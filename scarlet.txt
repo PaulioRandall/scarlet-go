@@ -1,0 +1,58 @@
+
+// Keywords:
+// - `PROCEDURE`
+// - `IN, OUT`
+// - `DO`
+// - `END`
+// - `IF`
+// - `MATCH`
+// - `LOOP`
+// - `TRUE`, `ON`, `GOOD`
+// - `FALSE`, `OFF`, `BAD`
+// - `BIT`, `NUM`, `INT`, `REAL`, `STR`
+
+// Operators:
+// - ASSIGNMENT				`:=`
+// - EQUALS, NOT EQUALS			`=`, `#`
+// - GT, LT, GT_EQ, LT_EQ		`>`, `<`, `>=`, `<=`
+// - ADD, SUBTRACT			`+`, `-`
+// - MULTIPLY, DIVIDE			`*`, `/`
+// - MODULO				`%`
+// - NOT				`~`, `¬`
+// - AND, OR				`&`, `|`
+// - LINEFEED ENDED BRANCH CONSEQUENCE	`->`
+
+// Notes:
+// - STRING LITERAL	``
+// - STRING TEMPALTE	""
+
+PROCEDURE print_args DO
+	LOOP arg := @Args() -> @Print(arg, TRUE)
+END print_args
+
+PROCEDURE divide
+	IN a.(NUM), b.(NUM)
+	OUT r.(NUM), e.(STR)
+DO
+
+	MATCH
+		b = 0 -> e := `Can't divide by zero`
+		TRUE  -> r := a / b
+	END
+END divide
+
+PROCEDURE calc DO
+
+	args := @Args()
+	IF @Len(args) # 2 -> @Panic(`Need precisely two integer arguments`)
+
+	@When(e.(STR), ^) IN _, new -> @Panic(new)
+	
+	a, e := @ParseInt(args[1])
+	b, e := @ParseInt(args[2])
+
+	r, e := divide(a, b)
+	c, e := @FmtReal(r.(REAL), `*.##`)
+
+	@Print("{a} / {b} = {c}", TRUE)
+END calc

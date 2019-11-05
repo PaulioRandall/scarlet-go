@@ -1,0 +1,82 @@
+#!/bin/bash
+
+GO_PROJ_NAME="scarlet"
+PROJ_TEST_FILE="test.scarlet"
+
+clear
+rm -f cmd/"$GO_PROJ_NAME"
+
+# contains returns 1 if any argument string (except the first) is a subset of
+# the first argument string, else 0 is returned.
+contains() {
+  local arg=$1
+  for option in "${@:2}"
+  do
+    if [[ "$arg" == "$option" ]]; then
+      return 1
+    fi
+  done
+  return 0
+}
+
+# exitIfNotZero exits the script with error code 1 if the first argument is not
+# 0 (zero).
+exitIfNotZero() {
+  if [[ "$1" != "0" ]]; then
+    echo
+    echo "Exit code $1: $2"
+    exit 1
+  fi
+}
+
+# Check that the first argument was supplied and is not empty, exit if not.
+if [[ "$1" == "" ]]; then
+  echo "No parameter supplied, I don't know what to do!"
+  echo "I accept 'test' or 'run'."
+  exit 1
+fi
+
+# Check that the first arguement is in the list of valid options, exit if not.
+contains "$1" "test" "run"
+if [[ $? != 1 ]]; then
+  echo "I don't understand the option '$1'..."
+  echo "I only deal with 'test' or 'run' commands, take it leave it."
+  exit 1
+fi
+
+# If the option requires the code be built then build the code.
+contains "$1" "test" "run"
+if [[ $? == 1 ]]; then
+  echo Building...
+  cd cmd
+  go build -o "$GO_PROJ_NAME" "${GO_PROJ_NAME}.go"
+  exitIfNotZero $? "Go building failed"
+  cd ..
+fi
+
+# If the option requires the code be formatted then format the code.
+contains "$1" "test" "run"
+if [[ $? == 1 ]]; then
+  echo Formatting...
+  go fmt ./...
+  exitIfNotZero $? "Go formatting failed"
+fi
+
+# If the option requires the code be tested the test the code.
+contains "$1" "test" "run"
+if [[ $? == 1 ]]; then
+  echo Testing...
+  go test ./... -timeout 3s
+  exitIfNotZero $? "Go tests failed"
+fi
+
+# If the option requests the code be run then run the code with the first test
+# scroll.
+contains "$1" "run"
+if [[ $? == 1 ]]; then
+  echo Running...
+  cd cmd
+  ./"$GO_PROJ_NAME" run "./${PROJ_TEST_FILE}"
+  exitIfNotZero $? "Running './${GO_PROJ_NAME} run ${PROJ_TEST_FILE}' failed"
+  cd ..
+fi
