@@ -1,5 +1,6 @@
 
 // Keywords:
+// - `ALIAS`
 // - `PROCEDURE`
 // - `IN, OUT`
 // - `DO`
@@ -7,9 +8,9 @@
 // - `IF`
 // - `MATCH`
 // - `LOOP`
-// - `TRUE`, `ON`, `GOOD`
-// - `FALSE`, `OFF`, `BAD`
-// - `BIT`, `NUM`, `INT`, `REAL`, `STR`
+// - `TRUE`
+// - `FALSE`
+// - `BOOL`, `INT`, `REAL`, `STR`
 
 // Operators:
 // - ASSIGNMENT				`:=`
@@ -21,38 +22,46 @@
 // - NOT				`~`, `¬`
 // - AND, OR				`&`, `|`
 // - LINEFEED ENDED BRANCH CONSEQUENCE	`->`
+// - TAIL PROCEDURE DEFINITION `^`
+// - IGNORE IN `_`
 
 // Notes:
 // - STRING LITERAL	``
 // - STRING TEMPALTE	""
 
+ALIAS LF := TRUE
+ALIAS ELSE := TRUE
+ALIAS FOREACH := LOOP
+
 PROCEDURE print_args DO
-	LOOP arg := @Args() -> @Print(arg, TRUE)
+	FOREACH arg := @Args() -> @Print(arg, LF)
 END print_args
 
 PROCEDURE divide
-	IN a.(NUM), b.(NUM)
-	OUT r.(NUM), e.(STR)
+	IN a.(REAL), b.(REAL)
+	OUT r.(REAL), e.(STR)
 DO
 
 	MATCH
 		b = 0 -> e := `Can't divide by zero`
-		TRUE  -> r := a / b
+		ELSE  -> r := a / b
 	END
 END divide
 
 PROCEDURE calc DO
 
 	args := @Args()
-	IF @Len(args) # 2 -> @Panic(`Need precisely two integer arguments`)
+	IF @Len(args) # 2 -> @Panic(`Need precisely two number arguments`)
 
-	@When(e.(STR), ^) IN _, new -> @Panic(new)
+	@when(e.(STR), ^) IN _, new DO
+		@Panic(new)
+	END
 	
-	a, e := @ParseInt(args[1])
-	b, e := @ParseInt(args[2])
+	a, e := @ParseReal(args[1])
+	b, e := @ParseReal(args[2])
 
 	r, e := divide(a, b)
 	c, e := @FmtReal(r.(REAL), `*.##`)
 
-	@Print("{a} / {b} = {c}", TRUE)
+	@Print("{a} / {b} = {c}", LF)
 END calc
