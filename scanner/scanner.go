@@ -4,15 +4,26 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
+// ScanToken is a recursive descent function that returns the next token
+// followed by the callable (tail) function to get the token after next. If the
+// function is null then the end of the token stream has been reached.
+type ScanToken func() (token.Token, ScanToken)
+
+// source represents the source code yet to be scanned.
 type source struct {
-	s []rune // The source code
+	rs []rune // The source code
 	i int    // The rune index
 }
 
-// ScanToken is a recursive descent function that returns the next token
-// followed by the callable tail function to get the token after next. If the
-// function is null then the end of the token stream has been reached.
-type ScanToken func() (token.Token, ScanToken)
+// scan removes `n` runes from the unscanned source code and returns it. The
+// index is updated accordingly.
+func (s* source) scan(n int) (out string, index int) {
+	out = s.rs[:n]
+	s.rs = s.rs[n:]
+	s.i += n
+	return out, s.i
+}
+
 
 // no_tok returns an empty Token.
 func no_tok() token.Token {
@@ -23,7 +34,7 @@ func no_tok() token.Token {
 // input source.
 func New(src string) ScanToken {
 	s := source{
-		s: []rune(src),
+		rs: []rune(src),
 	}
 	return s.fileScope
 }
@@ -31,6 +42,6 @@ func New(src string) ScanToken {
 // fileScope identifies and returns the next token in the source. The token must
 // be one that appears at the start of a statement within the top level of a
 // source file.
-func (src *source) fileScope() (t token.Token, f ScanToken) {
+func (s* source) fileScope() (t token.Token, f ScanToken) {
 	return no_tok(), nil
 }
