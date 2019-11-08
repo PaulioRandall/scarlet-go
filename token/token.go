@@ -2,7 +2,11 @@ package token
 
 // Token represents a grammer token within a source file.
 type Token struct {
-	k Kind
+	value string
+	kind  Kind
+	line  int
+	start int
+	end   int
 }
 
 // ScanToken is a recursive descent function that returns the next token
