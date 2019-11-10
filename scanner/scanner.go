@@ -11,8 +11,8 @@ import (
 // function is null then the end of the token stream has been reached.
 type ScanToken func() (token.Token, ScanToken)
 
-// no_tok returns an empty Token.
-func no_tok() token.Token {
+// EmptyTok returns an empty Token.
+func EmptyTok() token.Token {
 	return token.Token{}
 }
 
@@ -24,13 +24,18 @@ func (s *source) fileScope() (t token.Token, f ScanToken) {
 	var k token.Kind
 	var n int
 
+	if len(s.runes) == 0 {
+		return EmptyTok(), nil
+	}
+
 	switch ru := s.runes[0]; {
-	case unicode.IsSpace(ru):
-		k, n = token.WHITESPACE, countSpaces(s.runes)
 	case newlineRunes(s.runes, 0) != 0:
 		return s.scanNewline(), s.fileScope
+	case unicode.IsSpace(ru):
+		k, n = token.WHITESPACE, countSpaces(s.runes)
 	default:
-		return no_tok(), s.fileScope
+		// TODO: Should return error
+		return EmptyTok(), s.fileScope
 	}
 
 	return s.scan(n, k), s.fileScope

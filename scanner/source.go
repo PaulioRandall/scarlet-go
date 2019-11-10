@@ -44,7 +44,7 @@ func (s *source) scanNewline() token.Token {
 
 	n := newlineRunes(s.runes, 0)
 	if n == 0 {
-		panic("Expected haracters representing a newline, LF or CRLF")
+		panic("Expected characters representing a newline, LF or CRLF")
 	}
 
 	t := token.Token{

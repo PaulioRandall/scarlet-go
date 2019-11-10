@@ -23,6 +23,7 @@ func countSpaces(runes []rune) (n int) {
 // is `\n` then `1` is returned, if the the next rune are `\r\n` then `2` is
 // returned else 0 is returned.
 func newlineRunes(runes []rune, i int) int {
+
 	if runes[i] == '\n' {
 		return 1
 	}
