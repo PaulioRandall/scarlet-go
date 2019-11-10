@@ -3,6 +3,7 @@ package scanner
 import (
 	"testing"
 
+	"github.com/PaulioRandall/scarlet-go/cookies/where"
 	"github.com/PaulioRandall/scarlet-go/token"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,9 +16,7 @@ func TestScan_1(t *testing.T) {
 	exp := token.Token{
 		Kind:  token.UNDEFINED,
 		Value: "Scar",
-		Line:  0,
-		Start: 0,
-		End:   4,
+		Where: where.New(0, 0, 4),
 	}
 
 	act := s.scan(4, token.UNDEFINED)

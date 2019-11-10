@@ -1,12 +1,14 @@
 package token
 
+import (
+	"github.com/PaulioRandall/scarlet-go/cookies/where"
+)
+
 // Token represents a grammer token within a source file.
 type Token struct {
-	Value string // The value of the token within the source code
-	Line  int    // The line in the source code of the token
-	Start int    // The index of the first character in the source code
-	End   int    // The index after the last character within the source code
-	Kind  Kind   // The type of the token
+	Value string      // The value of the token within the source code
+	Kind  Kind        // The type of the token
+	Where where.Where // The location of the token within the source file
 }
 
 // ScanToken is a recursive descent function that returns the next token

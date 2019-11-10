@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"github.com/PaulioRandall/scarlet-go/cookies/where"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -24,15 +25,13 @@ func (s *source) scan(n int, k token.Kind) token.Token {
 	}
 
 	t := token.Token{
-		Line:  s.line,
-		Start: s.col,
-		Value: string(s.runes[:n]),
-		End:   s.col + n,
 		Kind:  k,
+		Where: where.New(s.line, s.col, s.col+n),
+		Value: string(s.runes[:n]),
 	}
 
 	s.runes = s.runes[n:]
-	s.col = t.End
+	s.col = t.Where.End()
 
 	return t
 }

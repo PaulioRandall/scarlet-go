@@ -4,7 +4,7 @@
 
 ### Scanner
 
-- Add functionality to return error when an error is detected in source code
-- Add functionality to parse linefeeds (inluding carraige returns) as newline tokens
+- Add functionality to scan linefeeds (and sometimes carraige returns) as newline tokens
+- Add functionality to scan `PROCEDURE` block start and block `END` tokens
 
 ## Ideas
