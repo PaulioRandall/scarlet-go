@@ -8,7 +8,7 @@ import (
 // the input `runes` slice.
 func countSpaces(runes []rune) (n int) {
 	for _, ru := range runes {
-		if !unicode.IsSpace(ru) || isNewline(n, runes) {
+		if !unicode.IsSpace(ru) || newlineRunes(runes, n) != 0 {
 			return
 		}
 
@@ -18,18 +18,20 @@ func countSpaces(runes []rune) (n int) {
 	return
 }
 
-// isNewline returns true if the next token is a newline token. This may be a
-// single linefeed or carriage return followed by a linefeed.
-func isNewline(i int, runes []rune) bool {
+// newlineRunes returns the number runes representing the next new line if the
+// next token is a newline token else zero is returned. I.e. if the next rune
+// is `\n` then `1` is returned, if the the next rune are `\r\n` then `2` is
+// returned else 0 is returned.
+func newlineRunes(runes []rune, i int) int {
 	if runes[i] == '\n' {
-		return true
+		return 1
 	}
 
 	if i+1 < len(runes) {
 		if runes[i] == '\r' && runes[i+1] == '\n' {
-			return true
+			return 2
 		}
 	}
 
-	return false
+	return 0
 }

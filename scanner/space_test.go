@@ -18,10 +18,10 @@ func TestCoutSpaces_1(t *testing.T) {
 }
 
 func TestIsNewline_1(t *testing.T) {
-	assert.True(t, isNewline(0, []rune("\n")))
-	assert.True(t, isNewline(7, []rune("Scarlet\n")))
-	assert.True(t, isNewline(7, []rune("Scarlet\r\n")))
-	assert.False(t, isNewline(0, []rune("Scarlet")))
-	assert.False(t, isNewline(7, []rune("Scarlet\r")))
-	assert.False(t, isNewline(0, []rune("Scarlet\n")))
+	assert.Equal(t, 1, newlineRunes([]rune("\n"), 0))
+	assert.Equal(t, 1, newlineRunes([]rune("Scarlet\n"), 7))
+	assert.Equal(t, 2, newlineRunes([]rune("Scarlet\r\n"), 7))
+	assert.Equal(t, 0, newlineRunes([]rune("Scarlet"), 0))
+	assert.Equal(t, 0, newlineRunes([]rune("Scarlet\r"), 7))
+	assert.Equal(t, 0, newlineRunes([]rune("Scarlet\n"), 0))
 }

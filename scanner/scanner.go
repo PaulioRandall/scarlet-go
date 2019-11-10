@@ -27,6 +27,8 @@ func (s *source) fileScope() (t token.Token, f ScanToken) {
 	switch ru := s.runes[0]; {
 	case unicode.IsSpace(ru):
 		k, n = token.WHITESPACE, countSpaces(s.runes)
+	case newlineRunes(s.runes, 0) != 0:
+		return s.scanNewline(), s.fileScope
 	default:
 		return no_tok(), s.fileScope
 	}

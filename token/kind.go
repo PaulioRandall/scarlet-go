@@ -7,6 +7,7 @@ const (
 	UNDEFINED Kind = iota
 	// ------------------
 	WHITESPACE
+	NEWLINE
 	PROCEDURE
 	END
 )
@@ -21,6 +22,8 @@ func KindName(k Kind) string {
 	switch k {
 	case UNDEFINED:
 		return `UNDEFINED`
+	case NEWLINE:
+		return `NEWLINE`
 	case WHITESPACE:
 		return `WHITESPACE`
 	case PROCEDURE:

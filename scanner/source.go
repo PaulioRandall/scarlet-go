@@ -36,6 +36,29 @@ func (s *source) scan(n int, k token.Kind) token.Token {
 	return t
 }
 
+// scanNewline removes the next linefeed (or CRLF) runes from the unscanned
+// source code and uses them to create a newline token. The source line and
+// column indexes are updated accordingly. If the next sequence of runes do not
+// form a newline token then a panic ensues.
+func (s *source) scanNewline() token.Token {
+
+	n := newlineRunes(s.runes, 0)
+	if n == 0 {
+		panic("Expected haracters representing a newline, LF or CRLF")
+	}
+
+	t := token.Token{
+		Kind:  token.NEWLINE,
+		Where: where.New(s.line, s.col, s.col+n),
+		Value: string(s.runes[:n]),
+	}
+
+	s.runes = s.runes[n:]
+	s.col = t.Where.End()
+
+	return t
+}
+
 // New returns a ScanToken function that will return the first token in the
 // input source.
 func New(src string) ScanToken {
