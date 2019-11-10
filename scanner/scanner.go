@@ -1,6 +1,8 @@
 package scanner
 
 import (
+	"unicode"
+
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -18,5 +20,16 @@ func no_tok() token.Token {
 // be one that appears at the start of a statement within the top level of a
 // source file.
 func (s *source) fileScope() (t token.Token, f ScanToken) {
-	return no_tok(), nil
+
+	var k token.Kind
+	var n int
+
+	switch ru := s.runes[0]; {
+	case unicode.IsSpace(ru):
+		k, n = token.WHITESPACE, countSpaces(s.runes)
+	default:
+		return no_tok(), s.fileScope
+	}
+
+	return s.scan(n, k), s.fileScope
 }
