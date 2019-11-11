@@ -1,6 +1,8 @@
 package perror
 
 import (
+	"fmt"
+
 	w "github.com/PaulioRandall/scarlet-go/cookies/where"
 )
 
@@ -9,6 +11,7 @@ type Perror interface {
 	Error() string
 	Where() w.Where
 	Unwrap() error
+	String() string
 }
 
 // perr is simple implementation of Perror.
@@ -31,6 +34,11 @@ func (e perr) Where() w.Where {
 // Unwrap satisfies the Perror interface.
 func (e perr) Unwrap() error {
 	return e.why
+}
+
+// String returns a simple string representation of the error.
+func (e perr) String() string {
+	return fmt.Sprintf("%s at %s", e.what, e.where.String())
 }
 
 // New returns an instantiated implementation of Perror.

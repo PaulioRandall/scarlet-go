@@ -54,7 +54,8 @@ func (s *source) scanNewline() token.Token {
 	}
 
 	s.runes = s.runes[n:]
-	s.col = t.Where.End()
+	s.line++
+	s.col = 0
 
 	return t
 }

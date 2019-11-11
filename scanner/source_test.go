@@ -62,8 +62,8 @@ func TestScanNewline_1(t *testing.T) {
 
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune("Scarlet"), s.runes)
-	assert.Equal(t, 0, s.line)
-	assert.Equal(t, 1, s.col)
+	assert.Equal(t, 1, s.line)
+	assert.Equal(t, 0, s.col)
 }
 
 func TestScanNewline_2(t *testing.T) {
@@ -81,8 +81,8 @@ func TestScanNewline_2(t *testing.T) {
 
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune("Scarlet"), s.runes)
-	assert.Equal(t, 0, s.line)
-	assert.Equal(t, 2, s.col)
+	assert.Equal(t, 1, s.line)
+	assert.Equal(t, 0, s.col)
 }
 
 func TestScanNewline_3(t *testing.T) {
