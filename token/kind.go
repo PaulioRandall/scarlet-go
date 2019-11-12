@@ -34,3 +34,18 @@ func KindName(k Kind) string {
 
 	return `--UNKOWN--`
 }
+
+// FindWordKind identifies the kind of the word string.
+func FindWordKind(s string) (k Kind) {
+
+	switch s {
+	case `PROCEDURE`:
+		k = PROCEDURE
+	case `END`:
+		k = END
+	default:
+		k = UNDEFINED
+	}
+
+	return
+}

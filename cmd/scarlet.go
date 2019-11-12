@@ -3,7 +3,8 @@ package main
 import (
 	"io/ioutil"
 
-	"github.com/PaulioRandall/scarlet-go/scanner"
+	"github.com/PaulioRandall/scarlet-go/scanner/source"
+	"github.com/PaulioRandall/scarlet-go/token"
 )
 
 func main() {
@@ -19,16 +20,16 @@ func main() {
 // run executes the input source code.
 func run(src string) {
 
-	s := scanner.New(src)
+	s := source.New(src)
 
-	tok, s, e := s()
+	t, s, e := s()
 	if e != nil {
 		panic(e.String())
 	}
 
-	for tok != scanner.EmptyTok() {
-		print(tok.Kind.Name() + " ")
-		tok, s, e = s()
+	for t != token.Empty() {
+		print(t.Kind.Name() + " ")
+		t, s, e = s()
 
 		if e != nil {
 			panic(e.String())
