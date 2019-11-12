@@ -13,18 +13,25 @@ func main() {
 		panic(e)
 	}
 
-	s := scanner.New(string(b))
-	tok, s, pe := s()
-	if pe != nil {
-		panic(pe.String())
+	run(string(b))
+}
+
+// run executes the input source code.
+func run(src string) {
+
+	s := scanner.New(src)
+
+	tok, s, e := s()
+	if e != nil {
+		panic(e.String())
 	}
 
 	for tok != scanner.EmptyTok() {
 		print(tok.Kind.Name() + " ")
-		tok, s, pe = s()
+		tok, s, e = s()
 
-		if pe != nil {
-			panic(pe.String())
+		if e != nil {
+			panic(e.String())
 		}
 	}
 }

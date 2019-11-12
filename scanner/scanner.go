@@ -34,6 +34,8 @@ func (s *source) fileScope() (token.Token, ScanToken, perror.Perror) {
 		return s.scanNewline(), s.fileScope, nil
 	case unicode.IsSpace(ru):
 		k, n = token.WHITESPACE, countSpaces(s.runes)
+	case unicode.IsLetter(ru):
+		k, n = identifyWord(s.runes)
 	default:
 		return EmptyTok(), nil, perror.New(
 			"Unknown token",

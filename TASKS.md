@@ -2,8 +2,8 @@
 
 ## Available
 
-### Scanner
+NEXT: Identify some more tasks
 
-- Add functionality to scan `PROCEDURE` block start and block `END` tokens
+### Scanner
 
 ## Ideas
