@@ -21,3 +21,16 @@ type ScanToken func() (Token, ScanToken, perror.Perror)
 func Empty() Token {
 	return Token{}
 }
+
+// IsSignificant returns true if the token is required for parsing the program.
+// Better put, false is returned if the token is whitespace or a comment etc.
+func (t Token) IsSignificant() bool {
+	switch t.Kind {
+	case UNDEFINED:
+	case WHITESPACE:
+	default:
+		return true
+	}
+
+	return false
+}

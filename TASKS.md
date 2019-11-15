@@ -2,7 +2,9 @@
 
 ## Available
 
-NEXT: Identify some more tasks
+### Token
+
+- Convert Token into an interface
 
 ### Scanner
 
@@ -12,6 +14,6 @@ NEXT: Identify some more tasks
 
 ### Strimmer
 
-- Define a strimmer package and initial struct that wraps the scanner pkg, providing the same interface, but non-source tokens such as whitespace and comments.
+- Test strimmer
 
 ## Ideas
