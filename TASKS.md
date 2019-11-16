@@ -8,6 +8,7 @@
 
 ### Scanner
 
+- Write scan tests
 - Scan function names
 - Scan function input parameters
 - Scan function output parameters

@@ -42,8 +42,8 @@ func (s *source) scanRunes(n int, k token.Kind) token.Token {
 
 	t := token.Token{
 		Kind:  k,
-		Where: where.New(s.line, s.col, s.col+n),
 		Value: string(s.runes[:n]),
+		Where: where.New(s.line, s.col, s.col+n),
 	}
 
 	s.runes = s.runes[n:]
@@ -65,8 +65,8 @@ func (s *source) scanNewline() token.Token {
 
 	t := token.Token{
 		Kind:  token.NEWLINE,
-		Where: where.New(s.line, s.col, s.col+n),
 		Value: string(s.runes[:n]),
+		Where: where.New(s.line, s.col, s.col+n),
 	}
 
 	s.runes = s.runes[n:]
