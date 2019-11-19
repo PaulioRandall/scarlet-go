@@ -40,11 +40,11 @@ func (s *source) scanRunes(n int, k token.Kind) token.Token {
 
 	s.checkSize(n)
 
-	t := token.Token{
-		Kind:  k,
-		Value: string(s.runes[:n]),
-		Where: where.New(s.line, s.col, s.col+n),
-	}
+	t := token.New(
+		string(s.runes[:n]),
+		k,
+		where.New(s.line, s.col, s.col+n),
+	)
 
 	s.runes = s.runes[n:]
 	s.col = t.Where.End()
@@ -63,11 +63,11 @@ func (s *source) scanNewline() token.Token {
 		panic("Expected characters representing a newline, LF or CRLF")
 	}
 
-	t := token.Token{
-		Kind:  token.NEWLINE,
-		Value: string(s.runes[:n]),
-		Where: where.New(s.line, s.col, s.col+n),
-	}
+	t := token.New(
+		string(s.runes[:n]),
+		token.NEWLINE,
+		where.New(s.line, s.col, s.col+n),
+	)
 
 	s.runes = s.runes[n:]
 	s.line++
@@ -86,11 +86,11 @@ func (s *source) scanWord(n int) token.Token {
 	s.checkSize(n)
 
 	v := string(s.runes[:n])
-	t := token.Token{
-		Kind:  token.FindWordKind(v),
-		Value: v,
-		Where: where.New(s.line, s.col, s.col+n),
-	}
+	t := token.New(
+		v,
+		token.FindWordKind(v),
+		where.New(s.line, s.col, s.col+n),
+	)
 
 	s.runes = s.runes[n:]
 	s.col = t.Where.End()

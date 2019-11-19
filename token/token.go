@@ -29,6 +29,15 @@ type Token struct {
 // function is null then the end of the token stream has been reached.
 type ScanToken func() (Token, ScanToken, perror.Perror)
 
+// New creates a new token.
+func New(v string, k Kind, w where.Where) Token {
+	return Token{
+		Value: v,
+		Kind:  k,
+		Where: w,
+	}
+}
+
 // EmptyTok returns an empty Token.
 func Empty() Token {
 	return Token{}
