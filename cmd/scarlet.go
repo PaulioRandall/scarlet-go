@@ -28,7 +28,7 @@ func run(src string) {
 	}
 
 	for t != token.Empty() {
-		print(t.Kind.Name() + " ")
+		print(t.Kind().Name() + " ")
 		t, st, e = st()
 
 		if e != nil {

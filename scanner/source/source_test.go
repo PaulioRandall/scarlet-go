@@ -13,11 +13,11 @@ func TestScanRunes_1(t *testing.T) {
 		runes: []rune("Scarlet"),
 	}
 
-	exp := token.Token{
-		Kind:  token.UNDEFINED,
-		Value: "Scar",
-		Where: where.New(0, 0, 4),
-	}
+	exp := token.New(
+		"Scar",
+		token.UNDEFINED,
+		where.New(0, 0, 4),
+	)
 
 	act := s.scanRunes(4, token.UNDEFINED)
 
@@ -56,11 +56,11 @@ func TestScanNewline_1(t *testing.T) {
 		runes: []rune("\nScarlet"),
 	}
 
-	exp := token.Token{
-		Kind:  token.NEWLINE,
-		Value: "\n",
-		Where: where.New(0, 0, 1),
-	}
+	exp := token.New(
+		"\n",
+		token.NEWLINE,
+		where.New(0, 0, 1),
+	)
 
 	act := s.scanNewline()
 
@@ -75,11 +75,11 @@ func TestScanNewline_2(t *testing.T) {
 		runes: []rune("\r\nScarlet"),
 	}
 
-	exp := token.Token{
-		Kind:  token.NEWLINE,
-		Value: "\r\n",
-		Where: where.New(0, 0, 2),
-	}
+	exp := token.New(
+		"\r\n",
+		token.NEWLINE,
+		where.New(0, 0, 2),
+	)
 
 	act := s.scanNewline()
 
@@ -104,11 +104,11 @@ func TestScanWord_1(t *testing.T) {
 		runes: []rune("END"),
 	}
 
-	exp := token.Token{
-		Kind:  token.END,
-		Value: "END",
-		Where: where.New(0, 0, 3),
-	}
+	exp := token.New(
+		"END",
+		token.END,
+		where.New(0, 0, 3),
+	)
 
 	act := s.scanWord(3)
 
@@ -123,11 +123,11 @@ func TestScanWord_2(t *testing.T) {
 		runes: []rune("PROCEDURE END"),
 	}
 
-	exp := token.Token{
-		Kind:  token.PROCEDURE,
-		Value: "PROCEDURE",
-		Where: where.New(0, 0, 9),
-	}
+	exp := token.New(
+		"PROCEDURE",
+		token.PROCEDURE,
+		where.New(0, 0, 9),
+	)
 
 	act := s.scanWord(9)
 
@@ -142,11 +142,11 @@ func TestScanWord_3(t *testing.T) {
 		runes: []rune("Anything"),
 	}
 
-	exp := token.Token{
-		Kind:  token.UNDEFINED,
-		Value: "Anything",
-		Where: where.New(0, 0, 8),
-	}
+	exp := token.New(
+		"Anything",
+		token.UNDEFINED,
+		where.New(0, 0, 8),
+	)
 
 	act := s.scanWord(8)
 

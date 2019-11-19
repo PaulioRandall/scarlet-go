@@ -6,13 +6,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestToken_1(t *testing.T) {
-	_ = TokenInterface(Token{})
+func TestTokenSimple_1(t *testing.T) {
+	_ = Token(tokenSimple{})
 }
 
-func TestToken_IsSignificant_1(t *testing.T) {
-	assert.False(t, Token{Kind: UNDEFINED}.IsSignificant())
-	assert.False(t, Token{Kind: WHITESPACE}.IsSignificant())
-	assert.True(t, Token{Kind: PROCEDURE}.IsSignificant())
-	assert.True(t, Token{Kind: END}.IsSignificant())
+func TestTokenSimple_IsSignificant_1(t *testing.T) {
+	assert.False(t, tokenSimple{k: UNDEFINED}.IsSignificant())
+	assert.False(t, tokenSimple{k: WHITESPACE}.IsSignificant())
+	assert.True(t, tokenSimple{k: PROCEDURE}.IsSignificant())
+	assert.True(t, tokenSimple{k: END}.IsSignificant())
 }

@@ -4,8 +4,6 @@
 
 ### Token
 
-- Convert Token into an interface
-
 ### Scanner
 
 - Write scan tests

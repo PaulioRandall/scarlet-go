@@ -47,7 +47,7 @@ func (s *source) scanRunes(n int, k token.Kind) token.Token {
 	)
 
 	s.runes = s.runes[n:]
-	s.col = t.Where.End()
+	s.col = t.Where().End()
 
 	return t
 }
@@ -93,7 +93,7 @@ func (s *source) scanWord(n int) token.Token {
 	)
 
 	s.runes = s.runes[n:]
-	s.col = t.Where.End()
+	s.col = t.Where().End()
 
 	return t
 }

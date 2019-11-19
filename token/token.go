@@ -5,23 +5,29 @@ import (
 	"github.com/PaulioRandall/scarlet-go/cookies/where"
 )
 
-type TokenInterface interface {
+// Token represents a grammer token within a source file.
+type Token interface {
 
 	// Value returns the string representing the token in source.
-	O_Value() string
+	Value() string
 
 	// Kind returns the type of the token.
-	O_Kind() Kind
+	Kind() Kind
 
 	// Where returns where the token is located within the source.
-	O_Where() where.Where
+	Where() where.Where
+
+	// IsSignificant returns true if the token is required for parsing the
+	// program. Better put, false is returned if the token is whitespace or a
+	// comment etc.
+	IsSignificant() bool
 }
 
-// Token represents a grammer token within a source file.
-type Token struct {
-	Value string      // The value of the token within the source code
-	Kind  Kind        // The type of the token
-	Where where.Where // The location of the token within the source file
+// tokenSimple is a simple implementation of the Token interface.
+type tokenSimple struct {
+	v string
+	k Kind
+	w where.Where
 }
 
 // ScanToken is a recursive descent function that returns the next token
@@ -31,37 +37,36 @@ type ScanToken func() (Token, ScanToken, perror.Perror)
 
 // New creates a new token.
 func New(v string, k Kind, w where.Where) Token {
-	return Token{
-		Value: v,
-		Kind:  k,
-		Where: w,
+	return tokenSimple{
+		v: v,
+		k: k,
+		w: w,
 	}
 }
 
 // EmptyTok returns an empty Token.
 func Empty() Token {
-	return Token{}
+	return tokenSimple{}
 }
 
-// Value satisfies the TokenInterface interface.
-func (t Token) O_Value() string {
-	return t.Value
+// Value satisfies the Token interface.
+func (t tokenSimple) Value() string {
+	return t.v
 }
 
-// Kind satisfies the TokenInterface interface.
-func (t Token) O_Kind() Kind {
-	return t.Kind
+// Kind satisfies the Token interface.
+func (t tokenSimple) Kind() Kind {
+	return t.k
 }
 
-// Where satisfies the TokenInterface interface.
-func (t Token) O_Where() where.Where {
-	return t.Where
+// Where satisfies the Token interface.
+func (t tokenSimple) Where() where.Where {
+	return t.w
 }
 
-// IsSignificant returns true if the token is required for parsing the program.
-// Better put, false is returned if the token is whitespace or a comment etc.
-func (t Token) IsSignificant() bool {
-	switch t.Kind {
+// IsSignificant satisfies the Token interface.
+func (t tokenSimple) IsSignificant() bool {
+	switch t.k {
 	case UNDEFINED:
 	case WHITESPACE:
 	default:
