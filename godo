@@ -64,6 +64,7 @@ if [[ "$1" == "run" ]]; then
   goFmt
   goTest
   runBuild
+  echo
   exit 0
 fi
 
