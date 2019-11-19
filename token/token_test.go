@@ -6,6 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestToken_1(t *testing.T) {
+	_ = TokenInterface(Token{})
+}
+
 func TestToken_IsSignificant_1(t *testing.T) {
 	assert.False(t, Token{Kind: UNDEFINED}.IsSignificant())
 	assert.False(t, Token{Kind: WHITESPACE}.IsSignificant())

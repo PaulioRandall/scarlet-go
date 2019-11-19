@@ -5,6 +5,18 @@ import (
 	"github.com/PaulioRandall/scarlet-go/cookies/where"
 )
 
+type TokenInterface interface {
+
+	// Value returns the string representing the token in source.
+	O_Value() string
+
+	// Kind returns the type of the token.
+	O_Kind() Kind
+
+	// Where returns where the token is located within the source.
+	O_Where() where.Where
+}
+
 // Token represents a grammer token within a source file.
 type Token struct {
 	Value string      // The value of the token within the source code
@@ -20,6 +32,21 @@ type ScanToken func() (Token, ScanToken, perror.Perror)
 // EmptyTok returns an empty Token.
 func Empty() Token {
 	return Token{}
+}
+
+// Value satisfies the TokenInterface interface.
+func (t Token) O_Value() string {
+	return t.Value
+}
+
+// Kind satisfies the TokenInterface interface.
+func (t Token) O_Kind() Kind {
+	return t.Kind
+}
+
+// Where satisfies the TokenInterface interface.
+func (t Token) O_Where() where.Where {
+	return t.Where
 }
 
 // IsSignificant returns true if the token is required for parsing the program.
