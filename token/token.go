@@ -44,6 +44,15 @@ func New(v string, k Kind, w where.Where) Token {
 	}
 }
 
+// NewFlat creates a new token.
+func NewFlat(v string, k Kind, line, start, end int) Token {
+	return tokenSimple{
+		v: v,
+		k: k,
+		w: where.New(line, start, end),
+	}
+}
+
 // EmptyTok returns an empty Token.
 func Empty() Token {
 	return tokenSimple{}

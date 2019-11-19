@@ -6,13 +6,12 @@
 
 ### Scanner
 
+- Rename `source` struct to `scanner`
 - Write scan tests
-- Scan function names
-- Scan function input parameters
-- Scan function output parameters
+- Scan procedure names
+- Scan procedure input parameters
+- Scan procedure output parameters
 
 ### Strimmer
-
-- Test strimmer
 
 ## Ideas
