@@ -1,4 +1,4 @@
-package source
+package scanner
 
 import (
 	"testing"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestScanRunes_1(t *testing.T) {
-	s := source{
+	s := scanner{
 		runes: []rune("Scarlet"),
 	}
 
@@ -28,7 +28,7 @@ func TestScanRunes_1(t *testing.T) {
 }
 
 func TestScanRunes_2(t *testing.T) {
-	s := source{
+	s := scanner{
 		runes: []rune("Scarlet"),
 	}
 
@@ -38,7 +38,7 @@ func TestScanRunes_2(t *testing.T) {
 }
 
 func TestScanRunes_3(t *testing.T) {
-	s := source{
+	s := scanner{
 		runes: []rune("Scarlet"),
 	}
 
@@ -52,7 +52,7 @@ func TestScanRunes_3(t *testing.T) {
 }
 
 func TestScanNewline_1(t *testing.T) {
-	s := source{
+	s := scanner{
 		runes: []rune("\nScarlet"),
 	}
 
@@ -71,7 +71,7 @@ func TestScanNewline_1(t *testing.T) {
 }
 
 func TestScanNewline_2(t *testing.T) {
-	s := source{
+	s := scanner{
 		runes: []rune("\r\nScarlet"),
 	}
 
@@ -90,7 +90,7 @@ func TestScanNewline_2(t *testing.T) {
 }
 
 func TestScanNewline_3(t *testing.T) {
-	s := source{
+	s := scanner{
 		runes: []rune("Scarlet"),
 	}
 
@@ -100,7 +100,7 @@ func TestScanNewline_3(t *testing.T) {
 }
 
 func TestScanWord_1(t *testing.T) {
-	s := source{
+	s := scanner{
 		runes: []rune("END"),
 	}
 
@@ -119,7 +119,7 @@ func TestScanWord_1(t *testing.T) {
 }
 
 func TestScanWord_2(t *testing.T) {
-	s := source{
+	s := scanner{
 		runes: []rune("PROCEDURE END"),
 	}
 
@@ -138,7 +138,7 @@ func TestScanWord_2(t *testing.T) {
 }
 
 func TestScanWord_3(t *testing.T) {
-	s := source{
+	s := scanner{
 		runes: []rune("Anything"),
 	}
 
@@ -157,7 +157,7 @@ func TestScanWord_3(t *testing.T) {
 }
 
 func TestScanWord_4(t *testing.T) {
-	s := source{
+	s := scanner{
 		runes: []rune("Scarlet"),
 	}
 

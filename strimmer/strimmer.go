@@ -2,14 +2,14 @@ package strimmer
 
 import (
 	"github.com/PaulioRandall/scarlet-go/cookies/perror"
-	"github.com/PaulioRandall/scarlet-go/scanner/source"
+	"github.com/PaulioRandall/scarlet-go/scanner"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
 // New returns a ScanToken function that will return the first token in the
 // input source.
 func New(src string) token.ScanToken {
-	st := source.New(src)
+	st := scanner.New(src)
 	return wrap(st)
 }
 

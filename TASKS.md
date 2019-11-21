@@ -6,7 +6,6 @@
 
 ### Scanner
 
-- Rename `source` struct to `scanner`
 - Write scan tests
 - Scan procedure names
 - Scan procedure input parameters
