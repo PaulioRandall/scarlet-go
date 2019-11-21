@@ -9,7 +9,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// TODO: Potential for abstraction with doTestScan(...) in scanner_2_test.go.
+// TODO: Potential for abstraction with scanner_2_test.go.
 func doTestWrap(t *testing.T, in string, exps ...token.Token) {
 
 	var tok token.Token

@@ -6,9 +6,9 @@
 
 ### Scanner
 
-- Scan procedure names
-- Scan procedure input parameters
-- Scan procedure output parameters
+- Scan in procedure names
+- Scan in procedure input parameters
+- Scan in procedure output parameters
 
 ### Strimmer
 

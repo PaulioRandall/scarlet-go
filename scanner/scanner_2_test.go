@@ -9,8 +9,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// TODO: Potential for abstraction with doTestWrap(...) in strimmer_test.go.
-func doTestScan(t *testing.T, in string, exps ...token.Token) {
+// TODO: Potential for abstraction with strimmer_test.go.
+func doTestScanOK(t *testing.T, in string, exps ...token.Token) {
 
 	var tok token.Token
 	var st token.ScanToken = New(in)
@@ -33,15 +33,15 @@ func doTestScan(t *testing.T, in string, exps ...token.Token) {
 	assert.Equal(t, n, size, "Expected %d tokens but got %d", size, n)
 }
 
-func TestScanner_Scan_1(t *testing.T) {
-	doTestScan(t,
+func TestScanner_Scan_OK_1(t *testing.T) {
+	doTestScanOK(t,
 		"PROCEDURE",
 		token.NewFlat("PROCEDURE", token.PROCEDURE, 0, 0, 9),
 	)
 }
 
-func TestScanner_Scan_2(t *testing.T) {
-	doTestScan(t,
+func TestScanner_Scan_OK_2(t *testing.T) {
+	doTestScanOK(t,
 		"PROCEDURE\nEND",
 		token.NewFlat("PROCEDURE", token.PROCEDURE, 0, 0, 9),
 		token.NewFlat("\n", token.NEWLINE, 0, 9, 10),
@@ -49,15 +49,15 @@ func TestScanner_Scan_2(t *testing.T) {
 	)
 }
 
-func TestScanner_Scan_3(t *testing.T) {
-	doTestScan(t,
+func TestScanner_Scan_OK_3(t *testing.T) {
+	doTestScanOK(t,
 		"\t\t\t",
 		token.NewFlat("\t\t\t", token.WHITESPACE, 0, 0, 3),
 	)
 }
 
-func TestScanner_Scan_4(t *testing.T) {
-	doTestScan(t,
+func TestScanner_Scan_OK_4(t *testing.T) {
+	doTestScanOK(t,
 		"PROCEDURE\t\tEND",
 		token.NewFlat("PROCEDURE", token.PROCEDURE, 0, 0, 9),
 		token.NewFlat("\t\t", token.WHITESPACE, 0, 9, 11),
