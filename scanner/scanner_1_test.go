@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestScanRunes_1(t *testing.T) {
+func TestScanner_ScanRunes_1(t *testing.T) {
 	s := scanner{
 		runes: []rune("Scarlet"),
 	}
@@ -27,7 +27,7 @@ func TestScanRunes_1(t *testing.T) {
 	assert.Equal(t, 4, s.col)
 }
 
-func TestScanRunes_2(t *testing.T) {
+func TestScanner_ScanRunes_2(t *testing.T) {
 	s := scanner{
 		runes: []rune("Scarlet"),
 	}
@@ -37,7 +37,7 @@ func TestScanRunes_2(t *testing.T) {
 	})
 }
 
-func TestScanRunes_3(t *testing.T) {
+func TestScanner_ScanRunes_3(t *testing.T) {
 	s := scanner{
 		runes: []rune("Scarlet"),
 	}
@@ -51,7 +51,7 @@ func TestScanRunes_3(t *testing.T) {
 	})
 }
 
-func TestScanNewline_1(t *testing.T) {
+func TestScanner_ScanNewline_1(t *testing.T) {
 	s := scanner{
 		runes: []rune("\nScarlet"),
 	}
@@ -70,7 +70,7 @@ func TestScanNewline_1(t *testing.T) {
 	assert.Equal(t, 0, s.col)
 }
 
-func TestScanNewline_2(t *testing.T) {
+func TestScanner_ScanNewline_2(t *testing.T) {
 	s := scanner{
 		runes: []rune("\r\nScarlet"),
 	}
@@ -89,7 +89,7 @@ func TestScanNewline_2(t *testing.T) {
 	assert.Equal(t, 0, s.col)
 }
 
-func TestScanNewline_3(t *testing.T) {
+func TestScanner_ScanNewline_3(t *testing.T) {
 	s := scanner{
 		runes: []rune("Scarlet"),
 	}
@@ -99,7 +99,7 @@ func TestScanNewline_3(t *testing.T) {
 	})
 }
 
-func TestScanWord_1(t *testing.T) {
+func TestScanner_ScanWord_1(t *testing.T) {
 	s := scanner{
 		runes: []rune("END"),
 	}
@@ -118,7 +118,7 @@ func TestScanWord_1(t *testing.T) {
 	assert.Equal(t, 3, s.col)
 }
 
-func TestScanWord_2(t *testing.T) {
+func TestScanner_ScanWord_2(t *testing.T) {
 	s := scanner{
 		runes: []rune("PROCEDURE END"),
 	}
@@ -137,7 +137,7 @@ func TestScanWord_2(t *testing.T) {
 	assert.Equal(t, 9, s.col)
 }
 
-func TestScanWord_3(t *testing.T) {
+func TestScanner_ScanWord_3(t *testing.T) {
 	s := scanner{
 		runes: []rune("Anything"),
 	}
@@ -156,7 +156,7 @@ func TestScanWord_3(t *testing.T) {
 	assert.Equal(t, 8, s.col)
 }
 
-func TestScanWord_4(t *testing.T) {
+func TestScanner_ScanWord_4(t *testing.T) {
 	s := scanner{
 		runes: []rune("Scarlet"),
 	}
