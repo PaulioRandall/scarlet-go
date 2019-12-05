@@ -2,6 +2,8 @@
 package source
 
 import (
+	"strings"
+
 	"github.com/PaulioRandall/scarlet-go/token"
 	"github.com/PaulioRandall/scarlet-go/where"
 )
@@ -30,41 +32,36 @@ func (s *Source) Where() where.Where {
 // and counts the number of runes in it.
 type TokenFinder func([]rune) (int, token.Kind)
 
-// SliceBy accepts a TokenFinder function and slices off a token based on the
-// result.
-func (s *Source) SliceBy(f TokenFinder) token.Token {
-	n, k := s.Identify(f)
-	return s.Slice(n, k)
-}
-
 // Identify accepts a TokenFinder function and returns the kind and length of
 // the next token from it.
 func (s *Source) Identify(f TokenFinder) (int, token.Kind) {
 	return f(s.runes)
 }
 
-// SliceNewline performs the same action the Slice function but increments the
-// line number and resets the coloumn index afterwards.
-func (s *Source) SliceNewline(n int, k token.Kind) token.Token {
-
-	t := s.Slice(n, k)
-	s.line++
-	s.col = 0
-
-	return t
-}
-
 // Slice slices `n` runes from the front of the source code and uses them to
-// construct a new token; the source line and column indexes are updated
-// accordingly. If `n` is less than one or greater than the number of remaining
-// runes then a panic ensues.
+// construct a new token. If token value ends in a linefeed the internal line
+// count is incremented and internal column index reset to zero else the column
+// index is increased by the number of runes sliced off. If `n` is less than
+// one or greater than the number of remaining runes then a panic ensues.
 func (s *Source) Slice(n int, k token.Kind) token.Token {
 
 	s.checkSize(n)
 	str, start, end := s.slice(n)
-
 	w := where.New(s.line, start, end)
+
+	if strings.HasSuffix(str, "\n") {
+		s.line++
+		s.col = 0
+	}
+
 	return token.Newish(str, k, w)
+}
+
+// SliceBy accepts a TokenFinder function and slices off a token based on the
+// result.
+func (s *Source) SliceBy(f TokenFinder) token.Token {
+	n, k := s.Identify(f)
+	return s.Slice(n, k)
 }
 
 // checkSize validates that `n` is greater than zero and less than the number of

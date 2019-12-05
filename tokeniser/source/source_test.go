@@ -51,7 +51,7 @@ func TestSource_Slice_3(t *testing.T) {
 	})
 }
 
-func TestSource_SliceNewline_1(t *testing.T) {
+func TestSource_Slice_4(t *testing.T) {
 	s := Source{
 		runes: []rune("\nScarlet"),
 	}
@@ -62,7 +62,7 @@ func TestSource_SliceNewline_1(t *testing.T) {
 		0, 0, 1,
 	)
 
-	act := s.SliceNewline(1, token.NEWLINE)
+	act := s.Slice(1, token.NEWLINE)
 
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune("Scarlet"), s.runes)
@@ -70,7 +70,7 @@ func TestSource_SliceNewline_1(t *testing.T) {
 	assert.Equal(t, 0, s.col)
 }
 
-func TestSource_SliceNewline_2(t *testing.T) {
+func TestSource_Slice_5(t *testing.T) {
 	s := Source{
 		runes: []rune("\r\nScarlet"),
 	}
@@ -81,10 +81,32 @@ func TestSource_SliceNewline_2(t *testing.T) {
 		0, 0, 2,
 	)
 
-	act := s.SliceNewline(2, token.NEWLINE)
+	act := s.Slice(2, token.NEWLINE)
 
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune("Scarlet"), s.runes)
 	assert.Equal(t, 1, s.line)
 	assert.Equal(t, 0, s.col)
+}
+
+func TestSource_SliceBy_1(t *testing.T) {
+	s := Source{
+		runes: []rune("Scarlet"),
+	}
+
+	exp := token.New(
+		"Scar",
+		token.UNDEFINED,
+		0, 0, 4,
+	)
+
+	act := s.SliceBy(func(r []rune) (int, token.Kind) {
+		assert.Equal(t, []rune("Scarlet"), r)
+		return 4, token.UNDEFINED
+	})
+
+	assert.Equal(t, exp, act)
+	assert.Equal(t, []rune("let"), s.runes)
+	assert.Equal(t, 0, s.line)
+	assert.Equal(t, 4, s.col)
 }

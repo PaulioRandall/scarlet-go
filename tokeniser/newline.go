@@ -19,7 +19,7 @@ func newlineThunk(s *source.Source, after TokenThunk) TokenThunk {
 			)
 		}
 
-		t := s.SliceNewline(n, k)
+		t := s.Slice(n, k)
 		return t, after, nil
 	}
 }
