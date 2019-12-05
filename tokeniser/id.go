@@ -8,7 +8,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/tokeniser/source"
 )
 
-// idThunk returns a TokeThunk that returns an ID token along with the next
+// idThunk returns a TokenThunk that returns an ID token along with the next
 // thunk to use `after`.
 func idThunk(s *source.Source, after TokenThunk) TokenThunk {
 	return func() (token.Token, TokenThunk, perror.Perror) {

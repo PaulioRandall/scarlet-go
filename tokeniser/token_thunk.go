@@ -1,5 +1,5 @@
 // tokeniser is responsible for recursively suppling tokens from the source
-// code and ensuring it follows the production rules.
+// code and ensuring they follow the production rules.
 package tokeniser
 
 import (
