@@ -1,22 +1,28 @@
 package productions
 
 import (
+	"github.com/PaulioRandall/scarlet-go/cookies"
 	"github.com/PaulioRandall/scarlet-go/perror"
-	//"github.com/PaulioRandall/scarlet-go/where"
 	"github.com/PaulioRandall/scarlet-go/source"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// Production represents a production rule.
-type Production interface {
-	Next() (token.Token, Production, perror.Perror)
-}
+// TokenEmitter is a thunk prototype that emits a token when called.
+type TokenEmitter func() (token.Token, TokenEmitter, perror.Perror)
 
-type rule struct {
-	parent *Production
-	src    *source.Source
-}
+// newlineEmitter returns a TokenEmitter that returns a newline token along with
+// the next emitter to use `after`.
+func newlineEmitter(src *source.Source, after TokenEmitter) TokenEmitter {
+	return func() (token.Token, TokenEmitter, perror.Perror) {
 
-// newline is a terminal production rule that will always return a newline token
-// and its parent production.
-type newline string
+		n := cookies.NewlineRunes(src.Runes(), 0)
+		if n == 0 {
+			return token.Empty(), nil, perror.Newish(
+				"Expected newline characters, i.e. LF or CRLF",
+				src.Where(),
+			)
+		}
+
+		return src.SliceNewline(n, token.NEWLINE), after, nil
+	}
+}

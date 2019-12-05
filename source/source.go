@@ -1,7 +1,6 @@
 package source
 
 import (
-	"github.com/PaulioRandall/scarlet-go/cookies"
 	"github.com/PaulioRandall/scarlet-go/token"
 	"github.com/PaulioRandall/scarlet-go/where"
 )
@@ -14,18 +13,21 @@ type Source struct {
 	col   int
 }
 
-// sliceNewline slices the next newline (LF or CRLF) from the front of the
-// source code and uses them to construct a newline token; the source line and
-// column indexes are updated accordingly. If the next sequence of runes do not
-// form a newline token then a panic ensues.
-func (s *Source) SliceNewline() token.Token {
+// Runes returns the source code that has yet to be tokenised.
+func (s *Source) Runes() []rune {
+	return s.runes
+}
 
-	n := cookies.NewlineRunes(s.runes, 0)
-	if n == 0 {
-		panic("Expected characters representing a newline, LF or CRLF")
-	}
+// Where returns the current location in the source code.
+func (s *Source) Where() where.Where {
+	return where.New(s.line, s.col, s.col)
+}
 
-	t := s.Slice(n, token.NEWLINE)
+// SliceNewline performs the same action the Slice function but increments the
+// line number and resets the coloumn index afterwards.
+func (s *Source) SliceNewline(n int, k token.Kind) token.Token {
+
+	t := s.Slice(n, k)
 	s.line++
 	s.col = 0
 
