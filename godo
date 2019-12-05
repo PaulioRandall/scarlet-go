@@ -51,6 +51,13 @@ runBuild() {
 }
 
 # If wanting to just test the code do this.
+if [[ "$1" == "build" ]]; then
+  goBuild
+  goFmt
+  exit 0
+fi
+
+# If wanting to just test the code do this.
 if [[ "$1" == "test" ]]; then
   goBuild
   goFmt

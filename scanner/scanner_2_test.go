@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/PaulioRandall/scarlet-go/cookies/perror"
+	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -46,6 +46,7 @@ func TestScanner_Scan_4(t *testing.T) {
 	)
 }
 
+/*
 func TestScanner_Scan_5(t *testing.T) {
 	scanner_ScanErrTest(t,
 		New("~~~"),
@@ -61,3 +62,4 @@ func TestScanner_Scan_6(t *testing.T) {
 		perror.New("", 1, 2, 2),
 	)
 }
+*/

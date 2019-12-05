@@ -1,7 +1,7 @@
 package strimmer
 
 import (
-	"github.com/PaulioRandall/scarlet-go/cookies/perror"
+	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/scanner"
 	"github.com/PaulioRandall/scarlet-go/token"
 )

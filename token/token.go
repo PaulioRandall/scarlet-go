@@ -1,8 +1,8 @@
 package token
 
 import (
-	"github.com/PaulioRandall/scarlet-go/cookies/perror"
-	"github.com/PaulioRandall/scarlet-go/cookies/where"
+	"github.com/PaulioRandall/scarlet-go/perror"
+	"github.com/PaulioRandall/scarlet-go/where"
 )
 
 // Token represents a grammer token within a source file.

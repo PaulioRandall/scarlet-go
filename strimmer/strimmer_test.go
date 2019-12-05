@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/PaulioRandall/scarlet-go/cookies/perror"
+	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -44,6 +44,7 @@ func TestWrap_4(t *testing.T) {
 	)
 }
 
+/*
 func TestWrap_5(t *testing.T) {
 	wrapErrTest(t,
 		New("~~~"),
@@ -59,3 +60,4 @@ func TestWrap_6(t *testing.T) {
 		perror.New("", 1, 2, 2),
 	)
 }
+*/

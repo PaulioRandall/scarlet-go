@@ -4,9 +4,9 @@ import (
 	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/cookies"
-	"github.com/PaulioRandall/scarlet-go/cookies/perror"
-	"github.com/PaulioRandall/scarlet-go/cookies/where"
+	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/where"
 )
 
 // scanner holds the yet to be scanned source code and where that code begins

@@ -3,8 +3,8 @@ package scanner
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/cookies/where"
 	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/where"
 	"github.com/stretchr/testify/assert"
 )
 

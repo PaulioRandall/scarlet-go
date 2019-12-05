@@ -3,7 +3,7 @@ package perror
 import (
 	"fmt"
 
-	w "github.com/PaulioRandall/scarlet-go/cookies/where"
+	w "github.com/PaulioRandall/scarlet-go/where"
 )
 
 // Perror represents an error within a file including its location.
