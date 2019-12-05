@@ -11,8 +11,17 @@ func TestTokenSimple_1(t *testing.T) {
 }
 
 func TestTokenSimple_IsSignificant_1(t *testing.T) {
-	assert.False(t, tokenSimple{k: UNDEFINED}.IsSignificant())
-	assert.False(t, tokenSimple{k: WHITESPACE}.IsSignificant())
-	assert.True(t, tokenSimple{k: PROCEDURE}.IsSignificant())
-	assert.True(t, tokenSimple{k: END}.IsSignificant())
+	kinds := map[Kind]bool{
+		// Kinds that are significant
+		FUNC: true,
+		END:  true,
+		// Kinds that are NOT significant
+		UNDEFINED:  false,
+		WHITESPACE: false,
+	}
+
+	for k, exp := range kinds {
+		act := tokenSimple{k: k}.IsSignificant()
+		assert.Equal(t, exp, act)
+	}
 }

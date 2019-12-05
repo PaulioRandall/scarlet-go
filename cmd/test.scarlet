@@ -1,4 +1,6 @@
 
-PROCEDURE
-      
+abc := FUNC(x, y) z, e DO
+  @Print(x)
 END
+
+abc()

@@ -2,15 +2,19 @@
 
 ## Available
 
-- Abstract `scanner` and `strimmer` test boiler plate functions into a test utility file within `token`. The token test utility file will support testing of the `scanner` and any code that both wraps it and exposes the same interface. E.g. `strimmer`.
-
 ### Token
 
 ### Scanner
 
-- Scan in procedure names
-- Scan in procedure input parameters
-- Scan in procedure output parameters
+- Think of using types as production rules
+- Rename PROCEDURE to FUNC
+- Add identifiers
+- Add assignment symbol
+- Add paremeter separator symbol
+- Add spell symbol and spell identifier
+- Add parameter symbols
+- Allow FUNCs to have input parameters
+- Allow FUNCs to have output parameters
 
 ### Strimmer
 

@@ -31,25 +31,26 @@ func New(src string) token.ScanToken {
 // source file.
 func (s *scanner) scan() (token.Token, token.ScanToken, perror.Perror) {
 
-	var k token.Kind
-	var n int
-
 	if len(s.runes) == 0 {
 		return token.Empty(), nil, nil
 	}
 
 	switch ru := s.runes[0]; {
 	case cookies.NewlineRunes(s.runes, 0) != 0:
-		return s.scanNewline(), s.scan, nil
+		return s.scanNewlineToken(), s.scan, nil
 
 	case unicode.IsSpace(ru):
-		k = token.WHITESPACE
-		n = countSpaces(s.runes)
-		return s.scanRunes(n, k), s.scan, nil
+		k := token.WHITESPACE
+		n := countSpaces(s.runes)
+		return s.scanToken(n, k), s.scan, nil
 
 	case unicode.IsLetter(ru):
-		n = countWord(s.runes)
-		return s.scanWord(n), s.scan, nil
+		n := countWord(s.runes)
+		return s.scanWordToken(n), s.scan, nil
+	}
+
+	if n := countSymbols(s.runes); n > 0 {
+		return s.scanSymbolToken(n), s.scan, nil
 	}
 
 	return token.Empty(), nil, perror.New(
@@ -70,11 +71,11 @@ func (s *scanner) checkSize(n int) {
 	}
 }
 
-// scan removes `n` runes from the unscanned source code and uses them to
-// create a new token. The source line and column indexes are updated
+// scascanTokenn removes `n` runes from the unscanned source code and uses them
+// to create a new token. The source line and column indexes are updated
 // accordingly. If `n` is less than one or greater than the number of remaining
 // runes then a panic ensues.
-func (s *scanner) scanRunes(n int, k token.Kind) token.Token {
+func (s *scanner) scanToken(n int, k token.Kind) token.Token {
 
 	s.checkSize(n)
 
@@ -90,11 +91,11 @@ func (s *scanner) scanRunes(n int, k token.Kind) token.Token {
 	return t
 }
 
-// scanNewline removes the next linefeed (or CRLF) runes from the unscanned
+// scanNewlineToken removes the next linefeed (or CRLF) runes from the unscanned
 // source code and uses them to create a newline token. The source line and
 // column indexes are updated accordingly. If the next sequence of runes do not
 // form a newline token then a panic ensues.
-func (s *scanner) scanNewline() token.Token {
+func (s *scanner) scanNewlineToken() token.Token {
 
 	n := cookies.NewlineRunes(s.runes, 0)
 	if n == 0 {
@@ -114,12 +115,12 @@ func (s *scanner) scanNewline() token.Token {
 	return t
 }
 
-// scanWord removes `n` runes from the unscanned source code and uses them to
-// create a new word token. The kind is identified from the resultant word
+// scanWordToken removes `n` runes from the unscanned source code and uses them
+// to create a new word token. The kind is identified from the resultant word
 // string. The source line and column indexes are updated accordingly. If `n` is
 // less than one or greater than the number of remaining runes then a panic
 // ensues.
-func (s *scanner) scanWord(n int) token.Token {
+func (s *scanner) scanWordToken(n int) token.Token {
 
 	s.checkSize(n)
 
@@ -134,4 +135,8 @@ func (s *scanner) scanWord(n int) token.Token {
 	s.col = t.Where().End()
 
 	return t
+}
+
+func (s *scanner) scanSymbolToken(n int) token.Token {
+	return token.Empty()
 }

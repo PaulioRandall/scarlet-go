@@ -15,6 +15,6 @@ func TestFindWordKind_1(t *testing.T) {
 	doTestFindWordKind(t, "", UNDEFINED)
 	doTestFindWordKind(t, "AAGGHH", UNDEFINED)
 	doTestFindWordKind(t, "ENDEND", UNDEFINED)
-	doTestFindWordKind(t, "PROCEDURE", PROCEDURE)
+	doTestFindWordKind(t, "FUNC", FUNC)
 	doTestFindWordKind(t, "END", END)
 }

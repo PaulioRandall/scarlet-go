@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestScanner_ScanRunes_1(t *testing.T) {
+func TestScanner_scanToken_1(t *testing.T) {
 	s := scanner{
 		runes: []rune("Scarlet"),
 	}
@@ -19,7 +19,7 @@ func TestScanner_ScanRunes_1(t *testing.T) {
 		where.New(0, 0, 4),
 	)
 
-	act := s.scanRunes(4, token.UNDEFINED)
+	act := s.scanToken(4, token.UNDEFINED)
 
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune("let"), s.runes)
@@ -27,31 +27,31 @@ func TestScanner_ScanRunes_1(t *testing.T) {
 	assert.Equal(t, 4, s.col)
 }
 
-func TestScanner_ScanRunes_2(t *testing.T) {
+func TestScanner_scanToken_2(t *testing.T) {
 	s := scanner{
 		runes: []rune("Scarlet"),
 	}
 
 	assert.Panics(t, func() {
-		s.scanRunes(0, token.UNDEFINED)
+		s.scanToken(0, token.UNDEFINED)
 	})
 }
 
-func TestScanner_ScanRunes_3(t *testing.T) {
+func TestScanner_scanToken_3(t *testing.T) {
 	s := scanner{
 		runes: []rune("Scarlet"),
 	}
 
 	assert.Panics(t, func() {
-		s.scanRunes(99, token.UNDEFINED)
+		s.scanToken(99, token.UNDEFINED)
 	})
 
 	assert.Panics(t, func() {
-		s.scanRunes(0, token.UNDEFINED)
+		s.scanToken(0, token.UNDEFINED)
 	})
 }
 
-func TestScanner_ScanNewline_1(t *testing.T) {
+func TestScanner_scanNewlineToken_1(t *testing.T) {
 	s := scanner{
 		runes: []rune("\nScarlet"),
 	}
@@ -62,7 +62,7 @@ func TestScanner_ScanNewline_1(t *testing.T) {
 		where.New(0, 0, 1),
 	)
 
-	act := s.scanNewline()
+	act := s.scanNewlineToken()
 
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune("Scarlet"), s.runes)
@@ -70,7 +70,7 @@ func TestScanner_ScanNewline_1(t *testing.T) {
 	assert.Equal(t, 0, s.col)
 }
 
-func TestScanner_ScanNewline_2(t *testing.T) {
+func TestScanner_scanNewlineToken_2(t *testing.T) {
 	s := scanner{
 		runes: []rune("\r\nScarlet"),
 	}
@@ -81,7 +81,7 @@ func TestScanner_ScanNewline_2(t *testing.T) {
 		where.New(0, 0, 2),
 	)
 
-	act := s.scanNewline()
+	act := s.scanNewlineToken()
 
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune("Scarlet"), s.runes)
@@ -89,17 +89,17 @@ func TestScanner_ScanNewline_2(t *testing.T) {
 	assert.Equal(t, 0, s.col)
 }
 
-func TestScanner_ScanNewline_3(t *testing.T) {
+func TestScanner_scanNewlineToken_3(t *testing.T) {
 	s := scanner{
 		runes: []rune("Scarlet"),
 	}
 
 	assert.Panics(t, func() {
-		s.scanNewline()
+		s.scanNewlineToken()
 	})
 }
 
-func TestScanner_ScanWord_1(t *testing.T) {
+func TestScanner_scanWordToken_1(t *testing.T) {
 	s := scanner{
 		runes: []rune("END"),
 	}
@@ -110,7 +110,7 @@ func TestScanner_ScanWord_1(t *testing.T) {
 		where.New(0, 0, 3),
 	)
 
-	act := s.scanWord(3)
+	act := s.scanWordToken(3)
 
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune(""), s.runes)
@@ -118,26 +118,26 @@ func TestScanner_ScanWord_1(t *testing.T) {
 	assert.Equal(t, 3, s.col)
 }
 
-func TestScanner_ScanWord_2(t *testing.T) {
+func TestScanner_scanWordToken_2(t *testing.T) {
 	s := scanner{
-		runes: []rune("PROCEDURE END"),
+		runes: []rune("FUNC END"),
 	}
 
 	exp := token.New(
-		"PROCEDURE",
-		token.PROCEDURE,
-		where.New(0, 0, 9),
+		"FUNC",
+		token.FUNC,
+		where.New(0, 0, 4),
 	)
 
-	act := s.scanWord(9)
+	act := s.scanWordToken(4)
 
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune(" END"), s.runes)
 	assert.Equal(t, 0, s.line)
-	assert.Equal(t, 9, s.col)
+	assert.Equal(t, 4, s.col)
 }
 
-func TestScanner_ScanWord_3(t *testing.T) {
+func TestScanner_scanWordToken_3(t *testing.T) {
 	s := scanner{
 		runes: []rune("Anything"),
 	}
@@ -148,7 +148,7 @@ func TestScanner_ScanWord_3(t *testing.T) {
 		where.New(0, 0, 8),
 	)
 
-	act := s.scanWord(8)
+	act := s.scanWordToken(8)
 
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune(""), s.runes)
@@ -156,12 +156,12 @@ func TestScanner_ScanWord_3(t *testing.T) {
 	assert.Equal(t, 8, s.col)
 }
 
-func TestScanner_ScanWord_4(t *testing.T) {
+func TestScanner_scanWordToken_4(t *testing.T) {
 	s := scanner{
 		runes: []rune("Scarlet"),
 	}
 
 	assert.Panics(t, func() {
-		s.scanWord(99)
+		s.scanWordToken(99)
 	})
 }

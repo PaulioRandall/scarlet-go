@@ -34,3 +34,19 @@ func countWord(runes []rune) (n int) {
 
 	return
 }
+
+// countSymbols counts the number of symbol runes that form a lexeme.
+func countSymbols(runes []rune) (n int) {
+
+	for _, ru := range runes {
+		switch ru {
+		case ':', '=', '(', ')':
+		default:
+			break
+		}
+
+		n++
+	}
+
+	return
+}

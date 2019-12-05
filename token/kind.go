@@ -8,17 +8,12 @@ const (
 	// ------------------
 	WHITESPACE
 	NEWLINE
-	PROCEDURE
+	FUNC
 	END
 )
 
 // Name returns the name of the token type.
 func (k Kind) Name() string {
-	return KindName(k)
-}
-
-// KindName returns the name of the input kind.
-func KindName(k Kind) string {
 	switch k {
 	case UNDEFINED:
 		return `UNDEFINED`
@@ -26,26 +21,23 @@ func KindName(k Kind) string {
 		return `NEWLINE`
 	case WHITESPACE:
 		return `WHITESPACE`
-	case PROCEDURE:
-		return `PROCEDURE`
+	case FUNC:
+		return `FUNC`
 	case END:
 		return `END`
+	default:
+		return `--UNKOWN--`
 	}
-
-	return `--UNKOWN--`
 }
 
 // FindWordKind identifies the kind of the word string.
-func FindWordKind(s string) (k Kind) {
-
+func FindWordKind(s string) Kind {
 	switch s {
-	case `PROCEDURE`:
-		k = PROCEDURE
+	case `FUNC`:
+		return FUNC
 	case `END`:
-		k = END
+		return END
 	default:
-		k = UNDEFINED
+		return UNDEFINED
 	}
-
-	return
 }
