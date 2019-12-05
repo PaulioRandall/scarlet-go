@@ -35,8 +35,8 @@ type tokenSimple struct {
 // function is null then the end of the token stream has been reached.
 type ScanToken func() (Token, ScanToken, perror.Perror)
 
-// New creates a new token.
-func New(v string, k Kind, w where.Where) Token {
+// Newish creates a new token.
+func Newish(v string, k Kind, w where.Where) Token {
 	return tokenSimple{
 		v: v,
 		k: k,
@@ -44,8 +44,8 @@ func New(v string, k Kind, w where.Where) Token {
 	}
 }
 
-// NewFlat creates a new token.
-func NewFlat(v string, k Kind, line, start, end int) Token {
+// New creates a new token.
+func New(v string, k Kind, line, start, end int) Token {
 	return tokenSimple{
 		v: v,
 		k: k,

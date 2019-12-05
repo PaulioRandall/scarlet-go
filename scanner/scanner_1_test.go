@@ -16,7 +16,7 @@ func TestScanner_scanToken_1(t *testing.T) {
 	exp := token.New(
 		"Scar",
 		token.UNDEFINED,
-		where.New(0, 0, 4),
+		0, 0, 4,
 	)
 
 	act := s.scanToken(4, token.UNDEFINED)
@@ -59,7 +59,7 @@ func TestScanner_scanNewlineToken_1(t *testing.T) {
 	exp := token.New(
 		"\n",
 		token.NEWLINE,
-		where.New(0, 0, 1),
+		0, 0, 1,
 	)
 
 	act := s.scanNewlineToken()
@@ -75,7 +75,7 @@ func TestScanner_scanNewlineToken_2(t *testing.T) {
 		runes: []rune("\r\nScarlet"),
 	}
 
-	exp := token.New(
+	exp := token.Newish(
 		"\r\n",
 		token.NEWLINE,
 		where.New(0, 0, 2),
@@ -104,7 +104,7 @@ func TestScanner_scanWordToken_1(t *testing.T) {
 		runes: []rune("END"),
 	}
 
-	exp := token.New(
+	exp := token.Newish(
 		"END",
 		token.END,
 		where.New(0, 0, 3),
@@ -126,7 +126,7 @@ func TestScanner_scanWordToken_2(t *testing.T) {
 	exp := token.New(
 		"FUNC",
 		token.FUNC,
-		where.New(0, 0, 4),
+		0, 0, 4,
 	)
 
 	act := s.scanWordToken(4)
@@ -145,7 +145,7 @@ func TestScanner_scanWordToken_3(t *testing.T) {
 	exp := token.New(
 		"Anything",
 		token.UNDEFINED,
-		where.New(0, 0, 8),
+		0, 0, 8,
 	)
 
 	act := s.scanWordToken(8)

@@ -1,3 +1,4 @@
+// source provides a structure to store the state of source code parsing.
 package source
 
 import (
@@ -11,6 +12,13 @@ type Source struct {
 	runes []rune
 	line  int
 	col   int
+}
+
+// New creates a new source instance.
+func New(src string) *Source {
+	return &Source{
+		runes: []rune(src),
+	}
 }
 
 // Runes returns the source code that has yet to be tokenised.
@@ -44,7 +52,7 @@ func (s *Source) Slice(n int, k token.Kind) token.Token {
 	str, start, end := s.slice(n)
 
 	w := where.New(s.line, start, end)
-	return token.New(str, k, w)
+	return token.Newish(str, k, w)
 }
 
 // checkSize validates that `n` is greater than zero and less than the number of

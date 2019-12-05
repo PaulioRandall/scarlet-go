@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/token"
-	"github.com/PaulioRandall/scarlet-go/where"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +16,7 @@ func TestSource_Slice_1(t *testing.T) {
 	exp := token.New(
 		"Scar",
 		token.UNDEFINED,
-		where.New(0, 0, 4),
+		0, 0, 4,
 	)
 
 	act := s.Slice(4, token.UNDEFINED)
@@ -59,7 +59,7 @@ func TestSource_SliceNewline_1(t *testing.T) {
 	exp := token.New(
 		"\n",
 		token.NEWLINE,
-		where.New(0, 0, 1),
+		0, 0, 1,
 	)
 
 	act := s.SliceNewline(1, token.NEWLINE)
@@ -78,7 +78,7 @@ func TestSource_SliceNewline_2(t *testing.T) {
 	exp := token.New(
 		"\r\n",
 		token.NEWLINE,
-		where.New(0, 0, 2),
+		0, 0, 2,
 	)
 
 	act := s.SliceNewline(2, token.NEWLINE)

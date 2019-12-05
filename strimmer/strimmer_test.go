@@ -17,16 +17,16 @@ func wrapErrTest(t *testing.T, f token.ScanToken, expAt int, exp perror.Perror) 
 func TestWrap_1(t *testing.T) {
 	token.ScanTokenTest(t,
 		New("FUNC"),
-		token.NewFlat("FUNC", token.FUNC, 0, 0, 4),
+		token.New("FUNC", token.FUNC, 0, 0, 4),
 	)
 }
 
 func TestWrap_2(t *testing.T) {
 	token.ScanTokenTest(t,
 		New("FUNC\nEND"),
-		token.NewFlat("FUNC", token.FUNC, 0, 0, 4),
-		token.NewFlat("\n", token.NEWLINE, 0, 4, 5),
-		token.NewFlat("END", token.END, 1, 0, 3),
+		token.New("FUNC", token.FUNC, 0, 0, 4),
+		token.New("\n", token.NEWLINE, 0, 4, 5),
+		token.New("END", token.END, 1, 0, 3),
 	)
 }
 
@@ -39,8 +39,8 @@ func TestWrap_3(t *testing.T) {
 func TestWrap_4(t *testing.T) {
 	token.ScanTokenTest(t,
 		New("FUNC\t\tEND"),
-		token.NewFlat("FUNC", token.FUNC, 0, 0, 4),
-		token.NewFlat("END", token.END, 0, 6, 9),
+		token.New("FUNC", token.FUNC, 0, 0, 4),
+		token.New("END", token.END, 0, 6, 9),
 	)
 }
 

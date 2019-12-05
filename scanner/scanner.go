@@ -79,7 +79,7 @@ func (s *scanner) scanToken(n int, k token.Kind) token.Token {
 
 	s.checkSize(n)
 
-	t := token.New(
+	t := token.Newish(
 		string(s.runes[:n]),
 		k,
 		where.New(s.line, s.col, s.col+n),
@@ -102,7 +102,7 @@ func (s *scanner) scanNewlineToken() token.Token {
 		panic("Expected characters representing a newline, LF or CRLF")
 	}
 
-	t := token.New(
+	t := token.Newish(
 		string(s.runes[:n]),
 		token.NEWLINE,
 		where.New(s.line, s.col, s.col+n),
@@ -125,7 +125,7 @@ func (s *scanner) scanWordToken(n int) token.Token {
 	s.checkSize(n)
 
 	v := string(s.runes[:n])
-	t := token.New(
+	t := token.Newish(
 		v,
 		token.FindWordKind(v),
 		where.New(s.line, s.col, s.col+n),
