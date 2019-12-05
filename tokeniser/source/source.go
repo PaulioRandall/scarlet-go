@@ -28,6 +28,11 @@ func (s *Source) Where() where.Where {
 	return where.New(s.line, s.col, s.col)
 }
 
+// IsEmpty returns true if there is no more source code to parse.
+func (s *Source) IsEmpty() bool {
+	return len(s.runes) == 0
+}
+
 // TokenFinder represents a function that identifies the kind of the next token
 // and counts the number of runes in it.
 type TokenFinder func([]rune) (int, token.Kind)
