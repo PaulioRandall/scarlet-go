@@ -21,14 +21,26 @@ func New(src string) *Source {
 	}
 }
 
-// Runes returns the source code that has yet to be tokenised.
-func (s *Source) Runes() []rune {
-	return s.runes
-}
-
 // Where returns the current location in the source code.
 func (s *Source) Where() where.Where {
 	return where.New(s.line, s.col, s.col)
+}
+
+// TokenFinder represents a function that identifies the kind of the next token
+// and counts the number of runes in it.
+type TokenFinder func([]rune) (int, token.Kind)
+
+// SliceBy accepts a TokenFinder function and slices off a token based on the
+// result.
+func (s *Source) SliceBy(f TokenFinder) token.Token {
+	n, k := s.Identify(f)
+	return s.Slice(n, k)
+}
+
+// Identify accepts a TokenFinder function and returns the kind and length of
+// the next token from it.
+func (s *Source) Identify(f TokenFinder) (int, token.Kind) {
+	return f(s.runes)
 }
 
 // SliceNewline performs the same action the Slice function but increments the

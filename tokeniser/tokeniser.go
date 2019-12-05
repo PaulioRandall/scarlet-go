@@ -7,20 +7,20 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// TokenEmitter is a recursive thunk prototype that, when called, emits a
-// token. The next emitter is also returned to allow recursive tokenisation.
-// The end of the token stream is reached once the TokenEmitter becomes nil.
+// TokenThunk is a recursive thunk prototype that, when called, emits a
+// token. The next thunk is also returned to allow recursive tokenisation.
+// The end of the token stream is reached once the TokenThunk becomes nil.
 //
 // E.g:
-// for emitter := tokeniser.New(src_code); emitter != nil; {
-//   tok, emitter, perr := emitter()
+// for thunk := tokeniser.New(src_code); thunk != nil; {
+//   tok, thunk, perr := thunk()
 //   // ...check error and do something with token...
 // }
-type TokenEmitter func() (token.Token, TokenEmitter, perror.Perror)
+type TokenThunk func() (token.Token, TokenThunk, perror.Perror)
 
-// New creates a TokenEmitter thunk for the first token in the supplied source
+// New creates a TokenThunk thunk for the first token in the supplied source
 // code.
-func New(src string) TokenEmitter {
+func New(src string) TokenThunk {
 	//source.New(src)
 	return nil
 }

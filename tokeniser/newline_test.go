@@ -7,26 +7,27 @@ import (
 	"github.com/PaulioRandall/scarlet-go/tokeniser/source"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestNewlineEmitter_1(t *testing.T) {
+func TestNewlineThunk_1(t *testing.T) {
 
 	s := source.New("\r\n")
-	f := newlineEmitter(s, nil)
-	assert.NotNil(t, f)
+	f := newlineThunk(s, nil)
+	require.NotNil(t, f)
 
-	exp := token.New("", token.NEWLINE, 0, 0, 2)
+	exp := token.New("\r\n", token.NEWLINE, 0, 0, 2)
 	act, f, e := f()
 
 	assert.Nil(t, e)
 	assert.Nil(t, f)
-	assert.Equal(t, exp.Where(), act.Where())
+	assert.Equal(t, exp, act)
 }
 
-func TestNewlineEmitter_2(t *testing.T) {
+func TestNewlineThunk_2(t *testing.T) {
 
 	s := source.New("abc")
-	f := newlineEmitter(s, nil)
+	f := newlineThunk(s, nil)
 	assert.NotNil(t, f)
 
 	act, f, e := f()
