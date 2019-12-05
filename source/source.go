@@ -7,7 +7,7 @@ import (
 )
 
 // Source represents some source code and provides some functionality to
-// convert it into tokens.
+// convert slices of it into tokens.
 type Source struct {
 	runes []rune
 	line  int
@@ -27,6 +27,7 @@ func (s *Source) SliceNewline() token.Token {
 
 	t := s.Slice(n, token.NEWLINE)
 	s.line++
+	s.col = 0
 
 	return t
 }
