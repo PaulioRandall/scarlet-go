@@ -1,8 +1,6 @@
 package scanner
 
 import (
-	//"unicode"
-
 	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/source"
 	"github.com/PaulioRandall/scarlet-go/token"
@@ -29,6 +27,7 @@ func scan(s *source.Source) token.ScanToken {
 			findSpace,   // 2
 			findKeyword, // 3
 			findId,      // 4
+			findSymbol,  // 5
 		}
 
 		for _, f := range fs {

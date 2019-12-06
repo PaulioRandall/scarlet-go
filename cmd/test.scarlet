@@ -1,6 +1,7 @@
 
 abc := FUNC(x, y) z, e DO
   @Println(x)
+  z := y
 END
 
-abc()
+abc(`:)`, `^_^`)

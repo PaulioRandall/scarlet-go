@@ -10,10 +10,13 @@ import (
 )
 
 func TestFindNewline_1(t *testing.T) {
+	// Check it is a type of source.TokenFinder.
 	var _ source.TokenFinder = findNewline
 }
 
 func TestFindNewline_2(t *testing.T) {
+	// Check it works when `\n` is the only input token.
+
 	r := []rune("\n")
 	n, k := findNewline(r)
 
@@ -22,6 +25,8 @@ func TestFindNewline_2(t *testing.T) {
 }
 
 func TestFindNewline_3(t *testing.T) {
+	// Check it works when `\r\n` is the only input token.
+
 	r := []rune("\r\n")
 	n, k := findNewline(r)
 
@@ -30,6 +35,9 @@ func TestFindNewline_3(t *testing.T) {
 }
 
 func TestFindNewline_4(t *testing.T) {
+	// Check it works when there are multiple tokens in the input and a newline
+	// is the first.
+
 	r := []rune("\r\nabc")
 	n, k := findNewline(r)
 
@@ -38,6 +46,8 @@ func TestFindNewline_4(t *testing.T) {
 }
 
 func TestFindNewline_5(t *testing.T) {
+	// Check 0 and UNDEFINED are returned when the first token is not a newline.
+
 	r := []rune("   ")
 	n, k := findNewline(r)
 

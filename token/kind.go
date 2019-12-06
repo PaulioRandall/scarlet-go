@@ -11,6 +11,7 @@ const (
 	FUNC
 	END
 	ID
+	ASSIGN
 )
 
 var kindNames map[Kind]string = map[Kind]string{
@@ -19,6 +20,7 @@ var kindNames map[Kind]string = map[Kind]string{
 	FUNC:       `FUNC`,
 	END:        `END`,
 	ID:         `ID`,
+	ASSIGN:     `ASSIGN`,
 }
 
 // Name returns the name of the token type.

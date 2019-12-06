@@ -10,10 +10,13 @@ import (
 )
 
 func TestFindKeyword_1(t *testing.T) {
+	// Check it is a type of source.TokenFinder.
 	var _ source.TokenFinder = findKeyword
 }
 
 func TestFindKeyword_2(t *testing.T) {
+	// Check it works when a keyword is the only input token.
+
 	r := []rune("FUNC")
 	n, k := findKeyword(r)
 
@@ -22,14 +25,19 @@ func TestFindKeyword_2(t *testing.T) {
 }
 
 func TestFindKeyword_3(t *testing.T) {
-	r := []rune("END")
+	// Check it works when there are multiple tokens in the input and a keyword
+	// is the first.
+
+	r := []rune("FUNC END")
 	n, k := findKeyword(r)
 
-	assert.Equal(t, 3, n)
-	assert.Equal(t, token.END, k)
+	assert.Equal(t, 4, n)
+	assert.Equal(t, token.FUNC, k)
 }
 
 func TestFindKeyword_4(t *testing.T) {
+	// Check 0 and UNDEFINED are returned when the first token is not a keyword.
+
 	r := []rune("   ")
 	n, k := findKeyword(r)
 
