@@ -1,16 +1,18 @@
-package token
+package lexor
 
 import (
 	"testing"
+
+	"github.com/PaulioRandall/scarlet-go/token"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 // ScanTokenTest performs a test of a ScanToken implemention.
-func ScanTokenTest(t *testing.T, f ScanToken, exps ...Token) {
+func ScanTokenTest(t *testing.T, f ScanToken, exps ...token.Token) {
 
-	var tok Token
+	var tok token.Token
 	var e error
 
 	var size int = len(exps)
@@ -37,7 +39,7 @@ func ScanTokenTest(t *testing.T, f ScanToken, exps ...Token) {
 // expected error.
 func ScanTokenErrTest(t *testing.T, f ScanToken, expAt int) error {
 
-	var tok Token
+	var tok token.Token
 	var e error
 
 	for i := 0; i < expAt; i++ {

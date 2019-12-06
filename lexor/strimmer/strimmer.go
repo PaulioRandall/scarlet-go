@@ -1,14 +1,15 @@
 package strimmer
 
 import (
+	"github.com/PaulioRandall/scarlet-go/lexor"
+	"github.com/PaulioRandall/scarlet-go/lexor/scanner"
 	"github.com/PaulioRandall/scarlet-go/perror"
-	"github.com/PaulioRandall/scarlet-go/scanner"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
 // New returns a ScanToken function that will return the first token in the
 // input source.
-func New(src string) token.ScanToken {
+func New(src string) lexor.ScanToken {
 	st := scanner.New(src)
 	return wrap(st)
 }
@@ -16,13 +17,13 @@ func New(src string) token.ScanToken {
 // wrap wraps a ScanToken function with one that iterates through the scanner to
 // find and return the next significant token. It effectively filters all
 // insgnificant tokens for the user.
-func wrap(f token.ScanToken) token.ScanToken {
+func wrap(f lexor.ScanToken) lexor.ScanToken {
 
 	if f == nil {
 		return nil
 	}
 
-	return func() (t token.Token, st token.ScanToken, e perror.Perror) {
+	return func() (t token.Token, st lexor.ScanToken, e perror.Perror) {
 
 		for {
 

@@ -3,7 +3,7 @@ package scanner
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/source"
+	"github.com/PaulioRandall/scarlet-go/lexor/source"
 	"github.com/PaulioRandall/scarlet-go/token"
 
 	"github.com/stretchr/testify/assert"

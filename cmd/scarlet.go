@@ -3,7 +3,7 @@ package main
 import (
 	"io/ioutil"
 
-	"github.com/PaulioRandall/scarlet-go/strimmer"
+	"github.com/PaulioRandall/scarlet-go/lexor/strimmer"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
