@@ -8,8 +8,12 @@ import (
 	"github.com/PaulioRandall/scarlet-go/where"
 )
 
+// TokenFinder represents a function that identifies the kind of the next token
+// and counts the number of runes in it.
+type TokenFinder func([]rune) (int, token.Kind)
+
 // Source represents some source code and provides some functionality to
-// convert slices of it into tokens.
+// remove slices of it and return them as tokens.
 type Source struct {
 	runes []rune
 	line  int
@@ -33,40 +37,23 @@ func (s *Source) IsEmpty() bool {
 	return len(s.runes) == 0
 }
 
-// TokenFinder represents a function that identifies the kind of the next token
-// and counts the number of runes in it.
-type TokenFinder func([]rune) (int, token.Kind)
-
 // Identify accepts a TokenFinder function and returns the kind and length of
 // the next token from it.
 func (s *Source) Identify(f TokenFinder) (int, token.Kind) {
 	return f(s.runes)
 }
 
-// Slice slices `n` runes from the front of the source code and uses them to
-// construct a new token. If token value ends in a linefeed the internal line
-// count is incremented and internal column index reset to zero else the column
-// index is increased by the number of runes sliced off. If `n` is less than
-// one or greater than the number of remaining runes then a panic ensues.
-func (s *Source) Slice(n int, k token.Kind) token.Token {
-
-	s.checkSize(n)
-	str, start, end := s.slice(n)
-	w := where.New(s.line, start, end)
-
-	if strings.HasSuffix(str, "\n") {
-		s.line++
-		s.col = 0
-	}
-
-	return token.Newish(str, k, w)
-}
-
 // SliceBy accepts a TokenFinder function and slices off a token based on the
 // result.
 func (s *Source) SliceBy(f TokenFinder) token.Token {
 	n, k := s.Identify(f)
-	return s.Slice(n, k)
+
+	if k == token.UNDEFINED {
+		return token.Empty()
+	}
+
+	s.checkSize(n)
+	return s.tokenise(n, k)
 }
 
 // checkSize validates that `n` is greater than zero and less than the number of
@@ -77,6 +64,24 @@ func (s *Source) checkSize(n int) {
 	} else if n > len(s.runes) {
 		panic("Cannot read more runes than are available")
 	}
+}
+
+// tokenise slices `n` runes from the front of the source code and uses them to
+// construct a new token. If token value ends in a linefeed the internal line
+// count is incremented and internal column index reset to zero else the column
+// index is increased by the number of runes sliced off. If `n` is less than
+// one or greater than the number of remaining runes then a panic ensues.
+func (s *Source) tokenise(n int, k token.Kind) token.Token {
+
+	str, start, end := s.slice(n)
+	w := where.New(s.line, start, end)
+
+	if strings.HasSuffix(str, "\n") {
+		s.line++
+		s.col = 0
+	}
+
+	return token.Newish(str, k, w)
 }
 
 // slice slices `n` runes from the front of the source code and updates the

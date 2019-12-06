@@ -16,11 +16,6 @@ type Token interface {
 
 	// Where returns where the token is located within the source.
 	Where() where.Where
-
-	// IsSignificant returns true if the token is required for parsing the
-	// program. Better put, false is returned if the token is whitespace or a
-	// comment etc.
-	IsSignificant() bool
 }
 
 // tokenSimple is a simple implementation of the Token interface.
@@ -71,16 +66,4 @@ func (t tokenSimple) Kind() Kind {
 // Where satisfies the Token interface.
 func (t tokenSimple) Where() where.Where {
 	return t.w
-}
-
-// IsSignificant satisfies the Token interface.
-func (t tokenSimple) IsSignificant() bool {
-	switch t.k {
-	case UNDEFINED:
-	case WHITESPACE:
-	default:
-		return true
-	}
-
-	return false
 }

@@ -14,20 +14,23 @@ func ScanTokenTest(t *testing.T, f ScanToken, exps ...Token) {
 	var e error
 
 	var size int = len(exps)
-	var n int
+	var i int
 
-	for i := 0; f != nil; i++ {
-		n = i
+	for i = 0; f != nil; i++ {
 
 		tok, f, e = f()
 		require.Nil(t, e)
+
+		if size == 0 {
+			break
+		}
 
 		if i < size {
 			assert.Equal(t, exps[i], tok, "Token[%d]", i)
 		}
 	}
 
-	assert.Equal(t, n, size, "Expected %d tokens but got %d", size, n)
+	assert.Equal(t, size, i, "Expected %d tokens but got %d", size, i)
 }
 
 // ScanTokenErrTest performs a test that the ScanToken implemention returns the

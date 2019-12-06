@@ -1,10 +1,10 @@
-package tokeniser
+package scanner
 
 import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// findNewline
+// findNewline satisfies the source.TokenFinder function prototype.
 func findNewline(r []rune) (int, token.Kind) {
 	switch max := len(r); {
 	case max == 0:

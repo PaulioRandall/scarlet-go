@@ -17,17 +17,29 @@ func New(src string) token.ScanToken {
 // find and return the next significant token. It effectively filters all
 // insgnificant tokens for the user.
 func wrap(f token.ScanToken) token.ScanToken {
+
+	if f == nil {
+		return nil
+	}
+
 	return func() (t token.Token, st token.ScanToken, e perror.Perror) {
 
-		t, st, e = f()
+		for {
 
-		for e == nil && t != token.Empty() {
-			if t.IsSignificant() {
-				st = wrap(st)
-				return
+			t, st, e = f()
+
+			if e == nil || t == token.Empty() {
+				break
 			}
 
-			t, st, e = st()
+			if !ignore(t.Kind()) {
+				st = wrap(st)
+				break
+			}
+
+			if st == nil {
+				break
+			}
 		}
 
 		/* Why does this result in an infinite loop?
@@ -41,4 +53,22 @@ func wrap(f token.ScanToken) token.ScanToken {
 
 		return
 	}
+}
+
+// ignore returns true if the input `k` is a kind for a token that should be
+// discarded.
+func ignore(k token.Kind) bool {
+
+	ks := []token.Kind{
+		token.UNDEFINED,
+		token.WHITESPACE,
+	}
+
+	for _, j := range ks {
+		if k == j {
+			return true
+		}
+	}
+
+	return false
 }
