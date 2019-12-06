@@ -1,9 +1,10 @@
 PROGRAM    := STATEMENT { STATEMENT } .
 STATEMENT  := ( ASSIGNMENT | CALL | SPELL ) NEWLINE .
 SPELL      := "@" CALL .
-CALL       := ID "(" IDS ")" .
+CALL       := ID PARAMS .
 ASSIGNMENT := IDS ":=" FUNC .
-FUNC       := "FUNC" "(" IDS ")" IDS BLOCK .
+FUNC       := "FUNC" PARAMS IDS BLOCK .
+PARAMS     := "(" IDS ")" .
 BLOCK      := "DO" NEWLINE { STATEMENT } "END" NEWLINE .
 IDS        := ID { "," ID } .
 ID         := LETTER { LETTER } .

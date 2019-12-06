@@ -1,6 +1,6 @@
 
 abc := FUNC(x, y) z, e DO
-  @Print(x)
+  @Println(x)
 END
 
 abc()
