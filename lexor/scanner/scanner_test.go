@@ -28,11 +28,23 @@ func TestScan_2(t *testing.T) {
 	// Check it works when the input contains multiple tokens.
 
 	lexor.ScanTokenTest(t,
-		New("FUNC DO\nabc :=\nEND"),
+		New("FUNC(x,y)"),
 		token.New("FUNC", token.FUNC, 0, 0, 4),
-		token.New(" ", token.WHITESPACE, 0, 4, 5),
-		token.New("DO", token.DO, 0, 5, 7),
-		token.New("\n", token.NEWLINE, 0, 7, 8),
+		token.New("(", token.OPEN_PAREN, 0, 4, 5),
+		token.New("x", token.ID, 0, 5, 6),
+		token.New(",", token.ID_DELIM, 0, 6, 7),
+		token.New("y", token.ID, 0, 7, 8),
+		token.New(")", token.CLOSE_PAREN, 0, 8, 9),
+	)
+}
+
+func TestScan_3(t *testing.T) {
+	// Check it works when the input contains multiple tokens.
+
+	lexor.ScanTokenTest(t,
+		New("DO\nabc :=\nEND"),
+		token.New("DO", token.DO, 0, 0, 2),
+		token.New("\n", token.NEWLINE, 0, 2, 3),
 		token.New("abc", token.ID, 1, 0, 3),
 		token.New(" ", token.WHITESPACE, 1, 3, 4),
 		token.New(":=", token.ASSIGN, 1, 4, 6),
@@ -41,7 +53,7 @@ func TestScan_2(t *testing.T) {
 	)
 }
 
-func TestScan_3(t *testing.T) {
+func TestScan_4(t *testing.T) {
 	// Check an error occurrs when the input contains invalid tokens.
 
 	scanErrTest(t,

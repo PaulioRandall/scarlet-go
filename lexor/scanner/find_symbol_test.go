@@ -15,24 +15,28 @@ func TestFindSymbol_1(t *testing.T) {
 }
 
 func TestFindSymbol_2(t *testing.T) {
-	// Check it works when a symbol is the only input token.
+	// Check it works on a range of valid inputs.
 
-	r := []rune(":=")
-	n, k := findSymbol(r)
+	f := func(s string, expN int, expK token.Kind) {
+		r := []rune(s)
+		n, k := findSymbol(r)
 
-	assert.Equal(t, 2, n)
-	assert.Equal(t, token.ASSIGN, k)
-}
+		assert.Equal(t, expN, n,
+			"Odd number of runes in symbol")
+		assert.Equal(t, expK, k,
+			"Expected: %s, actual: %s", expK.Name(), k.Name())
+	}
 
-func TestFindSymbol_3(t *testing.T) {
-	// Check it works when there are multiple tokens in the input and a symbol is
-	// the first.
+	// When input contains only one token, a symbol token
+	f(":=", 2, token.ASSIGN)
+	f("(", 1, token.OPEN_PAREN)
+	f(")", 1, token.CLOSE_PAREN)
+	f(",", 1, token.ID_DELIM)
+	f("@", 1, token.SPELL)
 
-	r := []rune(":= 123.456")
-	n, k := findSymbol(r)
-
-	assert.Equal(t, 2, n)
-	assert.Equal(t, token.ASSIGN, k)
+	// When input contains multiple tokens, but the first is a symbol token
+	f(":= 123.456", 2, token.ASSIGN)
+	f("@Abc", 1, token.SPELL)
 }
 
 func TestFindSymbol_4(t *testing.T) {

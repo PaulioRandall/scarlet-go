@@ -12,10 +12,11 @@ const (
 	DO
 	END
 	ID
+	ID_DELIM
 	ASSIGN
 	OPEN_PAREN
 	CLOSE_PAREN
-	ID_DELIM
+	SPELL
 )
 
 var kindNames map[Kind]string = map[Kind]string{
@@ -25,13 +26,18 @@ var kindNames map[Kind]string = map[Kind]string{
 	DO:          `DO`,
 	END:         `END`,
 	ID:          `ID`,
+	ID_DELIM:    `ID_DELIM`,
 	ASSIGN:      `ASSIGN`,
 	OPEN_PAREN:  `OPEN_PAREN`,
 	CLOSE_PAREN: `CLOSE_PAREN`,
-	ID_DELIM:    `ID_DELIM`,
+	SPELL:       `SPELL`,
 }
 
 // Name returns the name of the token type.
 func (k Kind) Name() string {
-	return kindNames[k]
+	s := kindNames[k]
+	if s == `` {
+		return `UNDEFINED`
+	}
+	return s
 }
