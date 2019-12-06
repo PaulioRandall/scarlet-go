@@ -16,7 +16,6 @@ V := {
   IDS
   ID
   LETTER
-  NEWLINE
 }
 
 ## Terminals
@@ -29,24 +28,22 @@ T := {
   "="
   ","
   * Unicode category L (letter) *
-  * LF or CRLF *
 }
 
 ## Production Rules (WSN)
 
 P := {
   PROGRAM    := STATEMENT { STATEMENT } .
-  STATEMENT  := ( ASSIGNMENT | CALL | SPELL ) NEWLINE .
+  STATEMENT  := ( ASSIGNMENT | CALL | SPELL ) .
   SPELL      := "@" CALL .
   CALL       := ID PARAMS .
   ASSIGNMENT := IDS ":=" FUNC .
   FUNC       := "FUNC" PARAMS IDS BLOCK .
   PARAMS     := "(" IDS ")" .
-  BLOCK      := "DO" NEWLINE { STATEMENT } "END" NEWLINE .
+  BLOCK      := "DO" { STATEMENT } "END" .
   IDS        := ID { "," ID } .
   ID         := LETTER { LETTER } .
   LETTER     := * Unicode category L (letter) * .
-  NEWLINE    := * LF or CRLF * .
 }
 
 ## Start
