@@ -25,11 +25,11 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 
 	return func() (t token.Token, st lexor.ScanToken, e perror.Perror) {
 
-		for {
+		for st = f; st != nil; {
 
-			t, st, e = f()
+			t, st, e = st()
 
-			if e == nil || t == token.Empty() {
+			if e != nil || t == token.Empty() {
 				break
 			}
 
@@ -37,20 +37,7 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 				st = wrap(st)
 				break
 			}
-
-			if st == nil {
-				break
-			}
 		}
-
-		/* Why does this result in an infinite loop?
-		for t, st, e = f(); e == nil && t != token.Empty(); {
-			if t.IsSignificant() {
-				st = wrap(st)
-				return
-			}
-		}
-		*/
 
 		return
 	}

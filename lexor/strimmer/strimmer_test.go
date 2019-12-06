@@ -24,10 +24,10 @@ func TestWrap_1(t *testing.T) {
 
 func TestWrap_2(t *testing.T) {
 	lexor.ScanTokenTest(t,
-		New("abc\nefg"),
+		New("abc\n   efg"),
 		token.New("abc", token.ID, 0, 0, 3),
 		token.New("\n", token.NEWLINE, 0, 3, 4),
-		token.New("efg", token.ID, 1, 0, 3),
+		token.New("efg", token.ID, 1, 3, 6),
 	)
 }
 
