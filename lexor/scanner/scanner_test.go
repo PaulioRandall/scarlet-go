@@ -28,9 +28,11 @@ func TestScan_2(t *testing.T) {
 	// Check it works when the input contains multiple tokens.
 
 	lexor.ScanTokenTest(t,
-		New("FUNC\nabc :=\nEND"),
+		New("FUNC DO\nabc :=\nEND"),
 		token.New("FUNC", token.FUNC, 0, 0, 4),
-		token.New("\n", token.NEWLINE, 0, 4, 5),
+		token.New(" ", token.WHITESPACE, 0, 4, 5),
+		token.New("DO", token.DO, 0, 5, 7),
+		token.New("\n", token.NEWLINE, 0, 7, 8),
 		token.New("abc", token.ID, 1, 0, 3),
 		token.New(" ", token.WHITESPACE, 1, 3, 4),
 		token.New(":=", token.ASSIGN, 1, 4, 6),

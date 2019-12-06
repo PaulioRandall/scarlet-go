@@ -40,6 +40,7 @@ func kindOfKeyword(s string) token.Kind {
 
 	ks := map[string]token.Kind{
 		`FUNC`: token.FUNC,
+		`DO`:   token.DO,
 		`END`:  token.END,
 	}
 

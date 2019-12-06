@@ -9,18 +9,26 @@ const (
 	WHITESPACE
 	NEWLINE
 	FUNC
+	DO
 	END
 	ID
 	ASSIGN
+	OPEN_PAREN
+	CLOSE_PAREN
+	ID_DELIM
 )
 
 var kindNames map[Kind]string = map[Kind]string{
-	WHITESPACE: `WHITESPACE`,
-	NEWLINE:    `NEWLINE`,
-	FUNC:       `FUNC`,
-	END:        `END`,
-	ID:         `ID`,
-	ASSIGN:     `ASSIGN`,
+	WHITESPACE:  `WHITESPACE`,
+	NEWLINE:     `NEWLINE`,
+	FUNC:        `FUNC`,
+	DO:          `DO`,
+	END:         `END`,
+	ID:          `ID`,
+	ASSIGN:      `ASSIGN`,
+	OPEN_PAREN:  `OPEN_PAREN`,
+	CLOSE_PAREN: `CLOSE_PAREN`,
+	ID_DELIM:    `ID_DELIM`,
 }
 
 // Name returns the name of the token type.
