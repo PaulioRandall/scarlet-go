@@ -18,16 +18,16 @@ func wrapErrTest(t *testing.T, f lexor.ScanToken, expAt int, exp perror.Perror) 
 func TestWrap_1(t *testing.T) {
 	lexor.ScanTokenTest(t,
 		New("abc"),
-		token.New("abc", token.ID, 0, 0, 3),
+		token.New(token.ID, "abc", 0, 0, 3),
 	)
 }
 
 func TestWrap_2(t *testing.T) {
 	lexor.ScanTokenTest(t,
 		New("abc\n   efg"),
-		token.New("abc", token.ID, 0, 0, 3),
-		token.New("\n", token.NEWLINE, 0, 3, 4),
-		token.New("efg", token.ID, 1, 3, 6),
+		token.New(token.ID, "abc", 0, 0, 3),
+		token.New(token.NEWLINE, "\n", 0, 3, 4),
+		token.New(token.ID, "efg", 1, 3, 6),
 	)
 }
 

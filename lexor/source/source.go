@@ -81,7 +81,7 @@ func (s *Source) tokenise(n int, k token.Kind) token.Token {
 		s.col = 0
 	}
 
-	return token.Newish(str, k, w)
+	return token.Newish(k, str, w)
 }
 
 // slice slices `n` runes from the front of the source code and updates the

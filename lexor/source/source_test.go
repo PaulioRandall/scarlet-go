@@ -17,8 +17,8 @@ func TestSource_SliceBy_1(t *testing.T) {
 	}
 
 	exp := token.New(
-		"Scar",
 		token.ID,
+		"Scar",
 		0, 0, 4,
 	)
 
@@ -62,8 +62,8 @@ func TestSource_SliceBy_3(t *testing.T) {
 	}
 
 	exp := token.New(
-		"\r\n",
 		token.NEWLINE,
+		"\r\n",
 		0, 0, 2,
 	)
 
