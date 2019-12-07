@@ -36,6 +36,7 @@ func run(src string) {
 	}
 }
 
+// Prints the tokens nicely
 func printToken(t token.Token) {
 	k := t.Kind()
 
