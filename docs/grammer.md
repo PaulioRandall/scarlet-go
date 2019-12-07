@@ -38,7 +38,7 @@ P := {
   SPELL      := "@" CALL .
   CALL       := ID PARAMS .
   ASSIGNMENT := IDS ":=" FUNC .
-  FUNC       := "FUNC" PARAMS IDS BLOCK .
+  FUNC       := "F" PARAMS IDS BLOCK .
   PARAMS     := "(" IDS ")" .
   BLOCK      := "DO" { STATEMENT } "END" .
   IDS        := ID { "," ID } .
