@@ -42,13 +42,15 @@ func TestScan_3(t *testing.T) {
 	// Check it works when the input contains multiple tokens.
 
 	lexor.ScanTokenTest(t,
-		New("DO\nabc :=\nEND"),
+		New("DO\nabc := `xyz`\nEND"),
 		token.New("DO", token.DO, 0, 0, 2),
 		token.New("\n", token.NEWLINE, 0, 2, 3),
 		token.New("abc", token.ID, 1, 0, 3),
 		token.New(" ", token.WHITESPACE, 1, 3, 4),
 		token.New(":=", token.ASSIGN, 1, 4, 6),
-		token.New("\n", token.NEWLINE, 1, 6, 7),
+		token.New(" ", token.WHITESPACE, 1, 6, 7),
+		token.New("`xyz`", token.STR_LITERAL, 1, 7, 12),
+		token.New("\n", token.NEWLINE, 1, 12, 13),
 		token.New("END", token.END, 2, 0, 3),
 	)
 }

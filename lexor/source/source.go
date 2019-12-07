@@ -10,7 +10,7 @@ import (
 
 // TokenFinder represents a function that identifies the kind of the next token
 // and counts the number of runes in it.
-type TokenFinder func([]rune) (int, token.Kind)
+type TokenFinder func([]rune) (int, token.Kind, error)
 
 // Source represents some source code and provides some functionality to
 // remove slices of it and return them as tokens.
@@ -39,21 +39,21 @@ func (s *Source) IsEmpty() bool {
 
 // Identify accepts a TokenFinder function and returns the kind and length of
 // the next token from it.
-func (s *Source) Identify(f TokenFinder) (int, token.Kind) {
+func (s *Source) Identify(f TokenFinder) (int, token.Kind, error) {
 	return f(s.runes)
 }
 
 // SliceBy accepts a TokenFinder function and slices off a token based on the
 // result.
-func (s *Source) SliceBy(f TokenFinder) token.Token {
-	n, k := s.Identify(f)
+func (s *Source) SliceBy(f TokenFinder) (_ token.Token, e error) {
+	n, k, e := s.Identify(f)
 
-	if k == token.UNDEFINED {
-		return token.Empty()
+	if e != nil || k == token.UNDEFINED {
+		return
 	}
 
 	s.checkSize(n)
-	return s.tokenise(n, k)
+	return s.tokenise(n, k), nil
 }
 
 // checkSize validates that `n` is greater than zero and less than the number of

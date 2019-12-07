@@ -6,6 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSource_SliceBy_1(t *testing.T) {
@@ -21,11 +22,12 @@ func TestSource_SliceBy_1(t *testing.T) {
 		0, 0, 4,
 	)
 
-	act := s.SliceBy(func(r []rune) (int, token.Kind) {
+	act, e := s.SliceBy(func(r []rune) (int, token.Kind, error) {
 		assert.Equal(t, []rune("Scarlet"), r)
-		return 4, token.ID
+		return 4, token.ID, nil
 	})
 
+	require.Nil(t, e)
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune("let"), s.runes)
 	assert.Equal(t, 0, s.line)
@@ -33,21 +35,21 @@ func TestSource_SliceBy_1(t *testing.T) {
 }
 
 func TestSource_SliceBy_2(t *testing.T) {
-	// Out of range slice indexes returned.
+	// Out of range slice indexes panic.
 
 	s := Source{
 		runes: []rune("Scarlet"),
 	}
 
 	assert.Panics(t, func() {
-		s.SliceBy(func(r []rune) (int, token.Kind) {
-			return 99, token.ID
+		s.SliceBy(func(r []rune) (int, token.Kind, error) {
+			return 99, token.ID, nil
 		})
 	})
 
 	assert.Panics(t, func() {
-		s.SliceBy(func(r []rune) (int, token.Kind) {
-			return -1, token.ID
+		s.SliceBy(func(r []rune) (int, token.Kind, error) {
+			return -1, token.ID, nil
 		})
 	})
 }
@@ -65,10 +67,11 @@ func TestSource_SliceBy_3(t *testing.T) {
 		0, 0, 2,
 	)
 
-	act := s.SliceBy(func(r []rune) (int, token.Kind) {
-		return 2, token.NEWLINE
+	act, e := s.SliceBy(func(r []rune) (int, token.Kind, error) {
+		return 2, token.NEWLINE, nil
 	})
 
+	require.Nil(t, e)
 	assert.Equal(t, exp, act)
 	assert.Equal(t, []rune("Scarlet"), s.runes)
 	assert.Equal(t, 1, s.line)

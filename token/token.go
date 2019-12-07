@@ -42,11 +42,6 @@ func New(v string, k Kind, line, start, end int) Token {
 	}
 }
 
-// EmptyTok returns an empty Token.
-func Empty() Token {
-	return tokenSimple{}
-}
-
 // Value satisfies the Token interface.
 func (t tokenSimple) Value() string {
 	return t.v

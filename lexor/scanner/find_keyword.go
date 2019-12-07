@@ -7,7 +7,7 @@ import (
 )
 
 // findKeyword satisfies the source.TokenFinder function prototype.
-func findKeyword(r []rune) (n int, _ token.Kind) {
+func findKeyword(r []rune) (n int, k token.Kind, _ error) {
 
 	for _, ru := range r {
 		if !unicode.IsLetter(ru) {
@@ -17,7 +17,8 @@ func findKeyword(r []rune) (n int, _ token.Kind) {
 		n++
 	}
 
-	return checkIfKeyword(r, n)
+	n, k = checkIfKeyword(r, n)
+	return
 }
 
 // checkIfKeyword returns the the input `n` and the identified keyword kind if

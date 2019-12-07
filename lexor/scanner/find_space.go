@@ -7,10 +7,12 @@ import (
 )
 
 // findSpace satisfies the source.TokenFinder function prototype.
-func findSpace(r []rune) (n int, k token.Kind) {
+func findSpace(r []rune) (n int, k token.Kind, _ error) {
 
 	for _, ru := range r {
-		if _, kd := findNewline(r); !unicode.IsSpace(ru) || kd == token.WHITESPACE {
+
+		_, k, _ = findNewline(r)
+		if !unicode.IsSpace(ru) || k == token.WHITESPACE {
 			break
 		}
 

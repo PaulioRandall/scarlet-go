@@ -7,6 +7,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFindSymbol_1(t *testing.T) {
@@ -19,8 +20,9 @@ func TestFindSymbol_2(t *testing.T) {
 
 	f := func(s string, expN int, expK token.Kind) {
 		r := []rune(s)
-		n, k := findSymbol(r)
+		n, k, e := findSymbol(r)
 
+		require.Nil(t, e)
 		assert.Equal(t, expN, n,
 			"Odd number of runes in symbol")
 		assert.Equal(t, expK, k,
@@ -43,8 +45,9 @@ func TestFindSymbol_4(t *testing.T) {
 	// Check 0 and UNDEFINED are returned when the first token is not a symbol.
 
 	r := []rune("  :=")
-	n, k := findId(r)
+	n, k, e := findSymbol(r)
 
+	require.Nil(t, e)
 	assert.Equal(t, 0, n)
 	assert.Equal(t, token.UNDEFINED, k)
 }

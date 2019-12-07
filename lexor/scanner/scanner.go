@@ -21,25 +21,34 @@ func scan(s *source.Source) lexor.ScanToken {
 		return nil
 	}
 
-	return func() (token.Token, lexor.ScanToken, perror.Perror) {
+	return func() (t token.Token, sc lexor.ScanToken, e perror.Perror) {
 
 		fs := []source.TokenFinder{
-			findNewline, // 1
-			findSpace,   // 2
-			findKeyword, // 3
-			findId,      // 4
-			findSymbol,  // 5
+			findNewline,    // 1
+			findSpace,      // 2
+			findKeyword,    // 3
+			findId,         // 4
+			findStrLiteral, // 5
+			findSymbol,     // 6
 		}
 
+		var err error
+
 		for _, f := range fs {
-			if t := s.SliceBy(f); t != token.Empty() {
-				return t, scan(s), nil
+			t, err = s.SliceBy(f)
+
+			if err != nil {
+				e = perror.Wrap("Scanning error", s.Where(), err)
+				return
+			}
+
+			if t != nil {
+				sc = scan(s)
+				return
 			}
 		}
 
-		return token.Empty(), nil, perror.Newish(
-			"Unknown token",
-			s.Where(),
-		)
+		e = perror.Newish("Unknown token", s.Where())
+		return
 	}
 }

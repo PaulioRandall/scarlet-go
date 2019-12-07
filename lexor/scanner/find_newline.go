@@ -5,14 +5,14 @@ import (
 )
 
 // findNewline satisfies the source.TokenFinder function prototype.
-func findNewline(r []rune) (int, token.Kind) {
-	switch max := len(r); {
-	case max == 0:
+func findNewline(r []rune) (n int, k token.Kind, _ error) {
+	switch size := len(r); {
+	case size < 1:
 	case r[0] == '\n':
-		return 1, token.NEWLINE
-	case max > 1 && r[0] == '\r' && r[1] == '\n':
-		return 2, token.NEWLINE
+		n, k = 1, token.NEWLINE
+	case size > 1 && r[0] == '\r' && r[1] == '\n':
+		n, k = 2, token.NEWLINE
 	}
 
-	return 0, token.UNDEFINED
+	return
 }

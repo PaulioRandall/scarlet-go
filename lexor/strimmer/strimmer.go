@@ -29,7 +29,7 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 
 			t, st, e = st()
 
-			if e != nil || t == token.Empty() {
+			if e != nil || t == nil {
 				break
 			}
 

@@ -17,6 +17,7 @@ const (
 	OPEN_PAREN
 	CLOSE_PAREN
 	SPELL
+	STR_LITERAL
 )
 
 var kindNames map[Kind]string = map[Kind]string{
@@ -31,6 +32,7 @@ var kindNames map[Kind]string = map[Kind]string{
 	OPEN_PAREN:  `OPEN_PAREN`,
 	CLOSE_PAREN: `CLOSE_PAREN`,
 	SPELL:       `SPELL`,
+	STR_LITERAL: `STR_LITERAL`,
 }
 
 // Name returns the name of the token type.

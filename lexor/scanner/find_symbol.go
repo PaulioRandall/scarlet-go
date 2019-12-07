@@ -16,15 +16,15 @@ var symbolSet map[string]token.Kind = map[string]token.Kind{
 
 // findSymbol satisfies the source.TokenFinder function prototype. It attempts
 // to match the next token to a symbol kind returning its length if matched.
-func findSymbol(runes []rune) (int, token.Kind) {
+func findSymbol(r []rune) (_ int, _ token.Kind, _ error) {
 
-	src := string(runes)
+	src := string(r)
 
 	for s, k := range symbolSet {
 		if strings.HasPrefix(src, s) {
-			return len([]rune(s)), k
+			return len([]rune(s)), k, nil
 		}
 	}
 
-	return 0, token.UNDEFINED
+	return
 }
