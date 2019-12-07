@@ -2,20 +2,21 @@ package scanner
 
 import (
 	"github.com/PaulioRandall/scarlet-go/lexor"
-	"github.com/PaulioRandall/scarlet-go/lexor/source"
 	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
 // New returns a ScanToken thunk that will return the first token in the input
-// source.
+// lexor.
 func New(src string) lexor.ScanToken {
-	s := source.New(src)
+	s := &stream{
+		runes: []rune(src),
+	}
 	return scan(s)
 }
 
 // scan returns a ScanToken thunk that returns the next token in the source.
-func scan(s *source.Source) lexor.ScanToken {
+func scan(s *stream) lexor.ScanToken {
 
 	if s.IsEmpty() {
 		return nil
@@ -23,7 +24,7 @@ func scan(s *source.Source) lexor.ScanToken {
 
 	return func() (t token.Token, sc lexor.ScanToken, e perror.Perror) {
 
-		fs := []source.TokenFinder{
+		fs := []TokenFinder{
 			findNewline,    // 1
 			findSpace,      // 2
 			findKeyword,    // 3

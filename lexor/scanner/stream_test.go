@@ -1,4 +1,4 @@
-package source
+package scanner
 
 import (
 	"testing"
@@ -9,10 +9,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestSource_SliceBy_1(t *testing.T) {
+func TestStream_SliceBy_1(t *testing.T) {
 	// Typicial usage.
 
-	s := Source{
+	s := stream{
 		runes: []rune("Scarlet"),
 	}
 
@@ -34,10 +34,10 @@ func TestSource_SliceBy_1(t *testing.T) {
 	assert.Equal(t, 4, s.col)
 }
 
-func TestSource_SliceBy_2(t *testing.T) {
+func TestStream_SliceBy_2(t *testing.T) {
 	// Out of range slice indexes panic.
 
-	s := Source{
+	s := stream{
 		runes: []rune("Scarlet"),
 	}
 
@@ -54,10 +54,10 @@ func TestSource_SliceBy_2(t *testing.T) {
 	})
 }
 
-func TestSource_SliceBy_3(t *testing.T) {
+func TestStream_SliceBy_3(t *testing.T) {
 	// Updates line index correctly.
 
-	s := Source{
+	s := stream{
 		runes: []rune("\r\nScarlet"),
 	}
 

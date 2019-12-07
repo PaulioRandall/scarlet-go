@@ -3,7 +3,6 @@ package scanner
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/lexor/source"
 	"github.com/PaulioRandall/scarlet-go/token"
 
 	"github.com/stretchr/testify/assert"
@@ -11,8 +10,8 @@ import (
 )
 
 func TestFindSpace_1(t *testing.T) {
-	// Check it is a type of source.TokenFinder.
-	var _ source.TokenFinder = findSpace
+	// Check it is a type of lexor.TokenFinder.
+	var _ TokenFinder = findSpace
 }
 
 func TestFindSpace_2(t *testing.T) {
