@@ -28,13 +28,13 @@ func TestScan_2(t *testing.T) {
 	// Check it works when the input contains multiple tokens.
 
 	lexor.ScanTokenTest(t,
-		New("FUNC(x,y)"),
-		token.New(token.FUNC, "FUNC", 0, 0, 4),
-		token.New(token.OPEN_PAREN, "(", 0, 4, 5),
-		token.New(token.ID, "x", 0, 5, 6),
-		token.New(token.ID_DELIM, ",", 0, 6, 7),
-		token.New(token.ID, "y", 0, 7, 8),
-		token.New(token.CLOSE_PAREN, ")", 0, 8, 9),
+		New("F(x,y)"),
+		token.New(token.FUNC, "F", 0, 0, 1),
+		token.New(token.OPEN_PAREN, "(", 0, 1, 2),
+		token.New(token.ID, "x", 0, 2, 3),
+		token.New(token.ID_DELIM, ",", 0, 3, 4),
+		token.New(token.ID, "y", 0, 4, 5),
+		token.New(token.CLOSE_PAREN, ")", 0, 5, 6),
 	)
 }
 
