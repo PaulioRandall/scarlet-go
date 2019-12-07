@@ -10,7 +10,7 @@ type Statement interface {
 	// Kind returns the type of the statement.
 	Kind() Kind
 
-	// Tokens returns the tokens that make up the statement but not those of
+	// Tokens returns the tokens that make up the statement including those of
 	// sub-statements.
 	Tokens() []token.Token
 

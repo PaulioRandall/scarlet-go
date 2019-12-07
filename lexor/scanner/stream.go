@@ -7,8 +7,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/where"
 )
 
-// TokenFinder represents a function that identifies the kind of the next token
-// and counts the number of runes in it.
+// TokenFinder is a function prototype that identifies the kind of the next
+// token and counts the number of runes in it.
 type TokenFinder func([]rune) (int, token.Kind, error)
 
 // stream represents some source code and provides functionality to remove
