@@ -1,6 +1,6 @@
 
 // Keywords:
-// - `FUNC`
+// - `F`
 // - `IF`, `WATCH`
 // - `DO`, `MATCH`, `LOOP`, `END`
 // - `TRUE`, `FALSE`
@@ -22,18 +22,18 @@
 // - STRING LITERAL	``
 // - STRING TEMPALTE	""
 
-printArgs := FUNC(x, y) z, e DO
+printArgs := F(x, y) z, e DO
 	LOOP arg := @Args() -> @Println(arg)
 END
 
-divide := FUNC(a, b) r, e DO
+divide := F(a, b) r, e DO
 	MATCH
 		b = 0 -> e := `Can't divide by zero`
 		TRUE  -> r := a / b
 	END
 END
 
-calc := FUNC(divide) DO
+calc := F(divide) DO
 
 	args := @Args()
 	IF @Len(args) # 2 -> @Panic(`Need precisely two number arguments`)
