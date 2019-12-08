@@ -1,9 +1,5 @@
 package token
 
-import (
-	"github.com/PaulioRandall/scarlet-go/where"
-)
-
 // Kind represents a token type.
 type Kind string
 
@@ -33,32 +29,32 @@ type Token interface {
 	// Value returns the string representing the token in source.
 	Value() string
 
-	// Where returns where the token is located within the source.
-	Where() where.Where
+	// Where returns the token location within the source.
+	Where() Snippet
 }
 
 // tokenImpl is a simple implementation of the Token interface.
 type tokenImpl struct {
 	k Kind
 	v string
-	w where.Where
+	s Snippet
 }
 
-// New creates a new token.
-func New(k Kind, v string, line, start, end int) Token {
+// NewToken creates a new token.
+func NewToken(k Kind, v string, line, start, end int) Token {
 	return tokenImpl{
 		k: k,
 		v: v,
-		w: where.New(line, start, end),
+		s: NewSnippet(line, start, end),
 	}
 }
 
-// NewByWhere creates a new token using Where as an input parameter.
-func NewByWhere(k Kind, v string, w where.Where) Token {
+// TokenBySnippet creates a new token using a Snippet as the location parameter.
+func TokenBySnippet(k Kind, v string, s Snippet) Token {
 	return tokenImpl{
 		k: k,
 		v: v,
-		w: w,
+		s: s,
 	}
 }
 
@@ -73,6 +69,6 @@ func (t tokenImpl) Value() string {
 }
 
 // Where satisfies the Token interface.
-func (t tokenImpl) Where() where.Where {
-	return t.w
+func (t tokenImpl) Where() Snippet {
+	return t.s
 }

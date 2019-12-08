@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/token"
-	"github.com/PaulioRandall/scarlet-go/where"
 )
 
 // TokenFinder is a function prototype that identifies the kind of the next
@@ -20,8 +19,8 @@ type stream struct {
 }
 
 // Where returns the current location in the source code.
-func (s *stream) Where() where.Where {
-	return where.New(s.line, s.col, s.col)
+func (s *stream) Where() token.Snippet {
+	return token.NewSnippet(s.line, s.col, s.col)
 }
 
 // IsEmpty returns true if there is no more source code to parse.
@@ -66,14 +65,14 @@ func (s *stream) checkSize(n int) {
 func (s *stream) tokenise(n int, k token.Kind) token.Token {
 
 	str, start, end := s.slice(n)
-	w := where.New(s.line, start, end)
+	w := token.NewSnippet(s.line, start, end)
 
 	if strings.HasSuffix(str, "\n") {
 		s.line++
 		s.col = 0
 	}
 
-	return token.NewByWhere(k, str, w)
+	return token.TokenBySnippet(k, str, w)
 }
 
 // slice slices `n` runes from the front of the source code and updates the

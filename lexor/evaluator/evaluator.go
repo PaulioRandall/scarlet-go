@@ -3,7 +3,6 @@ package evaluator
 import (
 	"github.com/PaulioRandall/scarlet-go/lexor"
 	"github.com/PaulioRandall/scarlet-go/lexor/strimmer"
-	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -22,7 +21,7 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 		return nil
 	}
 
-	return func() (t token.Token, st lexor.ScanToken, e perror.Perror) {
+	return func() (t token.Token, st lexor.ScanToken, e token.Perror) {
 
 		t, st, e = f()
 
@@ -49,5 +48,5 @@ func evaluate(t token.Token) token.Token {
 func evaluateStrLiteral(t token.Token) token.Token {
 	s := t.Value()
 	s = s[1 : len(s)-1]
-	return token.NewByWhere(t.Kind(), s, t.Where())
+	return token.TokenBySnippet(t.Kind(), s, t.Where())
 }

@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 
 	"github.com/PaulioRandall/scarlet-go/lexor/evaluator"
-	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -22,7 +21,7 @@ func main() {
 func run(src string) {
 
 	var t token.Token
-	var e perror.Perror
+	var e token.Perror
 	st := evaluator.New(src)
 
 	for st != nil {

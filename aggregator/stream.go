@@ -1,7 +1,6 @@
 package aggregator
 
 import (
-	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/stat"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
@@ -9,7 +8,7 @@ import (
 // SequenceFinder is a function prototype that identifies a sequence of tokens
 // returning the number of tokens and if they represent a statement, the
 // statement kind.
-type SequenceFinder func([]token.Token) (int, stat.Kind, perror.Perror)
+type SequenceFinder func([]token.Token) (int, stat.Kind, token.Perror)
 
 // stream represents the tokens scanned from source and provides functionality
 // to remove and return slices of them.
@@ -24,7 +23,7 @@ func (s *stream) IsEmpty() bool {
 
 // Identify accepts an SequenceFinder function and returns the kind and length
 // of the next statement in it.
-func (s *stream) Identify(f SequenceFinder) (int, stat.Kind, perror.Perror) {
+func (s *stream) Identify(f SequenceFinder) (int, stat.Kind, token.Perror) {
 	return f(s.t)
 }
 
@@ -33,7 +32,7 @@ func (s *stream) Identify(f SequenceFinder) (int, stat.Kind, perror.Perror) {
 func (s *stream) SliceBy(f SequenceFinder) (
 	t []token.Token,
 	k stat.Kind,
-	e perror.Perror) {
+	e token.Perror) {
 
 	n, k, e := s.Identify(f)
 

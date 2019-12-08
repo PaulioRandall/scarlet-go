@@ -2,7 +2,6 @@ package scanner
 
 import (
 	"github.com/PaulioRandall/scarlet-go/lexor"
-	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -22,7 +21,7 @@ func scan(s *stream) lexor.ScanToken {
 		return nil
 	}
 
-	return func() (t token.Token, sc lexor.ScanToken, e perror.Perror) {
+	return func() (t token.Token, sc lexor.ScanToken, e token.Perror) {
 
 		fs := []TokenFinder{
 			findNewline,    // 1
@@ -39,7 +38,7 @@ func scan(s *stream) lexor.ScanToken {
 			t, err = s.SliceBy(f)
 
 			if err != nil {
-				e = perror.Wrap("Scanning error", s.Where(), err)
+				e = token.WrapPerror("Scanning error", s.Where(), err)
 				return
 			}
 
@@ -49,7 +48,7 @@ func scan(s *stream) lexor.ScanToken {
 			}
 		}
 
-		e = perror.Newish("Unknown token", s.Where())
+		e = token.PerrorBySnippet("Unknown token", s.Where())
 		return
 	}
 }

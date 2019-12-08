@@ -16,7 +16,7 @@ func TestStream_SliceBy_1(t *testing.T) {
 		runes: []rune("Scarlet"),
 	}
 
-	exp := token.New(
+	exp := token.NewToken(
 		token.ID,
 		"Scar",
 		0, 0, 4,
@@ -61,7 +61,7 @@ func TestStream_SliceBy_3(t *testing.T) {
 		runes: []rune("\r\nScarlet"),
 	}
 
-	exp := token.New(
+	exp := token.NewToken(
 		token.NEWLINE,
 		"\r\n",
 		0, 0, 2,

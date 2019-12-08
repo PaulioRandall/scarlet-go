@@ -1,15 +1,13 @@
-package perror
+package token
 
 import (
 	"fmt"
-
-	w "github.com/PaulioRandall/scarlet-go/where"
 )
 
 // Perror represents an error within a file including its location.
 type Perror interface {
 	Error() string
-	Where() w.Where
+	Where() Snippet
 	Unwrap() error
 	String() string
 }
@@ -17,7 +15,7 @@ type Perror interface {
 // perr is simple implementation of Perror.
 type perr struct {
 	what  string
-	where w.Where
+	where Snippet
 	why   error
 }
 
@@ -27,7 +25,7 @@ func (e perr) Error() string {
 }
 
 // Where satisfies the Perror interface.
-func (e perr) Where() w.Where {
+func (e perr) Where() Snippet {
 	return e.where
 }
 
@@ -41,21 +39,21 @@ func (e perr) String() string {
 	return fmt.Sprintf("%s at %s", e.what, e.where.String())
 }
 
-// New returns an instantiated implementation of Perror.
-func New(what string, line, start, end int) Perror {
-	return Newish(what, w.New(line, start, end))
+// NewPerror returns a new instance of Perror.
+func NewPerror(what string, line, start, end int) Perror {
+	return PerrorBySnippet(what, NewSnippet(line, start, end))
 }
 
-// Newish returns an instantiated implementation of Perror.
-func Newish(what string, where w.Where) Perror {
+// PerrorBySnippet returns a new instance of Perror.
+func PerrorBySnippet(what string, where Snippet) Perror {
 	return perr{
 		what:  what,
 		where: where,
 	}
 }
 
-// Wrap wraps an error in an implementation of Perror.
-func Wrap(what string, where w.Where, why error) Perror {
+// WrapPerror wraps an error in a Perror.
+func WrapPerror(what string, where Snippet, why error) Perror {
 	return perr{
 		what:  what,
 		where: where,

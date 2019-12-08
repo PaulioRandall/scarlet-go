@@ -19,7 +19,7 @@ func TestFindIds_2(t *testing.T) {
 	// Check it works when a single ID token is the only input.
 
 	in := []token.Token{
-		token.New(token.ID, "abc", 0, 0, 3),
+		token.NewToken(token.ID, "abc", 0, 0, 3),
 	}
 
 	n, k, e := findIds(in)
@@ -34,11 +34,11 @@ func TestFindIds_3(t *testing.T) {
 	// Check it works when a multiple delimiter separated ID tokens are input.
 
 	in := []token.Token{
-		token.New(token.ID, "abc", 0, 0, 3),
-		token.New(token.ID_DELIM, ",", 0, 3, 4),
-		token.New(token.ID, "efg", 0, 4, 7),
-		token.New(token.ID_DELIM, ",", 0, 7, 8),
-		token.New(token.ID, "xyz", 0, 8, 11),
+		token.NewToken(token.ID, "abc", 0, 0, 3),
+		token.NewToken(token.ID_DELIM, ",", 0, 3, 4),
+		token.NewToken(token.ID, "efg", 0, 4, 7),
+		token.NewToken(token.ID_DELIM, ",", 0, 7, 8),
+		token.NewToken(token.ID, "xyz", 0, 8, 11),
 	}
 
 	n, k, e := findIds(in)
@@ -54,11 +54,11 @@ func TestFindIds_4(t *testing.T) {
 	// tokens.
 
 	in := []token.Token{
-		token.New(token.ID, "abc", 0, 0, 3),
-		token.New(token.ID_DELIM, ",", 0, 3, 4),
-		token.New(token.ID, "efg", 0, 4, 7),
-		token.New(token.ASSIGN, ":=", 0, 7, 9),
-		token.New(token.STR_LITERAL, "`xyz`", 0, 9, 14),
+		token.NewToken(token.ID, "abc", 0, 0, 3),
+		token.NewToken(token.ID_DELIM, ",", 0, 3, 4),
+		token.NewToken(token.ID, "efg", 0, 4, 7),
+		token.NewToken(token.ASSIGN, ":=", 0, 7, 9),
+		token.NewToken(token.STR_LITERAL, "`xyz`", 0, 9, 14),
 	}
 
 	n, k, e := findIds(in)
@@ -73,8 +73,8 @@ func TestFindIds_5(t *testing.T) {
 	// Check zero values are returned when the input does not lead with ID tokens.
 
 	in := []token.Token{
-		token.New(token.ASSIGN, ":=", 0, 0, 2),
-		token.New(token.ID, "abc", 0, 2, 5),
+		token.NewToken(token.ASSIGN, ":=", 0, 0, 2),
+		token.NewToken(token.ID, "abc", 0, 2, 5),
 	}
 
 	n, k, e := findIds(in)

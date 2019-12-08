@@ -3,7 +3,6 @@ package strimmer
 import (
 	"github.com/PaulioRandall/scarlet-go/lexor"
 	"github.com/PaulioRandall/scarlet-go/lexor/scanner"
-	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -23,7 +22,7 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 		return nil
 	}
 
-	return func() (t token.Token, st lexor.ScanToken, e perror.Perror) {
+	return func() (t token.Token, st lexor.ScanToken, e token.Perror) {
 
 		for st = f; st != nil; {
 
