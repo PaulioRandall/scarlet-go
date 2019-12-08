@@ -25,7 +25,7 @@ func TestFindSymbol_2(t *testing.T) {
 		assert.Equal(t, expN, n,
 			"Odd number of runes in symbol")
 		assert.Equal(t, expK, k,
-			"Expected: %s, actual: %s", expK.Name(), k.Name())
+			"Expected: %s, actual: %s", expK, k)
 	}
 
 	// When input contains only one token, a symbol token

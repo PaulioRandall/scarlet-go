@@ -4,6 +4,26 @@ import (
 	"github.com/PaulioRandall/scarlet-go/where"
 )
 
+// Kind represents a token type.
+type Kind string
+
+const (
+	UNDEFINED Kind = ``
+	// ------------------
+	WHITESPACE  Kind = `WHITESPACE`
+	NEWLINE     Kind = `NEWLINE`
+	FUNC        Kind = `FUNC`
+	DO          Kind = `DO`
+	END         Kind = `END`
+	ID          Kind = `ID`
+	ID_DELIM    Kind = `ID_DELIM`
+	ASSIGN      Kind = `ASSIGN`
+	OPEN_PAREN  Kind = `OPEN_PAREN`
+	CLOSE_PAREN Kind = `CLOSE_PAREN`
+	SPELL       Kind = `SPELL`
+	STR_LITERAL Kind = `STR_LITERAL`
+)
+
 // Token represents a grammer token within a source file.
 type Token interface {
 

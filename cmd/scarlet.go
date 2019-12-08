@@ -41,8 +41,8 @@ func printToken(t token.Token) {
 	k := t.Kind()
 
 	if k == token.NEWLINE {
-		println(k.Name())
+		println(k)
 	} else {
-		print(k.Name() + " ")
+		print(k + " ")
 	}
 }
