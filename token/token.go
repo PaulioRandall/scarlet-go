@@ -44,21 +44,21 @@ type tokenImpl struct {
 	w where.Where
 }
 
-// Newish creates a new token.
-func Newish(k Kind, v string, w where.Where) Token {
-	return tokenImpl{
-		k: k,
-		v: v,
-		w: w,
-	}
-}
-
 // New creates a new token.
 func New(k Kind, v string, line, start, end int) Token {
 	return tokenImpl{
 		k: k,
 		v: v,
 		w: where.New(line, start, end),
+	}
+}
+
+// NewByWhere creates a new token using Where as an input parameter.
+func NewByWhere(k Kind, v string, w where.Where) Token {
+	return tokenImpl{
+		k: k,
+		v: v,
+		w: w,
 	}
 }
 

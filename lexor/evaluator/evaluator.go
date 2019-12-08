@@ -49,5 +49,5 @@ func evaluate(t token.Token) token.Token {
 func evaluateStrLiteral(t token.Token) token.Token {
 	s := t.Value()
 	s = s[1 : len(s)-1]
-	return token.Newish(t.Kind(), s, t.Where())
+	return token.NewByWhere(t.Kind(), s, t.Where())
 }
