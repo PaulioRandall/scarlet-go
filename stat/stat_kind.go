@@ -5,6 +5,7 @@ type Kind int
 
 const (
 	UNDEFINED Kind = iota
+	OK
 	// ------------------
 	ASSIGN_FUNC
 	ASSIGN_ID
@@ -15,8 +16,8 @@ const (
 var kindNames map[Kind]string = map[Kind]string{
 	ASSIGN_FUNC:  `ASSIGN_FUNC`,
 	ASSIGN_ID:    `ASSIGN_ID`,
-	INVOKE_SPELL: `ASSIGN_SPELL`,
-	INVOKE_FUNC:  `ASSIGN_FUNC`,
+	INVOKE_SPELL: `INVOKE_SPELL`,
+	INVOKE_FUNC:  `INVOKE_FUNC`,
 }
 
 // Name returns the name of the token type.

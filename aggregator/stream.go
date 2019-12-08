@@ -6,9 +6,10 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// Aggregator is a function prototype that identifies the kind of the next
-// statement and counts the number of tokens in it.
-type Aggregator func([]token.Token) (int, stat.Kind, perror.Perror)
+// SequenceFinder is a function prototype that identifies a sequence of tokens
+// returning the number of tokens and if they represent a statement, the
+// statement kind.
+type SequenceFinder func([]token.Token) (int, stat.Kind, perror.Perror)
 
 // stream represents the tokens scanned from source and provides functionality
 // to remove and return slices of them.
@@ -21,15 +22,19 @@ func (s *stream) IsEmpty() bool {
 	return len(s.t) == 0
 }
 
-// Identify accepts an Aggregator function and returns the kind and length of
-// the next statement in it.
-func (s *stream) Identify(f Aggregator) (int, stat.Kind, perror.Perror) {
+// Identify accepts an SequenceFinder function and returns the kind and length
+// of the next statement in it.
+func (s *stream) Identify(f SequenceFinder) (int, stat.Kind, perror.Perror) {
 	return f(s.t)
 }
 
-// SliceBy accepts a Aggregator function and slices off tokens based on the
+// SliceBy accepts a SequenceFinder function and slices off tokens based on the
 // result.
-func (s *stream) SliceBy(f Aggregator) (t []token.Token, k stat.Kind, e perror.Perror) {
+func (s *stream) SliceBy(f SequenceFinder) (
+	t []token.Token,
+	k stat.Kind,
+	e perror.Perror) {
+
 	n, k, e := s.Identify(f)
 
 	if e != nil || k == stat.UNDEFINED {
