@@ -17,7 +17,7 @@ func findIds(tok []token.Token) (n int, k stat.Kind, e perror.Perror) {
 
 		switch {
 		case i == 0:
-			if tok[0].Kind() == token.ID {
+			if t.Kind() != token.ID {
 				return
 			}
 		case nextIsID:

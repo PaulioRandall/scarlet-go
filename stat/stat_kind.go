@@ -14,6 +14,7 @@ const (
 )
 
 var kindNames map[Kind]string = map[Kind]string{
+	OK:           `OK`,
 	ASSIGN_FUNC:  `ASSIGN_FUNC`,
 	ASSIGN_ID:    `ASSIGN_ID`,
 	INVOKE_SPELL: `INVOKE_SPELL`,
