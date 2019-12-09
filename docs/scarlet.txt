@@ -1,9 +1,11 @@
 
 // Keywords:
 // - `F`
-// - `IF`, `WATCH`
-// - `DO`, `MATCH`, `LOOP`, `END`
+// - `IF`,
+// - `DO`, `MATCH`, `WATCH`
+// - `END`
 // - `TRUE`, `FALSE`
+// - `GLOBAL`
 
 // Operators:
 // - ASSIGNMENT				`:=`
@@ -14,40 +16,37 @@
 // - MODULO				`%`
 // - NOT				`~`, `¬`
 // - AND, OR				`&`, `|`
-// - LINEFEED ENDED DO BODY `->`
-// - TAIL PROCEDURE DEFINITION `^`
-// - IGNORE IN `_`
+// - INLINE DO `->`
+// - IGNORE  `_`
 
 // Notes:
 // - STRING LITERAL	``
 // - STRING TEMPALTE	""
 
-printArgs := F(x, y) z, e DO
-	LOOP arg := @Args() -> @Println(arg)
+printArgs := F() DO
+	@Foreach(@Args(), F(i, v, _) -> @Println(v))
 END
 
-divide := F(a, b) r, e DO
-	MATCH
-		b = 0 -> e := `Can't divide by zero`
-		TRUE  -> r := a / b
-	END
+GLOBAL safeDivide := F(a, b) r, e MATCH
+	b = 0 -> e := `Can't divide by zero`
+	TRUE  -> r := a / b
 END
 
-calc := F(divide) DO
+GLOBAL parseAndDivide := F(args) a, b, r, e WATCH e
+	a, e := @ToReal(args[1])
+	b, e := @ToReal(args[2])
+	r, e := safeDivide(a, b)
+	c, e := @FmtReal(r, `*.##`)
+END
 
+calc := F() e WATCH e
+	
 	args := @Args()
-	IF @Len(args) # 2 -> @Panic(`Need precisely two number arguments`)
+	IF @Len(args) # 3 -> e := `Need precisely two number arguments`
 
-	WATCH e DO
-		a, e := @ParseReal(args[1])
-		b, e := @ParseReal(args[2])
-		r, e := divide(a, b)
-		c, e := @FmtReal(r, `*.##`)
-	END
-
-	IF e # `` -> @Panic(e)
-
+	a, b, c, e := parseAndDivide(args)
 	@Println("{a} / {b} = {c}")
 END
 
-calc(12, 2)
+printArgs()
+@ExpectEmpty(calc())
