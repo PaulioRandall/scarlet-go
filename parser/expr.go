@@ -14,3 +14,12 @@ type ValueExpr Value
 func (ex ValueExpr) Eval(ctx Context) Value {
 	return Value(ex)
 }
+
+// IdExpr is an expression that resolves an ID into a value
+type IdExpr string
+
+// Eval satisfies the Expr interface.
+func (ex IdExpr) Eval(ctx Context) Value {
+	id := string(ex)
+	return ctx.Get(id)
+}

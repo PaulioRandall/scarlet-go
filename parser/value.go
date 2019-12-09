@@ -18,6 +18,14 @@ type Value struct {
 	v interface{}
 }
 
+// NewValue creates a new value.
+func NewValue(k Kind, v interface{}) Value {
+	return Value{
+		k: k,
+		v: v,
+	}
+}
+
 // ToStr returns the value as a string or error if the kind does not represent
 // a string.
 func (v Value) ToStr() (string, error) {

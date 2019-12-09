@@ -28,8 +28,8 @@ printArgs := F() DO
 END
 
 GLOBAL safeDivide := F(a, b) r, e MATCH
-	b = 0 -> e := `Can't divide by zero`
-	TRUE  -> r := a / b
+	b # 0 -> r := a / b
+	TRUE  -> e := `Can't divide by zero`
 END
 
 GLOBAL parseAndDivide := F(args) a, b, r, e WATCH e
