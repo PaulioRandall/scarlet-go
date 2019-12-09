@@ -8,7 +8,8 @@ import (
 type Kind string
 
 const (
-	STR Kind = `STRING`
+	STR  Kind = `STRING`
+	FUNC Kind = `FUNC`
 )
 
 // Value represents a value within the script. This could be a variable value
