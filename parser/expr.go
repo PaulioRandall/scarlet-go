@@ -30,5 +30,14 @@ type FuncExpr Func
 // Eval satisfies the Expr interface.
 func (ex FuncExpr) Eval(ctx Context) Value {
 	// TODO
-	return NewValue(FUNC, Func{})
+	return Value{Func{}}
+}
+
+// SpellExpr is an expression that calls a spell for a value.
+type SpellExpr Func
+
+// Eval satisfies the Expr interface.
+func (ex SpellExpr) Eval(ctx Context) Value {
+	// TODO
+	return Value{Spell{}}
 }

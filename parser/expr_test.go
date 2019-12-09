@@ -20,7 +20,7 @@ func TestIdExpr_2(t *testing.T) {
 	// Ensure Eval returns the correct Value from the context.
 
 	var ex Expr = IdExpr(`abc`)
-	v := NewValue(STR, `xyz`)
+	v := Value{`xyz`}
 
 	ctx := NewRootCtx()
 	ctx.Set(`abc`, v)
@@ -32,4 +32,9 @@ func TestIdExpr_2(t *testing.T) {
 func TestFuncExpr_1(t *testing.T) {
 	// Check it is a type of Expr.
 	var _ Expr = FuncExpr{}
+}
+
+func TestSpellExpr_1(t *testing.T) {
+	// Check it is a type of Expr.
+	var _ Expr = SpellExpr{}
 }
