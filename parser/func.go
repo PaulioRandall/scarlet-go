@@ -10,6 +10,9 @@ type Params []Expr
 // order.
 type Block []Expr
 
+// Spell represents a callable spell.
+type Spell Params
+
 // Func represents a callable function.
 type Func struct {
 	Params Params

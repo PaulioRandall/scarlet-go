@@ -28,3 +28,8 @@ func TestIdExpr_2(t *testing.T) {
 	act := ex.Eval(ctx)
 	assert.Equal(t, v, act)
 }
+
+func TestFuncExpr_1(t *testing.T) {
+	// Check it is a type of Expr.
+	var _ Expr = FuncExpr{}
+}

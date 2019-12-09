@@ -23,3 +23,12 @@ func (ex IdExpr) Eval(ctx Context) Value {
 	id := string(ex)
 	return ctx.Get(id)
 }
+
+// FuncExpr is an expression that calls a function for a value.
+type FuncExpr Func
+
+// Eval satisfies the Expr interface.
+func (ex FuncExpr) Eval(ctx Context) Value {
+	// TODO
+	return NewValue(FUNC, Func{})
+}
