@@ -13,6 +13,12 @@ type Block []Expr
 // Spell represents a callable spell.
 type Spell Params
 
+// Assign represents an assignment.
+type Assign struct {
+	Dst IDs
+	Src Params
+}
+
 // Func represents a callable function.
 type Func struct {
 	Params Params
