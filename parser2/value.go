@@ -16,6 +16,10 @@ const (
 	SPELL Kind = `SPELL`
 )
 
+// Procedure is a function prototype that executes a construct with a block of
+// code.
+type Procedure func(ctx Context, params []Value) (Value, EvalErr)
+
 // Value represents a value within the script. This could be a variable value
 // or intermediate one.
 type Value struct {
@@ -40,20 +44,20 @@ func (v Value) ToStr() (string, error) {
 	return v.v.(string), nil
 }
 
-// ToFunc returns the value as a function or error if the kind does not
-// represent a function.
-func (v Value) ToFunc() (Eval, error) {
+// ToFunc returns the value as an executable Scarlet function or error if the
+// kind does not represent a function.
+func (v Value) ToFunc() (Procedure, error) {
 	if v.k != FUNC {
 		return nil, errors.New("TODO")
 	}
-	return v.v.(Eval), nil
+	return v.v.(Procedure), nil
 }
 
-// ToSpell returns the value as a spell or error if the kind does not represent
-// a spell.
-func (v Value) ToSpell() (Eval, error) {
+// ToSpell returns the value as executable Scarlet spell or error if the kind
+// does not represent a spell.
+func (v Value) ToSpell() (Procedure, error) {
 	if v.k != SPELL {
 		return nil, errors.New("TODO")
 	}
-	return v.v.(Eval), nil
+	return v.v.(Procedure), nil
 }
