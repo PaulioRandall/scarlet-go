@@ -6,9 +6,6 @@ END
 
 abc(`:)`, `^_^`)
 
-// THEN: Add scanning of comment lines to the scanner
-// THEN: Update strimmer to ignore comment lines
-
 // THEN: Rename pkg `parser2` to `parser`
 // THEN: Split `eval.go` into appropriate files or pkgs
 // THEN: Move `value.go` to its own pkg

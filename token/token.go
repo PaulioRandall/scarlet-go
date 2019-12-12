@@ -6,6 +6,7 @@ type Kind string
 const (
 	UNDEFINED Kind = ``
 	// ------------------
+	COMMENT     Kind = `COMMENT`
 	WHITESPACE  Kind = `WHITESPACE`
 	NEWLINE     Kind = `NEWLINE`
 	FUNC        Kind = `FUNC`

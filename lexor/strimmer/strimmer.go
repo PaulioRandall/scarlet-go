@@ -29,12 +29,12 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 			t, st, e = st()
 
 			if e != nil || t == nil {
-				break
+				return
 			}
 
-			if !ignore(t.Kind()) {
+			if isSignificant(t.Kind()) {
 				st = wrap(st)
-				break
+				return
 			}
 		}
 
@@ -42,20 +42,21 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 	}
 }
 
-// ignore returns true if the input `k` is a kind for a token that should be
-// discarded.
-func ignore(k token.Kind) bool {
+// isSignificant returns true if the input `k` is an essential token to the
+// parsing of a script, i.e. not whiespace or a comment.
+func isSignificant(k token.Kind) bool {
 
 	ks := []token.Kind{
 		token.UNDEFINED,
 		token.WHITESPACE,
+		token.COMMENT,
 	}
 
 	for _, j := range ks {
 		if k == j {
-			return true
+			return false
 		}
 	}
 
-	return false
+	return true
 }

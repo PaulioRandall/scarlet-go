@@ -23,16 +23,21 @@ func TestWrap_1(t *testing.T) {
 
 func TestWrap_2(t *testing.T) {
 	lexor.ScanTokenTest(t,
-		New("abc\n   efg"),
+		New("abc\n   efg // xyz\n"),
 		token.NewToken(token.ID, "abc", 0, 0, 3),
 		token.NewToken(token.NEWLINE, "\n", 0, 3, 4),
 		token.NewToken(token.ID, "efg", 1, 3, 6),
+		token.NewToken(token.NEWLINE, "\n", 1, 13, 14),
 	)
 }
 
 func TestWrap_3(t *testing.T) {
 	lexor.ScanTokenTest(t,
 		New("\t\t\t"),
+	)
+
+	lexor.ScanTokenTest(t,
+		New("// abc"),
 	)
 }
 
