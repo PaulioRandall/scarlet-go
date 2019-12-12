@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func wrapErrTest(t *testing.T, f lexor.ScanToken, expAt int, exp token.Perror) {
+func wrapErrTest(t *testing.T, f lexor.ScanToken, expAt int, exp lexor.ScanErr) {
 	e := lexor.ScanTokenErrTest(t, f, expAt)
-	assert.Equal(t, exp.Where(), e.(token.Perror).Where())
+	assert.Equal(t, exp.Where(), e.(lexor.ScanErr).Where())
 }
 
 func TestWrap_1(t *testing.T) {
@@ -34,6 +34,6 @@ func TestWrap_3(t *testing.T) {
 	wrapErrTest(t,
 		New("~~~"),
 		0,
-		token.NewPerror("", 0, 0, 0),
+		lexor.NewScanErr("", 0, 0, 0),
 	)
 }

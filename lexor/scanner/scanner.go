@@ -21,7 +21,7 @@ func scan(s *stream) lexor.ScanToken {
 		return nil
 	}
 
-	return func() (t token.Token, sc lexor.ScanToken, e token.Perror) {
+	return func() (t token.Token, sc lexor.ScanToken, e lexor.ScanErr) {
 
 		fs := []TokenFinder{
 			findNewline,    // 1
@@ -38,7 +38,7 @@ func scan(s *stream) lexor.ScanToken {
 			t, err = s.SliceBy(f)
 
 			if err != nil {
-				e = token.WrapPerror("Scanning error", s.Where(), err)
+				e = lexor.WrapScanErr("Scanning error", s.Where(), err)
 				return
 			}
 
@@ -48,7 +48,7 @@ func scan(s *stream) lexor.ScanToken {
 			}
 		}
 
-		e = token.PerrorBySnippet("Unknown token", s.Where())
+		e = lexor.NewScanErr_2("Unknown token", s.Where())
 		return
 	}
 }

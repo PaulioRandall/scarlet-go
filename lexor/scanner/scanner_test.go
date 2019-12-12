@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func scanErrTest(t *testing.T, f lexor.ScanToken, expAt int, exp token.Perror) {
+func scanErrTest(t *testing.T, f lexor.ScanToken, expAt int, exp lexor.ScanErr) {
 	e := lexor.ScanTokenErrTest(t, f, expAt)
-	assert.Equal(t, exp.Where(), e.(token.Perror).Where())
+	assert.Equal(t, exp.Where(), e.(lexor.ScanErr).Where())
 }
 
 func TestScan_1(t *testing.T) {
@@ -60,6 +60,6 @@ func TestScan_4(t *testing.T) {
 	scanErrTest(t,
 		New("abc   ~~~"),
 		2,
-		token.NewPerror("", 0, 6, 6),
+		lexor.NewScanErr("", 0, 6, 6),
 	)
 }

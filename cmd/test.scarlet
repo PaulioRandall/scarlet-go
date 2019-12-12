@@ -6,13 +6,9 @@ END
 
 abc(`:)`, `^_^`)
 
-// NEXT: Move `token/perror.go` to `lexor` pkg
-// THEN: Rename `Perror` to `ScanErr`, do the filename as well
-
 // THEN: Add scanning of comment lines to the scanner
 // THEN: Update strimmer to ignore comment lines
 
-// THEN: Remove pkg `parser`
 // THEN: Rename pkg `parser2` to `parser`
 // THEN: Split `eval.go` into appropriate files or pkgs
 // THEN: Move `value.go` to its own pkg

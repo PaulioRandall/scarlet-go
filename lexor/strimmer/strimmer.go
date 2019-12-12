@@ -22,7 +22,7 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 		return nil
 	}
 
-	return func() (t token.Token, st lexor.ScanToken, e token.Perror) {
+	return func() (t token.Token, st lexor.ScanToken, e lexor.ScanErr) {
 
 		for st = f; st != nil; {
 
