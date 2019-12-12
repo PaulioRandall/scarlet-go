@@ -23,30 +23,32 @@
 // - STRING LITERAL	``
 // - STRING TEMPALTE	""
 
-printArgs := F() DO
-	@Foreach(@Args(), F(i, v, _) -> @Println(v))
+GLOBAL divideAndFmt := F(a, b) r, e DO
+	WATCH e
+		IF b = 0 -> e := `Can't divide by zero`
+		r := a / b
+		r, e := @FmtReal(r, `.##`)
+	END
 END
 
-GLOBAL safeDivide := F(a, b) r, e MATCH
-	b # 0 -> r := a / b
-	TRUE  -> e := `Can't divide by zero`
+calc := F(argParser) e DO
+	WATCH e
+		a, b := argParser()
+		c, e := divideAndFmt(a, b)
+		@Println("{a} / {b} = {c}")
+	END
 END
 
-GLOBAL parseAndDivide := F(args) a, b, r, e WATCH e
-	a, e := @ToReal(args[1])
-	b, e := @ToReal(args[2])
-	r, e := safeDivide(a, b)
-	c, e := @FmtReal(r, `*.##`)
-END
-
-calc := F() e WATCH e
-	
+parseArgs := F() a, b, e DO
 	args := @Args()
-	IF @Len(args) # 3 -> e := `Need precisely two number arguments`
-
-	a, b, c, e := parseAndDivide(args)
-	@Println("{a} / {b} = {c}")
+	
+	WATCH e
+		IF @Len(args) < 3 -> e := `Need at least two number arguments`
+		a, e := @ToReal(args[1])
+		b, e := @ToReal(args[2])
+	END
 END
 
-printArgs()
-@ExpectEmpty(calc())
+@Foreach(@Args(), F(_, v, _) -> @Println(v))
+e := calc(parseArgs)
+@PanicIf(e)
