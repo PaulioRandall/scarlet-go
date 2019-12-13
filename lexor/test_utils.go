@@ -9,6 +9,24 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// DummyScanner is a ScanToken implementation that returns the token elements
+// recursively.
+func DummyScanner(tokens []token.Token) ScanToken {
+	return func() (t token.Token, st ScanToken, _ ScanErr) {
+		size := len(tokens)
+
+		if size > 0 {
+			t = tokens[0]
+		}
+
+		if size > 1 {
+			st = DummyScanner(tokens[1:])
+		}
+
+		return
+	}
+}
+
 // ScanTokenTest performs a test of a ScanToken implemention.
 func ScanTokenTest(t *testing.T, f ScanToken, exps ...token.Token) {
 

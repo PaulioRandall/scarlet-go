@@ -1,21 +1,20 @@
+// strimmer removes insignificant tokens, i.e. removing tokens that are not
+// required for parsing such as whitespace. It wraps another ScanToken function.
 package strimmer
 
 import (
 	"github.com/PaulioRandall/scarlet-go/lexor"
-	"github.com/PaulioRandall/scarlet-go/lexor/scanner"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// New returns a ScanToken function that will return the first token in the
-// input source.
-func New(src string) lexor.ScanToken {
-	st := scanner.New(src)
-	return wrap(st)
+// New makes a new strimmer function.
+func New(src lexor.ScanToken) lexor.ScanToken {
+	return wrap(src)
 }
 
-// wrap wraps a ScanToken function with one that iterates through the scanner to
-// find and return the next significant token. It effectively filters all
-// insgnificant tokens for the user.
+// wrap wraps a ScanToken with one that removes insignificant tokens. This means
+// the underlying recursive function maybe called multiple times before a value
+// is returned.
 func wrap(f lexor.ScanToken) lexor.ScanToken {
 
 	if f == nil {
@@ -42,8 +41,8 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 	}
 }
 
-// isSignificant returns true if the input `k` is an essential token to the
-// parsing of a script, i.e. not whiespace or a comment.
+// isSignificant returns true if the input `k` is an significant token to the
+// parsing of a script, i.e. not whiespace or a comment etc.
 func isSignificant(k token.Kind) bool {
 
 	ks := []token.Kind{
