@@ -6,14 +6,9 @@ END
 
 abc(`:)`, `^_^`)
 
-// THEN: Rename pkg `parser2` to `parser`
-// THEN: Split `eval.go` into appropriate files or pkgs
-// THEN: Move `value.go` to its own pkg
-
-// THEN: Rename `parser.EvalErr` to `ParseErr`, do the filename as well
-// THEN: Move the new `ParseErr` file to its own pkg
-// THEN: In `ParseErr` pkg, add functionality that enables the mapping of unique
-//       ParseErr IDs to their source tokens they so when an error occurrs the
+// THEN: Move the new `EvalErr` file to its own pkg
+// THEN: In `EvalErr` pkg, add functionality that enables the mapping of unique
+//       EvalErr IDs to their source tokens so when an error occurrs the
 //       tokens and thus location of the error in the file can be identified.
 
 // THEN: Go through each source file in the project and add or update the

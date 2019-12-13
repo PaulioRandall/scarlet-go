@@ -1,4 +1,4 @@
-package parser2
+package context
 
 // Context represents a specific scope within a script. There will be one for
 // the root of a script with a new one being created for the body of each
@@ -21,38 +21,38 @@ type Context interface {
 	Schism() Context
 }
 
-// RootContext represents a context at the root of a script.
-type RootContext struct {
+// rootCtx represents a context at the root of a script.
+type rootCtx struct {
 	vars    map[string]Value
 	globals map[string]Value
 }
 
-// NewRootCtx creates a new RootContext.
+// NewRootCtx creates a new context designed to work at the scripts root.
 func NewRootCtx() Context {
-	return RootContext{
+	return rootCtx{
 		vars:    make(map[string]Value),
 		globals: make(map[string]Value),
 	}
 }
 
 // Get satisfies the Context interface.
-func (ctx RootContext) Get(id string) Value {
+func (ctx rootCtx) Get(id string) Value {
 	return ctx.vars[id]
 }
 
 // Set satisfies the Context interface.
-func (ctx RootContext) Set(id string, v Value) {
+func (ctx rootCtx) Set(id string, v Value) {
 	ctx.vars[id] = v
 }
 
 // SetGlobal satisfies the Context interface.
-func (ctx RootContext) SetGlobal(id string, v Value) {
+func (ctx rootCtx) SetGlobal(id string, v Value) {
 	ctx.globals[id] = v
 }
 
 // Schism satisfies the Context interface.
-func (ctx RootContext) Schism() Context {
-	return RootContext{
+func (ctx rootCtx) Schism() Context {
+	return rootCtx{
 		vars:    make(map[string]Value),
 		globals: ctx.globals,
 	}

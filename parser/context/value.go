@@ -1,10 +1,10 @@
-package parser2
+package context
 
 import (
 	"errors"
 )
 
-// Kind represents a Value type.
+// Kind represents a type of a Value.
 type Kind string
 
 const (
@@ -18,7 +18,7 @@ const (
 
 // Procedure is a function prototype that executes a construct with a block of
 // code.
-type Procedure func(ctx Context, params []Value) (Value, EvalErr)
+type Procedure func(ctx Context, params []Value) (Value, ProcErr)
 
 // Value represents a value within the script. This could be a variable value
 // or intermediate one.
