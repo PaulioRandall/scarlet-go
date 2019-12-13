@@ -1,4 +1,4 @@
-package eval
+package err
 
 // EvalErr represents a error returned during the evaluation of a Scarlet
 // expression.
@@ -13,6 +13,7 @@ type EvalErr interface {
 	Why() error
 }
 
+// stdEvalErr is the standard implementation of EvalErr.
 type stdEvalErr struct {
 	what string
 	who  int64

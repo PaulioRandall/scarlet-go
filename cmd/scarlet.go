@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/lexor"
 	"github.com/PaulioRandall/scarlet-go/lexor/evaluator"
+	"github.com/PaulioRandall/scarlet-go/lexor/strimmer"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -23,7 +24,9 @@ func run(src string) {
 
 	var t token.Token
 	var e lexor.ScanErr
-	st := evaluator.New(src)
+
+	st := strimmer.New(src)
+	st = evaluator.New(st)
 
 	for st != nil {
 		t, st, e = st()

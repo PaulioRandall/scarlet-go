@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/lexor"
+	"github.com/PaulioRandall/scarlet-go/lexor/scanner"
 	"github.com/PaulioRandall/scarlet-go/token"
 
 	"github.com/stretchr/testify/assert"
@@ -16,23 +17,23 @@ func wrapErrTest(t *testing.T, f lexor.ScanToken, expAt int, exp lexor.ScanErr) 
 
 func TestWrap_1(t *testing.T) {
 	lexor.ScanTokenTest(t,
-		New("`abc`"),
+		New(scanner.New("`abc`")),
 		token.NewToken(token.STR_LITERAL, "abc", 0, 0, 5),
 	)
 }
 
 func TestWrap_2(t *testing.T) {
 	lexor.ScanTokenTest(t,
-		New("abc\n F"),
-		token.NewToken(token.ID, "abc", 0, 0, 3),
-		token.NewToken(token.NEWLINE, "\n", 0, 3, 4),
-		token.NewToken(token.FUNC, "F", 1, 1, 2),
+		New(scanner.New("`abc`\nF")),
+		token.NewToken(token.STR_LITERAL, "abc", 0, 0, 5),
+		token.NewToken(token.NEWLINE, "\n", 0, 5, 6),
+		token.NewToken(token.FUNC, "F", 1, 0, 1),
 	)
 }
 
 func TestWrap_3(t *testing.T) {
 	wrapErrTest(t,
-		New("~~~"),
+		New(scanner.New("~~~")),
 		0,
 		lexor.NewScanErr("", 0, 0, 0),
 	)

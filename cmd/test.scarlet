@@ -6,10 +6,12 @@ END
 
 abc(`:)`, `^_^`)
 
-// THEN: Move the new `EvalErr` file to its own pkg
 // THEN: In `EvalErr` pkg, add functionality that enables the mapping of unique
 //       EvalErr IDs to their source tokens so when an error occurrs the
 //       tokens and thus location of the error in the file can be identified.
 
 // THEN: Go through each source file in the project and add or update the
 //       documentation.
+
+// THEN: Modify lexor.ScanToken implementations to accept another ScanTokens in
+//       their New... functions so that they may be wrapped in multiple ways.

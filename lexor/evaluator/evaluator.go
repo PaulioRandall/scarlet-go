@@ -1,20 +1,19 @@
+// evaluator parses the value of certain tokens, i.e. removing quotes from
+// string literals. It wraps another ScanToken function.
 package evaluator
 
 import (
 	"github.com/PaulioRandall/scarlet-go/lexor"
-	"github.com/PaulioRandall/scarlet-go/lexor/strimmer"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// New returns a ScanToken function that will return the first token in the
-// input source.
-func New(src string) lexor.ScanToken {
-	st := strimmer.New(src)
-	return wrap(st)
+// New makes a new evaluator function.
+func New(src lexor.ScanToken) lexor.ScanToken {
+	return wrap(src)
 }
 
-// wrap wraps a ScanToken function with one that iterates through the strimmer
-// to find and evaluate tokens that require evaluation.
+// wrap wraps a ScanToken with one that evaluates the token before being
+// returned.
 func wrap(f lexor.ScanToken) lexor.ScanToken {
 
 	if f == nil {
@@ -26,7 +25,7 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 		t, st, e = f()
 
 		if e == nil && t != nil {
-			t = evaluate(t)
+			t = eval(t)
 			st = wrap(st)
 		}
 
@@ -34,18 +33,18 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 	}
 }
 
-// evaluate evaluates the value of the token if needed and then returns it.
-func evaluate(t token.Token) token.Token {
+// eval evaluates the value of the token if needed and then returns it.
+func eval(t token.Token) token.Token {
 	if t.Kind() == token.STR_LITERAL {
-		t = evaluateStrLiteral(t)
+		t = evalStr(t)
 	}
 
 	return t
 }
 
-// evaluates the value of a string literal by removing the leading and trailing
-// back tik.
-func evaluateStrLiteral(t token.Token) token.Token {
+// evalStr evaluates the value of a string literal by removing the leading and
+// trailing quotes.
+func evalStr(t token.Token) token.Token {
 	s := t.Value()
 	s = s[1 : len(s)-1]
 	return token.TokenBySnippet(t.Kind(), s, t.Where())
