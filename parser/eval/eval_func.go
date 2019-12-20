@@ -1,36 +1,64 @@
 package eval
 
 import (
-	CTX "github.com/PaulioRandall/scarlet-go/parser/context"
-	"github.com/PaulioRandall/scarlet-go/parser/err"
+	"github.com/PaulioRandall/scarlet-go/parser/ctx"
 )
 
-// evalFunc creates an Eval function that invokes a Scarlet function when
-// called.
-func evalFunc(fn Eval, params []Eval) Eval {
-	return func(parent CTX.Context, _ []CTX.Value) (CTX.Value, err.EvalErr) {
+// evalFunc creates an Expr that invokes a Scarlet function when called.
+func evalFunc(getFunc Expr, params []Expr) Expr {
 
-		fParams, e := evalParams(parent, params)
+	getInput := evalParams(params)
+
+	return func(parent ctx.Context) (v ctx.Value, e EvalErr) {
+
+		f, e := getFuncProcedure(parent, getFunc)
 		if e != nil {
-			return CTX.Value{}, e
+			return
 		}
 
-		fValue, e := fn(parent, nil)
+		args, e := getFuncArgs(parent, getInput)
 		if e != nil {
-			return CTX.Value{}, e
+			return
 		}
 
-		f, eerr := fValue.ToFunc()
-		if eerr != nil {
-			return CTX.Value{}, err.NewEvalErr(eerr, -1, "TODO")
-		}
-
-		ctx := parent.Schism()
-		v, perr := f(ctx, fParams)
+		c := parent.Schism()
+		v, perr := f(c, args)
 		if perr != nil {
-			return CTX.Value{}, err.NewEvalErr(perr, -1, "TODO")
+			e = NewEvalErr(perr, -1, "TODO")
 		}
 
-		return v, nil
+		return
 	}
+}
+
+func getFuncArgs(c ctx.Context, getInput Expr) (args []ctx.Value, e EvalErr) {
+
+	asValue, e := getInput(c)
+	if e != nil {
+		return
+	}
+
+	args, err := asValue.ToList()
+	if err != nil {
+		e = NewEvalErr(err, -1, "TODO")
+		return
+	}
+
+	return
+}
+
+func getFuncProcedure(c ctx.Context, getFunc Expr) (f ctx.Procedure, e EvalErr) {
+
+	asValue, e := getFunc(c)
+	if e != nil {
+		return
+	}
+
+	f, err := asValue.ToFunc()
+	if err != nil {
+		e = NewEvalErr(err, -1, "TODO")
+		return
+	}
+
+	return
 }

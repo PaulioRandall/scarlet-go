@@ -1,4 +1,4 @@
-package context
+package ctx
 
 import (
 	"errors"
@@ -25,6 +25,16 @@ type Procedure func(ctx Context, params []Value) (Value, ProcErr)
 type Value struct {
 	k Kind
 	v interface{}
+}
+
+// NewValue creates a new Value.
+func NewValue(k Kind, v interface{}) Value {
+	return Value{k, v}
+}
+
+// IsEmpty returns true if the value is empty.
+func (v Value) IsEmpty() bool {
+	return v == (Value{})
 }
 
 // ToList returns the value as a list of Values.

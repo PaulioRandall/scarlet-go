@@ -1,4 +1,4 @@
-package err
+package eval
 
 // EvalErr represents a error returned during the evaluation of a Scarlet
 // expression.

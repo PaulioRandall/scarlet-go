@@ -1,5 +1,5 @@
 package eval
 
-func evalAssign() Eval {
+func evalAssign() Expr {
 	return nil
 }

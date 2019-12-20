@@ -1,48 +1,24 @@
 package eval
 
 import (
-	CTX "github.com/PaulioRandall/scarlet-go/parser/context"
-	"github.com/PaulioRandall/scarlet-go/parser/err"
+	"github.com/PaulioRandall/scarlet-go/parser/ctx"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// Eval is a function that produces a value when invoked.
-type Eval func(ctx CTX.Context, params []CTX.Value) (CTX.Value, err.EvalErr)
+// Expr represents an expression that produces a value when evaluated.
+type Expr func(c ctx.Context) (ctx.Value, EvalErr)
 
-// evalValue creates an Eval function that just returns the input value.
-func evalValue(v CTX.Value) Eval {
-	return func(CTX.Context, []CTX.Value) (CTX.Value, err.EvalErr) {
+// evalValue creates an Expr that just returns the input value.
+func evalValue(v ctx.Value) Expr {
+	return func(ctx.Context) (ctx.Value, EvalErr) {
 		return v, nil
 	}
 }
 
-// evalID creates an Eval function that returns the value associated with a
-// specific ID from the context.
-func evalID(t token.Token) Eval {
-	return func(ctx CTX.Context, _ []CTX.Value) (CTX.Value, err.EvalErr) {
-		return ctx.Get(t.Value()), nil
+// evalID creates an Expr that returns the value associated with a specific ID
+// from the context.
+func evalID(t token.Token) Expr {
+	return func(c ctx.Context) (ctx.Value, EvalErr) {
+		return c.Get(t.Value()), nil
 	}
-}
-
-// evalParams executes a set of Eval functions that return values used as
-// parameters to some other expression.
-func evalParams(ctx CTX.Context, params []Eval) ([]CTX.Value, err.EvalErr) {
-
-	var r []CTX.Value
-
-	for _, p := range params {
-		v, e := p(ctx, nil)
-
-		if e != nil {
-			return nil, e
-		}
-
-		if v == (CTX.Value{}) {
-			return nil, err.NewEvalErr(nil, -1, "TODO")
-		}
-
-		r = append(r, v)
-	}
-
-	return r, nil
 }

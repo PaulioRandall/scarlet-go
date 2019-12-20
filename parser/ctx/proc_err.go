@@ -1,4 +1,4 @@
-package context
+package ctx
 
 // ProcErr represents a error returned during the execution of a Scarlet
 // function or spell.

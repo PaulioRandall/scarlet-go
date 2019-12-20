@@ -1,4 +1,4 @@
-package context
+package ctx
 
 // Context represents a specific scope within a script. There will be one for
 // the root of a script with a new one being created for the body of each
