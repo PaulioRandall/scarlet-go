@@ -1,4 +1,4 @@
-package token2
+package token
 
 import (
 	"fmt"
@@ -30,14 +30,16 @@ type Token struct {
 	Kind  Kind
 	Value string
 	Line  int
+	Col   int
 }
 
 // NewToken creates a new token.
-func NewToken(k Kind, v string, l int) Token {
+func NewToken(k Kind, v string, l, c int) Token {
 	return Token{
 		Kind:  k,
 		Value: v,
 		Line:  l,
+		Col:   c,
 	}
 }
 
