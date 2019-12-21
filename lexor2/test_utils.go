@@ -33,6 +33,24 @@ func DummyScanToken(tokens []token.Token) ScanToken {
 	}
 }
 
+// AssertScanErr assert a ScanErr matches another except for the error message.
+func AssertScanErr(t *testing.T, exp ScanErr, act ScanErr) {
+	if exp == nil {
+		assert.Nil(t, act, "Expected a nil ScanErr")
+		return
+	}
+
+	require.NotNil(t, act, "Did not expect a nil ScanErr")
+	assert.Equal(t, exp.Line(), act.Line(), "Wrong line index")
+	assert.Equal(t, exp.Col(), act.Col(), "Wrong column index")
+
+	if exp.Unwrap() == nil {
+		assert.Nil(t, act.Unwrap(), "Did not expected a cause, a wrapped error")
+	} else {
+		assert.NotNil(t, act.Unwrap(), "Expected a cause, a wrapped error")
+	}
+}
+
 // ScanTokenTest performs a test of a ScanToken implemention.
 func ScanTokenTest(t *testing.T, f ScanToken, exps ...token.Token) {
 
