@@ -12,9 +12,14 @@ import (
 // DummyScanToken creates a ScanToken function that returns the supplied token
 // elements recursively.
 func DummyScanToken(tokens []token.Token) ScanToken {
+	return dummyScanTokenIndexed(0, tokens)
+}
+
+// dummyScanTokenIndexed creates a ScanToken function that returns the token
+// at the specified index of the specified token slice.
+func dummyScanTokenIndexed(i int, tokens []token.Token) ScanToken {
 
 	size := len(tokens)
-	i := 0
 
 	return func() (t token.Token, st ScanToken, _ ScanErr) {
 
@@ -25,8 +30,8 @@ func DummyScanToken(tokens []token.Token) ScanToken {
 		t = tokens[i]
 		i++
 
-		if size-i > 0 {
-			st = DummyScanToken(tokens)
+		if i < size {
+			st = dummyScanTokenIndexed(i, tokens)
 		}
 
 		return
