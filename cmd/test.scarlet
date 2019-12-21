@@ -6,5 +6,4 @@ END
 
 abc(`:)`, `^_^`)
 
-// NEXT: Implement parser but don't mapping tokens to statements, just map the
-//       starting line number.
+// NEXT: Update grammer and scanner to include all remaining token types.
