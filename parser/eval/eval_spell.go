@@ -2,7 +2,7 @@ package eval
 
 import (
 	"github.com/PaulioRandall/scarlet-go/parser/ctx"
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/token2"
 )
 
 // evalSpell creates an Expr that invokes a spell function when called.

@@ -1,5 +1,9 @@
 package lexor
 
+import (
+	"fmt"
+)
+
 // ScanErr represents an error while scanning.
 type ScanErr interface {
 	error
@@ -12,6 +16,9 @@ type ScanErr interface {
 
 	// Col returns the line where the error occurred
 	Col() int
+
+	// String returns the string representation of the error.
+	String() string
 }
 
 // stdScanErr is the standard ScanErr implementation.
@@ -50,4 +57,16 @@ func (e stdScanErr) Line() int {
 // Col satisfies the ScanErr interface.
 func (e stdScanErr) Col() int {
 	return e.col
+}
+
+// String satisfies the ScanErr interface.
+func (e stdScanErr) String() string {
+
+	s := fmt.Sprintf("%d:%d: %s", e.line, e.col, e.what)
+
+	if e.why != nil {
+		s += fmt.Sprintf("\n\t...caused by: %s", e.why.Error())
+	}
+
+	return s
 }

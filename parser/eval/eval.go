@@ -2,7 +2,7 @@ package eval
 
 import (
 	"github.com/PaulioRandall/scarlet-go/parser/ctx"
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/token2"
 )
 
 // Expr represents an expression that produces a value when evaluated.
@@ -19,6 +19,6 @@ func evalValue(v ctx.Value) Expr {
 // from the context.
 func evalID(t token.Token) Expr {
 	return func(c ctx.Context) (ctx.Value, EvalErr) {
-		return c.Get(t.Value()), nil
+		return c.Get(t.Value), nil
 	}
 }
