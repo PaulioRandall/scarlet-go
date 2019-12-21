@@ -3,11 +3,11 @@ package main
 import (
 	"io/ioutil"
 
-	"github.com/PaulioRandall/scarlet-go/lexor2"
-	"github.com/PaulioRandall/scarlet-go/lexor2/evaluator"
-	"github.com/PaulioRandall/scarlet-go/lexor2/scanner"
-	"github.com/PaulioRandall/scarlet-go/lexor2/strimmer"
-	"github.com/PaulioRandall/scarlet-go/token2"
+	"github.com/PaulioRandall/scarlet-go/lexor"
+	"github.com/PaulioRandall/scarlet-go/lexor/evaluator"
+	"github.com/PaulioRandall/scarlet-go/lexor/scanner"
+	"github.com/PaulioRandall/scarlet-go/lexor/strimmer"
+	"github.com/PaulioRandall/scarlet-go/token"
 )
 
 func main() {

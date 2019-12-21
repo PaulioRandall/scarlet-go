@@ -2,63 +2,71 @@ package lexor
 
 import (
 	"fmt"
-
-	"github.com/PaulioRandall/scarlet-go/token"
 )
 
 // ScanErr represents an error while scanning.
 type ScanErr interface {
-	Error() string
-	Where() token.Snippet
+	error
+
+	// Unwrap returns the underlying error or nil if there isn't one.
 	Unwrap() error
+
+	// Line returns the line where the error occurred
+	Line() int
+
+	// Col returns the line where the error occurred
+	Col() int
+
+	// String returns the string representation of the error.
 	String() string
 }
 
 // stdScanErr is the standard ScanErr implementation.
 type stdScanErr struct {
-	what  string
-	where token.Snippet
-	why   error
+	what string
+	why  error
+	line int
+	col  int
 }
 
-// Error satisfies the Perror interface.
+// NewScanErr returns a new instance of ScanErr.
+func NewScanErr(what string, why error, line, col int) ScanErr {
+	return stdScanErr{
+		what: what,
+		why:  why,
+		line: line,
+		col:  col,
+	}
+}
+
+// Error satisfies the error interface.
 func (e stdScanErr) Error() string {
 	return e.what
 }
 
-// Where satisfies the Perror interface.
-func (e stdScanErr) Where() token.Snippet {
-	return e.where
-}
-
-// Unwrap satisfies the Perror interface.
+// Unwrap satisfies the ScanErr interface.
 func (e stdScanErr) Unwrap() error {
 	return e.why
 }
 
-// String returns a simple string representation of the error.
+// Line satisfies the ScanErr interface.
+func (e stdScanErr) Line() int {
+	return e.line
+}
+
+// Col satisfies the ScanErr interface.
+func (e stdScanErr) Col() int {
+	return e.col
+}
+
+// String satisfies the ScanErr interface.
 func (e stdScanErr) String() string {
-	return fmt.Sprintf("%s at %s", e.what, e.where.String())
-}
 
-// NewScanErr returns a new instance of ScanErr.
-func NewScanErr(what string, line, start, end int) ScanErr {
-	return NewScanErr_2(what, token.NewSnippet(line, start, end))
-}
+	s := fmt.Sprintf("%d:%d: %s", e.line, e.col, e.what)
 
-// NewScanErr_2 returns a new instance of ScanErr.
-func NewScanErr_2(what string, where token.Snippet) stdScanErr {
-	return stdScanErr{
-		what:  what,
-		where: where,
+	if e.why != nil {
+		s += fmt.Sprintf("\n\t...caused by: %s", e.why.Error())
 	}
-}
 
-// WrapScanErr wraps an error in a ScanErr.
-func WrapScanErr(what string, where token.Snippet, why error) ScanErr {
-	return stdScanErr{
-		what:  what,
-		where: where,
-		why:   why,
-	}
+	return s
 }

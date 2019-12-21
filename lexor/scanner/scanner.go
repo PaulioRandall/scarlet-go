@@ -39,17 +39,17 @@ func scan(s *stream) lexor.ScanToken {
 			t, err = s.SliceBy(f)
 
 			if err != nil {
-				e = lexor.WrapScanErr("Scanning error", s.Where(), err)
+				e = lexor.NewScanErr("Scanning error", err, s.line, s.col)
 				return
 			}
 
-			if t != nil {
+			if t != (token.Token{}) {
 				sc = scan(s)
 				return
 			}
 		}
 
-		e = lexor.NewScanErr_2("Unknown token", s.Where())
+		e = lexor.NewScanErr("Unknown token", nil, s.line, s.col)
 		return
 	}
 }

@@ -2,7 +2,7 @@ package eval
 
 import (
 	"github.com/PaulioRandall/scarlet-go/parser/ctx"
-	"github.com/PaulioRandall/scarlet-go/token2"
+	"github.com/PaulioRandall/scarlet-go/token"
 )
 
 // Expr represents an expression that produces a value when evaluated.

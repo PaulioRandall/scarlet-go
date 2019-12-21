@@ -9,21 +9,50 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// DummyScanner is a ScanToken implementation that returns the token elements
-// recursively.
-func DummyScanner(tokens []token.Token) ScanToken {
-	return func() (t token.Token, st ScanToken, _ ScanErr) {
-		size := len(tokens)
+// DummyScanToken creates a ScanToken function that returns the supplied token
+// elements recursively.
+func DummyScanToken(tokens []token.Token) ScanToken {
+	return dummyScanTokenIndexed(0, tokens)
+}
 
-		if size > 0 {
-			t = tokens[0]
+// dummyScanTokenIndexed creates a ScanToken function that returns the token
+// at the specified index of the specified token slice.
+func dummyScanTokenIndexed(i int, tokens []token.Token) ScanToken {
+
+	size := len(tokens)
+
+	return func() (t token.Token, st ScanToken, _ ScanErr) {
+
+		if i >= size {
+			return
 		}
 
-		if size > 1 {
-			st = DummyScanner(tokens[1:])
+		t = tokens[i]
+		i++
+
+		if i < size {
+			st = dummyScanTokenIndexed(i, tokens)
 		}
 
 		return
+	}
+}
+
+// AssertScanErr assert a ScanErr matches another except for the error message.
+func AssertScanErr(t *testing.T, exp ScanErr, act ScanErr) {
+	if exp == nil {
+		assert.Nil(t, act, "Expected a nil ScanErr")
+		return
+	}
+
+	require.NotNil(t, act, "Did not expect a nil ScanErr")
+	assert.Equal(t, exp.Line(), act.Line(), "Wrong line index")
+	assert.Equal(t, exp.Col(), act.Col(), "Wrong column index")
+
+	if exp.Unwrap() == nil {
+		assert.Nil(t, act.Unwrap(), "Did not expected a cause, a wrapped error")
+	} else {
+		assert.NotNil(t, act.Unwrap(), "Expected a cause, a wrapped error")
 	}
 }
 

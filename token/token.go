@@ -1,5 +1,9 @@
 package token
 
+import (
+	"fmt"
+)
+
 // Kind represents a token type.
 type Kind string
 
@@ -22,54 +26,24 @@ const (
 )
 
 // Token represents a grammer token within a source file.
-type Token interface {
-
-	// Kind returns the type of the token.
-	Kind() Kind
-
-	// Value returns the string representing the token in source.
-	Value() string
-
-	// Where returns the token location within the source.
-	Where() Snippet
-}
-
-// tokenImpl is a simple implementation of the Token interface.
-type tokenImpl struct {
-	k Kind
-	v string
-	s Snippet
+type Token struct {
+	Kind  Kind
+	Value string
+	Line  int
+	Col   int
 }
 
 // NewToken creates a new token.
-func NewToken(k Kind, v string, line, start, end int) Token {
-	return tokenImpl{
-		k: k,
-		v: v,
-		s: NewSnippet(line, start, end),
+func NewToken(k Kind, v string, l, c int) Token {
+	return Token{
+		Kind:  k,
+		Value: v,
+		Line:  l,
+		Col:   c,
 	}
 }
 
-// TokenBySnippet creates a new token using a Snippet as the location parameter.
-func TokenBySnippet(k Kind, v string, s Snippet) Token {
-	return tokenImpl{
-		k: k,
-		v: v,
-		s: s,
-	}
-}
-
-// Kind satisfies the Token interface.
-func (t tokenImpl) Kind() Kind {
-	return t.k
-}
-
-// Value satisfies the Token interface.
-func (t tokenImpl) Value() string {
-	return t.v
-}
-
-// Where satisfies the Token interface.
-func (t tokenImpl) Where() Snippet {
-	return t.s
+// String returns a string representation of the token.
+func (t Token) String() string {
+	return fmt.Sprintf(`%d: '%s' (%s)`, t.Line, t.Value, t.Kind)
 }

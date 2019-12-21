@@ -27,11 +27,11 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 
 			t, st, e = st()
 
-			if e != nil || t == nil {
+			if e != nil || t == (token.Token{}) {
 				return
 			}
 
-			if isSignificant(t.Kind()) {
+			if isSignificant(t.Kind) {
 				st = wrap(st)
 				return
 			}

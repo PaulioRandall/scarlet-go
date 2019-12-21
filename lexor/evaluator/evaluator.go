@@ -24,7 +24,7 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 
 		t, st, e = f()
 
-		if e == nil && t != nil {
+		if e == nil && t != (token.Token{}) {
 			t = eval(t)
 			st = wrap(st)
 		}
@@ -35,7 +35,7 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 
 // eval evaluates the value of the token if needed and then returns it.
 func eval(t token.Token) token.Token {
-	if t.Kind() == token.STR_LITERAL {
+	if t.Kind == token.STR_LITERAL {
 		t = evalStr(t)
 	}
 
@@ -45,7 +45,7 @@ func eval(t token.Token) token.Token {
 // evalStr evaluates the value of a string literal by removing the leading and
 // trailing quotes.
 func evalStr(t token.Token) token.Token {
-	s := t.Value()
-	s = s[1 : len(s)-1]
-	return token.TokenBySnippet(t.Kind(), s, t.Where())
+	s := t.Value
+	t.Value = s[1 : len(s)-1]
+	return t
 }

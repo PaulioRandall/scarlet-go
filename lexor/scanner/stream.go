@@ -18,12 +18,7 @@ type stream struct {
 	col   int
 }
 
-// Where returns the current location in the source code.
-func (s *stream) Where() token.Snippet {
-	return token.NewSnippet(s.line, s.col, s.col)
-}
-
-// IsEmpty returns true if there is no more source code to parse.
+// IsEmpty returns true if there are no more terminal characters to parse.
 func (s *stream) IsEmpty() bool {
 	return len(s.runes) == 0
 }
@@ -64,28 +59,27 @@ func (s *stream) checkSize(n int) {
 // one or greater than the number of remaining runes then a panic ensues.
 func (s *stream) tokenise(n int, k token.Kind) token.Token {
 
-	str, start, end := s.slice(n)
-	w := token.NewSnippet(s.line, start, end)
+	str, line, col := s.slice(n)
 
 	if strings.HasSuffix(str, "\n") {
 		s.line++
 		s.col = 0
 	}
 
-	return token.TokenBySnippet(k, str, w)
+	return token.NewToken(k, str, line, col)
 }
 
 // slice slices `n` runes from the front of the source code and updates the
 // column field accordingly. Linefeeds must be sliced using the sliceNewline
 // function.
-func (s *stream) slice(n int) (str string, start int, end int) {
+func (s *stream) slice(n int) (str string, line int, col int) {
 
 	str = string(s.runes[:n])
-	start = s.col
-	end = s.col + n
+	line = s.line
+	col = s.col
 
 	s.runes = s.runes[n:]
-	s.col = end
+	s.col = s.col + n
 
 	return
 }
