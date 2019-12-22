@@ -24,13 +24,14 @@ func scan(s *stream) lexor.ScanToken {
 	return func() (t token.Token, sc lexor.ScanToken, e lexor.ScanErr) {
 
 		fs := []TokenFinder{
-			findNewline,    // 1
-			findSpace,      // 2
-			findComment,    // 3
-			findKeyword,    // 4
-			findId,         // 5
-			findStrLiteral, // 6
-			findSymbol,     // 7
+			findNewline,     // 1
+			findSpace,       // 2
+			findComment,     // 3
+			findKeyword,     // 4
+			findId,          // 5
+			findStrLiteral,  // 6
+			findStrTemplate, // 7
+			findSymbol,      // 8
 		}
 
 		var err error
