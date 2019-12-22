@@ -4,9 +4,6 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/token"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestFindComment_1(t *testing.T) {
@@ -17,33 +14,24 @@ func TestFindComment_1(t *testing.T) {
 func TestFindComment_2(t *testing.T) {
 	// Check it works when a comment is the only input token.
 
-	r := []rune("// Die Hard is a Christmas movie")
-	n, k, e := findComment(r)
-
-	require.Nil(t, e)
-	assert.Equal(t, 32, n)
-	assert.Equal(t, token.COMMENT, k)
+	in := "// Die Hard is a Christmas movie"
+	expN, expK := 32, token.COMMENT
+	tokenFinderTest(t, findComment, in, expN, expK)
 }
 
 func TestFindComment_3(t *testing.T) {
 	// Check it works when there are multiple tokens in the input and a comment is
 	// the first.
 
-	r := []rune("// abc\nefg")
-	n, k, e := findComment(r)
-
-	require.Nil(t, e)
-	assert.Equal(t, 6, n)
-	assert.Equal(t, token.COMMENT, k)
+	in := "// abc\nefg"
+	expN, expK := 6, token.COMMENT
+	tokenFinderTest(t, findComment, in, expN, expK)
 }
 
 func TestFindComment_4(t *testing.T) {
 	// Check 0 and UNDEFINED are returned when the first token is not a comment.
 
-	r := []rune("   ")
-	n, k, e := findComment(r)
-
-	require.Nil(t, e)
-	assert.Equal(t, 0, n)
-	assert.Equal(t, token.UNDEFINED, k)
+	in := "   "
+	expN, expK := 0, token.UNDEFINED
+	tokenFinderTest(t, findComment, in, expN, expK)
 }

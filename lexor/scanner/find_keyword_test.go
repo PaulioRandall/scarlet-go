@@ -4,9 +4,6 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/token"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestFindKeyword_1(t *testing.T) {
@@ -17,33 +14,24 @@ func TestFindKeyword_1(t *testing.T) {
 func TestFindKeyword_2(t *testing.T) {
 	// Check it works when a keyword is the only input token.
 
-	r := []rune("F")
-	n, k, e := findKeyword(r)
-
-	require.Nil(t, e)
-	assert.Equal(t, 1, n)
-	assert.Equal(t, token.FUNC, k)
+	in := "F"
+	expN, expK := 1, token.FUNC
+	tokenFinderTest(t, findKeyword, in, expN, expK)
 }
 
 func TestFindKeyword_3(t *testing.T) {
 	// Check it works when there are multiple tokens in the input and a keyword
 	// is the first.
 
-	r := []rune("F END")
-	n, k, e := findKeyword(r)
-
-	require.Nil(t, e)
-	assert.Equal(t, 1, n)
-	assert.Equal(t, token.FUNC, k)
+	in := "F END"
+	expN, expK := 1, token.FUNC
+	tokenFinderTest(t, findKeyword, in, expN, expK)
 }
 
 func TestFindKeyword_4(t *testing.T) {
 	// Check 0 and UNDEFINED are returned when the first token is not a keyword.
 
-	r := []rune("   ")
-	n, k, e := findKeyword(r)
-
-	require.Nil(t, e)
-	assert.Equal(t, 0, n)
-	assert.Equal(t, token.UNDEFINED, k)
+	in := "   "
+	expN, expK := 0, token.UNDEFINED
+	tokenFinderTest(t, findId, in, expN, expK)
 }
