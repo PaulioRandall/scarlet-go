@@ -24,6 +24,7 @@ const (
 	SPELL        Kind = `SPELL`
 	STR_LITERAL  Kind = `STR_LITERAL`
 	STR_TEMPLATE Kind = `STR_TEMPLATE`
+	NUM_LITERAL  Kind = `NUM_LITERAL`
 )
 
 // Token represents a grammer token within a source file.
