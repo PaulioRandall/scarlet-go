@@ -27,6 +27,20 @@ func TestFindSymbol_2(t *testing.T) {
 	f("{", 1, token.OPEN_LIST)
 	f("}", 1, token.CLOSE_LIST)
 
+	f("+", 1, token.ADD)
+	f("-", 1, token.SUBTRACT)
+	f("/", 1, token.DIVIDE)
+	f("*", 1, token.MULTIPLY)
+	f("%", 1, token.MODULO)
+	f("|", 1, token.OR)
+	f("&", 1, token.AND)
+	f("=", 1, token.EQUAL)
+	f("#", 1, token.NOT_EQUAL)
+	f("<=", 2, token.LT_OR_EQUAL)
+	f(">=", 2, token.GT_OR_EQUAL)
+	f("<", 1, token.LT)
+	f(">", 1, token.GT)
+
 	// When input contains multiple tokens, but the first is a symbol token
 	f(":= 123.456", 2, token.ASSIGN)
 	f("@Abc", 1, token.SPELL)
