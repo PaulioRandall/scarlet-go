@@ -5,6 +5,7 @@ G := (V, T, P, S)
 ## Non-terminals
 
 V := {  
+  COMMENT  
   PROGRAM  
   BLOCK  
   STATEMENT  
@@ -15,12 +16,10 @@ V := {
   FUNC_CALL  
   ASSIGNMENT  
   FUNC  
-  IF  
+  GUARD  
   OPERATION  
   OPERAND  
   BODY  
-  DO_BODY  
-  INLINE_BODY  
   MATCH_BLOCK  
   MATCH_CASE  
   WATCH_BLOCK  
@@ -80,22 +79,21 @@ T := {
 ## Production Rules (WSN)
 
 P := {  
+  COMMENT          := "//" * Any visible unicode character * NEWLINE .  
   PROGRAM          := STATEMENT BLOCK .  
   BLOCK            := { STATEMENT } .  
-  STATEMENT        := ( ASSIGNMENT | INLINE_EXPR | IF | MATCH | WATCH ) NEWLINE .  
+  STATEMENT        := ( ASSIGNMENT | INLINE_EXPR | GUARD | MATCH | WATCH ) NEWLINE .  
   INLINE_STATEMENT := ( ASSIGNMENT | INLINE_EXPR ) NEWLINE .  
   EXPR             := ID_USAGE | INLINE_EXPR .  
   INLINE_EXPR      := LITERAL | FUNC_CALL | SPELL | OPERATION .  
   SPELL            := "@" FUNC_CALL .  
   FUNC_CALL        := ID "(" PARAM_LIST ")" .  
   ASSIGNMENT       := [ "GLOBAL" ] ID_ARRAY ":=" ( LIST | EXPR | FUNC ) .  
-  FUNC             := "F" "(" PARAM_LIST ")" ID_ARRAY BODY .  
-  IF               := "IF" EXPR BODY .  
+  FUNC             := "F" "(" PARAM_LIST [ "->" ID_ARRAY ] ")" BODY .  
+  GUARD            := "[" EXPR "]" BODY .  
   OPERATION        := OPERAND OPERATOR { OPERAND OPERATOR } OPERAND .  
   OPERAND          := [ "~" | "¬" ] ( ID_USAGE | LITERAL | FUNC_CALL | SPELL ) .  
-  BODY             := DO_BODY | INLINE_BODY .  
-  DO_BODY          := "DO" NEWLINE BLOCK "END" .  
-  INLINE_BODY      := "->" INLINE_STATEMENT .  
+  BODY             := INLINE_STATEMENT | ( "DO" NEWLINE BLOCK "END" ) .  
   MATCH_BLOCK      := "MATCH" NEWLINE MATCH_CASE { MATCH_CASE } "END" .  
   MATCH_CASE       := EXPR BODY NEWLINE .  
   WATCH_BLOCK      := "WATCH" ID { "," ID } NEWLINE BLOCK "END" .  
@@ -110,8 +108,8 @@ P := {
   BOOL_OPERATOR    := "|" | "&" .  
   NUM_OPERATOR     := "+" | "-" | "\*" | "/" | "%" .  
   LITERAL          := BOOL | NUMBER | STRING | TEMPLATE.  
-  LIST_ACCESS      := "[" ( ID | INTEGER ) "]" .  
-  LIST             := "[" LIST_ITEMS [ "," [ NEWLINE ] ] "]" .  
+  LIST_ACCESS      := "(" ( ID | INTEGER ) ")" .  
+  LIST             := "{" LIST_ITEMS [ "," [ NEWLINE ] ] "}" .  
   LIST_ITEMS       := EXPR { "," [ NEWLINE ] EXPR } .  
   BOOL             := "TRUE" | "FALSE" .  
   NUMBER           := INTEGER [ "." INTEGER ] .  

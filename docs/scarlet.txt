@@ -2,7 +2,6 @@
 // Keywords:
 // - `GLOBAL`
 // - `F`
-// - `IF`,
 // - `DO`, `MATCH`, `WATCH`
 // - `END`
 // - `TRUE`, `FALSE`
@@ -20,36 +19,50 @@
 // - IGNORE  `_`
 
 // Notes:
-// - LIST []
+// - LIST {}
+// - PARAMETERS ()
 // - STRING LITERAL	``
 // - STRING TEMPALTE	""
 
-GLOBAL divideAndFmt := F(a, b) r, e DO
+GLOBAL divideAndFmt := F(a, b -> r, e) DO
 	WATCH e
-		IF b = 0 -> e := `Can't divide by zero`
+		[b = 0] e := `Can't divide by zero`
 		r := a / b
 		r, e := @FmtReal(r, `.##`)
 	END
 END
 
-SET calc := F(argParser) e DO
+calc := F(argParser -> e) DO
 	WATCH e
-		a, b := argParser()
+		a, b := argParser(@Args())
 		c, e := divideAndFmt(a, b)
 		@Println("{a} / {b} = {c}")
 	END
 END
 
-parseArgs := F() a, b, e DO
-	args := @Args()
-	
+parseArgs := F(args -> a, b, e) DO	
 	WATCH e
-		IF @Len(args) < 3 -> e := `Need at least two number arguments`
-		a, e := @ToReal(args[1])
-		b, e := @ToReal(args[2])
+		[@Len(args) < 3] DO
+			e := `Need at least two number arguments`
+		END
+
+		a, e := @ToReal(args(1))
+		b, e := @ToReal(args(2))
 	END
 END
 
-@Foreach(@Args(), F(_, v, _) -> @Println(v))
+printValues := F(_, v, _) @Println(v)
+@Foreach(@Args(), printValues)
 e := calc(parseArgs)
 @PanicIf(e)
+
+list := {
+	`abc`,
+	3,
+}
+
+// Future stuff
+
+$"ls -la"
+$"ls -la" IN `./other`
+output := $"ls -la"
