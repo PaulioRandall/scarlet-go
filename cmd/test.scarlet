@@ -7,3 +7,4 @@ END
 abc(`:)`, `^_^`)
 
 // NEXT: Update grammer and scanner to include all remaining token types.
+// THEN: Add 1 token buffer struct to lexor

@@ -10,19 +10,20 @@ type Kind string
 const (
 	UNDEFINED Kind = ``
 	// ------------------
-	COMMENT     Kind = `COMMENT`
-	WHITESPACE  Kind = `WHITESPACE`
-	NEWLINE     Kind = `NEWLINE`
-	FUNC        Kind = `FUNC`
-	DO          Kind = `DO`
-	END         Kind = `END`
-	ID          Kind = `ID`
-	ID_DELIM    Kind = `ID_DELIM`
-	ASSIGN      Kind = `ASSIGN`
-	OPEN_PAREN  Kind = `OPEN_PAREN`
-	CLOSE_PAREN Kind = `CLOSE_PAREN`
-	SPELL       Kind = `SPELL`
-	STR_LITERAL Kind = `STR_LITERAL`
+	COMMENT      Kind = `COMMENT`
+	WHITESPACE   Kind = `WHITESPACE`
+	NEWLINE      Kind = `NEWLINE`
+	FUNC         Kind = `FUNC`
+	DO           Kind = `DO`
+	END          Kind = `END`
+	ID           Kind = `ID`
+	ID_DELIM     Kind = `ID_DELIM`
+	ASSIGN       Kind = `ASSIGN`
+	OPEN_PAREN   Kind = `OPEN_PAREN`
+	CLOSE_PAREN  Kind = `CLOSE_PAREN`
+	SPELL        Kind = `SPELL`
+	STR_LITERAL  Kind = `STR_LITERAL`
+	STR_TEMPLATE Kind = `STR_TEMPLATE`
 )
 
 // Token represents a grammer token within a source file.

@@ -13,11 +13,10 @@ func findStrLiteral(r []rune) (_ int, _ token.Kind, e error) {
 
 	for i, ru := range r {
 		switch {
-		case i == 0:
-			if ru == '`' {
-				continue
-			}
+		case i == 0 && ru != '`':
 			return
+		case i == 0:
+			continue
 		case ru == '`':
 			return i + 1, token.STR_LITERAL, nil
 		case ru == '\n':
