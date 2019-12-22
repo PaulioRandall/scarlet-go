@@ -27,6 +27,8 @@ const (
 	NUM_LITERAL  Kind = `NUM_LITERAL`
 	TRUE         Kind = `TRUE`
 	FALSE        Kind = `FALSE`
+	OPEN_LIST    Kind = `OPEN_LIST`
+	CLOSE_LIST   Kind = `CLOSE_LIST`
 )
 
 // Token represents a grammer token within a source file.

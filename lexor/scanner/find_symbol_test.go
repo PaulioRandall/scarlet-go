@@ -24,6 +24,8 @@ func TestFindSymbol_2(t *testing.T) {
 	f(")", 1, token.CLOSE_PAREN)
 	f(",", 1, token.ID_DELIM)
 	f("@", 1, token.SPELL)
+	f("{", 1, token.OPEN_LIST)
+	f("}", 1, token.CLOSE_LIST)
 
 	// When input contains multiple tokens, but the first is a symbol token
 	f(":= 123.456", 2, token.ASSIGN)

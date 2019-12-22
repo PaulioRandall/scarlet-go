@@ -12,6 +12,8 @@ var symbolSet map[string]token.Kind = map[string]token.Kind{
 	")":  token.CLOSE_PAREN,
 	",":  token.ID_DELIM,
 	"@":  token.SPELL,
+	"{":  token.OPEN_LIST,
+	"}":  token.CLOSE_LIST,
 }
 
 // findSymbol satisfies the source.TokenFinder function prototype. It attempts
