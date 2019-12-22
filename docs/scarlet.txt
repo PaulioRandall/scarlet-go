@@ -1,6 +1,6 @@
 
 // Keywords:
-// - `VAR`, `GLOBAL`
+// - `GLOBAL`
 // - `F`
 // - `IF`,
 // - `DO`, `MATCH`, `WATCH`
@@ -20,35 +20,36 @@
 // - IGNORE  `_`
 
 // Notes:
+// - LIST []
 // - STRING LITERAL	``
 // - STRING TEMPALTE	""
 
 GLOBAL divideAndFmt := F(a, b) r, e DO
 	WATCH e
-		IF b = 0 -> VAR e := `Can't divide by zero`
-		VAR r := a / b
-		VAR r, e := @FmtReal(r, `.##`)
+		IF b = 0 -> e := `Can't divide by zero`
+		r := a / b
+		r, e := @FmtReal(r, `.##`)
 	END
 END
 
-VAR calc := F(argParser) e DO
+SET calc := F(argParser) e DO
 	WATCH e
-		VAR a, b := argParser()
-		VAR c, e := divideAndFmt(a, b)
+		a, b := argParser()
+		c, e := divideAndFmt(a, b)
 		@Println("{a} / {b} = {c}")
 	END
 END
 
-VAR parseArgs := F() a, b, e DO
-	VAR args := @Args()
+parseArgs := F() a, b, e DO
+	args := @Args()
 	
 	WATCH e
 		IF @Len(args) < 3 -> e := `Need at least two number arguments`
-		VAR a, e := @ToReal(args[1])
-		VAR b, e := @ToReal(args[2])
+		a, e := @ToReal(args[1])
+		b, e := @ToReal(args[2])
 	END
 END
 
 @Foreach(@Args(), F(_, v, _) -> @Println(v))
-VAR e := calc(parseArgs)
+e := calc(parseArgs)
 @PanicIf(e)
