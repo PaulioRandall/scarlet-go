@@ -36,6 +36,8 @@ func TestFindSymbol_2(t *testing.T) {
 	f("%", 1, token.MODULO)
 	f("|", 1, token.OR)
 	f("&", 1, token.AND)
+	f("~", 1, token.NOT)
+	f("¬", 1, token.NOT)
 	f("=", 1, token.EQUAL)
 	f("#", 1, token.NOT_EQUAL)
 	f("<=", 2, token.LT_OR_EQUAL)

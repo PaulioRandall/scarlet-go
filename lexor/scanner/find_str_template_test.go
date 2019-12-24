@@ -14,8 +14,8 @@ func TestFindStrTemplate_1(t *testing.T) {
 func TestFindStrTemplate_2(t *testing.T) {
 	// Check it works when a string template is the only input token.
 
-	in := `"abc @~\""`
-	expN, expK := 10, token.STR_TEMPLATE
+	in := `"abc \n@~\""`
+	expN, expK := 12, token.STR_TEMPLATE
 	tokenFinderTest(t, findStrTemplate, in, expN, expK)
 }
 

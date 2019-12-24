@@ -41,6 +41,7 @@ const (
 	MODULO       Kind = `MODULO`
 	OR           Kind = `OR`
 	AND          Kind = `AND`
+	NOT          Kind = `NOT`
 	EQUAL        Kind = `EQUAL`
 	NOT_EQUAL    Kind = `NOT_EQUAL`
 	LT           Kind = `LT`

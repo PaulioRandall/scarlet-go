@@ -34,10 +34,12 @@ func findSymbol(r []rune) (_ int, _ token.Kind, _ error) {
 		sym{"%", 1, token.MODULO},
 		sym{"|", 1, token.OR},
 		sym{"&", 1, token.AND},
+		sym{"~", 1, token.NOT},
+		sym{"¬", 1, token.NOT},
 		sym{"=", 1, token.EQUAL},
 		sym{"#", 1, token.NOT_EQUAL},
 		sym{"<=", 2, token.LT_OR_EQUAL}, // Order matters! Must be before `<`
-		sym{">=", 2, token.GT_OR_EQUAL},
+		sym{">=", 2, token.GT_OR_EQUAL}, // Order matters! Must be before `>`
 		sym{"<", 1, token.LT},
 		sym{">", 1, token.GT},
 	}

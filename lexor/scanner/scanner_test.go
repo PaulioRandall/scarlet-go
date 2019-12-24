@@ -57,7 +57,7 @@ func TestScan_4(t *testing.T) {
 	// Check an error occurrs when the input contains invalid tokens.
 
 	scanErrTest(t,
-		New("abc   ~~~"),
+		New("abc   £££"),
 		2,
 		lexor.NewScanErr("", nil, 0, 6),
 	)
