@@ -15,6 +15,8 @@ const (
 	NEWLINE      Kind = `NEWLINE`
 	FUNC         Kind = `FUNC`
 	DO           Kind = `DO`
+	MATCH        Kind = `MATCH`
+	WATCH        Kind = `WATCH`
 	END          Kind = `END`
 	ID           Kind = `ID`
 	ID_DELIM     Kind = `ID_DELIM`

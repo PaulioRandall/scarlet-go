@@ -42,6 +42,8 @@ func kindOfKeyword(s string) token.Kind {
 	ks := map[string]token.Kind{
 		`F`:     token.FUNC,
 		`DO`:    token.DO,
+		`WATCH`: token.WATCH,
+		`MATCH`: token.MATCH,
 		`END`:   token.END,
 		`TRUE`:  token.TRUE,
 		`FALSE`: token.FALSE,
