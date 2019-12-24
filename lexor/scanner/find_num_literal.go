@@ -19,19 +19,17 @@ func findNumLiteral(r []rune) (_ int, _ token.Kind, e error) {
 		return
 	}
 
-	if n == size || r[n] != '.' {
-		goto FOUND
+	if n < size && r[n] == '.' {
+
+		n++ // Decimal point
+		n += countDigits(r, size, n)
+
+		if n == 0 {
+			e = errors.New("Expected digit after decimal point")
+			return
+		}
 	}
 
-	n++ // Decimal point
-	n += countDigits(r, size, n)
-
-	if n == 0 {
-		e = errors.New("Expected digit after decimal point")
-		return
-	}
-
-FOUND:
 	return n, token.NUM_LITERAL, nil
 }
 

@@ -8,15 +8,19 @@ import (
 
 // findSpace satisfies the source.TokenFinder function prototype. It attempts
 // to find whitespace or a newline token.
-func findSpace(r []rune) (n int, k token.Kind, _ error) {
+func findSpace(r []rune) (n int, _ token.Kind, _ error) {
 
 	prev := rune(0)
 
+	if len(r) == 0 {
+		goto NOT_SPACE
+	}
+
 	for _, ru := range r {
 		switch {
-		case n == 0 && ru == '\n':
+		case n == 0 && ru == '\n': // First rune only
 			goto FOUND_NEWLINE
-		case n == 1 && prev == '\r' && ru == '\n':
+		case n == 1 && prev == '\r' && ru == '\n': // Second rune only
 			goto FOUND_NEWLINE
 		case ru == '\n':
 			if prev == '\r' {
@@ -33,19 +37,12 @@ func findSpace(r []rune) (n int, k token.Kind, _ error) {
 		}
 	}
 
-	if n == 0 {
-		goto NOT_SPACE
-	}
-
 FOUND_WHITESPACE:
-	k = token.WHITESPACE
-	return
+	return n, token.WHITESPACE, nil
 
 FOUND_NEWLINE:
-	n++
-	k = token.NEWLINE
-	return
+	return n + 1, token.NEWLINE, nil
 
 NOT_SPACE:
-	return
+	return 0, token.UNDEFINED, nil
 }
