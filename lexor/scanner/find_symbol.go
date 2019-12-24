@@ -18,9 +18,11 @@ func findSymbol(r []rune) (_ int, _ token.Kind, _ error) {
 
 	symbols := []sym{
 		sym{":=", 2, token.ASSIGN},
-		sym{"->", 2, token.RETURNS},
+		sym{"->", 2, token.RETURNS}, // Order matters! Must be before `-`
 		sym{"(", 1, token.OPEN_PAREN},
 		sym{")", 1, token.CLOSE_PAREN},
+		sym{"[", 1, token.OPEN_GUARD},
+		sym{"]", 1, token.CLOSE_GUARD},
 		sym{",", 1, token.ID_DELIM},
 		sym{"@", 1, token.SPELL},
 		sym{"{", 1, token.OPEN_LIST},
@@ -34,7 +36,7 @@ func findSymbol(r []rune) (_ int, _ token.Kind, _ error) {
 		sym{"&", 1, token.AND},
 		sym{"=", 1, token.EQUAL},
 		sym{"#", 1, token.NOT_EQUAL},
-		sym{"<=", 2, token.LT_OR_EQUAL},
+		sym{"<=", 2, token.LT_OR_EQUAL}, // Order matters! Must be before `<`
 		sym{">=", 2, token.GT_OR_EQUAL},
 		sym{"<", 1, token.LT},
 		sym{">", 1, token.GT},

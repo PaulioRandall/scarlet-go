@@ -23,6 +23,8 @@ func TestFindSymbol_2(t *testing.T) {
 	f("->", 2, token.RETURNS)
 	f("(", 1, token.OPEN_PAREN)
 	f(")", 1, token.CLOSE_PAREN)
+	f("[", 1, token.OPEN_GUARD)
+	f("]", 1, token.CLOSE_GUARD)
 	f(",", 1, token.ID_DELIM)
 	f("@", 1, token.SPELL)
 	f("{", 1, token.OPEN_LIST)
