@@ -29,6 +29,31 @@ func TestFindSpace_3(t *testing.T) {
 }
 
 func TestFindSpace_4(t *testing.T) {
+	// Check it works when `\n` is the only input token.
+
+	in := "\n"
+	expN, expK := 1, token.NEWLINE
+	tokenFinderTest(t, findSpace, in, expN, expK)
+}
+
+func TestFindSpace_5(t *testing.T) {
+	// Check it works when `\r\n` is the only input token.
+
+	in := "\r\n"
+	expN, expK := 2, token.NEWLINE
+	tokenFinderTest(t, findSpace, in, expN, expK)
+}
+
+func TestFindSpace_6(t *testing.T) {
+	// Check it works when there are multiple tokens in the input and a newline
+	// is the first.
+
+	in := "\r\nabc"
+	expN, expK := 2, token.NEWLINE
+	tokenFinderTest(t, findSpace, in, expN, expK)
+}
+
+func TestFindSpace_7(t *testing.T) {
 	// Check 0 and UNDEFINED are returned when the first token is not whitespace.
 
 	in := "abc"
