@@ -1,6 +1,7 @@
 
 GLOBAL abc := F(x, y -> z, e) DO
   @Println(x)
+  e := _
   z := y
 END
 

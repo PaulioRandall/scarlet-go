@@ -44,6 +44,7 @@ func TestFindSymbol_2(t *testing.T) {
 	f(">=", 2, token.GT_OR_EQUAL)
 	f("<", 1, token.LT)
 	f(">", 1, token.GT)
+	f("_", 1, token.VOID)
 
 	// When input contains multiple tokens, but the first is a symbol token
 	f(":= 123.456", 2, token.ASSIGN)

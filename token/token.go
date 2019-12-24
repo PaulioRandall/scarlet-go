@@ -49,6 +49,7 @@ const (
 	GT           Kind = `GT`
 	LT_OR_EQUAL  Kind = `LT_OR_EQUAL`
 	GT_OR_EQUAL  Kind = `GT_OR_EQUAL`
+	VOID         Kind = `VOID`
 )
 
 // Token represents a grammer token within a source file.

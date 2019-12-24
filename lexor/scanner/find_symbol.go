@@ -42,6 +42,7 @@ func findSymbol(r []rune) (_ int, _ token.Kind, _ error) {
 		sym{">=", 2, token.GT_OR_EQUAL}, // Order matters! Must be before `>`
 		sym{"<", 1, token.LT},
 		sym{">", 1, token.GT},
+		sym{"_", 1, token.VOID},
 	}
 
 	src := string(r)
