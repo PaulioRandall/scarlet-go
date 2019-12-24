@@ -19,6 +19,7 @@ const (
 	ID           Kind = `ID`
 	ID_DELIM     Kind = `ID_DELIM`
 	ASSIGN       Kind = `ASSIGN`
+	RETURNS      Kind = `RETURNS`
 	OPEN_PAREN   Kind = `OPEN_PAREN`
 	CLOSE_PAREN  Kind = `CLOSE_PAREN`
 	SPELL        Kind = `SPELL`

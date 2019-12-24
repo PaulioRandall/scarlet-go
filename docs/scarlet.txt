@@ -35,12 +35,12 @@ END
 calc := F(argParser -> e) DO
 	WATCH e
 		a, b := argParser(@Args())
-		c, e := divideAndFmt(a, b)
-		@Println("{a} / {b} = {c}")
+		r, e := divideAndFmt(a, b)
+		@Println("{a} / {b} = {r}")
 	END
 END
 
-parseArgs := F(args -> a, b, e) DO	
+parseArgs := F(args -> a, b, e) DO
 	WATCH e
 		[@Len(args) < 3] DO
 			e := `Need at least two number arguments`

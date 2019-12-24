@@ -18,6 +18,7 @@ func findSymbol(r []rune) (_ int, _ token.Kind, _ error) {
 
 	symbols := []sym{
 		sym{":=", 2, token.ASSIGN},
+		sym{"->", 2, token.RETURNS},
 		sym{"(", 1, token.OPEN_PAREN},
 		sym{")", 1, token.CLOSE_PAREN},
 		sym{",", 1, token.ID_DELIM},

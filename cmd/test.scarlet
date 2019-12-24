@@ -1,5 +1,5 @@
 
-abc := F(x, y) z, e DO
+abc := F(x, y -> z, e) DO
   @Println(x)
   z := y
 END
@@ -7,4 +7,6 @@ END
 abc(`:)`, `^_^`)
 
 // NEXT: Update grammer and scanner to include all remaining token types.
-// THEN: Add 1-token buffer struct to lexor
+// THEN: Merge strimmer into evaluator.
+// THEN: Update evaluator to strip ends from string templates.
+// THEN: Add 1-token buffer struct to lexor.

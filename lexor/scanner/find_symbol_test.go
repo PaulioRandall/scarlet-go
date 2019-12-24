@@ -20,13 +20,13 @@ func TestFindSymbol_2(t *testing.T) {
 
 	// When input contains only one token, a symbol token
 	f(":=", 2, token.ASSIGN)
+	f("->", 2, token.RETURNS)
 	f("(", 1, token.OPEN_PAREN)
 	f(")", 1, token.CLOSE_PAREN)
 	f(",", 1, token.ID_DELIM)
 	f("@", 1, token.SPELL)
 	f("{", 1, token.OPEN_LIST)
 	f("}", 1, token.CLOSE_LIST)
-
 	f("+", 1, token.ADD)
 	f("-", 1, token.SUBTRACT)
 	f("/", 1, token.DIVIDE)
