@@ -14,6 +14,7 @@ func TestFindKeyword_1(t *testing.T) {
 func TestFindKeyword_2(t *testing.T) {
 	// Check it works when a keyword is the only input token.
 
+	tokenFinderTest(t, findKeyword, "GLOBAL", 6, token.GLOBAL)
 	tokenFinderTest(t, findKeyword, "F", 1, token.FUNC)
 	tokenFinderTest(t, findKeyword, "DO", 2, token.DO)
 	tokenFinderTest(t, findKeyword, "WATCH", 5, token.WATCH)

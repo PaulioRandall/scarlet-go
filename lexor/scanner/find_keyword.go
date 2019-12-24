@@ -40,13 +40,14 @@ func checkIfKeyword(r []rune, n int) (_ int, k token.Kind) {
 func kindOfKeyword(s string) token.Kind {
 
 	ks := map[string]token.Kind{
-		`F`:     token.FUNC,
-		`DO`:    token.DO,
-		`WATCH`: token.WATCH,
-		`MATCH`: token.MATCH,
-		`END`:   token.END,
-		`TRUE`:  token.TRUE,
-		`FALSE`: token.FALSE,
+		`GLOBAL`: token.GLOBAL,
+		`F`:      token.FUNC,
+		`DO`:     token.DO,
+		`WATCH`:  token.WATCH,
+		`MATCH`:  token.MATCH,
+		`END`:    token.END,
+		`TRUE`:   token.TRUE,
+		`FALSE`:  token.FALSE,
 	}
 
 	for k, v := range ks {

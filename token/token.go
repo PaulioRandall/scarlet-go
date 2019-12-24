@@ -13,6 +13,7 @@ const (
 	COMMENT      Kind = `COMMENT`
 	WHITESPACE   Kind = `WHITESPACE`
 	NEWLINE      Kind = `NEWLINE`
+	GLOBAL       Kind = `GLOBAL`
 	FUNC         Kind = `FUNC`
 	DO           Kind = `DO`
 	MATCH        Kind = `MATCH`
