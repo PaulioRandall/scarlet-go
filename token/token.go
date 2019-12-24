@@ -27,14 +27,14 @@ const (
 	CLOSE_PAREN  Kind = `CLOSE_PAREN`
 	OPEN_GUARD   Kind = `OPEN_GUARD`
 	CLOSE_GUARD  Kind = `CLOSE_GUARD`
+	OPEN_LIST    Kind = `OPEN_LIST`
+	CLOSE_LIST   Kind = `CLOSE_LIST`
 	SPELL        Kind = `SPELL`
 	STR_LITERAL  Kind = `STR_LITERAL`
 	STR_TEMPLATE Kind = `STR_TEMPLATE`
 	NUM_LITERAL  Kind = `NUM_LITERAL`
 	TRUE         Kind = `TRUE`
 	FALSE        Kind = `FALSE`
-	OPEN_LIST    Kind = `OPEN_LIST`
-	CLOSE_LIST   Kind = `CLOSE_LIST`
 	ADD          Kind = `ADD`
 	SUBTRACT     Kind = `SUBTRACT`
 	DIVIDE       Kind = `DIVIDE`

@@ -1,29 +1,4 @@
 
-// Keywords:
-// - `GLOBAL`
-// - `F`
-// - `DO`, `MATCH`, `WATCH`
-// - `END`
-// - `TRUE`, `FALSE`
-
-// Operators:
-// - ASSIGNMENT				`:=`
-// - EQUALS, NOT EQUALS			`=`, `#`
-// - GT, LT, GT_EQ, LT_EQ		`>`, `<`, `>=`, `<=`
-// - ADD, SUBTRACT			`+`, `-`
-// - MULTIPLY, DIVIDE			`*`, `/`
-// - MODULO				`%`
-// - NOT				`~`, `¬`
-// - AND, OR				`&`, `|`
-// - INLINE DO `->`
-// - IGNORE  `_`
-
-// Notes:
-// - LIST {}
-// - PARAMETERS ()
-// - STRING LITERAL	``
-// - STRING TEMPALTE	""
-
 GLOBAL divideAndFmt := F(a, b -> r, e) DO
 	WATCH e
 		[b = 0] e := `Can't divide by zero`
@@ -56,13 +31,24 @@ printValues := F(_, v, _) @Println(v)
 e := calc(parseArgs)
 @PanicIf(e)
 
-list := {
-	`abc`,
-	3,
-}
+list := { `abc`, 3 }
 
 // Future stuff
 
-$"ls -la"
-$"ls -la" IN `./other`
-output := $"ls -la"
+// Quick command line calls
+$"ls -la"              // Execute a terminal process
+output := $"ls -la"    // Return output as a list of strings
+$"ls -la" IN `./other` // Execute within a specified folder
+
+// Pairs
+p := a: b       // Pair together `a` and `b` as KEY and VALUE
+key, val := p   // Get the key and value
+key, _ := p     // Get the key
+_, val := p     // Get the value
+map := {        // Combining lists and pairs produces a map
+	`a`: `alpha`
+	`b`: `beta`
+	`c`: `charlie`
+}
+val := map(`b`) // Returns the value for the key `b`
+
