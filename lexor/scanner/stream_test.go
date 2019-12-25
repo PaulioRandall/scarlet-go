@@ -24,6 +24,19 @@ func tokenFinderTest(
 	assert.Equal(t, expK, k)
 }
 
+func tokenFinderErrTest(
+	t *testing.T,
+	f TokenFinder,
+	in string,
+) {
+
+	n, k, e := f([]rune(in))
+
+	require.NotNil(t, e, "Expected error")
+	assert.Empty(t, n, "Expected `n` to be 0")
+	assert.Empty(t, k, "Expected token.UNDEFINED")
+}
+
 func TestStream_SliceBy_1(t *testing.T) {
 	// Typicial usage.
 

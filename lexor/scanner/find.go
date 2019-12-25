@@ -100,11 +100,13 @@ func findNumLiteral(r []rune) (_ int, _ token.Kind, e error) {
 	if n < size && r[n] == '.' {
 
 		n++ // Decimal point
-		n += countDigits(r, size, n)
+		d := countDigits(r, size, n)
 
-		if n == 0 {
+		if d == 0 {
 			e = errors.New("Expected digit after decimal point")
 			return
+		} else {
+			n += d
 		}
 	}
 
@@ -166,4 +168,55 @@ func keywordOrID(r []rune) token.Kind {
 	}
 
 	return token.ID
+}
+
+// findStrLiteral satisfies the source.TokenFinder function prototype. It
+// attempts to match the next token to the string literal kind returning its
+// length and kind if matched.
+func findStrLiteral(r []rune) (_ int, _ token.Kind, e error) {
+
+	for i, ru := range r {
+		switch {
+		case i == 0 && ru != '`':
+			return
+		case i == 0:
+			continue
+		case ru == '`':
+			return i + 1, token.STR_LITERAL, nil
+		case ru == '\n':
+			goto ERROR
+		}
+	}
+
+ERROR:
+	e = errors.New("Unterminated string literal")
+	return
+}
+
+// findStrTemplate satisfies the source.TokenFinder function prototype. It
+// attempts to match the next token to the string template kind returning its
+// length and kind if matched.
+func findStrTemplate(r []rune) (_ int, _ token.Kind, e error) {
+
+	prev := rune(0)
+
+	for i, ru := range r {
+
+		switch {
+		case i == 0 && ru != '"':
+			return
+		case i == 0 && ru == '"':
+			break
+		case prev != '\\' && ru == '"':
+			return i + 1, token.STR_TEMPLATE, nil
+		case ru == '\n':
+			goto ERROR
+		}
+
+		prev = ru
+	}
+
+ERROR:
+	e = errors.New("Unterminated string template")
+	return
 }
