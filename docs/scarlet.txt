@@ -50,5 +50,5 @@ map := {        // Combining lists and pairs produces a map
 	`b`: `beta`
 	`c`: `charlie`
 }
-val := map(`b`) // Returns the value for the key `b`
+i, v := @Search(list, `b`) // Finds the specified pair searching on the key
 
