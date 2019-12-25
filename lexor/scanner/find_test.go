@@ -10,6 +10,8 @@ func TestFind__1(t *testing.T) {
 	// Check the find... functions are a type of lexor.TokenFinder.
 	var _ TokenFinder = findComment
 	var _ TokenFinder = findSpace
+	var _ TokenFinder = findNumLiteral
+	var _ TokenFinder = findWord
 }
 
 func TestFind__2(t *testing.T) {
@@ -25,6 +27,17 @@ func TestFind__2(t *testing.T) {
 	tokenFinderTest(t, findSpace, " \t\v\f", 4, token.WHITESPACE)
 	tokenFinderTest(t, findSpace, "\n", 1, token.NEWLINE)
 	tokenFinderTest(t, findSpace, "\r\n", 2, token.NEWLINE)
+	tokenFinderTest(t, findNumLiteral, "123", 3, token.NUM_LITERAL)
+	tokenFinderTest(t, findNumLiteral, "123.456", 7, token.NUM_LITERAL)
+	tokenFinderTest(t, findWord, "GLOBAL", 6, token.GLOBAL)
+	tokenFinderTest(t, findWord, "F", 1, token.FUNC)
+	tokenFinderTest(t, findWord, "DO", 2, token.DO)
+	tokenFinderTest(t, findWord, "WATCH", 5, token.WATCH)
+	tokenFinderTest(t, findWord, "MATCH", 5, token.MATCH)
+	tokenFinderTest(t, findWord, "END", 3, token.END)
+	tokenFinderTest(t, findWord, "TRUE", 4, token.TRUE)
+	tokenFinderTest(t, findWord, "FALSE", 5, token.FALSE)
+	tokenFinderTest(t, findWord, "an_identifier", 13, token.ID)
 }
 
 func TestFind__3(t *testing.T) {
@@ -41,11 +54,16 @@ func TestFind__3(t *testing.T) {
 	tokenFinderTest(t, findSpace, "  \b", 2, token.WHITESPACE)
 	tokenFinderTest(t, findSpace, "\nabc", 1, token.NEWLINE)
 	tokenFinderTest(t, findSpace, "\r\nabc", 2, token.NEWLINE)
+	tokenFinderTest(t, findNumLiteral, "123.456abc", 7, token.NUM_LITERAL)
+	tokenFinderTest(t, findWord, "F()", 1, token.FUNC)
 }
 
 func TestFind__4(t *testing.T) {
 
-	// Check 0 and UNDEFINED are returned when the first token is not a comment.
+	// Check 0 and UNDEFINED are returned when the first token is not a the
+	// token under test.
 	tokenFinderTest(t, findComment, "   // abc", 0, token.UNDEFINED)
 	tokenFinderTest(t, findSpace, "abc   ", 0, token.UNDEFINED)
+	tokenFinderTest(t, findNumLiteral, "   123", 0, token.UNDEFINED)
+	tokenFinderTest(t, findWord, "   F", 0, token.UNDEFINED)
 }
