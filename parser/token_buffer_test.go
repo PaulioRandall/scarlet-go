@@ -30,15 +30,15 @@ func TestTokenBuffer_2(t *testing.T) {
 		token.NewToken(token.ID, "abc", 0, 0),
 		token.NewToken(token.NEWLINE, "\n", 0, 3),
 		token.NewToken(token.STR_LITERAL, "`efg`", 1, 3),
-		token.NewToken(token.STR_TEMPLATE, `"hij"`, 1, 6),
 		token.Token{},
 	}
 
 	tb := NewTokenBuffer(lexor.DummyScanToken(stream))
 
-	for i := 0; i < len(stream); i++ {
-		doTestTokenBuffer(t, tb, stream[i])
-	}
+	doTestTokenBuffer(t, tb, stream[0])
+	doTestTokenBuffer(t, tb, stream[1])
+	doTestTokenBuffer(t, tb, stream[2])
+	doTestTokenBuffer(t, tb, stream[3])
 
 	doTestTokenBufferIsEmpty(t, tb)
 }
