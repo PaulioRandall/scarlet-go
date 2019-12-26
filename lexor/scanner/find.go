@@ -183,14 +183,14 @@ ERROR:
 func findWord(r []rune) (n int, k token.Kind, _ error) {
 
 	for _, ru := range r {
-		if !unicode.IsLetter(ru) && ru != '_' {
+		if ru != '_' && !unicode.IsLetter(ru) {
 			break
 		}
 
 		n++
 	}
 
-	if n > 0 {
+	if n > 1 || (n == 1 && r[0] != '_') {
 		k = keywordOrID(r[:n])
 	}
 

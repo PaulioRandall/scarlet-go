@@ -54,6 +54,17 @@ func TestScan_3(t *testing.T) {
 }
 
 func TestScan_4(t *testing.T) {
+	// Check it works when the input contains multiple tokens.
+
+	lexor.ScanTokenTest(t,
+		New("a:=_"),
+		token.NewToken(token.ID, "a", 0, 0),
+		token.NewToken(token.ASSIGN, ":=", 0, 1),
+		token.NewToken(token.VOID, "_", 0, 3),
+	)
+}
+
+func TestScan_5(t *testing.T) {
 	// Check an error occurrs when the input contains invalid tokens.
 
 	scanErrTest(t,

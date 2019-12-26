@@ -7,6 +7,4 @@ END
 
 abc(`:)`, `^_^`)
 
-// NEXT: Merge strimmer into evaluator.
-// THEN: Update evaluator to strip ends from string templates.
-// THEN: Add 1-token buffer struct to lexor.
+// NEXT: Add token buffer struct to parser.
