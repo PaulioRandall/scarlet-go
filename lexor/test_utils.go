@@ -76,10 +76,11 @@ func ScanTokenTest(t *testing.T, f ScanToken, exps ...token.Token) {
 
 		if i < size {
 			assert.Equal(t, exps[i], tok, "Token[%d]", i)
+		} else {
+			require.Equal(t, size, i,
+				"Expected %d tokens but at index %d I found: ", size, i, tok.String())
 		}
 	}
-
-	assert.Equal(t, size, i, "Expected %d tokens but got %d", size, i)
 }
 
 // ScanTokenErrTest performs a test that the ScanToken implemention returns the

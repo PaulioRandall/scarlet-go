@@ -2,6 +2,7 @@ package token
 
 import (
 	"fmt"
+	"strconv"
 )
 
 // Kind represents a token type.
@@ -72,5 +73,6 @@ func NewToken(k Kind, v string, l, c int) Token {
 
 // String returns a string representation of the token.
 func (t Token) String() string {
-	return fmt.Sprintf(`%d: '%s' (%s)`, t.Line, t.Value, t.Kind)
+	s := strconv.QuoteToGraphic(t.Value)
+	return fmt.Sprintf(`%d: '%s' (%s)`, t.Line, s, t.Kind)
 }

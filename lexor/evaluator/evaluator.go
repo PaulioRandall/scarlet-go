@@ -1,5 +1,6 @@
-// evaluator parses the value of certain tokens, i.e. removing quotes from
-// string literals. It wraps another ScanToken function.
+// evaluator performs evaluation on tokens obtained via an underlying
+// ScanToken function, i.e. removing insignificant tokens, quotes from string
+// literals, ect.
 package evaluator
 
 import (
@@ -7,26 +8,43 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// New makes a new evaluator function.
+// New makes a new evaluator function that wraps the specified ScanToken
+// function.
 func New(src lexor.ScanToken) lexor.ScanToken {
 	return wrap(src)
 }
 
-// wrap wraps a ScanToken with one that evaluates the token before being
-// returned.
+// wrap wraps a ScanToken with one that performs evaluation. The underlying
+// ScanToken function maybe called multiple times before a value is returned.
 func wrap(f lexor.ScanToken) lexor.ScanToken {
 
 	if f == nil {
 		return nil
 	}
 
-	return func() (t token.Token, st lexor.ScanToken, e lexor.ScanErr) {
+	return func() (_ token.Token, _ lexor.ScanToken, e lexor.ScanErr) {
 
-		t, st, e = f()
+		var t token.Token
+		var st lexor.ScanToken
 
-		if e == nil && t != (token.Token{}) {
-			t = eval(t)
-			st = wrap(st)
+		for st = f; st != nil; {
+
+			t, st, e = f()
+
+			switch {
+			case e != nil:
+				return
+			case t == (token.Token{}):
+				e = lexor.NewScanErr(
+					"SANITY CHECK: Unexpected EMPTY token", nil, 0, 0)
+				return
+			case t.Kind == token.UNDEFINED:
+				e = lexor.NewScanErr(
+					"SANITY CHECK: Unexpected UNDEFINED token", nil, 0, 0)
+				return
+			case eval(&t):
+				return t, wrap(st), nil
+			}
 		}
 
 		return
@@ -34,18 +52,20 @@ func wrap(f lexor.ScanToken) lexor.ScanToken {
 }
 
 // eval evaluates the value of the token if needed and then returns it.
-func eval(t token.Token) token.Token {
-	if t.Kind == token.STR_LITERAL {
-		t = evalStr(t)
+func eval(t *token.Token) bool {
+	switch t.Kind {
+	case token.WHITESPACE, token.COMMENT:
+		return false
+	case token.STR_LITERAL, token.STR_TEMPLATE:
+		trimStrQuotes(t)
 	}
 
-	return t
+	return true
 }
 
-// evalStr evaluates the value of a string literal by removing the leading and
-// trailing quotes.
-func evalStr(t token.Token) token.Token {
+// trimStrQuotes removes the leading and trailing quotes from string literals
+// and templates.
+func trimStrQuotes(t *token.Token) {
 	s := t.Value
 	t.Value = s[1 : len(s)-1]
-	return t
 }

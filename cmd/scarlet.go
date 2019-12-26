@@ -6,7 +6,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/lexor"
 	"github.com/PaulioRandall/scarlet-go/lexor/evaluator"
 	"github.com/PaulioRandall/scarlet-go/lexor/scanner"
-	"github.com/PaulioRandall/scarlet-go/lexor/strimmer"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -27,7 +26,6 @@ func run(src string) {
 	var e lexor.ScanErr
 
 	st := scanner.New(src)
-	st = strimmer.New(st)
 	st = evaluator.New(st)
 
 	for st != nil {
@@ -37,7 +35,9 @@ func run(src string) {
 			panic(e.String())
 		}
 
-		printToken(t)
+		if st != nil && t != (token.Token{}) {
+			printToken(t)
+		}
 	}
 }
 
