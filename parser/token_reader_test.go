@@ -6,24 +6,22 @@ import (
 	"github.com/PaulioRandall/scarlet-go/lexor"
 	"github.com/PaulioRandall/scarlet-go/token"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestTokenReader_Peek_1(t *testing.T) {
-	// Test single token
 
 	stream := []token.Token{
 		token.NewToken(token.ID, "abc", 0, 0),
 		token.NewToken(token.ID, "efg", 0, 3),
 	}
 
-	tb := NewTokenReader(lexor.DummyScanToken(stream))
+	tr := NewTokenReader(lexor.DummyScanToken(stream))
 
 	doTest := func(exp token.Token) {
-		act := tb.Peek()
+		act := tr.Peek()
 		require.Equal(t, exp, act)
-		require.Nil(t, tb.Err())
+		require.Nil(t, tr.Err())
 	}
 
 	doTest(stream[0])
@@ -31,7 +29,6 @@ func TestTokenReader_Peek_1(t *testing.T) {
 }
 
 func TestTokenReader_Read_1(t *testing.T) {
-	// Test multiple tokens
 
 	stream := []token.Token{
 		token.NewToken(token.ID, "abc", 0, 0),
@@ -40,13 +37,13 @@ func TestTokenReader_Read_1(t *testing.T) {
 		token.Token{},
 	}
 
-	tb := NewTokenReader(lexor.DummyScanToken(stream))
+	tr := NewTokenReader(lexor.DummyScanToken(stream))
 
 	doTest := func(expMore bool, exp token.Token) {
-		assert.Equal(t, expMore, tb.HasMore())
-		act := tb.Read()
+		require.Equal(t, expMore, tr.HasMore())
+		act := tr.Read()
 		require.Equal(t, exp, act)
-		require.Nil(t, tb.Err())
+		require.Nil(t, tr.Err())
 	}
 
 	doTest(true, stream[0])

@@ -21,40 +21,40 @@ func NewTokenReader(st lexor.ScanToken) *TokenReader {
 }
 
 // Err returns the scanning error if one has occurred.
-func (tb *TokenReader) Err() lexor.ScanErr {
-	return tb.err
+func (tr *TokenReader) Err() lexor.ScanErr {
+	return tr.err
 }
 
 // HasMore returns true if there are tokens remaining to be read.
-func (tb *TokenReader) HasMore() bool {
-	return tb.buffer != nil || tb.scanner != nil
+func (tr *TokenReader) HasMore() bool {
+	return tr.buffer != nil || tr.scanner != nil
 }
 
 // Read returns the next token in the stream.
-func (tb *TokenReader) Read() (t token.Token) {
+func (tr *TokenReader) Read() (t token.Token) {
 
-	if tb.buffer == nil {
-		t = tb.Peek()
+	if tr.buffer == nil {
+		t = tr.Peek()
 	}
 
-	tb.buffer = nil
+	tr.buffer = nil
 	return t
 }
 
 // Peek returns the next token without iterating to the one after.
-func (tb *TokenReader) Peek() token.Token {
+func (tr *TokenReader) Peek() token.Token {
 
 	EMPTY_TOKEN := token.Token{}
 
 	switch {
-	case tb.err != nil:
+	case tr.err != nil:
 		return EMPTY_TOKEN
-	case tb.buffer != nil:
-		return *tb.buffer
-	case tb.scanner == nil:
+	case tr.buffer != nil:
+		return *tr.buffer
+	case tr.scanner == nil:
 		return EMPTY_TOKEN
-	case tb.buff():
-		return *tb.buffer
+	case tr.buff():
+		return *tr.buffer
 	}
 
 	return EMPTY_TOKEN
@@ -63,17 +63,17 @@ func (tb *TokenReader) Peek() token.Token {
 // buff scans in another token and points the buffer to it. Assumes that the
 // current buffer content is no longer needed and the scanner contains at least
 // one more token.
-func (tb *TokenReader) buff() bool {
+func (tr *TokenReader) buff() bool {
 
 	var t token.Token
-	tb.buffer = nil
+	tr.buffer = nil
 
-	t, tb.scanner, tb.err = tb.scanner()
+	t, tr.scanner, tr.err = tr.scanner()
 
-	if tb.err != nil {
+	if tr.err != nil {
 		return false
 	}
 
-	tb.buffer = &t
+	tr.buffer = &t
 	return true
 }
