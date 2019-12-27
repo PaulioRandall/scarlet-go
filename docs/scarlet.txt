@@ -31,7 +31,10 @@ printValues := F(_, v, _) @Println(v)
 e := calc(parseArgs)
 @PanicIf(e)
 
-list := { `abc`, 3 }
+list := { 
+	`abc`,
+	3,
+}
 
 // Future stuff
 
