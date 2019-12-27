@@ -72,6 +72,11 @@ func (tc *TokenCollector) PutBack(n int) {
 	}
 }
 
+// PutBackAll puts back all tokens so they may be re-read.
+func (tc *TokenCollector) PutBackAll() {
+	tc.index = 0
+}
+
 // Clear removes any collected tokens so they can no longer be put back.
 func (tc *TokenCollector) Clear(n int) {
 	tc.buffer = []token.Token{}
