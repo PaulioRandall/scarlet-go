@@ -6,33 +6,33 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// TokenFinder is a function prototype that identifies the kind of the next
+// tokenFinder is a function prototype that identifies the kind of the next
 // token and counts the number of runes in it.
-type TokenFinder func([]rune) (int, token.Kind, error)
+type tokenFinder func([]rune) (int, token.Kind, error)
 
 // stream represents some source code and provides functionality to remove
-// slices of it and return them as tokens.
+// slices of it as tokens.
 type stream struct {
 	runes []rune
 	line  int
 	col   int
 }
 
-// IsEmpty returns true if there are no more terminal characters to parse.
-func (s *stream) IsEmpty() bool {
+// isEmpty returns true if there are no more terminal characters to parse.
+func (s *stream) isEmpty() bool {
 	return len(s.runes) == 0
 }
 
-// Identify accepts a TokenFinder function and returns the kind and length of
+// identify accepts a token finder function and returns the kind and length of
 // the next token from it.
-func (s *stream) Identify(f TokenFinder) (int, token.Kind, error) {
+func (s *stream) identify(f tokenFinder) (int, token.Kind, error) {
 	return f(s.runes)
 }
 
-// SliceBy accepts a TokenFinder function and slices off a token based on the
+// sliceBy accepts a token finder function and slices off a token based on the
 // result.
-func (s *stream) SliceBy(f TokenFinder) (_ token.Token, e error) {
-	n, k, e := s.Identify(f)
+func (s *stream) sliceBy(f tokenFinder) (_ token.Token, e error) {
+	n, k, e := s.identify(f)
 
 	if e != nil || k == token.UNDEFINED {
 		return

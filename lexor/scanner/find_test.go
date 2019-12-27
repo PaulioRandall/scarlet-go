@@ -11,7 +11,7 @@ import (
 
 func tokenFinderTest(
 	t *testing.T,
-	f TokenFinder,
+	f tokenFinder,
 	in string,
 	expN int,
 	expK token.Kind,
@@ -26,7 +26,7 @@ func tokenFinderTest(
 
 func tokenFinderErrTest(
 	t *testing.T,
-	f TokenFinder,
+	f tokenFinder,
 	in string,
 ) {
 
@@ -38,20 +38,20 @@ func tokenFinderErrTest(
 }
 
 func TestFind__1(t *testing.T) {
-	// Check the find... functions are a type of lexor.TokenFinder.
-	var _ TokenFinder = findComment
-	var _ TokenFinder = findSpace
-	var _ TokenFinder = findNumLiteral
-	var _ TokenFinder = findWord
-	var _ TokenFinder = findStrLiteral
-	var _ TokenFinder = findStrTemplate
-	var _ TokenFinder = findSymbol
+	// Check the find... functions are a type of `tokenFinder`.
+	var _ tokenFinder = findComment
+	var _ tokenFinder = findSpace
+	var _ tokenFinder = findNumLiteral
+	var _ tokenFinder = findWord
+	var _ tokenFinder = findStrLiteral
+	var _ tokenFinder = findStrTemplate
+	var _ tokenFinder = findSymbol
 }
 
 func TestFind__2(t *testing.T) {
 
 	// 1. testing.T
-	// 2. TokenFinder
+	// 2. tokenFinder function
 	// 3. Input text
 	// 4. Expected token length
 	// 5. Expected token kind
@@ -105,7 +105,7 @@ func TestFind__2(t *testing.T) {
 func TestFind__3(t *testing.T) {
 
 	// 1. testing.T
-	// 2. TokenFinder
+	// 2. tokenFinder function
 	// 3. Input text
 	// 4. Expected token length
 	// 5. Expected token kind
@@ -126,7 +126,7 @@ func TestFind__3(t *testing.T) {
 func TestFind__4(t *testing.T) {
 
 	// 1. testing.T
-	// 2. TokenFinder
+	// 2. tokenFinder function
 	// 3. Input text
 	// 4. Expected token length
 	// 5. Expected token kind
@@ -145,7 +145,7 @@ func TestFind__4(t *testing.T) {
 func TestFind__5(t *testing.T) {
 
 	// 1. testing.T
-	// 2. TokenFinder
+	// 2. tokenFinder function
 	// 3. Input text
 	// 4. Expected token length
 	// 5. Expected token kind

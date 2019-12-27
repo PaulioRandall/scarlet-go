@@ -7,4 +7,6 @@ END
 
 abc(`:)`, `^_^`)
 
-// NEXT: Add token buffer struct to parser.
+// NEXT: Get started on the parser. Try using production rule driven parsing.
+//       Revert back to using structs contianing an Eval function so that token
+//       information can be stored with the expression.

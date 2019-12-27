@@ -1,3 +1,5 @@
+// scanner scans source code for tokens. The API is a `lexor.ScanToken`
+// function returned by the public New function.
 package scanner
 
 import (
@@ -17,13 +19,13 @@ func New(src string) lexor.ScanToken {
 // scan returns a ScanToken thunk that returns the next token in the source.
 func scan(s *stream) lexor.ScanToken {
 
-	if s.IsEmpty() {
+	if s.isEmpty() {
 		return nil
 	}
 
 	return func() (t token.Token, sc lexor.ScanToken, e lexor.ScanErr) {
 
-		fs := []TokenFinder{
+		fs := []tokenFinder{
 			findSpace,       // 1
 			findComment,     // 2
 			findWord,        // 3
@@ -35,7 +37,7 @@ func scan(s *stream) lexor.ScanToken {
 		var err error
 
 		for _, f := range fs {
-			t, err = s.SliceBy(f)
+			t, err = s.sliceBy(f)
 
 			if err != nil {
 				e = lexor.NewScanErr("Scanning error", err, s.line, s.col)
