@@ -71,6 +71,21 @@ func NewToken(k Kind, v string, l, c int) Token {
 	}
 }
 
+// ZERO returns a zero token value.
+func ZERO() Token {
+	return Token{}
+}
+
+// IsZero returns true if the token is a zero value.
+func (t Token) IsZero() bool {
+	return t == Token{}
+}
+
+// IsNotZero returns true if the token is NOT a zero value.
+func (t Token) IsNotZero() bool {
+	return t != Token{}
+}
+
 // String returns a string representation of the token.
 func (t Token) String() string {
 	s := strconv.QuoteToGraphic(t.Value)

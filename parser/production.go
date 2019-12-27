@@ -5,29 +5,55 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// RuleMatcher is a prototype function that matches a particular production
-// rule within the grammer. A non-nil expression is created and returned if the
-// tokens matched and the token buffer updated ready for reading in the next
-// expression. An error is returned if enough tokens match to remove all
-// ambiguity that the rule is correct in the instance but invalid syntax is
-// detected.
-type RuleMatcher func(TokenReader) (eval.Expr, ParseErr)
-
 // ID_ARRAY         := ID_OR_VOID { "," ID_OR_VOID } .
-// ID_OR_VOID       := ID | "\_" .
-func matchIdArray(tb *TokenReader) (eval.Expr, ParseErr) {
+func matchIdArray(tc *TokenCollector) ([]eval.Expr, ParseErr) {
 
-	if tb.Peek().Kind != token.ID {
-		// TODO
+	ev, _ := matchIdOrVoid(tc)
+
+	if ev == nil {
+		return nil, nil
 	}
 
-	return nil, nil
+	ids := []eval.Expr{ev}
+	matchMoreIds(ids, tc)
+
+	return ids, nil
 }
 
-// ID               := LETTER { "\_" | LETTER } .
-func matchID(tb *TokenReader) (id eval.Expr, _ ParseErr) {
-	if tb.Peek().Kind != token.ID {
-		id = eval.NewForID(tb.Read())
+// ID_OR_VOID       := ID | "\_" .
+func matchIdOrVoid(tc *TokenCollector) (eval.Expr, ParseErr) {
+
+	t := tc.Read()
+
+	if tc.Err() != nil {
+		return nil, tc.Err()
 	}
-	return
+
+	if t.Kind != token.ID && t.Kind != token.VOID {
+		tc.PutBack(1)
+		return nil, nil
+	}
+
+	return eval.NewForID(t), nil
+}
+
+// ID_ARRAY         := ... { "," ID_OR_VOID } .
+func matchMoreIds(ids []eval.Expr, tc *TokenCollector) ParseErr {
+	for tc.Peek().Kind == token.ID_DELIM {
+
+		// Skip the delimiter
+		if _ = tc.Read(); tc.Err() != nil {
+			return tc.Err()
+		}
+
+		ev, _ := matchIdOrVoid(tc)
+
+		if ev == nil {
+			return NewParseErr("Expected ID token", nil, tc.Peek())
+		}
+
+		ids = append(ids, ev)
+	}
+
+	return nil
 }

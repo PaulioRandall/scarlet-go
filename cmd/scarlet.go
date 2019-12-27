@@ -32,7 +32,7 @@ func run(src string) {
 		t, st, e = st()
 
 		if e != nil {
-			panic(e.String())
+			panic(e)
 		}
 
 		if st != nil && t != (token.Token{}) {

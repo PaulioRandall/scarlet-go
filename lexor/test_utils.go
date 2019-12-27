@@ -49,10 +49,15 @@ func AssertScanErr(t *testing.T, exp ScanErr, act ScanErr) {
 	assert.Equal(t, exp.Line(), act.Line(), "Wrong line index")
 	assert.Equal(t, exp.Col(), act.Col(), "Wrong column index")
 
-	if exp.Unwrap() == nil {
-		assert.Nil(t, act.Unwrap(), "Did not expected a cause, a wrapped error")
+	expS, ok := exp.(serr)
+	require.True(t, ok)
+	actS, ok := act.(serr)
+	require.True(t, ok)
+
+	if expS.why == nil {
+		assert.Nil(t, actS.why, "Did not expected a cause, a wrapped error")
 	} else {
-		assert.NotNil(t, act.Unwrap(), "Expected a cause, a wrapped error")
+		assert.NotNil(t, actS.why, "Expected a cause, a wrapped error")
 	}
 }
 

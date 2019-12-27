@@ -7,6 +7,5 @@ END
 
 abc(`:)`, `^_^`)
 
-// NEXT: Get started on the parser. Try using production rule driven parsing.
-//       Revert back to using structs contianing an Eval function so that token
-//       information can be stored with the expression.
+// NEXT: Test the stuff in production.go.
+// THEN: 

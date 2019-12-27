@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/lexor"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -10,6 +9,7 @@ type TokenCollector struct {
 	buffer []token.Token
 	index  int
 	reader *TokenReader
+	err    ParseErr
 }
 
 // TokenCollector makes a new TokenCollector using the specified reader.
@@ -20,8 +20,8 @@ func NewTokenCollector(r *TokenReader) *TokenCollector {
 }
 
 // Err returns the scanning error if one has occurred.
-func (tc *TokenCollector) Err() lexor.ScanErr {
-	return tc.reader.Err()
+func (tc *TokenCollector) Err() ParseErr {
+	return tc.err
 }
 
 // HasMore returns true if there are tokens remaining to be read. This excludes
@@ -36,7 +36,7 @@ func (tc *TokenCollector) HasMore() bool {
 func (tc *TokenCollector) Read() token.Token {
 
 	t := tc.Peek()
-	if t != (token.Token{}) {
+	if t.IsNotZero() {
 		tc.index++
 	}
 
@@ -48,20 +48,18 @@ func (tc *TokenCollector) Read() token.Token {
 // stream has been reached.
 func (tc *TokenCollector) Peek() token.Token {
 
-	EMPTY_TOKEN := token.Token{}
-
 	switch {
-	case tc.reader.Err() != nil:
-		return EMPTY_TOKEN
+	case tc.err != nil:
+		return token.ZERO()
 	case tc.index < len(tc.buffer):
 		return tc.buffer[tc.index]
 	case !tc.HasMore():
-		return EMPTY_TOKEN
+		return token.ZERO()
 	case tc.tryBuff():
 		return tc.buffer[tc.index]
 	}
 
-	return EMPTY_TOKEN
+	return token.ZERO()
 }
 
 // PutBack puts back upto `n` tokens so they may be re-read.
@@ -88,7 +86,12 @@ func (tc *TokenCollector) tryBuff() bool {
 
 	t := tc.reader.Read()
 
-	if tc.reader.Err() != nil || t == (token.Token{}) {
+	if tc.reader.Err() != nil {
+		tc.err = NewParseErr("Error parsing token", tc.reader.Err(), t)
+		return false
+	}
+
+	if t.IsZero() {
 		return false
 	}
 
