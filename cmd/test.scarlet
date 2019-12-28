@@ -7,6 +7,4 @@ END
 
 abc(`:)`, `^_^`)
 
-// NEXT: 
-
 // TODO: Experiment with unifying scanning and parsing errors.

@@ -5,37 +5,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// LIST_ACCESS      := ID [ ITEM_ACCESS ] .
-func matchListAccess(tc *TokenCollector) (_ eval.Expr, _ int) {
-
-	var (
-		idExpr eval.Expr
-		iExpr  eval.Expr
-		i      int
-	)
-
-	t, n := tc.Read(), 1
-
-	if t.Kind != token.ID {
-		goto NO_MATCH
-	}
-
-	iExpr, i = matchItemAccess(tc)
-
-	if iExpr == nil {
-		goto NO_MATCH
-	}
-
-	n += i
-	idExpr = eval.NewForID(t)
-
-	return eval.NewForListAccess(idExpr, iExpr), n
-
-NO_MATCH:
-	tc.PutBack(n)
-	return
-}
-
 // ITEM_ACCESS      := "[" ( ID | INTEGER ) "]" .
 func matchItemAccess(tc *TokenCollector) (_ eval.Expr, _ int) {
 

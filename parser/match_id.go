@@ -82,3 +82,30 @@ func matchMoreIds(ids []eval.Expr, tc *TokenCollector) (_ int) {
 
 	return n
 }
+
+// ID_OR_ITEM       := ID [ ITEM_ACCESS ] .
+func matchIdOrItem(tc *TokenCollector) (_ eval.Expr, _ int) {
+
+	var (
+		idExpr eval.Expr
+		iExpr  eval.Expr
+		i      int
+	)
+
+	t, n := tc.Read(), 1
+
+	if t.Kind != token.ID {
+		tc.PutBack(n)
+		return
+	}
+
+	idExpr = eval.NewForID(t)
+	iExpr, i = matchItemAccess(tc)
+
+	if iExpr == nil {
+		return idExpr, n
+	}
+
+	n += i
+	return eval.NewForListAccess(idExpr, iExpr), n
+}

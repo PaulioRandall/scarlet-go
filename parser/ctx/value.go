@@ -11,7 +11,9 @@ const (
 	UNDEFINED Kind = ``
 	// ------------------
 	LIST  Kind = `LIST`
+	BOOL  Kind = `BOOL`
 	INT   Kind = `INT`
+	REAL  Kind = `REAL`
 	STR   Kind = `STR`
 	FUNC  Kind = `FUNC`
 	SPELL Kind = `SPELL`
@@ -46,6 +48,15 @@ func (v Value) ToList() ([]Value, error) {
 	return v.v.([]Value), nil
 }
 
+// ToBool returns the value as a bool or error if the kind does not represent
+// a boolean.
+func (v Value) ToBool() (bool, error) {
+	if v.k != BOOL {
+		return false, errors.New("TODO")
+	}
+	return v.v.(bool), nil
+}
+
 // ToInt returns the value as an integer or error if the kind does not represent
 // an integer.
 func (v Value) ToInt() (int64, error) {
@@ -53,6 +64,15 @@ func (v Value) ToInt() (int64, error) {
 		return 0, errors.New("TODO")
 	}
 	return v.v.(int64), nil
+}
+
+// ToReal returns the value as an real number or error if the kind does not
+// represent a real number.
+func (v Value) ToReal() (float64, error) {
+	if v.k != REAL {
+		return 0, errors.New("TODO")
+	}
+	return v.v.(float64), nil
 }
 
 // ToStr returns the value as a string or error if the kind does not represent
