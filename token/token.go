@@ -62,8 +62,8 @@ type Token struct {
 	Col   int
 }
 
-// NewToken creates a new token.
-func NewToken(k Kind, v string, l, c int) Token {
+// New creates a new token.
+func New(k Kind, v string, l, c int) Token {
 	return Token{
 		Kind:  k,
 		Value: v,

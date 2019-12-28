@@ -8,8 +8,6 @@ import (
 )
 
 func TestWrap_1(t *testing.T) {
-	//
-
 	lexor.ScanTokenTest(t,
 		New(lexor.DummyScanToken([]token.Token{
 			token.OfValue(token.ID, "abc"),

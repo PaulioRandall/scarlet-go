@@ -66,7 +66,7 @@ func (s *stream) tokenise(n int, k token.Kind) token.Token {
 		s.col = 0
 	}
 
-	return token.NewToken(k, str, line, col)
+	return token.New(k, str, line, col)
 }
 
 // slice slices `n` runes from the front of the source code and updates the
