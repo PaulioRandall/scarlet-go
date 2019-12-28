@@ -8,7 +8,7 @@ import (
 
 func TestMatchListAccess_1(t *testing.T) {
 
-	doTest := func(tc *TokenCollector) interface{} {
+	doTest := func(tc *TokenCollector) (interface{}, int) {
 		return matchListAccess(tc)
 	}
 
@@ -19,7 +19,7 @@ func TestMatchListAccess_1(t *testing.T) {
 		token.OfValue(token.INT_LITERAL, "123"),
 		token.OfKind(token.CLOSE_GUARD),
 	})
-	doTestMatch(t, tc, true, false, doTest)
+	doTestMatch(t, tc, 4, false, doTest)
 
 	// No match
 	tc = setupTokenCollector([]token.Token{
@@ -27,12 +27,12 @@ func TestMatchListAccess_1(t *testing.T) {
 		token.OfKind(token.OPEN_GUARD),
 		token.OfKind(token.FUNC),
 	})
-	doTestMatch(t, tc, false, false, doTest)
+	doTestMatch(t, tc, 0, false, doTest)
 }
 
 func TestMatchItemAccess_1(t *testing.T) {
 
-	doTest := func(tc *TokenCollector) interface{} {
+	doTest := func(tc *TokenCollector) (interface{}, int) {
 		return matchItemAccess(tc)
 	}
 
@@ -42,12 +42,12 @@ func TestMatchItemAccess_1(t *testing.T) {
 		token.OfValue(token.INT_LITERAL, "123"),
 		token.OfKind(token.CLOSE_GUARD),
 	})
-	doTestMatch(t, tc, true, false, doTest)
+	doTestMatch(t, tc, 3, false, doTest)
 
 	// No match
 	tc = setupTokenCollector([]token.Token{
 		token.OfKind(token.OPEN_GUARD),
 		token.OfKind(token.FUNC),
 	})
-	doTestMatch(t, tc, false, false, doTest)
+	doTestMatch(t, tc, 0, false, doTest)
 }

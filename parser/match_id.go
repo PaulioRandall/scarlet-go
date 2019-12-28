@@ -10,17 +10,17 @@ import (
 
 // ID               := LETTER { "\_" | LETTER } .
 // INTEGER          := DIGIT { DIGIT } .
-func matchIdOrInt(tc *TokenCollector) eval.Expr {
+func matchIdOrInt(tc *TokenCollector) (_ eval.Expr, _ int) {
 
 	t := tc.Read()
 
 	if t.Kind == token.ID {
-		return eval.NewForID(t)
+		return eval.NewForID(t), 1
 	}
 
 	if t.Kind != token.INT_LITERAL {
 		tc.PutBack(1)
-		return nil
+		return
 	}
 
 	i, e := strconv.Atoi(t.Value)
@@ -29,50 +29,56 @@ func matchIdOrInt(tc *TokenCollector) eval.Expr {
 	}
 
 	v := ctx.NewValue(ctx.INT, i)
-	return eval.NewForValue(v)
+	return eval.NewForValue(v), 1
 }
 
 // ID_OR_VOID       := ID | "\_" .
-func matchIdOrVoid(tc *TokenCollector) eval.Expr {
+func matchIdOrVoid(tc *TokenCollector) (_ eval.Expr, _ int) {
 
 	t := tc.Read()
 
 	if t.Kind != token.ID && t.Kind != token.VOID {
 		tc.PutBack(1)
-		return nil
+		return
 	}
 
-	return eval.NewForID(t)
+	return eval.NewForID(t), 1
 }
 
 // ID_ARRAY         := ID_OR_VOID { "," ID_OR_VOID } .
-func matchIdArray(tc *TokenCollector) []eval.Expr {
+func matchIdArray(tc *TokenCollector) (_ []eval.Expr, _ int) {
 
-	ev := matchIdOrVoid(tc)
+	ev, n := matchIdOrVoid(tc)
 
 	if ev == nil {
-		return nil
+		return
 	}
 
 	ids := []eval.Expr{ev}
-	matchMoreIds(ids, tc)
+	n += matchMoreIds(ids, tc)
 
-	return ids
+	return ids, n
 }
 
 // *ID_ARRAY        := ... { "," ID_OR_VOID } .
-func matchMoreIds(ids []eval.Expr, tc *TokenCollector) {
+func matchMoreIds(ids []eval.Expr, tc *TokenCollector) (_ int) {
+
+	n := 0
 
 	for tc.Peek().Kind == token.ID_DELIM {
 
 		_ = tc.Read() // Skip the delimiter
+		n++
 
-		ev := matchIdOrVoid(tc)
+		expr, count := matchIdOrVoid(tc)
 
-		if ev == nil {
+		if expr == nil {
 			panic(NewParseErr("Expected ID token", nil, tc.Peek()))
 		}
 
-		ids = append(ids, ev)
+		n += count
+		ids = append(ids, expr)
 	}
+
+	return n
 }

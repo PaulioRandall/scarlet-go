@@ -11,22 +11,30 @@ import (
 func doTestMatch(
 	t *testing.T,
 	tc *TokenCollector,
-	exp, err bool,
-	f func(*TokenCollector) interface{},
+	exp int,
+	err bool,
+	f func(*TokenCollector) (interface{}, int),
 ) {
 
 	if err {
 		require.Panics(t, func() { f(tc) }, "Expected a panic")
-	} else if exp {
-		require.NotNil(t, f(tc), "Expected an Expr")
+		return
+	}
+
+	ev, n := f(tc)
+
+	if exp > 0 {
+		require.NotNil(t, ev, "Expected an Expr")
+		require.Equal(t, exp, n, "Expected %d tokens used", exp)
 	} else {
-		require.Nil(t, f(tc), "Expected nil Expr")
+		require.Nil(t, ev, "Expected nil Expr")
+		require.Empty(t, n, "Expected 0 tokens used")
 	}
 }
 
 func TestMatchIdOrInt_1(t *testing.T) {
 
-	doTest := func(tc *TokenCollector) interface{} {
+	doTest := func(tc *TokenCollector) (interface{}, int) {
 		return matchIdOrInt(tc)
 	}
 
@@ -34,30 +42,30 @@ func TestMatchIdOrInt_1(t *testing.T) {
 	tc := setupTokenCollector([]token.Token{
 		token.OfKind(token.ID),
 	})
-	doTestMatch(t, tc, true, false, doTest)
+	doTestMatch(t, tc, 1, false, doTest)
 
 	// Match int
 	tc = setupTokenCollector([]token.Token{
 		token.OfValue(token.INT_LITERAL, "123"),
 	})
-	doTestMatch(t, tc, true, false, doTest)
+	doTestMatch(t, tc, 1, false, doTest)
 
 	// No match
 	tc = setupTokenCollector([]token.Token{
 		token.OfKind(token.FUNC),
 	})
-	doTestMatch(t, tc, false, false, doTest)
+	doTestMatch(t, tc, 0, false, doTest)
 
 	// Invalid syntax
 	tc = setupTokenCollector([]token.Token{
 		token.OfValue(token.INT_LITERAL, "abc"),
 	})
-	doTestMatch(t, tc, false, true, doTest)
+	doTestMatch(t, tc, 0, true, doTest)
 }
 
 func TestMatchIdOrVoid_1(t *testing.T) {
 
-	doTest := func(tc *TokenCollector) interface{} {
+	doTest := func(tc *TokenCollector) (interface{}, int) {
 		return matchIdOrVoid(tc)
 	}
 
@@ -65,24 +73,24 @@ func TestMatchIdOrVoid_1(t *testing.T) {
 	tc := setupTokenCollector([]token.Token{
 		token.OfKind(token.ID),
 	})
-	doTestMatch(t, tc, true, false, doTest)
+	doTestMatch(t, tc, 1, false, doTest)
 
 	// Match VOID
 	tc = setupTokenCollector([]token.Token{
 		token.OfKind(token.VOID),
 	})
-	doTestMatch(t, tc, true, false, doTest)
+	doTestMatch(t, tc, 1, false, doTest)
 
 	// No match
 	tc = setupTokenCollector([]token.Token{
 		token.OfKind(token.FUNC),
 	})
-	doTestMatch(t, tc, false, false, doTest)
+	doTestMatch(t, tc, 0, false, doTest)
 }
 
 func TestMatchIdArray_1(t *testing.T) {
 
-	doTest := func(tc *TokenCollector) interface{} {
+	doTest := func(tc *TokenCollector) (interface{}, int) {
 		return matchIdArray(tc)
 	}
 
@@ -90,7 +98,7 @@ func TestMatchIdArray_1(t *testing.T) {
 	tc := setupTokenCollector([]token.Token{
 		token.OfKind(token.ID),
 	})
-	doTestMatch(t, tc, true, false, doTest)
+	doTestMatch(t, tc, 1, false, doTest)
 
 	// Match multiple
 	tc = setupTokenCollector([]token.Token{
@@ -100,13 +108,13 @@ func TestMatchIdArray_1(t *testing.T) {
 		token.OfKind(token.ID_DELIM),
 		token.OfKind(token.ID),
 	})
-	doTestMatch(t, tc, true, false, doTest)
+	doTestMatch(t, tc, 5, false, doTest)
 
 	// No match
 	tc = setupTokenCollector([]token.Token{
 		token.OfKind(token.FUNC),
 	})
-	doTestMatch(t, tc, false, false, doTest)
+	doTestMatch(t, tc, 0, false, doTest)
 
 	// Invalid syntax
 	tc = setupTokenCollector([]token.Token{
@@ -114,5 +122,5 @@ func TestMatchIdArray_1(t *testing.T) {
 		token.OfKind(token.ID_DELIM),
 		token.OfKind(token.FUNC),
 	})
-	doTestMatch(t, tc, false, true, doTest)
+	doTestMatch(t, tc, 0, true, doTest)
 }

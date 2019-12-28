@@ -6,49 +6,67 @@ import (
 )
 
 // LIST_ACCESS      := ID [ ITEM_ACCESS ] .
-func matchListAccess(tc *TokenCollector) eval.Expr {
+func matchListAccess(tc *TokenCollector) (_ eval.Expr, _ int) {
 
-	t := tc.Read()
+	var (
+		idExpr eval.Expr
+		iExpr  eval.Expr
+		i      int
+	)
+
+	t, n := tc.Read(), 1
 
 	if t.Kind != token.ID {
-		tc.PutBack(1)
-		return nil
+		goto NO_MATCH
 	}
 
-	indexEv := matchItemAccess(tc)
+	iExpr, i = matchItemAccess(tc)
 
-	if indexEv == nil {
-		tc.PutBack(1)
-		return nil
+	if iExpr == nil {
+		goto NO_MATCH
 	}
 
-	idEv := eval.NewForID(t)
-	return eval.NewForListAccess(idEv, indexEv)
+	n += i
+	idExpr = eval.NewForID(t)
+
+	return eval.NewForListAccess(idExpr, iExpr), n
+
+NO_MATCH:
+	tc.PutBack(n)
+	return
 }
 
 // ITEM_ACCESS      := "[" ( ID | INTEGER ) "]" .
-func matchItemAccess(tc *TokenCollector) eval.Expr {
+func matchItemAccess(tc *TokenCollector) (_ eval.Expr, _ int) {
 
-	t := tc.Read()
+	var (
+		iExpr eval.Expr
+		i     int
+	)
+
+	t, n := tc.Read(), 1
 
 	if t.Kind != token.OPEN_GUARD {
-		tc.PutBack(1)
-		return nil
+		goto NO_MATCH
 	}
 
-	indexExpr := matchIdOrInt(tc)
+	iExpr, i = matchIdOrInt(tc)
 
-	if indexExpr == nil {
-		tc.PutBack(1)
-		return nil
+	if iExpr == nil {
+		goto NO_MATCH
 	}
 
+	n += i
 	t = tc.Read()
+	n++
 
 	if t.Kind != token.CLOSE_GUARD {
-		tc.PutBack(3)
-		return nil
+		goto NO_MATCH
 	}
 
-	return indexExpr
+	return iExpr, n
+
+NO_MATCH:
+	tc.PutBack(n)
+	return
 }
