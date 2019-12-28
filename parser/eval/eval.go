@@ -22,3 +22,12 @@ func NewForID(t token.Token) Expr {
 		return c.Get(t.Value), nil
 	}
 }
+
+// NewForListAccess creates an Expr that returns a specified value within a
+// list.
+func NewForListAccess(idEv, indexEv Expr) Expr {
+	return func(c ctx.Context) (ctx.Value, EvalErr) {
+		// TODO:
+		return ctx.Value{}, nil
+	}
+}

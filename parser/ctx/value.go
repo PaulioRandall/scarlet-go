@@ -11,6 +11,7 @@ const (
 	UNDEFINED Kind = ``
 	// ------------------
 	LIST  Kind = `LIST`
+	INT   Kind = `INT`
 	STR   Kind = `STR`
 	FUNC  Kind = `FUNC`
 	SPELL Kind = `SPELL`
@@ -43,6 +44,15 @@ func (v Value) ToList() ([]Value, error) {
 		return nil, errors.New("TODO")
 	}
 	return v.v.([]Value), nil
+}
+
+// ToInt returns the value as an integer or error if the kind does not represent
+// an integer.
+func (v Value) ToInt() (int64, error) {
+	if v.k != INT {
+		return 0, errors.New("TODO")
+	}
+	return v.v.(int64), nil
 }
 
 // ToStr returns the value as a string or error if the kind does not represent

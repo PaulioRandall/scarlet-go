@@ -72,6 +72,19 @@ func (tc *TokenCollector) Clear(n int) {
 	tc.index = 0
 }
 
+// _print_buffer prints the contents of the buffer.
+func (tc *TokenCollector) _print_buffer() {
+	for i, v := range tc.buffer {
+		if i > 0 {
+			print(" -> ")
+		}
+
+		print(v.Kind)
+	}
+
+	println()
+}
+
 // tryBuff reads in another token and adds it to the buffer. Returns true if a
 // valid token was added to the buffer.
 func (tc *TokenCollector) tryBuff() bool {

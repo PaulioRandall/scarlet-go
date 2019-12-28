@@ -1,12 +1,37 @@
 package parser
 
 import (
+	"strconv"
+
+	"github.com/PaulioRandall/scarlet-go/parser/ctx"
 	"github.com/PaulioRandall/scarlet-go/parser/eval"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// TODO:
-// ID_USAGE         := ID [ LIST_ACCESS ] .
+// ID               := LETTER { "\_" | LETTER } .
+// INTEGER          := DIGIT { DIGIT } .
+func matchIdOrInt(tc *TokenCollector) eval.Expr {
+
+	t := tc.Read()
+
+	if t.Kind == token.ID {
+		return eval.NewForID(t)
+	}
+
+	if t.Kind != token.NUM_LITERAL {
+		tc.PutBack(1)
+		return nil
+	}
+
+	// TODO: Separate num token into INT and REAL
+	i, e := strconv.Atoi(t.Value)
+	if e != nil {
+		panic(NewParseErr("Could not parse INT token value", nil, t))
+	}
+
+	v := ctx.NewValue(ctx.INT, i)
+	return eval.NewForValue(v)
+}
 
 // ID_OR_VOID       := ID | "\_" .
 func matchIdOrVoid(tc *TokenCollector) eval.Expr {
