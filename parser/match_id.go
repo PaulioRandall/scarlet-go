@@ -18,7 +18,7 @@ func matchIdOrInt(tc *TokenCollector) eval.Expr {
 		return eval.NewForID(t)
 	}
 
-	if t.Kind != token.NUM_LITERAL {
+	if t.Kind != token.INT_LITERAL {
 		tc.PutBack(1)
 		return nil
 	}

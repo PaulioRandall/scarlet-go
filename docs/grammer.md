@@ -38,8 +38,8 @@ V := {
   LIST  
   LIST_ITEMS  
   BOOL  
-  NUMBER  
-  INTEGER  
+  REAL  
+  INT  
   DIGIT  
   STRING  
   TEMPLATE  
@@ -106,14 +106,14 @@ P := {
   CMP_OPERATOR     := "=" | "#" | "<" | ">" | "<=" | ">=" .  
   BOOL_OPERATOR    := "|" | "&" .  
   NUM_OPERATOR     := "+" | "-" | "\*" | "/" | "%" .  
-  LITERAL          := BOOL | NUMBER | STRING | TEMPLATE.  
+  LITERAL          := BOOL | INT | REAL | STRING | TEMPLATE.  
   LIST_ACCESS      := ID [ ITEM_ACCESS ] .  
-  ITEM_ACCESS      := "[" ( ID | INTEGER ) "]" .  
+  ITEM_ACCESS      := "[" ( ID | INT ) "]" .  
   LIST             := "{" LIST_ITEMS [ "," [ NEWLINE ] ] "}" .  
   LIST_ITEMS       := EXPR { "," [ NEWLINE ] EXPR } .  
   BOOL             := "TRUE" | "FALSE" .  
-  NUMBER           := INTEGER [ "." INTEGER ] .  
-  INTEGER          := DIGIT { DIGIT } .  
+  REAL             := INT [ "." INT ] .  
+  INT              := DIGIT { DIGIT } .  
   DIGIT            := * Unicode category Nd (0-9) * .  
   STRING           := "\`" * Any visible unicode character * "\`" .  
   TEMPLATE         := '"' * Any control or visible unicode character * '"' .  

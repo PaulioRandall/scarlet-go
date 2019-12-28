@@ -98,20 +98,21 @@ func findNumLiteral(r []rune) (_ int, _ token.Kind, e error) {
 		return
 	}
 
-	if n < size && r[n] == '.' {
-
-		n++ // Decimal point
-		d := _countDigits(r, size, n)
-
-		if d == 0 {
-			e = errors.New("Expected digit after decimal point")
-			return
-		} else {
-			n += d
-		}
+	if n >= size || r[n] != '.' {
+		return n, token.INT_LITERAL, nil
 	}
 
-	return n, token.NUM_LITERAL, nil
+	n++ // Decimal point
+	d := _countDigits(r, size, n)
+
+	if d == 0 {
+		e = errors.New("Expected digit after decimal point")
+		return
+	} else {
+		n += d
+	}
+
+	return n, token.REAL_LITERAL, nil
 }
 
 // countDigits counts an uninterupted series of digits in the rune slice

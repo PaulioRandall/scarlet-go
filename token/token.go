@@ -33,7 +33,8 @@ const (
 	SPELL        Kind = `SPELL`
 	STR_LITERAL  Kind = `STR_LITERAL`
 	STR_TEMPLATE Kind = `STR_TEMPLATE`
-	NUM_LITERAL  Kind = `NUM_LITERAL`
+	INT_LITERAL  Kind = `INT_LITERAL`
+	REAL_LITERAL Kind = `REAL_LITERAL`
 	TRUE         Kind = `TRUE`
 	FALSE        Kind = `FALSE`
 	ADD          Kind = `ADD`

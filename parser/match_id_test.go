@@ -38,7 +38,7 @@ func TestMatchIdOrInt_1(t *testing.T) {
 
 	// Match int
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.NUM_LITERAL, "123", 0, 0),
+		token.NewToken(token.INT_LITERAL, "123", 0, 0),
 	})
 	doTestMatch(t, tc, true, false, doTest)
 
@@ -50,7 +50,7 @@ func TestMatchIdOrInt_1(t *testing.T) {
 
 	// Invalid syntax
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.NUM_LITERAL, "abc", 0, 0),
+		token.NewToken(token.INT_LITERAL, "abc", 0, 0),
 	})
 	doTestMatch(t, tc, false, true, doTest)
 }
