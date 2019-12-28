@@ -72,6 +72,21 @@ func NewToken(k Kind, v string, l, c int) Token {
 	}
 }
 
+// OfKind creates a new token with the specified kind.
+func OfKind(k Kind) Token {
+	return Token{
+		Kind: k,
+	}
+}
+
+// OfValue creates a new token with the specified kind and value.
+func OfValue(k Kind, v string) Token {
+	return Token{
+		Kind:  k,
+		Value: v,
+	}
+}
+
 // ZERO returns a zero token value.
 func ZERO() Token {
 	return Token{}

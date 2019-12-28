@@ -16,7 +16,7 @@ func TestStream_sliceBy_1(t *testing.T) {
 		runes: []rune("Scarlet"),
 	}
 
-	exp := token.NewToken(token.ID, "Scar", 0, 0)
+	exp := token.OfValue(token.ID, "Scar")
 
 	act, e := s.sliceBy(func(r []rune) (int, token.Kind, error) {
 		assert.Equal(t, []rune("Scarlet"), r)
@@ -57,7 +57,7 @@ func TestStream_sliceBy_3(t *testing.T) {
 		runes: []rune("\r\nScarlet"),
 	}
 
-	exp := token.NewToken(token.NEWLINE, "\r\n", 0, 0)
+	exp := token.OfValue(token.NEWLINE, "\r\n")
 
 	act, e := s.sliceBy(func(r []rune) (int, token.Kind, error) {
 		return 2, token.NEWLINE, nil

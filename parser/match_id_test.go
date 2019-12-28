@@ -32,25 +32,25 @@ func TestMatchIdOrInt_1(t *testing.T) {
 
 	// Match ID
 	tc := setupTokenCollector([]token.Token{
-		token.NewToken(token.ID, "", 0, 0),
+		token.OfKind(token.ID),
 	})
 	doTestMatch(t, tc, true, false, doTest)
 
 	// Match int
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.INT_LITERAL, "123", 0, 0),
+		token.OfValue(token.INT_LITERAL, "123"),
 	})
 	doTestMatch(t, tc, true, false, doTest)
 
 	// No match
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.FUNC, "", 0, 0),
+		token.OfKind(token.FUNC),
 	})
 	doTestMatch(t, tc, false, false, doTest)
 
 	// Invalid syntax
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.INT_LITERAL, "abc", 0, 0),
+		token.OfValue(token.INT_LITERAL, "abc"),
 	})
 	doTestMatch(t, tc, false, true, doTest)
 }
@@ -63,19 +63,19 @@ func TestMatchIdOrVoid_1(t *testing.T) {
 
 	// Match ID
 	tc := setupTokenCollector([]token.Token{
-		token.NewToken(token.ID, "", 0, 0),
+		token.OfKind(token.ID),
 	})
 	doTestMatch(t, tc, true, false, doTest)
 
 	// Match VOID
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.VOID, "", 0, 0),
+		token.OfKind(token.VOID),
 	})
 	doTestMatch(t, tc, true, false, doTest)
 
 	// No match
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.FUNC, "", 0, 0),
+		token.OfKind(token.FUNC),
 	})
 	doTestMatch(t, tc, false, false, doTest)
 }
@@ -88,31 +88,31 @@ func TestMatchIdArray_1(t *testing.T) {
 
 	// Match single
 	tc := setupTokenCollector([]token.Token{
-		token.NewToken(token.ID, "", 0, 0),
+		token.OfKind(token.ID),
 	})
 	doTestMatch(t, tc, true, false, doTest)
 
 	// Match multiple
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.ID, "", 0, 0),
-		token.NewToken(token.ID_DELIM, "", 0, 0),
-		token.NewToken(token.ID, "", 0, 0),
-		token.NewToken(token.ID_DELIM, "", 0, 0),
-		token.NewToken(token.ID, "", 0, 0),
+		token.OfKind(token.ID),
+		token.OfKind(token.ID_DELIM),
+		token.OfKind(token.ID),
+		token.OfKind(token.ID_DELIM),
+		token.OfKind(token.ID),
 	})
 	doTestMatch(t, tc, true, false, doTest)
 
 	// No match
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.FUNC, "", 0, 0),
+		token.OfKind(token.FUNC),
 	})
 	doTestMatch(t, tc, false, false, doTest)
 
 	// Invalid syntax
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.ID, "", 0, 0),
-		token.NewToken(token.ID_DELIM, "", 0, 0),
-		token.NewToken(token.FUNC, "", 0, 0),
+		token.OfKind(token.ID),
+		token.OfKind(token.ID_DELIM),
+		token.OfKind(token.FUNC),
 	})
 	doTestMatch(t, tc, false, true, doTest)
 }

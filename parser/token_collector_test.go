@@ -18,8 +18,8 @@ func setupTokenCollector(stream []token.Token) *TokenCollector {
 func TestTokenCollector_Peek_1(t *testing.T) {
 
 	stream := []token.Token{
-		token.NewToken(token.ID, "abc", 0, 0),
-		token.NewToken(token.ID, "efg", 0, 3),
+		token.OfValue(token.ID, "abc"),
+		token.OfValue(token.ID, "efg"),
 	}
 
 	tc := setupTokenCollector(stream)
@@ -39,9 +39,9 @@ func TestTokenCollector_Peek_1(t *testing.T) {
 func TestTokenCollector_Read_1(t *testing.T) {
 
 	stream := []token.Token{
-		token.NewToken(token.ID, "abc", 0, 0),
-		token.NewToken(token.ID, "efg", 0, 3),
-		token.NewToken(token.ID, "hij", 0, 6),
+		token.OfValue(token.ID, "abc"),
+		token.OfValue(token.ID, "efg"),
+		token.OfValue(token.ID, "hij"),
 		token.Token{},
 	}
 
@@ -67,9 +67,9 @@ func TestTokenCollector_Read_1(t *testing.T) {
 func TestTokenCollector_PutBack_1(t *testing.T) {
 
 	stream := []token.Token{
-		token.NewToken(token.ID, "abc", 0, 0),
-		token.NewToken(token.ID, "efg", 0, 3),
-		token.NewToken(token.ID, "hij", 0, 6),
+		token.OfValue(token.ID, "abc"),
+		token.OfValue(token.ID, "efg"),
+		token.OfValue(token.ID, "hij"),
 		token.Token{},
 	}
 

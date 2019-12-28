@@ -23,7 +23,6 @@ func matchIdOrInt(tc *TokenCollector) eval.Expr {
 		return nil
 	}
 
-	// TODO: Separate num token into INT and REAL
 	i, e := strconv.Atoi(t.Value)
 	if e != nil {
 		panic(NewParseErr("Could not parse INT token value", nil, t))

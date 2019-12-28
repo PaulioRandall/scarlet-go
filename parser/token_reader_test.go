@@ -12,8 +12,8 @@ import (
 func TestTokenReader_Peek_1(t *testing.T) {
 
 	stream := []token.Token{
-		token.NewToken(token.ID, "abc", 0, 0),
-		token.NewToken(token.ID, "efg", 0, 3),
+		token.OfValue(token.ID, "abc"),
+		token.OfValue(token.ID, "efg"),
 	}
 
 	tr := NewTokenReader(lexor.DummyScanToken(stream))
@@ -30,9 +30,9 @@ func TestTokenReader_Peek_1(t *testing.T) {
 func TestTokenReader_Read_1(t *testing.T) {
 
 	stream := []token.Token{
-		token.NewToken(token.ID, "abc", 0, 0),
-		token.NewToken(token.ID, "efg", 0, 3),
-		token.NewToken(token.ID, "hij", 0, 6),
+		token.OfValue(token.ID, "abc"),
+		token.OfValue(token.ID, "efg"),
+		token.OfValue(token.ID, "hij"),
 		token.Token{},
 	}
 

@@ -14,18 +14,18 @@ func TestMatchListAccess_1(t *testing.T) {
 
 	// Match
 	tc := setupTokenCollector([]token.Token{
-		token.NewToken(token.ID, "", 0, 0),
-		token.NewToken(token.OPEN_GUARD, "", 0, 0),
-		token.NewToken(token.INT_LITERAL, "123", 0, 0),
-		token.NewToken(token.CLOSE_GUARD, "", 0, 0),
+		token.OfKind(token.ID),
+		token.OfKind(token.OPEN_GUARD),
+		token.OfValue(token.INT_LITERAL, "123"),
+		token.OfKind(token.CLOSE_GUARD),
 	})
 	doTestMatch(t, tc, true, false, doTest)
 
 	// No match
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.ID, "", 0, 0),
-		token.NewToken(token.OPEN_GUARD, "", 0, 0),
-		token.NewToken(token.FUNC, "", 0, 0),
+		token.OfKind(token.ID),
+		token.OfKind(token.OPEN_GUARD),
+		token.OfKind(token.FUNC),
 	})
 	doTestMatch(t, tc, false, false, doTest)
 }
@@ -38,16 +38,16 @@ func TestMatchItemAccess_1(t *testing.T) {
 
 	// Match
 	tc := setupTokenCollector([]token.Token{
-		token.NewToken(token.OPEN_GUARD, "", 0, 0),
-		token.NewToken(token.INT_LITERAL, "123", 0, 0),
-		token.NewToken(token.CLOSE_GUARD, "", 0, 0),
+		token.OfKind(token.OPEN_GUARD),
+		token.OfValue(token.INT_LITERAL, "123"),
+		token.OfKind(token.CLOSE_GUARD),
 	})
 	doTestMatch(t, tc, true, false, doTest)
 
 	// No match
 	tc = setupTokenCollector([]token.Token{
-		token.NewToken(token.OPEN_GUARD, "", 0, 0),
-		token.NewToken(token.FUNC, "", 0, 0),
+		token.OfKind(token.OPEN_GUARD),
+		token.OfKind(token.FUNC),
 	})
 	doTestMatch(t, tc, false, false, doTest)
 }
