@@ -28,7 +28,6 @@ func TestTokenCollector_Peek_1(t *testing.T) {
 		act := tc.Peek()
 
 		require.Equal(t, exp, act)
-		require.Nil(t, tc.Err())
 		require.Equal(t, 0, tc.index)
 		require.Equal(t, 1, len(tc.buffer))
 	}
@@ -53,7 +52,6 @@ func TestTokenCollector_Read_1(t *testing.T) {
 		act := tc.Read()
 
 		require.Equal(t, expT, act)
-		require.Nil(t, tc.Err())
 		require.Equal(t, expBufIndex, tc.index)
 		require.Equal(t, expBufIndex, len(tc.buffer))
 	}
@@ -79,7 +77,6 @@ func TestTokenCollector_PutBack_1(t *testing.T) {
 
 	doTest := func(expMore bool, expBufIndex, expBufLen int) {
 		require.Equal(t, expMore, tc.HasMore())
-		require.Nil(t, tc.Err())
 		require.Equal(t, expBufIndex, tc.index)
 		require.Equal(t, expBufLen, len(tc.buffer))
 	}

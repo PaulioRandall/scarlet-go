@@ -9,7 +9,6 @@ type TokenCollector struct {
 	buffer []token.Token
 	index  int
 	reader *TokenReader
-	err    ParseErr
 }
 
 // TokenCollector makes a new TokenCollector using the specified reader.
@@ -17,11 +16,6 @@ func NewTokenCollector(r *TokenReader) *TokenCollector {
 	return &TokenCollector{
 		reader: r,
 	}
-}
-
-// Err returns the scanning error if one has occurred.
-func (tc *TokenCollector) Err() ParseErr {
-	return tc.err
 }
 
 // HasMore returns true if there are tokens remaining to be read. This excludes
@@ -48,14 +42,11 @@ func (tc *TokenCollector) Read() token.Token {
 // stream has been reached.
 func (tc *TokenCollector) Peek() token.Token {
 
-	switch {
-	case tc.err != nil:
-		return token.ZERO()
-	case tc.index < len(tc.buffer):
+	if tc.index < len(tc.buffer) {
 		return tc.buffer[tc.index]
-	case !tc.HasMore():
-		return token.ZERO()
-	case tc.tryBuff():
+	}
+
+	if tc.HasMore() && tc.tryBuff() {
 		return tc.buffer[tc.index]
 	}
 
@@ -81,15 +72,11 @@ func (tc *TokenCollector) Clear(n int) {
 	tc.index = 0
 }
 
-// tryBuff reads in another token and adds it to the buffer.
+// tryBuff reads in another token and adds it to the buffer. Returns true if a
+// valid token was added to the buffer.
 func (tc *TokenCollector) tryBuff() bool {
 
 	t := tc.reader.Read()
-
-	if tc.reader.Err() != nil {
-		tc.err = NewParseErr("Error parsing token", tc.reader.Err(), t)
-		return false
-	}
 
 	if t.IsZero() {
 		return false

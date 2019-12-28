@@ -5,59 +5,50 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
+// TODO:
+// ID_USAGE         := ID [ LIST_ACCESS ] .
+
 // ID_OR_VOID       := ID | "\_" .
-func matchIdOrVoid(tc *TokenCollector) (eval.Expr, ParseErr) {
+func matchIdOrVoid(tc *TokenCollector) eval.Expr {
 
 	t := tc.Read()
 
-	if tc.Err() != nil {
-		return nil, tc.Err()
-	}
-
 	if t.Kind != token.ID && t.Kind != token.VOID {
 		tc.PutBack(1)
-		return nil, nil
+		return nil
 	}
 
-	return eval.NewForID(t), nil
+	return eval.NewForID(t)
 }
 
 // ID_ARRAY         := ID_OR_VOID { "," ID_OR_VOID } .
-func matchIdArray(tc *TokenCollector) ([]eval.Expr, ParseErr) {
+func matchIdArray(tc *TokenCollector) []eval.Expr {
 
-	ev, _ := matchIdOrVoid(tc)
+	ev := matchIdOrVoid(tc)
 
 	if ev == nil {
-		return nil, nil
+		return nil
 	}
 
 	ids := []eval.Expr{ev}
+	matchMoreIds(ids, tc)
 
-	if e := matchMoreIds(ids, tc); e != nil {
-		return nil, e
-	}
-
-	return ids, nil
+	return ids
 }
 
-// ID_ARRAY         := ... { "," ID_OR_VOID } .
-func matchMoreIds(ids []eval.Expr, tc *TokenCollector) ParseErr {
+// *ID_ARRAY        := ... { "," ID_OR_VOID } .
+func matchMoreIds(ids []eval.Expr, tc *TokenCollector) {
 
 	for tc.Peek().Kind == token.ID_DELIM {
 
-		// Skip the delimiter
-		if _ = tc.Read(); tc.Err() != nil {
-			return tc.Err()
-		}
+		_ = tc.Read() // Skip the delimiter
 
-		ev, _ := matchIdOrVoid(tc)
+		ev := matchIdOrVoid(tc)
 
 		if ev == nil {
-			return NewParseErr("Expected ID token", nil, tc.Peek())
+			panic(NewParseErr("Expected ID token", nil, tc.Peek()))
 		}
 
 		ids = append(ids, ev)
 	}
-
-	return nil
 }

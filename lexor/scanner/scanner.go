@@ -44,7 +44,7 @@ func scan(s *stream) lexor.ScanToken {
 				return
 			}
 
-			if t != (token.Token{}) {
+			if t.IsNotZero() {
 				sc = scan(s)
 				return
 			}

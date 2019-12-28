@@ -21,7 +21,6 @@ func TestTokenReader_Peek_1(t *testing.T) {
 	doTest := func(exp token.Token) {
 		act := tr.Peek()
 		require.Equal(t, exp, act)
-		require.Nil(t, tr.Err())
 	}
 
 	doTest(stream[0])
@@ -41,9 +40,9 @@ func TestTokenReader_Read_1(t *testing.T) {
 
 	doTest := func(expMore bool, exp token.Token) {
 		require.Equal(t, expMore, tr.HasMore())
+
 		act := tr.Read()
 		require.Equal(t, exp, act)
-		require.Nil(t, tr.Err())
 	}
 
 	doTest(true, stream[0])

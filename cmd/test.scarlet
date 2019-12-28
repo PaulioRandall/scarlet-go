@@ -7,4 +7,4 @@ END
 
 abc(`:)`, `^_^`)
 
-// NEXT: Test the stuff in production.go.
+// NEXT: Experiment with unifying scanning and parsing errors.

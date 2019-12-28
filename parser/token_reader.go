@@ -10,7 +10,6 @@ import (
 type TokenReader struct {
 	buffer  *token.Token
 	scanner lexor.ScanToken
-	err     lexor.ScanErr
 }
 
 // NewTokenReader makes a new TokenReader using the specified scanner.
@@ -18,11 +17,6 @@ func NewTokenReader(st lexor.ScanToken) *TokenReader {
 	return &TokenReader{
 		scanner: st,
 	}
-}
-
-// Err returns the scanning error if one has occurred.
-func (tr *TokenReader) Err() lexor.ScanErr {
-	return tr.err
 }
 
 // HasMore returns true if there are tokens remaining to be read.
@@ -44,36 +38,32 @@ func (tr *TokenReader) Read() (t token.Token) {
 // Peek returns the next token without iterating to the one after.
 func (tr *TokenReader) Peek() token.Token {
 
-	EMPTY_TOKEN := token.Token{}
-
-	switch {
-	case tr.err != nil:
-		return EMPTY_TOKEN
-	case tr.buffer != nil:
-		return *tr.buffer
-	case tr.scanner == nil:
-		return EMPTY_TOKEN
-	case tr.buff():
+	if tr.buffer != nil {
 		return *tr.buffer
 	}
 
-	return EMPTY_TOKEN
+	if tr.scanner != nil {
+		tr.buff()
+		return *tr.buffer
+	}
+
+	return token.ZERO()
 }
 
 // buff scans in another token and points the buffer to it. Assumes that the
 // current buffer content is no longer needed and the scanner contains at least
 // one more token.
-func (tr *TokenReader) buff() bool {
+func (tr *TokenReader) buff() {
 
 	var t token.Token
+	var e lexor.ScanErr
 	tr.buffer = nil
 
-	t, tr.scanner, tr.err = tr.scanner()
+	t, tr.scanner, e = tr.scanner()
 
-	if tr.err != nil {
-		return false
+	if e != nil {
+		panic(e)
 	}
 
 	tr.buffer = &t
-	return true
 }
