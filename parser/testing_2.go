@@ -11,7 +11,7 @@ import (
 
 type matcher_2 func(tc *TokenCollector) int
 
-func dummyTC_2(stream []token.Token) *TokenCollector {
+func dummyTC_2(stream ...token.Token) *TokenCollector {
 	st := lexor.DummyScanToken(stream)
 	tr := NewTokenReader(st)
 	return NewTokenCollector(tr)
