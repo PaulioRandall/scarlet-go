@@ -19,9 +19,26 @@ package parser
 // WATCH_BLOCK      := "WATCH" ID { "," ID } NEWLINE BLOCK "END" .
 // PARAM_LIST       := [ PARAM ] { "," ( PARAM ) } .
 // PARAM            := "\_" | ID_OR_ITEM | LITERAL .
-// OPERATOR         := NUM_OPERATOR | BOOL_OPERATOR | CMP_OPERATOR .
-// CMP_OPERATOR     := "=" | "#" | "<" | ">" | "<=" | ">=" .
-// BOOL_OPERATOR    := "|" | "&" .
-// NUM_OPERATOR     := "+" | "-" | "\*" | "/" | "%" .
 // LIST             := "{" LIST_ITEMS [ "," [ NEWLINE ] ] "}" .
 // LIST_ITEMS       := EXPR { "," [ NEWLINE ] EXPR } .
+
+import (
+	"github.com/PaulioRandall/scarlet-go/parser/eval"
+	"github.com/PaulioRandall/scarlet-go/token"
+)
+
+// OPERATOR         := NUM_OPERATOR | BOOL_OPERATOR | CMP_OPERATOR .
+// NUM_OPERATOR     := "+" | "-" | "\*" | "/" | "%" .
+// BOOL_OPERATOR    := "|" | "&" .
+// CMP_OPERATOR     := "=" | "#" | "<" | ">" | "<=" | ">=" .
+func matchOperator(tc *TokenCollector) (_ eval.Expr, _ int) {
+
+	t := tc.Read()
+
+	if t.Kind != token.OPERATOR {
+		tc.PutBack(1)
+		return
+	}
+
+	return eval.NewForOperator(t), 1
+}

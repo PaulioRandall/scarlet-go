@@ -244,21 +244,21 @@ func findSymbol(r []rune) (_ int, _ token.Kind, _ error) {
 		sym{"}", 1, token.CLOSE_LIST},
 		sym{",", 1, token.ID_DELIM},
 		sym{"@", 1, token.SPELL},
-		sym{"+", 1, token.ADD},
-		sym{"-", 1, token.SUBTRACT},
-		sym{"/", 1, token.DIVIDE},
-		sym{"*", 1, token.MULTIPLY},
-		sym{"%", 1, token.MODULO},
-		sym{"|", 1, token.OR},
-		sym{"&", 1, token.AND},
+		sym{"+", 1, token.OPERATOR},
+		sym{"-", 1, token.OPERATOR},
+		sym{"/", 1, token.OPERATOR},
+		sym{"*", 1, token.OPERATOR},
+		sym{"%", 1, token.OPERATOR},
+		sym{"|", 1, token.OPERATOR},
+		sym{"&", 1, token.OPERATOR},
 		sym{"~", 1, token.NOT},
 		sym{"¬", 1, token.NOT},
-		sym{"=", 1, token.CMP_OPERATOR},
-		sym{"#", 1, token.CMP_OPERATOR},
-		sym{"<=", 2, token.CMP_OPERATOR}, // Order matters! Must be before `<`
-		sym{">=", 2, token.CMP_OPERATOR}, // Order matters! Must be before `>`
-		sym{"<", 1, token.CMP_OPERATOR},
-		sym{">", 1, token.CMP_OPERATOR},
+		sym{"=", 1, token.OPERATOR},
+		sym{"#", 1, token.OPERATOR},
+		sym{"<=", 2, token.OPERATOR}, // Order matters! Must be before `<`
+		sym{">=", 2, token.OPERATOR}, // Order matters! Must be before `>`
+		sym{"<", 1, token.OPERATOR},
+		sym{">", 1, token.OPERATOR},
 		sym{"_", 1, token.VOID},
 	}
 

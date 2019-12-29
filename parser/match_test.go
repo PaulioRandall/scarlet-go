@@ -9,12 +9,12 @@ import (
 func TestMatchCmpOperator(t *testing.T) {
 
 	doTest := func(tc *TokenCollector) (interface{}, int) {
-		return matchCmpOperator(tc)
+		return matchOperator(tc)
 	}
 
 	// Match
 	tc := dummyTC([]token.Token{
-		token.OfKind(token.CMP_OPERATOR),
+		token.OfKind(token.OPERATOR),
 	})
 	doTestMatch(t, tc, 1, false, doTest)
 

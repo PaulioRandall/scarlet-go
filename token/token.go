@@ -37,15 +37,8 @@ const (
 	REAL_LITERAL Kind = `REAL_LITERAL`
 	TRUE         Kind = `TRUE`
 	FALSE        Kind = `FALSE`
-	ADD          Kind = `ADD`
-	SUBTRACT     Kind = `SUBTRACT`
-	DIVIDE       Kind = `DIVIDE`
-	MULTIPLY     Kind = `MULTIPLY`
-	MODULO       Kind = `MODULO`
-	OR           Kind = `OR`
-	AND          Kind = `AND`
 	NOT          Kind = `NOT`
-	CMP_OPERATOR Kind = `CMP_OPERATOR`
+	OPERATOR     Kind = `OPERATOR`
 	VOID         Kind = `VOID`
 )
 
