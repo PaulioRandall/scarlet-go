@@ -42,3 +42,25 @@ func matchOperator(tc *TokenCollector) (_ eval.Expr, _ int) {
 
 	return eval.NewForOperator(t), 1
 }
+
+// PARAM            := "\_" | ID_OR_ITEM | LITERAL .
+func matchParam(tc *TokenCollector) (_ eval.Expr, _ int) {
+
+	ex, n := matchIdOrItem(tc)
+	if ex != nil {
+		return ex, n
+	}
+
+	ex, n = matchLiteral(tc)
+	if ex != nil {
+		return ex, n
+	}
+
+	t := tc.Read()
+	if t.Kind == token.VOID {
+		return eval.NewForID(t), 1
+	}
+
+	tc.PutBack(1)
+	return
+}
