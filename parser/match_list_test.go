@@ -13,17 +13,15 @@ func TestMatchItemAccess_1(t *testing.T) {
 	}
 
 	// Match
-	tc := dummyTC([]token.Token{
+	testMatcher(t, 3, false, doTest,
 		token.OfKind(token.OPEN_GUARD),
 		token.OfValue(token.INT_LITERAL, "123"),
 		token.OfKind(token.CLOSE_GUARD),
-	})
-	doTestMatch(t, tc, 3, false, doTest)
+	)
 
 	// No match
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 0, false, doTest,
 		token.OfKind(token.OPEN_GUARD),
 		token.OfKind(token.FUNC),
-	})
-	doTestMatch(t, tc, 0, false, doTest)
+	)
 }

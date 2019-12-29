@@ -18,7 +18,6 @@ package parser
 // MATCH_CASE       := EXPR BODY NEWLINE .
 // WATCH_BLOCK      := "WATCH" ID { "," ID } NEWLINE BLOCK "END" .
 // PARAM_LIST       := [ PARAM ] { "," ( PARAM ) } .
-// PARAM            := "\_" | ID_OR_ITEM | LITERAL .
 // LIST             := "{" LIST_ITEMS [ "," [ NEWLINE ] ] "}" .
 // LIST_ITEMS       := EXPR { "," [ NEWLINE ] EXPR } .
 

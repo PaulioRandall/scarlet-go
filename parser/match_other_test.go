@@ -13,16 +13,14 @@ func TestMatchOperator(t *testing.T) {
 	}
 
 	// Match
-	tc := dummyTC([]token.Token{
+	testMatcher(t, 1, false, doTest,
 		token.OfKind(token.OPERATOR),
-	})
-	doTestMatch(t, tc, 1, false, doTest)
+	)
 
 	// No match
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 0, false, doTest,
 		token.OfKind(token.FUNC),
-	})
-	doTestMatch(t, tc, 0, false, doTest)
+	)
 }
 
 func TestMatchParam(t *testing.T) {
@@ -32,26 +30,22 @@ func TestMatchParam(t *testing.T) {
 	}
 
 	// Match id
-	tc := dummyTC([]token.Token{
+	testMatcher(t, 1, false, doTest,
 		token.OfKind(token.ID),
-	})
-	doTestMatch(t, tc, 1, false, doTest)
+	)
 
 	// Match literal
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 1, false, doTest,
 		token.OfKind(token.STR_LITERAL),
-	})
-	doTestMatch(t, tc, 1, false, doTest)
+	)
 
 	// Match void
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 1, false, doTest,
 		token.OfKind(token.VOID),
-	})
-	doTestMatch(t, tc, 1, false, doTest)
+	)
 
 	// No match
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 0, false, doTest,
 		token.OfKind(token.FUNC),
-	})
-	doTestMatch(t, tc, 0, false, doTest)
+	)
 }

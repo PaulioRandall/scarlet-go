@@ -13,56 +13,47 @@ func TestMatchLiteral_1(t *testing.T) {
 	}
 
 	// Match bool `true`
-	tc := dummyTC([]token.Token{
+	testMatcher(t, 1, false, doTest,
 		token.OfValue(token.BOOL_LITERAL, "TRUE"),
-	})
-	doTestMatch(t, tc, 1, false, doTest)
+	)
 
 	// Match bool `false`
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 1, false, doTest,
 		token.OfValue(token.BOOL_LITERAL, "FALSE"),
-	})
-	doTestMatch(t, tc, 1, false, doTest)
+	)
 
 	// Match int
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 1, false, doTest,
 		token.OfValue(token.INT_LITERAL, "123"),
-	})
-	doTestMatch(t, tc, 1, false, doTest)
+	)
 
 	// Match real
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 1, false, doTest,
 		token.OfValue(token.REAL_LITERAL, "123.456"),
-	})
-	doTestMatch(t, tc, 1, false, doTest)
+	)
 
 	// Match string
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 1, false, doTest,
 		token.OfValue(token.STR_LITERAL, "wololo"),
-	})
-	doTestMatch(t, tc, 1, false, doTest)
+	)
 
 	// Match template
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 1, false, doTest,
 		token.OfValue(token.STR_TEMPLATE, "wololo"),
-	})
-	doTestMatch(t, tc, 1, false, doTest)
+	)
 
 	// No match
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 0, false, doTest,
 		token.OfKind(token.FUNC),
-	})
-	doTestMatch(t, tc, 0, false, doTest)
+	)
 
 	// Match invalid bool
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 0, true, doTest,
 		token.OfValue(token.BOOL_LITERAL, "?"),
-	})
-	doTestMatch(t, tc, 0, true, doTest)
+	)
 
 	// Match invalid real
-	tc = dummyTC([]token.Token{
+	testMatcher(t, 0, true, doTest,
 		token.OfValue(token.REAL_LITERAL, "?"),
-	})
-	doTestMatch(t, tc, 0, true, doTest)
+	)
 }

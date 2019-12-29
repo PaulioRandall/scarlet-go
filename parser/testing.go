@@ -9,10 +9,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type matcher func(tc *TokenCollector) (interface{}, int)
+
 func dummyTC(stream []token.Token) *TokenCollector {
 	st := lexor.DummyScanToken(stream)
 	tr := NewTokenReader(st)
 	return NewTokenCollector(tr)
+}
+
+func testMatcher(
+	t *testing.T,
+	exp int,
+	err bool,
+	f matcher,
+	in ...token.Token,
+) {
+	doTestMatch(t, dummyTC(in), exp, err, f)
 }
 
 func doTestMatch(
@@ -20,7 +32,7 @@ func doTestMatch(
 	tc *TokenCollector,
 	exp int,
 	err bool,
-	f func(*TokenCollector) (interface{}, int),
+	f matcher,
 ) {
 
 	if err {
