@@ -6,7 +6,6 @@ package parser
 // INLINE_STATEMENT := ( ASSIGNMENT | INLINE_EXPR ) NEWLINE .
 // EXPR             := ID_OR_ITEM | INLINE_EXPR .
 // INLINE_EXPR      := LITERAL | FUNC_CALL | SPELL | OPERATION .
-// SPELL            := "@" FUNC_CALL .
 // ASSIGNMENT       := [ "GLOBAL" ] ID_ARRAY ":=" ( LIST | EXPR | FUNC ) .
 // FUNC             := "F" "(" PARAM_LIST [ "->" ID_ARRAY ] ")" BODY .
 // GUARD            := "[" EXPR "]" BODY .
@@ -43,8 +42,38 @@ func matchOperator(tc *TokenCollector) (_ eval.Expr, _ int) {
 // FUNC_CALL        := ID "(" PARAM_LIST ")" .
 func matchFuncCall(tc *TokenCollector) (_ eval.Expr, _ int) {
 
+	exs, n := matchCall(tc)
+	if exs == nil {
+		return
+	}
+
+	return eval.NewForFuncCall(exs[0], exs[1:]), n
+}
+
+// SPELL            := "@" FUNC_CALL .
+func matchSpellCall(tc *TokenCollector) (_ eval.Expr, _ int) {
+
+	n, t := 1, tc.Read()
+	if t.Kind != token.SPELL {
+		tc.Unread(n)
+		return
+	}
+
+	exs, i := matchCall(tc)
+	if exs == nil {
+		panic(NewParseErr("Expected ID and parameter tokens", nil, tc.Peek()))
+	}
+
+	n += i
+	return eval.NewForSpellCall(exs[0], exs[1:]), n
+}
+
+// FUNC_CALL        := ID "(" PARAM_LIST ")" .
+func matchCall(tc *TokenCollector) (_ []eval.Expr, _ int) {
+
 	var idExpr eval.Expr
 	var paramExpr []eval.Expr
+	var ex []eval.Expr
 	var i int
 
 	n, t := 1, tc.Read()
@@ -60,16 +89,18 @@ func matchFuncCall(tc *TokenCollector) (_ eval.Expr, _ int) {
 	idExpr = eval.NewForID(t)
 	paramExpr, i = matchParamList(tc)
 
-	if paramExpr != nil {
-		n += i
-	}
-
 	n, t = n+1, tc.Read()
 	if t.Kind != token.CLOSE_PAREN {
-		panic(NewParseErr("Unexpected token", nil, t))
+		panic(NewParseErr("Expected closing parentheses", nil, t))
 	}
 
-	return eval.NewForFuncCall(idExpr, paramExpr), n
+	ex = []eval.Expr{idExpr}
+	if paramExpr != nil {
+		n += i
+		ex = append(ex, paramExpr...)
+	}
+
+	return ex, n
 
 NO_MATCH:
 	tc.Unread(n)

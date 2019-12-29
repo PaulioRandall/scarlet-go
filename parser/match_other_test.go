@@ -23,10 +23,10 @@ func TestMatchOperator(t *testing.T) {
 	)
 }
 
-func TestMatchFuncCall(t *testing.T) {
+func TestMatchCall(t *testing.T) {
 
 	doTest := func(tc *TokenCollector) (interface{}, int) {
-		return matchFuncCall(tc)
+		return matchCall(tc)
 	}
 
 	// Match no params
@@ -56,5 +56,31 @@ func TestMatchFuncCall(t *testing.T) {
 		token.OfKind(token.ID),
 		token.OfKind(token.OPEN_PAREN),
 		token.OfKind(token.ID),
+	)
+}
+
+func TestMatchSpellCall(t *testing.T) {
+
+	doTest := func(tc *TokenCollector) (interface{}, int) {
+		return matchSpellCall(tc)
+	}
+
+	// Match
+	testMatcher(t, 4, false, doTest,
+		token.OfKind(token.SPELL),
+		token.OfKind(token.ID),
+		token.OfKind(token.OPEN_PAREN),
+		token.OfKind(token.CLOSE_PAREN),
+	)
+
+	// No match
+	testMatcher(t, 0, false, doTest,
+		token.OfKind(token.FUNC),
+	)
+
+	// Error
+	testMatcher(t, 0, true, doTest,
+		token.OfKind(token.SPELL),
+		token.OfKind(token.OPEN_PAREN),
 	)
 }
