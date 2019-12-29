@@ -65,7 +65,7 @@ func matchMoreIds(ids []eval.Expr, tc *TokenCollector) (_ int) {
 
 	n := 0
 
-	for tc.Peek().Kind == token.ID_DELIM {
+	for tc.Peek().Kind == token.DELIM {
 
 		_ = tc.Read() // Skip the delimiter
 		n++

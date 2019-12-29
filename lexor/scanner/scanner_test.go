@@ -29,7 +29,7 @@ func TestScan_2(t *testing.T) {
 		token.New(token.FUNC, "F", 0, 0),
 		token.New(token.OPEN_PAREN, "(", 0, 1),
 		token.New(token.ID, "x", 0, 2),
-		token.New(token.ID_DELIM, ",", 0, 3),
+		token.New(token.DELIM, ",", 0, 3),
 		token.New(token.ID, "y", 0, 4),
 		token.New(token.CLOSE_PAREN, ")", 0, 5),
 		token.New(token.COMMENT, "// ^_^", 0, 6),

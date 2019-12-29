@@ -47,9 +47,9 @@ func TestMatchParamList(t *testing.T) {
 	// Match multiple
 	testMatcher(t, 5, false, doTest,
 		token.OfKind(token.ID),
-		token.OfKind(token.ID_DELIM),
+		token.OfKind(token.DELIM),
 		token.OfKind(token.STR_LITERAL),
-		token.OfKind(token.ID_DELIM),
+		token.OfKind(token.DELIM),
 		token.OfKind(token.VOID),
 	)
 
@@ -61,6 +61,6 @@ func TestMatchParamList(t *testing.T) {
 	// Error
 	testMatcher(t, 0, true, doTest,
 		token.OfKind(token.ID),
-		token.OfKind(token.ID_DELIM),
+		token.OfKind(token.DELIM),
 	)
 }

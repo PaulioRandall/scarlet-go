@@ -82,7 +82,7 @@ func TestFind__2(t *testing.T) {
 	tokenFinderTest(t, findSymbol, "]", 1, token.CLOSE_GUARD)
 	tokenFinderTest(t, findSymbol, "{", 1, token.OPEN_LIST)
 	tokenFinderTest(t, findSymbol, "}", 1, token.CLOSE_LIST)
-	tokenFinderTest(t, findSymbol, ",", 1, token.ID_DELIM)
+	tokenFinderTest(t, findSymbol, ",", 1, token.DELIM)
 	tokenFinderTest(t, findSymbol, "@", 1, token.SPELL)
 	tokenFinderTest(t, findSymbol, "+", 1, token.OPERATOR)
 	tokenFinderTest(t, findSymbol, "-", 1, token.OPERATOR)

@@ -242,7 +242,7 @@ func findSymbol(r []rune) (_ int, _ token.Kind, _ error) {
 		sym{"]", 1, token.CLOSE_GUARD},
 		sym{"{", 1, token.OPEN_LIST},
 		sym{"}", 1, token.CLOSE_LIST},
-		sym{",", 1, token.ID_DELIM},
+		sym{",", 1, token.DELIM},
 		sym{"@", 1, token.SPELL},
 		sym{"+", 1, token.OPERATOR},
 		sym{"-", 1, token.OPERATOR},

@@ -21,7 +21,7 @@ const (
 	WATCH        Kind = `WATCH`
 	END          Kind = `END`
 	ID           Kind = `ID`
-	ID_DELIM     Kind = `ID_DELIM`
+	DELIM        Kind = `DELIM`
 	ASSIGN       Kind = `ASSIGN`
 	RETURNS      Kind = `RETURNS`
 	OPEN_PAREN   Kind = `OPEN_PAREN`

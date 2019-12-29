@@ -37,9 +37,8 @@ func matchParamList(tc *TokenCollector) (_ []eval.Expr, _ int) {
 
 	params := []eval.Expr{ex}
 
-	// TODO: Rename ID_DELIM to just DELIM
 	for {
-		if tc.Read().Kind != token.ID_DELIM {
+		if tc.Read().Kind != token.DELIM {
 			tc.PutBack(1)
 			break
 		}
