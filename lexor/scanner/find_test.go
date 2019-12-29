@@ -93,12 +93,12 @@ func TestFind__2(t *testing.T) {
 	tokenFinderTest(t, findSymbol, "&", 1, token.AND)
 	tokenFinderTest(t, findSymbol, "~", 1, token.NOT)
 	tokenFinderTest(t, findSymbol, "¬", 1, token.NOT)
-	tokenFinderTest(t, findSymbol, "=", 1, token.EQUAL)
-	tokenFinderTest(t, findSymbol, "#", 1, token.NOT_EQUAL)
-	tokenFinderTest(t, findSymbol, "<=", 2, token.LT_OR_EQUAL)
-	tokenFinderTest(t, findSymbol, ">=", 2, token.GT_OR_EQUAL)
-	tokenFinderTest(t, findSymbol, "<", 1, token.LT)
-	tokenFinderTest(t, findSymbol, ">", 1, token.GT)
+	tokenFinderTest(t, findSymbol, "=", 1, token.CMP_OPERATOR)
+	tokenFinderTest(t, findSymbol, "#", 1, token.CMP_OPERATOR)
+	tokenFinderTest(t, findSymbol, "<=", 2, token.CMP_OPERATOR)
+	tokenFinderTest(t, findSymbol, ">=", 2, token.CMP_OPERATOR)
+	tokenFinderTest(t, findSymbol, "<", 1, token.CMP_OPERATOR)
+	tokenFinderTest(t, findSymbol, ">", 1, token.CMP_OPERATOR)
 	tokenFinderTest(t, findSymbol, "_", 1, token.VOID)
 }
 

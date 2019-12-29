@@ -31,3 +31,10 @@ func NewForListAccess(idEv, indexEv Expr) Expr {
 		return ctx.Value{}, nil
 	}
 }
+
+func NewForOperator(t token.Token) Expr {
+	return func(c ctx.Context) (ctx.Value, EvalErr) {
+		// TODO:
+		return ctx.Value{}, nil
+	}
+}

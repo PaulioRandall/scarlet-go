@@ -45,12 +45,7 @@ const (
 	OR           Kind = `OR`
 	AND          Kind = `AND`
 	NOT          Kind = `NOT`
-	EQUAL        Kind = `EQUAL`
-	NOT_EQUAL    Kind = `NOT_EQUAL`
-	LT           Kind = `LT`
-	GT           Kind = `GT`
-	LT_OR_EQUAL  Kind = `LT_OR_EQUAL`
-	GT_OR_EQUAL  Kind = `GT_OR_EQUAL`
+	CMP_OPERATOR Kind = `CMP_OPERATOR`
 	VOID         Kind = `VOID`
 )
 
