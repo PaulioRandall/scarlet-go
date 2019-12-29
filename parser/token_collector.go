@@ -53,16 +53,16 @@ func (tc *TokenCollector) Peek() token.Token {
 	return token.ZERO()
 }
 
-// PutBack puts back upto `n` tokens so they may be re-read.
-func (tc *TokenCollector) PutBack(n int) {
+// Unread unreads upto `n` tokens so they may be re-read.
+func (tc *TokenCollector) Unread(n int) {
 	for n > 0 && tc.index > 0 {
 		n--
 		tc.index--
 	}
 }
 
-// PutBackAll puts back all tokens so they may be re-read.
-func (tc *TokenCollector) PutBackAll() {
+// UnreadAll unreads all tokens so they may be re-read.
+func (tc *TokenCollector) UnreadAll() {
 	tc.index = 0
 }
 

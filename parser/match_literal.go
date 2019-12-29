@@ -27,7 +27,7 @@ func matchLiteral(tc *TokenCollector) (_ eval.Expr, _ int) {
 		// TODO: Treating as a string literal for now
 		v = ctx.NewValue(ctx.STR, t.Value)
 	default:
-		tc.PutBack(1)
+		tc.Unread(1)
 		return
 	}
 

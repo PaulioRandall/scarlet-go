@@ -19,7 +19,7 @@ func matchIdOrInt(tc *TokenCollector) (_ eval.Expr, _ int) {
 	}
 
 	if t.Kind != token.INT_LITERAL {
-		tc.PutBack(1)
+		tc.Unread(1)
 		return
 	}
 
@@ -38,7 +38,7 @@ func matchIdOrVoid(tc *TokenCollector) (_ eval.Expr, _ int) {
 	t := tc.Read()
 
 	if t.Kind != token.ID && t.Kind != token.VOID {
-		tc.PutBack(1)
+		tc.Unread(1)
 		return
 	}
 
@@ -95,7 +95,7 @@ func matchIdOrItem(tc *TokenCollector) (_ eval.Expr, _ int) {
 	t, n := tc.Read(), 1
 
 	if t.Kind != token.ID {
-		tc.PutBack(n)
+		tc.Unread(n)
 		return
 	}
 

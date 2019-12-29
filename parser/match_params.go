@@ -23,7 +23,7 @@ func matchParam(tc *TokenCollector) (_ eval.Expr, _ int) {
 		return eval.NewForID(t), 1
 	}
 
-	tc.PutBack(1)
+	tc.Unread(1)
 	return
 }
 
@@ -39,7 +39,7 @@ func matchParamList(tc *TokenCollector) (_ []eval.Expr, _ int) {
 
 	for {
 		if tc.Read().Kind != token.DELIM {
-			tc.PutBack(1)
+			tc.Unread(1)
 			break
 		}
 

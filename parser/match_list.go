@@ -36,6 +36,6 @@ func matchItemAccess(tc *TokenCollector) (_ eval.Expr, _ int) {
 	return iExpr, n
 
 NO_MATCH:
-	tc.PutBack(n)
+	tc.Unread(n)
 	return
 }

@@ -57,7 +57,7 @@ func TestTokenCollector_Read_1(t *testing.T) {
 	doTest(false, token.Token{}, 3)
 }
 
-func TestTokenCollector_PutBack_1(t *testing.T) {
+func TestTokenCollector_Unread_1(t *testing.T) {
 
 	stream := []token.Token{
 		token.OfValue(token.ID, "abc"),
@@ -80,7 +80,7 @@ func TestTokenCollector_PutBack_1(t *testing.T) {
 
 	doTest(true, 3, 3)
 
-	tc.PutBack(2)
+	tc.Unread(2)
 
 	doTest(true, 1, 3)
 	require.Equal(t, stream[1], tc.Peek())

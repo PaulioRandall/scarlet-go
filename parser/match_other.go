@@ -7,7 +7,6 @@ package parser
 // EXPR             := ID_OR_ITEM | INLINE_EXPR .
 // INLINE_EXPR      := LITERAL | FUNC_CALL | SPELL | OPERATION .
 // SPELL            := "@" FUNC_CALL .
-// FUNC_CALL        := ID "(" PARAM_LIST ")" .
 // ASSIGNMENT       := [ "GLOBAL" ] ID_ARRAY ":=" ( LIST | EXPR | FUNC ) .
 // FUNC             := "F" "(" PARAM_LIST [ "->" ID_ARRAY ] ")" BODY .
 // GUARD            := "[" EXPR "]" BODY .
@@ -34,9 +33,45 @@ func matchOperator(tc *TokenCollector) (_ eval.Expr, _ int) {
 	t := tc.Read()
 
 	if t.Kind != token.OPERATOR {
-		tc.PutBack(1)
+		tc.Unread(1)
 		return
 	}
 
 	return eval.NewForOperator(t), 1
+}
+
+// FUNC_CALL        := ID "(" PARAM_LIST ")" .
+func matchFuncCall(tc *TokenCollector) (_ eval.Expr, _ int) {
+
+	var idExpr eval.Expr
+	var paramExpr []eval.Expr
+	var i int
+
+	n, t := 1, tc.Read()
+	if t.Kind != token.ID {
+		goto NO_MATCH
+	}
+
+	n, t = n+1, tc.Read()
+	if t.Kind != token.OPEN_PAREN {
+		goto NO_MATCH
+	}
+
+	idExpr = eval.NewForID(t)
+	paramExpr, i = matchParamList(tc)
+
+	if paramExpr != nil {
+		n += i
+	}
+
+	n, t = n+1, tc.Read()
+	if t.Kind != token.CLOSE_PAREN {
+		panic(NewParseErr("Unexpected token", nil, t))
+	}
+
+	return eval.NewForFuncCall(idExpr, paramExpr), n
+
+NO_MATCH:
+	tc.Unread(n)
+	return
 }

@@ -4,8 +4,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/parser/ctx"
 )
 
-// evalFunc creates an Expr that invokes a Scarlet function when called.
-func evalFunc(getFunc Expr, params []Expr) Expr {
+// NewForFuncCall creates an Expr that invokes a Scarlet function when called.
+func NewForFuncCall(getFunc Expr, params []Expr) Expr {
 
 	getInput := evalParams(params)
 
