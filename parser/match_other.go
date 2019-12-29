@@ -17,7 +17,6 @@ package parser
 // MATCH_BLOCK      := "MATCH" NEWLINE MATCH_CASE { MATCH_CASE } "END" .
 // MATCH_CASE       := EXPR BODY NEWLINE .
 // WATCH_BLOCK      := "WATCH" ID { "," ID } NEWLINE BLOCK "END" .
-// PARAM_LIST       := [ PARAM ] { "," ( PARAM ) } .
 // LIST             := "{" LIST_ITEMS [ "," [ NEWLINE ] ] "}" .
 // LIST_ITEMS       := EXPR { "," [ NEWLINE ] EXPR } .
 
@@ -40,26 +39,4 @@ func matchOperator(tc *TokenCollector) (_ eval.Expr, _ int) {
 	}
 
 	return eval.NewForOperator(t), 1
-}
-
-// PARAM            := "\_" | ID_OR_ITEM | LITERAL .
-func matchParam(tc *TokenCollector) (_ eval.Expr, _ int) {
-
-	ex, n := matchIdOrItem(tc)
-	if ex != nil {
-		return ex, n
-	}
-
-	ex, n = matchLiteral(tc)
-	if ex != nil {
-		return ex, n
-	}
-
-	t := tc.Read()
-	if t.Kind == token.VOID {
-		return eval.NewForID(t), 1
-	}
-
-	tc.PutBack(1)
-	return
 }
