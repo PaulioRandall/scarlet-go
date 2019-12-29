@@ -14,13 +14,13 @@ func TestMatchLiteral_1(t *testing.T) {
 
 	// Match bool `true`
 	tc := dummyTC([]token.Token{
-		token.OfValue(token.TRUE, "TRUE"),
+		token.OfValue(token.BOOL_LITERAL, "TRUE"),
 	})
 	doTestMatch(t, tc, 1, false, doTest)
 
 	// Match bool `false`
 	tc = dummyTC([]token.Token{
-		token.OfValue(token.FALSE, "FALSE"),
+		token.OfValue(token.BOOL_LITERAL, "FALSE"),
 	})
 	doTestMatch(t, tc, 1, false, doTest)
 
@@ -56,7 +56,7 @@ func TestMatchLiteral_1(t *testing.T) {
 
 	// Match invalid bool
 	tc = dummyTC([]token.Token{
-		token.OfValue(token.TRUE, "?"),
+		token.OfValue(token.BOOL_LITERAL, "?"),
 	})
 	doTestMatch(t, tc, 0, true, doTest)
 

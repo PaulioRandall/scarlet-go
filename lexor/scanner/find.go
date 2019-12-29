@@ -208,8 +208,8 @@ func keywordOrID(r []rune) token.Kind {
 		`WATCH`:  token.WATCH,
 		`MATCH`:  token.MATCH,
 		`END`:    token.END,
-		`TRUE`:   token.TRUE,
-		`FALSE`:  token.FALSE,
+		`TRUE`:   token.BOOL_LITERAL,
+		`FALSE`:  token.BOOL_LITERAL,
 	}
 
 	src := string(r)

@@ -6,7 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-func TestMatchCmpOperator(t *testing.T) {
+func TestMatchOperator(t *testing.T) {
 
 	doTest := func(tc *TokenCollector) (interface{}, int) {
 		return matchOperator(tc)

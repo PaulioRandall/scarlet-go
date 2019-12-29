@@ -35,8 +35,7 @@ const (
 	STR_TEMPLATE Kind = `STR_TEMPLATE`
 	INT_LITERAL  Kind = `INT_LITERAL`
 	REAL_LITERAL Kind = `REAL_LITERAL`
-	TRUE         Kind = `TRUE`
-	FALSE        Kind = `FALSE`
+	BOOL_LITERAL Kind = `BOOL`
 	NOT          Kind = `NOT`
 	OPERATOR     Kind = `OPERATOR`
 	VOID         Kind = `VOID`

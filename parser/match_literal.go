@@ -15,9 +15,7 @@ func matchLiteral(tc *TokenCollector) (_ eval.Expr, _ int) {
 	var v ctx.Value
 
 	switch t.Kind {
-	case token.TRUE:
-		fallthrough
-	case token.FALSE:
+	case token.BOOL_LITERAL:
 		v = parseBoolValue(t)
 	case token.INT_LITERAL:
 		fallthrough
