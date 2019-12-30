@@ -10,7 +10,7 @@ import (
 
 func TestMatchSeq_1(t *testing.T) {
 
-	tc := dummyTC_2(
+	tc := dummyTC(
 		token.OfKind(token.ID),
 		token.OfKind(token.ASSIGN),
 	)
@@ -37,7 +37,7 @@ func TestMatchSeq_1(t *testing.T) {
 
 func TestMatchAny_1(t *testing.T) {
 
-	tc := dummyTC_2(
+	tc := dummyTC(
 		token.OfKind(token.ID),
 	)
 
@@ -56,7 +56,7 @@ func TestMatchAny_1(t *testing.T) {
 
 func TestMatchEither_1(t *testing.T) {
 
-	tc := dummyTC_2(
+	tc := dummyTC(
 		token.OfKind(token.ID),
 	)
 
@@ -73,15 +73,15 @@ func TestMatchEither_1(t *testing.T) {
 	))
 }
 
-func TestMatchIdArray_2_1(t *testing.T) {
+func TestMatchIdArray_1(t *testing.T) {
 
 	// Match single
-	testMatcher_2(t, 1, false, matchIdArray_2,
+	testMatcher(t, 1, false, matchIdArray,
 		token.OfKind(token.ID),
 	)
 
 	// Match multiple
-	testMatcher_2(t, 5, false, matchIdArray_2,
+	testMatcher(t, 5, false, matchIdArray,
 		token.OfKind(token.ID),
 		token.OfKind(token.DELIM),
 		token.OfKind(token.ID),
@@ -90,27 +90,27 @@ func TestMatchIdArray_2_1(t *testing.T) {
 	)
 
 	// No match
-	testMatcher_2(t, 0, false, matchIdArray_2,
+	testMatcher(t, 0, false, matchIdArray,
 		token.OfKind(token.FUNC),
 	)
 
 	// Invalid syntax
-	testMatcher_2(t, 0, true, matchIdArray_2,
+	testMatcher(t, 0, true, matchIdArray,
 		token.OfKind(token.ID),
 		token.OfKind(token.DELIM),
 		token.OfKind(token.FUNC),
 	)
 }
 
-func TestMatchIdOrItem_2_1(t *testing.T) {
+func TestMatchIdOrItem_1(t *testing.T) {
 
 	// Match ID
-	testMatcher_2(t, 1, false, matchIdOrItem_2,
+	testMatcher(t, 1, false, matchIdOrItem,
 		token.OfKind(token.ID),
 	)
 
 	// Match item access
-	testMatcher_2(t, 4, false, matchIdOrItem_2,
+	testMatcher(t, 4, false, matchIdOrItem,
 		token.OfKind(token.ID),
 		token.OfKind(token.OPEN_GUARD),
 		token.OfValue(token.INT_LITERAL, "123"),
@@ -118,59 +118,59 @@ func TestMatchIdOrItem_2_1(t *testing.T) {
 	)
 
 	// No match
-	testMatcher_2(t, 0, false, matchIdOrItem_2,
+	testMatcher(t, 0, false, matchIdOrItem,
 		token.OfKind(token.FUNC),
 	)
 }
 
-func TestMatchItemAccess_2_1(t *testing.T) {
+func TestMatchItemAccess_1(t *testing.T) {
 
 	// Match
-	testMatcher_2(t, 3, false, matchItemAccess_2,
+	testMatcher(t, 3, false, matchItemAccess,
 		token.OfKind(token.OPEN_GUARD),
 		token.OfValue(token.INT_LITERAL, "123"),
 		token.OfKind(token.CLOSE_GUARD),
 	)
 
 	// No match
-	testMatcher_2(t, 0, false, matchItemAccess_2,
+	testMatcher(t, 0, false, matchItemAccess,
 		token.OfKind(token.OPEN_GUARD),
 		token.OfKind(token.FUNC),
 	)
 }
 
-func TestMatchParam_2_1(t *testing.T) {
+func TestMatchParam_1(t *testing.T) {
 
 	// Match id
-	testMatcher_2(t, 1, false, matchParam_2,
+	testMatcher(t, 1, false, matchParam,
 		token.OfKind(token.ID),
 	)
 
 	// Match literal
-	testMatcher_2(t, 1, false, matchParam_2,
+	testMatcher(t, 1, false, matchParam,
 		token.OfKind(token.STR_LITERAL),
 	)
 
 	// Match void
-	testMatcher_2(t, 1, false, matchParam_2,
+	testMatcher(t, 1, false, matchParam,
 		token.OfKind(token.VOID),
 	)
 
 	// No match
-	testMatcher_2(t, 0, false, matchParam_2,
+	testMatcher(t, 0, false, matchParam,
 		token.OfKind(token.FUNC),
 	)
 }
 
-func TestMatchParamList_2_1(t *testing.T) {
+func TestMatchParamList_1(t *testing.T) {
 
 	// Match single
-	testMatcher_2(t, 1, false, matchParamList_2,
+	testMatcher(t, 1, false, matchParamList,
 		token.OfKind(token.ID),
 	)
 
 	// Match multiple
-	testMatcher_2(t, 5, false, matchParamList_2,
+	testMatcher(t, 5, false, matchParamList,
 		token.OfKind(token.ID),
 		token.OfKind(token.DELIM),
 		token.OfKind(token.STR_LITERAL),
@@ -179,27 +179,27 @@ func TestMatchParamList_2_1(t *testing.T) {
 	)
 
 	// No match
-	testMatcher_2(t, 0, false, matchParamList_2,
+	testMatcher(t, 0, false, matchParamList,
 		token.OfKind(token.OPERATOR),
 	)
 
 	// Error
-	testMatcher_2(t, 0, true, matchParamList_2,
+	testMatcher(t, 0, true, matchParamList,
 		token.OfKind(token.ID),
 		token.OfKind(token.DELIM),
 	)
 }
 
-func TestMatchCall_2_1(t *testing.T) {
+func TestMatchCall_1(t *testing.T) {
 
 	// Match no params
-	testMatcher_2(t, 2, false, matchCall_2,
+	testMatcher(t, 2, false, matchCall,
 		token.OfKind(token.OPEN_PAREN),
 		token.OfKind(token.CLOSE_PAREN),
 	)
 
 	// Match with params
-	testMatcher_2(t, 5, false, matchCall_2,
+	testMatcher(t, 5, false, matchCall,
 		token.OfKind(token.OPEN_PAREN),
 		token.OfKind(token.ID),
 		token.OfKind(token.DELIM),
@@ -208,12 +208,12 @@ func TestMatchCall_2_1(t *testing.T) {
 	)
 
 	// No match
-	testMatcher_2(t, 0, false, matchCall_2,
+	testMatcher(t, 0, false, matchCall,
 		token.OfKind(token.FUNC),
 	)
 
 	// Error
-	testMatcher_2(t, 0, true, matchCall_2,
+	testMatcher(t, 0, true, matchCall,
 		token.OfKind(token.OPEN_PAREN),
 		token.OfKind(token.ID),
 	)

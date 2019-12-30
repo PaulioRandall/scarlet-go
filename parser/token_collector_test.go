@@ -3,10 +3,17 @@ package parser
 import (
 	"testing"
 
+	"github.com/PaulioRandall/scarlet-go/lexor"
 	"github.com/PaulioRandall/scarlet-go/token"
 
 	"github.com/stretchr/testify/require"
 )
+
+func dummyTC(stream ...token.Token) *TokenCollector {
+	st := lexor.DummyScanToken(stream)
+	tr := NewTokenReader(st)
+	return NewTokenCollector(tr)
+}
 
 func TestTokenCollector_Peek_1(t *testing.T) {
 
@@ -15,7 +22,7 @@ func TestTokenCollector_Peek_1(t *testing.T) {
 		token.OfValue(token.ID, "efg"),
 	}
 
-	tc := dummyTC(stream)
+	tc := dummyTC(stream...)
 
 	doTest := func(exp token.Token) {
 		act := tc.Peek()
@@ -38,7 +45,7 @@ func TestTokenCollector_Read_1(t *testing.T) {
 		token.Token{},
 	}
 
-	tc := dummyTC(stream)
+	tc := dummyTC(stream...)
 
 	doTest := func(expMore bool, expT token.Token, expBufIndex int) {
 		require.Equal(t, expMore, tc.HasMore())
@@ -66,7 +73,7 @@ func TestTokenCollector_Unread_1(t *testing.T) {
 		token.Token{},
 	}
 
-	tc := dummyTC(stream)
+	tc := dummyTC(stream...)
 
 	doTest := func(expMore bool, expBufIndex, expBufLen int) {
 		require.Equal(t, expMore, tc.HasMore())

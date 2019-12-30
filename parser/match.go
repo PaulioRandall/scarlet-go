@@ -61,7 +61,7 @@ func matchAny(tc *TokenCollector, ks ...token.Kind) (_ int) {
 // matchEither calls each matcher function in order until a match is found or
 // non-match. If one matches the number of tokens returned by the matcher is
 // returned else zero is returned.
-func matchEither(tc *TokenCollector, ms ...matcher_2) (n int) {
+func matchEither(tc *TokenCollector, ms ...matcher) (n int) {
 
 	for _, m := range ms {
 		n = m(tc)
@@ -75,17 +75,17 @@ func matchEither(tc *TokenCollector, ms ...matcher_2) (n int) {
 }
 
 // ID_ARRAY         := ID_OR_VOID { "," ID_OR_VOID } .
-func matchIdArray_2(tc *TokenCollector) (_ int) {
+func matchIdArray(tc *TokenCollector) (_ int) {
 
 	if 0 == matchAny(tc, token.ID, token.VOID) {
 		return
 	}
 
-	return 1 + matchMoreIds_2(tc)
+	return 1 + matchMoreIds(tc)
 }
 
 // *ID_ARRAY        := ... { "," ID_OR_VOID } .
-func matchMoreIds_2(tc *TokenCollector) (n int) {
+func matchMoreIds(tc *TokenCollector) (n int) {
 
 	for 1 == matchAny(tc, token.DELIM) {
 		n++
@@ -101,17 +101,17 @@ func matchMoreIds_2(tc *TokenCollector) (n int) {
 }
 
 // ID_OR_ITEM       := ID [ ITEM_ACCESS ] .
-func matchIdOrItem_2(tc *TokenCollector) (_ int) {
+func matchIdOrItem(tc *TokenCollector) (_ int) {
 
 	if 0 == matchAny(tc, token.ID) {
 		return
 	}
 
-	return 1 + matchItemAccess_2(tc)
+	return 1 + matchItemAccess(tc)
 }
 
 // ITEM_ACCESS      := "[" ( ID | INTEGER ) "]" .
-func matchItemAccess_2(tc *TokenCollector) (_ int) {
+func matchItemAccess(tc *TokenCollector) (_ int) {
 
 	n := matchAny(tc, token.OPEN_GUARD)
 	n += matchAny(tc, token.ID, token.INT_LITERAL)
@@ -126,7 +126,7 @@ func matchItemAccess_2(tc *TokenCollector) (_ int) {
 }
 
 // LITERAL          := BOOL | INT | REAL | STRING | TEMPLATE .
-func matchLiteral_2(tc *TokenCollector) int {
+func matchLiteral(tc *TokenCollector) int {
 	return matchAny(tc,
 		token.BOOL_LITERAL,
 		token.INT_LITERAL,
@@ -137,22 +137,22 @@ func matchLiteral_2(tc *TokenCollector) int {
 }
 
 // PARAM            := "\_" | ID_OR_ITEM | LITERAL .
-func matchParam_2(tc *TokenCollector) int {
+func matchParam(tc *TokenCollector) int {
 
 	if 1 == matchAny(tc, token.VOID) {
 		return 1
 	}
 
 	return matchEither(tc,
-		matchLiteral_2,
-		matchIdOrItem_2,
+		matchLiteral,
+		matchIdOrItem,
 	)
 }
 
 // PARAM_LIST       := PARAM { "," PARAM } .
-func matchParamList_2(tc *TokenCollector) (_ int) {
+func matchParamList(tc *TokenCollector) (_ int) {
 
-	n := matchParam_2(tc)
+	n := matchParam(tc)
 	if n == 0 {
 		return
 	}
@@ -160,7 +160,7 @@ func matchParamList_2(tc *TokenCollector) (_ int) {
 	for 1 == matchAny(tc, token.DELIM) {
 		n++
 
-		i := matchParam_2(tc)
+		i := matchParam(tc)
 		if i == 0 {
 			panic(NewParseErr("Expected another parameter", nil, tc.Peek()))
 		}
@@ -172,13 +172,13 @@ func matchParamList_2(tc *TokenCollector) (_ int) {
 }
 
 // FUNC_CALL        := ID "(" PARAM_LIST ")" .
-func matchCall_2(tc *TokenCollector) (_ int) {
+func matchCall(tc *TokenCollector) (_ int) {
 
 	if 0 == matchAny(tc, token.OPEN_PAREN) {
 		return
 	}
 
-	n := matchParamList_2(tc)
+	n := matchParamList(tc)
 
 	if 0 == matchAny(tc, token.CLOSE_PAREN) {
 		panic(NewParseErr("Expected closing parentheses", nil, tc.Peek()))
