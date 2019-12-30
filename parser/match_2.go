@@ -22,10 +22,10 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// match attempts to pattern match the list of token kinds to the tokens read
-// by the TokenCollector. If they all match the number of tokens is returned
-// else zero is returned.
-func match(tc *TokenCollector, ks ...token.Kind) (_ int) {
+// matchSeq attempts to pattern match the sequence of token kinds to the tokens
+// read by the TokenCollector. If they all match the number of tokens is
+// returned else zero is returned.
+func matchSeq(tc *TokenCollector, ks ...token.Kind) (_ int) {
 
 	var t token.Token
 	var n int
@@ -40,4 +40,149 @@ func match(tc *TokenCollector, ks ...token.Kind) (_ int) {
 	}
 
 	return n
+}
+
+// matchAny attempts to match any of the token kinds with the next token read
+// by the TokenCollector. If a match is found 1 is returned else 0 is.
+func matchAny(tc *TokenCollector, ks ...token.Kind) (_ int) {
+
+	t := tc.Read()
+
+	for _, k := range ks {
+		if t.Kind == k {
+			return 1
+		}
+	}
+
+	tc.Unread(1)
+	return 0
+}
+
+// matchEither calls each matcher function in order until a match is found or
+// non-match. If one matches the number of tokens returned by the matcher is
+// returned else zero is returned.
+func matchEither(tc *TokenCollector, ms ...matcher_2) (n int) {
+
+	for _, m := range ms {
+		n = m(tc)
+
+		if n > 0 {
+			break
+		}
+	}
+
+	return
+}
+
+// ID_ARRAY         := ID_OR_VOID { "," ID_OR_VOID } .
+func matchIdArray_2(tc *TokenCollector) (_ int) {
+
+	if 0 == matchAny(tc, token.ID, token.VOID) {
+		return
+	}
+
+	return 1 + matchMoreIds_2(tc)
+}
+
+// *ID_ARRAY        := ... { "," ID_OR_VOID } .
+func matchMoreIds_2(tc *TokenCollector) (n int) {
+
+	for 1 == matchAny(tc, token.DELIM) {
+		n++
+
+		if 0 == matchAny(tc, token.ID, token.VOID) {
+			panic(NewParseErr("Expected ID token", nil, tc.Peek()))
+		}
+
+		n++
+	}
+
+	return
+}
+
+// ID_OR_ITEM       := ID [ ITEM_ACCESS ] .
+func matchIdOrItem_2(tc *TokenCollector) (_ int) {
+
+	if 0 == matchAny(tc, token.ID) {
+		return
+	}
+
+	return 1 + matchItemAccess_2(tc)
+}
+
+// ITEM_ACCESS      := "[" ( ID | INTEGER ) "]" .
+func matchItemAccess_2(tc *TokenCollector) (_ int) {
+
+	n := matchAny(tc, token.OPEN_GUARD)
+	n += matchAny(tc, token.ID, token.INT_LITERAL)
+	n += matchAny(tc, token.CLOSE_GUARD)
+
+	if n != 3 {
+		tc.Unread(n)
+		return
+	}
+
+	return n
+}
+
+// LITERAL          := BOOL | INT | REAL | STRING | TEMPLATE .
+func matchLiteral_2(tc *TokenCollector) int {
+	return matchAny(tc,
+		token.BOOL_LITERAL,
+		token.INT_LITERAL,
+		token.REAL_LITERAL,
+		token.STR_LITERAL,
+		token.STR_TEMPLATE,
+	)
+}
+
+// PARAM            := "\_" | ID_OR_ITEM | LITERAL .
+func matchParam_2(tc *TokenCollector) int {
+
+	if 1 == matchAny(tc, token.VOID) {
+		return 1
+	}
+
+	return matchEither(tc,
+		matchLiteral_2,
+		matchIdOrItem_2,
+	)
+}
+
+// PARAM_LIST       := PARAM { "," PARAM } .
+func matchParamList_2(tc *TokenCollector) (_ int) {
+
+	n := matchParam_2(tc)
+	if n == 0 {
+		return
+	}
+
+	for 1 == matchAny(tc, token.DELIM) {
+		n++
+
+		i := matchParam_2(tc)
+		if i == 0 {
+			panic(NewParseErr("Expected another parameter", nil, tc.Peek()))
+		}
+
+		n += i
+	}
+
+	return n
+}
+
+// FUNC_CALL        := ID "(" PARAM_LIST ")" .
+func matchCall_2(tc *TokenCollector) (_ int) {
+
+	if 0 == matchAny(tc, token.OPEN_PAREN) {
+		return
+	}
+
+	n := matchParamList_2(tc)
+
+	if 0 == matchAny(tc, token.CLOSE_PAREN) {
+		panic(NewParseErr("Expected closing parentheses", nil, tc.Peek()))
+	}
+
+	return 2 + n
 }
