@@ -222,26 +222,18 @@ func TestMatchCall_1(t *testing.T) {
 func TestMatchGlobalAssign_1(t *testing.T) {
 
 	// Match
-	testMatcher(t, 3, false, matchGlobalAssign,
-		token.OfKind(token.GLOBAL),
+	testMatcher(t, 2, false, matchLeftSideOfAssign,
 		token.OfKind(token.ID),
 		token.OfKind(token.ASSIGN),
 	)
 
 	// No match
-	testMatcher(t, 0, false, matchGlobalAssign,
+	testMatcher(t, 0, false, matchLeftSideOfAssign,
 		token.OfKind(token.UNDEFINED),
 	)
 
 	// Error
-	testMatcher(t, 0, true, matchGlobalAssign,
-		token.OfKind(token.GLOBAL),
-		token.OfKind(token.UNDEFINED),
-	)
-
-	// Error
-	testMatcher(t, 0, true, matchGlobalAssign,
-		token.OfKind(token.GLOBAL),
+	testMatcher(t, 0, true, matchLeftSideOfAssign,
 		token.OfKind(token.ID),
 		token.OfKind(token.UNDEFINED),
 	)

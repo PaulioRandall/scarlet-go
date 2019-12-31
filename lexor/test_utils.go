@@ -39,6 +39,9 @@ func dummyScanTokenIndexed(i int, tokens []token.Token) ScanToken {
 }
 
 // AssertScanErr assert a ScanErr matches another except for the error message.
+// Where:
+// 	`exp` is the expected error
+// 	`act` is the actual error
 func AssertScanErr(t *testing.T, exp ScanErr, act ScanErr) {
 	if exp == nil {
 		assert.Nil(t, act, "Expected a nil ScanErr")

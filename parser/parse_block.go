@@ -7,35 +7,37 @@ import (
 
 func parseStatement(tc *TokenCollector) (_ eval.Expr) {
 
-	if n := matchGlobalAssign(tc); n > 0 {
-		return parseAssign(tc)
+	//isGlobal = 1 == matchAny(tc, token.GLOBAL)
+	tc.Take()
+
+	if n := matchLeftSideOfAssign(tc); n > 0 {
+		//ids, a := parseAssign(tc)
 	}
 
 	return
 }
 
-func parseAssign(tc *TokenCollector) (_ eval.Expr) {
-
-	var assignToken token.Token
-
-	// TODO: Count the IDs to make sure we have the same number of expressions
+// parseAssign parses the next statement as an assignment statement. Assumes
+// that the statement matches a valid assignment statement.
+func parseAssign(tc *TokenCollector) (ids []eval.Expr, a token.Token) {
 
 	for _, t := range tc.Take() {
-		if t.Kind == token.GLOBAL {
+
+		if t.Kind == token.ID || t.Kind == token.VOID {
+			ids = append(ids, eval.NewForID(t))
 			continue
 		}
 
-		if t.Kind == token.ID || t.Kind == token.VOID {
-			// TODO: create expressions for these
-		}
-
 		if t.Kind == token.ASSIGN {
-			assignToken = t
+			a = t
 		}
 	}
 
-	println(assignToken.String()) // DELETE ME
-	// TODO: Match the expressions then parse them
+	return
+}
+
+// parseExprArray parses an array of expressions.
+func parseExprArray(tc *TokenCollector) (_ []eval.Expr) {
 
 	return
 }
