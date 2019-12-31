@@ -73,35 +73,6 @@ func TestMatchEither_1(t *testing.T) {
 	))
 }
 
-func TestMatchIdArray_1(t *testing.T) {
-
-	// Match single
-	testMatcher(t, 1, false, matchIdArray,
-		token.OfKind(token.ID),
-	)
-
-	// Match multiple
-	testMatcher(t, 5, false, matchIdArray,
-		token.OfKind(token.ID),
-		token.OfKind(token.DELIM),
-		token.OfKind(token.ID),
-		token.OfKind(token.DELIM),
-		token.OfKind(token.ID),
-	)
-
-	// No match
-	testMatcher(t, 0, false, matchIdArray,
-		token.OfKind(token.FUNC),
-	)
-
-	// Invalid syntax
-	testMatcher(t, 0, true, matchIdArray,
-		token.OfKind(token.ID),
-		token.OfKind(token.DELIM),
-		token.OfKind(token.FUNC),
-	)
-}
-
 func TestMatchIdOrItem_1(t *testing.T) {
 
 	// Match ID
@@ -190,51 +161,16 @@ func TestMatchParamList_1(t *testing.T) {
 	)
 }
 
-func TestMatchCall_1(t *testing.T) {
-
-	// Match no params
-	testMatcher(t, 2, false, matchCall,
-		token.OfKind(token.OPEN_PAREN),
-		token.OfKind(token.CLOSE_PAREN),
-	)
-
-	// Match with params
-	testMatcher(t, 5, false, matchCall,
-		token.OfKind(token.OPEN_PAREN),
-		token.OfKind(token.ID),
-		token.OfKind(token.DELIM),
-		token.OfKind(token.STR_LITERAL),
-		token.OfKind(token.CLOSE_PAREN),
-	)
-
-	// No match
-	testMatcher(t, 0, false, matchCall,
-		token.OfKind(token.FUNC),
-	)
-
-	// Error
-	testMatcher(t, 0, true, matchCall,
-		token.OfKind(token.OPEN_PAREN),
-		token.OfKind(token.ID),
-	)
-}
-
-func TestMatchGlobalAssign_1(t *testing.T) {
+func TestMatchCallStart_1(t *testing.T) {
 
 	// Match
-	testMatcher(t, 2, false, matchLeftSideOfAssign,
+	testMatcher(t, 2, false, matchCallStart,
 		token.OfKind(token.ID),
-		token.OfKind(token.ASSIGN),
+		token.OfKind(token.OPEN_PAREN),
 	)
 
 	// No match
-	testMatcher(t, 0, false, matchLeftSideOfAssign,
-		token.OfKind(token.UNDEFINED),
-	)
-
-	// Error
-	testMatcher(t, 0, true, matchLeftSideOfAssign,
-		token.OfKind(token.ID),
-		token.OfKind(token.UNDEFINED),
+	testMatcher(t, 0, false, matchCallStart,
+		token.OfKind(token.FUNC),
 	)
 }

@@ -1,11 +1,14 @@
 package parser
 
+// COMMENT          := "//" * Any visible unicode character * NEWLINE .
 // PROGRAM          := STATEMENT BLOCK .
 // BLOCK            := { STATEMENT } .
 // STATEMENT        := ( ASSIGNMENT | INLINE_EXPR | GUARD | MATCH_BLOCK | WATCH_BLOCK ) NEWLINE .
 // INLINE_STATEMENT := ( ASSIGNMENT | INLINE_EXPR ) NEWLINE .
 // EXPR             := ID_OR_ITEM | INLINE_EXPR .
 // INLINE_EXPR      := LITERAL | FUNC_CALL | SPELL | OPERATION .
+// SPELL            := "@" FUNC_CALL .
+// FUNC_CALL        := ID "(" PARAM_LIST ")" .
 // ASSIGNMENT       := [ "GLOBAL" ] ID_ARRAY ":=" ( LIST | EXPR | FUNC ) .
 // FUNC             := "F" "(" PARAM_LIST [ "->" ID_ARRAY ] ")" BODY .
 // GUARD            := "[" EXPR "]" BODY .
@@ -74,43 +77,7 @@ func matchEither(tc *TokenCollector, ms ...matcher) (n int) {
 	return
 }
 
-// ID_ARRAY         := ID_OR_VOID { "," ID_OR_VOID } .
-func matchIdArray(tc *TokenCollector) (_ int) {
-
-	if 0 == matchAny(tc, token.ID, token.VOID) {
-		return
-	}
-
-	return 1 + matchMoreIds(tc)
-}
-
-// *ID_ARRAY        := ... { "," ID_OR_VOID } .
-func matchMoreIds(tc *TokenCollector) (n int) {
-
-	for 1 == matchAny(tc, token.DELIM) {
-		n++
-
-		if 0 == matchAny(tc, token.ID, token.VOID) {
-			panic(NewParseErr("Expected ID token", nil, tc.Peek()))
-		}
-
-		n++
-	}
-
-	return
-}
-
-// ID_OR_ITEM       := ID [ ITEM_ACCESS ] .
-func matchIdOrItem(tc *TokenCollector) (_ int) {
-
-	if 0 == matchAny(tc, token.ID) {
-		return
-	}
-
-	return 1 + matchItemAccess(tc)
-}
-
-// ITEM_ACCESS      := "[" ( ID | INTEGER ) "]" .
+// matchItemAccess  := "[" ( ID | INT) ) "]" .
 func matchItemAccess(tc *TokenCollector) (_ int) {
 
 	n := matchAny(tc, token.OPEN_GUARD)
@@ -125,7 +92,17 @@ func matchItemAccess(tc *TokenCollector) (_ int) {
 	return n
 }
 
-// LITERAL          := BOOL | INT | REAL | STRING | TEMPLATE .
+// matchIdOrItem   := ID [ matchItemAccess ] .
+func matchIdOrItem(tc *TokenCollector) (_ int) {
+
+	if 0 == matchAny(tc, token.ID) {
+		return
+	}
+
+	return 1 + matchItemAccess(tc)
+}
+
+// matchLiteral     := BOOL | INT | REAL | STRING | TEMPLATE .
 func matchLiteral(tc *TokenCollector) int {
 	return matchAny(tc,
 		token.BOOL_LITERAL,
@@ -136,7 +113,12 @@ func matchLiteral(tc *TokenCollector) int {
 	)
 }
 
-// PARAM            := "\_" | ID_OR_ITEM | LITERAL .
+// matchCallStart   := ID "("
+func matchCallStart(tc *TokenCollector) (_ int) {
+	return matchSeq(tc, token.ID, token.OPEN_PAREN)
+}
+
+// matchParam       := VOID | matchLiteral | matchIdOrItem .
 func matchParam(tc *TokenCollector) int {
 
 	if 1 == matchAny(tc, token.VOID) {
@@ -149,7 +131,7 @@ func matchParam(tc *TokenCollector) int {
 	)
 }
 
-// PARAM_LIST       := PARAM { "," PARAM } .
+// PARAM_LIST       := matchParam { "," matchParam } .
 func matchParamList(tc *TokenCollector) (_ int) {
 
 	n := matchParam(tc)
@@ -169,35 +151,4 @@ func matchParamList(tc *TokenCollector) (_ int) {
 	}
 
 	return n
-}
-
-// FUNC_CALL        := ID "(" PARAM_LIST ")" .
-func matchCall(tc *TokenCollector) (_ int) {
-
-	if 0 == matchAny(tc, token.OPEN_PAREN) {
-		return
-	}
-
-	n := matchParamList(tc)
-
-	if 0 == matchAny(tc, token.CLOSE_PAREN) {
-		panic(NewParseErr("Expected closing parentheses", nil, tc.Peek()))
-	}
-
-	return 2 + n
-}
-
-func matchLeftSideOfAssign(tc *TokenCollector) (_ int) {
-
-	n := matchIdArray(tc)
-
-	if 0 == n {
-		return
-	}
-
-	if 0 == matchAny(tc, token.ASSIGN) {
-		panic(NewParseErr("Expected ASSIGN token", nil, tc.Peek()))
-	}
-
-	return n + 1
 }
