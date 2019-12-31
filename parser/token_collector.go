@@ -66,10 +66,23 @@ func (tc *TokenCollector) UnreadAll() {
 	tc.index = 0
 }
 
-// Clear removes any collected tokens so they can no longer be put back.
+// Take removes and returns all read tokens that may still be unread. It then
+// clears those tokens so they can no longer be unread.
+func (tc *TokenCollector) Take() []token.Token {
+	r := tc.buffer[0:tc.index]
+	tc.Clear(tc.index)
+	return r
+}
+
+// Clear removes `n` collected tokens so they can no longer be unread.
 func (tc *TokenCollector) Clear(n int) {
-	tc.buffer = []token.Token{}
-	tc.index = 0
+
+	if n > tc.index {
+		n = tc.index
+	}
+
+	tc.buffer = tc.buffer[n:]
+	tc.index -= n
 }
 
 // _print_buffer prints the contents of the buffer.

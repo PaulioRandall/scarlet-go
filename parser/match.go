@@ -186,3 +186,22 @@ func matchCall(tc *TokenCollector) (_ int) {
 
 	return 2 + n
 }
+
+func matchGlobalAssign(tc *TokenCollector) (_ int) {
+
+	if 1 == matchAny(tc, token.GLOBAL) {
+		n := matchIdArray(tc)
+
+		if 0 == n {
+			panic(NewParseErr("Expected ID token", nil, tc.Peek()))
+		}
+
+		if 0 == matchAny(tc, token.ASSIGN) {
+			panic(NewParseErr("Expected ASSIGN token", nil, tc.Peek()))
+		}
+
+		return 1 + n + 1
+	}
+
+	return
+}

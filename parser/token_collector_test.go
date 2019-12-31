@@ -92,3 +92,45 @@ func TestTokenCollector_Unread_1(t *testing.T) {
 	doTest(true, 1, 3)
 	require.Equal(t, stream[1], tc.Peek())
 }
+
+func TestTokenCollector_Take_1(t *testing.T) {
+
+	stream := []token.Token{
+		token.OfKind(token.ID),
+		token.OfKind(token.ID),
+		token.OfKind(token.ID),
+		token.OfKind(token.ID),
+	}
+
+	tc := dummyTC(stream...)
+
+	_ = tc.Read()
+	_ = tc.Read()
+	_ = tc.Read()
+	tc.Unread(1)
+	act := tc.Take()
+
+	require.Equal(t, stream[:2], act)
+	require.Equal(t, 0, tc.index)
+	require.Equal(t, 1, len(tc.buffer))
+}
+
+func TestTokenCollector_Clear_1(t *testing.T) {
+
+	stream := []token.Token{
+		token.OfKind(token.ID),
+		token.OfKind(token.ID),
+		token.OfKind(token.ID),
+		token.OfKind(token.ID),
+	}
+
+	tc := dummyTC(stream...)
+
+	_ = tc.Read()
+	_ = tc.Read()
+	_ = tc.Read()
+	tc.Clear(2)
+
+	require.Equal(t, 1, tc.index)
+	require.Equal(t, 1, len(tc.buffer))
+}
