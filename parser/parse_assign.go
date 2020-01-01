@@ -1,148 +1,107 @@
 package parser
 
 import (
+	"strings"
+
 	"github.com/PaulioRandall/scarlet-go/parser/eval"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// parseAssign parses the next statement as an assignment statement. Assumes
-// that the statement matches a valid assignment statement.
-func parseAssign(tc *TokenCollector) (ids []eval.Expr) {
+// parseAssign parses the next statement as an assignment statement.
+func parseAssign(tm *TokenMatcher) (ids []eval.Expr) {
 
-	_ = matchAssignStart(tc)
+	t, _ := readExpect(tm, token.ID, token.VOID)
+	ids = append(ids, eval.NewForID(t))
 
-	for _, t := range tc.Take() {
+	for 1 == tm.Match(token.DELIM) {
+		_ = tm.Skip()
 
-		if t.Kind == token.ID || t.Kind == token.VOID {
-			ids = append(ids, eval.NewForID(t))
-		}
+		t, _ = readExpect(tm, token.ID, token.VOID)
+		ids = append(ids, eval.NewForID(t))
 	}
 
-	if 0 != matchAny(tc, token.FUNC) {
-		tc.Clear(1)
-		_ = parseFuncDef(tc)
+	if 1 == tm.Match(token.FUNC) {
+		_ = tm.Skip()
+		_ = parseFuncDef(tm)
 		//_ = parseFuncBody(tc)
 	}
 
+	// TODO: Other possibile expressions
+
 	return
 }
 
-func parseFuncDef(tc *TokenCollector) (f eval.Expr) {
+func parseFuncDef(tm *TokenMatcher) (f eval.Expr) {
 
-	// TODO: Match functions shouldn't increment the token index
+	_, _ = readExpect(tm, token.OPEN_PAREN)
 
-	if 0 == matchAny(tc, token.OPEN_PAREN) {
-		panic(NewParseErr("Expected opening parenthesis token", nil, tc.Peek()))
-	}
+	//params := parseFuncParams(tm)
+	//returns := parseFuncReturns(tm)
 
-	var params []eval.Expr
-	if 0 != matchFuncParams(tc) {
-		for _, t := range tc.Take() {
-			if t.Kind == token.ID {
-				params = append(params, eval.NewForID(t))
-			}
-		}
-	}
+	_, _ = readExpect(tm, token.CLOSE_PAREN)
 
-	var returns []eval.Expr
-	if 0 != matchFuncReturns(tc) {
-		for _, t := range tc.Take() {
-			if t.Kind == token.ID {
-				returns = append(returns, eval.NewForID(t))
-			}
-		}
-	}
+	// TODO: Body
 
-	if 0 == matchAny(tc, token.CLOSE_PAREN) {
-		panic(NewParseErr("Expected closing parenthesis token", nil, tc.Peek()))
-	}
-
-	return // TODO
+	return
 }
 
-// matchAssignStart := matchAssignIds ":=".
-func matchAssignStart(tc *TokenCollector) (_ int) {
+// parseFuncParams   := [ ID { "," ID } ].
+func parseFuncParams(tm *TokenMatcher) (ps []eval.Expr) {
 
-	n := matchAssignIds(tc)
-
-	if 0 == n {
+	if 0 == tm.Match(token.ID) {
 		return
 	}
 
-	if 0 == matchAny(tc, token.ASSIGN) {
-		panic(NewParseErr("Expected ASSIGN token", nil, tc.Peek()))
-	}
+	t, _ := tm.Read()
+	ps = append(ps, eval.NewForID(t))
 
-	return 1 + n
-}
+	for 1 == tm.Match(token.DELIM) {
+		tm.Skip()
 
-// ID_OR_VOID       := ID | "_" .
-// matchAssignIds   := [ ID_OR_VOID { "," ID_OR_VOID } ].
-func matchAssignIds(tc *TokenCollector) (n int) {
-
-	if 0 == matchAny(tc, token.ID, token.VOID) {
-		return
-	}
-
-	n++
-
-	for 1 == matchAny(tc, token.DELIM) {
-		n++
-
-		if 0 == matchAny(tc, token.ID, token.VOID) {
-			panic(NewParseErr("Expected ID token", nil, tc.Peek()))
-		}
-
-		n++
-	}
-
-	return n
-}
-
-// matchFuncParams   := [ ID { "," ID } ].
-func matchFuncParams(tc *TokenCollector) (n int) {
-
-	if 0 == matchAny(tc, token.ID) {
-		return
-	}
-
-	n++
-
-	for 1 == matchAny(tc, token.DELIM) {
-		n++
-
-		if 0 == matchAny(tc, token.ID) {
-			panic(NewParseErr("Expected ID token", nil, tc.Peek()))
-		}
-
-		n++
+		t, _ = readExpect(tm, token.ID)
+		ps = append(ps, eval.NewForID(t))
 	}
 
 	return
 }
 
-// matchFuncReturns := [ "->" ID { "," ID } ].
-func matchFuncReturns(tc *TokenCollector) (n int) {
+// parseFuncReturns := [ "->" ID { "," ID } ].
+func parseFuncReturns(tm *TokenMatcher) (re []eval.Expr) {
 
-	if 0 == matchAny(tc, token.RETURNS) {
-		return
-	}
+	if 1 == tm.Match(token.RETURNS) {
+		tm.Skip()
 
-	n++
+		t, _ := readExpect(tm, token.ID)
+		re = append(re, eval.NewForID(t))
 
-	if 0 == matchAny(tc, token.ID) {
-		panic(NewParseErr("Expected ID token", nil, tc.Peek()))
-	}
+		for 1 == tm.Match(token.DELIM) {
+			tm.Skip()
 
-	for 1 == matchAny(tc, token.DELIM) {
-		n++
-
-		if 0 == matchAny(tc, token.ID) {
-			panic(NewParseErr("Expected ID token", nil, tc.Peek()))
+			t, _ = readExpect(tm, token.ID)
+			re = append(re, eval.NewForID(t))
 		}
-
-		n++
 	}
 
 	return
+}
+
+func readExpect(tm *TokenMatcher, ks ...token.Kind) (_ token.Token, _ bool) {
+
+	if 0 == tm.MatchAny(ks...) {
+		kindNames := token.KindsToStrings(ks)
+		s := "Expected" + strings.Join(kindNames, " or ") + " token"
+
+		t, _ := tm.Peek()
+		badToken(s, t)
+	}
+
+	return tm.Read()
+}
+
+func badToken(s string, t token.Token) {
+	if t.IsZero() {
+		panic(s)
+	}
+
+	panic(s + " [" + t.String() + "]")
 }

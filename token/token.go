@@ -49,6 +49,16 @@ type Token struct {
 	Col   int
 }
 
+// KindsToStrings converts the kind slice to a string slice.
+func KindsToStrings(ks []Kind) (strs []string) {
+
+	for _, k := range ks {
+		strs = append(strs, string(k))
+	}
+
+	return
+}
+
 // New creates a new token.
 func New(k Kind, v string, l, c int) Token {
 	return Token{

@@ -35,9 +35,10 @@ func (tm *TokenMatcher) SkipMany(n int) int {
 	return n
 }
 
-// Read returns the next token in the stream. True is returned if the token is
-// valid and the end of the stream has NOT been reached.
-func (tm *TokenMatcher) Read() (_ token.Token, _ bool) {
+// Peek returns the next token in the stream without removing it from the
+// stream. True is returned if the token is valid and the end of the stream
+// has NOT been reached.
+func (tm *TokenMatcher) Peek() (_ token.Token, _ bool) {
 
 	if 0 == len(tm.buffer) {
 		if 0 == tm.readIntoBuffer(1) {
@@ -45,10 +46,19 @@ func (tm *TokenMatcher) Read() (_ token.Token, _ bool) {
 		}
 	}
 
-	r := tm.buffer[0]
-	tm.buffer = tm.buffer[1:]
+	return tm.buffer[0], true
+}
 
-	return r, true
+// Read returns the next token in the stream. True is returned if the token is
+// valid and the end of the stream has NOT been reached.
+func (tm *TokenMatcher) Read() (_ token.Token, _ bool) {
+	r, ok := tm.Peek()
+
+	if ok {
+		tm.buffer = tm.buffer[1:]
+	}
+
+	return r, ok
 }
 
 // Read returns the next `n` tokens in the stream. The length of the slice is
@@ -127,6 +137,35 @@ func (tm *TokenMatcher) MatchSeq(seq ...token.Kind) (_ int) {
 	}
 
 	return seqLen
+}
+
+// MatchRepeat compares the sequence of input kinds `seq` with the kinds in the
+// next sequence allowing for the input sequence to repeat any number of times
+// (longest match is used). The length of the repeating sequence is returned if
+// it matches at least once else 0 is returned.
+func (tm *TokenMatcher) MatchRepeat(seq ...token.Kind) (n int) {
+
+	seqLen := len(seq)
+
+	for {
+		need := n + seqLen - len(tm.buffer)
+
+		if need > 0 {
+			if tm.readIntoBuffer(need) < need {
+				return
+			}
+		}
+
+		for i, k := range seq {
+			if k != tm.buffer[n+i].Kind {
+				return
+			}
+		}
+
+		n += seqLen
+	}
+
+	return
 }
 
 /*

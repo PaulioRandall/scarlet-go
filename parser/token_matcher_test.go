@@ -9,6 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func dummyTM(stream ...token.Token) *TokenMatcher {
+	st := lexor.DummyScanToken(stream)
+	return NewTokenMatcher(st)
+}
+
 func TestTokenMatcher_Read_1(t *testing.T) {
 
 	stream := []token.Token{

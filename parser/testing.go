@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type matcher func(tc *TokenCollector) int
+type matcher func(tm *TokenMatcher) int
 
 func testMatcher(
 	t *testing.T,
@@ -18,12 +18,12 @@ func testMatcher(
 	in ...token.Token,
 ) {
 
-	tc := dummyTC(in...)
+	tm := dummyTM(in...)
 
 	if err {
-		require.Panics(t, func() { f(tc) }, "Expected a panic")
+		require.Panics(t, func() { f(tm) }, "Expected a panic")
 		return
 	}
 
-	require.Equal(t, exp, f(tc), "Expected %d matched tokens", exp)
+	require.Equal(t, exp, f(tm), "Expected %d matched tokens", exp)
 }
