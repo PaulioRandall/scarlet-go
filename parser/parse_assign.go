@@ -3,27 +3,29 @@ package parser
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/parser/eval"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
 // parseAssign parses the next statement as an assignment statement.
-func parseAssign(tm *TokenMatcher) (ids []eval.Expr) {
+func parseAssign(tm *TokenMatcher) (_ Expr) {
+
+	var ids []Expr
+	var ex []Expr
 
 	t, _ := readExpect(tm, token.ID, token.VOID)
-	ids = append(ids, eval.NewForID(t))
+	ids = append(ids, NewForID(t))
 
 	for 1 == tm.Match(token.DELIM) {
 		_ = tm.Skip()
 
 		t, _ = readExpect(tm, token.ID, token.VOID)
-		ids = append(ids, eval.NewForID(t))
+		ids = append(ids, NewForID(t))
 	}
 
 	if 1 == tm.Match(token.FUNC) {
 		_ = tm.Skip()
-		_ = parseFuncDef(tm)
-		//_ = parseFuncBody(tc)
+		ex = append(ex, parseFuncDef(tm))
+		return NewForAssign(ids, ex)
 	}
 
 	// TODO: Other possibile expressions
@@ -31,7 +33,7 @@ func parseAssign(tm *TokenMatcher) (ids []eval.Expr) {
 	return
 }
 
-func parseFuncDef(tm *TokenMatcher) (f eval.Expr) {
+func parseFuncDef(tm *TokenMatcher) (f Expr) {
 
 	_, _ = readExpect(tm, token.OPEN_PAREN)
 
@@ -41,44 +43,45 @@ func parseFuncDef(tm *TokenMatcher) (f eval.Expr) {
 	_, _ = readExpect(tm, token.CLOSE_PAREN)
 
 	// TODO: Body
+	//body = parseFuncBody(tm)
 
 	return
 }
 
 // parseFuncParams   := [ ID { "," ID } ].
-func parseFuncParams(tm *TokenMatcher) (ps []eval.Expr) {
+func parseFuncParams(tm *TokenMatcher) (ps []Expr) {
 
 	if 0 == tm.Match(token.ID) {
 		return
 	}
 
 	t, _ := tm.Read()
-	ps = append(ps, eval.NewForID(t))
+	ps = append(ps, NewForID(t))
 
 	for 1 == tm.Match(token.DELIM) {
 		tm.Skip()
 
 		t, _ = readExpect(tm, token.ID)
-		ps = append(ps, eval.NewForID(t))
+		ps = append(ps, NewForID(t))
 	}
 
 	return
 }
 
 // parseFuncReturns := [ "->" ID { "," ID } ].
-func parseFuncReturns(tm *TokenMatcher) (re []eval.Expr) {
+func parseFuncReturns(tm *TokenMatcher) (re []Expr) {
 
 	if 1 == tm.Match(token.RETURNS) {
 		tm.Skip()
 
 		t, _ := readExpect(tm, token.ID)
-		re = append(re, eval.NewForID(t))
+		re = append(re, NewForID(t))
 
 		for 1 == tm.Match(token.DELIM) {
 			tm.Skip()
 
 			t, _ = readExpect(tm, token.ID)
-			re = append(re, eval.NewForID(t))
+			re = append(re, NewForID(t))
 		}
 	}
 
