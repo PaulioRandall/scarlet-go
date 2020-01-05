@@ -27,14 +27,6 @@ type rootCtx struct {
 	globals map[string]Value
 }
 
-// NewRootCtx creates a new context designed to work at the scripts root.
-func NewRootCtx() Context {
-	return rootCtx{
-		vars:    make(map[string]Value),
-		globals: make(map[string]Value),
-	}
-}
-
 // Get satisfies the Context interface.
 func (ctx rootCtx) Get(id string) Value {
 	return ctx.vars[id]

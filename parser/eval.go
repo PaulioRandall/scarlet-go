@@ -34,7 +34,7 @@ func NewForOperator(t token.Token) Expr {
 	}
 }
 
-func NewForFuncCall(id Expr, params, returns []Expr, body []Expr) Expr {
+func NewForFuncDef(id Expr, params, returns []Expr, body []Expr) Expr {
 	return func(parent ctx.Context) (_ ctx.Value, _ error) {
 		// TODO:
 		return
@@ -48,6 +48,6 @@ func NewForSpellCall(id Expr, params []Expr) Expr {
 	}
 }
 
-func NewForAssign(ids, ex []Expr) Expr {
-	return nil
+func NewForAssign(ids, ex []Expr) (_ Expr) {
+	return
 }

@@ -35,17 +35,25 @@ func parseAssign(tm *TokenMatcher) (_ Expr) {
 
 func parseFuncDef(tm *TokenMatcher) (f Expr) {
 
+	t, _ := readExpect(tm, token.ID)
+	id := NewForID(t)
+
 	_, _ = readExpect(tm, token.OPEN_PAREN)
 
-	//params := parseFuncParams(tm)
-	//returns := parseFuncReturns(tm)
+	params := parseFuncParams(tm)
+	returns := parseFuncReturns(tm)
 
 	_, _ = readExpect(tm, token.CLOSE_PAREN)
 
-	// TODO: Body
-	//body = parseFuncBody(tm)
+	var body []Expr
+	if 1 == tm.Match(token.DO) {
+		_, _ = readExpect(tm, token.DO)
+		body = parseBlock(tm)
+	} else {
+		body = []Expr{parseStatement(tm)}
+	}
 
-	return
+	return NewForFuncDef(id, params, returns, body)
 }
 
 // parseFuncParams   := [ ID { "," ID } ].

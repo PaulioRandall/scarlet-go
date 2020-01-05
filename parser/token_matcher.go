@@ -168,11 +168,11 @@ func (tm *TokenMatcher) MatchRepeat(seq ...token.Kind) (n int) {
 	return
 }
 
-/*
+// HasMore returns true if there are more tokens in the stream, however, the
+// last token may be a zero value.
 func (tm *TokenMatcher) HasMore() bool {
 	return len(tm.buffer) > 0 || tm.scanner != nil
 }
-*/
 
 // readIntoBuffer reads upto `n` tokens into the buffer. The number of tokens
 // added is returned; if it is less than the input `n` then the end of the

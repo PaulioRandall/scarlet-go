@@ -21,7 +21,7 @@ const (
 
 // Procedure is a function prototype that executes a construct with a block of
 // code.
-type Procedure func(ctx Context, params []Value) (Value, ProcErr)
+type Procedure func(ctx Context, params []Value) (Value, error)
 
 // Value represents a value within the script. This could be a variable value
 // or intermediate one.
@@ -35,8 +35,8 @@ func NewValue(k Kind, v interface{}) Value {
 	return Value{k, v}
 }
 
-// IsEmpty returns true if the value is empty.
-func (v Value) IsEmpty() bool {
+// IsZero returns true if the value is empty.
+func (v Value) IsZero() bool {
 	return v == (Value{})
 }
 
