@@ -1,11 +1,16 @@
 package lexor
 
 import (
+	"errors"
 	//"strconv"
 	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/token"
 )
+
+// ****************************************************************************
+// * Package API
+// ****************************************************************************
 
 // Scanner is a structure for parsing source code into tokens.
 type Scanner struct {
@@ -32,6 +37,7 @@ func (scn *Scanner) Next() (tk token.Token) {
 		scn.scanNewline,
 		scn.scanSpace,
 		scn.scanComment,
+		scn.scanNumLiteral,
 	}
 
 	for _, f := range fs {
@@ -44,6 +50,10 @@ func (scn *Scanner) Next() (tk token.Token) {
 
 	return
 }
+
+// ****************************************************************************
+// * Helper functions
+// ****************************************************************************
 
 // tokenize slices off the next token from the scanners rune array and updates
 // the line and column numbers accordingly.
@@ -75,23 +85,38 @@ func (scn *Scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token)
 // newlineTerminals returns the number of terminal symbols that make up the next
 // newline token in the slice. If the next token is not a newline token then 0
 // is returned.
-func newlineTerminals(runes []rune) (_ int) {
+func newlineTerminals(r []rune) (_ int) {
 
-	size := len(runes)
+	size := len(r)
 
 	if size < 1 {
 		return
 	}
 
-	if runes[0] == '\n' { // LF
+	if r[0] == '\n' { // LF
 		return 1
 	}
 
-	if size > 1 && runes[0] == '\r' && runes[1] == '\n' { // CRLF
+	if size > 1 && r[0] == '\r' && r[1] == '\n' { // CRLF
 		return 2
 	}
 
 	return
+}
+
+// countDigits counts an uninterupted series of digits in the rune slice
+// starting from the specified index.
+func countDigits(r []rune, start int) (n int) {
+
+	size := len(r)
+
+	for n = start; n < size; n++ {
+		if !unicode.IsDigit(r[n]) {
+			break
+		}
+	}
+
+	return n - start
 }
 
 // ****************************************************************************
@@ -134,14 +159,26 @@ func (scn *Scanner) scanComment() (_ token.Token) {
 	return scn.tokenize(i, token.COMMENT, false)
 }
 
-// scanComment attempts to scan a series of whitespace characters. If
-// successful a non-empty whitespace token is returned.
+// scanSpace attempts to scan a series of whitespace characters. If successful
+// a non-empty whitespace token is returned.
 func (scn *Scanner) scanSpace() (_ token.Token) {
 
-	var i int
-	var ru rune
+	var n int
 
-	for i, ru = range scn.runes {
+	if len(scn.runes) == 0 {
+		return
+	}
+
+	if newlineTerminals(scn.runes) != 0 {
+		return
+	}
+
+	if !unicode.IsSpace(scn.runes[0]) {
+		return
+	}
+
+	for i, ru := range scn.runes {
+
 		if !unicode.IsSpace(ru) {
 			break
 		}
@@ -149,12 +186,34 @@ func (scn *Scanner) scanSpace() (_ token.Token) {
 		if n := newlineTerminals(scn.runes[i:]); n > 0 {
 			break
 		}
+
+		n++
 	}
 
-	if i == 0 {
+	return scn.tokenize(n, token.WHITESPACE, false)
+}
+
+// scanNumLiteral attempts to scan a literal number. If successful a non-empty
+// number literal token is returned.
+func (scn *Scanner) scanNumLiteral() (_ token.Token) {
+
+	r := scn.runes
+	n := countDigits(r, 0)
+
+	if n == 0 {
 		return
 	}
 
-	i++ // Convert from index to count
-	return scn.tokenize(i, token.WHITESPACE, false)
+	if n == len(r) || r[n] != '.' {
+		return scn.tokenize(n, token.INT_LITERAL, false)
+	}
+
+	n++ // +1 for decimal point
+	d := countDigits(r, n)
+	if d == 0 {
+		panic(errors.New("Expected digit after decimal point"))
+	}
+
+	n += d
+	return scn.tokenize(n, token.REAL_LITERAL, false)
 }
