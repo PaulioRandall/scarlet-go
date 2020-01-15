@@ -1,8 +1,6 @@
 package lexor
 
 import (
-	"errors"
-	//"strconv"
 	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/token"
@@ -38,6 +36,12 @@ func (scn *Scanner) Next() (tk token.Token) {
 		scn.scanSpace,
 		scn.scanComment,
 		scn.scanNumLiteral,
+		scn.scanStrLiteral,
+		scn.scanStrTemplate,
+	}
+
+	if len(scn.runes) == 0 {
+		return
 	}
 
 	for _, f := range fs {
@@ -160,14 +164,11 @@ func (scn *Scanner) scanComment() (_ token.Token) {
 }
 
 // scanSpace attempts to scan a series of whitespace characters. If successful
-// a non-empty whitespace token is returned.
+// a non-empty whitespace token is returned. Assumes that the scanners rune
+// array length is greater than 0.
 func (scn *Scanner) scanSpace() (_ token.Token) {
 
 	var n int
-
-	if len(scn.runes) == 0 {
-		return
-	}
 
 	if newlineTerminals(scn.runes) != 0 {
 		return
@@ -211,9 +212,58 @@ func (scn *Scanner) scanNumLiteral() (_ token.Token) {
 	n++ // +1 for decimal point
 	d := countDigits(r, n)
 	if d == 0 {
-		panic(errors.New("Expected digit after decimal point"))
+		panic("Expected digit after decimal point")
 	}
 
 	n += d
 	return scn.tokenize(n, token.REAL_LITERAL, false)
+}
+
+// scanStrLiteral attempts to scan a string literal. If successful a non-empty
+// string literal token is returned. Assumes that the scanners rune array
+// length is greater than 0.
+func (scn *Scanner) scanStrLiteral() (_ token.Token) {
+
+	for i, ru := range scn.runes {
+		switch {
+		case i == 0 && ru != '`':
+			return
+		case i == 0:
+			continue
+		case ru == '`':
+			return scn.tokenize(i+1, token.STR_LITERAL, false)
+		case ru == '\n':
+			goto ERROR
+		}
+	}
+
+ERROR:
+	panic("Unterminated string literal")
+}
+
+// scanStrTemplate attempts to scan a string template. If successful a non-empty
+// string template token is returned. Assumes that the scanners rune array
+// length is greater than 0.
+func (scn *Scanner) scanStrTemplate() (_ token.Token) {
+
+	prev := rune(0)
+
+	for i, ru := range scn.runes {
+
+		switch {
+		case i == 0 && ru != '"':
+			return
+		case i == 0 && ru == '"':
+			break
+		case prev != '\\' && ru == '"':
+			return scn.tokenize(i+1, token.STR_TEMPLATE, false)
+		case ru == '\n':
+			goto ERROR
+		}
+
+		prev = ru
+	}
+
+ERROR:
+	panic("Unterminated string template")
 }

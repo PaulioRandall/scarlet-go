@@ -31,18 +31,25 @@ func doTest(t *testing.T, scn *Scanner, exp ...token.Token) {
 func TestScanner_Next_1(t *testing.T) {
 
 	s := New("\r\n" +
-		"// comment" + "\n" +
-		" \t\v\f" + "123" + "\n" +
-		"123.456")
+		" \t\r\v\f" + "// comment" + "\n" +
+		"123" + " " + "123.456" + "\r\n" +
+		"`abc`" + `"abc"`)
 
 	doTest(t, s,
+		// Line 0
 		tok(token.NEWLINE, "\r\n", 0, 0),
-		tok(token.COMMENT, "// comment", 1, 0),
-		tok(token.NEWLINE, "\n", 1, 10),
-		tok(token.WHITESPACE, " \t\v\f", 2, 0),
-		tok(token.INT_LITERAL, "123", 2, 4),
-		tok(token.NEWLINE, "\n", 2, 7),
-		tok(token.REAL_LITERAL, "123.456", 3, 0),
+		// Line 1
+		tok(token.WHITESPACE, " \t\r\v\f", 1, 0),
+		tok(token.COMMENT, "// comment", 1, 5),
+		tok(token.NEWLINE, "\n", 1, 15),
+		// Line 2
+		tok(token.INT_LITERAL, "123", 2, 0), //
+		tok(token.WHITESPACE, " ", 2, 3),
+		tok(token.REAL_LITERAL, "123.456", 2, 4),
+		tok(token.NEWLINE, "\r\n", 2, 11),
+		// Line 3
+		tok(token.STR_LITERAL, "`abc`", 3, 0),
+		tok(token.STR_TEMPLATE, `"abc"`, 3, 5),
 	)
 
 	assert.Empty(t, s.Next())
