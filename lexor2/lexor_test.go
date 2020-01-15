@@ -30,12 +30,15 @@ func doTest(t *testing.T, scn *Scanner, exp ...token.Token) {
 
 func TestScanner_Next_1(t *testing.T) {
 
-	s := New("\r\n" + "// comment" + "\n")
+	s := New("\r\n" +
+		"// comment" + "\n" +
+		" \t\v\f")
 
 	doTest(t, s,
 		tok(token.NEWLINE, "\r\n", 0, 0),
 		tok(token.COMMENT, "// comment", 1, 0),
 		tok(token.NEWLINE, "\n", 1, 10),
+		tok(token.WHITESPACE, " \t\v\f", 2, 0),
 	)
 
 	assert.Empty(t, s.Next())

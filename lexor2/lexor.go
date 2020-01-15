@@ -1,6 +1,9 @@
 package lexor
 
 import (
+	//"strconv"
+	"unicode"
+
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -27,6 +30,7 @@ func (scn *Scanner) Next() (tk token.Token) {
 
 	fs := []scanFunc{
 		scn.scanNewline,
+		scn.scanSpace,
 		scn.scanComment,
 	}
 
@@ -39,54 +43,6 @@ func (scn *Scanner) Next() (tk token.Token) {
 	}
 
 	return
-}
-
-// scanNewline attempts to scan a newline token. If successful a non-empty
-// newline token is returned.
-func (scn *Scanner) scanNewline() (_ token.Token) {
-
-	size := len(scn.runes)
-
-	if size < 1 {
-		return
-	}
-
-	if scn.runes[0] == '\n' { // LF
-		return scn.tokenize(1, token.NEWLINE, true)
-	}
-
-	if size > 1 && scn.runes[0] == '\r' && scn.runes[1] == '\n' { // CRLF
-		return scn.tokenize(2, token.NEWLINE, true)
-	}
-
-	return
-}
-
-// scanComment attempts to scan a comment. If successful a non-empty comment
-// token is returned.
-func (scn *Scanner) scanComment() (_ token.Token) {
-
-	var n int
-
-	size := len(scn.runes)
-	if size < 2 {
-		return
-	}
-
-	if scn.runes[0] != '/' || scn.runes[1] != '/' {
-		return
-	}
-
-	for n = 2; n < size; n++ { // Scan to the end of the line or file
-		if scn.runes[n] == '\n' {
-			if scn.runes[n-1] == '\r' {
-				n--
-			}
-			break
-		}
-	}
-
-	return scn.tokenize(n, token.COMMENT, false)
 }
 
 // tokenize slices off the next token from the scanners rune array and updates
@@ -114,4 +70,91 @@ func (scn *Scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token)
 	}
 
 	return
+}
+
+// newlineTerminals returns the number of terminal symbols that make up the next
+// newline token in the slice. If the next token is not a newline token then 0
+// is returned.
+func newlineTerminals(runes []rune) (_ int) {
+
+	size := len(runes)
+
+	if size < 1 {
+		return
+	}
+
+	if runes[0] == '\n' { // LF
+		return 1
+	}
+
+	if size > 1 && runes[0] == '\r' && runes[1] == '\n' { // CRLF
+		return 2
+	}
+
+	return
+}
+
+// ****************************************************************************
+// * Scanning functions: func() token.Token
+// ****************************************************************************
+
+// scanNewline attempts to scan a newline token. If successful a non-empty
+// newline token is returned.
+func (scn *Scanner) scanNewline() (_ token.Token) {
+
+	if n := newlineTerminals(scn.runes); n > 0 {
+		return scn.tokenize(n, token.NEWLINE, true)
+	}
+
+	return
+}
+
+// scanComment attempts to scan a comment. If successful a non-empty comment
+// token is returned.
+func (scn *Scanner) scanComment() (_ token.Token) {
+
+	const COMMENT_PREFIX int = 2
+	var i int
+	size := len(scn.runes)
+
+	if size < COMMENT_PREFIX {
+		return
+	}
+
+	if scn.runes[0] != '/' || scn.runes[1] != '/' {
+		return
+	}
+
+	for i = COMMENT_PREFIX; i < size; i++ {
+		if n := newlineTerminals(scn.runes[i:]); n > 0 {
+			break
+		}
+	}
+
+	return scn.tokenize(i, token.COMMENT, false)
+}
+
+// scanComment attempts to scan a series of whitespace characters. If
+// successful a non-empty whitespace token is returned.
+func (scn *Scanner) scanSpace() (_ token.Token) {
+
+	var i int
+	var ru rune
+
+	for i, ru = range scn.runes {
+		if !unicode.IsSpace(ru) {
+			break
+		}
+
+		if n := newlineTerminals(scn.runes[i:]); n > 0 {
+			break
+		}
+	}
+
+	if i == 0 {
+		return
+	}
+
+	i++ // Convert from index to count
+	return scn.tokenize(i, token.WHITESPACE, false)
 }
