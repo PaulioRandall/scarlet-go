@@ -35,6 +35,7 @@ func (scn *Scanner) Next() (tk token.Token) {
 		scn.scanNewline,
 		scn.scanSpace,
 		scn.scanComment,
+		scn.scanWord,
 		scn.scanNumLiteral,
 		scn.scanStrLiteral,
 		scn.scanStrTemplate,
@@ -53,74 +54,6 @@ func (scn *Scanner) Next() (tk token.Token) {
 	}
 
 	return
-}
-
-// ****************************************************************************
-// * Helper functions
-// ****************************************************************************
-
-// tokenize slices off the next token from the scanners rune array and updates
-// the line and column numbers accordingly.
-func (scn *Scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token) {
-
-	if len(scn.runes) < n {
-		panic("Bad function argument, n is bigger than the source code")
-	}
-
-	tk = token.Token{
-		Kind:  k,
-		Value: string(scn.runes[:n]),
-		Line:  scn.line,
-		Col:   scn.col,
-	}
-
-	scn.runes = scn.runes[n:]
-
-	if newline {
-		scn.line++
-		scn.col = 0
-	} else {
-		scn.col += n
-	}
-
-	return
-}
-
-// newlineTerminals returns the number of terminal symbols that make up the next
-// newline token in the slice. If the next token is not a newline token then 0
-// is returned.
-func newlineTerminals(r []rune) (_ int) {
-
-	size := len(r)
-
-	if size < 1 {
-		return
-	}
-
-	if r[0] == '\n' { // LF
-		return 1
-	}
-
-	if size > 1 && r[0] == '\r' && r[1] == '\n' { // CRLF
-		return 2
-	}
-
-	return
-}
-
-// countDigits counts an uninterupted series of digits in the rune slice
-// starting from the specified index.
-func countDigits(r []rune, start int) (n int) {
-
-	size := len(r)
-
-	for n = start; n < size; n++ {
-		if !unicode.IsDigit(r[n]) {
-			break
-		}
-	}
-
-	return n - start
 }
 
 // ****************************************************************************
@@ -266,4 +199,121 @@ func (scn *Scanner) scanStrTemplate() (_ token.Token) {
 
 ERROR:
 	panic("Unterminated string template")
+}
+
+// scanWord attempts to scan a keyword or identifier. If successful a non-empty
+// keyword or identifier token is returned.
+func (scn *Scanner) scanWord() (_ token.Token) {
+
+	var n int
+	r := scn.runes
+
+	for _, ru := range r {
+		if ru != '_' && !unicode.IsLetter(ru) {
+			break
+		}
+
+		n++
+	}
+
+	if n == 0 || (n == 1 && r[0] == '_') {
+		return
+	}
+
+	k := keywordOrID(r[:n])
+	return scn.tokenize(n, k, false)
+}
+
+// ****************************************************************************
+// * Helper functions
+// ****************************************************************************
+
+// tokenize slices off the next token from the scanners rune array and updates
+// the line and column numbers accordingly.
+func (scn *Scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token) {
+
+	if len(scn.runes) < n {
+		panic("Bad function argument, n is bigger than the source code")
+	}
+
+	tk = token.Token{
+		Kind:  k,
+		Value: string(scn.runes[:n]),
+		Line:  scn.line,
+		Col:   scn.col,
+	}
+
+	scn.runes = scn.runes[n:]
+
+	if newline {
+		scn.line++
+		scn.col = 0
+	} else {
+		scn.col += n
+	}
+
+	return
+}
+
+// newlineTerminals returns the number of terminal symbols that make up the next
+// newline token in the slice. If the next token is not a newline token then 0
+// is returned.
+func newlineTerminals(r []rune) (_ int) {
+
+	size := len(r)
+
+	if size < 1 {
+		return
+	}
+
+	if r[0] == '\n' { // LF
+		return 1
+	}
+
+	if size > 1 && r[0] == '\r' && r[1] == '\n' { // CRLF
+		return 2
+	}
+
+	return
+}
+
+// countDigits counts an uninterupted series of digits in the rune slice
+// starting from the specified index.
+func countDigits(r []rune, start int) (n int) {
+
+	size := len(r)
+
+	for n = start; n < size; n++ {
+		if !unicode.IsDigit(r[n]) {
+			break
+		}
+	}
+
+	return n - start
+}
+
+// keywordOrID identifies the keyword kind represented by the input rune slice.
+// If no keyword can be found then the identifier kind is returned.
+func keywordOrID(r []rune) token.Kind {
+
+	ks := map[string]token.Kind{
+		`GLOBAL`: token.GLOBAL,
+		`F`:      token.FUNC,
+		`DO`:     token.DO,
+		`WATCH`:  token.WATCH,
+		`MATCH`:  token.MATCH,
+		`END`:    token.END,
+		`TRUE`:   token.BOOL_LITERAL,
+		`FALSE`:  token.BOOL_LITERAL,
+	}
+
+	src := string(r)
+
+	for k, v := range ks {
+		if k == src {
+			return v
+		}
+	}
+
+	return token.ID
 }

@@ -102,5 +102,5 @@ func (t Token) IsNotZero() bool {
 // String returns a string representation of the token.
 func (t Token) String() string {
 	s := strconv.QuoteToGraphic(t.Value)
-	return fmt.Sprintf(`%d: '%s' (%s)`, t.Line, s, t.Kind)
+	return fmt.Sprintf(`%d: %s (%s)`, t.Line, s, t.Kind)
 }
