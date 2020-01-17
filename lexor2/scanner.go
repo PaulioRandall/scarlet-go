@@ -36,6 +36,7 @@ func (scn *Scanner) Next() (tk token.Token) {
 		scn.scanSpace,
 		scn.scanComment,
 		scn.scanWord,
+		scn.scanSymbol,
 		scn.scanNumLiteral,
 		scn.scanStrLiteral,
 		scn.scanStrTemplate,
@@ -53,7 +54,7 @@ func (scn *Scanner) Next() (tk token.Token) {
 		}
 	}
 
-	return
+	panic("Could not identify next token")
 }
 
 // ****************************************************************************
@@ -221,6 +222,90 @@ func (scn *Scanner) scanWord() (_ token.Token) {
 	}
 
 	k := keywordOrID(r[:n])
+	return scn.tokenize(n, k, false)
+}
+
+// scanSymbol attempts to scan a symbol token. If successful a non-empty
+// symbol token is returned. Assumes that the scanners rune array length is
+// greater than 0.
+func (scn *Scanner) scanSymbol() (_ token.Token) {
+
+	var (
+		a rune
+		b rune
+		n int
+		k token.Kind
+	)
+
+	switch size := len(scn.runes); {
+	case size == 0:
+		return
+	case size > 1:
+		b = scn.runes[1]
+		fallthrough
+	default:
+		a = scn.runes[0]
+	}
+
+	switch {
+	case a == ':' && b == '=':
+		n, k = 2, token.ASSIGN
+	case a == '-' && b == '>': // Order matters! Must be before `-`
+		n, k = 2, token.RETURNS
+	case a == '(':
+		n, k = 1, token.OPEN_PAREN
+	case a == ')':
+		n, k = 1, token.CLOSE_PAREN
+	case a == '[':
+		n, k = 1, token.OPEN_GUARD
+	case a == ']':
+		n, k = 1, token.CLOSE_GUARD
+	case a == '{':
+		n, k = 1, token.OPEN_LIST
+	case a == '}':
+		n, k = 1, token.CLOSE_LIST
+	case a == ',':
+		n, k = 1, token.DELIM
+	case a == '@':
+		n, k = 1, token.SPELL
+	case a == '+':
+		n, k = 1, token.OPERATOR
+	case a == '-':
+		n, k = 1, token.OPERATOR
+	case a == '/':
+		n, k = 1, token.OPERATOR
+	case a == '*':
+		n, k = 1, token.OPERATOR
+	case a == '%':
+		n, k = 1, token.OPERATOR
+	case a == '|':
+		n, k = 1, token.OPERATOR
+	case a == '&':
+		n, k = 1, token.OPERATOR
+	case a == '~':
+		n, k = 1, token.NOT
+	case a == '¬':
+		n, k = 1, token.NOT
+	case a == '=':
+		n, k = 1, token.OPERATOR
+	case a == '#':
+		n, k = 1, token.OPERATOR
+	case a == '<' && b == '=': // Order matters! Must be before `<`
+		n, k = 2, token.OPERATOR
+	case a == '>' && b == '=': // Order matters! Must be before `<`
+		n, k = 2, token.OPERATOR
+	case a == '<':
+		n, k = 1, token.OPERATOR
+	case a == '>':
+		n, k = 1, token.OPERATOR
+	case a == '_':
+		n, k = 1, token.VOID
+	}
+
+	if k == token.UNDEFINED {
+		return
+	}
+
 	return scn.tokenize(n, k, false)
 }
 

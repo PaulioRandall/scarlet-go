@@ -24,6 +24,7 @@ func doTest(t *testing.T, scn *Scanner, exp ...token.Token) {
 			return
 		}
 
+		println(tk.String())
 		require.Equal(t, exp[i], tk)
 	}
 }
@@ -35,7 +36,8 @@ func TestScanner_Next_1(t *testing.T) {
 		"123" + " " + "123.456" + "\r\n" +
 		"`abc`" + `"abc"` + "\n" +
 		"abc_xyz" + "\r\n" +
-		"F" + " " + "MATCH" + " " + "TRUE" + "\n")
+		"F" + " " + "MATCH" + " " + "TRUE" + "\n" +
+		"@" + "~" + ":=" + "*" + "->" + ")" + "\r\n")
 
 	doTest(t, s,
 		// Line 0
@@ -64,6 +66,14 @@ func TestScanner_Next_1(t *testing.T) {
 		tok(token.BOOL_LITERAL, "TRUE", 5, 8),
 		tok(token.NEWLINE, "\n", 5, 12),
 		// Line 6
+		tok(token.SPELL, "@", 6, 0),
+		tok(token.NOT, "~", 6, 1),
+		tok(token.ASSIGN, ":=", 6, 2),
+		tok(token.OPERATOR, "*", 6, 4),
+		tok(token.RETURNS, "->", 6, 5),
+		tok(token.CLOSE_PAREN, ")", 6, 7),
+		tok(token.NEWLINE, "\r\n", 6, 8),
+		// Line 7
 	)
 
 	assert.Empty(t, s.Next())
