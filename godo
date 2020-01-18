@@ -2,9 +2,10 @@
 
 GO_PROJ_NAME="scarlet"
 TEST_TIMEOUT="3s"
+OUTPUT_FILE=-o $GO_PROJ_NAME
+BUILD_FLAGS=-ldflags "-s -w"
 
 clear
-rm -f cmd/"$GO_PROJ_NAME"
 
 # checkExitCode prints an error message and exits the script if the first
 # argument is not 0 (zero).
@@ -21,9 +22,30 @@ checkExitCode() {
 # goBuild builds the Go program.
 goBuild() {
   echo Building...
+  rm -f cmd/"$GO_PROJ_NAME"
   cd cmd
-  go build -o "$GO_PROJ_NAME" "${GO_PROJ_NAME}.go"
+  go build $OUTPUT_FILE $BUILD_FLAGS ${GO_PROJ_NAME}.go
   checkExitCode $? "'go build ...' failed"
+  cd ..
+}
+
+# goCompress compresses the binary executable.
+goCompress() {
+  echo Compressing...
+  cd cmd
+
+	if [ "command -v upx" ]; then
+		if [ "$1" == "atomic" ]; then
+  		upx --ultra-brute $GO_PROJ_NAME
+  	else
+  		upx $GO_PROJ_NAME
+  	fi
+
+  	checkExitCode $? "'upx ...' failed"
+  else
+  	echo "Can't compress because you don't have 'upx' installed"
+	fi
+		
   cd ..
 }
 
@@ -50,14 +72,20 @@ runBuild() {
   cd ..
 }
 
-# If wanting to just test the code do this.
+# If you just want to build the binary.
 if [[ "$1" == "build" ]]; then
   goBuild
   goFmt
   exit 0
 fi
 
-# If wanting to just test the code do this.
+# If you want to compress a built binary.
+if [[ "$1" == "compress" ]]; then
+  goCompress $2
+  exit 0
+fi
+
+# If you want to build and test the binary.
 if [[ "$1" == "test" ]]; then
   goBuild
   goFmt
@@ -65,7 +93,7 @@ if [[ "$1" == "test" ]]; then
   exit 0
 fi
 
-# Else if wanting to also run the code do this.
+# If you want to build, test, then run the binary.
 if [[ "$1" == "run" ]]; then
   goBuild
   goFmt
@@ -76,5 +104,9 @@ if [[ "$1" == "run" ]]; then
 fi
 
 echo "I don't understand the option or no option supplied '$1'..."
-echo "I only deal with 'test' or 'run' commands, take it leave it."
+echo "Usage"
+echo "	./godo build"
+echo "	./godo compress [atomic]"
+echo "	./godo test"
+echo "	./godo run"
 exit 1
