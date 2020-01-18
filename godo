@@ -1,11 +1,41 @@
 #!/bin/bash
 
-GO_PROJ_NAME="scarlet"
+# *********************************
+# Change these parameters as needed
+EXE_NAME="scarlet"
+MAIN_GO_FILE="cmd/scarlet.go"
 TEST_TIMEOUT="3s"
 OUTPUT_FILE=-o $GO_PROJ_NAME
-BUILD_FLAGS=-ldflags "-s -w"
+#BUILD_FLAGS=-ldflags "-s -w"
+RESOURCE_FILES="cmd/test.scarlet cmd/test.scarlet"
+# *********************************
+
+ROOT_DIR="$PWD"
+BUILD_DIR="build"
+EXE_FILE="$BUILD_DIR/$EXE_NAME"
 
 clear
+mkdir -p "$BUILD_DIR"
+
+# println prints the arguments then a line feed.
+# $@: List of text strings to print
+println() {
+  for s in "$@"
+  do
+    printf "$s"
+  done
+
+  printf "\n"
+}
+
+# copyResources copies a space separated list of resource files into the build
+# folder.
+copyResources() {
+	for X in $RESOURCE_FILES
+	do
+    cp -f -r "$X" "$BUILD_DIR"
+	done
+}
 
 # checkExitCode prints an error message and exits the script if the first
 # argument is not 0 (zero).
@@ -13,75 +43,66 @@ clear
 # $2: error message if an error detected
 checkExitCode() {
   if [[ "$1" != "0" ]]; then
-    echo
-    echo "Exit code $1: $2"
+    println "\n" "Exit code $1: $2"
     exit 1
   fi
 }
 
 # goBuild builds the Go program.
 goBuild() {
-  echo Building...
-  rm -f cmd/"$GO_PROJ_NAME"
-  cd cmd
-  go build $OUTPUT_FILE $BUILD_FLAGS ${GO_PROJ_NAME}.go
+  println "Building..."
+ 	rm -f "$BUILD_DIR/*"
+  go build -o "$EXE_FILE" "$MAIN_GO_FILE"
   checkExitCode $? "'go build ...' failed"
-  cd ..
-}
-
-# goCompress compresses the binary executable.
-goCompress() {
-  echo Compressing...
-  cd cmd
-
-	if [ "command -v upx" ]; then
-		if [ "$1" == "atomic" ]; then
-  		upx --ultra-brute $GO_PROJ_NAME
-  	else
-  		upx $GO_PROJ_NAME
-  	fi
-
-  	checkExitCode $? "'upx ...' failed"
-  else
-  	echo "Can't compress because you don't have 'upx' installed"
-	fi
-		
-  cd ..
 }
 
 # goFmt formats the Go code.
 goFmt() {
-  echo Formatting...
+  println "Formatting..."
   go fmt ./...
   checkExitCode $? "'go fmt ...' failed"
 }
 
 # goTest runs the Go test code.
 goTest() {
-  echo Testing...
+  println "Testing..."
   go test ./... -timeout "$TEST_TIMEOUT"
   checkExitCode $? "'go test ...' failed"
 }
 
 # runBuild runs the built program.
 runBuild() {
-  echo Running...
-  cd cmd
-  ./"$GO_PROJ_NAME"
-  checkExitCode $? "'./${GO_PROJ_NAME}' failed"
-  cd ..
+  println "Running..." "\n"
+  cd "$BUILD_DIR"
+  ./"$EXE_NAME"
+  checkExitCode $? "'./$EXE_FILE' failed"
+  cd "$ROOT_DIR"
+}
+
+# upxCompress compresses the binary executable.
+upxCompress() {
+  println Compressing...
+  cd $BUILD_DIR
+
+	if [ "command -v upx" ]; then
+		if [ "$1" == "atomic" ]; then
+  		upx --ultra-brute $EXE_NAME
+  	else
+  		upx $EXE_NAME
+  	fi
+
+  	checkExitCode $? "'upx ...' failed"
+  else
+  	println "Can't compress because you don't have 'upx' installed"
+	fi
+		
+  cd $ROOT_DIR
 }
 
 # If you just want to build the binary.
 if [[ "$1" == "build" ]]; then
   goBuild
   goFmt
-  exit 0
-fi
-
-# If you want to compress a built binary.
-if [[ "$1" == "compress" ]]; then
-  goCompress $2
   exit 0
 fi
 
@@ -98,15 +119,21 @@ if [[ "$1" == "run" ]]; then
   goBuild
   goFmt
   goTest
+  copyResources
   runBuild
-  echo
+  println
   exit 0
 fi
 
-echo "I don't understand the option or no option supplied '$1'..."
-echo "Usage"
-echo "	./godo build"
-echo "	./godo compress [atomic]"
-echo "	./godo test"
-echo "	./godo run"
+# If you want to compress a built binary.
+if [[ "$1" == "compress" ]]; then
+  upxCompress $2
+  exit 0
+fi
+
+println "I don't understand the option or no option supplied '$1'. Usage:"
+println "	./godo build            " "Build -> format"
+println "	./godo test             " "Build -> format -> test" 
+println "	./godo run              " "Build -> format -> test -> run"
+println "	./godo compress [atomic]"
 exit 1
