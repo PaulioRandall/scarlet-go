@@ -13,25 +13,24 @@ func tok(k token.Kind, v string, l, c int) token.Token {
 	return token.New(k, v, l, c)
 }
 
-func doTest(t *testing.T, scn *Scanner, exp ...token.Token) {
+func doTest(t *testing.T, ts TokenStream, exp ...token.Token) {
 
 	for i := 0; i < len(exp); i++ {
 
-		tk := scn.Next()
+		tk := ts.Next()
 
 		if tk == token.ZERO() {
 			require.Equal(t, len(exp), i, "Expected scanner to return more tokens")
 			return
 		}
 
-		println(tk.String())
 		require.Equal(t, exp[i], tk)
 	}
 }
 
 func TestScanner_Next_1(t *testing.T) {
 
-	s := New("\r\n" +
+	sc := NewScanner("\r\n" +
 		" \t\r\v\f" + "// comment" + "\n" +
 		"123" + " " + "123.456" + "\r\n" +
 		"`abc`" + `"abc"` + "\n" +
@@ -39,7 +38,7 @@ func TestScanner_Next_1(t *testing.T) {
 		"F" + " " + "MATCH" + " " + "TRUE" + "\n" +
 		"@" + "~" + ":=" + "*" + "->" + ")" + "\r\n")
 
-	doTest(t, s,
+	doTest(t, sc,
 		// Line 0
 		tok(token.NEWLINE, "\r\n", 0, 0),
 		// Line 1
@@ -76,11 +75,11 @@ func TestScanner_Next_1(t *testing.T) {
 		// Line 7
 	)
 
-	assert.Empty(t, s.Next())
+	assert.Empty(t, sc.Next())
 }
 
 func TestScanner_Next_2(t *testing.T) {
 	require.Panics(t, func() {
-		New("123.a").Next()
+		NewScanner("123.a").Next()
 	})
 }

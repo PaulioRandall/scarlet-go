@@ -10,15 +10,23 @@ import (
 // * Package API
 // ****************************************************************************
 
-// Scanner is a structure for parsing source code into tokens.
+// TokenStream represents a stream of tokens.
+type TokenStream interface {
+
+	// Next returns the next token in the stream.
+	Next() token.Token
+}
+
+// Scanner is a structure for parsing source code into tokens. It implements
+// the TokenStream interface so it may be wrapped.
 type Scanner struct {
 	runes []rune // Source code
 	line  int    // Line index
 	col   int    // Column index
 }
 
-// New creates a new scanner to parse the input string.
-func New(s string) *Scanner {
+// NewScanner creates a new scanner to parse the input string.
+func NewScanner(s string) TokenStream {
 	return &Scanner{
 		runes: []rune(s),
 		line:  0,
@@ -26,7 +34,7 @@ func New(s string) *Scanner {
 	}
 }
 
-// Next returns the next token in source code.
+// Next satisfies the TokenStream interface.
 func (scn *Scanner) Next() (tk token.Token) {
 
 	type scanFunc func() token.Token
