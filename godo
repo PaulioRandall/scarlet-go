@@ -5,7 +5,7 @@
 EXE_NAME="scarlet"
 MAIN_GO_FILE="cmd/scarlet.go"
 TEST_TIMEOUT="3s"
-OUTPUT_FILE=-o $GO_PROJ_NAME
+OUTPUT_FILE=-o $EXE_NAME
 #BUILD_FLAGS=-ldflags "-s -w"
 RESOURCE_FILES="cmd/test.scarlet cmd/test.scarlet"
 # *********************************

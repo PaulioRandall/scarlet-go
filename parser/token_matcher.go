@@ -1,7 +1,7 @@
 package parser
 
+/*
 import (
-	"github.com/PaulioRandall/scarlet-go/lexor"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -201,3 +201,4 @@ func (tm *TokenMatcher) readIntoBuffer(n int) (totalRead int) {
 
 	return
 }
+*/

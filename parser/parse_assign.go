@@ -1,5 +1,6 @@
 package parser
 
+/*
 import (
 	"strings"
 
@@ -116,3 +117,4 @@ func badToken(s string, t token.Token) {
 
 	panic(s + " [" + t.String() + "]")
 }
+*/

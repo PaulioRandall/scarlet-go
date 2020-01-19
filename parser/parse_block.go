@@ -1,5 +1,6 @@
 package parser
 
+/*
 import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
@@ -33,3 +34,4 @@ func parseStatement(tm *TokenMatcher) (_ Expr) {
 
 	return
 }
+*/

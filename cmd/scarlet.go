@@ -4,8 +4,6 @@ import (
 	"io/ioutil"
 
 	"github.com/PaulioRandall/scarlet-go/lexor"
-	"github.com/PaulioRandall/scarlet-go/lexor/evaluator"
-	"github.com/PaulioRandall/scarlet-go/lexor/scanner"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -22,19 +20,12 @@ func main() {
 // run executes the input source code.
 func run(src string) {
 
-	var t token.Token
-	var e lexor.ScanErr
+	var st lexor.TokenStream
 
-	st := scanner.New(src)
-	st = evaluator.New(st)
+	st = lexor.NewScanner(src)
+	st = lexor.NewEvaluator(st)
 
-	for st != nil {
-		t, st, e = st()
-
-		if e != nil {
-			panic(e)
-		}
-
+	for t := st.Next(); t != (token.Token{}); t = st.Next() {
 		if st != nil && t != (token.Token{}) {
 			printToken(t)
 		}
