@@ -26,3 +26,13 @@ type tokenExpr struct {
 func (ex tokenExpr) Token() token.Token {
 	return ex.tk
 }
+
+// derivedExpr is a base structure for expressions that do not have an
+// associated token linking them to the source code.
+type derivedExpr struct {
+}
+
+// Token satisfies the Expr interface.
+func (ex derivedExpr) Token() (_ token.Token) {
+	return
+}
