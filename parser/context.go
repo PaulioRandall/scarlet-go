@@ -1,5 +1,9 @@
 package parser
 
+// ****************************************************************************
+// * Kind
+// ****************************************************************************
+
 // Kind represents a type of a Value.
 type Kind string
 
@@ -16,12 +20,20 @@ const (
 	SPELL Kind = `SPELL`
 )
 
+// ****************************************************************************
+// * Value
+// ****************************************************************************
+
 // Value represents a value within the executing program, either the value of
 // a variable or an intermediate within a statement.
 type Value struct {
 	k Kind
 	v interface{}
 }
+
+// ****************************************************************************
+// * Context
+// ****************************************************************************
 
 // Context represents the current executing context. It contains all state
 // available to the current scope such as available variables and globals. It

@@ -1,37 +1,82 @@
 package parser
 
-/*
 import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// parseBlock parses a block of statements.
-func parseBlock(tm *TokenMatcher) (_ []Expr) {
-
-	var stats []Expr
-
-	for 0 == tm.MatchAny(token.END, token.UNDEFINED) {
-		if ex := parseStatement(tm); ex != nil {
-			stats = append(stats, ex)
-		}
-	}
-
-	tm.Skip()
-	return stats
+// blockStat represents a block of statements.
+type blockStat struct {
+	opener token.Token
+	closer token.Token
+	block  []Stat
 }
 
-// parseStatement parses a statement.
-func parseStatement(tm *TokenMatcher) (_ Expr) {
+// Token satisfies the Expr interface.
+func (ex blockStat) Token() token.Token {
+	return ex.opener
+}
 
-	switch {
-	case 1 == tm.Match(token.NEWLINE):
-	case 1 == tm.MatchSeq(token.ID, token.OPEN_PAREN):
-	case 1 == tm.Match(token.ID):
-		return parseAssign(tm)
+// String satisfies the Expr interface.
+func (ex blockStat) String() (s string) {
+
+	s += "Block (" + ex.opener.String() + ")\n"
+
+	for _, stat := range ex.block {
+		s += "\t" + stat.String() + "\n"
 	}
 
-	// TODO: Other possibile expressions
+	s += "(" + ex.closer.String() + ")"
+	return
+}
+
+// Eval satisfies the Expr interface.
+func (ex blockStat) Eval(ctx Context) (_ Value) {
+
+	for _, stat := range ex.block {
+		stat.Eval(ctx)
+	}
 
 	return
 }
-*/
+
+// parseStats parses a block of statements until the end of file or a block
+// closing token is encountered. If the 'opener' is empty then an EOF is
+// expected else a block closing token is expected; a panic will ensue
+// otherwise. If 'opener' is NOT empty it is assumed that it has been validated
+// prior to being passed.
+func (p *Parser) parseStats(opener token.Token) Stat {
+
+	expectEOF := opener == (token.Token{})
+	b := blockStat{
+		opener: opener,
+		block:  []Stat{},
+	}
+
+	for {
+		tk, ok := <-p.in
+
+		switch {
+		case !ok:
+			if expectEOF {
+				goto BLOCK_PARSED
+			}
+
+			panic("Expected a block closing token, found EOF instead")
+
+		case tk.Kind == token.END:
+			if !expectEOF {
+				b.closer = tk
+				goto BLOCK_PARSED
+			}
+
+			panic("Expected EOF, found a block closing token instead")
+
+		default:
+			s := p.parseStat(tk)
+			b.block = append(b.block, s)
+		}
+	}
+
+BLOCK_PARSED:
+	return b
+}

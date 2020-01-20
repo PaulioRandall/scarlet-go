@@ -20,14 +20,14 @@ func push(in chan token.Token, tokens ...token.Token) {
 	}()
 }
 
-func doTest(t *testing.T, exp Expr, tokens ...token.Token) {
+func doTestParseAssign(t *testing.T, exp Expr, tokens ...token.Token) {
 
 	in := make(chan token.Token, len(tokens))
-	out := make(chan Expr)
-	p := New(in, out)
+	p := New(in)
 
 	push(in, tokens...)
-	act := p.parseAssign()
+	act := p.parseAssign(<-in)
+
 	require.Equal(t, exp, act)
 }
 
@@ -39,7 +39,7 @@ func TestParser_parseAssign(t *testing.T) {
 		tok(token.STR_LITERAL, "123"),
 	}
 
-	exp := assignExpr{
+	exp := assignStat{
 		tokenExpr{tokens[1]},
 		tokens[0], // id
 		valueExpr{ // src
@@ -48,7 +48,5 @@ func TestParser_parseAssign(t *testing.T) {
 		},
 	}
 
-	println(exp.String())
-
-	doTest(t, exp, tokens...)
+	doTestParseAssign(t, exp, tokens...)
 }
