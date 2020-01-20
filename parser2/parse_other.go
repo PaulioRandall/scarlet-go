@@ -1,8 +1,6 @@
 package parser
 
-// valueExpr represents an expression that simple returns a value. It may also
-// have a token which indicates it position within the source code or the
-// position of the expression thgat generated it.
+// valueExpr represents an expression that simple returns a value.
 type valueExpr struct {
 	tokenExpr
 	v Value

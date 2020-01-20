@@ -1,10 +1,2 @@
 
-GLOBAL abc := F(x, y -> z, e) DO
-  @Println(x)
-  e := _
-  z := y
-END
-
-abc(`:)`, `^_^`)
-
-// TODO: Experiment with unifying scanning and parsing errors.
+x := `abc`

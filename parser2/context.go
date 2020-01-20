@@ -45,3 +45,8 @@ func (ctx Context) get(id string) (_ Value) {
 	v, _ = ctx.globals[id]
 	return v
 }
+
+// set creates or updates a local variable.
+func (ctx Context) set(id string, v Value) {
+	ctx.vars[id] = v
+}
