@@ -21,23 +21,22 @@ func (ex assignStat) Eval(ctx Context) (_ Value) {
 }
 
 // String satisfies the Expr interface.
-func (ex assignStat) String() string {
-	return "[" + ex.id.String() + "] " +
-		"[" + ex.tk.String() + "] " +
-		"[" + ex.src.String() + "]"
+func (ex assignStat) String() (s string) {
+	s += "Assign "
+	s += "[" + ex.id.String() + "] "
+	s += "[" + ex.tk.String() + "] "
+	s += "[" + ex.src.String() + "]"
+	return
 }
 
 // parseAssign parses an assignment into a statement. Assumes that the next
 // statement in the input channel is an assignment.
 func (p *Parser) parseAssign(dst token.Token) Stat {
 
-	p.checkToken(dst, token.ID)
-
-	ass := <-p.in
-	p.checkToken(ass, token.ASSIGN)
-
-	src := <-p.in
-	p.checkToken(src, token.STR_LITERAL)
+	p.ensure(dst, token.ID)
+	ass := p.takeEnsure(token.ASSIGN)
+	src := p.takeEnsure(token.STR_LITERAL)
+	p.takeEnsure(token.TERMINATOR)
 
 	srcEx := valueExpr{
 		tokenExpr: tokenExpr{src},

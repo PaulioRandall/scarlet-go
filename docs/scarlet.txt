@@ -55,3 +55,6 @@ map := {        // Combining lists and pairs produces a map
 }
 i, v := @Search(list, `b`) // Finds the specified pair searching on the key
 
+// Spell receivers, the first parameter to the spell is the receiver
+@Args().foreach(F(_, v, _) @Println(v))
+"abc".println()

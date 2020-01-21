@@ -37,6 +37,14 @@ func NewScanner(s string) TokenStream {
 // Next satisfies the TokenStream interface.
 func (scn *Scanner) Next() (tk token.Token) {
 
+	if len(scn.runes) == 0 {
+		return token.Token{
+			Kind: token.EOF,
+			Line: scn.line,
+			Col:  scn.col,
+		}
+	}
+
 	type scanFunc func() token.Token
 
 	fs := []scanFunc{
@@ -48,10 +56,6 @@ func (scn *Scanner) Next() (tk token.Token) {
 		scn.scanNumLiteral,
 		scn.scanStrLiteral,
 		scn.scanStrTemplate,
-	}
-
-	if len(scn.runes) == 0 {
-		return
 	}
 
 	for _, f := range fs {
@@ -308,6 +312,8 @@ func (scn *Scanner) scanSymbol() (_ token.Token) {
 		n, k = 1, token.OPERATOR
 	case a == '_':
 		n, k = 1, token.VOID
+	case a == ';':
+		n, k = 1, token.TERMINATOR
 	}
 
 	if k == token.UNDEFINED {

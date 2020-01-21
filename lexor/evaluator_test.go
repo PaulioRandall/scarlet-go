@@ -15,7 +15,7 @@ func TestEvaluator_Next_1(t *testing.T) {
 
 	doTest(t, ev,
 		tok(token.ID, "abc", 0, 0),
-		tok(token.NEWLINE, "\n", 0, 3),
+		tok(token.TERMINATOR, "\n", 0, 3),
 		tok(token.STR_LITERAL, "efg", 1, 5),
 	)
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/token"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,7 +18,7 @@ func doTest(t *testing.T, ts TokenStream, exp ...token.Token) {
 
 		tk := ts.Next()
 
-		if tk == token.ZERO() {
+		if tk == (token.Token{}) {
 			require.Equal(t, len(exp), i, "Expected scanner to return more tokens")
 			return
 		}
@@ -75,7 +74,12 @@ func TestScanner_Next_1(t *testing.T) {
 		// Line 7
 	)
 
-	assert.Empty(t, sc.Next())
+	expEOF := token.Token{
+		Kind: token.EOF,
+		Line: 7,
+		Col:  0,
+	}
+	require.Equal(t, expEOF, sc.Next())
 }
 
 func TestScanner_Next_2(t *testing.T) {

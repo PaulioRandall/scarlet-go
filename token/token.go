@@ -11,6 +11,8 @@ type Kind string
 const (
 	UNDEFINED Kind = ``
 	// ------------------
+	SOF          Kind = `SOF`
+	EOF          Kind = `EOF`
 	COMMENT      Kind = `COMMENT`
 	WHITESPACE   Kind = `WHITESPACE`
 	NEWLINE      Kind = `NEWLINE`
@@ -39,6 +41,7 @@ const (
 	NOT          Kind = `NOT`
 	OPERATOR     Kind = `OPERATOR`
 	VOID         Kind = `VOID`
+	TERMINATOR   Kind = `TERMINATOR`
 )
 
 // Token represents a grammer token within a source file.

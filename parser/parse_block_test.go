@@ -26,12 +26,13 @@ func TestParser_parseStats(t *testing.T) {
 		tok(token.ID, "abc"),
 		tok(token.ASSIGN, ":="),
 		tok(token.STR_LITERAL, "123"),
+		tok(token.TERMINATOR, "\n"),
 		tok(token.END, "END"),
 	}
 
 	exp := blockStat{
 		tokens[0], // opener
-		tokens[4], // closer
+		tokens[5], // closer
 		[]Stat{
 			assignStat{
 				tokenExpr{tokens[2]},

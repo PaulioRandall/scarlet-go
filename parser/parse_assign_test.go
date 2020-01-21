@@ -17,6 +17,7 @@ func push(in chan token.Token, tokens ...token.Token) {
 		for _, tk := range tokens {
 			in <- tk
 		}
+		close(in)
 	}()
 }
 
@@ -27,7 +28,6 @@ func doTestParseAssign(t *testing.T, exp Expr, tokens ...token.Token) {
 
 	push(in, tokens...)
 	act := p.parseAssign(<-in)
-
 	require.Equal(t, exp, act)
 }
 
@@ -37,6 +37,7 @@ func TestParser_parseAssign(t *testing.T) {
 		tok(token.ID, "abc"),
 		tok(token.ASSIGN, ":="),
 		tok(token.STR_LITERAL, "123"),
+		tok(token.TERMINATOR, "\n"),
 	}
 
 	exp := assignStat{

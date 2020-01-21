@@ -46,30 +46,28 @@ func (ex blockStat) Eval(ctx Context) (_ Value) {
 // prior to being passed.
 func (p *Parser) parseStats(opener token.Token) Stat {
 
-	expectEOF := opener == (token.Token{})
 	b := blockStat{
 		opener: opener,
 		block:  []Stat{},
 	}
 
 	for {
-		tk, ok := <-p.in
-
-		switch {
-		case !ok:
-			if expectEOF {
-				goto BLOCK_PARSED
+		switch tk := p.take(); tk.Kind {
+		case token.END:
+			if opener.Kind == token.SOF {
+				panic("Expected EOF, found a block closing token instead")
 			}
 
-			panic("Expected a block closing token, found EOF instead")
+			b.closer = tk
+			goto BLOCK_PARSED
 
-		case tk.Kind == token.END:
-			if !expectEOF {
-				b.closer = tk
-				goto BLOCK_PARSED
+		case token.EOF:
+			if opener.Kind != token.SOF {
+				panic("Expected a block closing token, found EOF instead")
 			}
 
-			panic("Expected EOF, found a block closing token instead")
+			b.closer = tk
+			goto BLOCK_PARSED
 
 		default:
 			s := p.parseStat(tk)
