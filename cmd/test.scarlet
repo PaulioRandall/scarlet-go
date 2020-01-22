@@ -2,5 +2,4 @@
 x := `abc`
 y := `xyz`
 
-// NEXT: In main, execute the parsed source code
-// THEN: What to parse next? Bool, number, string template assignments?
+// NEXT: What to parse next? Bool, number, string template assignments?

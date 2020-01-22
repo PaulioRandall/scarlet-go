@@ -1,5 +1,9 @@
 package parser
 
+import (
+	"fmt"
+)
+
 // ****************************************************************************
 // * Kind
 // ****************************************************************************
@@ -31,6 +35,11 @@ type Value struct {
 	v interface{}
 }
 
+// String returns a human readable string representation of the value.
+func (v Value) String() string {
+	return fmt.Sprintf("%v", v.v)
+}
+
 // ****************************************************************************
 // * Context
 // ****************************************************************************
@@ -43,6 +52,40 @@ type Context struct {
 	vars    map[string]Value
 	globals map[string]Value
 	parent  *Context
+}
+
+// NewContext creates a new context with variable and global identifier maps
+// pre-initialised.
+func NewContext() Context {
+	return Context{
+		vars:    make(map[string]Value),
+		globals: make(map[string]Value),
+	}
+}
+
+// String returns a human readable string representation of the context.
+func (ctx Context) String() (s string) {
+
+	varsToString := func(name string, vars map[string]Value) (s string) {
+
+		s += name + ":" + "\n"
+
+		if len(vars) == 0 {
+			s += "\t" + "(Empty)" + "\n"
+
+		} else {
+			for k, v := range vars {
+				s += "\t(" + string(v.k) + ") " + k + ": " + v.String() + "\n"
+			}
+		}
+
+		return s
+	}
+
+	s += varsToString("globals", ctx.globals)
+	s += varsToString("vars", ctx.vars)
+
+	return
 }
 
 // get returns the value assigned to a specified variable. If the ID does not

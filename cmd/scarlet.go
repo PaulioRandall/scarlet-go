@@ -29,6 +29,12 @@ func run(src string) {
 	exe := parseTokens(tokens)
 
 	println(exe.String())
+
+	println()
+	ctx := parser.NewContext()
+	exe.Eval(ctx)
+
+	println(ctx.String())
 }
 
 // collectTokens reads tokens from the 'src' into an array.
