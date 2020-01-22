@@ -31,7 +31,7 @@ func doTestParseAssign(t *testing.T, exp Expr, tokens ...token.Token) {
 	require.Equal(t, exp, act)
 }
 
-func TestParser_parseAssign(t *testing.T) {
+func TestParser_parseAssign_1(t *testing.T) {
 
 	tokens := []token.Token{
 		tok(token.ID, "abc"),
@@ -46,6 +46,27 @@ func TestParser_parseAssign(t *testing.T) {
 		valueExpr{ // src
 			tokenExpr{tokens[2]},
 			Value{STR, tokens[2].Value}, // v
+		},
+	}
+
+	doTestParseAssign(t, exp, tokens...)
+}
+
+func TestParser_parseAssign_2(t *testing.T) {
+
+	tokens := []token.Token{
+		tok(token.ID, "abc"),
+		tok(token.ASSIGN, ":="),
+		tok(token.BOOL_LITERAL, "TRUE"),
+		tok(token.TERMINATOR, "\n"),
+	}
+
+	exp := assignStat{
+		tokenExpr{tokens[1]},
+		tokens[0], // id
+		valueExpr{ // src
+			tokenExpr{tokens[2]},
+			Value{BOOL, true}, // v
 		},
 	}
 

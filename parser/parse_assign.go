@@ -35,12 +35,12 @@ func (p *Parser) parseAssign(dst token.Token) Stat {
 
 	p.ensure(dst, token.ID)
 	ass := p.takeEnsure(token.ASSIGN)
-	src := p.takeEnsure(token.STR_LITERAL)
+	src := p.takeEnsure(token.STR_LITERAL, token.BOOL_LITERAL)
 	p.takeEnsure(token.TERMINATOR)
 
 	srcEx := valueExpr{
 		tokenExpr: tokenExpr{src},
-		v:         Value{STR, src.Value},
+		v:         NewValue(src),
 	}
 
 	return assignStat{

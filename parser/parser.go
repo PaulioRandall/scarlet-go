@@ -39,19 +39,31 @@ func (p *Parser) take() token.Token {
 }
 
 // ensure will panic if the specified token is not of the specified kind.
-func (p *Parser) ensure(tk token.Token, k token.Kind) {
-	if tk.Kind != k {
-		panic("Expected token of kind '" + string(k) +
-			"' but was '" + string(tk.Kind) + "'")
+func (p *Parser) ensure(tk token.Token, ks ...token.Kind) {
+
+	tkk := tk.Kind
+
+	for _, k := range ks {
+		if tkk == k {
+			return
+		}
 	}
+
+	msg := "Expected any kind from" + "\n"
+	for _, k := range ks {
+		msg += "\t" + string(k) + ",\n"
+	}
+
+	msg += "but was '" + string(tk.Kind) + "'"
+	panic(msg)
 }
 
 // takeEnsure returns the next token in the input channel but will panic if
 // the if the channel is closed or the specified token is not of the specified
 // kind.
-func (p *Parser) takeEnsure(k token.Kind) token.Token {
+func (p *Parser) takeEnsure(ks ...token.Kind) token.Token {
 	tk := p.take()
-	p.ensure(tk, k)
+	p.ensure(tk, ks...)
 	return tk
 }
 

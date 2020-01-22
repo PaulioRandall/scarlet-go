@@ -2,6 +2,8 @@ package parser
 
 import (
 	"fmt"
+
+	"github.com/PaulioRandall/scarlet-go/token"
 )
 
 // ****************************************************************************
@@ -35,8 +37,34 @@ type Value struct {
 	v interface{}
 }
 
+// NewValue creates a new value from a token.
+func NewValue(tk token.Token) Value {
+
+	var k Kind
+	var v interface{}
+
+	switch tk.Kind {
+	case token.STR_LITERAL:
+		k, v = STR, tk.Value
+
+	case token.BOOL_LITERAL:
+		k, v = BOOL, (tk.Value == "TRUE")
+
+	default:
+		panic("An UNDEFINED token may not be converted to a Value")
+	}
+
+	return Value{
+		k: k,
+		v: v,
+	}
+}
+
 // String returns a human readable string representation of the value.
 func (v Value) String() string {
+	if v.k == STR {
+		return "\"" + v.v.(string) + "\""
+	}
 	return fmt.Sprintf("%v", v.v)
 }
 
@@ -75,7 +103,7 @@ func (ctx Context) String() (s string) {
 
 		} else {
 			for k, v := range vars {
-				s += "\t(" + string(v.k) + ") " + k + ": " + v.String() + "\n"
+				s += "\t" + k + " " + string(v.k) + ": " + v.String() + "\n"
 			}
 		}
 

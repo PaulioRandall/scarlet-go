@@ -1,5 +1,9 @@
 
-x := `abc`
-y := `xyz`
+a := `abc`
+b := `xyz`
+
+c := TRUE
+d := FALSE
+
 
 // NEXT: What to parse next? Bool, number, string template assignments?
