@@ -43,7 +43,6 @@ func NewValue(tk token.Token) Value {
 
 	var k Kind
 	var v interface{}
-	var e error
 
 	switch tk.Kind {
 	case token.STR_LITERAL:
@@ -53,22 +52,10 @@ func NewValue(tk token.Token) Value {
 		k, v = BOOL, (tk.Value == "TRUE")
 
 	case token.INT_LITERAL:
-		v, e = strconv.ParseInt(tk.Value, 10, 64)
-
-		if e != nil {
-			panic(tk.String() + ": Could not parse integer token: " + e.Error())
-		}
-
-		k, v = INT, v
+		k, v = INT, parseNum(tk)
 
 	case token.REAL_LITERAL:
-		v, e = strconv.ParseFloat(tk.Value, 64)
-
-		if e != nil {
-			panic(tk.String() + ": Could not parse real token: " + e.Error())
-		}
-
-		k, v = REAL, v
+		k, v = REAL, parseNum(tk)
 
 	default:
 		panic(tk.String() + ": An UNDEFINED token may not be converted to a Value")
@@ -78,6 +65,27 @@ func NewValue(tk token.Token) Value {
 		k: k,
 		v: v,
 	}
+}
+
+// parseNum parses and integer or real token value.
+func parseNum(tk token.Token) (v interface{}) {
+
+	var e error
+
+	switch tk.Kind {
+	case token.INT_LITERAL:
+		v, e = strconv.ParseInt(tk.Value, 10, 64)
+	case token.REAL_LITERAL:
+		v, e = strconv.ParseFloat(tk.Value, 64)
+	default:
+		panic(tk.String() + ": Not a number parsable token")
+	}
+
+	if e != nil {
+		panic(tk.String() + ": Could not parse number token: " + e.Error())
+	}
+
+	return
 }
 
 // String returns a human readable string representation of the value.
