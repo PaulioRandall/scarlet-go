@@ -32,11 +32,12 @@ func doTestParseAssign(t *testing.T, exp Expr, tokens ...token.Token) {
 }
 
 func TestParser_parseAssign_1(t *testing.T) {
+	// Parse string literal
 
 	tokens := []token.Token{
 		tok(token.ID, "abc"),
 		tok(token.ASSIGN, ":="),
-		tok(token.STR_LITERAL, "123"),
+		tok(token.STR_LITERAL, "She said yes!"),
 		tok(token.TERMINATOR, "\n"),
 	}
 
@@ -53,6 +54,7 @@ func TestParser_parseAssign_1(t *testing.T) {
 }
 
 func TestParser_parseAssign_2(t *testing.T) {
+	// Parse string template
 
 	tokens := []token.Token{
 		tok(token.ID, "abc"),
@@ -67,6 +69,28 @@ func TestParser_parseAssign_2(t *testing.T) {
 		valueExpr{ // src
 			tokenExpr{tokens[2]},
 			Value{BOOL, true}, // v
+		},
+	}
+
+	doTestParseAssign(t, exp, tokens...)
+}
+
+func TestParser_parseAssign_3(t *testing.T) {
+	// Parse number
+
+	tokens := []token.Token{
+		tok(token.ID, "abc"),
+		tok(token.ASSIGN, ":="),
+		tok(token.REAL_LITERAL, "123.456"),
+		tok(token.TERMINATOR, "\n"),
+	}
+
+	exp := assignStat{
+		tokenExpr{tokens[1]},
+		tokens[0], // id
+		valueExpr{ // src
+			tokenExpr{tokens[2]},
+			Value{REAL, 123.456}, // v
 		},
 	}
 

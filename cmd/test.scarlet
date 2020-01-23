@@ -5,5 +5,8 @@ b := `xyz`
 c := TRUE
 d := FALSE
 
+e := 123
+f := 123.456
 
-// NEXT: What to parse next? Bool, number, string template assignments?
+
+// NEXT: What to parse next? Number, string template assignments?

@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/PaulioRandall/scarlet-go/token"
 )
@@ -42,6 +43,7 @@ func NewValue(tk token.Token) Value {
 
 	var k Kind
 	var v interface{}
+	var e error
 
 	switch tk.Kind {
 	case token.STR_LITERAL:
@@ -50,8 +52,26 @@ func NewValue(tk token.Token) Value {
 	case token.BOOL_LITERAL:
 		k, v = BOOL, (tk.Value == "TRUE")
 
+	case token.INT_LITERAL:
+		v, e = strconv.ParseInt(tk.Value, 10, 64)
+
+		if e != nil {
+			panic(tk.String() + ": Could not parse integer token: " + e.Error())
+		}
+
+		k, v = INT, v
+
+	case token.REAL_LITERAL:
+		v, e = strconv.ParseFloat(tk.Value, 64)
+
+		if e != nil {
+			panic(tk.String() + ": Could not parse real token: " + e.Error())
+		}
+
+		k, v = REAL, v
+
 	default:
-		panic("An UNDEFINED token may not be converted to a Value")
+		panic(tk.String() + ": An UNDEFINED token may not be converted to a Value")
 	}
 
 	return Value{

@@ -32,7 +32,7 @@ func (p *Parser) take() token.Token {
 	tk, ok := <-p.in
 
 	if !ok {
-		panic("Token input channel closed prematurely")
+		panic(tk.String() + ": Token input channel closed prematurely")
 	}
 
 	return tk
@@ -68,15 +68,30 @@ func (p *Parser) takeEnsure(ks ...token.Kind) token.Token {
 }
 
 // parseStat parses the next statement.
-func (p *Parser) parseStat(lead token.Token) (s Stat) {
-
+func (p *Parser) parseStat(lead token.Token) Stat {
 	switch lead.Kind {
 	case token.ID:
-		s = p.parseAssign(lead)
+		return p.parseAssign(lead)
 	default:
-		panic("Token of kind '" + string(lead.Kind) + "' is not known to the " +
-			"parser or parsing has not been implemented for it yet")
+		panic(lead.String() + ": Token of kind does not start a valid " +
+			"statement or parsing has not been implemented for it yet")
 	}
+}
 
-	return
+// parseExpr parses the next expression.
+func (p *Parser) parseExpr(lead token.Token) Expr {
+	switch lead.Kind {
+	case token.STR_LITERAL:
+		fallthrough
+	case token.BOOL_LITERAL:
+		fallthrough
+	case token.INT_LITERAL, token.REAL_LITERAL:
+		return valueExpr{
+			tokenExpr: tokenExpr{lead},
+			v:         NewValue(lead),
+		}
+	default:
+		panic(lead.String() + ": Token of kind does not start a valid " +
+			"expression or parsing has not been implemented for it yet")
+	}
 }

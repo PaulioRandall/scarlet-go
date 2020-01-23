@@ -55,7 +55,7 @@ func (p *Parser) parseStats(opener token.Token) Stat {
 		switch tk := p.take(); tk.Kind {
 		case token.END:
 			if opener.Kind == token.SOF {
-				panic("Expected EOF, found a block closing token instead")
+				panic(tk.String() + ": Expected EOF, found a block closing token instead")
 			}
 
 			b.closer = tk
@@ -63,7 +63,7 @@ func (p *Parser) parseStats(opener token.Token) Stat {
 
 		case token.EOF:
 			if opener.Kind != token.SOF {
-				panic("Expected a block closing token, found EOF instead")
+				panic(tk.String() + ": Expected a block closing token, found EOF instead")
 			}
 
 			b.closer = tk
