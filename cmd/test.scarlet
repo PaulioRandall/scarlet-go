@@ -8,6 +8,11 @@ d := FALSE
 e := 123
 f := 123.456
 
-// GOAL: Parse multiple assignments
+x, y, z := "xyz", TRUE, 123
 
-// NEXT: Parse string templates
+// GOAL: Allow tab indent amount to be passed to String function.
+
+// GOAL: Build a 1-token buffer in the parser for peeking at tokens on the
+//       input stream.
+
+// GOAL: Describe the language axiomatically.

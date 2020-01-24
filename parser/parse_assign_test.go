@@ -43,10 +43,14 @@ func TestParser_parseAssign_1(t *testing.T) {
 
 	exp := assignStat{
 		tokenExpr{tokens[1]},
-		tokens[0], // id
-		valueExpr{ // src
-			tokenExpr{tokens[2]},
-			Value{STR, tokens[2].Value}, // v
+		[]token.Token{ // ids
+			tokens[0],
+		},
+		[]Expr{ // srcs
+			valueExpr{
+				tokenExpr{tokens[2]},
+				Value{STR, tokens[2].Value}, // v
+			},
 		},
 	}
 
@@ -65,10 +69,14 @@ func TestParser_parseAssign_2(t *testing.T) {
 
 	exp := assignStat{
 		tokenExpr{tokens[1]},
-		tokens[0], // id
-		valueExpr{ // src
-			tokenExpr{tokens[2]},
-			Value{BOOL, true}, // v
+		[]token.Token{ // ids
+			tokens[0],
+		},
+		[]Expr{ // srcs
+			valueExpr{
+				tokenExpr{tokens[2]},
+				Value{BOOL, true}, // v
+			},
 		},
 	}
 
@@ -87,10 +95,14 @@ func TestParser_parseAssign_3(t *testing.T) {
 
 	exp := assignStat{
 		tokenExpr{tokens[1]},
-		tokens[0], // id
-		valueExpr{ // src
-			tokenExpr{tokens[2]},
-			Value{REAL, 123.456}, // v
+		[]token.Token{ // ids
+			tokens[0],
+		},
+		[]Expr{ // srcs
+			valueExpr{
+				tokenExpr{tokens[2]},
+				Value{REAL, 123.456}, // v
+			},
 		},
 	}
 
@@ -109,10 +121,14 @@ func TestParser_parseAssign_4(t *testing.T) {
 
 	exp := assignStat{
 		tokenExpr{tokens[1]},
-		tokens[0], // id
-		valueExpr{ // src
-			tokenExpr{tokens[2]},
-			Value{STR, `"Caribbean"`}, // v
+		[]token.Token{ // ids
+			tokens[0],
+		},
+		[]Expr{ // srcs
+			valueExpr{
+				tokenExpr{tokens[2]},
+				Value{STR, `"Caribbean"`}, // v
+			},
 		},
 	}
 

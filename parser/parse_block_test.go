@@ -36,10 +36,14 @@ func TestParser_parseStats(t *testing.T) {
 		[]Stat{
 			assignStat{
 				tokenExpr{tokens[2]},
-				tokens[1], // assignStat.id
-				valueExpr{ // assignStat.src
-					tokenExpr{tokens[3]},
-					Value{STR, tokens[3].Value}, // assignStat.v
+				[]token.Token{ // assignStat.id
+					tokens[1],
+				},
+				[]Expr{ // assignStat.srcs
+					valueExpr{
+						tokenExpr{tokens[3]},
+						Value{STR, tokens[3].Value}, // assignStat.v
+					},
 				},
 			},
 		},
