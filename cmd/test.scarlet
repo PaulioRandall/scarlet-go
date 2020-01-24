@@ -1,16 +1,9 @@
 
 a := `abc`
 b := "xyz"
+c, d := TRUE, FALSE
+e, f := 123, 123.456
 
-c := TRUE
-d := FALSE
-
-e := 123
-f := 123.456
-
-x, y, z := "xyz", TRUE, 123
-
-// GOAL: Build a 1-token buffer in the parser for peeking at tokens on the
-//       input stream.
+// GOAL: Change token printing so only strings are quoted.
 
 // GOAL: Describe the language axiomatically.

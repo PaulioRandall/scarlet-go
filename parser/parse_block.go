@@ -60,29 +60,26 @@ func (p *Parser) parseStats(opener token.Token) Stat {
 	}
 
 	for {
-		switch tk := p.take(); tk.Kind {
+		switch tk := p.peek(); tk.Kind {
 		case token.END:
 			if opener.Kind == token.SOF {
 				panic(tk.String() + ": Expected EOF, found a block closing token instead")
 			}
-
-			b.closer = tk
 			goto BLOCK_PARSED
 
 		case token.EOF:
 			if opener.Kind != token.SOF {
 				panic(tk.String() + ": Expected a block closing token, found EOF instead")
 			}
-
-			b.closer = tk
 			goto BLOCK_PARSED
 
 		default:
-			s := p.parseStat(tk)
+			s := p.parseStat()
 			b.block = append(b.block, s)
 		}
 	}
 
 BLOCK_PARSED:
+	b.closer = p.take()
 	return b
 }

@@ -55,10 +55,16 @@ func (ex assignStat) TabString(tabs int) (s string) {
 
 // parseAssign parses an assignment into a statement. Assumes that the next
 // statement in the input channel is an assignment.
-func (p *Parser) parseAssign(first token.Token) Stat {
+func (p *Parser) parseAssign() Stat {
 
-	ids, ass := p.parseAssignIDs(first)
+	ids := p.parseAssignIDs()
+	ass := p.takeEnsure(token.ASSIGN)
 	srcs := p.parseAssignSources()
+	p.takeEnsure(token.TERMINATOR)
+
+	print(len(ids))
+	print(":")
+	println(len(srcs))
 
 	if len(ids) != len(srcs) {
 		panic(ass.String() + ": Assignment requires the ID and expression count match")
@@ -72,37 +78,33 @@ func (p *Parser) parseAssign(first token.Token) Stat {
 }
 
 // parseAssignIDs parses a delimitered list of ID tokens used for an assignment.
-func (p *Parser) parseAssignIDs(first token.Token) (ids []token.Token, tk token.Token) {
-
-	ids = []token.Token{first}
-
+func (p *Parser) parseAssignIDs() (ids []token.Token) {
 	for {
-		tk = p.takeEnsure(token.DELIM, token.ASSIGN)
 
-		if tk.Kind == token.ASSIGN {
-			break
+		tk := p.takeEnsure(token.ID)
+		ids = append(ids, tk)
+
+		if p.peek().Kind == token.DELIM {
+			p.take()
+			continue
 		}
 
-		tk = p.takeEnsure(token.ID)
-		ids = append(ids, tk)
+		return
 	}
-
-	return
 }
 
 // parseAssignSources parses the sources of an assignment.
 func (p *Parser) parseAssignSources() (srcs []Expr) {
+	for {
 
-	var next token.Token
-
-	for next.Kind != token.TERMINATOR {
-
-		next = p.take()
-		ex := p.parseExpr(next)
+		ex := p.parseExpr()
 		srcs = append(srcs, ex)
 
-		next = p.takeEnsure(token.DELIM, token.TERMINATOR)
-	}
+		if p.peek().Kind == token.DELIM {
+			p.take()
+			continue
+		}
 
-	return
+		return
+	}
 }

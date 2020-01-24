@@ -27,7 +27,7 @@ func doTestParseAssign(t *testing.T, exp Expr, tokens ...token.Token) {
 	p := New(in)
 
 	push(in, tokens...)
-	act := p.parseAssign(<-in)
+	act := p.parseAssign()
 	require.Equal(t, exp, act)
 }
 

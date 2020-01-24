@@ -6,8 +6,8 @@ import (
 
 // Parser is parser for a stream of tokens.
 type Parser struct {
-	in chan token.Token
-	i  int
+	in  chan token.Token
+	buf *token.Token // buffer, allows for look ahead by 1
 }
 
 // New creates a new Parser.
@@ -26,16 +26,34 @@ func (p *Parser) Parse() (_ Stat) {
 	})
 }
 
-// take returns the next token in the input channel or panics if it is closed.
-func (p *Parser) take() token.Token {
+// peek returns the token on the buffer. If the buffer is empty the the next
+// token is read from the input channel into the buffer first. Panics if the
+// channel is closed when attempting a read.
+func (p *Parser) peek() token.Token {
 
-	tk, ok := <-p.in
+	if p.buf == nil {
+		tk, ok := <-p.in
 
-	if !ok {
-		panic(tk.String() + ": Token input channel closed prematurely")
+		if !ok {
+			panic(tk.String() + ": Token input channel closed prematurely")
+		}
+
+		p.buf = &tk
 	}
 
-	return tk
+	return *p.buf
+}
+
+// take removes and returns the token in the buffer. If the buffer is empty then
+// a peek operation is performed to fill it.
+func (p *Parser) take() (tk token.Token) {
+
+	if p.buf == nil {
+		p.peek()
+	}
+
+	tk, p.buf = *p.buf, nil
+	return
 }
 
 // ensure will panic if the specified token is not of the specified kind.
@@ -56,6 +74,15 @@ func (p *Parser) ensure(tk token.Token, ks ...token.Kind) {
 
 	msg += "but was '" + string(tk.Kind) + "'"
 	panic(msg)
+}
+
+// peekEnsure returns the next token in the input channel but will panic if
+// the if the channel is closed or the specified token is not of the specified
+// kind.
+func (p *Parser) peekEnsure(ks ...token.Kind) token.Token {
+	tk := p.peek()
+	p.ensure(tk, ks...)
+	return tk
 }
 
 // takeEnsure returns the next token in the input channel but will panic if
