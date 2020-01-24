@@ -45,7 +45,7 @@ func NewValue(tk token.Token) Value {
 	var v interface{}
 
 	switch tk.Kind {
-	case token.STR_LITERAL:
+	case token.STR_LITERAL, token.STR_TEMPLATE:
 		k, v = STR, tk.Value
 
 	case token.BOOL_LITERAL:

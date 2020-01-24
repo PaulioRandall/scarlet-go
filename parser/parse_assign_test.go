@@ -96,3 +96,25 @@ func TestParser_parseAssign_3(t *testing.T) {
 
 	doTestParseAssign(t, exp, tokens...)
 }
+
+func TestParser_parseAssign_4(t *testing.T) {
+	// Parse string templates
+
+	tokens := []token.Token{
+		tok(token.ID, "abc"),
+		tok(token.ASSIGN, ":="),
+		tok(token.STR_TEMPLATE, `"Caribbean"`),
+		tok(token.TERMINATOR, "\n"),
+	}
+
+	exp := assignStat{
+		tokenExpr{tokens[1]},
+		tokens[0], // id
+		valueExpr{ // src
+			tokenExpr{tokens[2]},
+			Value{STR, `"Caribbean"`}, // v
+		},
+	}
+
+	doTestParseAssign(t, exp, tokens...)
+}

@@ -1,6 +1,6 @@
 
 a := `abc`
-b := `xyz`
+b := "xyz"
 
 c := TRUE
 d := FALSE
@@ -8,5 +8,6 @@ d := FALSE
 e := 123
 f := 123.456
 
+// GOAL: Parse multiple assignments
 
-// NEXT: What to parse next? Number, string template assignments?
+// NEXT: Parse string templates
