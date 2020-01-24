@@ -10,8 +10,6 @@ f := 123.456
 
 x, y, z := "xyz", TRUE, 123
 
-// GOAL: Allow tab indent amount to be passed to String function.
-
 // GOAL: Build a 1-token buffer in the parser for peeking at tokens on the
 //       input stream.
 

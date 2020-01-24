@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"strings"
+
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -18,14 +20,20 @@ func (ex blockStat) Token() token.Token {
 
 // String satisfies the Expr interface.
 func (ex blockStat) String() (s string) {
+	return ex.TabString(0)
+}
 
-	s += "Block (" + ex.opener.String() + ")\n"
+// TabString satisfies the Expr interface.
+func (ex blockStat) TabString(tabs int) (s string) {
+
+	pre := strings.Repeat("\t", tabs)
+	s += pre + "Block (" + ex.opener.String() + ")\n"
 
 	for _, stat := range ex.block {
-		s += "\t" + stat.String() + "\n"
+		s += pre + stat.TabString(1) + "\n"
 	}
 
-	s += "(" + ex.closer.String() + ")"
+	s += pre + "(" + ex.closer.String() + ")"
 	return
 }
 

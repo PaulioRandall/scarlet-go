@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"strings"
+
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -27,15 +29,22 @@ func (ex assignStat) Eval(ctx Context) (_ Value) {
 
 // String satisfies the Expr interface.
 func (ex assignStat) String() (s string) {
+	return ex.TabString(0)
+}
+
+// TabString satisfies the Expr interface.
+func (ex assignStat) TabString(tabs int) (s string) {
 
 	size := len(ex.ids)
+	pre := strings.Repeat("\t", tabs)
+
 	for i := 0; i < size; i++ {
 
 		if i != 0 {
 			s += "\n"
 		}
 
-		s += "Assign "
+		s += pre + "Assign "
 		s += "[" + ex.ids[i].String() + "] "
 		s += "[" + ex.tk.String() + "] "
 		s += "[" + ex.srcs[i].String() + "]"

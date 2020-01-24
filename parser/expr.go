@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"strings"
+
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -17,6 +19,10 @@ type Expr interface {
 
 	// String returns the expression as a human readable string.
 	String() string
+
+	// TabString returns the expression as a human readable string but allows for
+	// any number of tabs to be placed before each line.
+	TabString(int) string
 
 	// Eval executes the expression returning a value. The type of the value
 	// returned will depend on the type of expression being executed.
@@ -46,6 +52,11 @@ func (ex tokenExpr) Token() token.Token {
 // String satisfies the Expr interface.
 func (ex tokenExpr) String() string {
 	return ex.tk.String()
+}
+
+// TabString satisfies the Expr interface.
+func (ex tokenExpr) TabString(tabs int) (s string) {
+	return strings.Repeat("\t", tabs) + ex.String()
 }
 
 // ****************************************************************************
