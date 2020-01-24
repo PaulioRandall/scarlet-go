@@ -4,6 +4,6 @@ b := "xyz"
 c, d := TRUE, FALSE
 e, f := 123, 123.456
 
-// GOAL: Change token printing so only strings are quoted.
-
 // GOAL: Describe the language axiomatically.
+
+// GOAL: Convert parser function tests to parser API tests.

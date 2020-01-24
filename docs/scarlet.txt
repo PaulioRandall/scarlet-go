@@ -36,6 +36,8 @@ list := {
 	3,
 }
 
+EOF
+
 // Future stuff
 
 // Quick command line calls

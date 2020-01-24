@@ -62,10 +62,6 @@ func (p *Parser) parseAssign() Stat {
 	srcs := p.parseAssignSources()
 	p.takeEnsure(token.TERMINATOR)
 
-	print(len(ids))
-	print(":")
-	println(len(srcs))
-
 	if len(ids) != len(srcs) {
 		panic(ass.String() + ": Assignment requires the ID and expression count match")
 	}

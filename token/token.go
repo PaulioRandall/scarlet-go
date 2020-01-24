@@ -103,7 +103,18 @@ func (t Token) IsNotZero() bool {
 }
 
 // String returns a string representation of the token.
-func (t Token) String() string {
-	s := strconv.QuoteToGraphic(t.Value)
-	return fmt.Sprintf(`%d:%d %s %s`, t.Line, t.Col, t.Kind, s)
+func (tk Token) String() string {
+
+	var v interface{}
+
+	if tk.Kind == STR_TEMPLATE {
+		v = strconv.QuoteToGraphic(tk.Value)
+	} else if tk.Kind == STR_LITERAL {
+		v = "`" + tk.Value + "`"
+	} else {
+		v = tk.Value
+	}
+
+	// +1 for line index to number
+	return fmt.Sprintf(`%d:%d %s %v`, tk.Line+1, tk.Col, tk.Kind, v)
 }
