@@ -5,5 +5,3 @@ c, d := TRUE, FALSE
 e, f := 123, 123.456
 
 // GOAL: Describe the language axiomatically.
-
-// GOAL: Convert parser function tests to parser API tests.
