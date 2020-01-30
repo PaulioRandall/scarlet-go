@@ -4,4 +4,18 @@ b := "xyz"
 c, d := TRUE, FALSE
 e, f := 123, 123.456
 
+g := {
+	`abc`,
+	`xyz`,
+}
+
+// GOAL: Test the list assignment and parsing.
+
+// GOAL: Update evaluator to remove a TERMINATOR if it follows a DELIM.
+// THEN: Remove TERMINATOR optional stuff from assign and list expression parsing.
+
+// GOAL: Update parsing so that IDs can be expressions.
+
 // GOAL: Describe the language axiomatically.
+
+// MAYBE: Change GLOBAL keyword to STICKY?

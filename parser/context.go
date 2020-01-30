@@ -90,10 +90,12 @@ func parseNum(tk token.Token) (v interface{}) {
 
 // String returns a human readable string representation of the value.
 func (v Value) String() string {
-	if v.k == STR {
+	switch v.k {
+	case STR:
 		return "\"" + v.v.(string) + "\""
+	default:
+		return fmt.Sprintf("%v", v.v)
 	}
-	return fmt.Sprintf("%v", v.v)
 }
 
 // ****************************************************************************

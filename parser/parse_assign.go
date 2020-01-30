@@ -59,7 +59,7 @@ func (p *Parser) parseAssign() Stat {
 
 	ids := p.parseAssignIDs()
 	ass := p.takeEnsure(token.ASSIGN)
-	srcs := p.parseAssignSources()
+	srcs := p.parseDelimExpr()
 	p.takeEnsure(token.TERMINATOR)
 
 	if len(ids) != len(srcs) {
@@ -79,22 +79,6 @@ func (p *Parser) parseAssignIDs() (ids []token.Token) {
 
 		tk := p.takeEnsure(token.ID)
 		ids = append(ids, tk)
-
-		if p.peek().Kind == token.DELIM {
-			p.take()
-			continue
-		}
-
-		return
-	}
-}
-
-// parseAssignSources parses the sources of an assignment.
-func (p *Parser) parseAssignSources() (srcs []Expr) {
-	for {
-
-		ex := p.parseExpr()
-		srcs = append(srcs, ex)
 
 		if p.peek().Kind == token.DELIM {
 			p.take()

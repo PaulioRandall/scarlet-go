@@ -60,3 +60,14 @@ i, v := @Search(list, `b`) // Finds the specified pair searching on the key
 // Spell receivers, the first parameter to the spell is the receiver
 @Args().foreach(F(_, v, _) @Println(v))
 "abc".println()
+
+// Looping
+LOOP i
+	[exit] BREAK // Loop exit condition
+	// Repreated logic
+END
+
+FOR i, item, more <- list
+	// Logic applied to each item
+END
+

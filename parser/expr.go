@@ -51,12 +51,12 @@ func (ex tokenExpr) Token() token.Token {
 
 // String satisfies the Expr interface.
 func (ex tokenExpr) String() string {
-	return ex.tk.String()
+	return ex.TabString(0)
 }
 
 // TabString satisfies the Expr interface.
 func (ex tokenExpr) TabString(tabs int) (s string) {
-	return strings.Repeat("\t", tabs) + ex.String()
+	return strings.Repeat("\t", tabs) + ex.tk.String()
 }
 
 // ****************************************************************************
@@ -107,4 +107,57 @@ type idExpr struct {
 // Eval satisfies the Expr interface.
 func (ex idExpr) Eval(ctx Context) (_ Value) {
 	return ctx.get(ex.id)
+}
+
+// ****************************************************************************
+// * listExpr
+// ****************************************************************************
+
+// listExpr represents an expression that returns a list value.
+type listExpr struct {
+	start token.Token
+	end   token.Token
+	items []Expr
+}
+
+// Token satisfies the Expr interface.
+func (ex listExpr) Token() token.Token {
+	return ex.start
+}
+
+// String satisfies the Expr interface.
+func (ex listExpr) String() string {
+	return ex.TabString(0)
+}
+
+// TabString satisfies the Expr interface.
+func (ex listExpr) TabString(tabs int) (s string) {
+
+	size := len(ex.items)
+	pre := strings.Repeat("\t", tabs)
+
+	s += pre + "{ "
+
+	for i := 0; i < size; i++ {
+		s += "[" + ex.items[i].String() + "] "
+	}
+
+	s += "}"
+	return
+}
+
+// Eval satisfies the Expr interface.
+func (ex listExpr) Eval(ctx Context) (_ Value) {
+
+	r := []Value{}
+
+	for _, itemExpr := range ex.items {
+		v := itemExpr.Eval(ctx)
+		r = append(r, v)
+	}
+
+	return Value{
+		k: LIST,
+		v: r,
+	}
 }
