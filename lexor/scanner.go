@@ -396,7 +396,7 @@ func countDigits(r []rune, start int) (n int) {
 func keywordOrID(r []rune) token.Kind {
 
 	ks := map[string]token.Kind{
-		`GLOBAL`: token.GLOBAL,
+		`STICKY`: token.STICKY,
 		`F`:      token.FUNC,
 		`DO`:     token.DO,
 		`WATCH`:  token.WATCH,

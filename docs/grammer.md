@@ -12,7 +12,7 @@ P := {
 - INLINE_EXPR      := LITERAL | FUNC_CALL | SPELL | OPERATION .
 - SPELL            := "@" FUNC_CALL .
 - FUNC_CALL        := ID "(" PARAM_LIST ")" .
-- ASSIGNMENT       := [ "GLOBAL" ] ID_ARRAY ":=" ( LIST | EXPR | FUNC ) .
+- ASSIGNMENT       := [ "STICKY" ] ID_ARRAY ":=" ( LIST | EXPR | FUNC ) .
 - FUNC             := "F" "(" PARAM_LIST [ "->" ID_ARRAY ] ")" BODY .
 - GUARD            := "[" EXPR "]" BODY .
 - OPERATION        := OPERAND OPERATOR { OPERAND OPERATOR } OPERAND .

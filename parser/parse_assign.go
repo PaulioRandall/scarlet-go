@@ -11,17 +11,31 @@ import (
 // within a context.
 type assignStat struct {
 	tokenExpr
-	ids  []token.Token
-	srcs []Expr
+	sticky token.Token
+	ids    []token.Token
+	srcs   []Expr
 }
 
 // Eval satisfies the Expr interface.
 func (ex assignStat) Eval(ctx Context) (_ Value) {
 
-	size := len(ex.ids)
+	var (
+		isSticky bool
+		size     int = len(ex.ids)
+	)
+
+	if ex.sticky != (token.Token{}) {
+		isSticky = true
+	}
+
 	for i := 0; i < size; i++ {
 		v := ex.srcs[i].Eval(ctx)
-		ctx.set(ex.ids[i].Value, v)
+
+		if isSticky {
+			ctx.setSticky(ex.ids[i].Value, v)
+		} else {
+			ctx.set(ex.ids[i].Value, v)
+		}
 	}
 
 	return
@@ -35,8 +49,11 @@ func (ex assignStat) String() (s string) {
 // TabString satisfies the Expr interface.
 func (ex assignStat) TabString(tabs int) (s string) {
 
-	size := len(ex.ids)
-	pre := strings.Repeat("\t", tabs)
+	var (
+		isSticky bool   = ex.sticky != (token.Token{})
+		size     int    = len(ex.ids)
+		pre      string = strings.Repeat("\t", tabs)
+	)
 
 	for i := 0; i < size; i++ {
 
@@ -45,6 +62,11 @@ func (ex assignStat) TabString(tabs int) (s string) {
 		}
 
 		s += pre + "Assign "
+
+		if isSticky {
+			s += "[" + ex.sticky.String() + "] "
+		}
+
 		s += "[" + ex.ids[i].String() + "] "
 		s += "[" + ex.tk.String() + "] "
 		s += "[" + ex.srcs[i].String() + "]"
@@ -57,6 +79,11 @@ func (ex assignStat) TabString(tabs int) (s string) {
 // statement in the input channel is an assignment.
 func (p *Parser) parseAssign() Stat {
 
+	var sticky token.Token
+	if p.peek().Kind == token.STICKY {
+		sticky = p.take()
+	}
+
 	ids := p.parseAssignIDs()
 	ass := p.takeEnsure(token.ASSIGN)
 	srcs := p.parseDelimExpr()
@@ -68,6 +95,7 @@ func (p *Parser) parseAssign() Stat {
 
 	return assignStat{
 		tokenExpr: tokenExpr{ass},
+		sticky:    sticky,
 		ids:       ids,
 		srcs:      srcs,
 	}

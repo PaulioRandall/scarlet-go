@@ -40,7 +40,7 @@ func doTestParse(t *testing.T, exp Expr, tokens ...token.Token) {
 // Parse a string literal assignment
 func TestParser_parse_1(t *testing.T) {
 
-	tokens := []token.Token{
+	tks := []token.Token{
 		tok(token.ID, "abc"),
 		tok(token.ASSIGN, ":="),
 		tok(token.STR_LITERAL, "xyz"),
@@ -50,81 +50,86 @@ func TestParser_parse_1(t *testing.T) {
 
 	exp := blockStat{
 		tok(token.SOF, ""), // opener
-		tokens[4],          // closer
+		tks[4],             // closer
 		[]Stat{
 			assignStat{
-				tokenExpr{tokens[1]},
+				tokenExpr{tks[1]},
+				token.Token{}, // sticky
 				[]token.Token{ // ids
-					tokens[0],
+					tks[0],
 				},
 				[]Expr{ // srcs
 					valueExpr{
-						tokenExpr{tokens[2]},
-						Value{STR, tokens[2].Value}, // v
+						tokenExpr{tks[2]},
+						Value{STR, tks[2].Value}, // v
 					},
 				},
 			},
 		},
 	}
 
-	doTestParse(t, exp, tokens...)
+	doTestParse(t, exp, tks...)
 }
 
 // Parse several assignment statements
 // Parse a bool literal assignment
-// Parse a real literal assignment
+// Parse a STICKY real literal assignment
 // Parse a string template assignment
 func TestParser_parse_2(t *testing.T) {
 
-	tokens := []token.Token{
+	tks := []token.Token{
 		// Bool
 		tok(token.ID, "a"),
 		tok(token.ASSIGN, ":="),
 		tok(token.BOOL_LITERAL, "TRUE"),
-		tok(token.TERMINATOR, "\n"),
+		tok(token.TERMINATOR, "\n"), // 3
 		// Number
+		tok(token.STICKY, "STICKY"),
 		tok(token.ID, "b"),
 		tok(token.ASSIGN, ":="),
 		tok(token.REAL_LITERAL, "123.456"),
-		tok(token.TERMINATOR, "\n"),
+		tok(token.TERMINATOR, "\n"), // 8
 		// String template
 		tok(token.ID, "c"),
 		tok(token.ASSIGN, ":="),
 		tok(token.STR_TEMPLATE, `"Caribbean"`),
-		tok(token.TERMINATOR, "\n"),
+		tok(token.TERMINATOR, "\n"), // 12
 		// EOF
 		tok(token.EOF, ""),
 	}
 
 	exp := blockStat{
 		tok(token.SOF, ""), // opener
-		tokens[12],         // closer
+		tks[13],            // closer
 		[]Stat{
 			assignStat{
-				tokenExpr{tokens[1]},
-				[]token.Token{tokens[0]}, // ids
+				tokenExpr{tks[1]},
+				token.Token{},         // sticky
+				[]token.Token{tks[0]}, // ids
 				[]Expr{ // srcs
-					valueExpr{tokenExpr{tokens[2]}, Value{BOOL, true}}, // v
+					valueExpr{tokenExpr{tks[2]}, Value{BOOL, true}}, // v
 				},
 			},
 			assignStat{
-				tokenExpr{tokens[5]},
-				[]token.Token{tokens[4]}, // ids
+				tokenExpr{tks[6]},
+				tks[4],                // sticky
+				[]token.Token{tks[5]}, // ids
 				[]Expr{ // srcs
-					valueExpr{tokenExpr{tokens[6]}, Value{REAL, 123.456}}, // v
+					valueExpr{tokenExpr{tks[7]}, Value{REAL, 123.456}}, // v
 				},
 			},
 			assignStat{
-				tokenExpr{tokens[9]},
-				[]token.Token{tokens[8]}, // ids
+				tokenExpr{tks[10]},
+				token.Token{},         // sticky
+				[]token.Token{tks[9]}, // ids
 				[]Expr{ // srcs
-					valueExpr{tokenExpr{tokens[10]}, Value{STR, `"Caribbean"`}}, // v
+					valueExpr{tokenExpr{tks[11]}, Value{STR, `"Caribbean"`}}, // v
 				},
 			},
 		},
 	}
 
-	doTestParse(t, exp, tokens...)
+	doTestParse(t, exp, tks...)
 }
 
 // Parse multiple assignment statement
@@ -133,7 +138,7 @@ func TestParser_parse_2(t *testing.T) {
 // Parse a string template assignment
 func TestParser_parse_3(t *testing.T) {
 
-	tokens := []token.Token{
+	tks := []token.Token{
 		// ids
 		tok(token.ID, "a"),
 		tok(token.DELIM, ","),
@@ -154,25 +159,26 @@ func TestParser_parse_3(t *testing.T) {
 
 	exp := blockStat{
 		tok(token.SOF, ""), // opener
-		tokens[12],         // closer
+		tks[12],            // closer
 		[]Stat{
 			assignStat{
-				tokenExpr{tokens[5]},
+				tokenExpr{tks[5]},
+				token.Token{}, // sticky
 				[]token.Token{ // ids
-					tokens[0],
-					tokens[2],
-					tokens[4],
+					tks[0],
+					tks[2],
+					tks[4],
 				},
 				[]Expr{ // srcs
-					valueExpr{tokenExpr{tokens[6]}, Value{BOOL, true}},
-					valueExpr{tokenExpr{tokens[8]}, Value{REAL, 123.456}},
-					valueExpr{tokenExpr{tokens[10]}, Value{STR, `"Caribbean"`}},
+					valueExpr{tokenExpr{tks[6]}, Value{BOOL, true}},
+					valueExpr{tokenExpr{tks[8]}, Value{REAL, 123.456}},
+					valueExpr{tokenExpr{tks[10]}, Value{STR, `"Caribbean"`}},
 				},
 			},
 		},
 	}
 
-	doTestParse(t, exp, tokens...)
+	doTestParse(t, exp, tks...)
 }
 
 // Parse list assignment statement
@@ -180,7 +186,7 @@ func TestParser_parse_3(t *testing.T) {
 // Parse a list with a comma after the last item
 func TestParser_parse_4(t *testing.T) {
 
-	tokens := []token.Token{
+	tks := []token.Token{
 		// Line 1
 		tok(token.ID, "list"),
 		tok(token.ASSIGN, ":="),
@@ -209,24 +215,25 @@ func TestParser_parse_4(t *testing.T) {
 
 	exp := blockStat{
 		tok(token.SOF, ""), // field: opener
-		tokens[18],         // closer
+		tks[18],            // closer
 		[]Stat{
 			assignStat{
-				tokenExpr{tokens[1]},
-				[]token.Token{tokens[0]}, // ids
+				tokenExpr{tks[1]},
+				token.Token{},         // sticky
+				[]token.Token{tks[0]}, // ids
 				[]Expr{ // srcs
 					listExpr{
-						tokens[2],  // start
-						tokens[16], // end
+						tks[2],  // start
+						tks[16], // end
 						[]Expr{ // items
-							valueExpr{tokenExpr{tokens[4]}, Value{STR, "abc"}},
-							valueExpr{tokenExpr{tokens[6]}, Value{REAL, 123.456}},
+							valueExpr{tokenExpr{tks[4]}, Value{STR, "abc"}},
+							valueExpr{tokenExpr{tks[6]}, Value{REAL, 123.456}},
 							listExpr{
-								tokens[9],  // start
-								tokens[13], // end
+								tks[9],  // start
+								tks[13], // end
 								[]Expr{ // items
-									valueExpr{tokenExpr{tokens[10]}, Value{STR, "xyz"}},
-									valueExpr{tokenExpr{tokens[12]}, Value{BOOL, true}},
+									valueExpr{tokenExpr{tks[10]}, Value{STR, "xyz"}},
+									valueExpr{tokenExpr{tks[12]}, Value{BOOL, true}},
 								},
 							},
 						},
@@ -236,5 +243,5 @@ func TestParser_parse_4(t *testing.T) {
 		},
 	}
 
-	doTestParse(t, exp, tokens...)
+	doTestParse(t, exp, tks...)
 }

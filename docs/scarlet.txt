@@ -1,5 +1,5 @@
 
-GLOBAL divideAndFmt := F(a, b -> r, e) DO
+STICKY divideAndFmt := F(a, b -> r, e) DO
 	WATCH e
 		[b = 0] e := `Can't divide by zero`
 		r := a / b
