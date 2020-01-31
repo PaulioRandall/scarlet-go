@@ -62,12 +62,10 @@ i, v := @Search(list, `b`) // Finds the specified pair searching on the key
 "abc".println()
 
 // Looping
-LOOP i
-	[exit] BREAK // Loop exit condition
+LOOP i [exit]
 	// Repreated logic
 END
 
-FOR i, item, more <- list
+LOOP i, item, more <- list
 	// Logic applied to each item
 END
-

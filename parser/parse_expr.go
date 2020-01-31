@@ -10,8 +10,8 @@ func (p *Parser) parseStat() Stat {
 	case token.ID:
 		return p.parseAssign()
 	default:
-		panic(tk.String() + ": Token of kind does not start a valid " +
-			"statement or parsing has not been implemented for it yet")
+		panic(tk.String() + ": Token does not start a valid expression or " +
+			"parsing has not been implemented for it yet")
 	}
 }
 
@@ -37,8 +37,8 @@ func (p *Parser) parseExpr() Expr {
 	case token.OPEN_LIST:
 		return p.parseList()
 	default:
-		panic(tk.String() + ": Token of kind does not start a valid " +
-			"expression or parsing has not been implemented for it yet")
+		panic(tk.String() + ": Token does not start a valid expression or " +
+			"parsing has not been implemented for it yet")
 	}
 }
 
