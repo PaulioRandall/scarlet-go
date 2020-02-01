@@ -23,13 +23,17 @@ func (p *Parser) parseExpr() Expr {
 	}
 
 	switch tk := p.peek(); tk.Kind {
+	case token.ID:
+		return idExpr{
+			tokenExpr: tokenExpr{p.take()},
+			id:        tk.Value,
+		}
 	case token.STR_LITERAL, token.STR_TEMPLATE:
 		// TODO: string templates need compiling
 		fallthrough
 	case token.BOOL_LITERAL, token.INT_LITERAL, token.REAL_LITERAL:
-		p.take()
 		return valueExpr{
-			tokenExpr: tokenExpr{tk},
+			tokenExpr: tokenExpr{p.take()},
 			v:         NewValue(tk),
 		}
 	case token.OPEN_LIST:

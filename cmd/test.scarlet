@@ -3,20 +3,22 @@ a := `abc`
 STICKY b := "xyz"
 
 c, d := TRUE, FALSE
+d, c := c, d
+
 STICKY e, f := 123, 123.456
 
 g := {
-	123, TRUE,
-	{`abc`, "xyz"},
+	123, c,
+	{a, "xyz"},
 }
-
-// GOAL: Reorganise parser files and structures.
 
 // GOAL: Update parsing so that IDs can be expressions.
 
+// GOAL: Reorganise parser files and structures.
+
 // GOAL: Describe the language axiomatically.
 
-// GOAL: Add precise error handling when parsing
-// GOAL: Add precise error handling when evaluating
+// GOAL: Add precise error handling when parsing.
+// GOAL: Add precise error handling when evaluating.
 
 // GOAL: Parse functions!

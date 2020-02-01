@@ -20,22 +20,23 @@ type assignStat struct {
 func (ex assignStat) Eval(ctx Context) (_ Value) {
 
 	var (
-		isSticky bool
-		size     int = len(ex.ids)
+		size   int = len(ex.ids)
+		setter func(string, Value)
+		values = make([]Value, size)
 	)
 
-	if ex.sticky != (token.Token{}) {
-		isSticky = true
+	if ex.sticky == (token.Token{}) {
+		setter = ctx.set
+	} else {
+		setter = ctx.setSticky
 	}
 
 	for i := 0; i < size; i++ {
-		v := ex.srcs[i].Eval(ctx)
+		values[i] = ex.srcs[i].Eval(ctx)
+	}
 
-		if isSticky {
-			ctx.setSticky(ex.ids[i].Value, v)
-		} else {
-			ctx.set(ex.ids[i].Value, v)
-		}
+	for i := 0; i < size; i++ {
+		setter(ex.ids[i].Value, values[i])
 	}
 
 	return

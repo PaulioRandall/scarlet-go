@@ -74,7 +74,7 @@ func TestParser_parse_1(t *testing.T) {
 // Parse several assignment statements
 // Parse a bool literal assignment
 // Parse a STICKY real literal assignment
-// Parse a string template assignment
+// Parse a ID to ID assignment
 func TestParser_parse_2(t *testing.T) {
 
 	tks := []token.Token{
@@ -92,7 +92,7 @@ func TestParser_parse_2(t *testing.T) {
 		// String template
 		tok(token.ID, "c"),
 		tok(token.ASSIGN, ":="),
-		tok(token.STR_TEMPLATE, `"Caribbean"`),
+		tok(token.ID, "b"),
 		tok(token.TERMINATOR, "\n"), // 12
 		// EOF
 		tok(token.EOF, ""),
@@ -123,7 +123,7 @@ func TestParser_parse_2(t *testing.T) {
 				token.Token{},         // sticky
 				[]token.Token{tks[9]}, // ids
 				[]Expr{ // srcs
-					valueExpr{tokenExpr{tks[11]}, Value{STR, `"Caribbean"`}}, // v
+					idExpr{tokenExpr{tks[11]}, "b"}, // v
 				},
 			},
 		},
