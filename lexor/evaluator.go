@@ -39,7 +39,10 @@ func (ev *Evaluator) Next() (_ token.Token) {
 			continue
 		}
 
-		if prev == token.DO || prev == token.TERMINATOR || prev == token.UNDEFINED {
+		switch prev {
+		case token.OPEN_LIST, token.DELIM, token.TERMINATOR:
+			fallthrough
+		case token.DO, token.UNDEFINED:
 			if k == token.NEWLINE {
 				continue
 			}

@@ -10,9 +10,6 @@ g := {
 	{`abc`, "xyz"},
 }
 
-// GOAL: Update evaluator to remove a TERMINATOR if it follows a DELIM.
-// THEN: Remove TERMINATOR optional stuff from assign and list expression parsing.
-
 // FIX: INT_LITERAL causes unrelated tests to fail
 
 // GOAL: Reorganise parser files and structures.
@@ -23,3 +20,5 @@ g := {
 
 // GOAL: Add precise error handling when parsing
 // GOAL: Add precise error handling when evaluating
+
+// GOAL: Parse functions!

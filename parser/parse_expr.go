@@ -43,10 +43,7 @@ func (p *Parser) parseExpr() Expr {
 // parseDelimExpr parses a delimitered separated set of expressions.
 func (p *Parser) parseDelimExpr() (exs []Expr) {
 
-	for {
-		if p.peek().Kind == token.CLOSE_LIST {
-			return
-		}
+	for p.peek().Kind != token.CLOSE_LIST {
 
 		ex := p.parseExpr()
 		exs = append(exs, ex)
@@ -63,23 +60,15 @@ func (p *Parser) parseDelimExpr() (exs []Expr) {
 
 		return
 	}
+
+	return
 }
 
 // parseList parses a list literal.
 func (p *Parser) parseList() Expr {
 
 	start := p.takeEnsure(token.OPEN_LIST)
-
-	if p.peek().Kind == token.TERMINATOR {
-		p.take()
-	}
-
 	v := p.parseDelimExpr()
-
-	if p.peek().Kind == token.TERMINATOR {
-		p.take()
-	}
-
 	end := p.takeEnsure(token.CLOSE_LIST)
 
 	return listExpr{
