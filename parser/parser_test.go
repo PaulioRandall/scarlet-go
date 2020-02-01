@@ -115,7 +115,7 @@ func TestParser_parse_2(t *testing.T) {
 				tks[4],                // sticky
 				[]token.Token{tks[5]}, // ids
 				[]Expr{ // srcs
-					valueExpr{tokenExpr{tks[7]}, Value{REAL, 123.456}}, // v
+					valueExpr{tokenExpr{tks[7]}, Value{REAL, float64(123.456)}}, // v
 				},
 			},
 			assignStat{
@@ -134,7 +134,7 @@ func TestParser_parse_2(t *testing.T) {
 
 // Parse multiple assignment statement
 // Parse a bool literal assignment
-// Parse a real literal assignment
+// Parse a int literal assignment
 // Parse a string template assignment
 func TestParser_parse_3(t *testing.T) {
 
@@ -149,7 +149,7 @@ func TestParser_parse_3(t *testing.T) {
 		// srcs
 		tok(token.BOOL_LITERAL, "TRUE"),
 		tok(token.DELIM, ","),
-		tok(token.REAL_LITERAL, "123.456"),
+		tok(token.INT_LITERAL, "123"),
 		tok(token.DELIM, ","),
 		tok(token.STR_TEMPLATE, `"Caribbean"`),
 		tok(token.TERMINATOR, "\n"),
@@ -171,7 +171,7 @@ func TestParser_parse_3(t *testing.T) {
 				},
 				[]Expr{ // srcs
 					valueExpr{tokenExpr{tks[6]}, Value{BOOL, true}},
-					valueExpr{tokenExpr{tks[8]}, Value{REAL, 123.456}},
+					valueExpr{tokenExpr{tks[8]}, Value{INT, int64(123)}},
 					valueExpr{tokenExpr{tks[10]}, Value{STR, `"Caribbean"`}},
 				},
 			},
@@ -227,7 +227,7 @@ func TestParser_parse_4(t *testing.T) {
 						tks[16], // end
 						[]Expr{ // items
 							valueExpr{tokenExpr{tks[4]}, Value{STR, "abc"}},
-							valueExpr{tokenExpr{tks[6]}, Value{REAL, 123.456}},
+							valueExpr{tokenExpr{tks[6]}, Value{REAL, float64(123.456)}},
 							listExpr{
 								tks[9],  // start
 								tks[13], // end

@@ -10,8 +10,6 @@ g := {
 	{`abc`, "xyz"},
 }
 
-// FIX: INT_LITERAL causes unrelated tests to fail
-
 // GOAL: Reorganise parser files and structures.
 
 // GOAL: Update parsing so that IDs can be expressions.
