@@ -67,17 +67,3 @@ func (p *Parser) parseDelimExpr() (exs []Expr) {
 
 	return
 }
-
-// parseList parses a list literal.
-func (p *Parser) parseList() Expr {
-
-	start := p.takeEnsure(token.OPEN_LIST)
-	v := p.parseDelimExpr()
-	end := p.takeEnsure(token.CLOSE_LIST)
-
-	return listExpr{
-		start: start,
-		end:   end,
-		items: v,
-	}
-}

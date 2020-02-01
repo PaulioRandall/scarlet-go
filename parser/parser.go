@@ -45,7 +45,7 @@ func (p *Parser) peek() token.Token {
 }
 
 // take removes and returns the token in the buffer. If the buffer is empty then
-// a peek operation is performed to fill it.
+// a peek operation is performed to fill it first.
 func (p *Parser) take() (tk token.Token) {
 
 	if p.buf == nil {
@@ -56,7 +56,7 @@ func (p *Parser) take() (tk token.Token) {
 	return
 }
 
-// ensure will panic if the specified token is not of the specified kind.
+// ensure will panic if the specified token is not one of the specified kinds.
 func (p *Parser) ensure(tk token.Token, ks ...token.Kind) {
 
 	tkk := tk.Kind
@@ -77,8 +77,8 @@ func (p *Parser) ensure(tk token.Token, ks ...token.Kind) {
 }
 
 // peekEnsure returns the next token in the input channel but will panic if
-// the if the channel is closed or the specified token is not of the specified
-// kind.
+// the if the channel is closed or the specified token is not one of the
+// specified kinds.
 func (p *Parser) peekEnsure(ks ...token.Kind) token.Token {
 	tk := p.peek()
 	p.ensure(tk, ks...)
@@ -86,8 +86,8 @@ func (p *Parser) peekEnsure(ks ...token.Kind) token.Token {
 }
 
 // takeEnsure returns the next token in the input channel but will panic if
-// the if the channel is closed or the specified token is not of the specified
-// kind.
+// the if the channel is closed or the specified token is not one of the
+// specified kinds.
 func (p *Parser) takeEnsure(ks ...token.Kind) token.Token {
 	tk := p.take()
 	p.ensure(tk, ks...)

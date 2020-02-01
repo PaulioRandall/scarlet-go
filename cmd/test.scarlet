@@ -12,13 +12,15 @@ g := {
 	{a, "xyz"},
 }
 
-// GOAL: Update parsing so that IDs can be expressions.
-
 // GOAL: Reorganise parser files and structures.
 
 // GOAL: Describe the language axiomatically.
 
-// GOAL: Add precise error handling when parsing.
-// GOAL: Add precise error handling when evaluating.
+// GOAL: Add precise error handling.
+// STEP: Add to parser.
+// STEP: Add to Eval functions.
 
 // GOAL: Parse functions!
+// STEP: Start by parsing functions with no parameters.
+// STEP: Then add input parameters.
+// STEP: Then add output parameters.

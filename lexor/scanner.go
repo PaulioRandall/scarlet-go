@@ -13,7 +13,8 @@ import (
 // TokenStream represents a stream of tokens.
 type TokenStream interface {
 
-	// Next returns the next token in the stream.
+	// Next returns the next token in the stream. An EOF token is always returned
+	// if the token stream is empty.
 	Next() token.Token
 }
 
@@ -116,11 +117,7 @@ func (scn *Scanner) scanSpace() (_ token.Token) {
 
 	var n int
 
-	if newlineTerminals(scn.runes) != 0 {
-		return
-	}
-
-	if !unicode.IsSpace(scn.runes[0]) {
+	if newlineTerminals(scn.runes) != 0 || !unicode.IsSpace(scn.runes[0]) {
 		return
 	}
 
@@ -249,15 +246,13 @@ func (scn *Scanner) scanSymbol() (_ token.Token) {
 		k token.Kind
 	)
 
-	switch size := len(scn.runes); {
-	case size == 0:
+	if size := len(scn.runes); size == 0 {
 		return
-	case size > 1:
+	} else if size > 1 {
 		b = scn.runes[1]
-		fallthrough
-	default:
-		a = scn.runes[0]
 	}
+
+	a = scn.runes[0]
 
 	switch {
 	case a == ':' && b == '=':
@@ -278,42 +273,26 @@ func (scn *Scanner) scanSymbol() (_ token.Token) {
 		n, k = 1, token.CLOSE_LIST
 	case a == ',':
 		n, k = 1, token.DELIM
+	case a == '_':
+		n, k = 1, token.VOID
+	case a == ';':
+		n, k = 1, token.TERMINATOR
 	case a == '@':
 		n, k = 1, token.SPELL
-	case a == '+':
-		n, k = 1, token.OPERATOR
-	case a == '-':
-		n, k = 1, token.OPERATOR
-	case a == '/':
-		n, k = 1, token.OPERATOR
-	case a == '*':
-		n, k = 1, token.OPERATOR
-	case a == '%':
-		n, k = 1, token.OPERATOR
-	case a == '|':
-		n, k = 1, token.OPERATOR
-	case a == '&':
-		n, k = 1, token.OPERATOR
-	case a == '~':
+	case a == '~' || a == '¬': // Negation
 		n, k = 1, token.NOT
-	case a == '¬':
-		n, k = 1, token.NOT
-	case a == '=':
+	case a == '+' || a == '-' || a == '/' || a == '*' || a == '%': // Arithmetic
 		n, k = 1, token.OPERATOR
-	case a == '#':
+	case a == '|' || a == '&': // Boolean
+		n, k = 1, token.OPERATOR
+	case a == '=' || a == '#': // Comparisons...
 		n, k = 1, token.OPERATOR
 	case a == '<' && b == '=': // Order matters! Must be before `<`
 		n, k = 2, token.OPERATOR
 	case a == '>' && b == '=': // Order matters! Must be before `<`
 		n, k = 2, token.OPERATOR
-	case a == '<':
+	case a == '<' || a == '>':
 		n, k = 1, token.OPERATOR
-	case a == '>':
-		n, k = 1, token.OPERATOR
-	case a == '_':
-		n, k = 1, token.VOID
-	case a == ';':
-		n, k = 1, token.TERMINATOR
 	}
 
 	if k == token.UNDEFINED {
@@ -358,22 +337,16 @@ func (scn *Scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token)
 // newline token in the slice. If the next token is not a newline token then 0
 // is returned.
 func newlineTerminals(r []rune) (_ int) {
-
-	size := len(r)
-
-	if size < 1 {
+	switch size := len(r); {
+	case size < 1:
+		return
+	case r[0] == '\n': // LF
+		return 1
+	case size > 1 && r[0] == '\r' && r[1] == '\n': // CRLF
+		return 2
+	default:
 		return
 	}
-
-	if r[0] == '\n' { // LF
-		return 1
-	}
-
-	if size > 1 && r[0] == '\r' && r[1] == '\n' { // CRLF
-		return 2
-	}
-
-	return
 }
 
 // countDigits counts an uninterupted series of digits in the rune slice
@@ -394,25 +367,24 @@ func countDigits(r []rune, start int) (n int) {
 // keywordOrID identifies the keyword kind represented by the input rune slice.
 // If no keyword can be found then the identifier kind is returned.
 func keywordOrID(r []rune) token.Kind {
-
-	ks := map[string]token.Kind{
-		`STICKY`: token.STICKY,
-		`F`:      token.FUNC,
-		`DO`:     token.DO,
-		`WATCH`:  token.WATCH,
-		`MATCH`:  token.MATCH,
-		`END`:    token.END,
-		`TRUE`:   token.BOOL_LITERAL,
-		`FALSE`:  token.BOOL_LITERAL,
+	switch string(r) {
+	case `STICKY`:
+		return token.STICKY
+	case `F`:
+		return token.FUNC
+	case `DO`:
+		return token.DO
+	case `WATCH`:
+		return token.WATCH
+	case `MATCH`:
+		return token.MATCH
+	case `END`:
+		return token.END
+	case `TRUE`:
+		return token.BOOL_LITERAL
+	case `FALSE`:
+		return token.BOOL_LITERAL
+	default:
+		return token.ID
 	}
-
-	src := string(r)
-
-	for k, v := range ks {
-		if k == src {
-			return v
-		}
-	}
-
-	return token.ID
 }

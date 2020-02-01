@@ -6,6 +6,43 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
+// parseStats parses a block of statements until the end of file or a block
+// closing token is encountered. If the 'opener' is empty then an EOF is
+// expected else a block closing token is expected; a panic will ensue
+// otherwise. If 'opener' is NOT empty it is assumed that it has been validated
+// prior to being passed.
+func (p *Parser) parseStats(opener token.Token) Stat {
+
+	b := blockStat{
+		opener: opener,
+		block:  []Stat{},
+	}
+
+	for {
+		switch tk := p.peek(); tk.Kind {
+		case token.END:
+			if opener.Kind == token.SOF {
+				panic(tk.String() + ": Expected EOF, found a block closing token instead")
+			}
+			goto BLOCK_PARSED
+
+		case token.EOF:
+			if opener.Kind != token.SOF {
+				panic(tk.String() + ": Expected a block closing token, found EOF instead")
+			}
+			goto BLOCK_PARSED
+
+		default:
+			s := p.parseStat()
+			b.block = append(b.block, s)
+		}
+	}
+
+BLOCK_PARSED:
+	b.closer = p.take()
+	return b
+}
+
 // blockStat represents a block of statements.
 type blockStat struct {
 	opener token.Token
@@ -45,41 +82,4 @@ func (ex blockStat) Eval(ctx Context) (_ Value) {
 	}
 
 	return
-}
-
-// parseStats parses a block of statements until the end of file or a block
-// closing token is encountered. If the 'opener' is empty then an EOF is
-// expected else a block closing token is expected; a panic will ensue
-// otherwise. If 'opener' is NOT empty it is assumed that it has been validated
-// prior to being passed.
-func (p *Parser) parseStats(opener token.Token) Stat {
-
-	b := blockStat{
-		opener: opener,
-		block:  []Stat{},
-	}
-
-	for {
-		switch tk := p.peek(); tk.Kind {
-		case token.END:
-			if opener.Kind == token.SOF {
-				panic(tk.String() + ": Expected EOF, found a block closing token instead")
-			}
-			goto BLOCK_PARSED
-
-		case token.EOF:
-			if opener.Kind != token.SOF {
-				panic(tk.String() + ": Expected a block closing token, found EOF instead")
-			}
-			goto BLOCK_PARSED
-
-		default:
-			s := p.parseStat()
-			b.block = append(b.block, s)
-		}
-	}
-
-BLOCK_PARSED:
-	b.closer = p.take()
-	return b
 }
