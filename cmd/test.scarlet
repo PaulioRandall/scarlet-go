@@ -12,10 +12,6 @@ g := {
 	{a, "xyz"},
 }
 
-// GOAL: Reorganise parser files and structures.
-
-// GOAL: Describe the language axiomatically.
-
 // GOAL: Add precise error handling.
 // STEP: Add to parser.
 // STEP: Add to Eval functions.
@@ -24,3 +20,7 @@ g := {
 // STEP: Start by parsing functions with no parameters.
 // STEP: Then add input parameters.
 // STEP: Then add output parameters.
+
+// GOAL: Describe the language axiomatically.
+
+// GOAL: Document each package including the concepts that drive them.

@@ -7,7 +7,7 @@ import (
 )
 
 // ****************************************************************************
-// * Package API
+// * TokenStream
 // ****************************************************************************
 
 // TokenStream represents a stream of tokens.
@@ -18,9 +18,13 @@ type TokenStream interface {
 	Next() token.Token
 }
 
-// Scanner is a structure for parsing source code into tokens. It implements
+// ****************************************************************************
+// * scanner
+// ****************************************************************************
+
+// scanner is a structure for parsing source code into tokens. It implements
 // the TokenStream interface so it may be wrapped.
-type Scanner struct {
+type scanner struct {
 	runes []rune // Source code
 	line  int    // Line index
 	col   int    // Column index
@@ -28,7 +32,7 @@ type Scanner struct {
 
 // NewScanner creates a new scanner to parse the input string.
 func NewScanner(s string) TokenStream {
-	return &Scanner{
+	return &scanner{
 		runes: []rune(s),
 		line:  0,
 		col:   0,
@@ -36,7 +40,7 @@ func NewScanner(s string) TokenStream {
 }
 
 // Next satisfies the TokenStream interface.
-func (scn *Scanner) Next() (tk token.Token) {
+func (scn *scanner) Next() (tk token.Token) {
 
 	if len(scn.runes) == 0 {
 		return token.Token{
@@ -70,13 +74,9 @@ func (scn *Scanner) Next() (tk token.Token) {
 	panic("Could not identify next token")
 }
 
-// ****************************************************************************
-// * Scanning functions: func() token.Token
-// ****************************************************************************
-
 // scanNewline attempts to scan a newline token. If successful a non-empty
 // newline token is returned.
-func (scn *Scanner) scanNewline() (_ token.Token) {
+func (scn *scanner) scanNewline() (_ token.Token) {
 
 	if n := newlineTerminals(scn.runes); n > 0 {
 		return scn.tokenize(n, token.NEWLINE, true)
@@ -87,7 +87,7 @@ func (scn *Scanner) scanNewline() (_ token.Token) {
 
 // scanComment attempts to scan a comment. If successful a non-empty comment
 // token is returned.
-func (scn *Scanner) scanComment() (_ token.Token) {
+func (scn *scanner) scanComment() (_ token.Token) {
 
 	const COMMENT_PREFIX int = 2
 	var i int
@@ -113,7 +113,7 @@ func (scn *Scanner) scanComment() (_ token.Token) {
 // scanSpace attempts to scan a series of whitespace characters. If successful
 // a non-empty whitespace token is returned. Assumes that the scanners rune
 // array length is greater than 0.
-func (scn *Scanner) scanSpace() (_ token.Token) {
+func (scn *scanner) scanSpace() (_ token.Token) {
 
 	var n int
 
@@ -139,7 +139,7 @@ func (scn *Scanner) scanSpace() (_ token.Token) {
 
 // scanNumLiteral attempts to scan a literal number. If successful a non-empty
 // number literal token is returned.
-func (scn *Scanner) scanNumLiteral() (_ token.Token) {
+func (scn *scanner) scanNumLiteral() (_ token.Token) {
 
 	r := scn.runes
 	n := countDigits(r, 0)
@@ -165,7 +165,7 @@ func (scn *Scanner) scanNumLiteral() (_ token.Token) {
 // scanStrLiteral attempts to scan a string literal. If successful a non-empty
 // string literal token is returned. Assumes that the scanners rune array
 // length is greater than 0.
-func (scn *Scanner) scanStrLiteral() (_ token.Token) {
+func (scn *scanner) scanStrLiteral() (_ token.Token) {
 
 	for i, ru := range scn.runes {
 		switch {
@@ -187,7 +187,7 @@ ERROR:
 // scanStrTemplate attempts to scan a string template. If successful a non-empty
 // string template token is returned. Assumes that the scanners rune array
 // length is greater than 0.
-func (scn *Scanner) scanStrTemplate() (_ token.Token) {
+func (scn *scanner) scanStrTemplate() (_ token.Token) {
 
 	prev := rune(0)
 
@@ -213,7 +213,7 @@ ERROR:
 
 // scanWord attempts to scan a keyword or identifier. If successful a non-empty
 // keyword or identifier token is returned.
-func (scn *Scanner) scanWord() (_ token.Token) {
+func (scn *scanner) scanWord() (_ token.Token) {
 
 	var n int
 	r := scn.runes
@@ -237,7 +237,7 @@ func (scn *Scanner) scanWord() (_ token.Token) {
 // scanSymbol attempts to scan a symbol token. If successful a non-empty
 // symbol token is returned. Assumes that the scanners rune array length is
 // greater than 0.
-func (scn *Scanner) scanSymbol() (_ token.Token) {
+func (scn *scanner) scanSymbol() (_ token.Token) {
 
 	var (
 		a rune
@@ -302,13 +302,9 @@ func (scn *Scanner) scanSymbol() (_ token.Token) {
 	return scn.tokenize(n, k, false)
 }
 
-// ****************************************************************************
-// * Helper functions
-// ****************************************************************************
-
 // tokenize slices off the next token from the scanners rune array and updates
 // the line and column numbers accordingly.
-func (scn *Scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token) {
+func (scn *scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token) {
 
 	if len(scn.runes) < n {
 		panic("Bad function argument, n is bigger than the source code")
@@ -332,6 +328,10 @@ func (scn *Scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token)
 
 	return
 }
+
+// ****************************************************************************
+// * Helper functions
+// ****************************************************************************
 
 // newlineTerminals returns the number of terminal symbols that make up the next
 // newline token in the slice. If the next token is not a newline token then 0
