@@ -62,6 +62,7 @@ func (p *Parser) take() (tk token.Token) {
 // ensure will panic if the specified token is not one of the specified kinds.
 func (p *Parser) ensure(tk token.Token, ks ...token.Kind) {
 
+	var errMsg string
 	tkk := tk.Kind
 
 	for _, k := range ks {
@@ -70,13 +71,18 @@ func (p *Parser) ensure(tk token.Token, ks ...token.Kind) {
 		}
 	}
 
-	msg := "Expected any kind from" + "\n"
-	for _, k := range ks {
-		msg += "\t" + string(k) + ",\n"
+	errMsg = "Expected "
+	if len(ks) == 1 {
+		errMsg += string(ks[0])
+	} else {
+		errMsg = "either"
+		for _, k := range ks {
+			errMsg += " " + string(k)
+		}
 	}
 
-	msg += "but was '" + string(tk.Kind) + "'"
-	panic(bard.NewHorror(tk, nil, msg))
+	errMsg += " but was " + string(tk.Kind)
+	panic(bard.NewHorror(tk, nil, errMsg))
 }
 
 // peekEnsure returns the next token in the input channel but will panic if
