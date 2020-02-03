@@ -3,6 +3,7 @@ package parser
 import (
 	"strings"
 
+	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -21,7 +22,9 @@ func (p *Parser) parseAssign() Stat {
 	p.takeEnsure(token.TERMINATOR)
 
 	if len(ids) != len(srcs) {
-		panic(ass.String() + ": Assignment requires the ID and expression count match")
+		panic(bard.NewHorror(ass, nil,
+			"Assignment requires the ID and expression count match",
+		))
 	}
 
 	return assignStat{

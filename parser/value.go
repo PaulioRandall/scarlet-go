@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -58,7 +59,9 @@ func NewValue(tk token.Token) Value {
 		k, v = REAL, parseNum(REAL, tk)
 
 	default:
-		panic(tk.String() + ": An UNDEFINED token may not be converted to a Value")
+		panic(bard.NewHorror(tk, nil,
+			"An UNDEFINED token may not be converted to a Value",
+		))
 	}
 
 	return Value{
@@ -77,13 +80,15 @@ func parseNum(k Kind, tk token.Token) (v interface{}) {
 	} else if k == REAL {
 		v, e = strconv.ParseFloat(tk.Value, 64)
 	} else {
-		// Sanity Check
-		panic(tk.String() + ": Illegal number type, cannot parse")
+		panic(bard.NewHorror(tk, nil,
+			"SANITY CHECK! Illegal number type, cannot parse",
+		))
 	}
 
 	if e != nil {
-		// Sanity Check
-		panic(tk.String() + ": Could not parse integer token: " + e.Error())
+		panic(bard.NewHorror(tk, e,
+			"SANITY CHECK! Could not parse integer token",
+		))
 	}
 
 	return

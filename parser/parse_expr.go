@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -10,8 +11,10 @@ func (p *Parser) parseStat() Stat {
 	case token.STICKY, token.ID:
 		return p.parseAssign()
 	default:
-		panic(tk.String() + ": Token does not start a valid expression or " +
-			"parsing has not been implemented for it yet")
+		panic(bard.NewHorror(tk, nil,
+			"Token does not start a valid expression or "+
+				"parsing has not been implemented for it yet",
+		))
 	}
 }
 
@@ -39,8 +42,10 @@ func (p *Parser) parseExpr() Expr {
 	case token.OPEN_LIST:
 		return p.parseList()
 	default:
-		panic(tk.String() + ": Token does not start a valid expression or " +
-			"parsing has not been implemented for it yet")
+		panic(bard.NewHorror(tk, nil,
+			"Token does not start a valid expression or "+
+				"parsing has not been implemented for it yet",
+		))
 	}
 }
 

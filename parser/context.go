@@ -1,5 +1,9 @@
 package parser
 
+import (
+	"github.com/PaulioRandall/scarlet-go/bard"
+)
+
 // Context represents the current executing context. It contains all state
 // available to the current scope such as available variables. It also contains
 // it's parent context so it doubles up as the context stack (linked list).
@@ -65,7 +69,9 @@ func (ctx Context) set(id string, v Value) {
 func (ctx Context) setSticky(id string, v Value) {
 
 	if _, exists := ctx.stickies[id]; exists {
-		panic("Cannot reassign the sticky variable '" + id + "'")
+		panic(bard.NewNightmare(nil,
+			"Cannot reassign the sticky variable '%v'", id,
+		))
 	}
 
 	ctx.stickies[id] = v

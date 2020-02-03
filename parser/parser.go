@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -35,7 +36,9 @@ func (p *Parser) peek() token.Token {
 		tk, ok := <-p.in
 
 		if !ok {
-			panic(tk.String() + ": Token input channel closed prematurely")
+			panic(bard.NewHorror(tk, nil,
+				"Token input channel closed prematurely",
+			))
 		}
 
 		p.buf = &tk
@@ -73,7 +76,7 @@ func (p *Parser) ensure(tk token.Token, ks ...token.Kind) {
 	}
 
 	msg += "but was '" + string(tk.Kind) + "'"
-	panic(msg)
+	panic(bard.NewHorror(tk, nil, msg))
 }
 
 // peekEnsure returns the next token in the input channel but will panic if

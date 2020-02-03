@@ -3,6 +3,7 @@ package lexor
 import (
 	"unicode"
 
+	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -71,7 +72,9 @@ func (scn *scanner) Next() (tk token.Token) {
 		}
 	}
 
-	panic("Could not identify next token")
+	panic(bard.NewTerror(scn.line+1, scn.col, nil,
+		"Could not identify next token",
+	))
 }
 
 // scanNewline attempts to scan a newline token. If successful a non-empty
@@ -155,7 +158,9 @@ func (scn *scanner) scanNumLiteral() (_ token.Token) {
 	n++ // +1 for decimal point
 	d := countDigits(r, n)
 	if d == 0 {
-		panic("Expected digit after decimal point")
+		panic(bard.NewTerror(scn.line+1, scn.col, nil,
+			"Expected digit after decimal point",
+		))
 	}
 
 	n += d
@@ -181,7 +186,9 @@ func (scn *scanner) scanStrLiteral() (_ token.Token) {
 	}
 
 ERROR:
-	panic("Unterminated string literal")
+	panic(bard.NewTerror(scn.line+1, scn.col, nil,
+		"Unterminated string literal",
+	))
 }
 
 // scanStrTemplate attempts to scan a string template. If successful a non-empty
@@ -208,7 +215,9 @@ func (scn *scanner) scanStrTemplate() (_ token.Token) {
 	}
 
 ERROR:
-	panic("Unterminated string template")
+	panic(bard.NewTerror(scn.line+1, scn.col, nil,
+		"Unterminated string template",
+	))
 }
 
 // scanWord attempts to scan a keyword or identifier. If successful a non-empty
@@ -307,7 +316,7 @@ func (scn *scanner) scanSymbol() (_ token.Token) {
 func (scn *scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token) {
 
 	if len(scn.runes) < n {
-		panic("Bad function argument, n is bigger than the source code")
+		panic("SANITY CHECK! Bad function argument, n is bigger than the source code")
 	}
 
 	tk = token.Token{

@@ -3,6 +3,7 @@ package parser
 import (
 	"strings"
 
+	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -22,13 +23,17 @@ func (p *Parser) parseStats(opener token.Token) Stat {
 		switch tk := p.peek(); tk.Kind {
 		case token.END:
 			if opener.Kind == token.SOF {
-				panic(tk.String() + ": Expected EOF, found a block closing token instead")
+				panic(bard.NewHorror(tk, nil,
+					"Expected EOF, found a block closing token instead",
+				))
 			}
 			goto BLOCK_PARSED
 
 		case token.EOF:
 			if opener.Kind != token.SOF {
-				panic(tk.String() + ": Expected a block closing token, found EOF instead")
+				panic(bard.NewHorror(tk, nil,
+					"Expected a block closing token, found EOF instead",
+				))
 			}
 			goto BLOCK_PARSED
 

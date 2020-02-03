@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 
+	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/lexor"
 	"github.com/PaulioRandall/scarlet-go/parser"
 	"github.com/PaulioRandall/scarlet-go/token"
@@ -10,12 +11,16 @@ import (
 
 func main() {
 
-	b, e := ioutil.ReadFile("./test.scarlet")
+	src, e := ioutil.ReadFile("./test.scarlet")
 	if e != nil {
 		panic(e)
 	}
 
-	run(string(b))
+	b := bard.NewDumbBard()
+
+	b.CatchNightmare(func() {
+		run(string(src))
+	})
 }
 
 // run executes the input source code.

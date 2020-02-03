@@ -12,14 +12,16 @@ g := {
 	{a, "xyz"},
 }
 
-// GOAL: Add precise error handling.
-// STEP: Add to parser.
-// STEP: Add to Eval functions.
+// MAYBE: all variables regardless of stickyness should be unique?
+
+// MAYBE: you shouldn't be allowed todo `a, a, a := 1, 2, 3`
 
 // GOAL: Parse functions!
 // STEP: Start by parsing functions with no parameters.
 // STEP: Then add input parameters.
 // STEP: Then add output parameters.
+
+// GOAL: Create a Bard that shows where in the source code an error occurred.
 
 // GOAL: Describe the language axiomatically.
 
