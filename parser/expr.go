@@ -106,5 +106,5 @@ type idExpr struct {
 
 // Eval satisfies the Expr interface.
 func (ex idExpr) Eval(ctx Context) (_ Value) {
-	return ctx.get(ex.id)
+	return ctx.resolve(ex.id)
 }

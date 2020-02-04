@@ -60,6 +60,18 @@ func (ctx Context) get(id string) (_ Value) {
 	return v
 }
 
+// resolve returns the value assigned to a specified variable. If the ID does
+// not exist a panic ensues.
+func (ctx Context) resolve(id string) (_ Value) {
+	v := ctx.get(id)
+	if v == (Value{}) {
+		panic(bard.NewNightmare(nil,
+			"Cannot resolve the variable '%v'", id,
+		))
+	}
+	return v
+}
+
 // set creates or updates a local variable.
 func (ctx Context) set(id string, v Value) {
 	ctx.vars[id] = v

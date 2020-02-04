@@ -12,11 +12,9 @@ g := {
 	{a, "xyz"},
 }
 
-// FIX: assigning an undeclared variable should panic `a := b` where `b` is not defined
-
 // MAYBE: all variables regardless of stickyness should be unique?
 
-// MAYBE: you shouldn't be allowed todo `a, a, a := 1, 2, 3`?
+// MAYBE: you shouldn't be allowed todo `a, a := 1, 2` etc?
 
 // GOAL: Parse functions!
 // STEP: Start by parsing functions with no parameters.
