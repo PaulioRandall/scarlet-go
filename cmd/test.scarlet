@@ -14,6 +14,8 @@ g := {
 
 // MAYBE: you shouldn't be allowed todo `a, a := 1, 2` etc?
 
+// GOAL: Allow variable removal using VOID.
+
 // GOAL: Parse functions!
 // STEP: Start by parsing functions with no parameters.
 // STEP: Then add input parameters.
@@ -24,3 +26,5 @@ g := {
 // GOAL: Describe the language axiomatically.
 
 // GOAL: Document each package including the concepts that drive them.
+
+// MAYBE: variables should be strongly typed?

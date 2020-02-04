@@ -17,6 +17,8 @@ func (p *Parser) parseAssign() Stat {
 	}
 
 	ids := p.parseAssignIDs()
+	p.checkNoDuplicates(ids)
+
 	ass := p.takeEnsure(token.ASSIGN)
 	srcs := p.parseDelimExpr()
 	p.takeEnsure(token.TERMINATOR)
@@ -48,6 +50,18 @@ func (p *Parser) parseAssignIDs() (ids []token.Token) {
 		}
 
 		return
+	}
+}
+
+// checkNoDuplicates checks that there are no duplicate IDs within a slice. A
+// panic ensues otherwise.
+func (p *Parser) checkNoDuplicates(ids []token.Token) {
+	for i, sub := range ids {
+		for j, obj := range ids {
+			if i != j && sub.Value == obj.Value {
+				panic(bard.NewHorror(obj, nil, "Duplicate IDs not allowed"))
+			}
+		}
 	}
 }
 
