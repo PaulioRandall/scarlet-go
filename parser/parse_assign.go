@@ -11,9 +11,9 @@ import (
 // statement in the input channel is an assignment.
 func (p *Parser) parseAssign() Stat {
 
-	var sticky token.Token
-	if p.peek().Kind == token.STICKY {
-		sticky = p.take()
+	var fix token.Token
+	if p.peek().Kind == token.FIX {
+		fix = p.take()
 	}
 
 	ids := p.parseAssignIDs()
@@ -31,7 +31,7 @@ func (p *Parser) parseAssign() Stat {
 
 	return assignStat{
 		tokenExpr: tokenExpr{ass},
-		sticky:    sticky,
+		fix:       fix,
 		ids:       ids,
 		srcs:      srcs,
 	}
@@ -70,9 +70,9 @@ func (p *Parser) checkNoDuplicates(ids []token.Token) {
 // within a context.
 type assignStat struct {
 	tokenExpr
-	sticky token.Token
-	ids    []token.Token
-	srcs   []Expr
+	fix  token.Token
+	ids  []token.Token
+	srcs []Expr
 }
 
 // String satisfies the Expr interface.
@@ -84,9 +84,9 @@ func (ex assignStat) String() (s string) {
 func (ex assignStat) TabString(tabs int) (s string) {
 
 	var (
-		isSticky = ex.sticky != (token.Token{})
-		size     = len(ex.ids)
-		pre      = strings.Repeat("\t", tabs)
+		isFixed = ex.fix != (token.Token{})
+		size    = len(ex.ids)
+		pre     = strings.Repeat("\t", tabs)
 	)
 
 	for i := 0; i < size; i++ {
@@ -97,8 +97,8 @@ func (ex assignStat) TabString(tabs int) (s string) {
 
 		s += pre + "Assign "
 
-		if isSticky {
-			s += "[" + ex.sticky.String() + "] "
+		if isFixed {
+			s += "[" + ex.fix.String() + "] "
 		}
 
 		s += "[" + ex.ids[i].String() + "] "
@@ -122,8 +122,8 @@ func (ex assignStat) Eval(ctx Context) (_ Value) {
 	}
 
 	for i := 0; i < size; i++ {
-		isSticky := ex.sticky != (token.Token{})
-		ctx.set(ex.ids[i].Value, values[i], isSticky)
+		isFixed := ex.fix != (token.Token{})
+		ctx.set(ex.ids[i].Value, values[i], isFixed)
 	}
 
 	return

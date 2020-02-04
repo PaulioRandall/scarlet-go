@@ -8,7 +8,7 @@ import (
 // parseStat parses the next statement.
 func (p *Parser) parseStat() Stat {
 	switch tk := p.peek(); tk.Kind {
-	case token.STICKY, token.ID:
+	case token.FIX, token.ID:
 		return p.parseAssign()
 	default:
 		panic(bard.NewHorror(tk, nil,

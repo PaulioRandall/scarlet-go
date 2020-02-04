@@ -1,12 +1,12 @@
 
 a := `abc`
 
-STICKY b := "xyz"
+FIX b := "xyz"
 
 c, d := TRUE, FALSE
 d, c := c, d
 
-STICKY e, f := 123, 123.456
+FIX e, f := 123, 123.456
 
 g := {
 	123, c,
@@ -15,17 +15,17 @@ g := {
 
 d := _
 
-// MAYBE: STICKY should be renamed FIX for conciseness and encourage use?
+// GOAL: Create a Bard that shows where in the source code an error occurred.
 
 // GOAL: Parse functions!
 // STEP: Start by parsing functions with no parameters.
 // STEP: Then add input parameters.
 // STEP: Then add output parameters.
 
-// GOAL: Create a Bard that shows where in the source code an error occurred.
+// GOAL: Document each package including the concepts that drive them.
 
 // GOAL: Describe the language axiomatically.
 
-// GOAL: Document each package including the concepts that drive them.
-
 // MAYBE: variables should be strongly typed?
+
+// MAYBE: all variables should start with a lower case?

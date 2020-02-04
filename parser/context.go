@@ -6,8 +6,8 @@ import (
 
 // variable represents a value stored against an identifier within a context.
 type variable struct {
-	val      Value
-	isSticky bool
+	val     Value
+	isFixed bool
 }
 
 // Context represents the current executing context. It contains all state
@@ -29,12 +29,12 @@ func NewContext() Context {
 // String returns a human readable string representation of the context.
 func (ctx Context) String() (s string) {
 
-	appendVars := func(stickies bool) {
+	appendVars := func(fixed bool) {
 
 		empty := true
 
 		for id, v := range ctx.vars {
-			if v.isSticky == stickies {
+			if v.isFixed == fixed {
 				empty = false
 				s += "\t" + id + " " + string(v.val.k) + ": " + v.val.String() + "\n"
 			}
@@ -46,7 +46,7 @@ func (ctx Context) String() (s string) {
 
 	}
 
-	s += "stickies:" + "\n"
+	s += "fixed:" + "\n"
 	appendVars(true)
 
 	s += "variables:" + "\n"
@@ -81,11 +81,11 @@ func (ctx Context) resolve(id string) (_ Value) {
 }
 
 // set creates or updates a variable.
-func (ctx Context) set(id string, val Value, isSticky bool) {
+func (ctx Context) set(id string, val Value, isFixed bool) {
 
-	if v := ctx.vars[id]; v.isSticky {
+	if v := ctx.vars[id]; v.isFixed {
 		panic(bard.NewNightmare(nil,
-			"Cannot reassign the sticky variable '%v'", id,
+			"Cannot reassign the fixed variable '%v'", id,
 		))
 	}
 
@@ -95,7 +95,7 @@ func (ctx Context) set(id string, val Value, isSticky bool) {
 	}
 
 	ctx.vars[id] = variable{
-		val:      val,
-		isSticky: isSticky,
+		val:     val,
+		isFixed: isFixed,
 	}
 }

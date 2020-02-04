@@ -84,7 +84,7 @@ func TestParser_parse_2(t *testing.T) {
 		tok(token.BOOL_LITERAL, "TRUE"),
 		tok(token.TERMINATOR, "\n"), // 3
 		// Number
-		tok(token.STICKY, "STICKY"),
+		tok(token.FIX, "FIX"),
 		tok(token.ID, "b"),
 		tok(token.ASSIGN, ":="),
 		tok(token.REAL_LITERAL, "123.456"),
