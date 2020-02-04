@@ -42,8 +42,10 @@ type Value struct {
 // NewValue creates a new value from a token.
 func NewValue(tk token.Token) Value {
 
-	var k Kind
-	var v interface{}
+	var (
+		k Kind
+		v interface{}
+	)
 
 	switch tk.Kind {
 	case token.STR_LITERAL, token.STR_TEMPLATE:
@@ -57,6 +59,9 @@ func NewValue(tk token.Token) Value {
 
 	case token.REAL_LITERAL:
 		k, v = REAL, parseNum(REAL, tk)
+
+	case token.VOID:
+		k = VOID
 
 	default:
 		panic(bard.NewHorror(tk, nil,

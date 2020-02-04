@@ -84,9 +84,9 @@ func (ex assignStat) String() (s string) {
 func (ex assignStat) TabString(tabs int) (s string) {
 
 	var (
-		isSticky bool   = ex.sticky != (token.Token{})
-		size     int    = len(ex.ids)
-		pre      string = strings.Repeat("\t", tabs)
+		isSticky = ex.sticky != (token.Token{})
+		size     = len(ex.ids)
+		pre      = strings.Repeat("\t", tabs)
 	)
 
 	for i := 0; i < size; i++ {
@@ -113,8 +113,8 @@ func (ex assignStat) TabString(tabs int) (s string) {
 func (ex assignStat) Eval(ctx Context) (_ Value) {
 
 	var (
-		size   int = len(ex.ids)
-		values     = make([]Value, size)
+		size   = len(ex.ids)
+		values = make([]Value, size)
 	)
 
 	for i := 0; i < size; i++ {

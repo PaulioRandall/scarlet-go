@@ -89,6 +89,11 @@ func (ctx Context) set(id string, val Value, isSticky bool) {
 		))
 	}
 
+	if val.k == VOID {
+		delete(ctx.vars, id)
+		return
+	}
+
 	ctx.vars[id] = variable{
 		val:      val,
 		isSticky: isSticky,

@@ -1,5 +1,6 @@
 
 a := `abc`
+
 STICKY b := "xyz"
 
 c, d := TRUE, FALSE
@@ -12,9 +13,9 @@ g := {
 	{a, "xyz"},
 }
 
-// MAYBE: you shouldn't be allowed todo `a, a := 1, 2` etc?
+d := _
 
-// GOAL: Allow variable removal using VOID.
+// MAYBE: STICKY should be renamed FIX for conciseness and encourage use?
 
 // GOAL: Parse functions!
 // STEP: Start by parsing functions with no parameters.
