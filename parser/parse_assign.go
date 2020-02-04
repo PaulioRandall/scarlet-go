@@ -100,22 +100,16 @@ func (ex assignStat) Eval(ctx Context) (_ Value) {
 
 	var (
 		size   int = len(ex.ids)
-		setter func(string, Value)
-		values = make([]Value, size)
+		values     = make([]Value, size)
 	)
-
-	if ex.sticky == (token.Token{}) {
-		setter = ctx.set
-	} else {
-		setter = ctx.setSticky
-	}
 
 	for i := 0; i < size; i++ {
 		values[i] = ex.srcs[i].Eval(ctx)
 	}
 
 	for i := 0; i < size; i++ {
-		setter(ex.ids[i].Value, values[i])
+		isSticky := ex.sticky != (token.Token{})
+		ctx.set(ex.ids[i].Value, values[i], isSticky)
 	}
 
 	return

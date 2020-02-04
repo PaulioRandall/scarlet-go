@@ -4,45 +4,53 @@ import (
 	"github.com/PaulioRandall/scarlet-go/bard"
 )
 
+// variable represents a value stored against an identifier within a context.
+type variable struct {
+	val      Value
+	isSticky bool
+}
+
 // Context represents the current executing context. It contains all state
 // available to the current scope such as available variables. It also contains
 // it's parent context so it doubles up as the context stack (linked list).
 type Context struct {
-	stickies map[string]Value
-	vars     map[string]Value
-	parent   *Context
+	vars   map[string]variable
+	parent *Context // TODO: Might be obsolete?
 }
 
 // NewContext creates a new context with variable and global identifier maps
 // pre-initialised.
 func NewContext() Context {
 	return Context{
-		stickies: make(map[string]Value),
-		vars:     make(map[string]Value),
+		vars: make(map[string]variable),
 	}
 }
 
 // String returns a human readable string representation of the context.
 func (ctx Context) String() (s string) {
 
-	varsToString := func(name string, vars map[string]Value) (s string) {
+	appendVars := func(stickies bool) {
 
-		s += name + ":" + "\n"
+		empty := true
 
-		if len(vars) == 0 {
-			s += "\t" + "(Empty)" + "\n"
-
-		} else {
-			for k, v := range vars {
-				s += "\t" + k + " " + string(v.k) + ": " + v.String() + "\n"
+		for id, v := range ctx.vars {
+			if v.isSticky == stickies {
+				empty = false
+				s += "\t" + id + " " + string(v.val.k) + ": " + v.val.String() + "\n"
 			}
 		}
 
-		return s
+		if empty {
+			s += "\t" + "(Empty)" + "\n"
+		}
+
 	}
 
-	s += varsToString("stickies", ctx.stickies)
-	s += varsToString("vars", ctx.vars)
+	s += "stickies:" + "\n"
+	appendVars(true)
+
+	s += "variables:" + "\n"
+	appendVars(false)
 
 	return
 }
@@ -51,40 +59,38 @@ func (ctx Context) String() (s string) {
 // exist an empty value is returned.
 func (ctx Context) get(id string) (_ Value) {
 
-	v, ok := ctx.vars[id]
-	if ok {
-		return v
+	if v, ok := ctx.vars[id]; ok {
+		return v.val
 	}
 
-	v, _ = ctx.stickies[id]
-	return v
+	return
 }
 
 // resolve returns the value assigned to a specified variable. If the ID does
 // not exist a panic ensues.
 func (ctx Context) resolve(id string) (_ Value) {
 	v := ctx.get(id)
+
 	if v == (Value{}) {
 		panic(bard.NewNightmare(nil,
 			"Cannot resolve the variable '%v'", id,
 		))
 	}
+
 	return v
 }
 
-// set creates or updates a local variable.
-func (ctx Context) set(id string, v Value) {
-	ctx.vars[id] = v
-}
+// set creates or updates a variable.
+func (ctx Context) set(id string, val Value, isSticky bool) {
 
-// setSticky creates a sticky variable.
-func (ctx Context) setSticky(id string, v Value) {
-
-	if _, exists := ctx.stickies[id]; exists {
+	if v := ctx.vars[id]; v.isSticky {
 		panic(bard.NewNightmare(nil,
 			"Cannot reassign the sticky variable '%v'", id,
 		))
 	}
 
-	ctx.stickies[id] = v
+	ctx.vars[id] = variable{
+		val:      val,
+		isSticky: isSticky,
+	}
 }

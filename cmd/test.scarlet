@@ -12,8 +12,6 @@ g := {
 	{a, "xyz"},
 }
 
-// MAYBE: all variables regardless of stickyness should be unique?
-
 // MAYBE: you shouldn't be allowed todo `a, a := 1, 2` etc?
 
 // GOAL: Parse functions!
