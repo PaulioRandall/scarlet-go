@@ -19,13 +19,22 @@ func (p *Parser) parseStat() Stat {
 }
 
 // parseExpr parses the next expression.
-func (p *Parser) parseExpr() Expr {
+func (p *Parser) parseExpr(allowVoids bool) Expr {
 
 	if p.peek().Kind == token.TERMINATOR {
 		p.take()
 	}
 
 	switch tk := p.peek(); tk.Kind {
+	case token.VOID:
+		if !allowVoids {
+			panic(bard.NewHorror(tk, nil, "Naughty use of VOID expression"))
+		}
+
+		return valueExpr{
+			tokenExpr: tokenExpr{p.take()},
+			v:         NewValue(tk),
+		}
 	case token.ID:
 		return idExpr{
 			tokenExpr: tokenExpr{p.take()},
@@ -34,7 +43,7 @@ func (p *Parser) parseExpr() Expr {
 	case token.STR_LITERAL, token.STR_TEMPLATE:
 		// TODO: string templates need compiling
 		fallthrough
-	case token.BOOL_LITERAL, token.INT_LITERAL, token.REAL_LITERAL, token.VOID:
+	case token.BOOL_LITERAL, token.INT_LITERAL, token.REAL_LITERAL:
 		return valueExpr{
 			tokenExpr: tokenExpr{p.take()},
 			v:         NewValue(tk),
@@ -50,11 +59,11 @@ func (p *Parser) parseExpr() Expr {
 }
 
 // parseDelimExpr parses a delimitered separated set of expressions.
-func (p *Parser) parseDelimExpr() (exs []Expr) {
+func (p *Parser) parseDelimExpr(allowVoids bool) (exs []Expr) {
 
 	for p.peek().Kind != token.CLOSE_LIST {
 
-		ex := p.parseExpr()
+		ex := p.parseExpr(allowVoids)
 		exs = append(exs, ex)
 
 		if p.peek().Kind == token.DELIM {

@@ -10,7 +10,7 @@ import (
 func (p *Parser) parseList() Expr {
 
 	start := p.takeEnsure(token.OPEN_LIST)
-	v := p.parseDelimExpr()
+	v := p.parseDelimExpr(false)
 	end := p.takeEnsure(token.CLOSE_LIST)
 
 	return listExpr{

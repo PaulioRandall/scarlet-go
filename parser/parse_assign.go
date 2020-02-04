@@ -20,7 +20,7 @@ func (p *Parser) parseAssign() Stat {
 	p.checkNoDuplicates(ids)
 
 	ass := p.takeEnsure(token.ASSIGN)
-	srcs := p.parseDelimExpr()
+	srcs := p.parseDelimExpr(true)
 	p.takeEnsure(token.TERMINATOR)
 
 	if len(ids) != len(srcs) {
