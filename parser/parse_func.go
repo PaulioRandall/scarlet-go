@@ -86,8 +86,47 @@ func (ex funcDefExpr) Eval(_ Context) (_ Value) {
 	// TODO: Create a specific struct for the value.
 	return Value{
 		k: FUNC,
-		v: ex,
+		v: funcValueExpr{
+			input:  ex.input,
+			output: ex.output,
+			body:   ex.body,
+		},
 	}
+}
+
+// funcValueExpr represents a function as a Value.
+type funcValueExpr struct {
+	input  []token.Token
+	output []token.Token
+	body   Stat
+}
+
+// String
+func (ex funcValueExpr) String() (s string) {
+
+	s += "F("
+
+	for i, id := range ex.input {
+		if i != 0 {
+			s += ", "
+		}
+
+		s += id.Value
+	}
+
+	if len(ex.output) > 0 {
+		s += " -> "
+
+		for i, id := range ex.output {
+			if i != 0 {
+				s += ", "
+			}
+
+			s += id.Value
+		}
+	}
+
+	return s + ")"
 }
 
 /*

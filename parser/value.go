@@ -102,6 +102,8 @@ func parseNum(k Kind, tk token.Token) (v interface{}) {
 // String returns a human readable string representation of the value.
 func (v Value) String() string {
 	switch v.k {
+	case FUNC:
+		return v.v.(funcValueExpr).String()
 	case STR:
 		return "\"" + v.v.(string) + "\""
 	default:
