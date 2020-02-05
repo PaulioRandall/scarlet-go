@@ -53,14 +53,14 @@ func TestParser_parse_1(t *testing.T) {
 		tks[4],             // closer
 		[]Stat{
 			assignStat{
-				tokenExpr{tks[1]},
+				tks[1],
 				token.Token{}, // sticky
 				[]token.Token{ // ids
 					tks[0],
 				},
 				[]Expr{ // srcs
 					valueExpr{
-						tokenExpr{tks[2]},
+						tks[2],
 						Value{STR, tks[2].Value}, // v
 					},
 				},
@@ -103,27 +103,27 @@ func TestParser_parse_2(t *testing.T) {
 		tks[13],            // closer
 		[]Stat{
 			assignStat{
-				tokenExpr{tks[1]},
+				tks[1],
 				token.Token{},         // sticky
 				[]token.Token{tks[0]}, // ids
 				[]Expr{ // srcs
-					valueExpr{tokenExpr{tks[2]}, Value{BOOL, true}}, // v
+					valueExpr{tks[2], Value{BOOL, true}}, // v
 				},
 			},
 			assignStat{
-				tokenExpr{tks[6]},
+				tks[6],
 				tks[4],                // sticky
 				[]token.Token{tks[5]}, // ids
 				[]Expr{ // srcs
-					valueExpr{tokenExpr{tks[7]}, Value{REAL, float64(123.456)}}, // v
+					valueExpr{tks[7], Value{REAL, float64(123.456)}}, // v
 				},
 			},
 			assignStat{
-				tokenExpr{tks[10]},
+				tks[10],
 				token.Token{},         // sticky
 				[]token.Token{tks[9]}, // ids
 				[]Expr{ // srcs
-					idExpr{tokenExpr{tks[11]}, "b"}, // v
+					idExpr{tks[11], "b"}, // v
 				},
 			},
 		},
@@ -162,7 +162,7 @@ func TestParser_parse_3(t *testing.T) {
 		tks[12],            // closer
 		[]Stat{
 			assignStat{
-				tokenExpr{tks[5]},
+				tks[5],
 				token.Token{}, // sticky
 				[]token.Token{ // ids
 					tks[0],
@@ -170,9 +170,9 @@ func TestParser_parse_3(t *testing.T) {
 					tks[4],
 				},
 				[]Expr{ // srcs
-					valueExpr{tokenExpr{tks[6]}, Value{BOOL, true}},
-					valueExpr{tokenExpr{tks[8]}, Value{INT, int64(123)}},
-					valueExpr{tokenExpr{tks[10]}, Value{STR, `"Caribbean"`}},
+					valueExpr{tks[6], Value{BOOL, true}},
+					valueExpr{tks[8], Value{INT, int64(123)}},
+					valueExpr{tks[10], Value{STR, `"Caribbean"`}},
 				},
 			},
 		},
@@ -218,7 +218,7 @@ func TestParser_parse_4(t *testing.T) {
 		tks[18],            // closer
 		[]Stat{
 			assignStat{
-				tokenExpr{tks[1]},
+				tks[1],
 				token.Token{},         // sticky
 				[]token.Token{tks[0]}, // ids
 				[]Expr{ // srcs
@@ -226,14 +226,14 @@ func TestParser_parse_4(t *testing.T) {
 						tks[2],  // start
 						tks[16], // end
 						[]Expr{ // items
-							valueExpr{tokenExpr{tks[4]}, Value{STR, "abc"}},
-							valueExpr{tokenExpr{tks[6]}, Value{REAL, float64(123.456)}},
+							valueExpr{tks[4], Value{STR, "abc"}},
+							valueExpr{tks[6], Value{REAL, float64(123.456)}},
 							listExpr{
 								tks[9],  // start
 								tks[13], // end
 								[]Expr{ // items
-									valueExpr{tokenExpr{tks[10]}, Value{STR, "xyz"}},
-									valueExpr{tokenExpr{tks[12]}, Value{BOOL, true}},
+									valueExpr{tks[10], Value{STR, "xyz"}},
+									valueExpr{tks[12], Value{BOOL, true}},
 								},
 							},
 						},

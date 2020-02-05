@@ -31,10 +31,10 @@ func (p *Parser) parseAssign(inline bool) Stat {
 	}
 
 	return assignStat{
-		tokenExpr: tokenExpr{ass},
-		fix:       fix,
-		ids:       ids,
-		srcs:      srcs,
+		ass:  ass,
+		fix:  fix,
+		ids:  ids,
+		srcs: srcs,
 	}
 }
 
@@ -70,7 +70,7 @@ func (p *Parser) checkNoDuplicates(ids []token.Token) {
 // evaluating expressions into values which are mapped to their identifier
 // within a context.
 type assignStat struct {
-	tokenExpr
+	ass  token.Token
 	fix  token.Token
 	ids  []token.Token
 	srcs []Expr
@@ -97,7 +97,7 @@ func (ex assignStat) String() (s string) {
 		}
 
 		s += "[" + ex.ids[i].String() + "] "
-		s += "[" + ex.tk.String() + "] "
+		s += "[" + ex.ass.String() + "] "
 		s += "[" + ex.srcs[i].String() + "]"
 	}
 

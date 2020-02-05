@@ -12,9 +12,6 @@ import (
 // sub expressions but must never recurse.
 type Expr interface {
 
-	// Token returns the token that links the expression to the source code.
-	Token() token.Token
-
 	// String returns the expression as a human readable string.
 	String() string
 
@@ -29,57 +26,23 @@ type Expr interface {
 type Stat Expr
 
 // ****************************************************************************
-// * tokenExpr
-// ****************************************************************************
-
-// tokenExpr is a base structure for expressions that may have an associated
-// token linking them to the source code.
-type tokenExpr struct {
-	tk token.Token
-}
-
-// Token satisfies the Expr interface.
-func (ex tokenExpr) Token() token.Token {
-	return ex.tk
-}
-
-// String satisfies the Expr interface.
-func (ex tokenExpr) String() string {
-	return ex.tk.String()
-}
-
-// ****************************************************************************
-// * derivedExpr
-// ****************************************************************************
-
-// derivedExpr is a base structure for expressions that do not have an
-// associated token linking them to the source code.
-type derivedExpr struct {
-}
-
-// Token satisfies the Expr interface.
-func (_ derivedExpr) Token() (_ token.Token) {
-	return
-}
-
-// String satisfies the Expr interface.
-func (_ derivedExpr) String() (_ string) {
-	return
-}
-
-// ****************************************************************************
 // * valueExpr
 // ****************************************************************************
 
 // valueExpr represents an expression that simple returns a value.
 type valueExpr struct {
-	tokenExpr
-	v Value
+	tk token.Token
+	v  Value
 }
 
 // Eval satisfies the Expr interface.
 func (ex valueExpr) Eval(_ Context) (_ Value) {
 	return ex.v
+}
+
+// String satisfies the Expr interface.
+func (ex valueExpr) String() string {
+	return ex.tk.String()
 }
 
 // ****************************************************************************
@@ -89,11 +52,16 @@ func (ex valueExpr) Eval(_ Context) (_ Value) {
 // idExpr represents an expression that simple returns the value assigned to a
 // variable.
 type idExpr struct {
-	tokenExpr
+	tk token.Token
 	id string
 }
 
 // Eval satisfies the Expr interface.
 func (ex idExpr) Eval(ctx Context) (_ Value) {
 	return ctx.resolve(ex.id)
+}
+
+// String satisfies the Expr interface.
+func (ex idExpr) String() string {
+	return ex.tk.String()
 }
