@@ -38,7 +38,7 @@ func (p *Parser) parseStats(opener token.Token) Stat {
 			goto BLOCK_PARSED
 
 		default:
-			s := p.parseStat()
+			s := p.parseStat(false)
 			b.block = append(b.block, s)
 		}
 	}
@@ -72,10 +72,14 @@ func (ex blockStat) TabString(tabs int) (s string) {
 	s += pre + "Block (" + ex.opener.String() + ")\n"
 
 	for _, stat := range ex.block {
-		s += pre + stat.TabString(1) + "\n"
+		s += pre + stat.TabString(1)
 	}
 
-	s += pre + "(" + ex.closer.String() + ")"
+	s += pre
+	if ex.closer != (token.Token{}) {
+		s += "(" + ex.closer.String() + ")"
+	}
+
 	return
 }
 

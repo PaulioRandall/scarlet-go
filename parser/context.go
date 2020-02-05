@@ -11,11 +11,9 @@ type variable struct {
 }
 
 // Context represents the current executing context. It contains all state
-// available to the current scope such as available variables. It also contains
-// it's parent context so it doubles up as the context stack (linked list).
+// available to the current scope such as available variables.
 type Context struct {
-	vars   map[string]variable
-	parent *Context // TODO: Might be obsolete?
+	vars map[string]variable
 }
 
 // NewContext creates a new context with variable and global identifier maps
@@ -98,4 +96,18 @@ func (ctx Context) set(id string, val Value, isFixed bool) {
 		val:     val,
 		isFixed: isFixed,
 	}
+}
+
+// sub creates a copy of the context without non-sticky variables.
+func (ctx Context) sub() Context {
+
+	sub := NewContext()
+
+	for id, val := range ctx.vars {
+		if val.isFixed {
+			sub.vars[id] = val
+		}
+	}
+
+	return sub
 }

@@ -19,6 +19,7 @@ const (
 	FIX          Kind = `FIX`
 	FUNC         Kind = `FUNC`
 	DO           Kind = `DO`
+	INLINE       Kind = `INLINE`
 	MATCH        Kind = `MATCH`
 	WATCH        Kind = `WATCH`
 	END          Kind = `END`

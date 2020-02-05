@@ -26,7 +26,7 @@ type Expr interface {
 
 	// Eval executes the expression returning a value. The type of the value
 	// returned will depend on the type of expression being executed.
-	Eval(ctx Context) Value
+	Eval(Context) Value
 }
 
 // Stat (Statement) is an expression that always returns an empty value. The
@@ -69,12 +69,12 @@ type derivedExpr struct {
 }
 
 // Token satisfies the Expr interface.
-func (ex derivedExpr) Token() (_ token.Token) {
+func (_ derivedExpr) Token() (_ token.Token) {
 	return
 }
 
 // String satisfies the Expr interface.
-func (ex derivedExpr) String() (_ string) {
+func (_ derivedExpr) String() (_ string) {
 	return
 }
 
@@ -89,7 +89,7 @@ type valueExpr struct {
 }
 
 // Eval satisfies the Expr interface.
-func (ex valueExpr) Eval(ctx Context) (_ Value) {
+func (ex valueExpr) Eval(_ Context) (_ Value) {
 	return ex.v
 }
 

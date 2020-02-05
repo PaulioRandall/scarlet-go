@@ -6,14 +6,13 @@ import (
 )
 
 // parseStat parses the next statement.
-func (p *Parser) parseStat() Stat {
+func (p *Parser) parseStat(inline bool) Stat {
 	switch tk := p.peek(); tk.Kind {
 	case token.FIX, token.ID:
-		return p.parseAssign()
+		return p.parseAssign(inline)
 	default:
 		panic(bard.NewHorror(tk, nil,
-			"Token does not start a valid expression or "+
-				"parsing has not been implemented for it yet",
+			"Unexpected token or maybe parsing has not been implemented for it yet",
 		))
 	}
 }
@@ -50,6 +49,8 @@ func (p *Parser) parseExpr(allowVoids bool) Expr {
 		}
 	case token.OPEN_LIST:
 		return p.parseList()
+	case token.FUNC:
+		return p.parseFuncDef()
 	default:
 		panic(bard.NewHorror(tk, nil,
 			"Token does not start a valid expression or "+

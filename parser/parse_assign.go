@@ -9,19 +9,22 @@ import (
 
 // parseAssign parses an assignment into a statement. Assumes that the next
 // statement in the input channel is an assignment.
-func (p *Parser) parseAssign() Stat {
+func (p *Parser) parseAssign(inline bool) Stat {
 
 	var fix token.Token
 	if p.peek().Kind == token.FIX {
 		fix = p.take()
 	}
 
-	ids := p.parseAssignIDs()
+	ids := p.parseIDs()
 	p.checkNoDuplicates(ids)
 
 	ass := p.takeEnsure(token.ASSIGN)
 	srcs := p.parseDelimExpr(true)
-	p.takeEnsure(token.TERMINATOR)
+
+	if !inline {
+		p.takeEnsure(token.TERMINATOR)
+	}
 
 	if len(ids) != len(srcs) {
 		panic(bard.NewHorror(ass, nil,
@@ -37,8 +40,8 @@ func (p *Parser) parseAssign() Stat {
 	}
 }
 
-// parseAssignIDs parses a delimitered list of ID tokens used for an assignment.
-func (p *Parser) parseAssignIDs() (ids []token.Token) {
+// parseIDs parses a delimitered list of ID tokens used for an assignment.
+func (p *Parser) parseIDs() (ids []token.Token) {
 	for {
 
 		tk := p.takeEnsure(token.ID)
