@@ -33,24 +33,17 @@ func (ex listExpr) Token() token.Token {
 }
 
 // String satisfies the Expr interface.
-func (ex listExpr) String() string {
-	return ex.TabString(0)
-}
-
-// TabString satisfies the Expr interface.
-func (ex listExpr) TabString(tabs int) (s string) {
+func (ex listExpr) String() (s string) {
 
 	size := len(ex.items)
-	pre := strings.Repeat("\t", tabs)
-
-	s += pre + "{ "
+	s = "List {"
 
 	for i := 0; i < size; i++ {
-		s += "[" + ex.items[i].String() + "] "
+		s += "\n[" + ex.items[i].String() + "]"
 	}
 
-	s += "}"
-	return
+	s = strings.ReplaceAll(s, "\n", "\n\t")
+	return s + "\n}"
 }
 
 // Eval satisfies the Expr interface.

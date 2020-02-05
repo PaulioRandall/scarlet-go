@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"strings"
-
 	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
@@ -80,16 +78,10 @@ type assignStat struct {
 
 // String satisfies the Expr interface.
 func (ex assignStat) String() (s string) {
-	return ex.TabString(0)
-}
-
-// TabString satisfies the Expr interface.
-func (ex assignStat) TabString(tabs int) (s string) {
 
 	var (
 		isFixed = ex.fix != (token.Token{})
 		size    = len(ex.ids)
-		pre     = strings.Repeat("\t", tabs)
 	)
 
 	for i := 0; i < size; i++ {
@@ -98,7 +90,7 @@ func (ex assignStat) TabString(tabs int) (s string) {
 			s += "\n"
 		}
 
-		s += pre + "Assign "
+		s += "Assign "
 
 		if isFixed {
 			s += "[" + ex.fix.String() + "] "

@@ -53,19 +53,12 @@ func (ex funcDefExpr) Token() token.Token {
 }
 
 // String satisfies the Expr interface.
-func (ex funcDefExpr) String() string {
-	return ex.TabString(0)
-}
-
-// TabString satisfies the Expr interface.
-func (ex funcDefExpr) TabString(tabs int) (s string) {
-
-	pre := "\t\t"
+func (ex funcDefExpr) String() (s string) {
 
 	s += ex.opener.String() + "\n"
 
 	if len(ex.input) > 0 {
-		s += pre + "In  "
+		s += "~In  "
 
 		for _, id := range ex.input {
 			s += "[" + id.String() + "] "
@@ -75,7 +68,7 @@ func (ex funcDefExpr) TabString(tabs int) (s string) {
 	}
 
 	if len(ex.output) > 0 {
-		s += pre + "Out "
+		s += "~Out "
 
 		for _, id := range ex.output {
 			s += "[" + id.String() + "] "
@@ -84,9 +77,7 @@ func (ex funcDefExpr) TabString(tabs int) (s string) {
 		s += "\n"
 	}
 
-	s += ex.body.TabString(2) + "\n"
-
-	return
+	return s + "~" + ex.body.String()
 }
 
 // Eval satisfies the Expr interface.

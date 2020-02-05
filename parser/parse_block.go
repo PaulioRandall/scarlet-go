@@ -62,22 +62,17 @@ func (ex blockStat) Token() token.Token {
 
 // String satisfies the Expr interface.
 func (ex blockStat) String() (s string) {
-	return ex.TabString(0)
-}
 
-// TabString satisfies the Expr interface.
-func (ex blockStat) TabString(tabs int) (s string) {
-
-	pre := strings.Repeat("\t", tabs)
-	s += pre + "Block (" + ex.opener.String() + ")\n"
+	s = "Block (" + ex.opener.String() + ")"
 
 	for _, stat := range ex.block {
-		s += pre + stat.TabString(1)
+		s += "\n" + stat.String()
 	}
 
-	s += pre
+	s = strings.ReplaceAll(s, "\n", "\n\t")
+
 	if ex.closer != (token.Token{}) {
-		s += "(" + ex.closer.String() + ")"
+		s += "\n(" + ex.closer.String() + ")"
 	}
 
 	return
