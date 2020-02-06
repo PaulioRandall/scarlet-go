@@ -29,8 +29,6 @@ j := i
 
 k, l, m, n := j(123, `:)`)
 
-// GOAL: Create a Bard that shows where in the source code an error occurred.
-
 // GOAL: Parse and evaluate conditional statements.
 
 // GOAL: Document each package including the concepts that drive them.
@@ -39,3 +37,5 @@ k, l, m, n := j(123, `:)`)
 
 // MAYBE: variables should be strongly typed?
 // MAYBE: all variables should start with a lower case?
+
+// GOAL: Improve parsing errors so the offending line is always printed.

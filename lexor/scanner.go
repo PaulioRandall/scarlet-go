@@ -72,7 +72,7 @@ func (scn *scanner) Next() (tk token.Token) {
 		}
 	}
 
-	panic(bard.NewTerror(scn.line+1, scn.col, nil,
+	panic(bard.NewTerror(scn.line, scn.col, nil,
 		"Could not identify next token",
 	))
 }
@@ -158,7 +158,7 @@ func (scn *scanner) scanNumLiteral() (_ token.Token) {
 	n++ // +1 for decimal point
 	d := countDigits(r, n)
 	if d == 0 {
-		panic(bard.NewTerror(scn.line+1, scn.col, nil,
+		panic(bard.NewTerror(scn.line, scn.col+n, nil,
 			"Expected digit after decimal point",
 		))
 	}
@@ -186,7 +186,7 @@ func (scn *scanner) scanStrLiteral() (_ token.Token) {
 	}
 
 ERROR:
-	panic(bard.NewTerror(scn.line+1, scn.col, nil,
+	panic(bard.NewTerror(scn.line, scn.col, nil,
 		"Unterminated string literal",
 	))
 }
@@ -215,7 +215,7 @@ func (scn *scanner) scanStrTemplate() (_ token.Token) {
 	}
 
 ERROR:
-	panic(bard.NewTerror(scn.line+1, scn.col, nil,
+	panic(bard.NewTerror(scn.line, scn.col, nil,
 		"Unterminated string template",
 	))
 }

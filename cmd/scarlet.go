@@ -12,12 +12,14 @@ import (
 
 func main() {
 
-	src, e := ioutil.ReadFile("./test.scarlet")
+	file := "./test.scarlet"
+
+	src, e := ioutil.ReadFile(file)
 	if e != nil {
 		panic(e)
 	}
 
-	b := bard.NewDumbBard()
+	b := bard.NewRhapsodist(file)
 
 	b.CatchNightmare(func() {
 		run(string(src))

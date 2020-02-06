@@ -4,20 +4,20 @@ import (
 	"fmt"
 )
 
-// dumbBard is a simple implementation of the Bard interface that outputs
+// troubadour is a simple implementation of the Bard interface that outputs
 // information simplistically without showing its reference to the source code.
-type dumbBard struct {
+type troubadour struct {
 	Bard
 }
 
-// NewDumbBard create a simplistic outputter that won't link errors to their
+// NewTroubadour create a simplistic outputter that won't link errors to their
 // location within source code.
-func NewDumbBard() Bard {
-	return dumbBard{}
+func NewTroubadour() Bard {
+	return troubadour{}
 }
 
 // CatchNightmare satisfies the Bard interface.
-func (b dumbBard) CatchNightmare(f func()) {
+func (t troubadour) CatchNightmare(f func()) {
 
 	isPanic := true
 
@@ -28,7 +28,7 @@ func (b dumbBard) CatchNightmare(f func()) {
 		}
 
 		e := recover()
-		b.printError(e)
+		t.printError(e)
 	}()
 
 	f()
@@ -36,7 +36,7 @@ func (b dumbBard) CatchNightmare(f func()) {
 }
 
 // printError priunts an error.
-func (b dumbBard) printError(e interface{}) {
+func (_ troubadour) printError(e interface{}) {
 
 	printNightmare := func(e error, at string, args ...interface{}) {
 
