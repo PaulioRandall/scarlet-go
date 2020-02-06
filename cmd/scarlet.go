@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/lexor"
@@ -33,9 +34,9 @@ func run(src string) {
 
 	exe := parseTokens(tokens)
 
-	println(exe.String())
+	println(strings.ReplaceAll(exe.String(), "\t", "  "))
 
-	println()
+	println("\nExecuting...\n")
 	ctx := parser.NewContext()
 	exe.Eval(ctx)
 

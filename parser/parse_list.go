@@ -27,11 +27,6 @@ type listExpr struct {
 	items []Expr
 }
 
-// Token satisfies the Expr interface.
-func (ex listExpr) Token() token.Token {
-	return ex.start
-}
-
 // String satisfies the Expr interface.
 func (ex listExpr) String() (s string) {
 
@@ -39,7 +34,7 @@ func (ex listExpr) String() (s string) {
 	s = "List {"
 
 	for i := 0; i < size; i++ {
-		s += "\n[" + ex.items[i].String() + "]"
+		s += "\n" + ex.items[i].String()
 	}
 
 	s = strings.ReplaceAll(s, "\n", "\n\t")

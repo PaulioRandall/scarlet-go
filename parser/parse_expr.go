@@ -34,23 +34,35 @@ func (p *Parser) parseExpr(allowVoids bool) Expr {
 			tk: p.take(),
 			v:  NewValue(tk),
 		}
+
 	case token.ID:
+		p.take()
+
+		if p.peek().Kind == token.OPEN_PAREN {
+			return p.parseFuncCall(tk)
+		}
+
 		return idExpr{
-			tk: p.take(),
+			tk: tk,
 			id: tk.Value,
 		}
+
 	case token.STR_LITERAL, token.STR_TEMPLATE:
 		// TODO: string templates need compiling
 		fallthrough
+
 	case token.BOOL_LITERAL, token.INT_LITERAL, token.REAL_LITERAL:
 		return valueExpr{
 			tk: p.take(),
 			v:  NewValue(tk),
 		}
+
 	case token.OPEN_LIST:
 		return p.parseList()
+
 	case token.FUNC:
 		return p.parseFuncDef()
+
 	default:
 		panic(bard.NewHorror(tk, nil,
 			"Token does not start a valid expression or "+

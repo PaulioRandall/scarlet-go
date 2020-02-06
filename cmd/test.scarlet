@@ -15,18 +15,23 @@ g := {
 }
 
 h := F(a, b -> a, c) DO
-	x := F(x, y) DO
+	FIX x := F(x, y) DO
 		x := 1
 	END
-	y := F() DO
-		// Blah
-	END
-	z := F(-> z) z := 2
 END
 
-// GOAL: Parse function calls!
+i := F(k, l -> k, l, m, n) DO
+	m := f
+	n := TRUE
+END
+
+j := i
+
+k, l, m, n := j(123, `:)`)
 
 // GOAL: Create a Bard that shows where in the source code an error occurred.
+
+// GOAL: Parse and evaluate conditional statements.
 
 // GOAL: Document each package including the concepts that drive them.
 // GOAL: Describe the language axiomatically.

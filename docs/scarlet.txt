@@ -1,5 +1,5 @@
 
-STICKY divideAndFmt := F(a, b -> r, e) DO
+FIX divideAndFmt := F(a, b -> r, e) DO
 	WATCH e
 		[b = 0] e := `Can't divide by zero`
 		r := a / b
@@ -40,6 +40,15 @@ EOF
 
 // Future stuff
 
+// Looping
+LOOP i [exit]
+	// Repreated logic
+END
+
+LOOP i, item, more <- list
+	// Logic applied to each item
+END
+
 // Quick command line calls
 $"ls -la"              // Execute a terminal process
 output := $"ls -la"    // Return output as a list of strings
@@ -60,12 +69,3 @@ i, v := @Search(list, `b`) // Finds the specified pair searching on the key
 // Spell receivers, the first parameter to the spell is the receiver
 @Args().foreach(F(_, v, _) @Println(v))
 "abc".println()
-
-// Looping
-LOOP i [exit]
-	// Repreated logic
-END
-
-LOOP i, item, more <- list
-	// Logic applied to each item
-END

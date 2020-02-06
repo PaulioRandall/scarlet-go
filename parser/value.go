@@ -17,6 +17,7 @@ type Kind string
 
 const (
 	UNDEFINED Kind = ``
+	TUPLE     Kind = `TUPLE`
 	// ------------------
 	VOID  Kind = `VOID`
 	BOOL  Kind = `BOOL`
@@ -103,7 +104,7 @@ func parseNum(k Kind, tk token.Token) (v interface{}) {
 func (v Value) String() string {
 	switch v.k {
 	case FUNC:
-		return v.v.(funcValueExpr).String()
+		return v.v.(funcValue).String()
 	case STR:
 		return "\"" + v.v.(string) + "\""
 	default:

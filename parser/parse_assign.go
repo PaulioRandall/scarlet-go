@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"strings"
+
 	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
@@ -22,12 +24,6 @@ func (p *Parser) parseAssign(inline bool) Stat {
 
 	if !inline {
 		p.takeEnsure(token.TERMINATOR)
-	}
-
-	if len(ids) != len(srcs) {
-		panic(bard.NewHorror(ass, nil,
-			"Assignment requires the ID and expression count match",
-		))
 	}
 
 	return assignStat{
@@ -81,43 +77,59 @@ func (ex assignStat) String() (s string) {
 
 	var (
 		isFixed = ex.fix != (token.Token{})
-		size    = len(ex.ids)
 	)
 
-	for i := 0; i < size; i++ {
-
-		if i != 0 {
-			s += "\n"
-		}
-
+	if isFixed {
+		s += "Fix Assign (" + ex.fix.String() + ") "
+	} else {
 		s += "Assign "
-
-		if isFixed {
-			s += "[" + ex.fix.String() + "] "
-		}
-
-		s += "[" + ex.ids[i].String() + "] "
-		s += "[" + ex.ass.String() + "] "
-		s += "[" + ex.srcs[i].String() + "]"
 	}
 
-	return
+	s += "(" + ex.ass.String() + ")"
+
+	s += "\n\tIDs"
+	for _, id := range ex.ids {
+		s += "\n\t\t" + id.String()
+	}
+
+	s += "\n\tExprs"
+	exprs := ""
+	for _, src := range ex.srcs {
+		exprs += "\n\t" + strings.ReplaceAll(src.String(), "\n", "\n\t")
+	}
+
+	return s + strings.ReplaceAll(exprs, "\n", "\n\t")
 }
 
 // Eval satisfies the Expr interface.
 func (ex assignStat) Eval(ctx Context) (_ Value) {
 
 	var (
-		size   = len(ex.ids)
-		values = make([]Value, size)
+		idCount = len(ex.ids)
+		values  []Value
 	)
 
-	for i := 0; i < size; i++ {
-		values[i] = ex.srcs[i].Eval(ctx)
+	for _, src := range ex.srcs {
+		val := src.Eval(ctx)
+
+		if val.k == TUPLE {
+			tuple := val.v.([]Value)
+			values = append(values, tuple...)
+			continue
+		}
+
+		values = append(values, val)
 	}
 
-	for i := 0; i < size; i++ {
-		isFixed := ex.fix != (token.Token{})
+	if idCount != len(values) {
+		panic(bard.NewHorror(ex.ass, nil,
+			"Expected the left-hand ID count and "+
+				"right-hand value count to be equal",
+		))
+	}
+
+	isFixed := ex.fix != (token.Token{})
+	for i := 0; i < idCount; i++ {
 		ctx.set(ex.ids[i].Value, values[i], isFixed)
 	}
 

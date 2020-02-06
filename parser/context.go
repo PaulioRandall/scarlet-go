@@ -34,7 +34,7 @@ func (ctx Context) String() (s string) {
 		for id, v := range ctx.vars {
 			if v.isFixed == fixed {
 				empty = false
-				s += "\t" + id + " " + string(v.val.k) + ": " + v.val.String() + "\n"
+				s += "\t" + id + " (" + string(v.val.k) + ") " + v.val.String() + "\n"
 			}
 		}
 
@@ -47,7 +47,7 @@ func (ctx Context) String() (s string) {
 	s += "fixed:" + "\n"
 	appendVars(true)
 
-	s += "variables:" + "\n"
+	s += "variable:" + "\n"
 	appendVars(false)
 
 	return
@@ -98,14 +98,29 @@ func (ctx Context) set(id string, val Value, isFixed bool) {
 	}
 }
 
-// sub creates a copy of the context without non-sticky variables.
+// override creates or updates a variable ignoring the existence of a previous
+// fixed value.
+func (ctx Context) override(id string, val Value, isFixed bool) {
+
+	if val.k == VOID {
+		delete(ctx.vars, id)
+		return
+	}
+
+	ctx.vars[id] = variable{
+		val:     val,
+		isFixed: isFixed,
+	}
+}
+
+// sub returns a copy of the context with only fixed variables.
 func (ctx Context) sub() Context {
 
 	sub := NewContext()
 
-	for id, val := range ctx.vars {
-		if val.isFixed {
-			sub.vars[id] = val
+	for id, v := range ctx.vars {
+		if v.isFixed {
+			sub.vars[id] = v
 		}
 	}
 

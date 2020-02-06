@@ -55,11 +55,6 @@ type blockStat struct {
 	block  []Stat
 }
 
-// Token satisfies the Expr interface.
-func (ex blockStat) Token() token.Token {
-	return ex.opener
-}
-
 // String satisfies the Expr interface.
 func (ex blockStat) String() (s string) {
 
