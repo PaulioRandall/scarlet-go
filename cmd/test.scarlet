@@ -29,6 +29,8 @@ j := i
 
 k, l, m, n := j(123, `:)`)
 
+// GOAL: Parse arithmetic and boolean operations.
+
 // GOAL: Parse and evaluate conditional statements.
 
 // GOAL: Document each package including the concepts that drive them.

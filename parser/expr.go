@@ -20,11 +20,6 @@ type Expr interface {
 	Eval(Context) Value
 }
 
-// Stat (Statement) is an expression that always returns an empty value. The
-// difference is purely semantic, i.e. tells the reader of this code that the
-// value should always be ignored.
-type Stat Expr
-
 // ****************************************************************************
 // * valueExpr
 // ****************************************************************************

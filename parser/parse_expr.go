@@ -5,6 +5,11 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
+// Stat (Statement) is an expression that always returns an empty value. The
+// difference is purely semantic, i.e. tells the reader of this code that the
+// value should always be ignored.
+type Stat Expr
+
 // parseStat parses the next statement.
 func (p *Parser) parseStat(inline bool) Stat {
 	switch tk := p.peek(); tk.Kind {
