@@ -60,13 +60,13 @@ type operation struct {
 // String satisfies the Expr interface.
 func (op operation) String() (s string) {
 
-	s += string(op.kind) + " Operation (" + op.operator.String() + ")\n"
+	s += string(op.kind) + " Operation (" + op.operator.String() + ")"
 
-	s += "\tLeft\n"
-	s += "\t" + strings.ReplaceAll(op.left.String(), "\n", "\t")
+	s += "\n\tLeft"
+	s += "\n\t\t" + strings.ReplaceAll(op.left.String(), "\n", "\n\t\t")
 
-	s += "\tRight\n"
-	s += "\t" + strings.ReplaceAll(op.right.String(), "\n", "\t")
+	s += "\n\tRight"
+	s += "\n\t\t" + strings.ReplaceAll(op.right.String(), "\n", "\n\t\t")
 
 	return
 }
@@ -91,12 +91,8 @@ func (op operation) evalNumeric(ctx Context) Value {
 
 	// TODO: Check both operands are numeric
 
-	if lv.k == INT && rv.k == INT {
-		return op.evalInt(
-			op.operator,
-			lv.v.(int64),
-			rv.v.(int64),
-		)
+	if op.operator.Kind != token.DIVIDE && lv.k == INT && rv.k == INT {
+		return op.evalInt(lv.v.(int64), rv.v.(int64))
 	}
 
 	var left float64
@@ -114,119 +110,110 @@ func (op operation) evalNumeric(ctx Context) Value {
 		right = rv.v.(float64)
 	}
 
-	return op.evalReal(op.operator, left, right)
+	return op.evalReal(left, right)
 }
 
 // evalInt evaluates an operation involving two integer operands.
-func (op operation) evalInt(tk token.Token, l, r int64) Value {
+func (op operation) evalInt(l, r int64) (v Value) {
 
-	var a int64
+	if op.kind == ARITHMETIC {
+		v.k = INT
 
-	switch tk.Kind {
-	case token.ADD:
-		a = l + r
-	case token.SUBTRACT:
-		a = l - r
-	case token.MULTIPLY:
-		a = l * r
-	case token.DIVIDE:
-		if r == 0 {
-			panic(bard.NewHorror(tk, nil, "Cannot divide by zero"))
+		switch op.operator.Kind {
+		case token.ADD:
+			v.v = l + r
+		case token.SUBTRACT:
+			v.v = l - r
+		case token.MULTIPLY:
+			v.v = l * r
+		case token.MOD:
+			v.v = l % r
+		default:
+			panic(bard.NewHorror(op.operator, nil,
+				"SANITY CHECK! Unknown integer arithmetic operator",
+			))
 		}
-		a = l / r
-	case token.MOD:
-		a = l % r
-	default:
-		goto COMPARISON
+
+		return
 	}
 
-	return Value{
-		k: INT,
-		v: a,
-	}
+	v.k = BOOL
 
-COMPARISON:
-
-	var b bool
-
-	switch tk.Kind {
+	switch op.operator.Kind {
 	case token.EQU:
-		b = l == r
+		v.v = l == r
 	case token.NEQ:
-		b = l != r
+		v.v = l != r
 	case token.LT:
-		b = l < r
+		v.v = l < r
 	case token.LT_OR_EQU:
-		b = l <= r
+		v.v = l <= r
 	case token.MT:
-		b = l > r
+		v.v = l > r
 	case token.MT_OR_EQU:
-		b = l >= r
+		v.v = l >= r
 	default:
-		panic(bard.NewHorror(tk, nil, "SANITY CHECK! Unknown int math operator"))
+		panic(bard.NewHorror(op.operator, nil,
+			"SANITY CHECK! Unknown int boolean operator",
+		))
 	}
 
-	return Value{
-		k: BOOL,
-		v: b,
-	}
+	return
 }
 
 // evalReal evaluates an operation involving two real operands.
-func (op operation) evalReal(tk token.Token, l, r float64) Value {
+func (op operation) evalReal(l, r float64) (v Value) {
 
-	var a float64
+	if op.kind == ARITHMETIC {
+		v.k = REAL
 
-	switch tk.Kind {
-	case token.ADD:
-		a = l + r
-	case token.SUBTRACT:
-		a = l - r
-	case token.MULTIPLY:
-		a = l * r
-	case token.DIVIDE:
-		if r == 0 {
-			panic(bard.NewHorror(tk, nil, "Cannot divide by zero"))
+		switch op.operator.Kind {
+		case token.ADD:
+			v.v = l + r
+		case token.SUBTRACT:
+			v.v = l - r
+		case token.MULTIPLY:
+			v.v = l * r
+		case token.DIVIDE:
+			if r == 0 {
+				panic(bard.NewHorror(op.operator, nil, "Cannot divide by zero"))
+			}
+			v.v = l / r
+		default:
+			panic(bard.NewHorror(op.operator, nil,
+				"SANITY CHECK! Unknown real arithmetic operator",
+			))
 		}
-		a = l / r
-	default:
-		goto COMPARISON
+
+		return
 	}
 
-	return Value{
-		k: REAL,
-		v: a,
-	}
+	v.k = BOOL
 
-COMPARISON:
-
-	var b bool
-
-	switch tk.Kind {
+	switch op.operator.Kind {
 	case token.EQU:
-		b = l == r
+		v.v = l == r
 	case token.NEQ:
-		b = l != r
+		v.v = l != r
 	case token.LT:
-		b = l < r
+		v.v = l < r
 	case token.LT_OR_EQU:
-		b = l <= r
+		v.v = l <= r
 	case token.MT:
-		b = l > r
+		v.v = l > r
 	case token.MT_OR_EQU:
-		b = l >= r
+		v.v = l >= r
 	default:
-		panic(bard.NewHorror(tk, nil, "SANITY CHECK! Unknown real math operator"))
+		panic(bard.NewHorror(op.operator, nil,
+			"SANITY CHECK! Unknown real boolean operator",
+		))
 	}
 
-	return Value{
-		k: BOOL,
-		v: b,
-	}
+	return
 }
 
 // evalNumeric evaluates an arithmetic or comparison ooeration.
-func (op operation) evalBoolean(ctx Context) Value {
+func (op operation) evalBoolean(ctx Context) (v Value) {
 
 	lv := op.left.Eval(ctx)
 	rv := op.right.Eval(ctx)
@@ -235,20 +222,19 @@ func (op operation) evalBoolean(ctx Context) Value {
 
 	l := lv.v.(bool)
 	r := rv.v.(bool)
-	tk := op.operator
-	var b bool
 
-	switch tk.Kind {
+	v.k = BOOL
+
+	switch op.operator.Kind {
 	case token.AND:
-		b = l && r
+		v.v = l && r
 	case token.OR:
-		b = l || r
+		v.v = l || r
 	default:
-		panic(bard.NewHorror(tk, nil, "SANITY CHECK! Unknown bool operator"))
+		panic(bard.NewHorror(op.operator, nil,
+			"SANITY CHECK! Unknown bool operator",
+		))
 	}
 
-	return Value{
-		k: BOOL,
-		v: b,
-	}
+	return
 }

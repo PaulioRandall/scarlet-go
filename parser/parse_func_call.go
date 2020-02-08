@@ -38,8 +38,6 @@ func (ex funcCallExpr) String() (s string) {
 		for _, p := range ex.params {
 			s += "\n\t\t" + p.String()
 		}
-
-		s += "\n"
 	}
 
 	return

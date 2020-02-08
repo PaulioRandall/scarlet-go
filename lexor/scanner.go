@@ -301,9 +301,9 @@ func (scn *scanner) scanSymbol() (_ token.Token) {
 	case a == '%':
 		n, k = 1, token.MOD
 	case a == '&':
-		n, k = 1, token.OR
-	case a == '|':
 		n, k = 1, token.AND
+	case a == '|':
+		n, k = 1, token.OR
 	case a == '=':
 		n, k = 1, token.EQU
 	case a == '#':
