@@ -78,8 +78,8 @@ func (p *Parser) parseExpr() Expr {
 	}
 
 	tk := p.peek()
-
 	left := p.parseOperand()
+
 	if left == nil {
 		panic(bard.NewHorror(tk, nil,
 			"Token does not start a valid expression or "+
@@ -87,7 +87,11 @@ func (p *Parser) parseExpr() Expr {
 		))
 	}
 
-	return left
+	if p.identifyOperatorKind(p.peek().Kind) == NOT_OPERATOR {
+		return left
+	}
+
+	return p.parseOperation(left)
 }
 
 // parseDelimExpr parses an operand as an expression. Nil is returned if the

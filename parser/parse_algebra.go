@@ -7,17 +7,60 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
+// opKind represents the kind of an operation.
+type opKind string
+
+const (
+	NOT_OPERATOR opKind = `NOT_OPERATOR`
+	ARITHMETIC   opKind = `Arithmetic`
+	COMPARISON   opKind = `Comparison`
+	BOOLEAN      opKind = `Boolean`
+)
+
+// identifyOperatorKind returns the operation kind of the token. If the token
+// is not a known operator then NOT_OPERATOR is returned.
+func (p *Parser) identifyOperatorKind(k token.Kind) opKind {
+	switch k {
+	case token.ADD, token.SUBTRACT, token.MULTIPLY, token.DIVIDE, token.MOD:
+		return ARITHMETIC
+	case token.EQU, token.NEQ:
+		return COMPARISON
+	case token.LT, token.LT_OR_EQU, token.MT, token.MT_OR_EQU:
+		return COMPARISON
+	case token.AND, token.OR:
+		return BOOLEAN
+	default:
+		return NOT_OPERATOR
+	}
+}
+
+// parseOperation parses an arithmetic operation.
+func (p *Parser) parseOperation(left Expr) Expr {
+
+	op := p.take()
+	kind := p.identifyOperatorKind(op.Kind)
+	right := p.parseExpr()
+
+	return operation{
+		kind:     kind,
+		left:     left,
+		operator: op,
+		right:    right,
+	}
+}
+
 // operation represents an algebraic operation.
 type operation struct {
+	kind     opKind
 	left     Expr
 	operator token.Token
 	right    Expr
 }
 
-// toString returns the string representation of the operation.
-func (op operation) toString(opType string) (s string) {
+// String satisfies the Expr interface.
+func (op operation) String() (s string) {
 
-	s += opType + " Operation (" + op.operator.String() + ")\n"
+	s += string(op.kind) + " Operation (" + op.operator.String() + ")\n"
 
 	s += "\tLeft\n"
 	s += "\t" + strings.ReplaceAll(op.left.String(), "\n", "\t")
@@ -28,19 +71,20 @@ func (op operation) toString(opType string) (s string) {
 	return
 }
 
-// mathOperation represents a number based operation.
-type mathOperation struct {
-	Expr
-	operation
-}
-
-// String satisfies the Expr interface.
-func (mop mathOperation) String() string {
-	return mop.toString("Math")
-}
-
 // Eval satisfies the Expr interface.
-func (op mathOperation) Eval(ctx Context) (_ Value) {
+func (op operation) Eval(ctx Context) (_ Value) {
+	switch op.kind {
+	case ARITHMETIC, COMPARISON:
+		return op.evalNumeric(ctx)
+	case BOOLEAN:
+		return op.evalBoolean(ctx)
+	default:
+		panic(bard.NewHorror(op.operator, nil, "SANITY CHECK! Unknown operator"))
+	}
+}
+
+// evalNumeric evaluates an arithmetic or comparison ooeration.
+func (op operation) evalNumeric(ctx Context) Value {
 
 	lv := op.left.Eval(ctx)
 	rv := op.right.Eval(ctx)
@@ -74,7 +118,7 @@ func (op mathOperation) Eval(ctx Context) (_ Value) {
 }
 
 // evalInt evaluates an operation involving two integer operands.
-func (op mathOperation) evalInt(tk token.Token, l, r int64) (_ Value) {
+func (op operation) evalInt(tk token.Token, l, r int64) Value {
 
 	var a int64
 
@@ -129,7 +173,7 @@ COMPARISON:
 }
 
 // evalReal evaluates an operation involving two real operands.
-func (op mathOperation) evalReal(tk token.Token, l, r float64) (_ Value) {
+func (op operation) evalReal(tk token.Token, l, r float64) Value {
 
 	var a float64
 
@@ -181,19 +225,8 @@ COMPARISON:
 	}
 }
 
-// boolOperation represents a boolean based operation.
-type boolOperation struct {
-	Expr
-	operation
-}
-
-// String satisfies the Expr interface.
-func (bop boolOperation) String() string {
-	return bop.toString("Bool")
-}
-
-// Eval satisfies the Expr interface.
-func (op boolOperation) Eval(ctx Context) (_ Value) {
+// evalNumeric evaluates an arithmetic or comparison ooeration.
+func (op operation) evalBoolean(ctx Context) Value {
 
 	lv := op.left.Eval(ctx)
 	rv := op.right.Eval(ctx)
