@@ -41,13 +41,19 @@ const (
 	BOOL_LITERAL  Kind = `BOOL`
 	NOT           Kind = `NOT`
 	OPERATOR      Kind = `OPERATOR` // Depricated
-	MATH_ADD      Kind = `MATH_ADD`
-	MATH_SUBTRACT Kind = `MATH_SUBTRACT`
-	MATH_MULTIPY  Kind = `MATH_MULTIPLY`
-	MATH_DIVIDE   Kind = `MATH_DIVIDE`
-	MATH_MODULO   Kind = `MATH_MODULO`
-	BOOL_AND      Kind = `BOOL_AND`
-	BOOL_OR       Kind = `BOOL_OR`
+	MATH_ADD      Kind = `ADD`
+	MATH_SUBTRACT Kind = `SUBTRACT`
+	MATH_MULTIPLY Kind = `MULTIPLY`
+	MATH_DIVIDE   Kind = `DIVIDE`
+	MATH_MODULO   Kind = `MODULO`
+	AND           Kind = `AND`
+	OR            Kind = `OR`
+	EQU           Kind = `EQUAL`
+	NEQ           Kind = `NOT_EQUAL`
+	LT            Kind = `LESS_THAN`
+	LT_OR_EQU     Kind = `LESS_THAN_OR_EQUAL`
+	MT            Kind = `MORE_THAN`
+	MT_OR_EQU     Kind = `MORE_THAN_OR_EQUAL`
 	VOID          Kind = `VOID`
 	TERMINATOR    Kind = `TERMINATOR`
 )
