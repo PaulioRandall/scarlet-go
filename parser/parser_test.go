@@ -12,10 +12,6 @@ func tok(k token.Kind, v string) token.Token {
 	return token.New(k, v, 0, 0)
 }
 
-func tok2(k token.Kind, v string, id int) token.Token {
-	return token.New(k, v, 0, id)
-}
-
 func push(in chan token.Token, tokens ...token.Token) {
 	go func() {
 		for _, tk := range tokens {
@@ -43,7 +39,7 @@ func TestParser_parse_1(t *testing.T) {
 	tks := []token.Token{
 		tok(token.ID, "abc"),
 		tok(token.ASSIGN, ":="),
-		tok(token.STR_LITERAL, "xyz"),
+		tok(token.STR, "xyz"),
 		tok(token.TERMINATOR, "\n"),
 		tok(token.EOF, ""),
 	}
@@ -81,13 +77,13 @@ func TestParser_parse_2(t *testing.T) {
 		// Bool
 		tok(token.ID, "a"),
 		tok(token.ASSIGN, ":="),
-		tok(token.BOOL_LITERAL, "TRUE"),
+		tok(token.BOOL, "TRUE"),
 		tok(token.TERMINATOR, "\n"), // 3
 		// Number
 		tok(token.FIX, "FIX"),
 		tok(token.ID, "b"),
 		tok(token.ASSIGN, ":="),
-		tok(token.REAL_LITERAL, "123.456"),
+		tok(token.REAL, "123.456"),
 		tok(token.TERMINATOR, "\n"), // 8
 		// String template
 		tok(token.ID, "c"),
@@ -147,11 +143,11 @@ func TestParser_parse_3(t *testing.T) {
 		tok(token.ID, "c"),
 		tok(token.ASSIGN, ":="),
 		// srcs
-		tok(token.BOOL_LITERAL, "TRUE"),
+		tok(token.BOOL, "TRUE"),
 		tok(token.DELIM, ","),
-		tok(token.INT_LITERAL, "123"),
+		tok(token.INT, "123"),
 		tok(token.DELIM, ","),
-		tok(token.STR_TEMPLATE, `"Caribbean"`),
+		tok(token.TEMPLATE, `"Caribbean"`),
 		tok(token.TERMINATOR, "\n"),
 		// EOF
 		tok(token.EOF, ""),
@@ -193,16 +189,16 @@ func TestParser_parse_4(t *testing.T) {
 		tok(token.OPEN_LIST, "{"),
 		tok(token.TERMINATOR, "\n"), // index: 3
 		// Line 2
-		tok(token.STR_LITERAL, "abc"),
+		tok(token.STR, "abc"),
 		tok(token.DELIM, ","),
-		tok(token.REAL_LITERAL, "123.456"),
+		tok(token.REAL, "123.456"),
 		tok(token.DELIM, ","),
 		tok(token.TERMINATOR, "\n"), // 8
 		// Line 3
 		tok(token.OPEN_LIST, "{"),
-		tok(token.STR_TEMPLATE, "xyz"),
+		tok(token.TEMPLATE, "xyz"),
 		tok(token.DELIM, ","),
-		tok(token.BOOL_LITERAL, "TRUE"), // 12
+		tok(token.BOOL, "TRUE"), // 12
 		tok(token.CLOSE_LIST, "}"),
 		tok(token.DELIM, ","),
 		tok(token.TERMINATOR, "\n"), // 15

@@ -11,51 +11,50 @@ type Kind string
 const (
 	UNDEFINED Kind = ``
 	// ------------------
-	SOF           Kind = `SOF`
-	EOF           Kind = `EOF`
-	COMMENT       Kind = `COMMENT`
-	WHITESPACE    Kind = `WHITESPACE`
-	NEWLINE       Kind = `NEWLINE`
-	FIX           Kind = `FIX`
-	FUNC          Kind = `FUNC`
-	DO            Kind = `DO`
-	INLINE        Kind = `INLINE`
-	MATCH         Kind = `MATCH`
-	WATCH         Kind = `WATCH`
-	END           Kind = `END`
-	ID            Kind = `ID`
-	DELIM         Kind = `DELIM`
-	ASSIGN        Kind = `ASSIGN`
-	RETURNS       Kind = `RETURNS`
-	OPEN_PAREN    Kind = `OPEN_PAREN`
-	CLOSE_PAREN   Kind = `CLOSE_PAREN`
-	OPEN_GUARD    Kind = `OPEN_GUARD`
-	CLOSE_GUARD   Kind = `CLOSE_GUARD`
-	OPEN_LIST     Kind = `OPEN_LIST`
-	CLOSE_LIST    Kind = `CLOSE_LIST`
-	SPELL         Kind = `SPELL`
-	STR_LITERAL   Kind = `STR_LITERAL`
-	STR_TEMPLATE  Kind = `STR_TEMPLATE`
-	INT_LITERAL   Kind = `INT_LITERAL`
-	REAL_LITERAL  Kind = `REAL_LITERAL`
-	BOOL_LITERAL  Kind = `BOOL`
-	NOT           Kind = `NOT`
-	OPERATOR      Kind = `OPERATOR` // Depricated
-	MATH_ADD      Kind = `ADD`
-	MATH_SUBTRACT Kind = `SUBTRACT`
-	MATH_MULTIPLY Kind = `MULTIPLY`
-	MATH_DIVIDE   Kind = `DIVIDE`
-	MATH_MODULO   Kind = `MODULO`
-	AND           Kind = `AND`
-	OR            Kind = `OR`
-	EQU           Kind = `EQUAL`
-	NEQ           Kind = `NOT_EQUAL`
-	LT            Kind = `LESS_THAN`
-	LT_OR_EQU     Kind = `LESS_THAN_OR_EQUAL`
-	MT            Kind = `MORE_THAN`
-	MT_OR_EQU     Kind = `MORE_THAN_OR_EQUAL`
-	VOID          Kind = `VOID`
-	TERMINATOR    Kind = `TERMINATOR`
+	SOF         Kind = `SOF`
+	EOF         Kind = `EOF`
+	COMMENT     Kind = `COMMENT`
+	WHITESPACE  Kind = `WHITESPACE`
+	NEWLINE     Kind = `NEWLINE`
+	FIX         Kind = `FIX`
+	FUNC        Kind = `FUNC`
+	DO          Kind = `DO`
+	INLINE      Kind = `INLINE`
+	MATCH       Kind = `MATCH`
+	WATCH       Kind = `WATCH`
+	END         Kind = `END`
+	ID          Kind = `ID`
+	DELIM       Kind = `DELIM`
+	ASSIGN      Kind = `ASSIGN`
+	RETURNS     Kind = `RETURNS`
+	OPEN_PAREN  Kind = `OPEN_PAREN`
+	CLOSE_PAREN Kind = `CLOSE_PAREN`
+	OPEN_GUARD  Kind = `OPEN_GUARD`
+	CLOSE_GUARD Kind = `CLOSE_GUARD`
+	OPEN_LIST   Kind = `OPEN_LIST`
+	CLOSE_LIST  Kind = `CLOSE_LIST`
+	SPELL       Kind = `SPELL`
+	STR         Kind = `STR`
+	TEMPLATE    Kind = `TEMPLATE`
+	INT         Kind = `INT`
+	REAL        Kind = `REAL`
+	BOOL        Kind = `BOOL`
+	NOT         Kind = `NOT`
+	ADD         Kind = `ADD`
+	SUBTRACT    Kind = `SUBTRACT`
+	MULTIPLY    Kind = `MULTIPLY`
+	DIVIDE      Kind = `DIVIDE`
+	MOD         Kind = `MOD`
+	AND         Kind = `AND`
+	OR          Kind = `OR`
+	EQU         Kind = `EQUAL`
+	NEQ         Kind = `NOT_EQUAL`
+	LT          Kind = `LESS_THAN`
+	LT_OR_EQU   Kind = `LESS_THAN_OR_EQUAL`
+	MT          Kind = `MORE_THAN`
+	MT_OR_EQU   Kind = `MORE_THAN_OR_EQUAL`
+	VOID        Kind = `VOID`
+	TERMINATOR  Kind = `TERMINATOR`
 )
 
 // Token represents a grammer token within a source file.
@@ -121,9 +120,9 @@ func (tk Token) String() string {
 
 	var v interface{}
 
-	if tk.Kind == STR_TEMPLATE {
+	if tk.Kind == TEMPLATE {
 		v = strconv.QuoteToGraphic(tk.Value)
-	} else if tk.Kind == STR_LITERAL {
+	} else if tk.Kind == STR {
 		v = "`" + tk.Value + "`"
 	} else {
 		v = tk.Value

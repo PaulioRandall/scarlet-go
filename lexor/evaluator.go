@@ -52,7 +52,7 @@ func (ev *evaluator) Next() (_ token.Token) {
 			tk.Kind = token.TERMINATOR
 		}
 
-		if k == token.STR_LITERAL || k == token.STR_TEMPLATE {
+		if k == token.STR || k == token.TEMPLATE {
 			trimStrQuotes(&tk)
 		}
 

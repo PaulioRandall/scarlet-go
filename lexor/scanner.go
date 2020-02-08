@@ -152,7 +152,7 @@ func (scn *scanner) scanNumLiteral() (_ token.Token) {
 	}
 
 	if n == len(r) || r[n] != '.' {
-		return scn.tokenize(n, token.INT_LITERAL, false)
+		return scn.tokenize(n, token.INT, false)
 	}
 
 	n++ // +1 for decimal point
@@ -164,7 +164,7 @@ func (scn *scanner) scanNumLiteral() (_ token.Token) {
 	}
 
 	n += d
-	return scn.tokenize(n, token.REAL_LITERAL, false)
+	return scn.tokenize(n, token.REAL, false)
 }
 
 // scanStrLiteral attempts to scan a string literal. If successful a non-empty
@@ -179,7 +179,7 @@ func (scn *scanner) scanStrLiteral() (_ token.Token) {
 		case i == 0:
 			continue
 		case ru == '`':
-			return scn.tokenize(i+1, token.STR_LITERAL, false)
+			return scn.tokenize(i+1, token.STR, false)
 		case ru == '\n':
 			goto ERROR
 		}
@@ -206,7 +206,7 @@ func (scn *scanner) scanStrTemplate() (_ token.Token) {
 		case i == 0 && ru == '"':
 			break
 		case prev != '\\' && ru == '"':
-			return scn.tokenize(i+1, token.STR_TEMPLATE, false)
+			return scn.tokenize(i+1, token.TEMPLATE, false)
 		case ru == '\n':
 			goto ERROR
 		}
@@ -290,18 +290,32 @@ func (scn *scanner) scanSymbol() (_ token.Token) {
 		n, k = 1, token.SPELL
 	case a == '~' || a == '¬': // Negation
 		n, k = 1, token.NOT
-	case a == '+' || a == '-' || a == '/' || a == '*' || a == '%': // Arithmetic
-		n, k = 1, token.OPERATOR
-	case a == '|' || a == '&': // Boolean
-		n, k = 1, token.OPERATOR
-	case a == '=' || a == '#': // Comparisons...
-		n, k = 1, token.OPERATOR
+	case a == '+':
+		n, k = 1, token.ADD
+	case a == '-':
+		n, k = 1, token.SUBTRACT
+	case a == '*':
+		n, k = 1, token.MULTIPLY
+	case a == '/':
+		n, k = 1, token.DIVIDE
+	case a == '%':
+		n, k = 1, token.MOD
+	case a == '&':
+		n, k = 1, token.OR
+	case a == '|':
+		n, k = 1, token.AND
+	case a == '=':
+		n, k = 1, token.EQU
+	case a == '#':
+		n, k = 1, token.NEQ
 	case a == '<' && b == '=': // Order matters! Must be before `<`
-		n, k = 2, token.OPERATOR
+		n, k = 2, token.LT_OR_EQU
 	case a == '>' && b == '=': // Order matters! Must be before `<`
-		n, k = 2, token.OPERATOR
-	case a == '<' || a == '>':
-		n, k = 1, token.OPERATOR
+		n, k = 2, token.MT_OR_EQU
+	case a == '<':
+		n, k = 1, token.LT
+	case a == '>':
+		n, k = 1, token.MT
 	}
 
 	if k == token.UNDEFINED {
@@ -389,10 +403,8 @@ func keywordOrID(r []rune) token.Kind {
 		return token.MATCH
 	case `END`:
 		return token.END
-	case `TRUE`:
-		return token.BOOL_LITERAL
-	case `FALSE`:
-		return token.BOOL_LITERAL
+	case `TRUE`, `FALSE`:
+		return token.BOOL
 	default:
 		return token.ID
 	}

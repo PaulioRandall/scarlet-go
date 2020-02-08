@@ -49,16 +49,16 @@ func NewValue(tk token.Token) Value {
 	)
 
 	switch tk.Kind {
-	case token.STR_LITERAL, token.STR_TEMPLATE:
+	case token.STR, token.TEMPLATE:
 		k, v = STR, tk.Value
 
-	case token.BOOL_LITERAL:
+	case token.BOOL:
 		k, v = BOOL, (tk.Value == "TRUE")
 
-	case token.INT_LITERAL:
+	case token.INT:
 		k, v = INT, parseNum(INT, tk)
 
-	case token.REAL_LITERAL:
+	case token.REAL:
 		k, v = REAL, parseNum(REAL, tk)
 
 	case token.VOID:

@@ -52,11 +52,11 @@ func (p *Parser) parseExpr(allowVoids bool) Expr {
 			id: tk.Value,
 		}
 
-	case token.STR_LITERAL, token.STR_TEMPLATE:
+	case token.STR, token.TEMPLATE:
 		// TODO: string templates need compiling
 		fallthrough
 
-	case token.BOOL_LITERAL, token.INT_LITERAL, token.REAL_LITERAL:
+	case token.BOOL, token.INT, token.REAL:
 		return valueExpr{
 			tk: p.take(),
 			v:  NewValue(tk),

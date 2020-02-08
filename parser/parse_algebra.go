@@ -79,18 +79,18 @@ func (op mathOperation) evalInt(tk token.Token, l, r int64) (_ Value) {
 	var a int64
 
 	switch tk.Kind {
-	case token.MATH_ADD:
+	case token.ADD:
 		a = l + r
-	case token.MATH_SUBTRACT:
+	case token.SUBTRACT:
 		a = l - r
-	case token.MATH_MULTIPLY:
+	case token.MULTIPLY:
 		a = l * r
-	case token.MATH_DIVIDE:
+	case token.DIVIDE:
 		if r == 0 {
 			panic(bard.NewHorror(tk, nil, "Cannot divide by zero"))
 		}
 		a = l / r
-	case token.MATH_MODULO:
+	case token.MOD:
 		a = l % r
 	default:
 		goto COMPARISON
@@ -134,13 +134,13 @@ func (op mathOperation) evalReal(tk token.Token, l, r float64) (_ Value) {
 	var a float64
 
 	switch tk.Kind {
-	case token.MATH_ADD:
+	case token.ADD:
 		a = l + r
-	case token.MATH_SUBTRACT:
+	case token.SUBTRACT:
 		a = l - r
-	case token.MATH_MULTIPLY:
+	case token.MULTIPLY:
 		a = l * r
-	case token.MATH_DIVIDE:
+	case token.DIVIDE:
 		if r == 0 {
 			panic(bard.NewHorror(tk, nil, "Cannot divide by zero"))
 		}

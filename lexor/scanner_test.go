@@ -45,13 +45,13 @@ func TestScanner_Next_1(t *testing.T) {
 		tok(token.COMMENT, "// comment", 1, 5),
 		tok(token.NEWLINE, "\n", 1, 15),
 		// Line 2
-		tok(token.INT_LITERAL, "123", 2, 0),
+		tok(token.INT, "123", 2, 0),
 		tok(token.WHITESPACE, " ", 2, 3),
-		tok(token.REAL_LITERAL, "123.456", 2, 4),
+		tok(token.REAL, "123.456", 2, 4),
 		tok(token.NEWLINE, "\r\n", 2, 11),
 		// Line 3
-		tok(token.STR_LITERAL, "`abc`", 3, 0),
-		tok(token.STR_TEMPLATE, `"abc"`, 3, 5),
+		tok(token.STR, "`abc`", 3, 0),
+		tok(token.TEMPLATE, `"abc"`, 3, 5),
 		tok(token.NEWLINE, "\n", 3, 10),
 		// Line 4
 		tok(token.ID, "abc_xyz", 4, 0),
@@ -61,13 +61,13 @@ func TestScanner_Next_1(t *testing.T) {
 		tok(token.WHITESPACE, " ", 5, 1),
 		tok(token.MATCH, "MATCH", 5, 2),
 		tok(token.WHITESPACE, " ", 5, 7),
-		tok(token.BOOL_LITERAL, "TRUE", 5, 8),
+		tok(token.BOOL, "TRUE", 5, 8),
 		tok(token.NEWLINE, "\n", 5, 12),
 		// Line 6
 		tok(token.SPELL, "@", 6, 0),
 		tok(token.NOT, "~", 6, 1),
 		tok(token.ASSIGN, ":=", 6, 2),
-		tok(token.OPERATOR, "*", 6, 4),
+		tok(token.MULTIPLY, "*", 6, 4),
 		tok(token.RETURNS, "->", 6, 5),
 		tok(token.CLOSE_PAREN, ")", 6, 7),
 		tok(token.NEWLINE, "\r\n", 6, 8),
@@ -79,6 +79,7 @@ func TestScanner_Next_1(t *testing.T) {
 		Line: 7,
 		Col:  0,
 	}
+
 	require.Equal(t, expEOF, sc.Next())
 }
 
