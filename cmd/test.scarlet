@@ -30,6 +30,7 @@ j := i
 k, l, m, n := j(123, `:)`)
 
 // GOAL: Parse arithmetic and boolean operations.
+// NEXT: Modify parseExpr to call parseOperation if an identifier or literal.
 
 // GOAL: Parse and evaluate conditional statements.
 

@@ -22,66 +22,12 @@ func (p *Parser) parseStat(inline bool) Stat {
 	}
 }
 
-// parseExpr parses the next expression.
-func (p *Parser) parseExpr(allowVoids bool) Expr {
-
-	if p.peek().Kind == token.TERMINATOR {
-		p.take()
-	}
-
-	switch tk := p.peek(); tk.Kind {
-	case token.VOID:
-		if !allowVoids {
-			panic(bard.NewHorror(tk, nil, "Naughty use of VOID expression"))
-		}
-
-		return valueExpr{
-			tk: p.take(),
-			v:  NewValue(tk),
-		}
-
-	case token.ID:
-		p.take()
-
-		if p.peek().Kind == token.OPEN_PAREN {
-			return p.parseFuncCall(tk)
-		}
-
-		return idExpr{
-			tk: tk,
-			id: tk.Value,
-		}
-
-	case token.STR, token.TEMPLATE:
-		// TODO: string templates need compiling
-		fallthrough
-
-	case token.BOOL, token.INT, token.REAL:
-		return valueExpr{
-			tk: p.take(),
-			v:  NewValue(tk),
-		}
-
-	case token.OPEN_LIST:
-		return p.parseList()
-
-	case token.FUNC:
-		return p.parseFuncDef()
-
-	default:
-		panic(bard.NewHorror(tk, nil,
-			"Token does not start a valid expression or "+
-				"parsing has not been implemented for it yet",
-		))
-	}
-}
-
 // parseDelimExpr parses a delimitered separated set of expressions.
-func (p *Parser) parseDelimExpr(allowVoids bool) (exs []Expr) {
+func (p *Parser) parseDelimExpr(allowVoid bool) (exs []Expr) {
 
 	for p.peek().Kind != token.CLOSE_LIST {
 
-		ex := p.parseExpr(allowVoids)
+		ex := p.parseAssignable(allowVoid)
 		exs = append(exs, ex)
 
 		if p.peek().Kind == token.DELIM {
@@ -95,6 +41,84 @@ func (p *Parser) parseDelimExpr(allowVoids bool) (exs []Expr) {
 		}
 
 		return
+	}
+
+	return
+}
+
+// parseExpr parses the an expression that will become an assignment source.
+func (p *Parser) parseAssignable(allowVoid bool) Expr {
+
+	if p.peek().Kind == token.TERMINATOR {
+		p.take()
+	}
+
+	switch tk := p.peek(); tk.Kind {
+	case token.VOID:
+		if !allowVoid {
+			panic(bard.NewHorror(tk, nil, "Naughty use of void expression"))
+		}
+
+		return valueExpr{
+			tk: p.take(),
+			v:  NewValue(tk),
+		}
+	case token.FUNC:
+		return p.parseFuncDef()
+	default:
+		return p.parseExpr()
+	}
+}
+
+// parseExpr parses the next expression.
+func (p *Parser) parseExpr() Expr {
+
+	if p.peek().Kind == token.TERMINATOR {
+		p.take()
+	}
+
+	tk := p.peek()
+
+	left := p.parseOperand()
+	if left == nil {
+		panic(bard.NewHorror(tk, nil,
+			"Token does not start a valid expression or "+
+				"parsing has not been implemented for it yet",
+		))
+	}
+
+	return left
+}
+
+// parseDelimExpr parses an operand as an expression. Nil is returned if the
+// next tokens do not match an operand.
+func (p *Parser) parseOperand() (ex Expr) {
+
+	tk := p.peek()
+
+	switch tk.Kind {
+	case token.STR, token.TEMPLATE:
+		// TODO: string templates need compiling
+		fallthrough
+	case token.BOOL, token.INT, token.REAL:
+		ex = valueExpr{
+			tk: p.take(),
+			v:  NewValue(tk),
+		}
+	case token.OPEN_LIST:
+		ex = p.parseList()
+	case token.ID:
+		p.take()
+
+		if p.peek().Kind == token.OPEN_PAREN {
+			ex = p.parseFuncCall(tk)
+			break
+		}
+
+		ex = idExpr{
+			tk: tk,
+			id: tk.Value,
+		}
 	}
 
 	return
