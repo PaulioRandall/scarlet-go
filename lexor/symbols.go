@@ -7,12 +7,6 @@ import (
 // Collection of terminal and non-terminal symbols for ease of reference and to
 // speed up syntax experimentation.
 const (
-	keyword_function                string = `F`
-	keyword_normalblockStart        string = `DO`
-	keyword_matchBlockStart         string = `MATCH`
-	keyword_blockEnd                string = `END`
-	keyword_true                    string = `TRUE`
-	keyword_false                   string = `FALSE`
 	terminal_carriageReturn         rune   = '\r'
 	terminal_lineFeed               rune   = '\n'
 	terminal_commentStart           rune   = '/'
@@ -57,15 +51,15 @@ const (
 func identifyKeyword(nonTerminal string) token.Kind {
 
 	switch nonTerminal {
-	case keyword_function:
+	case token.NON_TERMINAL_FUNCTION:
 		return token.FUNC
-	case keyword_normalblockStart:
+	case token.NON_TERMINAL_NORMAL_BLOCK_START:
 		return token.DO
-	case keyword_matchBlockStart:
+	case token.NON_TERMINAL_MATCH_BLOCK_START:
 		return token.MATCH
-	case keyword_blockEnd:
+	case token.NON_TERMINAL_BLOCK_END:
 		return token.END
-	case keyword_true, keyword_false:
+	case token.NON_TERMINAL_TRUE, token.NON_TERMINAL_FALSE:
 		return token.BOOL
 	}
 

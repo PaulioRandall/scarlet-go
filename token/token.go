@@ -5,56 +5,6 @@ import (
 	"strconv"
 )
 
-// Kind represents a token type.
-type Kind string
-
-const (
-	UNDEFINED Kind = ``
-	// ------------------
-	SOF         Kind = `SOF`
-	EOF         Kind = `EOF`
-	COMMENT     Kind = `COMMENT`
-	WHITESPACE  Kind = `WHITESPACE`
-	NEWLINE     Kind = `NEWLINE`
-	FUNC        Kind = `FUNC`
-	DO          Kind = `DO`
-	INLINE      Kind = `INLINE`
-	MATCH       Kind = `MATCH`
-	END         Kind = `END`
-	ID          Kind = `ID`
-	DELIM       Kind = `DELIM`
-	ASSIGN      Kind = `ASSIGN`
-	RETURNS     Kind = `RETURNS`
-	OPEN_PAREN  Kind = `OPEN_PAREN`
-	CLOSE_PAREN Kind = `CLOSE_PAREN`
-	OPEN_GUARD  Kind = `OPEN_GUARD`
-	CLOSE_GUARD Kind = `CLOSE_GUARD`
-	OPEN_LIST   Kind = `OPEN_LIST`
-	CLOSE_LIST  Kind = `CLOSE_LIST`
-	SPELL       Kind = `SPELL`
-	STR         Kind = `STR`
-	TEMPLATE    Kind = `TEMPLATE`
-	INT         Kind = `INT`
-	REAL        Kind = `REAL`
-	BOOL        Kind = `BOOL`
-	NOT         Kind = `NOT`
-	ADD         Kind = `ADD`
-	SUBTRACT    Kind = `SUBTRACT`
-	MULTIPLY    Kind = `MULTIPLY`
-	DIVIDE      Kind = `DIVIDE`
-	MOD         Kind = `MOD`
-	AND         Kind = `AND`
-	OR          Kind = `OR`
-	EQU         Kind = `EQUAL`
-	NEQ         Kind = `NOT_EQUAL`
-	LT          Kind = `LESS_THAN`
-	LT_OR_EQU   Kind = `LESS_THAN_OR_EQUAL`
-	MT          Kind = `MORE_THAN`
-	MT_OR_EQU   Kind = `MORE_THAN_OR_EQUAL`
-	VOID        Kind = `VOID`
-	TERMINATOR  Kind = `TERMINATOR`
-)
-
 // Token represents a grammer token within a source file.
 type Token struct {
 	Kind  Kind
