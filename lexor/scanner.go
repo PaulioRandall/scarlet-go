@@ -41,27 +41,27 @@ func NewScanner(s string) TokenStream {
 }
 
 // Next satisfies the TokenStream interface.
-func (scn *scanner) Next() (tk token.Token) {
+func (s *scanner) Next() (tk token.Token) {
 
-	if len(scn.runes) == 0 {
+	if s.empty() {
 		return token.Token{
 			Kind: token.EOF,
-			Line: scn.line,
-			Col:  scn.col,
+			Line: s.line,
+			Col:  s.col,
 		}
 	}
 
 	type scanFunc func() token.Token
 
 	fs := []scanFunc{
-		scn.scanNewline,
-		scn.scanSpace,
-		scn.scanComment,
-		scn.scanWord,
-		scn.scanSymbol,
-		scn.scanNumLiteral,
-		scn.scanStrLiteral,
-		scn.scanStrTemplate,
+		s.scanNewline,
+		s.scanSpace,
+		s.scanComment,
+		s.scanWord,
+		s.scanSymbol,
+		s.scanNumLiteral,
+		s.scanStrLiteral,
+		s.scanStrTemplate,
 	}
 
 	for _, f := range fs {
@@ -72,17 +72,17 @@ func (scn *scanner) Next() (tk token.Token) {
 		}
 	}
 
-	panic(bard.NewTerror(scn.line, scn.col, nil,
+	panic(bard.NewTerror(s.line, s.col, nil,
 		"Could not identify next token",
 	))
 }
 
 // scanNewline attempts to scan a newline token. If successful a non-empty
 // newline token is returned.
-func (scn *scanner) scanNewline() (_ token.Token) {
+func (s *scanner) scanNewline() (_ token.Token) {
 
-	if n := newlineTerminals(scn.runes); n > 0 {
-		return scn.tokenize(n, token.NEWLINE, true)
+	if n := s.countNewlineTerminals(0); n > 0 {
+		return s.tokenize(n, token.NEWLINE, true)
 	}
 
 	return
@@ -90,54 +90,33 @@ func (scn *scanner) scanNewline() (_ token.Token) {
 
 // scanComment attempts to scan a comment. If successful a non-empty comment
 // token is returned.
-func (scn *scanner) scanComment() (_ token.Token) {
+func (s *scanner) scanComment() (_ token.Token) {
 
-	const COMMENT_PREFIX int = 2
-	var i int
-	size := len(scn.runes)
-
-	if size < COMMENT_PREFIX {
+	if s.doesNotMatch(terminal_commentStart) {
 		return
 	}
 
-	if scn.runes[0] != '/' || scn.runes[1] != '/' {
-		return
-	}
+	const PREFIXES = 1 // Number of terminals that signify a comment start
 
-	for i = COMMENT_PREFIX; i < size; i++ {
-		if n := newlineTerminals(scn.runes[i:]); n > 0 {
-			break
-		}
-	}
-
-	return scn.tokenize(i, token.COMMENT, false)
+	n := s.matchUntilNewline(PREFIXES)
+	return s.tokenize(n+PREFIXES, token.COMMENT, false)
 }
 
 // scanSpace attempts to scan a series of whitespace characters. If successful
 // a non-empty whitespace token is returned. Assumes that the scanners rune
 // array length is greater than 0.
-func (scn *scanner) scanSpace() (_ token.Token) {
+func (s *scanner) scanSpace() (_ token.Token) {
 
-	var n int
+	isSpace := func(i int, ru rune) bool {
+		return s.matchesNewline(i) || !unicode.IsSpace(ru)
+	}
 
-	if newlineTerminals(scn.runes) != 0 || !unicode.IsSpace(scn.runes[0]) {
+	if isSpace(0, s.runes[0]) {
 		return
 	}
 
-	for i, ru := range scn.runes {
-
-		if !unicode.IsSpace(ru) {
-			break
-		}
-
-		if n := newlineTerminals(scn.runes[i:]); n > 0 {
-			break
-		}
-
-		n++
-	}
-
-	return scn.tokenize(n, token.WHITESPACE, false)
+	n := s.matchUntil(0, isSpace)
+	return s.tokenize(n, token.WHITESPACE, false)
 }
 
 // scanNumLiteral attempts to scan a literal number. If successful a non-empty
@@ -151,7 +130,7 @@ func (scn *scanner) scanNumLiteral() (_ token.Token) {
 		return
 	}
 
-	if n == len(r) || r[n] != '.' {
+	if n == len(r) || r[n] != terminal_fractionalDelim {
 		return scn.tokenize(n, token.INT, false)
 	}
 
@@ -174,13 +153,13 @@ func (scn *scanner) scanStrLiteral() (_ token.Token) {
 
 	for i, ru := range scn.runes {
 		switch {
-		case i == 0 && ru != '`':
+		case i == 0 && ru != terminal_stringStart:
 			return
 		case i == 0:
 			continue
-		case ru == '`':
+		case ru == terminal_stringEnd:
 			return scn.tokenize(i+1, token.STR, false)
-		case ru == '\n':
+		case ru == terminal_lineFeed:
 			goto ERROR
 		}
 	}
@@ -201,13 +180,13 @@ func (scn *scanner) scanStrTemplate() (_ token.Token) {
 	for i, ru := range scn.runes {
 
 		switch {
-		case i == 0 && ru != '"':
+		case i == 0 && ru != terminal_templateStart:
 			return
-		case i == 0 && ru == '"':
+		case i == 0 && ru == terminal_templateStart:
 			break
-		case prev != '\\' && ru == '"':
+		case prev != terminal_templateEscape && ru == terminal_templateEnd:
 			return scn.tokenize(i+1, token.TEMPLATE, false)
-		case ru == '\n':
+		case ru == terminal_lineFeed:
 			goto ERROR
 		}
 
@@ -228,18 +207,18 @@ func (scn *scanner) scanWord() (_ token.Token) {
 	r := scn.runes
 
 	for _, ru := range r {
-		if ru != '_' && !unicode.IsLetter(ru) {
+		if ru != terminal_wordUnderscore && !unicode.IsLetter(ru) {
 			break
 		}
 
 		n++
 	}
 
-	if n == 0 || (n == 1 && r[0] == '_') {
+	if n == 0 || (n == 1 && r[0] == terminal_wordUnderscore) {
 		return
 	}
 
-	k := keywordOrID(r[:n])
+	k := identifyAskeywordOrID(r[:n])
 	return scn.tokenize(n, k, false)
 }
 
@@ -356,22 +335,6 @@ func (scn *scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token)
 // * Helper functions
 // ****************************************************************************
 
-// newlineTerminals returns the number of terminal symbols that make up the next
-// newline token in the slice. If the next token is not a newline token then 0
-// is returned.
-func newlineTerminals(r []rune) (_ int) {
-	switch size := len(r); {
-	case size < 1:
-		return
-	case r[0] == '\n': // LF
-		return 1
-	case size > 1 && r[0] == '\r' && r[1] == '\n': // CRLF
-		return 2
-	default:
-		return
-	}
-}
-
 // countDigits counts an uninterupted series of digits in the rune slice
 // starting from the specified index.
 func countDigits(r []rune, start int) (n int) {
@@ -387,21 +350,16 @@ func countDigits(r []rune, start int) (n int) {
 	return n - start
 }
 
-// keywordOrID identifies the keyword kind represented by the input rune slice.
-// If no keyword can be found then the identifier kind is returned.
-func keywordOrID(r []rune) token.Kind {
-	switch string(r) {
-	case `F`:
-		return token.FUNC
-	case `DO`:
-		return token.DO
-	case `MATCH`:
-		return token.MATCH
-	case `END`:
-		return token.END
-	case `TRUE`, `FALSE`:
-		return token.BOOL
-	default:
+// identifyAskeywordOrID identifies the keyword kind represented by the input
+// rune slice. If no keyword can be found then the identifier kind is returned.
+func identifyAskeywordOrID(r []rune) token.Kind {
+
+	s := string(r)
+	k := identifyKeyword(s)
+
+	if k == token.UNDEFINED {
 		return token.ID
 	}
+
+	return k
 }
