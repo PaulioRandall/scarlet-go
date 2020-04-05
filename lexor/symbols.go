@@ -56,11 +56,11 @@ func (s *scanner) len() int {
 	return len(s.runes)
 }
 
-// matches returns true if the scanners rune slice begins with the specified
+// matches returns true if the scanners rune slice matches the specified
 // sequence of runes.
-func (s *scanner) matches(terminals ...rune) bool {
+func (s *scanner) matches(start int, terminals ...rune) bool {
 
-	haystack := s.runes
+	haystack := s.runes[start:]
 
 	if len(terminals) > len(haystack) {
 		return false
@@ -75,10 +75,10 @@ func (s *scanner) matches(terminals ...rune) bool {
 	return true
 }
 
-// doesNotMatch returns false if the scanners rune slice begins with the
-// specified sequence of runes.
-func (s *scanner) doesNotMatch(terminals ...rune) bool {
-	return !s.matches(terminals...)
+// doesNotMatch returns false if the scanners rune slice matches the specified
+// sequence of runes.
+func (s *scanner) doesNotMatch(start int, terminals ...rune) bool {
+	return !s.matches(start, terminals...)
 }
 
 // matchesNewline returns true if the scanners rune slice begins with a sequence
@@ -108,7 +108,7 @@ func (s *scanner) matchUntil(start int, f func(int, rune) bool) int {
 		}
 	}
 
-	return i - start
+	return i
 }
 
 // matchUntilNewline returns the count of runes from the beginning of the

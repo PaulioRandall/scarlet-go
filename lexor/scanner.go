@@ -92,14 +92,14 @@ func (s *scanner) scanNewline() (_ token.Token) {
 // token is returned.
 func (s *scanner) scanComment() (_ token.Token) {
 
-	if s.doesNotMatch(terminal_commentStart) {
+	if s.doesNotMatch(0, terminal_commentStart) {
 		return
 	}
 
 	const PREFIXES = 1 // Number of terminals that signify a comment start
-
 	n := s.matchUntilNewline(PREFIXES)
-	return s.tokenize(n+PREFIXES, token.COMMENT, false)
+
+	return s.tokenize(n, token.COMMENT, false)
 }
 
 // scanSpace attempts to scan a series of whitespace characters. If successful
@@ -121,29 +121,34 @@ func (s *scanner) scanSpace() (_ token.Token) {
 
 // scanNumLiteral attempts to scan a literal number. If successful a non-empty
 // number literal token is returned.
-func (scn *scanner) scanNumLiteral() (_ token.Token) {
+func (s *scanner) scanNumLiteral() (_ token.Token) {
 
-	r := scn.runes
-	n := countDigits(r, 0)
+	const DELIM_LEN = 1
 
-	if n == 0 {
+	isNotDigit := func(_ int, ru rune) bool {
+		return !unicode.IsDigit(ru)
+	}
+
+	intLen := s.matchUntil(0, isNotDigit)
+
+	if intLen == 0 {
 		return
 	}
 
-	if n == len(r) || r[n] != terminal_fractionalDelim {
-		return scn.tokenize(n, token.INT, false)
+	if intLen == s.len() || s.doesNotMatch(intLen, terminal_fractionalDelim) {
+		return s.tokenize(intLen, token.INT, false)
 	}
 
-	n++ // +1 for decimal point
-	d := countDigits(r, n)
-	if d == 0 {
-		panic(bard.NewTerror(scn.line, scn.col+n, nil,
+	fractionalLen := s.matchUntil(intLen+DELIM_LEN, isNotDigit)
+
+	if fractionalLen == 0 {
+		panic(bard.NewTerror(s.line, s.col+intLen+DELIM_LEN, nil,
 			"Expected digit after decimal point",
 		))
 	}
 
-	n += d
-	return scn.tokenize(n, token.REAL, false)
+	n := intLen + DELIM_LEN + fractionalLen
+	return s.tokenize(n, token.REAL, false)
 }
 
 // scanStrLiteral attempts to scan a string literal. If successful a non-empty
