@@ -20,7 +20,6 @@ const (
 	DO          Kind = `DO`
 	INLINE      Kind = `INLINE`
 	MATCH       Kind = `MATCH`
-	WATCH       Kind = `WATCH`
 	END         Kind = `END`
 	ID          Kind = `ID`
 	DELIM       Kind = `DELIM`

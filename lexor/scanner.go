@@ -395,8 +395,6 @@ func keywordOrID(r []rune) token.Kind {
 		return token.FUNC
 	case `DO`:
 		return token.DO
-	case `WATCH`:
-		return token.WATCH
 	case `MATCH`:
 		return token.MATCH
 	case `END`:
