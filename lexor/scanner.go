@@ -81,7 +81,7 @@ func (s *scanner) Next() (tk token.Token) {
 // newline token is returned.
 func (s *scanner) scanNewline() (_ token.Token) {
 
-	if n := s.countNewlineTerminals(0); n > 0 {
+	if n := s.howManyNewlineTerminals(0); n > 0 {
 		return s.tokenize(n, token.NEWLINE, true)
 	}
 
@@ -97,7 +97,7 @@ func (s *scanner) scanComment() (_ token.Token) {
 	}
 
 	const PREFIXES = 1 // Number of terminals that signify a comment start
-	n := s.countUntilNewline(PREFIXES)
+	n := s.howManyRunesUntilNewline(PREFIXES)
 
 	return s.tokenize(n, token.COMMENT, false)
 }
@@ -115,7 +115,7 @@ func (s *scanner) scanSpace() (_ token.Token) {
 		return
 	}
 
-	n := s.countUntil(0, isSpace)
+	n := s.howManyRunesUntil(0, isSpace)
 	return s.tokenize(n, token.WHITESPACE, false)
 }
 
@@ -129,7 +129,7 @@ func (s *scanner) scanNumLiteral() (_ token.Token) {
 		return !unicode.IsDigit(ru)
 	}
 
-	intLen := s.countUntil(0, isNotDigit)
+	intLen := s.howManyRunesUntil(0, isNotDigit)
 
 	if intLen == 0 {
 		return
@@ -139,7 +139,7 @@ func (s *scanner) scanNumLiteral() (_ token.Token) {
 		return s.tokenize(intLen, token.INT, false)
 	}
 
-	fractionalLen := s.countUntil(intLen+DELIM_LEN, isNotDigit)
+	fractionalLen := s.howManyRunesUntil(intLen+DELIM_LEN, isNotDigit)
 
 	if fractionalLen == 0 {
 		panic(bard.NewTerror(s.line, s.col+intLen+DELIM_LEN, nil,
@@ -152,153 +152,170 @@ func (s *scanner) scanNumLiteral() (_ token.Token) {
 }
 
 // scanStrLiteral attempts to scan a string literal. If successful a non-empty
-// string literal token is returned. Assumes that the scanners rune array
+// string literal token is returned. Assumes that the scanners rune slice
 // length is greater than 0.
-func (scn *scanner) scanStrLiteral() (_ token.Token) {
+func (s *scanner) scanStrLiteral() (_ token.Token) {
 
-	for i, ru := range scn.runes {
-		switch {
-		case i == 0 && ru != terminal_stringStart:
-			return
-		case i == 0:
-			continue
-		case ru == terminal_stringEnd:
-			return scn.tokenize(i+1, token.STR, false)
-		case ru == terminal_lineFeed:
-			goto ERROR
-		}
+	panic_unterminatedString := func() {
+		panic(bard.NewTerror(s.line, s.col, nil,
+			"Unterminated string literal",
+		))
 	}
 
-ERROR:
-	panic(bard.NewTerror(scn.line, scn.col, nil,
-		"Unterminated string literal",
-	))
+	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
+
+		switch {
+		case i == 0 && ru != terminal_stringStart:
+			return true
+		case i == 0:
+			return false
+		case ru == terminal_stringEnd:
+			return true
+		case s.matchesNewline(i):
+			panic_unterminatedString()
+		}
+
+		return false
+	})
+
+	if n == 0 {
+		return
+	}
+
+	if n == s.len() {
+		panic_unterminatedString()
+	}
+
+	return s.tokenize(n+1, token.STR, false)
 }
 
 // scanStrTemplate attempts to scan a string template. If successful a non-empty
 // string template token is returned. Assumes that the scanners rune array
 // length is greater than 0.
-func (scn *scanner) scanStrTemplate() (_ token.Token) {
+func (s *scanner) scanStrTemplate() (_ token.Token) {
 
-	prev := rune(0)
+	panic_unterminatedString := func() {
+		panic(bard.NewTerror(s.line, s.col, nil,
+			"Unterminated string template",
+		))
+	}
 
-	for i, ru := range scn.runes {
+	var prev rune
+
+	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
 
 		switch {
 		case i == 0 && ru != terminal_templateStart:
-			return
+			return true
 		case i == 0 && ru == terminal_templateStart:
-			break
+			return false
 		case prev != terminal_templateEscape && ru == terminal_templateEnd:
-			return scn.tokenize(i+1, token.TEMPLATE, false)
-		case ru == terminal_lineFeed:
-			goto ERROR
+			return true
+		case s.matchesNewline(i):
+			panic_unterminatedString()
 		}
 
-		prev = ru
+		return false
+	})
+
+	if n == 0 {
+		return
 	}
 
-ERROR:
-	panic(bard.NewTerror(scn.line, scn.col, nil,
-		"Unterminated string template",
-	))
+	if n == s.len() {
+		panic_unterminatedString()
+	}
+
+	return s.tokenize(n+1, token.TEMPLATE, false)
 }
 
 // scanWord attempts to scan a keyword or identifier. If successful a non-empty
 // keyword or identifier token is returned.
-func (scn *scanner) scanWord() (_ token.Token) {
+func (s *scanner) scanWord() (_ token.Token) {
 
-	var n int
-	r := scn.runes
+	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
 
-	for _, ru := range r {
-		if ru != terminal_wordUnderscore && !unicode.IsLetter(ru) {
-			break
+		if i == 0 && ru == terminal_wordUnderscore {
+			return true
 		}
 
-		n++
-	}
+		return ru != terminal_wordUnderscore && !unicode.IsLetter(ru)
+	})
 
-	if n == 0 || (n == 1 && r[0] == terminal_wordUnderscore) {
+	if n == 0 {
 		return
 	}
 
-	k := identifyAskeywordOrID(r[:n])
-	return scn.tokenize(n, k, false)
+	k := identifyAskeywordOrID(s.runes[:n])
+	return s.tokenize(n, k, false)
 }
 
 // scanSymbol attempts to scan a symbol token. If successful a non-empty
 // symbol token is returned. Assumes that the scanners rune array length is
 // greater than 0.
-func (scn *scanner) scanSymbol() (_ token.Token) {
+func (s *scanner) scanSymbol() (_ token.Token) {
 
-	var (
-		a rune
-		b rune
-		n int
-		k token.Kind
-	)
+	var n int
+	var k token.Kind
 
-	if size := len(scn.runes); size == 0 {
+	if s.empty() {
 		return
-	} else if size > 1 {
-		b = scn.runes[1]
 	}
 
-	a = scn.runes[0]
-
 	switch {
-	case a == ':' && b == '=':
+	case s.matchesNonTerminal(0, nonTerminal_assignment):
 		n, k = 2, token.ASSIGN
-	case a == '-' && b == '>': // Order matters! Must be before `-`
+	case s.matchesNonTerminal(0, nonTerminal_returnParams): // Order matters! Must be before `-`
 		n, k = 2, token.RETURNS
-	case a == '(':
+	case s.matchesTerminal(0, terminal_openParen):
 		n, k = 1, token.OPEN_PAREN
-	case a == ')':
+	case s.matchesTerminal(0, terminal_closeParen):
 		n, k = 1, token.CLOSE_PAREN
-	case a == '[':
+	case s.matchesTerminal(0, terminal_openGuard):
 		n, k = 1, token.OPEN_GUARD
-	case a == ']':
+	case s.matchesTerminal(0, terminal_closeGuard):
 		n, k = 1, token.CLOSE_GUARD
-	case a == '{':
+	case s.matchesTerminal(0, terminal_openList):
 		n, k = 1, token.OPEN_LIST
-	case a == '}':
+	case s.matchesTerminal(0, terminal_closeList):
 		n, k = 1, token.CLOSE_LIST
-	case a == ',':
+	case s.matchesTerminal(0, terminal_delim):
 		n, k = 1, token.DELIM
-	case a == '_':
+	case s.matchesTerminal(0, terminal_void):
 		n, k = 1, token.VOID
-	case a == ';':
+	case s.matchesTerminal(0, terminal_terminator):
 		n, k = 1, token.TERMINATOR
-	case a == '@':
+	case s.matchesTerminal(0, termianl_spellPrefix):
 		n, k = 1, token.SPELL
-	case a == '~' || a == '¬': // Negation
+	case s.matchesTerminal(0, terminal_universalNegation):
 		n, k = 1, token.NOT
-	case a == '+':
+	case s.matchesTerminal(0, terminal_teaDrinkingNegation):
+		n, k = 1, token.NOT
+	case s.matchesTerminal(0, terminal_mathAddition):
 		n, k = 1, token.ADD
-	case a == '-':
+	case s.matchesTerminal(0, terminal_mathSubtraction):
 		n, k = 1, token.SUBTRACT
-	case a == '*':
+	case s.matchesTerminal(0, terminal_mathMultiplication):
 		n, k = 1, token.MULTIPLY
-	case a == '/':
+	case s.matchesTerminal(0, terminal_mathDivision):
 		n, k = 1, token.DIVIDE
-	case a == '%':
+	case s.matchesTerminal(0, terminal_mathRemainder):
 		n, k = 1, token.MOD
-	case a == '&':
+	case s.matchesTerminal(0, terminal_logicalAnd):
 		n, k = 1, token.AND
-	case a == '|':
+	case s.matchesTerminal(0, terminal_logicalOr):
 		n, k = 1, token.OR
-	case a == '=':
+	case s.matchesTerminal(0, terminal_equality):
 		n, k = 1, token.EQU
-	case a == '#':
+	case s.matchesTerminal(0, terminal_inEquality):
 		n, k = 1, token.NEQ
-	case a == '<' && b == '=': // Order matters! Must be before `<`
+	case s.matchesNonTerminal(0, nonTerminal_lessThanOrEquals): // Order matters! Must be before `<`
 		n, k = 2, token.LT_OR_EQU
-	case a == '>' && b == '=': // Order matters! Must be before `<`
+	case s.matchesNonTerminal(0, nonTerminal_greaterThanOrEquals): // Order matters! Must be before `<`
 		n, k = 2, token.MT_OR_EQU
-	case a == '<':
+	case s.matchesTerminal(0, terminal_lessThan):
 		n, k = 1, token.LT
-	case a == '>':
+	case s.matchesTerminal(0, terminal_moreThan):
 		n, k = 1, token.MT
 	}
 
@@ -306,34 +323,7 @@ func (scn *scanner) scanSymbol() (_ token.Token) {
 		return
 	}
 
-	return scn.tokenize(n, k, false)
-}
-
-// tokenize slices off the next token from the scanners rune array and updates
-// the line and column numbers accordingly.
-func (scn *scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token) {
-
-	if len(scn.runes) < n {
-		panic("SANITY CHECK! Bad function argument, n is bigger than the source code")
-	}
-
-	tk = token.Token{
-		Kind:  k,
-		Value: string(scn.runes[:n]),
-		Line:  scn.line,
-		Col:   scn.col,
-	}
-
-	scn.runes = scn.runes[n:]
-
-	if newline {
-		scn.line++
-		scn.col = 0
-	} else {
-		scn.col += n
-	}
-
-	return
+	return s.tokenize(n, k, false)
 }
 
 // ****************************************************************************
