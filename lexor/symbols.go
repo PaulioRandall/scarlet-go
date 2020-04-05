@@ -93,11 +93,11 @@ func (s *scanner) doesNotMatchNewline(start int) bool {
 	return !s.matchesNewline(start)
 }
 
-// matchUntil iterates the scanners rune slice executing the function for
+// countUntil iterates the scanners rune slice executing the function for
 // on each rune. The number of runes counted before the function results in true
 // is returned to the user. If the function never returns true then the length
 // of the rune slice, from the start index, is returned.
-func (s *scanner) matchUntil(start int, f func(int, rune) bool) int {
+func (s *scanner) countUntil(start int, f func(int, rune) bool) int {
 
 	var i int
 	var ru rune
@@ -111,10 +111,10 @@ func (s *scanner) matchUntil(start int, f func(int, rune) bool) int {
 	return i
 }
 
-// matchUntilNewline returns the count of runes from the beginning of the
+// countUntilNewline returns the count of runes from the beginning of the
 // scanners rune slice to the first newline (exclusive).
-func (s *scanner) matchUntilNewline(start int) int {
-	return s.matchUntil(start, func(i int, ru rune) bool {
+func (s *scanner) countUntilNewline(start int) int {
+	return s.countUntil(start, func(i int, ru rune) bool {
 		return s.matchesNewline(i)
 	})
 }

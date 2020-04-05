@@ -97,7 +97,7 @@ func (s *scanner) scanComment() (_ token.Token) {
 	}
 
 	const PREFIXES = 1 // Number of terminals that signify a comment start
-	n := s.matchUntilNewline(PREFIXES)
+	n := s.countUntilNewline(PREFIXES)
 
 	return s.tokenize(n, token.COMMENT, false)
 }
@@ -115,7 +115,7 @@ func (s *scanner) scanSpace() (_ token.Token) {
 		return
 	}
 
-	n := s.matchUntil(0, isSpace)
+	n := s.countUntil(0, isSpace)
 	return s.tokenize(n, token.WHITESPACE, false)
 }
 
@@ -129,7 +129,7 @@ func (s *scanner) scanNumLiteral() (_ token.Token) {
 		return !unicode.IsDigit(ru)
 	}
 
-	intLen := s.matchUntil(0, isNotDigit)
+	intLen := s.countUntil(0, isNotDigit)
 
 	if intLen == 0 {
 		return
@@ -139,7 +139,7 @@ func (s *scanner) scanNumLiteral() (_ token.Token) {
 		return s.tokenize(intLen, token.INT, false)
 	}
 
-	fractionalLen := s.matchUntil(intLen+DELIM_LEN, isNotDigit)
+	fractionalLen := s.countUntil(intLen+DELIM_LEN, isNotDigit)
 
 	if fractionalLen == 0 {
 		panic(bard.NewTerror(s.line, s.col+intLen+DELIM_LEN, nil,
