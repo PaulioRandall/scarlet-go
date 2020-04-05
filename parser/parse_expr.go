@@ -13,7 +13,7 @@ type Stat Expr
 // parseStat parses the next statement.
 func (p *Parser) parseStat(inline bool) Stat {
 	switch tk := p.peek(); tk.Kind {
-	case token.FIX, token.ID:
+	case token.ID:
 		return p.parseAssign(inline)
 	default:
 		panic(bard.NewHorror(tk, nil,

@@ -50,7 +50,6 @@ func TestParser_parse_1(t *testing.T) {
 		[]Stat{
 			assignStat{
 				tks[1],
-				token.Token{}, // sticky
 				[]token.Token{ // ids
 					tks[0],
 				},
@@ -69,7 +68,6 @@ func TestParser_parse_1(t *testing.T) {
 
 // Parse several assignment statements
 // Parse a bool literal assignment
-// Parse a STICKY real literal assignment
 // Parse a ID to ID assignment
 func TestParser_parse_2(t *testing.T) {
 
@@ -80,46 +78,42 @@ func TestParser_parse_2(t *testing.T) {
 		tok(token.BOOL, "TRUE"),
 		tok(token.TERMINATOR, "\n"), // 3
 		// Number
-		tok(token.FIX, "FIX"),
 		tok(token.ID, "b"),
 		tok(token.ASSIGN, ":="),
 		tok(token.REAL, "123.456"),
-		tok(token.TERMINATOR, "\n"), // 8
+		tok(token.TERMINATOR, "\n"), // 7
 		// String template
 		tok(token.ID, "c"),
 		tok(token.ASSIGN, ":="),
 		tok(token.ID, "b"),
-		tok(token.TERMINATOR, "\n"), // 12
+		tok(token.TERMINATOR, "\n"), // 11
 		// EOF
 		tok(token.EOF, ""),
 	}
 
 	exp := blockStat{
 		tok(token.SOF, ""), // opener
-		tks[13],            // closer
+		tks[12],            // closer
 		[]Stat{
 			assignStat{
 				tks[1],
-				token.Token{},         // sticky
 				[]token.Token{tks[0]}, // ids
 				[]Expr{ // srcs
 					valueExpr{tks[2], Value{BOOL, true}}, // v
 				},
 			},
 			assignStat{
-				tks[6],
-				tks[4],                // sticky
-				[]token.Token{tks[5]}, // ids
+				tks[5],
+				[]token.Token{tks[4]}, // ids
 				[]Expr{ // srcs
-					valueExpr{tks[7], Value{REAL, float64(123.456)}}, // v
+					valueExpr{tks[6], Value{REAL, float64(123.456)}}, // v
 				},
 			},
 			assignStat{
-				tks[10],
-				token.Token{},         // sticky
-				[]token.Token{tks[9]}, // ids
+				tks[9],
+				[]token.Token{tks[8]}, // ids
 				[]Expr{ // srcs
-					idExpr{tks[11], "b"}, // v
+					idExpr{tks[10], "b"}, // v
 				},
 			},
 		},
@@ -159,7 +153,6 @@ func TestParser_parse_3(t *testing.T) {
 		[]Stat{
 			assignStat{
 				tks[5],
-				token.Token{}, // sticky
 				[]token.Token{ // ids
 					tks[0],
 					tks[2],
@@ -215,7 +208,6 @@ func TestParser_parse_4(t *testing.T) {
 		[]Stat{
 			assignStat{
 				tks[1],
-				token.Token{},         // sticky
 				[]token.Token{tks[0]}, // ids
 				[]Expr{ // srcs
 					listExpr{

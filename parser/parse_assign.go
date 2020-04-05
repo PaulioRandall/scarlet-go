@@ -11,11 +11,6 @@ import (
 // statement in the input channel is an assignment.
 func (p *Parser) parseAssign(inline bool) Stat {
 
-	var fix token.Token
-	if p.peek().Kind == token.FIX {
-		fix = p.take()
-	}
-
 	ids := p.parseIDs()
 	p.checkNoDuplicates(ids)
 
@@ -28,7 +23,6 @@ func (p *Parser) parseAssign(inline bool) Stat {
 
 	return assignStat{
 		ass:  ass,
-		fix:  fix,
 		ids:  ids,
 		srcs: srcs,
 	}
@@ -67,7 +61,6 @@ func (p *Parser) checkNoDuplicates(ids []token.Token) {
 // within a context.
 type assignStat struct {
 	ass  token.Token
-	fix  token.Token
 	ids  []token.Token
 	srcs []Expr
 }
@@ -75,17 +68,7 @@ type assignStat struct {
 // String satisfies the Expr interface.
 func (ex assignStat) String() (s string) {
 
-	var (
-		isFixed = ex.fix != (token.Token{})
-	)
-
-	if isFixed {
-		s += "Fix Assign (" + ex.fix.String() + ") "
-	} else {
-		s += "Assign "
-	}
-
-	s += "(" + ex.ass.String() + ")"
+	s += "Assign (" + ex.ass.String() + ")"
 
 	s += "\n\tIDs"
 	for _, id := range ex.ids {
@@ -128,9 +111,8 @@ func (ex assignStat) Eval(ctx Context) (_ Value) {
 		))
 	}
 
-	isFixed := ex.fix != (token.Token{})
 	for i := 0; i < idCount; i++ {
-		ctx.set(ex.ids[i].Value, values[i], isFixed)
+		ctx.set(ex.ids[i].Value, values[i])
 	}
 
 	return

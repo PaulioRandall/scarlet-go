@@ -4,51 +4,32 @@ import (
 	"github.com/PaulioRandall/scarlet-go/bard"
 )
 
-// variable represents a value stored against an identifier within a context.
-type variable struct {
-	val     Value
-	isFixed bool
-}
-
 // Context represents the current executing context. It contains all state
 // available to the current scope such as available variables.
 type Context struct {
-	vars map[string]variable
+	vars map[string]Value
 }
 
-// NewContext creates a new context with variable and global identifier maps
-// pre-initialised.
+// NewContext creates a new context with an intialised variable map.
 func NewContext() Context {
 	return Context{
-		vars: make(map[string]variable),
+		vars: make(map[string]Value),
 	}
 }
 
 // String returns a human readable string representation of the context.
 func (ctx Context) String() (s string) {
 
-	appendVars := func(fixed bool) {
+	s += "variable:" + "\n"
 
-		empty := true
-
-		for id, v := range ctx.vars {
-			if v.isFixed == fixed {
-				empty = false
-				s += "\t" + id + " (" + string(v.val.k) + ") " + v.val.String() + "\n"
-			}
-		}
-
-		if empty {
-			s += "\t" + "(Empty)" + "\n"
-		}
-
+	if len(ctx.vars) == 0 {
+		s += "\t" + "(Empty)" + "\n"
+		return
 	}
 
-	s += "fixed:" + "\n"
-	appendVars(true)
-
-	s += "variable:" + "\n"
-	appendVars(false)
+	for id, v := range ctx.vars {
+		s += "\t" + id + " (" + string(v.k) + ") " + v.String() + "\n"
+	}
 
 	return
 }
@@ -58,7 +39,7 @@ func (ctx Context) String() (s string) {
 func (ctx Context) get(id string) (_ Value) {
 
 	if v, ok := ctx.vars[id]; ok {
-		return v.val
+		return v
 	}
 
 	return
@@ -78,51 +59,14 @@ func (ctx Context) resolve(id string) (_ Value) {
 	return v
 }
 
-// set creates or updates a variable.
-func (ctx Context) set(id string, val Value, isFixed bool) {
+// set creates or updates a variable. Passing a VOID value signifies the entry
+// is to be deleted.
+func (ctx Context) set(id string, v Value) {
 
-	if v := ctx.vars[id]; v.isFixed {
-		panic(bard.NewNightmare(nil,
-			"Cannot reassign the fixed variable '%v'", id,
-		))
-	}
-
-	if val.k == VOID {
+	if v.k == VOID {
 		delete(ctx.vars, id)
 		return
 	}
 
-	ctx.vars[id] = variable{
-		val:     val,
-		isFixed: isFixed,
-	}
-}
-
-// override creates or updates a variable ignoring the existence of a previous
-// fixed value.
-func (ctx Context) override(id string, val Value, isFixed bool) {
-
-	if val.k == VOID {
-		delete(ctx.vars, id)
-		return
-	}
-
-	ctx.vars[id] = variable{
-		val:     val,
-		isFixed: isFixed,
-	}
-}
-
-// sub returns a copy of the context with only fixed variables.
-func (ctx Context) sub() Context {
-
-	sub := NewContext()
-
-	for id, v := range ctx.vars {
-		if v.isFixed {
-			sub.vars[id] = v
-		}
-	}
-
-	return sub
+	ctx.vars[id] = v
 }

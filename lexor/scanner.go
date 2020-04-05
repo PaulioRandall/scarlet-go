@@ -391,8 +391,6 @@ func countDigits(r []rune, start int) (n int) {
 // If no keyword can be found then the identifier kind is returned.
 func keywordOrID(r []rune) token.Kind {
 	switch string(r) {
-	case `FIX`:
-		return token.FIX
 	case `F`:
 		return token.FUNC
 	case `DO`:

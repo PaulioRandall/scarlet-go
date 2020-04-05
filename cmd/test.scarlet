@@ -1,13 +1,12 @@
 
 a := `abc`
-
-FIX b := "xyz"
+b := "xyz"
 
 c, d := TRUE, FALSE
 d, c := c, d
 d := _
 
-FIX e, f := 123, 123.456
+e, f := 123, 123.456
 
 g := {
 	123, c,
@@ -15,13 +14,12 @@ g := {
 }
 
 h := F(a, b -> a, c) DO
-	FIX x := F(x, y) DO
+	x := F(x, y) DO
 		x := 1
 	END
 END
 
 i := F(k, l -> k, l, m, n) DO
-	m := f
 	n := TRUE
 END
 

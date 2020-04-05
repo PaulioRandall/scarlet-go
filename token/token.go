@@ -16,7 +16,6 @@ const (
 	COMMENT     Kind = `COMMENT`
 	WHITESPACE  Kind = `WHITESPACE`
 	NEWLINE     Kind = `NEWLINE`
-	FIX         Kind = `FIX`
 	FUNC        Kind = `FUNC`
 	DO          Kind = `DO`
 	INLINE      Kind = `INLINE`

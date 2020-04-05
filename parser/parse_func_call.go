@@ -61,17 +61,17 @@ func (call funcCallExpr) Eval(ctx Context) Value {
 		panic(bard.NewHorror(call.id, nil, "Too many arguments"))
 	}
 
-	inSize := len(call.params)
-	sub := ctx.sub()
+	paramCount := len(call.params)
+	sub := NewContext()
 
 	for _, id := range f.output {
-		sub.override(id.Value, Value{VOID, nil}, false)
+		sub.set(id.Value, Value{VOID, nil})
 	}
 
-	for i := 0; i < inSize; i++ {
+	for i := 0; i < paramCount; i++ {
 		val := call.params[i].Eval(ctx)
 		id := f.input[i].Value
-		sub.override(id, val, false)
+		sub.set(id, val)
 	}
 
 	f.body.Eval(sub)
