@@ -10,29 +10,29 @@ import (
 func (p *Parser) parseFuncDef() Expr {
 
 	f := funcDefExpr{
-		opener: p.takeEnsure(token.FUNC),
+		opener: p.takeEnsure(token.KIND_FUNC),
 	}
 
-	p.takeEnsure(token.OPEN_PAREN)
+	p.takeEnsure(token.KIND_OPEN_PAREN)
 
-	if p.peek().Kind != token.CLOSE_PAREN {
-		if p.peek().Kind != token.RETURNS {
+	if p.peek().Kind != token.KIND_CLOSE_PAREN {
+		if p.peek().Kind != token.KIND_RETURNS {
 			f.input = p.parseIDs()
 		}
 
-		if p.peek().Kind == token.RETURNS {
+		if p.peek().Kind == token.KIND_RETURNS {
 			p.take()
 			f.output = p.parseIDs()
 		}
 	}
 
-	closeParen := p.takeEnsure(token.CLOSE_PAREN)
+	closeParen := p.takeEnsure(token.KIND_CLOSE_PAREN)
 
-	if p.peek().Kind == token.DO {
+	if p.peek().Kind == token.KIND_DO {
 		f.body = p.parseStats(p.take())
 	} else {
 		f.body = blockStat{
-			opener: token.New(token.INLINE, "", closeParen.Line, closeParen.Col),
+			opener: token.New(token.KIND_INLINE, "", closeParen.Line, closeParen.Col),
 			block:  []Stat{p.parseStat(true)},
 		}
 	}

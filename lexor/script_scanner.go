@@ -45,7 +45,7 @@ func (s *scanner) Next() (tk token.Token) {
 
 	if s.empty() {
 		return token.Token{
-			Kind: token.EOF,
+			Kind: token.KIND_EOF,
 			Line: s.line,
 			Col:  s.col,
 		}
@@ -82,7 +82,7 @@ func (s *scanner) Next() (tk token.Token) {
 func (s *scanner) scanNewline() (_ token.Token) {
 
 	if n := s.howManyNewlineTerminals(0); n > 0 {
-		return s.tokenize(n, token.NEWLINE, true)
+		return s.tokenize(n, token.KIND_NEWLINE, true)
 	}
 
 	return
@@ -99,7 +99,7 @@ func (s *scanner) scanComment() (_ token.Token) {
 	const PREFIXES = 1 // Number of terminals that signify a comment start
 	n := s.howManyRunesUntilNewline(PREFIXES)
 
-	return s.tokenize(n, token.COMMENT, false)
+	return s.tokenize(n, token.KIND_COMMENT, false)
 }
 
 // scanSpace attempts to scan a series of whitespace characters. If successful
@@ -116,7 +116,7 @@ func (s *scanner) scanSpace() (_ token.Token) {
 	}
 
 	n := s.howManyRunesUntil(0, isSpace)
-	return s.tokenize(n, token.WHITESPACE, false)
+	return s.tokenize(n, token.KIND_WHITESPACE, false)
 }
 
 // scanNumLiteral attempts to scan a literal number. If successful a non-empty
@@ -280,23 +280,23 @@ func (s *scanner) scanSymbol() (_ token.Token) {
 
 	switch { // The order matters! This might be best moved to the token package.
 	case s.matchesNonTerminal(0, token.NON_TERMINAL_ASSIGNMENT):
-		n, k = 2, token.ASSIGN
+		n, k = 2, token.KIND_ASSIGN
 	case s.matchesNonTerminal(0, token.NON_TERMINAL_RETURN_PARAMS):
-		n, k = 2, token.RETURNS
+		n, k = 2, token.KIND_RETURNS
 	case s.matchesTerminal(0, token.TERMINAL_OPEN_PAREN):
-		n, k = 1, token.OPEN_PAREN
+		n, k = 1, token.KIND_OPEN_PAREN
 	case s.matchesTerminal(0, token.TERMINAL_CLOSE_PAREN):
-		n, k = 1, token.CLOSE_PAREN
+		n, k = 1, token.KIND_CLOSE_PAREN
 	case s.matchesTerminal(0, token.TERMINAL_OPEN_GUARD):
-		n, k = 1, token.OPEN_GUARD
+		n, k = 1, token.KIND_OPEN_GUARD
 	case s.matchesTerminal(0, token.TERMINAL_CLOSE_GUARD):
-		n, k = 1, token.CLOSE_GUARD
+		n, k = 1, token.KIND_CLOSE_GUARD
 	case s.matchesTerminal(0, token.TERMINAL_OPEN_LIST):
-		n, k = 1, token.OPEN_LIST
+		n, k = 1, token.KIND_OPEN_LIST
 	case s.matchesTerminal(0, token.TERMINAL_CLOSE_LIST):
-		n, k = 1, token.CLOSE_LIST
+		n, k = 1, token.KIND_CLOSE_LIST
 	case s.matchesTerminal(0, token.TERMINAL_LIST_DELIM):
-		n, k = 1, token.DELIM
+		n, k = 1, token.KIND_DELIM
 	case s.matchesTerminal(0, token.TERMINAL_VOID_VALUE):
 		n, k = 1, token.VOID
 	case s.matchesTerminal(0, token.TERMINAL_STATEMENT_TERMINATOR):
@@ -335,7 +335,7 @@ func (s *scanner) scanSymbol() (_ token.Token) {
 		n, k = 1, token.MT
 	}
 
-	if k == token.UNDEFINED {
+	if k == token.KIND_UNDEFINED {
 		return
 	}
 
@@ -368,8 +368,8 @@ func identifyAskeywordOrID(r []rune) token.Kind {
 	s := string(r)
 	k := identifyKeyword(s)
 
-	if k == token.UNDEFINED {
-		return token.ID
+	if k == token.KIND_UNDEFINED {
+		return token.KIND_ID
 	}
 
 	return k

@@ -23,7 +23,7 @@ func New(in chan token.Token) *Parser {
 // of statements.
 func (p *Parser) Parse() (_ Stat) {
 	return p.parseStats(token.Token{
-		Kind: token.SOF,
+		Kind: token.KIND_SOF,
 	})
 }
 

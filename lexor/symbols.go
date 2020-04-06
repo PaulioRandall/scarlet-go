@@ -10,18 +10,18 @@ func identifyKeyword(nonTerminal string) token.Kind {
 
 	switch nonTerminal {
 	case token.NON_TERMINAL_FUNCTION:
-		return token.FUNC
+		return token.KIND_FUNC
 	case token.NON_TERMINAL_NORMAL_BLOCK_START:
-		return token.DO
+		return token.KIND_DO
 	case token.NON_TERMINAL_MATCH_BLOCK_START:
-		return token.MATCH
+		return token.KIND_MATCH
 	case token.NON_TERMINAL_BLOCK_END:
-		return token.END
+		return token.KIND_END
 	case token.NON_TERMINAL_TRUE, token.NON_TERMINAL_FALSE:
 		return token.BOOL
 	}
 
-	return token.UNDEFINED
+	return token.KIND_UNDEFINED
 }
 
 // empty returns true if the scanners rune slice is empty.

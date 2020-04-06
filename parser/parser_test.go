@@ -37,16 +37,16 @@ func doTestParse(t *testing.T, exp Expr, tokens ...token.Token) {
 func TestParser_parse_1(t *testing.T) {
 
 	tks := []token.Token{
-		tok(token.ID, "abc"),
-		tok(token.ASSIGN, ":="),
+		tok(token.KIND_ID, "abc"),
+		tok(token.KIND_ASSIGN, ":="),
 		tok(token.STR, "xyz"),
 		tok(token.TERMINATOR, "\n"),
-		tok(token.EOF, ""),
+		tok(token.KIND_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.SOF, ""), // opener
-		tks[4],             // closer
+		tok(token.KIND_SOF, ""), // opener
+		tks[4],                  // closer
 		[]Stat{
 			assignStat{
 				tks[1],
@@ -73,27 +73,27 @@ func TestParser_parse_2(t *testing.T) {
 
 	tks := []token.Token{
 		// Bool
-		tok(token.ID, "a"),
-		tok(token.ASSIGN, ":="),
+		tok(token.KIND_ID, "a"),
+		tok(token.KIND_ASSIGN, ":="),
 		tok(token.BOOL, "TRUE"),
 		tok(token.TERMINATOR, "\n"), // 3
 		// Number
-		tok(token.ID, "b"),
-		tok(token.ASSIGN, ":="),
+		tok(token.KIND_ID, "b"),
+		tok(token.KIND_ASSIGN, ":="),
 		tok(token.REAL, "123.456"),
 		tok(token.TERMINATOR, "\n"), // 7
 		// String template
-		tok(token.ID, "c"),
-		tok(token.ASSIGN, ":="),
-		tok(token.ID, "b"),
+		tok(token.KIND_ID, "c"),
+		tok(token.KIND_ASSIGN, ":="),
+		tok(token.KIND_ID, "b"),
 		tok(token.TERMINATOR, "\n"), // 11
 		// EOF
-		tok(token.EOF, ""),
+		tok(token.KIND_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.SOF, ""), // opener
-		tks[12],            // closer
+		tok(token.KIND_SOF, ""), // opener
+		tks[12],                 // closer
 		[]Stat{
 			assignStat{
 				tks[1],
@@ -130,26 +130,26 @@ func TestParser_parse_3(t *testing.T) {
 
 	tks := []token.Token{
 		// ids
-		tok(token.ID, "a"),
-		tok(token.DELIM, ","),
-		tok(token.ID, "b"),
-		tok(token.DELIM, ","),
-		tok(token.ID, "c"),
-		tok(token.ASSIGN, ":="),
+		tok(token.KIND_ID, "a"),
+		tok(token.KIND_DELIM, ","),
+		tok(token.KIND_ID, "b"),
+		tok(token.KIND_DELIM, ","),
+		tok(token.KIND_ID, "c"),
+		tok(token.KIND_ASSIGN, ":="),
 		// srcs
 		tok(token.BOOL, "TRUE"),
-		tok(token.DELIM, ","),
+		tok(token.KIND_DELIM, ","),
 		tok(token.INT, "123"),
-		tok(token.DELIM, ","),
+		tok(token.KIND_DELIM, ","),
 		tok(token.TEMPLATE, `"Caribbean"`),
 		tok(token.TERMINATOR, "\n"),
 		// EOF
-		tok(token.EOF, ""),
+		tok(token.KIND_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.SOF, ""), // opener
-		tks[12],            // closer
+		tok(token.KIND_SOF, ""), // opener
+		tks[12],                 // closer
 		[]Stat{
 			assignStat{
 				tks[5],
@@ -177,34 +177,34 @@ func TestParser_parse_4(t *testing.T) {
 
 	tks := []token.Token{
 		// Line 1
-		tok(token.ID, "list"),
-		tok(token.ASSIGN, ":="),
-		tok(token.OPEN_LIST, "{"),
+		tok(token.KIND_ID, "list"),
+		tok(token.KIND_ASSIGN, ":="),
+		tok(token.KIND_OPEN_LIST, "{"),
 		tok(token.TERMINATOR, "\n"), // index: 3
 		// Line 2
 		tok(token.STR, "abc"),
-		tok(token.DELIM, ","),
+		tok(token.KIND_DELIM, ","),
 		tok(token.REAL, "123.456"),
-		tok(token.DELIM, ","),
+		tok(token.KIND_DELIM, ","),
 		tok(token.TERMINATOR, "\n"), // 8
 		// Line 3
-		tok(token.OPEN_LIST, "{"),
+		tok(token.KIND_OPEN_LIST, "{"),
 		tok(token.TEMPLATE, "xyz"),
-		tok(token.DELIM, ","),
+		tok(token.KIND_DELIM, ","),
 		tok(token.BOOL, "TRUE"), // 12
-		tok(token.CLOSE_LIST, "}"),
-		tok(token.DELIM, ","),
+		tok(token.KIND_CLOSE_LIST, "}"),
+		tok(token.KIND_DELIM, ","),
 		tok(token.TERMINATOR, "\n"), // 15
 		// Line 4
-		tok(token.CLOSE_LIST, "}"),
+		tok(token.KIND_CLOSE_LIST, "}"),
 		tok(token.TERMINATOR, "\n"), // 17
 		// EOF
-		tok(token.EOF, ""),
+		tok(token.KIND_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.SOF, ""), // field: opener
-		tks[18],            // closer
+		tok(token.KIND_SOF, ""), // field: opener
+		tks[18],                 // closer
 		[]Stat{
 			assignStat{
 				tks[1],

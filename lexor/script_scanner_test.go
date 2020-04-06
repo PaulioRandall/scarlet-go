@@ -39,43 +39,43 @@ func TestScanner_Next_1(t *testing.T) {
 
 	doTest(t, sc,
 		// Line 0
-		tok(token.NEWLINE, "\r\n", 0, 0),
+		tok(token.KIND_NEWLINE, "\r\n", 0, 0),
 		// Line 1
-		tok(token.WHITESPACE, " \t\r\v\f", 1, 0),
-		tok(token.COMMENT, "// comment", 1, 5),
-		tok(token.NEWLINE, "\n", 1, 15),
+		tok(token.KIND_WHITESPACE, " \t\r\v\f", 1, 0),
+		tok(token.KIND_COMMENT, "// comment", 1, 5),
+		tok(token.KIND_NEWLINE, "\n", 1, 15),
 		// Line 2
 		tok(token.INT, "123", 2, 0),
-		tok(token.WHITESPACE, " ", 2, 3),
+		tok(token.KIND_WHITESPACE, " ", 2, 3),
 		tok(token.REAL, "123.456", 2, 4),
-		tok(token.NEWLINE, "\r\n", 2, 11),
+		tok(token.KIND_NEWLINE, "\r\n", 2, 11),
 		// Line 3
 		tok(token.STR, "`abc`", 3, 0),
 		tok(token.TEMPLATE, `"abc"`, 3, 5),
-		tok(token.NEWLINE, "\n", 3, 10),
+		tok(token.KIND_NEWLINE, "\n", 3, 10),
 		// Line 4
-		tok(token.ID, "abc_xyz", 4, 0),
-		tok(token.NEWLINE, "\r\n", 4, 7),
+		tok(token.KIND_ID, "abc_xyz", 4, 0),
+		tok(token.KIND_NEWLINE, "\r\n", 4, 7),
 		// Line 5
-		tok(token.FUNC, "F", 5, 0),
-		tok(token.WHITESPACE, " ", 5, 1),
-		tok(token.MATCH, "MATCH", 5, 2),
-		tok(token.WHITESPACE, " ", 5, 7),
+		tok(token.KIND_FUNC, "F", 5, 0),
+		tok(token.KIND_WHITESPACE, " ", 5, 1),
+		tok(token.KIND_MATCH, "MATCH", 5, 2),
+		tok(token.KIND_WHITESPACE, " ", 5, 7),
 		tok(token.BOOL, "TRUE", 5, 8),
-		tok(token.NEWLINE, "\n", 5, 12),
+		tok(token.KIND_NEWLINE, "\n", 5, 12),
 		// Line 6
 		tok(token.SPELL, "@", 6, 0),
 		tok(token.NOT, "~", 6, 1),
-		tok(token.ASSIGN, ":=", 6, 2),
+		tok(token.KIND_ASSIGN, ":=", 6, 2),
 		tok(token.MULTIPLY, "*", 6, 4),
-		tok(token.RETURNS, "->", 6, 5),
-		tok(token.CLOSE_PAREN, ")", 6, 7),
-		tok(token.NEWLINE, "\r\n", 6, 8),
+		tok(token.KIND_RETURNS, "->", 6, 5),
+		tok(token.KIND_CLOSE_PAREN, ")", 6, 7),
+		tok(token.KIND_NEWLINE, "\r\n", 6, 8),
 		// Line 7
 	)
 
 	expEOF := token.Token{
-		Kind: token.EOF,
+		Kind: token.KIND_EOF,
 		Line: 7,
 		Col:  0,
 	}

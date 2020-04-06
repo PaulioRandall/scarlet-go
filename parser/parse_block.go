@@ -21,16 +21,16 @@ func (p *Parser) parseStats(opener token.Token) Stat {
 
 	for {
 		switch tk := p.peek(); tk.Kind {
-		case token.END:
-			if opener.Kind == token.SOF {
+		case token.KIND_END:
+			if opener.Kind == token.KIND_SOF {
 				panic(bard.NewHorror(tk, nil,
 					"Expected EOF, found a block closing token instead",
 				))
 			}
 			goto BLOCK_PARSED
 
-		case token.EOF:
-			if opener.Kind != token.SOF {
+		case token.KIND_EOF:
+			if opener.Kind != token.KIND_SOF {
 				panic(bard.NewHorror(tk, nil,
 					"Expected a block closing token, found EOF instead",
 				))

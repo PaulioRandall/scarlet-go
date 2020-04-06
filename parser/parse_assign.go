@@ -14,7 +14,7 @@ func (p *Parser) parseAssign(inline bool) Stat {
 	ids := p.parseIDs()
 	p.checkNoDuplicates(ids)
 
-	ass := p.takeEnsure(token.ASSIGN)
+	ass := p.takeEnsure(token.KIND_ASSIGN)
 	srcs := p.parseDelimExpr(true)
 
 	if !inline {
@@ -32,10 +32,10 @@ func (p *Parser) parseAssign(inline bool) Stat {
 func (p *Parser) parseIDs() (ids []token.Token) {
 	for {
 
-		tk := p.takeEnsure(token.ID)
+		tk := p.takeEnsure(token.KIND_ID)
 		ids = append(ids, tk)
 
-		if p.peek().Kind == token.DELIM {
+		if p.peek().Kind == token.KIND_DELIM {
 			p.take()
 			continue
 		}

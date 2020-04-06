@@ -13,7 +13,7 @@ type Stat Expr
 // parseStat parses the next statement.
 func (p *Parser) parseStat(inline bool) Stat {
 	switch tk := p.peek(); tk.Kind {
-	case token.ID:
+	case token.KIND_ID:
 		return p.parseAssign(inline)
 	default:
 		panic(bard.NewHorror(tk, nil,
@@ -25,12 +25,12 @@ func (p *Parser) parseStat(inline bool) Stat {
 // parseDelimExpr parses a delimitered separated set of expressions.
 func (p *Parser) parseDelimExpr(allowVoid bool) (exs []Expr) {
 
-	for p.peek().Kind != token.CLOSE_LIST {
+	for p.peek().Kind != token.KIND_CLOSE_LIST {
 
 		ex := p.parseAssignable(allowVoid)
 		exs = append(exs, ex)
 
-		if p.peek().Kind == token.DELIM {
+		if p.peek().Kind == token.KIND_DELIM {
 			p.take()
 
 			if p.peek().Kind == token.TERMINATOR {
@@ -63,7 +63,7 @@ func (p *Parser) parseAssignable(allowVoid bool) Expr {
 			tk: p.take(),
 			v:  NewValue(tk),
 		}
-	case token.FUNC:
+	case token.KIND_FUNC:
 		return p.parseFuncDef()
 	default:
 		return p.parseExpr()
@@ -109,12 +109,12 @@ func (p *Parser) parseOperand() (ex Expr) {
 			tk: p.take(),
 			v:  NewValue(tk),
 		}
-	case token.OPEN_LIST:
+	case token.KIND_OPEN_LIST:
 		ex = p.parseList()
-	case token.ID:
+	case token.KIND_ID:
 		p.take()
 
-		if p.peek().Kind == token.OPEN_PAREN {
+		if p.peek().Kind == token.KIND_OPEN_PAREN {
 			ex = p.parseFuncCall(tk)
 			break
 		}

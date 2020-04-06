@@ -35,20 +35,20 @@ func (ev *evaluator) Next() (_ token.Token) {
 
 		k = tk.Kind
 
-		if k == token.WHITESPACE || k == token.COMMENT {
+		if k == token.KIND_WHITESPACE || k == token.KIND_COMMENT {
 			continue
 		}
 
 		switch prev {
-		case token.OPEN_LIST, token.DELIM, token.TERMINATOR:
+		case token.KIND_OPEN_LIST, token.KIND_DELIM, token.TERMINATOR:
 			fallthrough
-		case token.DO, token.UNDEFINED:
-			if k == token.NEWLINE {
+		case token.KIND_DO, token.KIND_UNDEFINED:
+			if k == token.KIND_NEWLINE {
 				continue
 			}
 		}
 
-		if k == token.NEWLINE {
+		if k == token.KIND_NEWLINE {
 			tk.Kind = token.TERMINATOR
 		}
 
