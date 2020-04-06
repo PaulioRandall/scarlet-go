@@ -7,10 +7,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// ****************************************************************************
-// * TokenStream
-// ****************************************************************************
-
 // TokenStream represents a stream of tokens.
 type TokenStream interface {
 
@@ -18,10 +14,6 @@ type TokenStream interface {
 	// if the token stream is empty.
 	Next() token.Token
 }
-
-// ****************************************************************************
-// * scanner
-// ****************************************************************************
 
 // scanner is a structure for parsing source code into tokens. It implements
 // the TokenStream interface so it may be wrapped.
@@ -54,20 +46,18 @@ func (s *scanner) Next() (tk token.Token) {
 	type scanFunc func() token.Token
 
 	fs := []scanFunc{
-		s.scanNewline,
-		s.scanSpace,
+		s.scanNewline, // LF & CRLF
+		s.scanWhitespace,
 		s.scanComment,
-		s.scanWord,
-		s.scanSymbol,
-		s.scanNumLiteral,
-		s.scanStrLiteral,
-		s.scanStrTemplate,
+		s.scanWord,   // Identifiers & keywords
+		s.scanSymbol, // :=, +, <, etc
+		s.scanNumberLiteral,
+		s.scanStringLiteral,  // `literal`
+		s.scanStringTemplate, // "Template: {identifier}"
 	}
 
 	for _, f := range fs {
-		tk = f()
-
-		if tk != token.ZERO() {
+		if tk = f(); tk != (token.Token{}) {
 			return
 		}
 	}
@@ -79,38 +69,16 @@ func (s *scanner) Next() (tk token.Token) {
 	))
 }
 
-// scanNewline attempts to scan a newline token. If successful a non-empty
-// newline token is returned.
 func (s *scanner) scanNewline() (_ token.Token) {
 
-	if n := s.howManyNewlineTerminals(0); n > 0 {
+	if n := s.countNewlineRunes(0); n > 0 {
 		return s.tokenize(n, token.KIND_NEWLINE, true)
 	}
 
 	return
 }
 
-// scanComment attempts to scan a comment. If successful a non-empty comment
-// token is returned.
-func (s *scanner) scanComment() (_ token.Token) {
-
-	const (
-		COMMENT_PREFIX     = token.LEXEME_COMMENT_START
-		COMMENT_PREFIX_LEN = len(COMMENT_PREFIX)
-	)
-
-	if s.doesNotMatchNonTerminal(0, COMMENT_PREFIX) {
-		return
-	}
-
-	n := s.howManyRunesUntilNewline(COMMENT_PREFIX_LEN)
-	return s.tokenize(n, token.KIND_COMMENT, false)
-}
-
-// scanSpace attempts to scan a series of whitespace characters. If successful
-// a non-empty whitespace token is returned. Assumes that the scanners rune
-// array length is greater than 0.
-func (s *scanner) scanSpace() (_ token.Token) {
+func (s *scanner) scanWhitespace() (_ token.Token) {
 
 	isSpace := func(i int, ru rune) bool {
 		return s.matchesNewline(i) || !unicode.IsSpace(ru)
@@ -124,152 +92,39 @@ func (s *scanner) scanSpace() (_ token.Token) {
 	return s.tokenize(n, token.KIND_WHITESPACE, false)
 }
 
-// scanNumLiteral attempts to scan a literal number. If successful a non-empty
-// number literal token is returned.
-func (s *scanner) scanNumLiteral() (_ token.Token) {
+func (s *scanner) scanComment() (_ token.Token) {
 
 	const (
-		DELIM     = token.LEXEME_FRACTIONAL_DELIM
-		DELIM_LEN = len(DELIM)
+		COMMENT_PREFIX     = token.LEXEME_COMMENT_START
+		COMMENT_PREFIX_LEN = len(COMMENT_PREFIX)
 	)
 
-	isNotDigit := func(_ int, ru rune) bool {
-		return !unicode.IsDigit(ru)
-	}
-
-	intLen := s.howManyRunesUntil(0, isNotDigit)
-
-	if intLen == 0 {
+	if s.doesNotMatchNonTerminal(0, COMMENT_PREFIX) {
 		return
 	}
 
-	if intLen == s.len() || s.doesNotMatchNonTerminal(intLen, DELIM) {
-		return s.tokenize(intLen, token.INT, false)
-	}
-
-	fractionalLen := s.howManyRunesUntil(intLen+DELIM_LEN, isNotDigit)
-
-	if fractionalLen == 0 {
-		panic(bard.NewTerror(s.line, s.col+intLen+DELIM_LEN, nil,
-			"Expected digit after decimal point",
-		))
-	}
-
-	n := intLen + DELIM_LEN + fractionalLen
-	return s.tokenize(n, token.REAL, false)
+	n := s.runesUntilNewline(COMMENT_PREFIX_LEN)
+	return s.tokenize(n, token.KIND_COMMENT, false)
 }
 
-// scanStrLiteral attempts to scan a string literal. If successful a non-empty
-// string literal token is returned. Assumes that the scanners rune slice
-// length is greater than 0.
-func (s *scanner) scanStrLiteral() (_ token.Token) {
-
-	const (
-		PREFIX = token.LEXEME_STRING_START
-		SUFFIX = token.LEXEME_STRING_END
-	)
-
-	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
-
-		switch {
-		case i == 0:
-			return s.doesNotMatchNonTerminal(i, PREFIX)
-		case s.matchesNonTerminal(i, SUFFIX):
-			return true
-		case s.matchesNewline(i):
-			panic(bard.NewTerror(s.line, s.col, nil,
-				"Newline encountered before a string literal was terminated",
-			))
-		case i+1 == s.len():
-			panic(bard.NewTerror(s.line, s.col, nil,
-				"EOF encountered before a string literal was terminated",
-			))
-		}
-
-		return false
-	})
-
-	if n == 0 {
-		return
-	}
-
-	return s.tokenize(n+1, token.STR, false)
-}
-
-// scanStrTemplate attempts to scan a string template. If successful a non-empty
-// string template token is returned. Assumes that the scanners rune array
-// length is greater than 0.
-func (s *scanner) scanStrTemplate() (_ token.Token) {
-
-	const (
-		PREFIX        = token.LEXEME_TEMPLATE_START
-		SUFFIX        = token.LEXEME_TEMPLATE_END
-		SUFFIX_LEN    = len(SUFFIX)
-		ESCAPE_SYMBOL = token.LEXEME_TEMPLATE_ESCAPE
-	)
-
-	var prevEscaped bool
-
-	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
-
-		escaped := prevEscaped
-		prevEscaped = false
-
-		switch {
-		case i == 0:
-			return s.doesNotMatchNonTerminal(i, PREFIX)
-		case s.matchesNonTerminal(i, ESCAPE_SYMBOL):
-			prevEscaped = true
-			return false
-		case !escaped && s.matchesNonTerminal(i, SUFFIX):
-			return true
-		case s.matchesNewline(i):
-			panic(bard.NewTerror(s.line, s.col, nil,
-				"Newline encountered before a string template was terminated",
-			))
-		case i+1 == s.len():
-			panic(bard.NewTerror(s.line, s.col, nil,
-				"EOF encountered before a string template was terminated",
-			))
-		}
-
-		return false
-	})
-
-	if n == 0 {
-		return
-	}
-
-	n += SUFFIX_LEN
-	return s.tokenize(n, token.TEMPLATE, false)
-}
-
-// scanWord attempts to scan a keyword or identifier. If successful a non-empty
-// keyword or identifier token is returned.
 func (s *scanner) scanWord() (_ token.Token) {
 
-	const UNDERSCORE_RUNE = token.TERMINAL_WORD_UNDERSCORE
-
-	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
-
-		if i == 0 && ru == UNDERSCORE_RUNE {
-			return true
-		}
-
-		return ru != UNDERSCORE_RUNE && !unicode.IsLetter(ru)
-	})
+	n := s.countWordRunes(0)
 
 	if n == 0 {
 		return
 	}
 
-	k := identifyAskeywordOrID(s.runes[:n])
+	w := string(s.runes[:n])
+	k := token.KeywordToKind(w)
+
+	if k == token.KIND_UNDEFINED {
+		k = token.KIND_ID
+	}
+
 	return s.tokenize(n, k, false)
 }
 
-// scanSymbol attempts to scan a symbol token. If successful a non-empty
-// symbol token is returned. Assumes that the scanners rune array length is
-// greater than 0.
 func (s *scanner) scanSymbol() (_ token.Token) {
 
 	var n int
@@ -343,35 +198,110 @@ func (s *scanner) scanSymbol() (_ token.Token) {
 	return s.tokenize(n, k, false)
 }
 
-// ****************************************************************************
-// * Helper functions
-// ****************************************************************************
+func (s *scanner) scanNumberLiteral() (_ token.Token) {
 
-// countDigits counts an uninterupted series of digits in the rune slice
-// starting from the specified index.
-func countDigits(r []rune, start int) (n int) {
+	const (
+		DELIM     = token.LEXEME_FRACTIONAL_DELIM
+		DELIM_LEN = len(DELIM)
+	)
 
-	size := len(r)
+	intLen := s.countDigitRunes(0)
 
-	for n = start; n < size; n++ {
-		if !unicode.IsDigit(r[n]) {
-			break
-		}
+	if intLen == 0 {
+		return
 	}
 
-	return n - start
+	if intLen == s.len() || s.doesNotMatchNonTerminal(intLen, DELIM) {
+		return s.tokenize(intLen, token.INT, false)
+	}
+
+	fractionalLen := s.countDigitRunes(intLen + DELIM_LEN)
+
+	if fractionalLen == 0 {
+		panic(bard.NewTerror(s.line, s.col+intLen+DELIM_LEN, nil,
+			"Expected digit after decimal point",
+		))
+	}
+
+	n := intLen + DELIM_LEN + fractionalLen
+	return s.tokenize(n, token.REAL, false)
 }
 
-// identifyAskeywordOrID identifies the keyword kind represented by the input
-// rune slice. If no keyword can be found then the identifier kind is returned.
-func identifyAskeywordOrID(r []rune) token.Kind {
+func (s *scanner) scanStringLiteral() (_ token.Token) {
 
-	s := string(r)
-	k := identifyKeyword(s)
+	const (
+		PREFIX = token.LEXEME_STRING_START
+		SUFFIX = token.LEXEME_STRING_END
+	)
 
-	if k == token.KIND_UNDEFINED {
-		return token.KIND_ID
+	n := s.howManyRunesUntil(0, func(i int, _ rune) bool {
+
+		switch {
+		case i == 0:
+			return s.doesNotMatchNonTerminal(i, PREFIX)
+		case s.matchesNonTerminal(i, SUFFIX):
+			return true
+		case s.matchesNewline(i):
+			panic(bard.NewTerror(s.line, s.col, nil,
+				"Newline encountered before a string literal was terminated",
+			))
+		case i+1 == s.len():
+			panic(bard.NewTerror(s.line, s.col, nil,
+				"EOF encountered before a string literal was terminated",
+			))
+		}
+
+		return false
+	})
+
+	if n == 0 {
+		return
 	}
 
-	return k
+	return s.tokenize(n+1, token.STR, false)
+}
+
+func (s *scanner) scanStringTemplate() (_ token.Token) {
+
+	const (
+		PREFIX        = token.LEXEME_TEMPLATE_START
+		SUFFIX        = token.LEXEME_TEMPLATE_END
+		SUFFIX_LEN    = len(SUFFIX)
+		ESCAPE_SYMBOL = token.LEXEME_TEMPLATE_ESCAPE
+	)
+
+	var prevEscaped bool
+
+	n := s.howManyRunesUntil(0, func(i int, _ rune) bool {
+
+		escaped := prevEscaped
+		prevEscaped = false
+
+		switch {
+		case i == 0:
+			return s.doesNotMatchNonTerminal(i, PREFIX)
+		case s.matchesNonTerminal(i, ESCAPE_SYMBOL):
+			prevEscaped = true
+			return false
+		case !escaped && s.matchesNonTerminal(i, SUFFIX):
+			return true
+		case s.matchesNewline(i):
+			panic(bard.NewTerror(s.line, s.col, nil,
+				"Newline encountered before a string template was terminated",
+			))
+		case i+1 == s.len():
+			panic(bard.NewTerror(s.line, s.col, nil,
+				"EOF encountered before a string template was terminated",
+			))
+		}
+
+		return false
+	})
+
+	if n == 0 {
+		return
+	}
+
+	n += SUFFIX_LEN
+	return s.tokenize(n, token.TEMPLATE, false)
 }

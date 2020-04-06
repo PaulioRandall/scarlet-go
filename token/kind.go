@@ -51,14 +51,34 @@ const (
 	TERMINATOR Kind = `TERMINATOR`
 )
 
+const (
+	KEYWORD_FUNCTION    string = `F`
+	KEYWORD_BLOCK_START string = `DO`
+	KEYWORD_BLOCK_END   string = `END`
+	KEYWORD_TRUE        string = `TRUE`
+	KEYWORD_FALSE       string = `FALSE`
+)
+
+// KeywordToKind maps a non-terminal keyword to a token kind.
+func KeywordToKind(nonTerminal string) Kind {
+
+	switch nonTerminal {
+	case KEYWORD_FUNCTION:
+		return KIND_FUNC
+	case KEYWORD_BLOCK_START:
+		return KIND_DO
+	case KEYWORD_BLOCK_END:
+		return KIND_END
+	case KEYWORD_TRUE, KEYWORD_FALSE:
+		return BOOL
+	}
+
+	return KIND_UNDEFINED
+}
+
 // Collection of terminal and non-terminal symbols for ease of reference and to
 // speed up syntax experimentation.
 const (
-	LEXEME_FUNCTION         string = `F`
-	LEXEME_BLOCK_START      string = `DO`
-	LEXEME_BLOCK_END        string = `END`
-	LEXEME_TRUE             string = `TRUE`
-	LEXEME_FALSE            string = `FALSE`
 	LEXEME_NEWLINE_LF       string = "\n"
 	LEXEME_NEWLINE_CRLF     string = "\r\n"
 	LEXEME_COMMENT_START    string = "/"
@@ -69,7 +89,6 @@ const (
 	LEXEME_TEMPLATE_END     string = `"`
 	LEXEME_TEMPLATE_ESCAPE  string = `\`
 	// TODO: lexeme theses
-	TERMINAL_WORD_UNDERSCORE           rune   = '_'
 	NON_TERMINAL_ASSIGNMENT            string = `:=`
 	NON_TERMINAL_RETURN_PARAMS         string = `->`
 	TERMINAL_OPEN_PAREN                rune   = '('

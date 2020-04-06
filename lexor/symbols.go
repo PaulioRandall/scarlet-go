@@ -1,26 +1,10 @@
 package lexor
 
 import (
+	"unicode"
+
 	"github.com/PaulioRandall/scarlet-go/token"
 )
-
-// identifyKeyword identifies the kind of token the keyword (non-terminal
-// symbol) represents.
-func identifyKeyword(nonTerminal string) token.Kind {
-
-	switch nonTerminal {
-	case token.LEXEME_FUNCTION:
-		return token.KIND_FUNC
-	case token.LEXEME_BLOCK_START:
-		return token.KIND_DO
-	case token.LEXEME_BLOCK_END:
-		return token.KIND_END
-	case token.LEXEME_TRUE, token.LEXEME_FALSE:
-		return token.BOOL
-	}
-
-	return token.KIND_UNDEFINED
-}
 
 // empty returns true if the scanners rune slice is empty.
 func (s *scanner) empty() bool {
@@ -64,36 +48,10 @@ func (s *scanner) doesNotMatchNonTerminal(start int, needle string) bool {
 	return !s.matchesNonTerminal(start, needle)
 }
 
-// matches returns true if the scanners rune slice matches the specified
-// sequence of runes.
-// @Deprecated
-func (s *scanner) matchesSequence(start int, terminals ...rune) bool {
-
-	haystack := s.runes[start:]
-
-	if len(terminals) > len(haystack) {
-		return false
-	}
-
-	for i, ru := range terminals {
-		if haystack[i] != ru {
-			return false
-		}
-	}
-
-	return true
-}
-
-// doesNotMatch returns false if the scanners rune slice matches the specified
-// sequence of runes.
-func (s *scanner) doesNotMatch(start int, terminals ...rune) bool {
-	return !s.matchesSequence(start, terminals...)
-}
-
 // matchesNewline returns true if the scanners rune slice begins with a sequence
 // of newline terminals.
 func (s *scanner) matchesNewline(start int) bool {
-	return s.howManyNewlineTerminals(start) > 0
+	return s.countNewlineRunes(start) > 0
 }
 
 // noMatchNewline returns false if the scanners rune slice begins with a
@@ -106,9 +64,8 @@ func (s *scanner) doesNotMatchNewline(start int) bool {
 // on each rune. The number of runes counted before the function results in true
 // is returned to the user. If the function never returns true then the length
 // of the rune slice, from the start index, is returned.
-func (s *scanner) howManyRunesUntil(start int, f func(int, rune) bool) int {
+func (s *scanner) howManyRunesUntil(start int, f func(int, rune) bool) (i int) {
 
-	var i int
 	var ru rune
 
 	for i, ru = range s.runes[start:] {
@@ -120,36 +77,48 @@ func (s *scanner) howManyRunesUntil(start int, f func(int, rune) bool) int {
 	return i
 }
 
-// countUntilNewline returns the count of runes from the beginning of the
-// scanners rune slice to the first newline (exclusive).
-func (s *scanner) howManyRunesUntilNewline(start int) int {
+func (s *scanner) countNewlineRunes(start int) int {
+
+	const (
+		LF        = token.LEXEME_NEWLINE_LF
+		CRLF      = token.LEXEME_NEWLINE_CRLF
+		NOT_FOUND = 0
+	)
+
+	size := s.len()
+
+	if size > 0 && s.matchesNonTerminal(start, LF) {
+		return len(LF)
+	}
+
+	if size > 1 && s.matchesNonTerminal(start, CRLF) {
+		return len(CRLF)
+	}
+
+	return NOT_FOUND
+}
+
+func (s *scanner) runesUntilNewline(start int) int {
 	return s.howManyRunesUntil(start, func(i int, ru rune) bool {
 		return s.matchesNewline(i)
 	})
 }
 
-// countNewlineTerminals returns the number of newline terminal symbols that
-// make up the next token in the scanners rune slice. Zero is returned if the
-// next sequence of terminals don't represent a newline.
-func (s *scanner) howManyNewlineTerminals(start int) int {
+func (s *scanner) countWordRunes(start int) int {
+	return s.howManyRunesUntil(start, func(i int, ru rune) bool {
 
-	const (
-		LEXEME_LF   = token.LEXEME_NEWLINE_LF
-		LEXEME_CRLF = token.LEXEME_NEWLINE_CRLF
-		NOT_FOUND   = 0
-	)
+		if i == 0 && ru == '_' {
+			return true
+		}
 
-	size := s.len()
+		return ru != '_' && !unicode.IsLetter(ru)
+	})
+}
 
-	if size > 0 && s.matchesNonTerminal(start, LEXEME_LF) {
-		return len(LEXEME_LF)
-	}
-
-	if size > 1 && s.matchesNonTerminal(start, LEXEME_CRLF) {
-		return len(LEXEME_CRLF)
-	}
-
-	return NOT_FOUND
+func (s *scanner) countDigitRunes(start int) int {
+	return s.howManyRunesUntil(start, func(_ int, ru rune) bool {
+		return !unicode.IsDigit(ru)
+	})
 }
 
 // tokenize slices off the next token from the scanners rune array and updates
