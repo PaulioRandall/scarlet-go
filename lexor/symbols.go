@@ -9,15 +9,13 @@ import (
 func identifyKeyword(nonTerminal string) token.Kind {
 
 	switch nonTerminal {
-	case token.NON_TERMINAL_FUNCTION:
+	case token.LEXEME_FUNCTION:
 		return token.KIND_FUNC
-	case token.NON_TERMINAL_NORMAL_BLOCK_START:
+	case token.LEXEME_BLOCK_START:
 		return token.KIND_DO
-	case token.NON_TERMINAL_MATCH_BLOCK_START:
-		return token.KIND_MATCH
-	case token.NON_TERMINAL_BLOCK_END:
+	case token.LEXEME_BLOCK_END:
 		return token.KIND_END
-	case token.NON_TERMINAL_TRUE, token.NON_TERMINAL_FALSE:
+	case token.LEXEME_TRUE, token.LEXEME_FALSE:
 		return token.BOOL
 	}
 
@@ -134,9 +132,11 @@ func (s *scanner) howManyRunesUntilNewline(start int) int {
 func (s *scanner) howManyNewlineTerminals(start int) int {
 
 	const (
-		NONE int = 0
-		LF   int = 1
-		CRLF int = 2
+		LINEFEED_RUNE        = token.TERMINAL_LINEFEED
+		CARRIAGE_RETURN_RUNE = token.TERMINAL_CARRIAGE_RETURN
+		NONE                 = 0
+		LF                   = 1
+		CRLF                 = 2
 	)
 
 	r := s.runes[start:]
@@ -145,11 +145,11 @@ func (s *scanner) howManyNewlineTerminals(start int) int {
 	switch {
 	case size < 1:
 		return NONE
-	case r[0] == token.TERMINAL_LINEFEED:
+	case r[0] == LINEFEED_RUNE:
 		return LF
 	case size == 1:
 		return NONE
-	case r[0] == token.TERMINAL_CARRIAGE_RETURN && r[1] == token.TERMINAL_LINEFEED:
+	case r[0] == CARRIAGE_RETURN_RUNE && r[1] == LINEFEED_RUNE:
 		return CRLF
 	}
 

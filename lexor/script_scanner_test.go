@@ -34,7 +34,7 @@ func TestScanner_Next_1(t *testing.T) {
 		"123" + " " + "123.456" + "\r\n" +
 		"`abc`" + `"abc"` + "\n" +
 		"abc_xyz" + "\r\n" +
-		"F" + " " + "MATCH" + " " + "TRUE" + "\n" +
+		"F" + " " + "TRUE" + "\n" +
 		"@" + "~" + ":=" + "*" + "->" + ")" + "\r\n")
 
 	doTest(t, sc,
@@ -59,10 +59,8 @@ func TestScanner_Next_1(t *testing.T) {
 		// Line 5
 		tok(token.KIND_FUNC, "F", 5, 0),
 		tok(token.KIND_WHITESPACE, " ", 5, 1),
-		tok(token.KIND_MATCH, "MATCH", 5, 2),
-		tok(token.KIND_WHITESPACE, " ", 5, 7),
-		tok(token.BOOL, "TRUE", 5, 8),
-		tok(token.KIND_NEWLINE, "\n", 5, 12),
+		tok(token.BOOL, "TRUE", 5, 2),
+		tok(token.KIND_NEWLINE, "\n", 5, 6),
 		// Line 6
 		tok(token.SPELL, "@", 6, 0),
 		tok(token.NOT, "~", 6, 1),

@@ -26,39 +26,40 @@ const (
 	KIND_CLOSE_GUARD Kind = `GUARD_CLOSE`
 	KIND_OPEN_LIST   Kind = `LIST_OPEN`
 	KIND_CLOSE_LIST  Kind = `LIST_CLOSE`
-	SPELL            Kind = `SPELL`
-	STR              Kind = `STR`
-	TEMPLATE         Kind = `TEMPLATE`
-	INT              Kind = `INT`
-	REAL             Kind = `REAL`
-	BOOL             Kind = `BOOL`
-	NOT              Kind = `NOT`
-	ADD              Kind = `ADD`
-	SUBTRACT         Kind = `SUBTRACT`
-	MULTIPLY         Kind = `MULTIPLY`
-	DIVIDE           Kind = `DIVIDE`
-	MOD              Kind = `MOD`
-	AND              Kind = `AND`
-	OR               Kind = `OR`
-	EQU              Kind = `EQUAL`
-	NEQ              Kind = `NOT_EQUAL`
-	LT               Kind = `LESS_THAN`
-	LT_OR_EQU        Kind = `LESS_THAN_OR_EQUAL`
-	MT               Kind = `MORE_THAN`
-	MT_OR_EQU        Kind = `MORE_THAN_OR_EQUAL`
-	VOID             Kind = `VOID`
-	TERMINATOR       Kind = `TERMINATOR`
+	// TODO: kind these
+	SPELL      Kind = `SPELL`
+	STR        Kind = `STR`
+	TEMPLATE   Kind = `TEMPLATE`
+	INT        Kind = `INT`
+	REAL       Kind = `REAL`
+	BOOL       Kind = `BOOL`
+	NOT        Kind = `NOT`
+	ADD        Kind = `ADD`
+	SUBTRACT   Kind = `SUBTRACT`
+	MULTIPLY   Kind = `MULTIPLY`
+	DIVIDE     Kind = `DIVIDE`
+	MOD        Kind = `MOD`
+	AND        Kind = `AND`
+	OR         Kind = `OR`
+	EQU        Kind = `EQUAL`
+	NEQ        Kind = `NOT_EQUAL`
+	LT         Kind = `LESS_THAN`
+	LT_OR_EQU  Kind = `LESS_THAN_OR_EQUAL`
+	MT         Kind = `MORE_THAN`
+	MT_OR_EQU  Kind = `MORE_THAN_OR_EQUAL`
+	VOID       Kind = `VOID`
+	TERMINATOR Kind = `TERMINATOR`
 )
 
 // Collection of terminal and non-terminal symbols for ease of reference and to
 // speed up syntax experimentation.
 const (
-	NON_TERMINAL_FUNCTION              string = `F`
-	NON_TERMINAL_NORMAL_BLOCK_START    string = `DO`
-	NON_TERMINAL_MATCH_BLOCK_START     string = `MATCH`
-	NON_TERMINAL_BLOCK_END             string = `END`
-	NON_TERMINAL_TRUE                  string = `TRUE`
-	NON_TERMINAL_FALSE                 string = `FALSE`
+	LEXEME_FUNCTION    string = `F`
+	LEXEME_BLOCK_START string = `DO`
+	LEXEME_BLOCK_END   string = `END`
+	LEXEME_TRUE        string = `TRUE`
+	LEXEME_FALSE       string = `FALSE`
+	// TODO: lexeme theses
 	TERMINAL_CARRIAGE_RETURN           rune   = '\r'
 	TERMINAL_LINEFEED                  rune   = '\n'
 	TERMINAL_COMMENT_START             rune   = '/'
