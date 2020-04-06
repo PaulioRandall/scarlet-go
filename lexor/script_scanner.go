@@ -95,7 +95,7 @@ func (s *scanner) scanWhitespace() (_ token.Token) {
 func (s *scanner) scanComment() (_ token.Token) {
 
 	const (
-		COMMENT_PREFIX     = token.LEXEME_COMMENT_START
+		COMMENT_PREFIX     = token.SYMBOL_COMMENT_START
 		COMMENT_PREFIX_LEN = len(COMMENT_PREFIX)
 	)
 
@@ -201,7 +201,7 @@ func (s *scanner) scanSymbol() (_ token.Token) {
 func (s *scanner) scanNumberLiteral() (_ token.Token) {
 
 	const (
-		DELIM     = token.LEXEME_FRACTIONAL_DELIM
+		DELIM     = token.SYMBOL_FRACTIONAL_DELIM
 		DELIM_LEN = len(DELIM)
 	)
 
@@ -230,8 +230,8 @@ func (s *scanner) scanNumberLiteral() (_ token.Token) {
 func (s *scanner) scanStringLiteral() (_ token.Token) {
 
 	const (
-		PREFIX = token.LEXEME_STRING_START
-		SUFFIX = token.LEXEME_STRING_END
+		PREFIX = token.SYMBOL_STRING_START
+		SUFFIX = token.SYMBOL_STRING_END
 	)
 
 	n := s.howManyRunesUntil(0, func(i int, _ rune) bool {
@@ -264,10 +264,10 @@ func (s *scanner) scanStringLiteral() (_ token.Token) {
 func (s *scanner) scanStringTemplate() (_ token.Token) {
 
 	const (
-		PREFIX        = token.LEXEME_TEMPLATE_START
-		SUFFIX        = token.LEXEME_TEMPLATE_END
+		PREFIX        = token.SYMBOL_TEMPLATE_START
+		SUFFIX        = token.SYMBOL_TEMPLATE_END
 		SUFFIX_LEN    = len(SUFFIX)
-		ESCAPE_SYMBOL = token.LEXEME_TEMPLATE_ESCAPE
+		ESCAPE_SYMBOL = token.SYMBOL_TEMPLATE_ESCAPE
 	)
 
 	var prevEscaped bool

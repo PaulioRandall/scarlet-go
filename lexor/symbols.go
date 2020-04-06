@@ -80,8 +80,8 @@ func (s *scanner) howManyRunesUntil(start int, f func(int, rune) bool) (i int) {
 func (s *scanner) countNewlineRunes(start int) int {
 
 	const (
-		LF        = token.LEXEME_NEWLINE_LF
-		CRLF      = token.LEXEME_NEWLINE_CRLF
+		LF        = token.NEWLINE_LF
+		CRLF      = token.NEWLINE_CRLF
 		NOT_FOUND = 0
 	)
 

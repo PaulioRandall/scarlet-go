@@ -76,18 +76,25 @@ func KeywordToKind(nonTerminal string) Kind {
 	return KIND_UNDEFINED
 }
 
-// Collection of terminal and non-terminal symbols for ease of reference and to
-// speed up syntax experimentation.
 const (
-	LEXEME_NEWLINE_LF       string = "\n"
-	LEXEME_NEWLINE_CRLF     string = "\r\n"
-	LEXEME_COMMENT_START    string = "/"
-	LEXEME_FRACTIONAL_DELIM string = "."
-	LEXEME_STRING_START     string = "`"
-	LEXEME_STRING_END       string = "`"
-	LEXEME_TEMPLATE_START   string = `"`
-	LEXEME_TEMPLATE_END     string = `"`
-	LEXEME_TEMPLATE_ESCAPE  string = `\`
+	NEWLINE_LF   string = "\n"
+	NEWLINE_CRLF string = "\r\n"
+)
+
+const (
+	SYMBOL_STRING_START    string = "`"
+	SYMBOL_STRING_END      string = "`"
+	SYMBOL_TEMPLATE_START  string = `"`
+	SYMBOL_TEMPLATE_ESCAPE string = `\`
+	SYMBOL_TEMPLATE_END    string = `"`
+)
+
+const (
+	SYMBOL_COMMENT_START    string = "/"
+	SYMBOL_FRACTIONAL_DELIM string = "."
+)
+
+const (
 	// TODO: lexeme theses
 	NON_TERMINAL_ASSIGNMENT            string = `:=`
 	NON_TERMINAL_RETURN_PARAMS         string = `->`
