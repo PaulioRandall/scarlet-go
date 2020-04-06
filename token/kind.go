@@ -63,12 +63,12 @@ const (
 	LEXEME_NEWLINE_CRLF     string = "\r\n"
 	LEXEME_COMMENT_START    string = "/"
 	LEXEME_FRACTIONAL_DELIM string = "."
+	LEXEME_STRING_START     string = "`"
+	LEXEME_STRING_END       string = "`"
+	LEXEME_TEMPLATE_START   string = `"`
+	LEXEME_TEMPLATE_END     string = `"`
+	LEXEME_TEMPLATE_ESCAPE  string = `\`
 	// TODO: lexeme theses
-	TERMINAL_STRING_START              rune   = '`'
-	TERMINAL_STRING_END                rune   = '`'
-	TERMINAL_TEMPLATE_START            rune   = '"'
-	TERMINAL_TEMPLATE_END              rune   = '"'
-	TERMINAL_TEMPLATE_ESCAPE           rune   = '\\'
 	TERMINAL_WORD_UNDERSCORE           rune   = '_'
 	NON_TERMINAL_ASSIGNMENT            string = `:=`
 	NON_TERMINAL_RETURN_PARAMS         string = `->`

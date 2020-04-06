@@ -72,6 +72,8 @@ func (s *scanner) Next() (tk token.Token) {
 		}
 	}
 
+	println(string(s.runes))
+
 	panic(bard.NewTerror(s.line, s.col, nil,
 		"Could not identify next token",
 	))
@@ -163,27 +165,25 @@ func (s *scanner) scanNumLiteral() (_ token.Token) {
 func (s *scanner) scanStrLiteral() (_ token.Token) {
 
 	const (
-		START_RUNE = token.TERMINAL_STRING_START
-		END_RUNE   = token.TERMINAL_STRING_END
+		PREFIX = token.LEXEME_STRING_START
+		SUFFIX = token.LEXEME_STRING_END
 	)
-
-	panic_unterminatedString := func() {
-		panic(bard.NewTerror(s.line, s.col, nil,
-			"Unterminated string literal",
-		))
-	}
 
 	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
 
 		switch {
-		case i == 0 && ru != START_RUNE:
-			return true
 		case i == 0:
-			return false
-		case ru == END_RUNE:
+			return s.doesNotMatchNonTerminal(i, PREFIX)
+		case s.matchesNonTerminal(i, SUFFIX):
 			return true
 		case s.matchesNewline(i):
-			panic_unterminatedString()
+			panic(bard.NewTerror(s.line, s.col, nil,
+				"Newline encountered before a string literal was terminated",
+			))
+		case i+1 == s.len():
+			panic(bard.NewTerror(s.line, s.col, nil,
+				"EOF encountered before a string literal was terminated",
+			))
 		}
 
 		return false
@@ -191,10 +191,6 @@ func (s *scanner) scanStrLiteral() (_ token.Token) {
 
 	if n == 0 {
 		return
-	}
-
-	if n == s.len() {
-		panic_unterminatedString()
 	}
 
 	return s.tokenize(n+1, token.STR, false)
@@ -206,30 +202,35 @@ func (s *scanner) scanStrLiteral() (_ token.Token) {
 func (s *scanner) scanStrTemplate() (_ token.Token) {
 
 	const (
-		START_RUNE  = token.TERMINAL_TEMPLATE_START
-		END_RUNE    = token.TERMINAL_TEMPLATE_END
-		ESCAPE_RUNE = token.TERMINAL_TEMPLATE_ESCAPE
+		PREFIX        = token.LEXEME_TEMPLATE_START
+		SUFFIX        = token.LEXEME_TEMPLATE_END
+		SUFFIX_LEN    = len(SUFFIX)
+		ESCAPE_SYMBOL = token.LEXEME_TEMPLATE_ESCAPE
 	)
 
-	panic_unterminatedString := func() {
-		panic(bard.NewTerror(s.line, s.col, nil,
-			"Unterminated string template",
-		))
-	}
-
-	var prev rune
+	var prevEscaped bool
 
 	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
 
+		escaped := prevEscaped
+		prevEscaped = false
+
 		switch {
-		case i == 0 && ru != START_RUNE:
-			return true
-		case i == 0 && ru == END_RUNE:
+		case i == 0:
+			return s.doesNotMatchNonTerminal(i, PREFIX)
+		case s.matchesNonTerminal(i, ESCAPE_SYMBOL):
+			prevEscaped = true
 			return false
-		case prev != ESCAPE_RUNE && ru == END_RUNE:
+		case !escaped && s.matchesNonTerminal(i, SUFFIX):
 			return true
 		case s.matchesNewline(i):
-			panic_unterminatedString()
+			panic(bard.NewTerror(s.line, s.col, nil,
+				"Newline encountered before a string template was terminated",
+			))
+		case i+1 == s.len():
+			panic(bard.NewTerror(s.line, s.col, nil,
+				"EOF encountered before a string template was terminated",
+			))
 		}
 
 		return false
@@ -239,11 +240,8 @@ func (s *scanner) scanStrTemplate() (_ token.Token) {
 		return
 	}
 
-	if n == s.len() {
-		panic_unterminatedString()
-	}
-
-	return s.tokenize(n+1, token.TEMPLATE, false)
+	n += SUFFIX_LEN
+	return s.tokenize(n, token.TEMPLATE, false)
 }
 
 // scanWord attempts to scan a keyword or identifier. If successful a non-empty
