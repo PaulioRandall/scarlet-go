@@ -132,28 +132,22 @@ func (s *scanner) howManyRunesUntilNewline(start int) int {
 func (s *scanner) howManyNewlineTerminals(start int) int {
 
 	const (
-		LINEFEED_RUNE        = token.TERMINAL_LINEFEED
-		CARRIAGE_RETURN_RUNE = token.TERMINAL_CARRIAGE_RETURN
-		NONE                 = 0
-		LF                   = 1
-		CRLF                 = 2
+		LEXEME_LF   = token.LEXEME_NEWLINE_LF
+		LEXEME_CRLF = token.LEXEME_NEWLINE_CRLF
+		NOT_FOUND   = 0
 	)
 
-	r := s.runes[start:]
-	size := len(r)
+	size := s.len()
 
-	switch {
-	case size < 1:
-		return NONE
-	case r[0] == LINEFEED_RUNE:
-		return LF
-	case size == 1:
-		return NONE
-	case r[0] == CARRIAGE_RETURN_RUNE && r[1] == LINEFEED_RUNE:
-		return CRLF
+	if size > 0 && s.matchesNonTerminal(start, LEXEME_LF) {
+		return len(LEXEME_LF)
 	}
 
-	return NONE
+	if size > 1 && s.matchesNonTerminal(start, LEXEME_CRLF) {
+		return len(LEXEME_CRLF)
+	}
+
+	return NOT_FOUND
 }
 
 // tokenize slices off the next token from the scanners rune array and updates

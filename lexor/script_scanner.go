@@ -124,8 +124,8 @@ func (s *scanner) scanSpace() (_ token.Token) {
 func (s *scanner) scanNumLiteral() (_ token.Token) {
 
 	const (
-		DELIM_LEN  = 1
 		DELIM_RUNE = token.TERMINAL_FRACTIONAL_DELIM
+		DELIM_LEN  = 1
 	)
 
 	isNotDigit := func(_ int, ru rune) bool {
