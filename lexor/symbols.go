@@ -4,48 +4,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// Collection of terminal and non-terminal symbols for ease of reference and to
-// speed up syntax experimentation.
-const (
-	terminal_carriageReturn         rune   = '\r'
-	terminal_lineFeed               rune   = '\n'
-	terminal_commentStart           rune   = '/'
-	terminal_fractionalDelim        rune   = '.'
-	terminal_stringStart            rune   = '`'
-	terminal_stringEnd              rune   = '`'
-	terminal_templateStart          rune   = '"'
-	terminal_templateEnd            rune   = '"'
-	terminal_templateEscape         rune   = '\\'
-	terminal_wordUnderscore         rune   = '_'
-	nonTerminal_assignment          string = `:=`
-	nonTerminal_returnParams        string = `->`
-	terminal_openParen              rune   = '('
-	terminal_closeParen             rune   = ')'
-	terminal_openGuard              rune   = '['
-	terminal_closeGuard             rune   = ']'
-	terminal_openList               rune   = '{'
-	terminal_closeList              rune   = '}'
-	terminal_delim                  rune   = ','
-	terminal_void                   rune   = '_'
-	terminal_terminator             rune   = ';'
-	termianl_spellPrefix            rune   = '@'
-	terminal_universalNegation      rune   = '~'
-	terminal_teaDrinkingNegation    rune   = '¬'
-	terminal_mathAddition           rune   = '+'
-	terminal_mathSubtraction        rune   = '-'
-	terminal_mathMultiplication     rune   = '*'
-	terminal_mathDivision           rune   = '/'
-	terminal_mathRemainder          rune   = '%'
-	terminal_logicalAnd             rune   = '&'
-	terminal_logicalOr              rune   = '|'
-	terminal_equality               rune   = '='
-	terminal_inEquality             rune   = '#'
-	nonTerminal_lessThanOrEquals    string = "<="
-	nonTerminal_greaterThanOrEquals string = "=>"
-	terminal_lessThan               rune   = '<'
-	terminal_moreThan               rune   = '>'
-)
-
 // identifyKeyword identifies the kind of token the keyword (non-terminal
 // symbol) represents.
 func identifyKeyword(nonTerminal string) token.Kind {
@@ -187,11 +145,11 @@ func (s *scanner) howManyNewlineTerminals(start int) int {
 	switch {
 	case size < 1:
 		return NONE
-	case r[0] == terminal_lineFeed:
+	case r[0] == token.TERMINAL_LINEFEED:
 		return LF
 	case size == 1:
 		return NONE
-	case r[0] == terminal_carriageReturn && r[1] == terminal_lineFeed:
+	case r[0] == token.TERMINAL_CARRIAGE_RETURN && r[1] == token.TERMINAL_LINEFEED:
 		return CRLF
 	}
 

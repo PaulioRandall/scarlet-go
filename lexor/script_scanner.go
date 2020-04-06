@@ -92,7 +92,7 @@ func (s *scanner) scanNewline() (_ token.Token) {
 // token is returned.
 func (s *scanner) scanComment() (_ token.Token) {
 
-	if s.doesNotMatch(0, terminal_commentStart) {
+	if s.doesNotMatch(0, token.TERMINAL_COMMENT_START) {
 		return
 	}
 
@@ -123,7 +123,10 @@ func (s *scanner) scanSpace() (_ token.Token) {
 // number literal token is returned.
 func (s *scanner) scanNumLiteral() (_ token.Token) {
 
-	const DELIM_LEN = 1
+	const (
+		DELIM_LEN  = 1
+		DELIM_RUNE = token.TERMINAL_FRACTIONAL_DELIM
+	)
 
 	isNotDigit := func(_ int, ru rune) bool {
 		return !unicode.IsDigit(ru)
@@ -135,7 +138,7 @@ func (s *scanner) scanNumLiteral() (_ token.Token) {
 		return
 	}
 
-	if intLen == s.len() || s.doesNotMatch(intLen, terminal_fractionalDelim) {
+	if intLen == s.len() || s.doesNotMatch(intLen, DELIM_RUNE) {
 		return s.tokenize(intLen, token.INT, false)
 	}
 
@@ -156,6 +159,11 @@ func (s *scanner) scanNumLiteral() (_ token.Token) {
 // length is greater than 0.
 func (s *scanner) scanStrLiteral() (_ token.Token) {
 
+	const (
+		START_RUNE = token.TERMINAL_STRING_START
+		END_RUNE   = token.TERMINAL_STRING_END
+	)
+
 	panic_unterminatedString := func() {
 		panic(bard.NewTerror(s.line, s.col, nil,
 			"Unterminated string literal",
@@ -165,11 +173,11 @@ func (s *scanner) scanStrLiteral() (_ token.Token) {
 	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
 
 		switch {
-		case i == 0 && ru != terminal_stringStart:
+		case i == 0 && ru != START_RUNE:
 			return true
 		case i == 0:
 			return false
-		case ru == terminal_stringEnd:
+		case ru == END_RUNE:
 			return true
 		case s.matchesNewline(i):
 			panic_unterminatedString()
@@ -194,6 +202,12 @@ func (s *scanner) scanStrLiteral() (_ token.Token) {
 // length is greater than 0.
 func (s *scanner) scanStrTemplate() (_ token.Token) {
 
+	const (
+		START_RUNE  = token.TERMINAL_TEMPLATE_START
+		END_RUNE    = token.TERMINAL_TEMPLATE_END
+		ESCAPE_RUNE = token.TERMINAL_TEMPLATE_ESCAPE
+	)
+
 	panic_unterminatedString := func() {
 		panic(bard.NewTerror(s.line, s.col, nil,
 			"Unterminated string template",
@@ -205,11 +219,11 @@ func (s *scanner) scanStrTemplate() (_ token.Token) {
 	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
 
 		switch {
-		case i == 0 && ru != terminal_templateStart:
+		case i == 0 && ru != START_RUNE:
 			return true
-		case i == 0 && ru == terminal_templateStart:
+		case i == 0 && ru == END_RUNE:
 			return false
-		case prev != terminal_templateEscape && ru == terminal_templateEnd:
+		case prev != ESCAPE_RUNE && ru == END_RUNE:
 			return true
 		case s.matchesNewline(i):
 			panic_unterminatedString()
@@ -233,13 +247,15 @@ func (s *scanner) scanStrTemplate() (_ token.Token) {
 // keyword or identifier token is returned.
 func (s *scanner) scanWord() (_ token.Token) {
 
+	const UNDERSCORE_RUNE = token.TERMINAL_WORD_UNDERSCORE
+
 	n := s.howManyRunesUntil(0, func(i int, ru rune) bool {
 
-		if i == 0 && ru == terminal_wordUnderscore {
+		if i == 0 && ru == UNDERSCORE_RUNE {
 			return true
 		}
 
-		return ru != terminal_wordUnderscore && !unicode.IsLetter(ru)
+		return ru != UNDERSCORE_RUNE && !unicode.IsLetter(ru)
 	})
 
 	if n == 0 {
@@ -262,60 +278,60 @@ func (s *scanner) scanSymbol() (_ token.Token) {
 		return
 	}
 
-	switch {
-	case s.matchesNonTerminal(0, nonTerminal_assignment):
+	switch { // The order matters! This might be best moved to the token package.
+	case s.matchesNonTerminal(0, token.NON_TERMINAL_ASSIGNMENT):
 		n, k = 2, token.ASSIGN
-	case s.matchesNonTerminal(0, nonTerminal_returnParams): // Order matters! Must be before `-`
+	case s.matchesNonTerminal(0, token.NON_TERMINAL_RETURN_PARAMS):
 		n, k = 2, token.RETURNS
-	case s.matchesTerminal(0, terminal_openParen):
+	case s.matchesTerminal(0, token.TERMINAL_OPEN_PAREN):
 		n, k = 1, token.OPEN_PAREN
-	case s.matchesTerminal(0, terminal_closeParen):
+	case s.matchesTerminal(0, token.TERMINAL_CLOSE_PAREN):
 		n, k = 1, token.CLOSE_PAREN
-	case s.matchesTerminal(0, terminal_openGuard):
+	case s.matchesTerminal(0, token.TERMINAL_OPEN_GUARD):
 		n, k = 1, token.OPEN_GUARD
-	case s.matchesTerminal(0, terminal_closeGuard):
+	case s.matchesTerminal(0, token.TERMINAL_CLOSE_GUARD):
 		n, k = 1, token.CLOSE_GUARD
-	case s.matchesTerminal(0, terminal_openList):
+	case s.matchesTerminal(0, token.TERMINAL_OPEN_LIST):
 		n, k = 1, token.OPEN_LIST
-	case s.matchesTerminal(0, terminal_closeList):
+	case s.matchesTerminal(0, token.TERMINAL_CLOSE_LIST):
 		n, k = 1, token.CLOSE_LIST
-	case s.matchesTerminal(0, terminal_delim):
+	case s.matchesTerminal(0, token.TERMINAL_LIST_DELIM):
 		n, k = 1, token.DELIM
-	case s.matchesTerminal(0, terminal_void):
+	case s.matchesTerminal(0, token.TERMINAL_VOID_VALUE):
 		n, k = 1, token.VOID
-	case s.matchesTerminal(0, terminal_terminator):
+	case s.matchesTerminal(0, token.TERMINAL_STATEMENT_TERMINATOR):
 		n, k = 1, token.TERMINATOR
-	case s.matchesTerminal(0, termianl_spellPrefix):
+	case s.matchesTerminal(0, token.TERMINAL_SPELL_PREFIX):
 		n, k = 1, token.SPELL
-	case s.matchesTerminal(0, terminal_universalNegation):
+	case s.matchesTerminal(0, token.TERMINAL_UNIVERSAL_NEGATION):
 		n, k = 1, token.NOT
-	case s.matchesTerminal(0, terminal_teaDrinkingNegation):
+	case s.matchesTerminal(0, token.TERMINAL_TEA_DRINKING_NEGATION):
 		n, k = 1, token.NOT
-	case s.matchesTerminal(0, terminal_mathAddition):
+	case s.matchesTerminal(0, token.TERMINAL_MATH_ADDITION):
 		n, k = 1, token.ADD
-	case s.matchesTerminal(0, terminal_mathSubtraction):
+	case s.matchesTerminal(0, token.TERMINAL_MATH_SUBTRACTION):
 		n, k = 1, token.SUBTRACT
-	case s.matchesTerminal(0, terminal_mathMultiplication):
+	case s.matchesTerminal(0, token.TERMINAL_MATH_MULTIPLICATION):
 		n, k = 1, token.MULTIPLY
-	case s.matchesTerminal(0, terminal_mathDivision):
+	case s.matchesTerminal(0, token.TERMINAL_MATH_DIVISION):
 		n, k = 1, token.DIVIDE
-	case s.matchesTerminal(0, terminal_mathRemainder):
+	case s.matchesTerminal(0, token.TERMINAL_MATH_REMAINDER):
 		n, k = 1, token.MOD
-	case s.matchesTerminal(0, terminal_logicalAnd):
+	case s.matchesTerminal(0, token.TERMINAL_LOGICAL_AND):
 		n, k = 1, token.AND
-	case s.matchesTerminal(0, terminal_logicalOr):
+	case s.matchesTerminal(0, token.TERMINAL_LOGICAL_OR):
 		n, k = 1, token.OR
-	case s.matchesTerminal(0, terminal_equality):
+	case s.matchesTerminal(0, token.TERMINAL_EQUALITY):
 		n, k = 1, token.EQU
-	case s.matchesTerminal(0, terminal_inEquality):
+	case s.matchesTerminal(0, token.TERMINAL_UNEQUALITY):
 		n, k = 1, token.NEQ
-	case s.matchesNonTerminal(0, nonTerminal_lessThanOrEquals): // Order matters! Must be before `<`
+	case s.matchesNonTerminal(0, token.NON_TERMINAL_LESS_THAN_OR_EQUAL):
 		n, k = 2, token.LT_OR_EQU
-	case s.matchesNonTerminal(0, nonTerminal_greaterThanOrEquals): // Order matters! Must be before `<`
+	case s.matchesNonTerminal(0, token.NON_TERMINAL_GREATER_THAN_OR_EQUAL):
 		n, k = 2, token.MT_OR_EQU
-	case s.matchesTerminal(0, terminal_lessThan):
+	case s.matchesTerminal(0, token.TERMINAL_LESS_THAN):
 		n, k = 1, token.LT
-	case s.matchesTerminal(0, terminal_moreThan):
+	case s.matchesTerminal(0, token.TERMINAL_MORE_THAN):
 		n, k = 1, token.MT
 	}
 
