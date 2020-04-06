@@ -54,7 +54,7 @@ func collectTokens(src string) (r []token.Token) {
 	st = lexor.NewScanner(src)
 	st = lexor.NewEvaluator(st)
 
-	for tk = st.Next(); tk.Kind != token.KIND_EOF; tk = st.Next() {
+	for tk = st.Next(); tk.Lexeme != token.LEXEME_EOF; tk = st.Next() {
 		r = append(r, tk)
 	}
 	r = append(r, tk)
@@ -65,10 +65,10 @@ func collectTokens(src string) (r []token.Token) {
 // printToken prints a token nicely.
 func printToken(tk token.Token) {
 
-	switch k := tk.Kind; k {
-	case token.TERMINATOR:
+	switch k := tk.Lexeme; k {
+	case token.LEXEME_TERMINATOR:
 		println(k)
-	case token.KIND_EOF:
+	case token.LEXEME_EOF:
 		println(k)
 		println()
 	default:

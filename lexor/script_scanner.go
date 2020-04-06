@@ -37,9 +37,9 @@ func (s *scanner) Next() (tk token.Token) {
 
 	if s.empty() {
 		return token.Token{
-			Kind: token.KIND_EOF,
-			Line: s.line,
-			Col:  s.col,
+			Lexeme: token.LEXEME_EOF,
+			Line:   s.line,
+			Col:    s.col,
 		}
 	}
 
@@ -72,7 +72,7 @@ func (s *scanner) Next() (tk token.Token) {
 func (s *scanner) scanNewline() (_ token.Token) {
 
 	if n := s.countNewlineRunes(0); n > 0 {
-		return s.tokenize(n, token.KIND_NEWLINE, true)
+		return s.tokenize(n, token.LEXEME_NEWLINE, true)
 	}
 
 	return
@@ -89,7 +89,7 @@ func (s *scanner) scanWhitespace() (_ token.Token) {
 	}
 
 	n := s.howManyRunesUntil(0, isSpace)
-	return s.tokenize(n, token.KIND_WHITESPACE, false)
+	return s.tokenize(n, token.LEXEME_WHITESPACE, false)
 }
 
 func (s *scanner) scanComment() (_ token.Token) {
@@ -104,7 +104,7 @@ func (s *scanner) scanComment() (_ token.Token) {
 	}
 
 	n := s.runesUntilNewline(COMMENT_PREFIX_LEN)
-	return s.tokenize(n, token.KIND_COMMENT, false)
+	return s.tokenize(n, token.LEXEME_COMMENT, false)
 }
 
 func (s *scanner) scanWord() (_ token.Token) {
@@ -116,13 +116,14 @@ func (s *scanner) scanWord() (_ token.Token) {
 	}
 
 	w := string(s.runes[:n])
-	k := token.KeywordToKind(w)
 
-	if k == token.KIND_UNDEFINED {
-		k = token.KIND_ID
+	for _, kw := range token.Keywords() {
+		if kw.Symbol == w {
+			return s.tokenize(n, kw.Lexeme, false)
+		}
 	}
 
-	return s.tokenize(n, k, false)
+	return s.tokenize(n, token.LEXEME_ID, false)
 }
 
 func (s *scanner) scanSymbol() (_ token.Token) {
@@ -140,7 +141,7 @@ func (s *scanner) scanSymbol() (_ token.Token) {
 		}
 
 		if s.matchesNonTerminal(0, sym.Symbol) {
-			return s.tokenize(sym.Len, sym.Kind, false)
+			return s.tokenize(sym.Len, sym.Lexeme, false)
 		}
 	}
 
@@ -161,7 +162,7 @@ func (s *scanner) scanNumberLiteral() (_ token.Token) {
 	}
 
 	if intLen == s.len() || s.doesNotMatchNonTerminal(intLen, DELIM) {
-		return s.tokenize(intLen, token.INT, false)
+		return s.tokenize(intLen, token.LEXEME_INT, false)
 	}
 
 	fractionalLen := s.countDigitRunes(intLen + DELIM_LEN)
@@ -173,7 +174,7 @@ func (s *scanner) scanNumberLiteral() (_ token.Token) {
 	}
 
 	n := intLen + DELIM_LEN + fractionalLen
-	return s.tokenize(n, token.REAL, false)
+	return s.tokenize(n, token.LEXEME_FLOAT, false)
 }
 
 func (s *scanner) scanStringLiteral() (_ token.Token) {
@@ -207,7 +208,7 @@ func (s *scanner) scanStringLiteral() (_ token.Token) {
 		return
 	}
 
-	return s.tokenize(n+1, token.STR, false)
+	return s.tokenize(n+1, token.LEXEME_STRING, false)
 }
 
 func (s *scanner) scanStringTemplate() (_ token.Token) {
@@ -252,5 +253,5 @@ func (s *scanner) scanStringTemplate() (_ token.Token) {
 	}
 
 	n += SUFFIX_LEN
-	return s.tokenize(n, token.TEMPLATE, false)
+	return s.tokenize(n, token.LEXEME_TEMPLATE, false)
 }

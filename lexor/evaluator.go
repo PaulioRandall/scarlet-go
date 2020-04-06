@@ -14,7 +14,7 @@ import (
 // TokenStream interface so it may be wrapped.
 type evaluator struct {
 	ts   TokenStream
-	prev token.Kind
+	prev token.Lexeme
 }
 
 // NewEvaluator creates a new evaluator to evaluate tokens within a stream.
@@ -28,35 +28,35 @@ func NewEvaluator(delegate TokenStream) TokenStream {
 func (ev *evaluator) Next() (_ token.Token) {
 
 	var tk token.Token
-	var k token.Kind
+	var lex token.Lexeme
 	prev := ev.prev
 
-	for tk = ev.ts.Next(); tk != token.ZERO(); tk = ev.ts.Next() {
+	for tk = ev.ts.Next(); tk != (token.Token{}); tk = ev.ts.Next() {
 
-		k = tk.Kind
+		lex = tk.Lexeme
 
-		if k == token.KIND_WHITESPACE || k == token.KIND_COMMENT {
+		if lex == token.LEXEME_WHITESPACE || lex == token.LEXEME_COMMENT {
 			continue
 		}
 
 		switch prev {
-		case token.KIND_OPEN_LIST, token.KIND_DELIM, token.TERMINATOR:
+		case token.LEXEME_OPEN_LIST, token.LEXEME_DELIM, token.LEXEME_TERMINATOR:
 			fallthrough
-		case token.KIND_DO, token.KIND_UNDEFINED:
-			if k == token.KIND_NEWLINE {
+		case token.LEXEME_DO, token.LEXEME_UNDEFINED:
+			if lex == token.LEXEME_NEWLINE {
 				continue
 			}
 		}
 
-		if k == token.KIND_NEWLINE {
-			tk.Kind = token.TERMINATOR
+		if lex == token.LEXEME_NEWLINE {
+			tk.Lexeme = token.LEXEME_TERMINATOR
 		}
 
-		if k == token.STR || k == token.TEMPLATE {
+		if lex == token.LEXEME_STRING || lex == token.LEXEME_TEMPLATE {
 			trimStrQuotes(&tk)
 		}
 
-		ev.prev = tk.Kind
+		ev.prev = tk.Lexeme
 		return tk
 	}
 

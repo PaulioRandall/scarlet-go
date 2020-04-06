@@ -7,60 +7,45 @@ import (
 
 // Token represents a grammer token within a source file.
 type Token struct {
-	Kind  Kind
-	Value string
-	Line  int
-	Col   int
+	Lexeme Lexeme
+	Value  string
+	Line   int
+	Col    int
 }
 
 // KindsToStrings converts the kind slice to a string slice.
-func KindsToStrings(ks []Kind) (strs []string) {
+func KindsToStrings(lexs []Lexeme) (strs []string) {
 
-	for _, k := range ks {
-		strs = append(strs, string(k))
+	for _, lex := range lexs {
+		strs = append(strs, string(lex))
 	}
 
 	return
 }
 
 // New creates a new token.
-func New(k Kind, v string, l, c int) Token {
+func New(lex Lexeme, v string, l, c int) Token {
 	return Token{
-		Kind:  k,
-		Value: v,
-		Line:  l,
-		Col:   c,
+		Lexeme: lex,
+		Value:  v,
+		Line:   l,
+		Col:    c,
 	}
 }
 
 // OfKind creates a new token with the specified kind.
-func OfKind(k Kind) Token {
+func OfKind(lex Lexeme) Token {
 	return Token{
-		Kind: k,
+		Lexeme: lex,
 	}
 }
 
 // OfValue creates a new token with the specified kind and value.
-func OfValue(k Kind, v string) Token {
+func OfValue(lex Lexeme, v string) Token {
 	return Token{
-		Kind:  k,
-		Value: v,
+		Lexeme: lex,
+		Value:  v,
 	}
-}
-
-// ZERO returns a zero token value.
-func ZERO() Token {
-	return Token{}
-}
-
-// IsZero returns true if the token is a zero value.
-func (t Token) IsZero() bool {
-	return t == Token{}
-}
-
-// IsNotZero returns true if the token is NOT a zero value.
-func (t Token) IsNotZero() bool {
-	return t != Token{}
 }
 
 // String returns a string representation of the token.
@@ -68,14 +53,14 @@ func (tk Token) String() string {
 
 	var v interface{}
 
-	if tk.Kind == TEMPLATE {
+	if tk.Lexeme == LEXEME_TEMPLATE {
 		v = strconv.QuoteToGraphic(tk.Value)
-	} else if tk.Kind == STR {
+	} else if tk.Lexeme == LEXEME_STRING {
 		v = "`" + tk.Value + "`"
 	} else {
 		v = tk.Value
 	}
 
 	// +1 for line index to number
-	return fmt.Sprintf(`%d:%d %s %v`, tk.Line+1, tk.Col, tk.Kind, v)
+	return fmt.Sprintf(`%d:%d %s %v`, tk.Line+1, tk.Col, tk.Lexeme, v)
 }

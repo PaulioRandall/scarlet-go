@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func tok(k token.Kind, v string) token.Token {
-	return token.New(k, v, 0, 0)
+func tok(l token.Lexeme, v string) token.Token {
+	return token.New(l, v, 0, 0)
 }
 
 func push(in chan token.Token, tokens ...token.Token) {
@@ -37,16 +37,16 @@ func doTestParse(t *testing.T, exp Expr, tokens ...token.Token) {
 func TestParser_parse_1(t *testing.T) {
 
 	tks := []token.Token{
-		tok(token.KIND_ID, "abc"),
-		tok(token.KIND_ASSIGN, ":="),
-		tok(token.STR, "xyz"),
-		tok(token.TERMINATOR, "\n"),
-		tok(token.KIND_EOF, ""),
+		tok(token.LEXEME_ID, "abc"),
+		tok(token.LEXEME_ASSIGN, ":="),
+		tok(token.LEXEME_STRING, "xyz"),
+		tok(token.LEXEME_TERMINATOR, "\n"),
+		tok(token.LEXEME_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.KIND_SOF, ""), // opener
-		tks[4],                  // closer
+		tok(token.LEXEME_SOF, ""), // opener
+		tks[4],                    // closer
 		[]Stat{
 			assignStat{
 				tks[1],
@@ -73,27 +73,27 @@ func TestParser_parse_2(t *testing.T) {
 
 	tks := []token.Token{
 		// Bool
-		tok(token.KIND_ID, "a"),
-		tok(token.KIND_ASSIGN, ":="),
-		tok(token.BOOL, "TRUE"),
-		tok(token.TERMINATOR, "\n"), // 3
+		tok(token.LEXEME_ID, "a"),
+		tok(token.LEXEME_ASSIGN, ":="),
+		tok(token.LEXEME_BOOL, "TRUE"),
+		tok(token.LEXEME_TERMINATOR, "\n"), // 3
 		// Number
-		tok(token.KIND_ID, "b"),
-		tok(token.KIND_ASSIGN, ":="),
-		tok(token.REAL, "123.456"),
-		tok(token.TERMINATOR, "\n"), // 7
+		tok(token.LEXEME_ID, "b"),
+		tok(token.LEXEME_ASSIGN, ":="),
+		tok(token.LEXEME_FLOAT, "123.456"),
+		tok(token.LEXEME_TERMINATOR, "\n"), // 7
 		// String template
-		tok(token.KIND_ID, "c"),
-		tok(token.KIND_ASSIGN, ":="),
-		tok(token.KIND_ID, "b"),
-		tok(token.TERMINATOR, "\n"), // 11
+		tok(token.LEXEME_ID, "c"),
+		tok(token.LEXEME_ASSIGN, ":="),
+		tok(token.LEXEME_ID, "b"),
+		tok(token.LEXEME_TERMINATOR, "\n"), // 11
 		// EOF
-		tok(token.KIND_EOF, ""),
+		tok(token.LEXEME_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.KIND_SOF, ""), // opener
-		tks[12],                 // closer
+		tok(token.LEXEME_SOF, ""), // opener
+		tks[12],                   // closer
 		[]Stat{
 			assignStat{
 				tks[1],
@@ -130,26 +130,26 @@ func TestParser_parse_3(t *testing.T) {
 
 	tks := []token.Token{
 		// ids
-		tok(token.KIND_ID, "a"),
-		tok(token.KIND_DELIM, ","),
-		tok(token.KIND_ID, "b"),
-		tok(token.KIND_DELIM, ","),
-		tok(token.KIND_ID, "c"),
-		tok(token.KIND_ASSIGN, ":="),
+		tok(token.LEXEME_ID, "a"),
+		tok(token.LEXEME_DELIM, ","),
+		tok(token.LEXEME_ID, "b"),
+		tok(token.LEXEME_DELIM, ","),
+		tok(token.LEXEME_ID, "c"),
+		tok(token.LEXEME_ASSIGN, ":="),
 		// srcs
-		tok(token.BOOL, "TRUE"),
-		tok(token.KIND_DELIM, ","),
-		tok(token.INT, "123"),
-		tok(token.KIND_DELIM, ","),
-		tok(token.TEMPLATE, `"Caribbean"`),
-		tok(token.TERMINATOR, "\n"),
+		tok(token.LEXEME_BOOL, "TRUE"),
+		tok(token.LEXEME_DELIM, ","),
+		tok(token.LEXEME_INT, "123"),
+		tok(token.LEXEME_DELIM, ","),
+		tok(token.LEXEME_TEMPLATE, `"Caribbean"`),
+		tok(token.LEXEME_TERMINATOR, "\n"),
 		// EOF
-		tok(token.KIND_EOF, ""),
+		tok(token.LEXEME_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.KIND_SOF, ""), // opener
-		tks[12],                 // closer
+		tok(token.LEXEME_SOF, ""), // opener
+		tks[12],                   // closer
 		[]Stat{
 			assignStat{
 				tks[5],
@@ -177,34 +177,34 @@ func TestParser_parse_4(t *testing.T) {
 
 	tks := []token.Token{
 		// Line 1
-		tok(token.KIND_ID, "list"),
-		tok(token.KIND_ASSIGN, ":="),
-		tok(token.KIND_OPEN_LIST, "{"),
-		tok(token.TERMINATOR, "\n"), // index: 3
+		tok(token.LEXEME_ID, "list"),
+		tok(token.LEXEME_ASSIGN, ":="),
+		tok(token.LEXEME_OPEN_LIST, "{"),
+		tok(token.LEXEME_TERMINATOR, "\n"), // index: 3
 		// Line 2
-		tok(token.STR, "abc"),
-		tok(token.KIND_DELIM, ","),
-		tok(token.REAL, "123.456"),
-		tok(token.KIND_DELIM, ","),
-		tok(token.TERMINATOR, "\n"), // 8
+		tok(token.LEXEME_STRING, "abc"),
+		tok(token.LEXEME_DELIM, ","),
+		tok(token.LEXEME_FLOAT, "123.456"),
+		tok(token.LEXEME_DELIM, ","),
+		tok(token.LEXEME_TERMINATOR, "\n"), // 8
 		// Line 3
-		tok(token.KIND_OPEN_LIST, "{"),
-		tok(token.TEMPLATE, "xyz"),
-		tok(token.KIND_DELIM, ","),
-		tok(token.BOOL, "TRUE"), // 12
-		tok(token.KIND_CLOSE_LIST, "}"),
-		tok(token.KIND_DELIM, ","),
-		tok(token.TERMINATOR, "\n"), // 15
+		tok(token.LEXEME_OPEN_LIST, "{"),
+		tok(token.LEXEME_TEMPLATE, "xyz"),
+		tok(token.LEXEME_DELIM, ","),
+		tok(token.LEXEME_BOOL, "TRUE"), // 12
+		tok(token.LEXEME_CLOSE_LIST, "}"),
+		tok(token.LEXEME_DELIM, ","),
+		tok(token.LEXEME_TERMINATOR, "\n"), // 15
 		// Line 4
-		tok(token.KIND_CLOSE_LIST, "}"),
-		tok(token.TERMINATOR, "\n"), // 17
+		tok(token.LEXEME_CLOSE_LIST, "}"),
+		tok(token.LEXEME_TERMINATOR, "\n"), // 17
 		// EOF
-		tok(token.KIND_EOF, ""),
+		tok(token.LEXEME_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.KIND_SOF, ""), // field: opener
-		tks[18],                 // closer
+		tok(token.LEXEME_SOF, ""), // field: opener
+		tks[18],                   // closer
 		[]Stat{
 			assignStat{
 				tks[1],

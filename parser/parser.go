@@ -23,7 +23,7 @@ func New(in chan token.Token) *Parser {
 // of statements.
 func (p *Parser) Parse() (_ Stat) {
 	return p.parseStats(token.Token{
-		Kind: token.KIND_SOF,
+		Lexeme: token.LEXEME_SOF,
 	})
 }
 
@@ -60,45 +60,45 @@ func (p *Parser) take() (tk token.Token) {
 }
 
 // ensure will panic if the specified token is not one of the specified kinds.
-func (p *Parser) ensure(tk token.Token, ks ...token.Kind) {
+func (p *Parser) ensure(tk token.Token, lexs ...token.Lexeme) {
 
 	var errMsg string
-	tkk := tk.Kind
+	tkLex := tk.Lexeme
 
-	for _, k := range ks {
-		if tkk == k {
+	for _, lex := range lexs {
+		if tkLex == lex {
 			return
 		}
 	}
 
 	errMsg = "Expected "
-	if len(ks) == 1 {
-		errMsg += string(ks[0])
+	if len(lexs) == 1 {
+		errMsg += string(lexs[0])
 	} else {
 		errMsg = "either"
-		for _, k := range ks {
-			errMsg += " " + string(k)
+		for _, lex := range lexs {
+			errMsg += " " + string(lex)
 		}
 	}
 
-	errMsg += " but was " + string(tk.Kind)
+	errMsg += " but was " + string(tk.Lexeme)
 	panic(bard.NewHorror(tk, nil, errMsg))
 }
 
 // peekEnsure returns the next token in the input channel but will panic if
 // the if the channel is closed or the specified token is not one of the
 // specified kinds.
-func (p *Parser) peekEnsure(ks ...token.Kind) token.Token {
+func (p *Parser) peekEnsure(lexs ...token.Lexeme) token.Token {
 	tk := p.peek()
-	p.ensure(tk, ks...)
+	p.ensure(tk, lexs...)
 	return tk
 }
 
 // takeEnsure returns the next token in the input channel but will panic if
 // the if the channel is closed or the specified token is not one of the
 // specified kinds.
-func (p *Parser) takeEnsure(ks ...token.Kind) token.Token {
+func (p *Parser) takeEnsure(lexs ...token.Lexeme) token.Token {
 	tk := p.take()
-	p.ensure(tk, ks...)
+	p.ensure(tk, lexs...)
 	return tk
 }

@@ -48,20 +48,20 @@ func NewValue(tk token.Token) Value {
 		v interface{}
 	)
 
-	switch tk.Kind {
-	case token.STR, token.TEMPLATE:
+	switch tk.Lexeme {
+	case token.LEXEME_STRING, token.LEXEME_TEMPLATE:
 		k, v = STR, tk.Value
 
-	case token.BOOL:
+	case token.LEXEME_BOOL:
 		k, v = BOOL, (tk.Value == "TRUE")
 
-	case token.INT:
+	case token.LEXEME_INT:
 		k, v = INT, parseNum(INT, tk)
 
-	case token.REAL:
+	case token.LEXEME_FLOAT:
 		k, v = REAL, parseNum(REAL, tk)
 
-	case token.VOID:
+	case token.LEXEME_VOID:
 		k = VOID
 
 	default:

@@ -1,79 +1,70 @@
 package token
 
-// Kind represents a token type.
-type Kind string
+// Lexeme represents a token type.
+type Lexeme string
 
 const (
-	KIND_UNDEFINED Kind = ``
+	LEXEME_UNDEFINED Lexeme = ``
 	// ------------------
-	KIND_SOF         Kind = `SOF`
-	KIND_EOF         Kind = `EOF`
-	KIND_COMMENT     Kind = `COMMENT`
-	KIND_WHITESPACE  Kind = `WHITESPACE`
-	KIND_NEWLINE     Kind = `NEWLINE`
-	KIND_FUNC        Kind = `FUNCTION_KEYWORD`
-	KIND_MATCH       Kind = `MATCH_BLOCK_KEYWORD`
-	KIND_INLINE      Kind = `INLINE_BLOCK_IMPLIED`
-	KIND_ID          Kind = `ID`
-	KIND_DELIM       Kind = `DELIMITER`
-	KIND_ASSIGN      Kind = `ASSIGNMENT`
-	KIND_RETURNS     Kind = `RETURNS`
-	KIND_DO          Kind = `BLOCK_OPEN`
-	KIND_END         Kind = `BLOCK_CLOSE`
-	KIND_OPEN_PAREN  Kind = `PAREN_OPEN`
-	KIND_CLOSE_PAREN Kind = `PAREN_CLOSE`
-	KIND_OPEN_GUARD  Kind = `GUARD_OPEN`
-	KIND_CLOSE_GUARD Kind = `GUARD_CLOSE`
-	KIND_OPEN_LIST   Kind = `LIST_OPEN`
-	KIND_CLOSE_LIST  Kind = `LIST_CLOSE`
-	// TODO: kind these
-	SPELL      Kind = `SPELL`
-	STR        Kind = `STR`
-	TEMPLATE   Kind = `TEMPLATE`
-	INT        Kind = `INT`
-	REAL       Kind = `REAL`
-	BOOL       Kind = `BOOL`
-	NOT        Kind = `NOT`
-	ADD        Kind = `ADD`
-	SUBTRACT   Kind = `SUBTRACT`
-	MULTIPLY   Kind = `MULTIPLY`
-	DIVIDE     Kind = `DIVIDE`
-	MOD        Kind = `MOD`
-	AND        Kind = `AND`
-	OR         Kind = `OR`
-	EQU        Kind = `EQUAL`
-	NEQ        Kind = `NOT_EQUAL`
-	LT         Kind = `LESS_THAN`
-	LT_OR_EQU  Kind = `LESS_THAN_OR_EQUAL`
-	MT         Kind = `MORE_THAN`
-	MT_OR_EQU  Kind = `MORE_THAN_OR_EQUAL`
-	VOID       Kind = `VOID`
-	TERMINATOR Kind = `TERMINATOR`
+	LEXEME_SOF         Lexeme = `SOF`
+	LEXEME_EOF         Lexeme = `EOF`
+	LEXEME_COMMENT     Lexeme = `COMMENT`
+	LEXEME_WHITESPACE  Lexeme = `WHITESPACE`
+	LEXEME_NEWLINE     Lexeme = `NEWLINE`
+	LEXEME_FUNC        Lexeme = `FUNCTION_KEYWORD`
+	LEXEME_MATCH       Lexeme = `MATCH_BLOCK_KEYWORD`
+	LEXEME_INLINE      Lexeme = `INLINE_BLOCK_IMPLIED`
+	LEXEME_ID          Lexeme = `ID`
+	LEXEME_DELIM       Lexeme = `DELIMITER`
+	LEXEME_ASSIGN      Lexeme = `ASSIGNMENT`
+	LEXEME_RETURNS     Lexeme = `RETURNS`
+	LEXEME_DO          Lexeme = `BLOCK_OPEN`
+	LEXEME_END         Lexeme = `BLOCK_CLOSE`
+	LEXEME_OPEN_PAREN  Lexeme = `PAREN_OPEN`
+	LEXEME_CLOSE_PAREN Lexeme = `PAREN_CLOSE`
+	LEXEME_OPEN_GUARD  Lexeme = `GUARD_OPEN`
+	LEXEME_CLOSE_GUARD Lexeme = `GUARD_CLOSE`
+	LEXEME_OPEN_LIST   Lexeme = `LIST_OPEN`
+	LEXEME_CLOSE_LIST  Lexeme = `LIST_CLOSE`
+	LEXEME_SPELL       Lexeme = `SPELL`
+	LEXEME_STRING      Lexeme = `STRING`
+	LEXEME_TEMPLATE    Lexeme = `TEMPLATE`
+	LEXEME_INT         Lexeme = `INT`
+	LEXEME_FLOAT       Lexeme = `FLOAT`
+	LEXEME_BOOL        Lexeme = `BOOL`
+	LEXEME_NOT         Lexeme = `NOT`
+	LEXEME_ADD         Lexeme = `ADD`
+	LEXEME_SUBTRACT    Lexeme = `SUBTRACT`
+	LEXEME_MULTIPLY    Lexeme = `MULTIPLY`
+	LEXEME_DIVIDE      Lexeme = `DIVIDE`
+	LEXEME_REMAINDER   Lexeme = `REMAINDER`
+	LEXEME_AND         Lexeme = `AND`
+	LEXEME_OR          Lexeme = `OR`
+	LEXEME_EQU         Lexeme = `EQUAL`
+	LEXEME_NEQ         Lexeme = `NOT_EQUAL`
+	LEXEME_LT          Lexeme = `LESS_THAN`
+	LEXEME_LT_OR_EQU   Lexeme = `LESS_THAN_OR_EQUAL`
+	LEXEME_MT          Lexeme = `MORE_THAN`
+	LEXEME_MT_OR_EQU   Lexeme = `MORE_THAN_OR_EQUAL`
+	LEXEME_VOID        Lexeme = `VOID`
+	LEXEME_TERMINATOR  Lexeme = `TERMINATOR`
 )
 
-const (
-	KEYWORD_FUNCTION    string = `F`
-	KEYWORD_BLOCK_START string = `DO`
-	KEYWORD_BLOCK_END   string = `END`
-	KEYWORD_TRUE        string = `TRUE`
-	KEYWORD_FALSE       string = `FALSE`
-)
+type Symbol struct {
+	Symbol string
+	Len    int
+	Lexeme Lexeme
+}
 
-// KeywordToKind maps a non-terminal keyword to a token kind.
-func KeywordToKind(nonTerminal string) Kind {
-
-	switch nonTerminal {
-	case KEYWORD_FUNCTION:
-		return KIND_FUNC
-	case KEYWORD_BLOCK_START:
-		return KIND_DO
-	case KEYWORD_BLOCK_END:
-		return KIND_END
-	case KEYWORD_TRUE, KEYWORD_FALSE:
-		return BOOL
+// Keywords maps a non-terminal keyword to a token kind.
+func Keywords() []Symbol {
+	return []Symbol{
+		Symbol{`F`, 1, LEXEME_FUNC},
+		Symbol{`DO`, 2, LEXEME_DO},
+		Symbol{`END`, 3, LEXEME_END},
+		Symbol{`TRUE`, 4, LEXEME_BOOL},
+		Symbol{`FALSE`, 5, LEXEME_BOOL},
 	}
-
-	return KIND_UNDEFINED
 }
 
 const (
@@ -94,40 +85,34 @@ const (
 	SYMBOL_FRACTIONAL_DELIM string = "."
 )
 
-type LoneSymbol struct {
-	Symbol string
-	Len    int
-	Kind   Kind
-}
-
-func LoneSymbols() []LoneSymbol {
-	return []LoneSymbol{
-		LoneSymbol{`:=`, 2, KIND_ASSIGN},
-		LoneSymbol{`->`, 2, KIND_RETURNS},
-		LoneSymbol{`(`, 1, KIND_OPEN_PAREN},
-		LoneSymbol{`)`, 1, KIND_CLOSE_PAREN},
-		LoneSymbol{`[`, 1, KIND_OPEN_GUARD},
-		LoneSymbol{`]`, 1, KIND_CLOSE_GUARD},
-		LoneSymbol{`{`, 1, KIND_OPEN_LIST},
-		LoneSymbol{`}`, 1, KIND_CLOSE_LIST},
-		LoneSymbol{`,`, 1, KIND_DELIM},
-		LoneSymbol{`_`, 1, VOID},
-		LoneSymbol{`;`, 1, TERMINATOR},
-		LoneSymbol{`@`, 1, SPELL},
-		LoneSymbol{`~`, 1, NOT},
-		LoneSymbol{`¬`, 1, NOT},
-		LoneSymbol{`+`, 1, ADD},
-		LoneSymbol{`-`, 1, SUBTRACT},
-		LoneSymbol{`*`, 1, MULTIPLY},
-		LoneSymbol{`/`, 1, DIVIDE},
-		LoneSymbol{`%`, 1, MOD},
-		LoneSymbol{`&`, 1, AND},
-		LoneSymbol{`|`, 1, OR},
-		LoneSymbol{`=`, 1, EQU},
-		LoneSymbol{`#`, 1, NEQ},
-		LoneSymbol{`<=`, 2, LT_OR_EQU},
-		LoneSymbol{`=>`, 2, MT_OR_EQU},
-		LoneSymbol{`<`, 1, LT},
-		LoneSymbol{`>`, 1, MT},
+func LoneSymbols() []Symbol {
+	return []Symbol{
+		Symbol{`:=`, 2, LEXEME_ASSIGN},
+		Symbol{`->`, 2, LEXEME_RETURNS},
+		Symbol{`(`, 1, LEXEME_OPEN_PAREN},
+		Symbol{`)`, 1, LEXEME_CLOSE_PAREN},
+		Symbol{`[`, 1, LEXEME_OPEN_GUARD},
+		Symbol{`]`, 1, LEXEME_CLOSE_GUARD},
+		Symbol{`{`, 1, LEXEME_OPEN_LIST},
+		Symbol{`}`, 1, LEXEME_CLOSE_LIST},
+		Symbol{`,`, 1, LEXEME_DELIM},
+		Symbol{`_`, 1, LEXEME_VOID},
+		Symbol{`;`, 1, LEXEME_TERMINATOR},
+		Symbol{`@`, 1, LEXEME_SPELL},
+		Symbol{`~`, 1, LEXEME_NOT},
+		Symbol{`¬`, 1, LEXEME_NOT},
+		Symbol{`+`, 1, LEXEME_ADD},
+		Symbol{`-`, 1, LEXEME_SUBTRACT},
+		Symbol{`*`, 1, LEXEME_MULTIPLY},
+		Symbol{`/`, 1, LEXEME_DIVIDE},
+		Symbol{`%`, 1, LEXEME_REMAINDER},
+		Symbol{`&`, 1, LEXEME_AND},
+		Symbol{`|`, 1, LEXEME_OR},
+		Symbol{`=`, 1, LEXEME_EQU},
+		Symbol{`#`, 1, LEXEME_NEQ},
+		Symbol{`<=`, 2, LEXEME_LT_OR_EQU},
+		Symbol{`=>`, 2, LEXEME_MT_OR_EQU},
+		Symbol{`<`, 1, LEXEME_LT},
+		Symbol{`>`, 1, LEXEME_MT},
 	}
 }

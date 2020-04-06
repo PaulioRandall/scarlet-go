@@ -12,8 +12,8 @@ type Stat Expr
 
 // parseStat parses the next statement.
 func (p *Parser) parseStat(inline bool) Stat {
-	switch tk := p.peek(); tk.Kind {
-	case token.KIND_ID:
+	switch tk := p.peek(); tk.Lexeme {
+	case token.LEXEME_ID:
 		return p.parseAssign(inline)
 	default:
 		panic(bard.NewHorror(tk, nil,
@@ -25,15 +25,15 @@ func (p *Parser) parseStat(inline bool) Stat {
 // parseDelimExpr parses a delimitered separated set of expressions.
 func (p *Parser) parseDelimExpr(allowVoid bool) (exs []Expr) {
 
-	for p.peek().Kind != token.KIND_CLOSE_LIST {
+	for p.peek().Lexeme != token.LEXEME_CLOSE_LIST {
 
 		ex := p.parseAssignable(allowVoid)
 		exs = append(exs, ex)
 
-		if p.peek().Kind == token.KIND_DELIM {
+		if p.peek().Lexeme == token.LEXEME_DELIM {
 			p.take()
 
-			if p.peek().Kind == token.TERMINATOR {
+			if p.peek().Lexeme == token.LEXEME_TERMINATOR {
 				p.take()
 			}
 
@@ -49,12 +49,12 @@ func (p *Parser) parseDelimExpr(allowVoid bool) (exs []Expr) {
 // parseExpr parses the an expression that will become an assignment source.
 func (p *Parser) parseAssignable(allowVoid bool) Expr {
 
-	if p.peek().Kind == token.TERMINATOR {
+	if p.peek().Lexeme == token.LEXEME_TERMINATOR {
 		p.take()
 	}
 
-	switch tk := p.peek(); tk.Kind {
-	case token.VOID:
+	switch tk := p.peek(); tk.Lexeme {
+	case token.LEXEME_VOID:
 		if !allowVoid {
 			panic(bard.NewHorror(tk, nil, "Naughty use of void expression"))
 		}
@@ -63,7 +63,7 @@ func (p *Parser) parseAssignable(allowVoid bool) Expr {
 			tk: p.take(),
 			v:  NewValue(tk),
 		}
-	case token.KIND_FUNC:
+	case token.LEXEME_FUNC:
 		return p.parseFuncDef()
 	default:
 		return p.parseExpr()
@@ -73,7 +73,7 @@ func (p *Parser) parseAssignable(allowVoid bool) Expr {
 // parseExpr parses the next expression.
 func (p *Parser) parseExpr() Expr {
 
-	if p.peek().Kind == token.TERMINATOR {
+	if p.peek().Lexeme == token.LEXEME_TERMINATOR {
 		p.take()
 	}
 
@@ -87,7 +87,7 @@ func (p *Parser) parseExpr() Expr {
 		))
 	}
 
-	if p.identifyOperatorKind(p.peek().Kind) == NOT_OPERATOR {
+	if p.identifyOperatorKind(p.peek().Lexeme) == NOT_OPERATOR {
 		return left
 	}
 
@@ -100,21 +100,21 @@ func (p *Parser) parseOperand() (ex Expr) {
 
 	tk := p.peek()
 
-	switch tk.Kind {
-	case token.STR, token.TEMPLATE:
+	switch tk.Lexeme {
+	case token.LEXEME_STRING, token.LEXEME_TEMPLATE:
 		// TODO: string templates need compiling
 		fallthrough
-	case token.BOOL, token.INT, token.REAL:
+	case token.LEXEME_BOOL, token.LEXEME_INT, token.LEXEME_FLOAT:
 		ex = valueExpr{
 			tk: p.take(),
 			v:  NewValue(tk),
 		}
-	case token.KIND_OPEN_LIST:
+	case token.LEXEME_OPEN_LIST:
 		ex = p.parseList()
-	case token.KIND_ID:
+	case token.LEXEME_ID:
 		p.take()
 
-		if p.peek().Kind == token.KIND_OPEN_PAREN {
+		if p.peek().Lexeme == token.LEXEME_OPEN_PAREN {
 			ex = p.parseFuncCall(tk)
 			break
 		}

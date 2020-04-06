@@ -19,15 +19,21 @@ const (
 
 // identifyOperatorKind returns the operation kind of the token. If the token
 // is not a known operator then NOT_OPERATOR is returned.
-func (p *Parser) identifyOperatorKind(k token.Kind) opKind {
-	switch k {
-	case token.ADD, token.SUBTRACT, token.MULTIPLY, token.DIVIDE, token.MOD:
+func (p *Parser) identifyOperatorKind(lex token.Lexeme) opKind {
+	switch lex {
+	case token.LEXEME_ADD, token.LEXEME_SUBTRACT:
+		fallthrough
+	case token.LEXEME_MULTIPLY, token.LEXEME_DIVIDE:
+		fallthrough
+	case token.LEXEME_REMAINDER:
 		return ARITHMETIC
-	case token.EQU, token.NEQ:
+	case token.LEXEME_EQU, token.LEXEME_NEQ:
 		return COMPARISON
-	case token.LT, token.LT_OR_EQU, token.MT, token.MT_OR_EQU:
+	case token.LEXEME_LT, token.LEXEME_MT:
+		fallthrough
+	case token.LEXEME_LT_OR_EQU, token.LEXEME_MT_OR_EQU:
 		return COMPARISON
-	case token.AND, token.OR:
+	case token.LEXEME_AND, token.LEXEME_OR:
 		return BOOLEAN
 	default:
 		return NOT_OPERATOR
@@ -38,7 +44,7 @@ func (p *Parser) identifyOperatorKind(k token.Kind) opKind {
 func (p *Parser) parseOperation(left Expr) Expr {
 
 	op := p.take()
-	kind := p.identifyOperatorKind(op.Kind)
+	kind := p.identifyOperatorKind(op.Lexeme)
 	right := p.parseExpr()
 
 	return operation{
@@ -91,7 +97,7 @@ func (op operation) evalNumeric(ctx Context) Value {
 
 	// TODO: Check both operands are numeric
 
-	if op.operator.Kind != token.DIVIDE && lv.k == INT && rv.k == INT {
+	if op.operator.Lexeme != token.LEXEME_DIVIDE && lv.k == INT && rv.k == INT {
 		return op.evalInt(lv.v.(int64), rv.v.(int64))
 	}
 
@@ -119,14 +125,14 @@ func (op operation) evalInt(l, r int64) (v Value) {
 	if op.kind == ARITHMETIC {
 		v.k = INT
 
-		switch op.operator.Kind {
-		case token.ADD:
+		switch op.operator.Lexeme {
+		case token.LEXEME_ADD:
 			v.v = l + r
-		case token.SUBTRACT:
+		case token.LEXEME_SUBTRACT:
 			v.v = l - r
-		case token.MULTIPLY:
+		case token.LEXEME_MULTIPLY:
 			v.v = l * r
-		case token.MOD:
+		case token.LEXEME_REMAINDER:
 			v.v = l % r
 		default:
 			panic(bard.NewHorror(op.operator, nil,
@@ -139,18 +145,18 @@ func (op operation) evalInt(l, r int64) (v Value) {
 
 	v.k = BOOL
 
-	switch op.operator.Kind {
-	case token.EQU:
+	switch op.operator.Lexeme {
+	case token.LEXEME_EQU:
 		v.v = l == r
-	case token.NEQ:
+	case token.LEXEME_NEQ:
 		v.v = l != r
-	case token.LT:
+	case token.LEXEME_LT:
 		v.v = l < r
-	case token.LT_OR_EQU:
+	case token.LEXEME_LT_OR_EQU:
 		v.v = l <= r
-	case token.MT:
+	case token.LEXEME_MT:
 		v.v = l > r
-	case token.MT_OR_EQU:
+	case token.LEXEME_MT_OR_EQU:
 		v.v = l >= r
 	default:
 		panic(bard.NewHorror(op.operator, nil,
@@ -167,14 +173,14 @@ func (op operation) evalReal(l, r float64) (v Value) {
 	if op.kind == ARITHMETIC {
 		v.k = REAL
 
-		switch op.operator.Kind {
-		case token.ADD:
+		switch op.operator.Lexeme {
+		case token.LEXEME_ADD:
 			v.v = l + r
-		case token.SUBTRACT:
+		case token.LEXEME_SUBTRACT:
 			v.v = l - r
-		case token.MULTIPLY:
+		case token.LEXEME_MULTIPLY:
 			v.v = l * r
-		case token.DIVIDE:
+		case token.LEXEME_DIVIDE:
 			if r == 0 {
 				panic(bard.NewHorror(op.operator, nil, "Cannot divide by zero"))
 			}
@@ -190,18 +196,18 @@ func (op operation) evalReal(l, r float64) (v Value) {
 
 	v.k = BOOL
 
-	switch op.operator.Kind {
-	case token.EQU:
+	switch op.operator.Lexeme {
+	case token.LEXEME_EQU:
 		v.v = l == r
-	case token.NEQ:
+	case token.LEXEME_NEQ:
 		v.v = l != r
-	case token.LT:
+	case token.LEXEME_LT:
 		v.v = l < r
-	case token.LT_OR_EQU:
+	case token.LEXEME_LT_OR_EQU:
 		v.v = l <= r
-	case token.MT:
+	case token.LEXEME_MT:
 		v.v = l > r
-	case token.MT_OR_EQU:
+	case token.LEXEME_MT_OR_EQU:
 		v.v = l >= r
 	default:
 		panic(bard.NewHorror(op.operator, nil,
@@ -225,10 +231,10 @@ func (op operation) evalBoolean(ctx Context) (v Value) {
 
 	v.k = BOOL
 
-	switch op.operator.Kind {
-	case token.AND:
+	switch op.operator.Lexeme {
+	case token.LEXEME_AND:
 		v.v = l && r
-	case token.OR:
+	case token.LEXEME_OR:
 		v.v = l || r
 	default:
 		panic(bard.NewHorror(op.operator, nil,

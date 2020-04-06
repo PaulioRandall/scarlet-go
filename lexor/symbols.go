@@ -123,17 +123,17 @@ func (s *scanner) countDigitRunes(start int) int {
 
 // tokenize slices off the next token from the scanners rune array and updates
 // the line and column numbers accordingly.
-func (s *scanner) tokenize(n int, k token.Kind, newline bool) (tk token.Token) {
+func (s *scanner) tokenize(n int, lex token.Lexeme, newline bool) (tk token.Token) {
 
 	if s.len() < n {
 		panic("SANITY CHECK! Bad argument, n is bigger than the remaining source code")
 	}
 
 	tk = token.Token{
-		Kind:  k,
-		Value: string(s.runes[:n]),
-		Line:  s.line,
-		Col:   s.col,
+		Lexeme: lex,
+		Value:  string(s.runes[:n]),
+		Line:   s.line,
+		Col:    s.col,
 	}
 
 	s.runes = s.runes[n:]
