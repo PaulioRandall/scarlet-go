@@ -92,13 +92,16 @@ func (s *scanner) scanNewline() (_ token.Token) {
 // token is returned.
 func (s *scanner) scanComment() (_ token.Token) {
 
-	if s.doesNotMatch(0, token.TERMINAL_COMMENT_START) {
+	const (
+		COMMENT_PREFIX     = token.LEXEME_COMMENT_START
+		COMMENT_PREFIX_LEN = len(COMMENT_PREFIX)
+	)
+
+	if s.doesNotMatchNonTerminal(0, COMMENT_PREFIX) {
 		return
 	}
 
-	const PREFIXES = 1 // Number of terminals that signify a comment start
-	n := s.howManyRunesUntilNewline(PREFIXES)
-
+	n := s.howManyRunesUntilNewline(COMMENT_PREFIX_LEN)
 	return s.tokenize(n, token.KIND_COMMENT, false)
 }
 
@@ -124,8 +127,8 @@ func (s *scanner) scanSpace() (_ token.Token) {
 func (s *scanner) scanNumLiteral() (_ token.Token) {
 
 	const (
-		DELIM_RUNE = token.TERMINAL_FRACTIONAL_DELIM
-		DELIM_LEN  = 1
+		DELIM     = token.LEXEME_FRACTIONAL_DELIM
+		DELIM_LEN = len(DELIM)
 	)
 
 	isNotDigit := func(_ int, ru rune) bool {
@@ -138,7 +141,7 @@ func (s *scanner) scanNumLiteral() (_ token.Token) {
 		return
 	}
 
-	if intLen == s.len() || s.doesNotMatch(intLen, DELIM_RUNE) {
+	if intLen == s.len() || s.doesNotMatchNonTerminal(intLen, DELIM) {
 		return s.tokenize(intLen, token.INT, false)
 	}
 

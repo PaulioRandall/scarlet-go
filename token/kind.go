@@ -54,18 +54,16 @@ const (
 // Collection of terminal and non-terminal symbols for ease of reference and to
 // speed up syntax experimentation.
 const (
-	LEXEME_FUNCTION     string = `F`
-	LEXEME_BLOCK_START  string = `DO`
-	LEXEME_BLOCK_END    string = `END`
-	LEXEME_TRUE         string = `TRUE`
-	LEXEME_FALSE        string = `FALSE`
-	LEXEME_NEWLINE_LF   string = "\n"
-	LEXEME_NEWLINE_CRLF string = "\r\n"
+	LEXEME_FUNCTION         string = `F`
+	LEXEME_BLOCK_START      string = `DO`
+	LEXEME_BLOCK_END        string = `END`
+	LEXEME_TRUE             string = `TRUE`
+	LEXEME_FALSE            string = `FALSE`
+	LEXEME_NEWLINE_LF       string = "\n"
+	LEXEME_NEWLINE_CRLF     string = "\r\n"
+	LEXEME_COMMENT_START    string = "/"
+	LEXEME_FRACTIONAL_DELIM string = "."
 	// TODO: lexeme theses
-	TERMINAL_CARRIAGE_RETURN           rune   = '\r'
-	TERMINAL_LINEFEED                  rune   = '\n'
-	TERMINAL_COMMENT_START             rune   = '/'
-	TERMINAL_FRACTIONAL_DELIM          rune   = '.'
 	TERMINAL_STRING_START              rune   = '`'
 	TERMINAL_STRING_END                rune   = '`'
 	TERMINAL_TEMPLATE_START            rune   = '"'

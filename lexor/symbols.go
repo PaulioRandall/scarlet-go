@@ -43,8 +43,6 @@ func (s *scanner) matchesTerminal(i int, terminal rune) bool {
 	return s.runes[i] == terminal
 }
 
-// matches returns true if the scanners rune slice matches the specified
-// string.
 func (s *scanner) matchesNonTerminal(start int, needle string) bool {
 
 	haystack := s.runes[start:]
@@ -60,6 +58,10 @@ func (s *scanner) matchesNonTerminal(start int, needle string) bool {
 	}
 
 	return true
+}
+
+func (s *scanner) doesNotMatchNonTerminal(start int, needle string) bool {
+	return !s.matchesNonTerminal(start, needle)
 }
 
 // matches returns true if the scanners rune slice matches the specified
