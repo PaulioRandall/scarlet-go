@@ -82,11 +82,11 @@ const (
 )
 
 const (
-	SYMBOL_STRING_START    string = "`"
-	SYMBOL_STRING_END      string = "`"
-	SYMBOL_TEMPLATE_START  string = `"`
-	SYMBOL_TEMPLATE_ESCAPE string = `\`
-	SYMBOL_TEMPLATE_END    string = `"`
+	STRING_SYMBOL_START    string = "`"
+	STRING_SYMBOL_END      string = "`"
+	TEMPLATE_SYMBOL_START  string = `"`
+	TEMPLATE_SYMBOL_ESCAPE string = `\`
+	TEMPLATE_SYMBOL_END    string = `"`
 )
 
 const (
@@ -94,33 +94,40 @@ const (
 	SYMBOL_FRACTIONAL_DELIM string = "."
 )
 
-const (
-	// TODO: lexeme theses
-	NON_TERMINAL_ASSIGNMENT            string = `:=`
-	NON_TERMINAL_RETURN_PARAMS         string = `->`
-	TERMINAL_OPEN_PAREN                rune   = '('
-	TERMINAL_CLOSE_PAREN               rune   = ')'
-	TERMINAL_OPEN_GUARD                rune   = '['
-	TERMINAL_CLOSE_GUARD               rune   = ']'
-	TERMINAL_OPEN_LIST                 rune   = '{'
-	TERMINAL_CLOSE_LIST                rune   = '}'
-	TERMINAL_LIST_DELIM                rune   = ','
-	TERMINAL_VOID_VALUE                rune   = '_'
-	TERMINAL_STATEMENT_TERMINATOR      rune   = ';'
-	TERMINAL_SPELL_PREFIX              rune   = '@'
-	TERMINAL_UNIVERSAL_NEGATION        rune   = '~'
-	TERMINAL_TEA_DRINKING_NEGATION     rune   = '¬'
-	TERMINAL_MATH_ADDITION             rune   = '+'
-	TERMINAL_MATH_SUBTRACTION          rune   = '-'
-	TERMINAL_MATH_MULTIPLICATION       rune   = '*'
-	TERMINAL_MATH_DIVISION             rune   = '/'
-	TERMINAL_MATH_REMAINDER            rune   = '%'
-	TERMINAL_LOGICAL_AND               rune   = '&'
-	TERMINAL_LOGICAL_OR                rune   = '|'
-	TERMINAL_EQUALITY                  rune   = '='
-	TERMINAL_UNEQUALITY                rune   = '#'
-	NON_TERMINAL_LESS_THAN_OR_EQUAL    string = "<="
-	NON_TERMINAL_GREATER_THAN_OR_EQUAL string = "=>"
-	TERMINAL_LESS_THAN                 rune   = '<'
-	TERMINAL_MORE_THAN                 rune   = '>'
-)
+type LoneSymbol struct {
+	Symbol string
+	Len    int
+	Kind   Kind
+}
+
+func LoneSymbols() []LoneSymbol {
+	return []LoneSymbol{
+		LoneSymbol{`:=`, 2, KIND_ASSIGN},
+		LoneSymbol{`->`, 2, KIND_RETURNS},
+		LoneSymbol{`(`, 1, KIND_OPEN_PAREN},
+		LoneSymbol{`)`, 1, KIND_CLOSE_PAREN},
+		LoneSymbol{`[`, 1, KIND_OPEN_GUARD},
+		LoneSymbol{`]`, 1, KIND_CLOSE_GUARD},
+		LoneSymbol{`{`, 1, KIND_OPEN_LIST},
+		LoneSymbol{`}`, 1, KIND_CLOSE_LIST},
+		LoneSymbol{`,`, 1, KIND_DELIM},
+		LoneSymbol{`_`, 1, VOID},
+		LoneSymbol{`;`, 1, TERMINATOR},
+		LoneSymbol{`@`, 1, SPELL},
+		LoneSymbol{`~`, 1, NOT},
+		LoneSymbol{`¬`, 1, NOT},
+		LoneSymbol{`+`, 1, ADD},
+		LoneSymbol{`-`, 1, SUBTRACT},
+		LoneSymbol{`*`, 1, MULTIPLY},
+		LoneSymbol{`/`, 1, DIVIDE},
+		LoneSymbol{`%`, 1, MOD},
+		LoneSymbol{`&`, 1, AND},
+		LoneSymbol{`|`, 1, OR},
+		LoneSymbol{`=`, 1, EQU},
+		LoneSymbol{`#`, 1, NEQ},
+		LoneSymbol{`<=`, 2, LT_OR_EQU},
+		LoneSymbol{`=>`, 2, MT_OR_EQU},
+		LoneSymbol{`<`, 1, LT},
+		LoneSymbol{`>`, 1, MT},
+	}
+}

@@ -127,75 +127,24 @@ func (s *scanner) scanWord() (_ token.Token) {
 
 func (s *scanner) scanSymbol() (_ token.Token) {
 
-	var n int
-	var k token.Kind
-
 	if s.empty() {
 		return
 	}
 
-	switch { // The order matters! This might be best moved to the token package.
-	case s.matchesNonTerminal(0, token.NON_TERMINAL_ASSIGNMENT):
-		n, k = 2, token.KIND_ASSIGN
-	case s.matchesNonTerminal(0, token.NON_TERMINAL_RETURN_PARAMS):
-		n, k = 2, token.KIND_RETURNS
-	case s.matchesTerminal(0, token.TERMINAL_OPEN_PAREN):
-		n, k = 1, token.KIND_OPEN_PAREN
-	case s.matchesTerminal(0, token.TERMINAL_CLOSE_PAREN):
-		n, k = 1, token.KIND_CLOSE_PAREN
-	case s.matchesTerminal(0, token.TERMINAL_OPEN_GUARD):
-		n, k = 1, token.KIND_OPEN_GUARD
-	case s.matchesTerminal(0, token.TERMINAL_CLOSE_GUARD):
-		n, k = 1, token.KIND_CLOSE_GUARD
-	case s.matchesTerminal(0, token.TERMINAL_OPEN_LIST):
-		n, k = 1, token.KIND_OPEN_LIST
-	case s.matchesTerminal(0, token.TERMINAL_CLOSE_LIST):
-		n, k = 1, token.KIND_CLOSE_LIST
-	case s.matchesTerminal(0, token.TERMINAL_LIST_DELIM):
-		n, k = 1, token.KIND_DELIM
-	case s.matchesTerminal(0, token.TERMINAL_VOID_VALUE):
-		n, k = 1, token.VOID
-	case s.matchesTerminal(0, token.TERMINAL_STATEMENT_TERMINATOR):
-		n, k = 1, token.TERMINATOR
-	case s.matchesTerminal(0, token.TERMINAL_SPELL_PREFIX):
-		n, k = 1, token.SPELL
-	case s.matchesTerminal(0, token.TERMINAL_UNIVERSAL_NEGATION):
-		n, k = 1, token.NOT
-	case s.matchesTerminal(0, token.TERMINAL_TEA_DRINKING_NEGATION):
-		n, k = 1, token.NOT
-	case s.matchesTerminal(0, token.TERMINAL_MATH_ADDITION):
-		n, k = 1, token.ADD
-	case s.matchesTerminal(0, token.TERMINAL_MATH_SUBTRACTION):
-		n, k = 1, token.SUBTRACT
-	case s.matchesTerminal(0, token.TERMINAL_MATH_MULTIPLICATION):
-		n, k = 1, token.MULTIPLY
-	case s.matchesTerminal(0, token.TERMINAL_MATH_DIVISION):
-		n, k = 1, token.DIVIDE
-	case s.matchesTerminal(0, token.TERMINAL_MATH_REMAINDER):
-		n, k = 1, token.MOD
-	case s.matchesTerminal(0, token.TERMINAL_LOGICAL_AND):
-		n, k = 1, token.AND
-	case s.matchesTerminal(0, token.TERMINAL_LOGICAL_OR):
-		n, k = 1, token.OR
-	case s.matchesTerminal(0, token.TERMINAL_EQUALITY):
-		n, k = 1, token.EQU
-	case s.matchesTerminal(0, token.TERMINAL_UNEQUALITY):
-		n, k = 1, token.NEQ
-	case s.matchesNonTerminal(0, token.NON_TERMINAL_LESS_THAN_OR_EQUAL):
-		n, k = 2, token.LT_OR_EQU
-	case s.matchesNonTerminal(0, token.NON_TERMINAL_GREATER_THAN_OR_EQUAL):
-		n, k = 2, token.MT_OR_EQU
-	case s.matchesTerminal(0, token.TERMINAL_LESS_THAN):
-		n, k = 1, token.LT
-	case s.matchesTerminal(0, token.TERMINAL_MORE_THAN):
-		n, k = 1, token.MT
+	size := s.len()
+
+	for _, sym := range token.LoneSymbols() {
+
+		if size < sym.Len {
+			continue
+		}
+
+		if s.matchesNonTerminal(0, sym.Symbol) {
+			return s.tokenize(sym.Len, sym.Kind, false)
+		}
 	}
 
-	if k == token.KIND_UNDEFINED {
-		return
-	}
-
-	return s.tokenize(n, k, false)
+	return
 }
 
 func (s *scanner) scanNumberLiteral() (_ token.Token) {
@@ -230,8 +179,8 @@ func (s *scanner) scanNumberLiteral() (_ token.Token) {
 func (s *scanner) scanStringLiteral() (_ token.Token) {
 
 	const (
-		PREFIX = token.SYMBOL_STRING_START
-		SUFFIX = token.SYMBOL_STRING_END
+		PREFIX = token.STRING_SYMBOL_START
+		SUFFIX = token.STRING_SYMBOL_END
 	)
 
 	n := s.howManyRunesUntil(0, func(i int, _ rune) bool {
@@ -264,10 +213,10 @@ func (s *scanner) scanStringLiteral() (_ token.Token) {
 func (s *scanner) scanStringTemplate() (_ token.Token) {
 
 	const (
-		PREFIX        = token.SYMBOL_TEMPLATE_START
-		SUFFIX        = token.SYMBOL_TEMPLATE_END
+		PREFIX        = token.TEMPLATE_SYMBOL_START
+		SUFFIX        = token.TEMPLATE_SYMBOL_END
 		SUFFIX_LEN    = len(SUFFIX)
-		ESCAPE_SYMBOL = token.SYMBOL_TEMPLATE_ESCAPE
+		ESCAPE_SYMBOL = token.TEMPLATE_SYMBOL_ESCAPE
 	)
 
 	var prevEscaped bool
