@@ -1,6 +1,7 @@
 package lexor
 
 import (
+	"github.com/PaulioRandall/scarlet-go/lexor/symbol"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -16,9 +17,7 @@ type TokenStream interface {
 // at a time on each call to TokenStream.Next.
 func NewScanner(s string) TokenStream {
 	return &scanner{
-		symbolStream{
-			runes: []rune(s),
-		},
+		symbol.NewSymbolStream(s),
 	}
 }
 

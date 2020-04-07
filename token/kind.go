@@ -68,11 +68,6 @@ func Keywords() []Symbol {
 }
 
 const (
-	NEWLINE_LF   string = "\n"
-	NEWLINE_CRLF string = "\r\n"
-)
-
-const (
 	STRING_SYMBOL_START    string = "`"
 	STRING_SYMBOL_END      string = "`"
 	TEMPLATE_SYMBOL_START  string = `"`
