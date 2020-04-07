@@ -7,107 +7,57 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// TokenStream represents a stream of tokens.
-type TokenStream interface {
+/******************************************************************************
+File:
+	Contains functions used in parsing a written script into tokens.
+******************************************************************************/
 
-	// Next returns the next token in the stream. An EOF token is always returned
-	// if the token stream is empty.
-	Next() token.Token
-}
+// scanFunc is the common signiture used by every scanning function that
+// follows. If a concrete scanning function finds a match it must return a
+// non-zero token and 'true' else it must return a zero token and 'false'.
+type scanFunc func(*scanner) (token.Token, bool)
 
-// scanner is a structure for parsing source code into tokens. It implements
-// the TokenStream interface so it may be wrapped.
-type scanner struct {
-	runes []rune // Source code
-	line  int    // Line index
-	col   int    // Column index
-}
-
-// NewScanner creates a new scanner to parse the input string.
-func NewScanner(s string) TokenStream {
-	return &scanner{
-		runes: []rune(s),
-		line:  0,
-		col:   0,
-	}
-}
-
-// Next satisfies the TokenStream interface.
-func (s *scanner) Next() (tk token.Token) {
-
-	if s.empty() {
-		return token.Token{
-			Lexeme: token.LEXEME_EOF,
-			Line:   s.line,
-			Col:    s.col,
-		}
-	}
-
-	type scanFunc func() token.Token
-
-	fs := []scanFunc{
-		s.scanNewline, // LF & CRLF
-		s.scanWhitespace,
-		s.scanComment,
-		s.scanWord,   // Identifiers & keywords
-		s.scanSymbol, // :=, +, <, etc
-		s.scanNumberLiteral,
-		s.scanStringLiteral,  // `literal`
-		s.scanStringTemplate, // "Template: {identifier}"
-	}
-
-	for _, f := range fs {
-		if tk = f(); tk != (token.Token{}) {
-			return
-		}
-	}
-
-	println(string(s.runes))
-
-	panic(bard.NewTerror(s.line, s.col, nil,
-		"Could not identify next token",
-	))
-}
-
-func (s *scanner) scanNewline() (_ token.Token) {
+func scanNewline(s *scanner) (_ token.Token, _ bool) {
 
 	if n := s.countNewlineRunes(0); n > 0 {
-		return s.tokenize(n, token.LEXEME_NEWLINE, true)
+		tk := s.tokenize(n, token.LEXEME_NEWLINE, true)
+		return tk, true
 	}
 
 	return
 }
 
-func (s *scanner) scanWhitespace() (_ token.Token) {
+func scanWhitespace(s *scanner) (_ token.Token, _ bool) {
 
-	isSpace := func(i int, ru rune) bool {
+	isNotSpace := func(i int, ru rune) bool {
 		return s.matchesNewline(i) || !unicode.IsSpace(ru)
 	}
 
-	if isSpace(0, s.runes[0]) {
-		return
+	if n := s.howManyRunesUntil(0, isNotSpace); n > 0 {
+		tk := s.tokenize(n, token.LEXEME_WHITESPACE, false)
+		return tk, true
 	}
 
-	n := s.howManyRunesUntil(0, isSpace)
-	return s.tokenize(n, token.LEXEME_WHITESPACE, false)
+	return
 }
 
-func (s *scanner) scanComment() (_ token.Token) {
+func scanComment(s *scanner) (tk token.Token, match bool) {
 
 	const (
 		COMMENT_PREFIX     = token.SYMBOL_COMMENT_START
 		COMMENT_PREFIX_LEN = len(COMMENT_PREFIX)
 	)
 
-	if s.doesNotMatchNonTerminal(0, COMMENT_PREFIX) {
-		return
+	if s.matchesNonTerminal(0, COMMENT_PREFIX) {
+		n := s.runesUntilNewline(COMMENT_PREFIX_LEN)
+		tk = s.tokenize(n, token.LEXEME_COMMENT, false)
+		match = true
 	}
 
-	n := s.runesUntilNewline(COMMENT_PREFIX_LEN)
-	return s.tokenize(n, token.LEXEME_COMMENT, false)
+	return
 }
 
-func (s *scanner) scanWord() (_ token.Token) {
+func scanWord(s *scanner) (_ token.Token, _ bool) {
 
 	n := s.countWordRunes(0)
 
@@ -119,14 +69,16 @@ func (s *scanner) scanWord() (_ token.Token) {
 
 	for _, kw := range token.Keywords() {
 		if kw.Symbol == w {
-			return s.tokenize(n, kw.Lexeme, false)
+			tk := s.tokenize(n, kw.Lexeme, false)
+			return tk, true
 		}
 	}
 
-	return s.tokenize(n, token.LEXEME_ID, false)
+	tk := s.tokenize(n, token.LEXEME_ID, false)
+	return tk, true
 }
 
-func (s *scanner) scanSymbol() (_ token.Token) {
+func scanSymbol(s *scanner) (_ token.Token, _ bool) {
 
 	if s.empty() {
 		return
@@ -141,14 +93,15 @@ func (s *scanner) scanSymbol() (_ token.Token) {
 		}
 
 		if s.matchesNonTerminal(0, sym.Symbol) {
-			return s.tokenize(sym.Len, sym.Lexeme, false)
+			tk := s.tokenize(sym.Len, sym.Lexeme, false)
+			return tk, true
 		}
 	}
 
 	return
 }
 
-func (s *scanner) scanNumberLiteral() (_ token.Token) {
+func scanNumberLiteral(s *scanner) (_ token.Token, _ bool) {
 
 	const (
 		DELIM     = token.SYMBOL_FRACTIONAL_DELIM
@@ -158,26 +111,34 @@ func (s *scanner) scanNumberLiteral() (_ token.Token) {
 	intLen := s.countDigitRunes(0)
 
 	if intLen == 0 {
+		// If there are no digits then this is not a number.
 		return
 	}
 
 	if intLen == s.len() || s.doesNotMatchNonTerminal(intLen, DELIM) {
-		return s.tokenize(intLen, token.LEXEME_INT, false)
+		// If this is the last token in the scanner or the next terminal is not the
+		// delimiter between a floats integral and fractional parts then it must be
+		// an integral.
+		tk := s.tokenize(intLen, token.LEXEME_INT, false)
+		return tk, true
 	}
 
 	fractionalLen := s.countDigitRunes(intLen + DELIM_LEN)
 
 	if fractionalLen == 0 {
+		// One or many fractional digits must follow a delimiter. Zero following
+		// digits is invalid syntax, so we must panic.
 		panic(bard.NewTerror(s.line, s.col+intLen+DELIM_LEN, nil,
-			"Expected digit after decimal point",
+			"Invalid syntax, expected digit after decimal point",
 		))
 	}
 
 	n := intLen + DELIM_LEN + fractionalLen
-	return s.tokenize(n, token.LEXEME_FLOAT, false)
+	tk := s.tokenize(n, token.LEXEME_FLOAT, false)
+	return tk, true
 }
 
-func (s *scanner) scanStringLiteral() (_ token.Token) {
+func scanStringLiteral(s *scanner) (_ token.Token, _ bool) {
 
 	const (
 		PREFIX = token.STRING_SYMBOL_START
@@ -188,8 +149,11 @@ func (s *scanner) scanStringLiteral() (_ token.Token) {
 
 		switch {
 		case i == 0:
+			// If the initial terminals are not signify a string literal then exit
+			// straight away.
 			return s.doesNotMatchNonTerminal(i, PREFIX)
 		case s.matchesNonTerminal(i, SUFFIX):
+			// If
 			return true
 		case s.matchesNewline(i):
 			panic(bard.NewTerror(s.line, s.col, nil,
@@ -208,10 +172,11 @@ func (s *scanner) scanStringLiteral() (_ token.Token) {
 		return
 	}
 
-	return s.tokenize(n+1, token.LEXEME_STRING, false)
+	tk := s.tokenize(n+1, token.LEXEME_STRING, false)
+	return tk, true
 }
 
-func (s *scanner) scanStringTemplate() (_ token.Token) {
+func scanStringTemplate(s *scanner) (_ token.Token, _ bool) {
 
 	const (
 		PREFIX        = token.TEMPLATE_SYMBOL_START
@@ -253,5 +218,6 @@ func (s *scanner) scanStringTemplate() (_ token.Token) {
 	}
 
 	n += SUFFIX_LEN
-	return s.tokenize(n, token.LEXEME_TEMPLATE, false)
+	tk := s.tokenize(n, token.LEXEME_TEMPLATE, false)
+	return tk, true
 }

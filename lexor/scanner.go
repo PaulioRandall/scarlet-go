@@ -3,8 +3,50 @@ package lexor
 import (
 	"unicode"
 
+	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/token"
 )
+
+// scanner is a structure for parsing source code into tokens. It implements
+// the TokenStream interface so it may be wrapped.
+type scanner struct {
+	runes []rune // Source code
+	line  int    // Line index
+	col   int    // Column index
+}
+
+// Next satisfies the TokenStream interface.
+func (s *scanner) Next() token.Token {
+
+	if s.empty() {
+		return token.Token{
+			Lexeme: token.LEXEME_EOF,
+			Line:   s.line,
+			Col:    s.col,
+		}
+	}
+
+	fs := []scanFunc{
+		scanNewline, // LF & CRLF
+		scanWhitespace,
+		scanComment,
+		scanWord,   // Identifiers & keywords
+		scanSymbol, // :=, +, <, etc
+		scanNumberLiteral,
+		scanStringLiteral,  // `literal`
+		scanStringTemplate, // "Template: {identifier}"
+	}
+
+	for _, f := range fs {
+		if tk, match := f(s); match {
+			return tk
+		}
+	}
+
+	panic(bard.NewTerror(s.line, s.col, nil,
+		"Could not identify next token",
+	))
+}
 
 // empty returns true if the scanners rune slice is empty.
 func (s *scanner) empty() bool {

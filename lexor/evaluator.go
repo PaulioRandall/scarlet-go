@@ -17,13 +17,6 @@ type evaluator struct {
 	prev token.Lexeme
 }
 
-// NewEvaluator creates a new evaluator to evaluate tokens within a stream.
-func NewEvaluator(delegate TokenStream) TokenStream {
-	return &evaluator{
-		ts: delegate,
-	}
-}
-
 // Next satisfies the TokenStream interface.
 func (ev *evaluator) Next() (_ token.Token) {
 
