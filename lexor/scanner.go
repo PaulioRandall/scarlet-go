@@ -59,7 +59,7 @@ type scanFunc func() (token.Token, bool)
 func (sc *scanner) scanNewline() (_ token.Token, _ bool) {
 
 	if n := sc.countNewlineRunes(0); n > 0 {
-		tk := sc.tokenize(n, token.LEXEME_NEWLINE, true)
+		tk := sc.tokenize(n, token.LEXEME_NEWLINE)
 		return tk, true
 	}
 
@@ -68,12 +68,12 @@ func (sc *scanner) scanNewline() (_ token.Token, _ bool) {
 
 func (sc *scanner) scanWhitespace() (_ token.Token, _ bool) {
 
-	isNotSpace := func(i int, ru rune) bool {
-		return sc.matchesNewline(i) || !unicode.IsSpace(ru)
+	isSpace := func(i int, ru rune) bool {
+		return !sc.isNewline(i) && unicode.IsSpace(ru)
 	}
 
-	if n := sc.howManyRunesUntil(0, isNotSpace); n > 0 {
-		tk := sc.tokenize(n, token.LEXEME_WHITESPACE, false)
+	if n := sc.countRunesWhile(0, isSpace); n > 0 {
+		tk := sc.tokenize(n, token.LEXEME_WHITESPACE)
 		return tk, true
 	}
 
@@ -87,9 +87,9 @@ func (sc *scanner) scanComment() (_ token.Token, _ bool) {
 		COMMENT_PREFIX_LEN = len(COMMENT_PREFIX)
 	)
 
-	if sc.matchesNonTerminal(0, COMMENT_PREFIX) {
+	if sc.isMatch(0, COMMENT_PREFIX) {
 		n := sc.runesUntilNewline(COMMENT_PREFIX_LEN)
-		tk := sc.tokenize(n, token.LEXEME_COMMENT, false)
+		tk := sc.tokenize(n, token.LEXEME_COMMENT)
 		return tk, true
 	}
 
@@ -108,12 +108,12 @@ func (sc *scanner) scanWord() (_ token.Token, _ bool) {
 
 	for _, kw := range token.Keywords() {
 		if kw.Symbol == w {
-			tk := sc.tokenize(n, kw.Lexeme, false)
+			tk := sc.tokenize(n, kw.Lexeme)
 			return tk, true
 		}
 	}
 
-	tk := sc.tokenize(n, token.LEXEME_ID, false)
+	tk := sc.tokenize(n, token.LEXEME_ID)
 	return tk, true
 }
 
@@ -131,8 +131,8 @@ func (sc *scanner) scanSymbol() (_ token.Token, _ bool) {
 			continue
 		}
 
-		if sc.matchesNonTerminal(0, sym.Symbol) {
-			tk := sc.tokenize(sym.Len, sym.Lexeme, false)
+		if sc.isMatch(0, sym.Symbol) {
+			tk := sc.tokenize(sym.Len, sym.Lexeme)
 			return tk, true
 		}
 	}
@@ -154,11 +154,11 @@ func (sc *scanner) scanNumberLiteral() (_ token.Token, _ bool) {
 		return
 	}
 
-	if intLen == sc.len() || sc.doesNotMatchNonTerminal(intLen, DELIM) {
+	if intLen == sc.len() || !sc.isMatch(intLen, DELIM) {
 		// If this is the last token in the scanner or the next terminal is not the
 		// delimiter between a floats integral and fractional parts then it must be
 		// an integral.
-		tk := sc.tokenize(intLen, token.LEXEME_INT, false)
+		tk := sc.tokenize(intLen, token.LEXEME_INT)
 		return tk, true
 	}
 
@@ -173,7 +173,7 @@ func (sc *scanner) scanNumberLiteral() (_ token.Token, _ bool) {
 	}
 
 	n := intLen + DELIM_LEN + fractionalLen
-	tk := sc.tokenize(n, token.LEXEME_FLOAT, false)
+	tk := sc.tokenize(n, token.LEXEME_FLOAT)
 	return tk, true
 }
 
@@ -184,17 +184,17 @@ func (sc *scanner) scanStringLiteral() (_ token.Token, _ bool) {
 		SUFFIX = token.STRING_SYMBOL_END
 	)
 
-	n := sc.howManyRunesUntil(0, func(i int, _ rune) bool {
+	n := sc.countRunesWhile(0, func(i int, _ rune) bool {
 
 		switch {
 		case i == 0:
 			// If the initial terminals are not signify a string literal then exit
 			// straight away.
-			return sc.doesNotMatchNonTerminal(i, PREFIX)
-		case sc.matchesNonTerminal(i, SUFFIX):
+			return sc.isMatch(i, PREFIX)
+		case sc.isMatch(i, SUFFIX):
 			// If
-			return true
-		case sc.matchesNewline(i):
+			return false
+		case sc.isNewline(i):
 			panic(bard.NewTerror(sc.line, sc.col, nil,
 				"Newline encountered before a string literal was terminated",
 			))
@@ -204,14 +204,14 @@ func (sc *scanner) scanStringLiteral() (_ token.Token, _ bool) {
 			))
 		}
 
-		return false
+		return true
 	})
 
 	if n == 0 {
 		return
 	}
 
-	tk := sc.tokenize(n+1, token.LEXEME_STRING, false)
+	tk := sc.tokenize(n+1, token.LEXEME_STRING)
 	return tk, true
 }
 
@@ -226,20 +226,20 @@ func (sc *scanner) scanStringTemplate() (_ token.Token, _ bool) {
 
 	var prevEscaped bool
 
-	n := sc.howManyRunesUntil(0, func(i int, _ rune) bool {
+	n := sc.countRunesWhile(0, func(i int, _ rune) bool {
 
 		escaped := prevEscaped
 		prevEscaped = false
 
 		switch {
 		case i == 0:
-			return sc.doesNotMatchNonTerminal(i, PREFIX)
-		case sc.matchesNonTerminal(i, ESCAPE_SYMBOL):
+			return sc.isMatch(i, PREFIX)
+		case sc.isMatch(i, ESCAPE_SYMBOL):
 			prevEscaped = true
-			return false
-		case !escaped && sc.matchesNonTerminal(i, SUFFIX):
 			return true
-		case sc.matchesNewline(i):
+		case !escaped && sc.isMatch(i, SUFFIX):
+			return false
+		case sc.isNewline(i):
 			panic(bard.NewTerror(sc.line, sc.col, nil,
 				"Newline encountered before a string template was terminated",
 			))
@@ -249,7 +249,7 @@ func (sc *scanner) scanStringTemplate() (_ token.Token, _ bool) {
 			))
 		}
 
-		return false
+		return true
 	})
 
 	if n == 0 {
@@ -257,6 +257,19 @@ func (sc *scanner) scanStringTemplate() (_ token.Token, _ bool) {
 	}
 
 	n += SUFFIX_LEN
-	tk := sc.tokenize(n, token.LEXEME_TEMPLATE, false)
+	tk := sc.tokenize(n, token.LEXEME_TEMPLATE)
 	return tk, true
+}
+
+func (sc *scanner) tokenize(runeCount int, lex token.Lexeme) token.Token {
+
+	tk := token.Token{
+		Lexeme: lex,
+		Line:   sc.line,
+		Col:    sc.col,
+	}
+
+	tk.Value = sc.read(runeCount, lex == token.LEXEME_NEWLINE)
+
+	return tk
 }

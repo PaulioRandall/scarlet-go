@@ -6,41 +6,36 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-// symbolStream provides access to an ordered stream of terminal symbols. The
-// word 'symbol' and Go type 'rune' are used interchangable.
-type symbolStream struct {
-	runes []rune // Symbols representing a script
-	line  int    // Current line index within the script
-	col   int    // Current column index within the line
+// codingError generates a panic to stop the program because a programmer has
+// introduced an error.
+func codingError(msg string) {
+	panic("PROGRAMMERS ERROR! " + msg)
 }
 
-// empty returns true if the scanners rune slice is empty.
+// symbolStream provides access to an ordered stream of terminal symbols
+// (runes).
+type symbolStream struct {
+	runes []rune // Symbols representing a script.
+	line  int    // Current line index within the script.
+	col   int    // Current column index within the line.
+}
+
+// empty returns true if the stream is empty.
 func (ss *symbolStream) empty() bool {
 	return len(ss.runes) == 0
 }
 
-// len returns the length of the scanners rune slice.
+// len returns the length of the stream.
 func (ss *symbolStream) len() int {
 	return len(ss.runes)
 }
 
-// matches returns true if the scanners rune slice matches the specified
-// sequence of runes.
-func (ss *symbolStream) matchesTerminal(i int, terminal rune) bool {
-
-	if i >= len(ss.runes) {
-		panic("SANITY CHECK! Bad argument, start is bigger than the remaining source code")
-	}
-
-	return ss.runes[i] == terminal
-}
-
-func (ss *symbolStream) matchesNonTerminal(start int, needle string) bool {
+func (ss *symbolStream) isMatch(start int, needle string) bool {
 
 	haystack := ss.runes[start:]
 
 	if len(needle) > len(haystack) {
-		panic("SANITY CHECK! Bad argument, the `needle` is bigger than the `haystack`")
+		codingError("Bad argument, the `needle` is bigger than the `haystack`")
 	}
 
 	for i, ru := range needle {
@@ -52,32 +47,16 @@ func (ss *symbolStream) matchesNonTerminal(start int, needle string) bool {
 	return true
 }
 
-func (ss *symbolStream) doesNotMatchNonTerminal(start int, needle string) bool {
-	return !ss.matchesNonTerminal(start, needle)
-}
-
-// matchesNewline returns true if the scanners rune slice begins with a sequence
-// of newline terminals.
-func (ss *symbolStream) matchesNewline(start int) bool {
+func (ss *symbolStream) isNewline(start int) bool {
 	return ss.countNewlineRunes(start) > 0
 }
 
-// noMatchNewline returns false if the scanners rune slice begins with a
-// sequence of newline terminals.
-func (ss *symbolStream) doesNotMatchNewline(start int) bool {
-	return !ss.matchesNewline(start)
-}
-
-// howManyRunesUntil iterates the scanners rune slice executing the function for
-// on each rune. The number of runes counted before the function results in true
-// is returned to the user. If the function never returns true then the length
-// of the rune slice, from the start index, is returned.
-func (ss *symbolStream) howManyRunesUntil(start int, f func(int, rune) bool) (i int) {
+func (ss *symbolStream) countRunesWhile(start int, f func(int, rune) bool) (i int) {
 
 	var ru rune
 
 	for i, ru = range ss.runes[start:] {
-		if f(i, ru) {
+		if !f(i, ru) {
 			break
 		}
 	}
@@ -95,11 +74,11 @@ func (ss *symbolStream) countNewlineRunes(start int) int {
 
 	size := ss.len()
 
-	if size > 0 && ss.matchesNonTerminal(start, LF) {
+	if size > 0 && ss.isMatch(start, LF) {
 		return len(LF)
 	}
 
-	if size > 1 && ss.matchesNonTerminal(start, CRLF) {
+	if size > 1 && ss.isMatch(start, CRLF) {
 		return len(CRLF)
 	}
 
@@ -107,51 +86,43 @@ func (ss *symbolStream) countNewlineRunes(start int) int {
 }
 
 func (ss *symbolStream) runesUntilNewline(start int) int {
-	return ss.howManyRunesUntil(start, func(i int, ru rune) bool {
-		return ss.matchesNewline(i)
+	return ss.countRunesWhile(start, func(i int, ru rune) bool {
+		return !ss.isNewline(i)
 	})
 }
 
 func (ss *symbolStream) countWordRunes(start int) int {
-	return ss.howManyRunesUntil(start, func(i int, ru rune) bool {
+	return ss.countRunesWhile(start, func(i int, ru rune) bool {
 
 		if i == 0 && ru == '_' {
-			return true
+			return false
 		}
 
-		return ru != '_' && !unicode.IsLetter(ru)
+		return ru == '_' || unicode.IsLetter(ru)
 	})
 }
 
 func (ss *symbolStream) countDigitRunes(start int) int {
-	return ss.howManyRunesUntil(start, func(_ int, ru rune) bool {
-		return !unicode.IsDigit(ru)
+	return ss.countRunesWhile(start, func(_ int, ru rune) bool {
+		return unicode.IsDigit(ru)
 	})
 }
 
-// tokenize slices off the next token from the scanners rune array and updates
-// the line and column numbers accordingly.
-func (ss *symbolStream) tokenize(n int, lex token.Lexeme, newline bool) (tk token.Token) {
+func (ss *symbolStream) read(runeCount int, isNewline bool) string {
 
-	if ss.len() < n {
-		panic("SANITY CHECK! Bad argument, n is bigger than the remaining source code")
+	if ss.len() < runeCount {
+		codingError("Bad argument, requested read amount is bigger than the number of remaining runes")
 	}
 
-	tk = token.Token{
-		Lexeme: lex,
-		Value:  string(ss.runes[:n]),
-		Line:   ss.line,
-		Col:    ss.col,
-	}
+	r := string(ss.runes[:runeCount])
+	ss.runes = ss.runes[runeCount:]
 
-	ss.runes = ss.runes[n:]
-
-	if newline {
+	if isNewline {
 		ss.line++
 		ss.col = 0
 	} else {
-		ss.col += n
+		ss.col += runeCount
 	}
 
-	return
+	return r
 }
