@@ -24,8 +24,8 @@ func (sc *scanner) Next() token.Token {
 	if sc.empty() {
 		return token.Token{
 			Lexeme: token.LEXEME_EOF,
-			Line:   sc.line,
-			Col:    sc.col,
+			Line:   sc.lineIndex(),
+			Col:    sc.colIndex(),
 		}
 	}
 
@@ -46,9 +46,7 @@ func (sc *scanner) Next() token.Token {
 		}
 	}
 
-	panic(bard.NewTerror(sc.line, sc.col, nil,
-		"Could not identify next token",
-	))
+	panic(sc.terror(0, "Could not identify next token"))
 }
 
 // scanFunc is the common signiture used by every scanning function that
@@ -58,7 +56,7 @@ type scanFunc func() (token.Token, bool)
 
 func (sc *scanner) scanNewline() (_ token.Token, _ bool) {
 
-	if n := sc.countNewlineRunes(0); n > 0 {
+	if n := sc.howManyNewlineSymbols(0); n > 0 {
 		tk := sc.tokenize(n, token.LEXEME_NEWLINE)
 		return tk, true
 	}
@@ -98,13 +96,13 @@ func (sc *scanner) scanComment() (_ token.Token, _ bool) {
 
 func (sc *scanner) scanWord() (_ token.Token, _ bool) {
 
-	n := sc.countWordRunes(0)
+	n := sc.howManyConsecutiveLetters(0)
 
 	if n == 0 {
 		return
 	}
 
-	w := string(sc.runes[:n])
+	w := sc.peek(n)
 
 	for _, kw := range token.Keywords() {
 		if kw.Symbol == w {
@@ -147,7 +145,7 @@ func (sc *scanner) scanNumberLiteral() (_ token.Token, _ bool) {
 		DELIM_LEN = len(DELIM)
 	)
 
-	intLen := sc.countDigitRunes(0)
+	intLen := sc.howManyConsecutiveDigits(0)
 
 	if intLen == 0 {
 		// If there are no digits then this is not a number.
@@ -162,12 +160,13 @@ func (sc *scanner) scanNumberLiteral() (_ token.Token, _ bool) {
 		return tk, true
 	}
 
-	fractionalLen := sc.countDigitRunes(intLen + DELIM_LEN)
+	fractionalLen := sc.howManyConsecutiveDigits(intLen + DELIM_LEN)
 
 	if fractionalLen == 0 {
 		// One or many fractional digits must follow a delimiter. Zero following
 		// digits is invalid syntax, so we must panic.
-		panic(bard.NewTerror(sc.line, sc.col+intLen+DELIM_LEN, nil,
+		panic(sc.terror(
+			intLen+DELIM_LEN,
 			"Invalid syntax, expected digit after decimal point",
 		))
 	}
@@ -195,11 +194,11 @@ func (sc *scanner) scanStringLiteral() (_ token.Token, _ bool) {
 			// If
 			return false
 		case sc.isNewline(i):
-			panic(bard.NewTerror(sc.line, sc.col, nil,
+			panic(sc.terror(0,
 				"Newline encountered before a string literal was terminated",
 			))
 		case i+1 == sc.len():
-			panic(bard.NewTerror(sc.line, sc.col, nil,
+			panic(sc.terror(0,
 				"EOF encountered before a string literal was terminated",
 			))
 		}
@@ -240,11 +239,11 @@ func (sc *scanner) scanStringTemplate() (_ token.Token, _ bool) {
 		case !escaped && sc.isMatch(i, SUFFIX):
 			return false
 		case sc.isNewline(i):
-			panic(bard.NewTerror(sc.line, sc.col, nil,
+			panic(sc.terror(0,
 				"Newline encountered before a string template was terminated",
 			))
 		case i+1 == sc.len():
-			panic(bard.NewTerror(sc.line, sc.col, nil,
+			panic(sc.terror(0,
 				"EOF encountered before a string template was terminated",
 			))
 		}
@@ -265,11 +264,20 @@ func (sc *scanner) tokenize(runeCount int, lex token.Lexeme) token.Token {
 
 	tk := token.Token{
 		Lexeme: lex,
-		Line:   sc.line,
-		Col:    sc.col,
+		Line:   sc.lineIndex(),
+		Col:    sc.colIndex(),
 	}
 
 	tk.Value = sc.read(runeCount, lex == token.LEXEME_NEWLINE)
 
 	return tk
+}
+
+func (sc *scanner) terror(colOffset int, msg string) bard.Terror {
+	return bard.NewTerror(
+		sc.lineIndex(),
+		sc.colIndex()+colOffset,
+		nil,
+		msg,
+	)
 }

@@ -31,6 +31,16 @@ func (ss *symbolStream) len() int {
 	return len(ss.runes)
 }
 
+// lineIndex returns the current line index the stream is at within the script.
+func (ss *symbolStream) lineIndex() int {
+	return ss.line
+}
+
+// colIndex returns the current column index of the current line.
+func (ss *symbolStream) colIndex() int {
+	return ss.col
+}
+
 func (ss *symbolStream) isMatch(start int, needle string) bool {
 
 	haystack := ss.runes[start:]
@@ -49,7 +59,7 @@ func (ss *symbolStream) isMatch(start int, needle string) bool {
 }
 
 func (ss *symbolStream) isNewline(start int) bool {
-	return ss.countNewlineRunes(start) > 0
+	return ss.howManyNewlineSymbols(start) > 0
 }
 
 func (ss *symbolStream) countRunesWhile(start int, f func(int, rune) bool) (i int) {
@@ -65,7 +75,7 @@ func (ss *symbolStream) countRunesWhile(start int, f func(int, rune) bool) (i in
 	return i
 }
 
-func (ss *symbolStream) countNewlineRunes(start int) int {
+func (ss *symbolStream) howManyNewlineSymbols(start int) int {
 
 	const (
 		LF        = token.NEWLINE_LF
@@ -86,13 +96,7 @@ func (ss *symbolStream) countNewlineRunes(start int) int {
 	return NOT_FOUND
 }
 
-func (ss *symbolStream) whensTheNextNewline(start int) int {
-	return ss.countRunesWhile(start, func(i int, ru rune) bool {
-		return !ss.isNewline(i)
-	})
-}
-
-func (ss *symbolStream) countWordRunes(start int) int {
+func (ss *symbolStream) howManyConsecutiveLetters(start int) int {
 	return ss.countRunesWhile(start, func(i int, ru rune) bool {
 
 		if i == 0 && ru == '_' {
@@ -103,19 +107,34 @@ func (ss *symbolStream) countWordRunes(start int) int {
 	})
 }
 
-func (ss *symbolStream) countDigitRunes(start int) int {
+func (ss *symbolStream) howManyConsecutiveDigits(start int) int {
 	return ss.countRunesWhile(start, func(_ int, ru rune) bool {
 		return unicode.IsDigit(ru)
 	})
 }
 
+func (ss *symbolStream) whensTheNextNewline(start int) int {
+	return ss.countRunesWhile(start, func(i int, ru rune) bool {
+		return !ss.isNewline(i)
+	})
+}
+
+// peek performs a read without eating up the symbols in the stream or updating
+// the line and column indexes.
+func (ss *symbolStream) peek(runeCount int) string {
+	return string(ss.runes[:runeCount])
+}
+
+// read reads the specified number of symbols from the stream updating the line
+// and column indexes accordingly. If you want to record the line or column
+// index of the read symbols, record them before performing the read.
 func (ss *symbolStream) read(runeCount int, isNewline bool) string {
 
 	if ss.len() < runeCount {
 		codingError("Bad argument, requested read amount is bigger than the number of remaining runes")
 	}
 
-	r := string(ss.runes[:runeCount])
+	r := ss.peek(runeCount)
 	ss.runes = ss.runes[runeCount:]
 
 	if isNewline {
