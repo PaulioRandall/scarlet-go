@@ -12,12 +12,13 @@ func codingError(msg string) {
 	panic("PROGRAMMERS ERROR! " + msg)
 }
 
-// symbolStream provides access to an ordered stream of terminal symbols
-// (runes).
+// symbolStream provides access to an ordered stream of terminal symbols (runes)
+// representing a script. The stream also stores the current cursor position in
+// the form of line and column indexes.
 type symbolStream struct {
 	runes []rune // Symbols representing a script.
-	line  int    // Current line index within the script.
-	col   int    // Current column index within the line.
+	line  int
+	col   int
 }
 
 // empty returns true if the stream is empty.
@@ -85,7 +86,7 @@ func (ss *symbolStream) countNewlineRunes(start int) int {
 	return NOT_FOUND
 }
 
-func (ss *symbolStream) runesUntilNewline(start int) int {
+func (ss *symbolStream) whensTheNextNewline(start int) int {
 	return ss.countRunesWhile(start, func(i int, ru rune) bool {
 		return !ss.isNewline(i)
 	})

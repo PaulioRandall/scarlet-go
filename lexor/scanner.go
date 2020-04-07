@@ -88,7 +88,7 @@ func (sc *scanner) scanComment() (_ token.Token, _ bool) {
 	)
 
 	if sc.isMatch(0, COMMENT_PREFIX) {
-		n := sc.runesUntilNewline(COMMENT_PREFIX_LEN)
+		n := sc.whensTheNextNewline(COMMENT_PREFIX_LEN)
 		tk := sc.tokenize(n, token.LEXEME_COMMENT)
 		return tk, true
 	}
