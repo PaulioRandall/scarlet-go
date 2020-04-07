@@ -7,185 +7,256 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
+/******************************************************************************
+File:
+	Contains functions used in parsing a written script into tokens.
+******************************************************************************/
+
 // scanner is a structure for parsing source code into tokens. It implements
 // the TokenStream interface so it may be wrapped.
 type scanner struct {
-	runes []rune // Source code
-	line  int    // Line index
-	col   int    // Column index
+	symbolStream
 }
 
 // Next satisfies the TokenStream interface.
-func (s *scanner) Next() token.Token {
+func (sc *scanner) Next() token.Token {
 
-	if s.empty() {
+	if sc.empty() {
 		return token.Token{
 			Lexeme: token.LEXEME_EOF,
-			Line:   s.line,
-			Col:    s.col,
+			Line:   sc.line,
+			Col:    sc.col,
 		}
 	}
 
 	fs := []scanFunc{
-		scanNewline, // LF & CRLF
-		scanWhitespace,
-		scanComment,
-		scanWord,   // Identifiers & keywords
-		scanSymbol, // :=, +, <, etc
-		scanNumberLiteral,
-		scanStringLiteral,  // `literal`
-		scanStringTemplate, // "Template: {identifier}"
+		sc.scanNewline, // LF & CRLF
+		sc.scanWhitespace,
+		sc.scanComment,
+		sc.scanWord,   // Identifiers & keywords
+		sc.scanSymbol, // :=, +, <, etc
+		sc.scanNumberLiteral,
+		sc.scanStringLiteral,  // `literal`
+		sc.scanStringTemplate, // "Template: {identifier}"
 	}
 
 	for _, f := range fs {
-		if tk, match := f(s); match {
+		if tk, match := f(); match {
 			return tk
 		}
 	}
 
-	panic(bard.NewTerror(s.line, s.col, nil,
+	panic(bard.NewTerror(sc.line, sc.col, nil,
 		"Could not identify next token",
 	))
 }
 
-// empty returns true if the scanners rune slice is empty.
-func (s *scanner) empty() bool {
-	return len(s.runes) == 0
-}
+// scanFunc is the common signiture used by every scanning function that
+// follows. If a concrete scanning function finds a match it must return a
+// non-zero token and 'true' else it must return a zero token and 'false'.
+type scanFunc func() (token.Token, bool)
 
-// len returns the length of the scanners rune slice.
-func (s *scanner) len() int {
-	return len(s.runes)
-}
+func (sc *scanner) scanNewline() (_ token.Token, _ bool) {
 
-// matches returns true if the scanners rune slice matches the specified
-// sequence of runes.
-func (s *scanner) matchesTerminal(i int, terminal rune) bool {
-
-	if i >= len(s.runes) {
-		panic("SANITY CHECK! Bad argument, start is bigger than the remaining source code")
-	}
-
-	return s.runes[i] == terminal
-}
-
-func (s *scanner) matchesNonTerminal(start int, needle string) bool {
-
-	haystack := s.runes[start:]
-
-	if len(needle) > len(haystack) {
-		panic("SANITY CHECK! Bad argument, the `needle` is bigger than the `haystack`")
-	}
-
-	for i, ru := range needle {
-		if haystack[i] != ru {
-			return false
-		}
-	}
-
-	return true
-}
-
-func (s *scanner) doesNotMatchNonTerminal(start int, needle string) bool {
-	return !s.matchesNonTerminal(start, needle)
-}
-
-// matchesNewline returns true if the scanners rune slice begins with a sequence
-// of newline terminals.
-func (s *scanner) matchesNewline(start int) bool {
-	return s.countNewlineRunes(start) > 0
-}
-
-// noMatchNewline returns false if the scanners rune slice begins with a
-// sequence of newline terminals.
-func (s *scanner) doesNotMatchNewline(start int) bool {
-	return !s.matchesNewline(start)
-}
-
-// howManyRunesUntil iterates the scanners rune slice executing the function for
-// on each rune. The number of runes counted before the function results in true
-// is returned to the user. If the function never returns true then the length
-// of the rune slice, from the start index, is returned.
-func (s *scanner) howManyRunesUntil(start int, f func(int, rune) bool) (i int) {
-
-	var ru rune
-
-	for i, ru = range s.runes[start:] {
-		if f(i, ru) {
-			break
-		}
-	}
-
-	return i
-}
-
-func (s *scanner) countNewlineRunes(start int) int {
-
-	const (
-		LF        = token.NEWLINE_LF
-		CRLF      = token.NEWLINE_CRLF
-		NOT_FOUND = 0
-	)
-
-	size := s.len()
-
-	if size > 0 && s.matchesNonTerminal(start, LF) {
-		return len(LF)
-	}
-
-	if size > 1 && s.matchesNonTerminal(start, CRLF) {
-		return len(CRLF)
-	}
-
-	return NOT_FOUND
-}
-
-func (s *scanner) runesUntilNewline(start int) int {
-	return s.howManyRunesUntil(start, func(i int, ru rune) bool {
-		return s.matchesNewline(i)
-	})
-}
-
-func (s *scanner) countWordRunes(start int) int {
-	return s.howManyRunesUntil(start, func(i int, ru rune) bool {
-
-		if i == 0 && ru == '_' {
-			return true
-		}
-
-		return ru != '_' && !unicode.IsLetter(ru)
-	})
-}
-
-func (s *scanner) countDigitRunes(start int) int {
-	return s.howManyRunesUntil(start, func(_ int, ru rune) bool {
-		return !unicode.IsDigit(ru)
-	})
-}
-
-// tokenize slices off the next token from the scanners rune array and updates
-// the line and column numbers accordingly.
-func (s *scanner) tokenize(n int, lex token.Lexeme, newline bool) (tk token.Token) {
-
-	if s.len() < n {
-		panic("SANITY CHECK! Bad argument, n is bigger than the remaining source code")
-	}
-
-	tk = token.Token{
-		Lexeme: lex,
-		Value:  string(s.runes[:n]),
-		Line:   s.line,
-		Col:    s.col,
-	}
-
-	s.runes = s.runes[n:]
-
-	if newline {
-		s.line++
-		s.col = 0
-	} else {
-		s.col += n
+	if n := sc.countNewlineRunes(0); n > 0 {
+		tk := sc.tokenize(n, token.LEXEME_NEWLINE, true)
+		return tk, true
 	}
 
 	return
+}
+
+func (sc *scanner) scanWhitespace() (_ token.Token, _ bool) {
+
+	isNotSpace := func(i int, ru rune) bool {
+		return sc.matchesNewline(i) || !unicode.IsSpace(ru)
+	}
+
+	if n := sc.howManyRunesUntil(0, isNotSpace); n > 0 {
+		tk := sc.tokenize(n, token.LEXEME_WHITESPACE, false)
+		return tk, true
+	}
+
+	return
+}
+
+func (sc *scanner) scanComment() (_ token.Token, _ bool) {
+
+	const (
+		COMMENT_PREFIX     = token.SYMBOL_COMMENT_START
+		COMMENT_PREFIX_LEN = len(COMMENT_PREFIX)
+	)
+
+	if sc.matchesNonTerminal(0, COMMENT_PREFIX) {
+		n := sc.runesUntilNewline(COMMENT_PREFIX_LEN)
+		tk := sc.tokenize(n, token.LEXEME_COMMENT, false)
+		return tk, true
+	}
+
+	return
+}
+
+func (sc *scanner) scanWord() (_ token.Token, _ bool) {
+
+	n := sc.countWordRunes(0)
+
+	if n == 0 {
+		return
+	}
+
+	w := string(sc.runes[:n])
+
+	for _, kw := range token.Keywords() {
+		if kw.Symbol == w {
+			tk := sc.tokenize(n, kw.Lexeme, false)
+			return tk, true
+		}
+	}
+
+	tk := sc.tokenize(n, token.LEXEME_ID, false)
+	return tk, true
+}
+
+func (sc *scanner) scanSymbol() (_ token.Token, _ bool) {
+
+	if sc.empty() {
+		return
+	}
+
+	size := sc.len()
+
+	for _, sym := range token.LoneSymbols() {
+
+		if size < sym.Len {
+			continue
+		}
+
+		if sc.matchesNonTerminal(0, sym.Symbol) {
+			tk := sc.tokenize(sym.Len, sym.Lexeme, false)
+			return tk, true
+		}
+	}
+
+	return
+}
+
+func (sc *scanner) scanNumberLiteral() (_ token.Token, _ bool) {
+
+	const (
+		DELIM     = token.SYMBOL_FRACTIONAL_DELIM
+		DELIM_LEN = len(DELIM)
+	)
+
+	intLen := sc.countDigitRunes(0)
+
+	if intLen == 0 {
+		// If there are no digits then this is not a number.
+		return
+	}
+
+	if intLen == sc.len() || sc.doesNotMatchNonTerminal(intLen, DELIM) {
+		// If this is the last token in the scanner or the next terminal is not the
+		// delimiter between a floats integral and fractional parts then it must be
+		// an integral.
+		tk := sc.tokenize(intLen, token.LEXEME_INT, false)
+		return tk, true
+	}
+
+	fractionalLen := sc.countDigitRunes(intLen + DELIM_LEN)
+
+	if fractionalLen == 0 {
+		// One or many fractional digits must follow a delimiter. Zero following
+		// digits is invalid syntax, so we must panic.
+		panic(bard.NewTerror(sc.line, sc.col+intLen+DELIM_LEN, nil,
+			"Invalid syntax, expected digit after decimal point",
+		))
+	}
+
+	n := intLen + DELIM_LEN + fractionalLen
+	tk := sc.tokenize(n, token.LEXEME_FLOAT, false)
+	return tk, true
+}
+
+func (sc *scanner) scanStringLiteral() (_ token.Token, _ bool) {
+
+	const (
+		PREFIX = token.STRING_SYMBOL_START
+		SUFFIX = token.STRING_SYMBOL_END
+	)
+
+	n := sc.howManyRunesUntil(0, func(i int, _ rune) bool {
+
+		switch {
+		case i == 0:
+			// If the initial terminals are not signify a string literal then exit
+			// straight away.
+			return sc.doesNotMatchNonTerminal(i, PREFIX)
+		case sc.matchesNonTerminal(i, SUFFIX):
+			// If
+			return true
+		case sc.matchesNewline(i):
+			panic(bard.NewTerror(sc.line, sc.col, nil,
+				"Newline encountered before a string literal was terminated",
+			))
+		case i+1 == sc.len():
+			panic(bard.NewTerror(sc.line, sc.col, nil,
+				"EOF encountered before a string literal was terminated",
+			))
+		}
+
+		return false
+	})
+
+	if n == 0 {
+		return
+	}
+
+	tk := sc.tokenize(n+1, token.LEXEME_STRING, false)
+	return tk, true
+}
+
+func (sc *scanner) scanStringTemplate() (_ token.Token, _ bool) {
+
+	const (
+		PREFIX        = token.TEMPLATE_SYMBOL_START
+		SUFFIX        = token.TEMPLATE_SYMBOL_END
+		SUFFIX_LEN    = len(SUFFIX)
+		ESCAPE_SYMBOL = token.TEMPLATE_SYMBOL_ESCAPE
+	)
+
+	var prevEscaped bool
+
+	n := sc.howManyRunesUntil(0, func(i int, _ rune) bool {
+
+		escaped := prevEscaped
+		prevEscaped = false
+
+		switch {
+		case i == 0:
+			return sc.doesNotMatchNonTerminal(i, PREFIX)
+		case sc.matchesNonTerminal(i, ESCAPE_SYMBOL):
+			prevEscaped = true
+			return false
+		case !escaped && sc.matchesNonTerminal(i, SUFFIX):
+			return true
+		case sc.matchesNewline(i):
+			panic(bard.NewTerror(sc.line, sc.col, nil,
+				"Newline encountered before a string template was terminated",
+			))
+		case i+1 == sc.len():
+			panic(bard.NewTerror(sc.line, sc.col, nil,
+				"EOF encountered before a string template was terminated",
+			))
+		}
+
+		return false
+	})
+
+	if n == 0 {
+		return
+	}
+
+	n += SUFFIX_LEN
+	tk := sc.tokenize(n, token.LEXEME_TEMPLATE, false)
+	return tk, true
 }

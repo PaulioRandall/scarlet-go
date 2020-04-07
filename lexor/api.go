@@ -16,9 +16,9 @@ type TokenStream interface {
 // at a time on each call to TokenStream.Next.
 func NewScanner(s string) TokenStream {
 	return &scanner{
-		runes: []rune(s),
-		line:  0,
-		col:   0,
+		symbolStream{
+			runes: []rune(s),
+		},
 	}
 }
 
