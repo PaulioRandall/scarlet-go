@@ -1,3 +1,11 @@
+// token package was created separate the TokenStream interface and its default
+// implementation from its more advanced implementations. The API is responsible
+// for providing basic token streaming functionality for its users.
+//
+// Key decisions:
+// 1. The simple slice-based implementation was included here because it is tiny
+// and has no additional dependencies. Moving it to its own file or package felt
+// unnecessary.
 package token
 
 import (
@@ -12,14 +20,14 @@ type TokenStream interface {
 	Read() lexeme.Token
 }
 
-// impl is a simple TokenStream implementation which reads from a fixed slice.
+// impl is a simple TokenStream implementation which reads from a slice.
 type impl struct {
 	tokens []lexeme.Token
 	index  int
 	prev   lexeme.Token
 }
 
-// New creates a simple token stream which reads from a fixed slice.
+// New creates a simple token stream which reads from a slice.
 func New(tokens []lexeme.Token) TokenStream {
 	return &impl{
 		tokens: tokens,
