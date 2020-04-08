@@ -13,4 +13,4 @@ Key decisions:
 2. The line separator terminals are hardcoded into the package because the program is only expected to work on platforms using those line separators.
 3. Any error results in a panic because all errors that can occur are errors made programming to the SymbolStream interface --or errors in the implementation--.
 
-The API is not ment to know anything about how language being scanned except that its code may be written over multiple lines.  
+This package is not ment to know anything about the text being scanned except that it may be written over multiple lines. For simplicity and lack of requirement, no back tracking functionality is provided.
