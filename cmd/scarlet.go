@@ -7,10 +7,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/parser"
-
-	"github.com/PaulioRandall/scarlet-go/streams/evaluator"
-	"github.com/PaulioRandall/scarlet-go/streams/scanner"
-	"github.com/PaulioRandall/scarlet-go/streams/token"
+	"github.com/PaulioRandall/scarlet-go/streams"
 )
 
 func main() {
@@ -30,9 +27,9 @@ func main() {
 }
 
 // run executes the input source code.
-func run(src string) {
+func run(s string) {
 
-	tokens := collectTokens(src)
+	tokens := streams.AnalyseScript(s)
 	for _, tk := range tokens {
 		printToken(tk)
 	}
@@ -46,23 +43,6 @@ func run(src string) {
 	exe.Eval(ctx)
 
 	println(ctx.String())
-}
-
-// collectTokens reads tokens from the 'src' into an array.
-func collectTokens(src string) (r []lexeme.Token) {
-
-	var st token.TokenStream
-	var tk lexeme.Token
-
-	st = scanner.New(src)
-	st = evaluator.New(st)
-
-	for tk = st.Read(); tk.Lexeme != lexeme.LEXEME_EOF; tk = st.Read() {
-		r = append(r, tk)
-	}
-	r = append(r, tk)
-
-	return
 }
 
 // printToken prints a token nicely.

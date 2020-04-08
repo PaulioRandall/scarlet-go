@@ -6,6 +6,14 @@ import (
 	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
 
+// EvalAll creates an evaluator from s and evaluates all tokens from it into a
+// new array.
+func EvalAll(s []lexeme.Token) []lexeme.Token {
+	ts := token.New(s)
+	ev := New(ts)
+	return token.ReadAll(ev)
+}
+
 type evaluator struct {
 	ts   token.TokenStream
 	prev lexeme.Lexeme

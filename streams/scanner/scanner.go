@@ -10,6 +10,12 @@ import (
 	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
 
+// ScanAll creates a scanner from s and reads all tokens from it into an array.
+func ScanAll(s string) []lexeme.Token {
+	sc := New(s)
+	return token.ReadAll(sc)
+}
+
 // Scanner is a TokenStream providing functionality for scanning written scripts
 // into a sequence of tokens.
 type Scanner struct {
