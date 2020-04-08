@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // ****************************************************************************
@@ -26,7 +26,7 @@ type Expr interface {
 
 // valueExpr represents an expression that simple returns a value.
 type valueExpr struct {
-	tk token.Token
+	tk lexeme.Token
 	v  Value
 }
 
@@ -47,7 +47,7 @@ func (ex valueExpr) String() string {
 // idExpr represents an expression that simple returns the value assigned to a
 // variable.
 type idExpr struct {
-	tk token.Token
+	tk lexeme.Token
 	id string
 }
 

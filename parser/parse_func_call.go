@@ -2,26 +2,26 @@ package parser
 
 import (
 	"github.com/PaulioRandall/scarlet-go/bard"
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // parseFuncCall parses a function call.
-func (p *Parser) parseFuncCall(id token.Token) Expr {
+func (p *Parser) parseFuncCall(id lexeme.Token) Expr {
 
 	c := funcCallExpr{
 		id: id,
 	}
 
-	p.takeEnsure(token.LEXEME_OPEN_PAREN)
+	p.takeEnsure(lexeme.LEXEME_OPEN_PAREN)
 	c.params = p.parseDelimExpr(true)
-	p.takeEnsure(token.LEXEME_CLOSE_PAREN)
+	p.takeEnsure(lexeme.LEXEME_CLOSE_PAREN)
 
 	return c
 }
 
 // funcCallExpr represents an expression for a function call.
 type funcCallExpr struct {
-	id     token.Token
+	id     lexeme.Token
 	params []Expr
 }
 

@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/bard"
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // parseAssign parses an assignment into a statement. Assumes that the next
@@ -14,11 +14,11 @@ func (p *Parser) parseAssign(inline bool) Stat {
 	ids := p.parseIDs()
 	p.checkNoDuplicates(ids)
 
-	ass := p.takeEnsure(token.LEXEME_ASSIGN)
+	ass := p.takeEnsure(lexeme.LEXEME_ASSIGN)
 	srcs := p.parseDelimExpr(true)
 
 	if !inline {
-		p.takeEnsure(token.LEXEME_TERMINATOR)
+		p.takeEnsure(lexeme.LEXEME_TERMINATOR)
 	}
 
 	return assignStat{
@@ -29,13 +29,13 @@ func (p *Parser) parseAssign(inline bool) Stat {
 }
 
 // parseIDs parses a delimitered list of ID tokens used for an assignment.
-func (p *Parser) parseIDs() (ids []token.Token) {
+func (p *Parser) parseIDs() (ids []lexeme.Token) {
 	for {
 
-		tk := p.takeEnsure(token.LEXEME_ID)
+		tk := p.takeEnsure(lexeme.LEXEME_ID)
 		ids = append(ids, tk)
 
-		if p.peek().Lexeme == token.LEXEME_DELIM {
+		if p.peek().Lexeme == lexeme.LEXEME_DELIM {
 			p.take()
 			continue
 		}
@@ -46,7 +46,7 @@ func (p *Parser) parseIDs() (ids []token.Token) {
 
 // checkNoDuplicates checks that there are no duplicate IDs within a slice. A
 // panic ensues otherwise.
-func (p *Parser) checkNoDuplicates(ids []token.Token) {
+func (p *Parser) checkNoDuplicates(ids []lexeme.Token) {
 	for i, sub := range ids {
 		for j, obj := range ids {
 			if i != j && sub.Value == obj.Value {
@@ -60,8 +60,8 @@ func (p *Parser) checkNoDuplicates(ids []token.Token) {
 // evaluating expressions into values which are mapped to their identifier
 // within a context.
 type assignStat struct {
-	ass  token.Token
-	ids  []token.Token
+	ass  lexeme.Token
+	ids  []lexeme.Token
 	srcs []Expr
 }
 

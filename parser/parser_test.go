@@ -3,16 +3,16 @@ package parser
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 
 	"github.com/stretchr/testify/require"
 )
 
-func tok(l token.Lexeme, v string) token.Token {
-	return token.New(l, v, 0, 0)
+func tok(l lexeme.Lexeme, v string) lexeme.Token {
+	return lexeme.New(l, v, 0, 0)
 }
 
-func push(in chan token.Token, tokens ...token.Token) {
+func push(in chan lexeme.Token, tokens ...lexeme.Token) {
 	go func() {
 		for _, tk := range tokens {
 			in <- tk
@@ -21,9 +21,9 @@ func push(in chan token.Token, tokens ...token.Token) {
 	}()
 }
 
-func doTestParse(t *testing.T, exp Expr, tokens ...token.Token) {
+func doTestParse(t *testing.T, exp Expr, tokens ...lexeme.Token) {
 
-	in := make(chan token.Token, len(tokens))
+	in := make(chan lexeme.Token, len(tokens))
 	p := New(in)
 
 	push(in, tokens...)
@@ -36,21 +36,21 @@ func doTestParse(t *testing.T, exp Expr, tokens ...token.Token) {
 // Parse a string literal assignment
 func TestParser_parse_1(t *testing.T) {
 
-	tks := []token.Token{
-		tok(token.LEXEME_ID, "abc"),
-		tok(token.LEXEME_ASSIGN, ":="),
-		tok(token.LEXEME_STRING, "xyz"),
-		tok(token.LEXEME_TERMINATOR, "\n"),
-		tok(token.LEXEME_EOF, ""),
+	tks := []lexeme.Token{
+		tok(lexeme.LEXEME_ID, "abc"),
+		tok(lexeme.LEXEME_ASSIGN, ":="),
+		tok(lexeme.LEXEME_STRING, "xyz"),
+		tok(lexeme.LEXEME_TERMINATOR, "\n"),
+		tok(lexeme.LEXEME_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.LEXEME_SOF, ""), // opener
-		tks[4],                    // closer
+		tok(lexeme.LEXEME_SOF, ""), // opener
+		tks[4],                     // closer
 		[]Stat{
 			assignStat{
 				tks[1],
-				[]token.Token{ // ids
+				[]lexeme.Token{ // ids
 					tks[0],
 				},
 				[]Expr{ // srcs
@@ -71,47 +71,47 @@ func TestParser_parse_1(t *testing.T) {
 // Parse a ID to ID assignment
 func TestParser_parse_2(t *testing.T) {
 
-	tks := []token.Token{
+	tks := []lexeme.Token{
 		// Bool
-		tok(token.LEXEME_ID, "a"),
-		tok(token.LEXEME_ASSIGN, ":="),
-		tok(token.LEXEME_BOOL, "TRUE"),
-		tok(token.LEXEME_TERMINATOR, "\n"), // 3
+		tok(lexeme.LEXEME_ID, "a"),
+		tok(lexeme.LEXEME_ASSIGN, ":="),
+		tok(lexeme.LEXEME_BOOL, "TRUE"),
+		tok(lexeme.LEXEME_TERMINATOR, "\n"), // 3
 		// Number
-		tok(token.LEXEME_ID, "b"),
-		tok(token.LEXEME_ASSIGN, ":="),
-		tok(token.LEXEME_FLOAT, "123.456"),
-		tok(token.LEXEME_TERMINATOR, "\n"), // 7
+		tok(lexeme.LEXEME_ID, "b"),
+		tok(lexeme.LEXEME_ASSIGN, ":="),
+		tok(lexeme.LEXEME_FLOAT, "123.456"),
+		tok(lexeme.LEXEME_TERMINATOR, "\n"), // 7
 		// String template
-		tok(token.LEXEME_ID, "c"),
-		tok(token.LEXEME_ASSIGN, ":="),
-		tok(token.LEXEME_ID, "b"),
-		tok(token.LEXEME_TERMINATOR, "\n"), // 11
+		tok(lexeme.LEXEME_ID, "c"),
+		tok(lexeme.LEXEME_ASSIGN, ":="),
+		tok(lexeme.LEXEME_ID, "b"),
+		tok(lexeme.LEXEME_TERMINATOR, "\n"), // 11
 		// EOF
-		tok(token.LEXEME_EOF, ""),
+		tok(lexeme.LEXEME_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.LEXEME_SOF, ""), // opener
-		tks[12],                   // closer
+		tok(lexeme.LEXEME_SOF, ""), // opener
+		tks[12],                    // closer
 		[]Stat{
 			assignStat{
 				tks[1],
-				[]token.Token{tks[0]}, // ids
+				[]lexeme.Token{tks[0]}, // ids
 				[]Expr{ // srcs
 					valueExpr{tks[2], Value{BOOL, true}}, // v
 				},
 			},
 			assignStat{
 				tks[5],
-				[]token.Token{tks[4]}, // ids
+				[]lexeme.Token{tks[4]}, // ids
 				[]Expr{ // srcs
 					valueExpr{tks[6], Value{REAL, float64(123.456)}}, // v
 				},
 			},
 			assignStat{
 				tks[9],
-				[]token.Token{tks[8]}, // ids
+				[]lexeme.Token{tks[8]}, // ids
 				[]Expr{ // srcs
 					idExpr{tks[10], "b"}, // v
 				},
@@ -128,32 +128,32 @@ func TestParser_parse_2(t *testing.T) {
 // Parse a string template assignment
 func TestParser_parse_3(t *testing.T) {
 
-	tks := []token.Token{
+	tks := []lexeme.Token{
 		// ids
-		tok(token.LEXEME_ID, "a"),
-		tok(token.LEXEME_DELIM, ","),
-		tok(token.LEXEME_ID, "b"),
-		tok(token.LEXEME_DELIM, ","),
-		tok(token.LEXEME_ID, "c"),
-		tok(token.LEXEME_ASSIGN, ":="),
+		tok(lexeme.LEXEME_ID, "a"),
+		tok(lexeme.LEXEME_DELIM, ","),
+		tok(lexeme.LEXEME_ID, "b"),
+		tok(lexeme.LEXEME_DELIM, ","),
+		tok(lexeme.LEXEME_ID, "c"),
+		tok(lexeme.LEXEME_ASSIGN, ":="),
 		// srcs
-		tok(token.LEXEME_BOOL, "TRUE"),
-		tok(token.LEXEME_DELIM, ","),
-		tok(token.LEXEME_INT, "123"),
-		tok(token.LEXEME_DELIM, ","),
-		tok(token.LEXEME_TEMPLATE, `"Caribbean"`),
-		tok(token.LEXEME_TERMINATOR, "\n"),
+		tok(lexeme.LEXEME_BOOL, "TRUE"),
+		tok(lexeme.LEXEME_DELIM, ","),
+		tok(lexeme.LEXEME_INT, "123"),
+		tok(lexeme.LEXEME_DELIM, ","),
+		tok(lexeme.LEXEME_TEMPLATE, `"Caribbean"`),
+		tok(lexeme.LEXEME_TERMINATOR, "\n"),
 		// EOF
-		tok(token.LEXEME_EOF, ""),
+		tok(lexeme.LEXEME_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.LEXEME_SOF, ""), // opener
-		tks[12],                   // closer
+		tok(lexeme.LEXEME_SOF, ""), // opener
+		tks[12],                    // closer
 		[]Stat{
 			assignStat{
 				tks[5],
-				[]token.Token{ // ids
+				[]lexeme.Token{ // ids
 					tks[0],
 					tks[2],
 					tks[4],
@@ -175,40 +175,40 @@ func TestParser_parse_3(t *testing.T) {
 // Parse a list with a comma after the last item
 func TestParser_parse_4(t *testing.T) {
 
-	tks := []token.Token{
+	tks := []lexeme.Token{
 		// Line 1
-		tok(token.LEXEME_ID, "list"),
-		tok(token.LEXEME_ASSIGN, ":="),
-		tok(token.LEXEME_OPEN_LIST, "{"),
-		tok(token.LEXEME_TERMINATOR, "\n"), // index: 3
+		tok(lexeme.LEXEME_ID, "list"),
+		tok(lexeme.LEXEME_ASSIGN, ":="),
+		tok(lexeme.LEXEME_OPEN_LIST, "{"),
+		tok(lexeme.LEXEME_TERMINATOR, "\n"), // index: 3
 		// Line 2
-		tok(token.LEXEME_STRING, "abc"),
-		tok(token.LEXEME_DELIM, ","),
-		tok(token.LEXEME_FLOAT, "123.456"),
-		tok(token.LEXEME_DELIM, ","),
-		tok(token.LEXEME_TERMINATOR, "\n"), // 8
+		tok(lexeme.LEXEME_STRING, "abc"),
+		tok(lexeme.LEXEME_DELIM, ","),
+		tok(lexeme.LEXEME_FLOAT, "123.456"),
+		tok(lexeme.LEXEME_DELIM, ","),
+		tok(lexeme.LEXEME_TERMINATOR, "\n"), // 8
 		// Line 3
-		tok(token.LEXEME_OPEN_LIST, "{"),
-		tok(token.LEXEME_TEMPLATE, "xyz"),
-		tok(token.LEXEME_DELIM, ","),
-		tok(token.LEXEME_BOOL, "TRUE"), // 12
-		tok(token.LEXEME_CLOSE_LIST, "}"),
-		tok(token.LEXEME_DELIM, ","),
-		tok(token.LEXEME_TERMINATOR, "\n"), // 15
+		tok(lexeme.LEXEME_OPEN_LIST, "{"),
+		tok(lexeme.LEXEME_TEMPLATE, "xyz"),
+		tok(lexeme.LEXEME_DELIM, ","),
+		tok(lexeme.LEXEME_BOOL, "TRUE"), // 12
+		tok(lexeme.LEXEME_CLOSE_LIST, "}"),
+		tok(lexeme.LEXEME_DELIM, ","),
+		tok(lexeme.LEXEME_TERMINATOR, "\n"), // 15
 		// Line 4
-		tok(token.LEXEME_CLOSE_LIST, "}"),
-		tok(token.LEXEME_TERMINATOR, "\n"), // 17
+		tok(lexeme.LEXEME_CLOSE_LIST, "}"),
+		tok(lexeme.LEXEME_TERMINATOR, "\n"), // 17
 		// EOF
-		tok(token.LEXEME_EOF, ""),
+		tok(lexeme.LEXEME_EOF, ""),
 	}
 
 	exp := blockStat{
-		tok(token.LEXEME_SOF, ""), // field: opener
-		tks[18],                   // closer
+		tok(lexeme.LEXEME_SOF, ""), // field: opener
+		tks[18],                    // closer
 		[]Stat{
 			assignStat{
 				tks[1],
-				[]token.Token{tks[0]}, // ids
+				[]lexeme.Token{tks[0]}, // ids
 				[]Expr{ // srcs
 					listExpr{
 						tks[2],  // start

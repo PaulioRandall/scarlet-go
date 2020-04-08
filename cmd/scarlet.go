@@ -5,9 +5,12 @@ import (
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/bard"
-	"github.com/PaulioRandall/scarlet-go/lexor"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/parser"
-	"github.com/PaulioRandall/scarlet-go/token"
+
+	"github.com/PaulioRandall/scarlet-go/streams/evaluator"
+	"github.com/PaulioRandall/scarlet-go/streams/scanner"
+	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
 
 func main() {
@@ -46,15 +49,15 @@ func run(src string) {
 }
 
 // collectTokens reads tokens from the 'src' into an array.
-func collectTokens(src string) (r []token.Token) {
+func collectTokens(src string) (r []lexeme.Token) {
 
-	var st lexor.TokenStream
-	var tk token.Token
+	var st token.TokenStream
+	var tk lexeme.Token
 
-	st = lexor.NewScanner(src)
-	st = lexor.NewEvaluator(st)
+	st = scanner.New(src)
+	st = evaluator.New(st)
 
-	for tk = st.Next(); tk.Lexeme != token.LEXEME_EOF; tk = st.Next() {
+	for tk = st.Next(); tk.Lexeme != lexeme.LEXEME_EOF; tk = st.Next() {
 		r = append(r, tk)
 	}
 	r = append(r, tk)
@@ -63,12 +66,12 @@ func collectTokens(src string) (r []token.Token) {
 }
 
 // printToken prints a token nicely.
-func printToken(tk token.Token) {
+func printToken(tk lexeme.Token) {
 
 	switch k := tk.Lexeme; k {
-	case token.LEXEME_TERMINATOR:
+	case lexeme.LEXEME_TERMINATOR:
 		println(k)
-	case token.LEXEME_EOF:
+	case lexeme.LEXEME_EOF:
 		println(k)
 		println()
 	default:
@@ -77,9 +80,9 @@ func printToken(tk token.Token) {
 }
 
 // parseTokens parses the token slice into an executable statement.
-func parseTokens(tokens []token.Token) parser.Stat {
+func parseTokens(tokens []lexeme.Token) parser.Stat {
 
-	in := make(chan token.Token)
+	in := make(chan lexeme.Token)
 
 	go func() {
 		for _, tk := range tokens {

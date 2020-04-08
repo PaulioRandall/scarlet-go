@@ -3,36 +3,36 @@ package parser
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // parseFuncDef parses a function definition.
 func (p *Parser) parseFuncDef() Expr {
 
 	f := funcDefExpr{
-		opener: p.takeEnsure(token.LEXEME_FUNC),
+		opener: p.takeEnsure(lexeme.LEXEME_FUNC),
 	}
 
-	p.takeEnsure(token.LEXEME_OPEN_PAREN)
+	p.takeEnsure(lexeme.LEXEME_OPEN_PAREN)
 
-	if p.peek().Lexeme != token.LEXEME_CLOSE_PAREN {
-		if p.peek().Lexeme != token.LEXEME_RETURNS {
+	if p.peek().Lexeme != lexeme.LEXEME_CLOSE_PAREN {
+		if p.peek().Lexeme != lexeme.LEXEME_RETURNS {
 			f.input = p.parseIDs()
 		}
 
-		if p.peek().Lexeme == token.LEXEME_RETURNS {
+		if p.peek().Lexeme == lexeme.LEXEME_RETURNS {
 			p.take()
 			f.output = p.parseIDs()
 		}
 	}
 
-	closeParen := p.takeEnsure(token.LEXEME_CLOSE_PAREN)
+	closeParen := p.takeEnsure(lexeme.LEXEME_CLOSE_PAREN)
 
-	if p.peek().Lexeme == token.LEXEME_DO {
+	if p.peek().Lexeme == lexeme.LEXEME_DO {
 		f.body = p.parseStats(p.take())
 	} else {
 		f.body = blockStat{
-			opener: token.New(token.LEXEME_INLINE, "", closeParen.Line, closeParen.Col),
+			opener: lexeme.New(lexeme.LEXEME_INLINE, "", closeParen.Line, closeParen.Col),
 			block:  []Stat{p.parseStat(true)},
 		}
 	}
@@ -43,9 +43,9 @@ func (p *Parser) parseFuncDef() Expr {
 // funcDefExpr represents an expression for a function definition, i.e. an
 // expression which creates a function.
 type funcDefExpr struct {
-	opener token.Token
-	input  []token.Token
-	output []token.Token
+	opener lexeme.Token
+	input  []lexeme.Token
+	output []lexeme.Token
 	body   Stat
 }
 
@@ -87,8 +87,8 @@ func (ex funcDefExpr) Eval(_ Context) (_ Value) {
 
 // funcValue represents a function as a Value.
 type funcValue struct {
-	input  []token.Token
-	output []token.Token
+	input  []lexeme.Token
+	output []lexeme.Token
 	body   Stat
 }
 

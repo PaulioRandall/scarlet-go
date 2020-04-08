@@ -3,7 +3,7 @@ package bard
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // Bard is an panic catcher and error message printer.
@@ -37,14 +37,14 @@ func (e Nightmare) Error() string {
 	return fmt.Sprintf(e.msg, e.args...)
 }
 
-// Horror is a nightmare were the reference to source code comes from a token.
+// Horror is a nightmare were the reference to source code comes from a lexeme.
 type Horror struct {
 	Nightmare
-	tk token.Token
+	tk lexeme.Token
 }
 
 // NewHorror creates a horror instance.
-func NewHorror(tk token.Token, cause error, msg string, args ...interface{}) Horror {
+func NewHorror(tk lexeme.Token, cause error, msg string, args ...interface{}) Horror {
 	return Horror{
 		Nightmare: Nightmare{
 			msg:   msg,

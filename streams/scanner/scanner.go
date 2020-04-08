@@ -1,30 +1,34 @@
-package lexor
+package scanner
 
 import (
 	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/bard"
-	"github.com/PaulioRandall/scarlet-go/lexor/symbol"
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
+
+	"github.com/PaulioRandall/scarlet-go/streams/symbol"
+	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
 
-/******************************************************************************
-File:
-	Contains functions used in parsing a written script into tokens.
-******************************************************************************/
-
-// scanner is a structure for parsing source code into tokens. It implements
-// the TokenStream interface so it may be wrapped.
-type scanner struct {
+// Scanner is a TokenStream providing functionality for scanning written scripts
+// into a sequence of tokens.
+type Scanner struct {
 	symbol.SymbolStream
 }
 
+// New creates a new token scanner as a TokenStream.
+func New(s string) token.TokenStream {
+	return &Scanner{
+		symbol.NewSymbolStream(s),
+	}
+}
+
 // Next satisfies the TokenStream interface.
-func (sc *scanner) Next() token.Token {
+func (sc *Scanner) Next() lexeme.Token {
 
 	if sc.Empty() {
-		return token.Token{
-			Lexeme: token.LEXEME_EOF,
+		return lexeme.Token{
+			Lexeme: lexeme.LEXEME_EOF,
 			Line:   sc.LineIndex(),
 			Col:    sc.ColIndex(),
 		}
@@ -53,49 +57,49 @@ func (sc *scanner) Next() token.Token {
 // scanFunc is the common signiture used by every scanning function that
 // follows. If a concrete scanning function finds a match it must return a
 // non-zero token and 'true' else it must return a zero token and 'false'.
-type scanFunc func() (token.Token, bool)
+type scanFunc func() (lexeme.Token, bool)
 
-func (sc *scanner) scanNewline() (_ token.Token, _ bool) {
+func (sc *Scanner) scanNewline() (_ lexeme.Token, _ bool) {
 
 	if n := sc.CountNewlineSymbols(0); n > 0 {
-		tk := sc.tokenize(n, token.LEXEME_NEWLINE)
+		tk := sc.tokenize(n, lexeme.LEXEME_NEWLINE)
 		return tk, true
 	}
 
 	return
 }
 
-func (sc *scanner) scanWhitespace() (_ token.Token, _ bool) {
+func (sc *Scanner) scanWhitespace() (_ lexeme.Token, _ bool) {
 
 	isSpace := func(i int, ru rune) bool {
 		return !sc.IsNewline(i) && unicode.IsSpace(ru)
 	}
 
 	if n := sc.CountSymbolsWhile(0, isSpace); n > 0 {
-		tk := sc.tokenize(n, token.LEXEME_WHITESPACE)
+		tk := sc.tokenize(n, lexeme.LEXEME_WHITESPACE)
 		return tk, true
 	}
 
 	return
 }
 
-func (sc *scanner) scanComment() (_ token.Token, _ bool) {
+func (sc *Scanner) scanComment() (_ lexeme.Token, _ bool) {
 
 	const (
-		COMMENT_PREFIX     = token.SYMBOL_COMMENT_START
+		COMMENT_PREFIX     = lexeme.SYMBOL_COMMENT_START
 		COMMENT_PREFIX_LEN = len(COMMENT_PREFIX)
 	)
 
 	if sc.IsMatch(0, COMMENT_PREFIX) {
 		n := sc.IndexOfNextNewline(COMMENT_PREFIX_LEN)
-		tk := sc.tokenize(n, token.LEXEME_COMMENT)
+		tk := sc.tokenize(n, lexeme.LEXEME_COMMENT)
 		return tk, true
 	}
 
 	return
 }
 
-func (sc *scanner) scanWord() (_ token.Token, _ bool) {
+func (sc *Scanner) scanWord() (_ lexeme.Token, _ bool) {
 
 	n := sc.CountSymbolsWhile(0, func(i int, ru rune) bool {
 		return ru == '_' || unicode.IsLetter(ru)
@@ -115,18 +119,18 @@ func (sc *scanner) scanWord() (_ token.Token, _ bool) {
 		panic(sc.terror(0, `Identifiers may not start with an underscore`))
 	}
 
-	for _, kw := range token.Keywords() {
+	for _, kw := range lexeme.Keywords() {
 		if kw.Symbol == w {
 			tk := sc.tokenize(n, kw.Lexeme)
 			return tk, true
 		}
 	}
 
-	tk := sc.tokenize(n, token.LEXEME_ID)
+	tk := sc.tokenize(n, lexeme.LEXEME_ID)
 	return tk, true
 }
 
-func (sc *scanner) scanSymbol() (_ token.Token, _ bool) {
+func (sc *Scanner) scanSymbol() (_ lexeme.Token, _ bool) {
 
 	if sc.Empty() {
 		return
@@ -134,7 +138,7 @@ func (sc *scanner) scanSymbol() (_ token.Token, _ bool) {
 
 	size := sc.Len()
 
-	for _, sym := range token.LoneSymbols() {
+	for _, sym := range lexeme.LoneSymbols() {
 
 		if size < sym.Len {
 			continue
@@ -149,10 +153,10 @@ func (sc *scanner) scanSymbol() (_ token.Token, _ bool) {
 	return
 }
 
-func (sc *scanner) scanNumberLiteral() (_ token.Token, _ bool) {
+func (sc *Scanner) scanNumberLiteral() (_ lexeme.Token, _ bool) {
 
 	const (
-		DELIM     = token.SYMBOL_FRACTIONAL_DELIM
+		DELIM     = lexeme.SYMBOL_FRACTIONAL_DELIM
 		DELIM_LEN = len(DELIM)
 	)
 
@@ -171,7 +175,7 @@ func (sc *scanner) scanNumberLiteral() (_ token.Token, _ bool) {
 		// If this is the last token in the scanner or the next terminal is not the
 		// delimiter between a floats integral and fractional parts then it must be
 		// an integral.
-		tk := sc.tokenize(intLen, token.LEXEME_INT)
+		tk := sc.tokenize(intLen, lexeme.LEXEME_INT)
 		return tk, true
 	}
 
@@ -187,15 +191,15 @@ func (sc *scanner) scanNumberLiteral() (_ token.Token, _ bool) {
 	}
 
 	n := intLen + DELIM_LEN + fractionalLen
-	tk := sc.tokenize(n, token.LEXEME_FLOAT)
+	tk := sc.tokenize(n, lexeme.LEXEME_FLOAT)
 	return tk, true
 }
 
-func (sc *scanner) scanStringLiteral() (_ token.Token, _ bool) {
+func (sc *Scanner) scanStringLiteral() (_ lexeme.Token, _ bool) {
 
 	const (
-		PREFIX = token.STRING_SYMBOL_START
-		SUFFIX = token.STRING_SYMBOL_END
+		PREFIX = lexeme.STRING_SYMBOL_START
+		SUFFIX = lexeme.STRING_SYMBOL_END
 	)
 
 	n := sc.CountSymbolsWhile(0, func(i int, _ rune) bool {
@@ -225,17 +229,17 @@ func (sc *scanner) scanStringLiteral() (_ token.Token, _ bool) {
 		return
 	}
 
-	tk := sc.tokenize(n+1, token.LEXEME_STRING)
+	tk := sc.tokenize(n+1, lexeme.LEXEME_STRING)
 	return tk, true
 }
 
-func (sc *scanner) scanStringTemplate() (_ token.Token, _ bool) {
+func (sc *Scanner) scanStringTemplate() (_ lexeme.Token, _ bool) {
 
 	const (
-		PREFIX        = token.TEMPLATE_SYMBOL_START
-		SUFFIX        = token.TEMPLATE_SYMBOL_END
+		PREFIX        = lexeme.TEMPLATE_SYMBOL_START
+		SUFFIX        = lexeme.TEMPLATE_SYMBOL_END
 		SUFFIX_LEN    = len(SUFFIX)
-		ESCAPE_SYMBOL = token.TEMPLATE_SYMBOL_ESCAPE
+		ESCAPE_SYMBOL = lexeme.TEMPLATE_SYMBOL_ESCAPE
 	)
 
 	var prevEscaped bool
@@ -271,24 +275,24 @@ func (sc *scanner) scanStringTemplate() (_ token.Token, _ bool) {
 	}
 
 	n += SUFFIX_LEN
-	tk := sc.tokenize(n, token.LEXEME_TEMPLATE)
+	tk := sc.tokenize(n, lexeme.LEXEME_TEMPLATE)
 	return tk, true
 }
 
-func (sc *scanner) tokenize(runeCount int, lex token.Lexeme) token.Token {
+func (sc *Scanner) tokenize(runeCount int, lex lexeme.Lexeme) lexeme.Token {
 
-	tk := token.Token{
+	tk := lexeme.Token{
 		Lexeme: lex,
 		Line:   sc.LineIndex(),
 		Col:    sc.ColIndex(),
 	}
 
-	tk.Value = sc.Read(runeCount, lex == token.LEXEME_NEWLINE)
+	tk.Value = sc.Read(runeCount, lex == lexeme.LEXEME_NEWLINE)
 
 	return tk
 }
 
-func (sc *scanner) terror(colOffset int, msg string) bard.Terror {
+func (sc *Scanner) terror(colOffset int, msg string) bard.Terror {
 	return bard.NewTerror(
 		sc.LineIndex(),
 		sc.ColIndex()+colOffset,

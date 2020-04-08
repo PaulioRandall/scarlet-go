@@ -10,7 +10,7 @@ The API combines three responsibilities:
 
 Key decisions:
 1. The three responsibilities seemed small and simple enough that a single interface combining them would be straight forward to create and maintain as well as being easier for package users to use.
-2. The line separator terminals are hardcoded into the package because the program is only expected to work on platforms using those line separators.
-3. Any error results in a panic because all errors that can occur are errors made programming to the SymbolStream interface --or errors in the implementation--.
+2. The line separator terminals are hardcoded into the package because this is the simplist approach and the program is only expected to work on platforms using those line separators.
+3. Any error results in a panic because all errors that can occur are those made by those programming to the SymbolStream interface --or possible errors in the implementation itself--.
 
 This package is not ment to know anything about the text being scanned except that it may be written over multiple lines. For simplicity and lack of requirement, no back tracking functionality is provided.

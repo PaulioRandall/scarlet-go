@@ -1,4 +1,4 @@
-package token
+package lexeme
 
 // Lexeme represents a token type.
 type Lexeme string

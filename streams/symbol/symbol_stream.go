@@ -176,7 +176,8 @@ func (ss *impl) IndexOfNextNewline(start int) int {
 	})
 }
 
-// codingError panics when programmer errors in the scanner itself is detected.
+// codingError generates a panic. It should be used when invalid API usage
+// is detected.
 func codingError(msg string) {
 	panic("PROGRAMMERS ERROR! " + msg)
 }

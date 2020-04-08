@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/bard"
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // opKind represents the kind of an operation.
@@ -17,23 +17,23 @@ const (
 	BOOLEAN      opKind = `Boolean`
 )
 
-// identifyOperatorKind returns the operation kind of the token. If the token
+// identifyOperatorKind returns the operation kind of the lexeme. If the token
 // is not a known operator then NOT_OPERATOR is returned.
-func (p *Parser) identifyOperatorKind(lex token.Lexeme) opKind {
+func (p *Parser) identifyOperatorKind(lex lexeme.Lexeme) opKind {
 	switch lex {
-	case token.LEXEME_ADD, token.LEXEME_SUBTRACT:
+	case lexeme.LEXEME_ADD, lexeme.LEXEME_SUBTRACT:
 		fallthrough
-	case token.LEXEME_MULTIPLY, token.LEXEME_DIVIDE:
+	case lexeme.LEXEME_MULTIPLY, lexeme.LEXEME_DIVIDE:
 		fallthrough
-	case token.LEXEME_REMAINDER:
+	case lexeme.LEXEME_REMAINDER:
 		return ARITHMETIC
-	case token.LEXEME_EQU, token.LEXEME_NEQ:
+	case lexeme.LEXEME_EQU, lexeme.LEXEME_NEQ:
 		return COMPARISON
-	case token.LEXEME_LT, token.LEXEME_MT:
+	case lexeme.LEXEME_LT, lexeme.LEXEME_MT:
 		fallthrough
-	case token.LEXEME_LT_OR_EQU, token.LEXEME_MT_OR_EQU:
+	case lexeme.LEXEME_LT_OR_EQU, lexeme.LEXEME_MT_OR_EQU:
 		return COMPARISON
-	case token.LEXEME_AND, token.LEXEME_OR:
+	case lexeme.LEXEME_AND, lexeme.LEXEME_OR:
 		return BOOLEAN
 	default:
 		return NOT_OPERATOR
@@ -59,7 +59,7 @@ func (p *Parser) parseOperation(left Expr) Expr {
 type operation struct {
 	kind     opKind
 	left     Expr
-	operator token.Token
+	operator lexeme.Token
 	right    Expr
 }
 
@@ -97,7 +97,7 @@ func (op operation) evalNumeric(ctx Context) Value {
 
 	// TODO: Check both operands are numeric
 
-	if op.operator.Lexeme != token.LEXEME_DIVIDE && lv.k == INT && rv.k == INT {
+	if op.operator.Lexeme != lexeme.LEXEME_DIVIDE && lv.k == INT && rv.k == INT {
 		return op.evalInt(lv.v.(int64), rv.v.(int64))
 	}
 
@@ -126,13 +126,13 @@ func (op operation) evalInt(l, r int64) (v Value) {
 		v.k = INT
 
 		switch op.operator.Lexeme {
-		case token.LEXEME_ADD:
+		case lexeme.LEXEME_ADD:
 			v.v = l + r
-		case token.LEXEME_SUBTRACT:
+		case lexeme.LEXEME_SUBTRACT:
 			v.v = l - r
-		case token.LEXEME_MULTIPLY:
+		case lexeme.LEXEME_MULTIPLY:
 			v.v = l * r
-		case token.LEXEME_REMAINDER:
+		case lexeme.LEXEME_REMAINDER:
 			v.v = l % r
 		default:
 			panic(bard.NewHorror(op.operator, nil,
@@ -146,17 +146,17 @@ func (op operation) evalInt(l, r int64) (v Value) {
 	v.k = BOOL
 
 	switch op.operator.Lexeme {
-	case token.LEXEME_EQU:
+	case lexeme.LEXEME_EQU:
 		v.v = l == r
-	case token.LEXEME_NEQ:
+	case lexeme.LEXEME_NEQ:
 		v.v = l != r
-	case token.LEXEME_LT:
+	case lexeme.LEXEME_LT:
 		v.v = l < r
-	case token.LEXEME_LT_OR_EQU:
+	case lexeme.LEXEME_LT_OR_EQU:
 		v.v = l <= r
-	case token.LEXEME_MT:
+	case lexeme.LEXEME_MT:
 		v.v = l > r
-	case token.LEXEME_MT_OR_EQU:
+	case lexeme.LEXEME_MT_OR_EQU:
 		v.v = l >= r
 	default:
 		panic(bard.NewHorror(op.operator, nil,
@@ -174,13 +174,13 @@ func (op operation) evalReal(l, r float64) (v Value) {
 		v.k = REAL
 
 		switch op.operator.Lexeme {
-		case token.LEXEME_ADD:
+		case lexeme.LEXEME_ADD:
 			v.v = l + r
-		case token.LEXEME_SUBTRACT:
+		case lexeme.LEXEME_SUBTRACT:
 			v.v = l - r
-		case token.LEXEME_MULTIPLY:
+		case lexeme.LEXEME_MULTIPLY:
 			v.v = l * r
-		case token.LEXEME_DIVIDE:
+		case lexeme.LEXEME_DIVIDE:
 			if r == 0 {
 				panic(bard.NewHorror(op.operator, nil, "Cannot divide by zero"))
 			}
@@ -197,17 +197,17 @@ func (op operation) evalReal(l, r float64) (v Value) {
 	v.k = BOOL
 
 	switch op.operator.Lexeme {
-	case token.LEXEME_EQU:
+	case lexeme.LEXEME_EQU:
 		v.v = l == r
-	case token.LEXEME_NEQ:
+	case lexeme.LEXEME_NEQ:
 		v.v = l != r
-	case token.LEXEME_LT:
+	case lexeme.LEXEME_LT:
 		v.v = l < r
-	case token.LEXEME_LT_OR_EQU:
+	case lexeme.LEXEME_LT_OR_EQU:
 		v.v = l <= r
-	case token.LEXEME_MT:
+	case lexeme.LEXEME_MT:
 		v.v = l > r
-	case token.LEXEME_MT_OR_EQU:
+	case lexeme.LEXEME_MT_OR_EQU:
 		v.v = l >= r
 	default:
 		panic(bard.NewHorror(op.operator, nil,
@@ -232,9 +232,9 @@ func (op operation) evalBoolean(ctx Context) (v Value) {
 	v.k = BOOL
 
 	switch op.operator.Lexeme {
-	case token.LEXEME_AND:
+	case lexeme.LEXEME_AND:
 		v.v = l && r
-	case token.LEXEME_OR:
+	case lexeme.LEXEME_OR:
 		v.v = l || r
 	default:
 		panic(bard.NewHorror(op.operator, nil,

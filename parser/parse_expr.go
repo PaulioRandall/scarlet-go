@@ -2,7 +2,7 @@ package parser
 
 import (
 	"github.com/PaulioRandall/scarlet-go/bard"
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // Stat (Statement) is an expression that always returns an empty value. The
@@ -13,7 +13,7 @@ type Stat Expr
 // parseStat parses the next statement.
 func (p *Parser) parseStat(inline bool) Stat {
 	switch tk := p.peek(); tk.Lexeme {
-	case token.LEXEME_ID:
+	case lexeme.LEXEME_ID:
 		return p.parseAssign(inline)
 	default:
 		panic(bard.NewHorror(tk, nil,
@@ -25,15 +25,15 @@ func (p *Parser) parseStat(inline bool) Stat {
 // parseDelimExpr parses a delimitered separated set of expressions.
 func (p *Parser) parseDelimExpr(allowVoid bool) (exs []Expr) {
 
-	for p.peek().Lexeme != token.LEXEME_CLOSE_LIST {
+	for p.peek().Lexeme != lexeme.LEXEME_CLOSE_LIST {
 
 		ex := p.parseAssignable(allowVoid)
 		exs = append(exs, ex)
 
-		if p.peek().Lexeme == token.LEXEME_DELIM {
+		if p.peek().Lexeme == lexeme.LEXEME_DELIM {
 			p.take()
 
-			if p.peek().Lexeme == token.LEXEME_TERMINATOR {
+			if p.peek().Lexeme == lexeme.LEXEME_TERMINATOR {
 				p.take()
 			}
 
@@ -49,12 +49,12 @@ func (p *Parser) parseDelimExpr(allowVoid bool) (exs []Expr) {
 // parseExpr parses the an expression that will become an assignment source.
 func (p *Parser) parseAssignable(allowVoid bool) Expr {
 
-	if p.peek().Lexeme == token.LEXEME_TERMINATOR {
+	if p.peek().Lexeme == lexeme.LEXEME_TERMINATOR {
 		p.take()
 	}
 
 	switch tk := p.peek(); tk.Lexeme {
-	case token.LEXEME_VOID:
+	case lexeme.LEXEME_VOID:
 		if !allowVoid {
 			panic(bard.NewHorror(tk, nil, "Naughty use of void expression"))
 		}
@@ -63,7 +63,7 @@ func (p *Parser) parseAssignable(allowVoid bool) Expr {
 			tk: p.take(),
 			v:  NewValue(tk),
 		}
-	case token.LEXEME_FUNC:
+	case lexeme.LEXEME_FUNC:
 		return p.parseFuncDef()
 	default:
 		return p.parseExpr()
@@ -73,7 +73,7 @@ func (p *Parser) parseAssignable(allowVoid bool) Expr {
 // parseExpr parses the next expression.
 func (p *Parser) parseExpr() Expr {
 
-	if p.peek().Lexeme == token.LEXEME_TERMINATOR {
+	if p.peek().Lexeme == lexeme.LEXEME_TERMINATOR {
 		p.take()
 	}
 
@@ -101,20 +101,20 @@ func (p *Parser) parseOperand() (ex Expr) {
 	tk := p.peek()
 
 	switch tk.Lexeme {
-	case token.LEXEME_STRING, token.LEXEME_TEMPLATE:
+	case lexeme.LEXEME_STRING, lexeme.LEXEME_TEMPLATE:
 		// TODO: string templates need compiling
 		fallthrough
-	case token.LEXEME_BOOL, token.LEXEME_INT, token.LEXEME_FLOAT:
+	case lexeme.LEXEME_BOOL, lexeme.LEXEME_INT, lexeme.LEXEME_FLOAT:
 		ex = valueExpr{
 			tk: p.take(),
 			v:  NewValue(tk),
 		}
-	case token.LEXEME_OPEN_LIST:
+	case lexeme.LEXEME_OPEN_LIST:
 		ex = p.parseList()
-	case token.LEXEME_ID:
+	case lexeme.LEXEME_ID:
 		p.take()
 
-		if p.peek().Lexeme == token.LEXEME_OPEN_PAREN {
+		if p.peek().Lexeme == lexeme.LEXEME_OPEN_PAREN {
 			ex = p.parseFuncCall(tk)
 			break
 		}

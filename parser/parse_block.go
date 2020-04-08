@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/bard"
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // parseStats parses a block of statements until the end of file or a block
@@ -12,7 +12,7 @@ import (
 // expected else a block closing token is expected; a panic will ensue
 // otherwise. If 'opener' is NOT empty it is assumed that it has been validated
 // prior to being passed.
-func (p *Parser) parseStats(opener token.Token) Stat {
+func (p *Parser) parseStats(opener lexeme.Token) Stat {
 
 	b := blockStat{
 		opener: opener,
@@ -21,16 +21,16 @@ func (p *Parser) parseStats(opener token.Token) Stat {
 
 	for {
 		switch tk := p.peek(); tk.Lexeme {
-		case token.LEXEME_END:
-			if opener.Lexeme == token.LEXEME_SOF {
+		case lexeme.LEXEME_END:
+			if opener.Lexeme == lexeme.LEXEME_SOF {
 				panic(bard.NewHorror(tk, nil,
 					"Expected EOF, found a block closing token instead",
 				))
 			}
 			goto BLOCK_PARSED
 
-		case token.LEXEME_EOF:
-			if opener.Lexeme != token.LEXEME_SOF {
+		case lexeme.LEXEME_EOF:
+			if opener.Lexeme != lexeme.LEXEME_SOF {
 				panic(bard.NewHorror(tk, nil,
 					"Expected a block closing token, found EOF instead",
 				))
@@ -50,8 +50,8 @@ BLOCK_PARSED:
 
 // blockStat represents a block of statements.
 type blockStat struct {
-	opener token.Token
-	closer token.Token
+	opener lexeme.Token
+	closer lexeme.Token
 	block  []Stat
 }
 
@@ -66,7 +66,7 @@ func (ex blockStat) String() (s string) {
 
 	s = strings.ReplaceAll(s, "\n", "\n\t")
 
-	if ex.closer != (token.Token{}) {
+	if ex.closer != (lexeme.Token{}) {
 		s += "\n(" + ex.closer.String() + ")"
 	}
 

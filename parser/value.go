@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/PaulioRandall/scarlet-go/bard"
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // ****************************************************************************
@@ -40,8 +40,8 @@ type Value struct {
 	v interface{}
 }
 
-// NewValue creates a new value from a token.
-func NewValue(tk token.Token) Value {
+// NewValue creates a new value from a lexeme.
+func NewValue(tk lexeme.Token) Value {
 
 	var (
 		k Kind
@@ -49,19 +49,19 @@ func NewValue(tk token.Token) Value {
 	)
 
 	switch tk.Lexeme {
-	case token.LEXEME_STRING, token.LEXEME_TEMPLATE:
+	case lexeme.LEXEME_STRING, lexeme.LEXEME_TEMPLATE:
 		k, v = STR, tk.Value
 
-	case token.LEXEME_BOOL:
+	case lexeme.LEXEME_BOOL:
 		k, v = BOOL, (tk.Value == "TRUE")
 
-	case token.LEXEME_INT:
+	case lexeme.LEXEME_INT:
 		k, v = INT, parseNum(INT, tk)
 
-	case token.LEXEME_FLOAT:
+	case lexeme.LEXEME_FLOAT:
 		k, v = REAL, parseNum(REAL, tk)
 
-	case token.LEXEME_VOID:
+	case lexeme.LEXEME_VOID:
 		k = VOID
 
 	default:
@@ -77,7 +77,7 @@ func NewValue(tk token.Token) Value {
 }
 
 // parseNum parses an INT or REAL token value into its Go counterpart.
-func parseNum(k Kind, tk token.Token) (v interface{}) {
+func parseNum(k Kind, tk lexeme.Token) (v interface{}) {
 
 	var e error
 

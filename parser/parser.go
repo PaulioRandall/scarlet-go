@@ -2,17 +2,17 @@ package parser
 
 import (
 	"github.com/PaulioRandall/scarlet-go/bard"
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // Parser is parser for a stream of tokens.
 type Parser struct {
-	in  chan token.Token
-	buf *token.Token // buffer, allows for look ahead by 1
+	in  chan lexeme.Token
+	buf *lexeme.Token // buffer, allows for look ahead by 1
 }
 
 // New creates a new Parser.
-func New(in chan token.Token) *Parser {
+func New(in chan lexeme.Token) *Parser {
 	return &Parser{
 		in: in,
 	}
@@ -22,15 +22,15 @@ func New(in chan token.Token) *Parser {
 // channel is closed. A master statement is returned that represents the block
 // of statements.
 func (p *Parser) Parse() (_ Stat) {
-	return p.parseStats(token.Token{
-		Lexeme: token.LEXEME_SOF,
+	return p.parseStats(lexeme.Token{
+		Lexeme: lexeme.LEXEME_SOF,
 	})
 }
 
 // peek returns the token on the buffer. If the buffer is empty the the next
 // token is read from the input channel into the buffer first. Panics if the
 // channel is closed when attempting a read.
-func (p *Parser) peek() token.Token {
+func (p *Parser) peek() lexeme.Token {
 
 	if p.buf == nil {
 		tk, ok := <-p.in
@@ -49,7 +49,7 @@ func (p *Parser) peek() token.Token {
 
 // take removes and returns the token in the buffer. If the buffer is empty then
 // a peek operation is performed to fill it first.
-func (p *Parser) take() (tk token.Token) {
+func (p *Parser) take() (tk lexeme.Token) {
 
 	if p.buf == nil {
 		p.peek()
@@ -60,7 +60,7 @@ func (p *Parser) take() (tk token.Token) {
 }
 
 // ensure will panic if the specified token is not one of the specified kinds.
-func (p *Parser) ensure(tk token.Token, lexs ...token.Lexeme) {
+func (p *Parser) ensure(tk lexeme.Token, lexs ...lexeme.Lexeme) {
 
 	var errMsg string
 	tkLex := tk.Lexeme
@@ -88,7 +88,7 @@ func (p *Parser) ensure(tk token.Token, lexs ...token.Lexeme) {
 // peekEnsure returns the next token in the input channel but will panic if
 // the if the channel is closed or the specified token is not one of the
 // specified kinds.
-func (p *Parser) peekEnsure(lexs ...token.Lexeme) token.Token {
+func (p *Parser) peekEnsure(lexs ...lexeme.Lexeme) lexeme.Token {
 	tk := p.peek()
 	p.ensure(tk, lexs...)
 	return tk
@@ -97,7 +97,7 @@ func (p *Parser) peekEnsure(lexs ...token.Lexeme) token.Token {
 // takeEnsure returns the next token in the input channel but will panic if
 // the if the channel is closed or the specified token is not one of the
 // specified kinds.
-func (p *Parser) takeEnsure(lexs ...token.Lexeme) token.Token {
+func (p *Parser) takeEnsure(lexs ...lexeme.Lexeme) lexeme.Token {
 	tk := p.take()
 	p.ensure(tk, lexs...)
 	return tk

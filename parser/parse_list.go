@@ -3,15 +3,15 @@ package parser
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // parseList parses a list literal.
 func (p *Parser) parseList() Expr {
 
-	start := p.takeEnsure(token.LEXEME_OPEN_LIST)
+	start := p.takeEnsure(lexeme.LEXEME_OPEN_LIST)
 	v := p.parseDelimExpr(false)
-	end := p.takeEnsure(token.LEXEME_CLOSE_LIST)
+	end := p.takeEnsure(lexeme.LEXEME_CLOSE_LIST)
 
 	return listExpr{
 		start: start,
@@ -22,8 +22,8 @@ func (p *Parser) parseList() Expr {
 
 // listExpr represents an expression that returns a list value.
 type listExpr struct {
-	start token.Token
-	end   token.Token
+	start lexeme.Token
+	end   lexeme.Token
 	items []Expr
 }
 
