@@ -1,3 +1,23 @@
+// scanner package was created to handle scanning of tokens from a script at a
+// high level; low level aspects live in the streams/symbol package.
+//
+// Key decisions:
+// 1. This could be rewritten to be much more performant, but I decided that
+// a focus on readability was more important. Also, each script is only scanned
+// once per execution so optimisation will probably not have any meaningful
+// effect.
+// 2. The terminal symbols used to represent various tokens have been separated
+// into the lexeme package, even though the ordering of scanning functions
+// depend on lexeme representations. This was conscious. It may not be possible
+// to effectivly separate them.
+//
+// This package is responsible for scanning scripts only, evaluation is
+// performed by the streams/evaluator package.
+//
+// TODO: Error handling needs to be simplified and the logger renamed to
+// 			 something more meaningful.
+// TODO: Some of these functions could probably do with being rewritten for
+//       greater clarity.
 package scanner
 
 import (
@@ -16,23 +36,31 @@ func ScanAll(s string) []lexeme.Token {
 	return token.ReadAll(sc)
 }
 
-// Scanner is a TokenStream providing functionality for scanning written scripts
-// into a sequence of tokens.
+// Scanner is a TokenStream providing functionality for parsing written scripts
+// into a sequence of tokens. It provides the high level scanning code whilst
+// the low level has been embedded.
 type Scanner struct {
 	symbol.SymbolStream
 }
 
-// New creates a new token scanner as a TokenStream.
+// New creates a new token Scanner as a TokenStream.
 func New(s string) token.TokenStream {
 	return &Scanner{
 		symbol.NewSymbolStream(s),
 	}
 }
 
+// scanFunc is the common signiture used by every scanning function used by
+// the Read function. If a concrete scanning function finds a match it must
+// return a non-zero token and true as the match else it must return a zero
+// token along with false.
+type scanFunc func() (lexeme.Token, bool)
+
 // Read satisfies the TokenStream interface.
 func (sc *Scanner) Read() lexeme.Token {
 
 	if sc.Empty() {
+		// TokenStream.Read requires an EOF token be returned upon an empty stream.
 		return lexeme.Token{
 			Lexeme: lexeme.LEXEME_EOF,
 			Line:   sc.LineIndex(),
@@ -40,17 +68,24 @@ func (sc *Scanner) Read() lexeme.Token {
 		}
 	}
 
+	// For proper parsing, the correct ordering of scanning functions may be
+	// important depending on the lexeme representations. These can be found in
+	// the lexeme package. Currently the followingering is required:
+	// 1. scanComment before scanSymbol
+	// 2. scanSymbol before scanWord
 	fs := []scanFunc{
-		sc.scanNewline, // LF & CRLF
-		sc.scanWhitespace,
+		sc.scanNewline,    // LF & CRLF
+		sc.scanWhitespace, // Any whitespace except newlines
 		sc.scanComment,
-		sc.scanWord,   // Identifiers & keywords
-		sc.scanSymbol, // :=, +, <, etc
-		sc.scanNumberLiteral,
+		sc.scanSymbol,         // :=, +, <, etc
+		sc.scanWord,           // Identifiers & keywords
+		sc.scanNumberLiteral,  // Ints & floats
 		sc.scanStringLiteral,  // `literal`
 		sc.scanStringTemplate, // "Template: {identifier}"
 	}
 
+	// Iterate each function list calling one at a time until one of them
+	// identifies and parses the token.
 	for _, f := range fs {
 		if tk, match := f(); match {
 			return tk
@@ -60,11 +95,8 @@ func (sc *Scanner) Read() lexeme.Token {
 	panic(sc.terror(0, "Could not identify next token"))
 }
 
-// scanFunc is the common signiture used by every scanning function that
-// follows. If a concrete scanning function finds a match it must return a
-// non-zero token and 'true' else it must return a zero token and 'false'.
-type scanFunc func() (lexeme.Token, bool)
-
+// scanNewline implements the scanFunc signiture to return a non-zero token if
+// a newline appears next within the script, i.e. LF or CRLF.
 func (sc *Scanner) scanNewline() (_ lexeme.Token, _ bool) {
 
 	if n := sc.CountNewlineSymbols(0); n > 0 {
@@ -75,6 +107,10 @@ func (sc *Scanner) scanNewline() (_ lexeme.Token, _ bool) {
 	return
 }
 
+// scanWhitespace implements the scanFunc signiture to return a non-zero token
+// if one or many consecutive whitespace terminals appear next within the
+// script. Newlines are not counted as whitespace, instead they are scanned by
+// the scanNewline function.
 func (sc *Scanner) scanWhitespace() (_ lexeme.Token, _ bool) {
 
 	isSpace := func(i int, ru rune) bool {
@@ -89,6 +125,9 @@ func (sc *Scanner) scanWhitespace() (_ lexeme.Token, _ bool) {
 	return
 }
 
+// scanComment implements the scanFunc signiture to return a non-zero token if
+// an inline comment appears next within the script. Inline comments always
+// include all terminals within the remainder of the line.
 func (sc *Scanner) scanComment() (_ lexeme.Token, _ bool) {
 
 	const (
@@ -105,48 +144,16 @@ func (sc *Scanner) scanComment() (_ lexeme.Token, _ bool) {
 	return
 }
 
-func (sc *Scanner) scanWord() (_ lexeme.Token, _ bool) {
-
-	n := sc.CountSymbolsWhile(0, func(i int, ru rune) bool {
-		return ru == '_' || unicode.IsLetter(ru)
-	})
-
-	if n == 0 {
-		return
-	}
-
-	w := sc.Peek(n)
-
-	if w[0] == '_' {
-		if len(w) == 1 {
-			return
-		}
-
-		panic(sc.terror(0, `Identifiers may not start with an underscore`))
-	}
-
-	for _, kw := range lexeme.Keywords() {
-		if kw.Symbol == w {
-			tk := sc.tokenize(n, kw.Lexeme)
-			return tk, true
-		}
-	}
-
-	tk := sc.tokenize(n, lexeme.LEXEME_ID)
-	return tk, true
-}
-
+// scanSymbol implements the scanFunc signiture to return a non-zero token if
+// a simple math, logic, or control symbol (lone symbol, non-terminal) appears
+// next within the script, i.e. :=, +, <, etc.
 func (sc *Scanner) scanSymbol() (_ lexeme.Token, _ bool) {
-
-	if sc.Empty() {
-		return
-	}
-
-	size := sc.Len()
 
 	for _, sym := range lexeme.LoneSymbols() {
 
-		if size < sym.Len {
+		if sc.Len() < sym.Len {
+			// Ignore symbols that are shorter than the stream as they won't match
+			// but will cause an out of range panic.
 			continue
 		}
 
@@ -159,6 +166,34 @@ func (sc *Scanner) scanSymbol() (_ lexeme.Token, _ bool) {
 	return
 }
 
+// scanWord implements the scanFunc signiture to return a non-zero token if
+// either a keyword or identifier appear next within the script.
+func (sc *Scanner) scanWord() (tk lexeme.Token, _ bool) {
+
+	n := sc.CountSymbolsWhile(0, func(_ int, ru rune) bool {
+		return lexeme.IsWordTerminal(ru)
+	})
+
+	if n == 0 {
+		return
+	}
+
+	w := sc.Peek(n)
+	lex := lexeme.FindKeywordLexeme(w)
+
+	if lex != lexeme.LEXEME_UNDEFINED {
+		tk = sc.tokenize(n, lex)
+	} else {
+		// Any word that is not a keyword (reserved word) must be an identifier.
+		tk = sc.tokenize(n, lexeme.LEXEME_ID)
+	}
+
+	return tk, true
+}
+
+// scanNumberLiteral implements the scanFunc signiture to return a non-zero
+// token if an int of float appear next within the script. Both integers and
+// floats are parsed by this function.
 func (sc *Scanner) scanNumberLiteral() (_ lexeme.Token, _ bool) {
 
 	const (
@@ -178,9 +213,9 @@ func (sc *Scanner) scanNumberLiteral() (_ lexeme.Token, _ bool) {
 	}
 
 	if intLen == sc.Len() || !sc.IsMatch(intLen, DELIM) {
-		// If this is the last token in the scanner or the next terminal is not the
-		// delimiter between a floats integral and fractional parts then it must be
-		// an integral.
+		// This must be an int if this is the last token in the scanner or the next
+		// terminal is not the delimiter between a floats integral and fractional
+		// parts.
 		tk := sc.tokenize(intLen, lexeme.LEXEME_INT)
 		return tk, true
 	}
@@ -190,8 +225,7 @@ func (sc *Scanner) scanNumberLiteral() (_ lexeme.Token, _ bool) {
 	if fractionalLen == 0 {
 		// One or many fractional digits must follow a delimiter. Zero following
 		// digits is invalid syntax, so we must panic.
-		panic(sc.terror(
-			intLen+DELIM_LEN,
+		panic(sc.terror(intLen+DELIM_LEN,
 			"Invalid syntax, expected digit after decimal point",
 		))
 	}
@@ -201,6 +235,8 @@ func (sc *Scanner) scanNumberLiteral() (_ lexeme.Token, _ bool) {
 	return tk, true
 }
 
+// scanStringLiteral implements the scanFunc signiture to return a non-zero
+// token if a literal string appears next within the script.
 func (sc *Scanner) scanStringLiteral() (_ lexeme.Token, _ bool) {
 
 	const (
@@ -210,13 +246,14 @@ func (sc *Scanner) scanStringLiteral() (_ lexeme.Token, _ bool) {
 
 	n := sc.CountSymbolsWhile(0, func(i int, _ rune) bool {
 
-		switch {
-		case i == 0:
-			// If the initial terminals are not signify a string literal then exit
-			// straight away.
+		if i == 0 {
+			// If the initial terminal does not signify a string literal then exit
+			// straight away, n will be 0.
 			return sc.IsMatch(i, PREFIX)
+		}
+
+		switch { // We must panic if we can't find the end of the string.
 		case sc.IsMatch(i, SUFFIX):
-			// If
 			return false
 		case sc.IsNewline(i):
 			panic(sc.terror(0,
@@ -239,6 +276,11 @@ func (sc *Scanner) scanStringLiteral() (_ lexeme.Token, _ bool) {
 	return tk, true
 }
 
+// scanStringTemplate implements the scanFunc signiture to return a non-zero
+// token if a template string appears next within the script. As the name
+// suggests, templates can be populated with the value of identifiers, but the
+// scanner is not concerned with parsing these. It does need to watch out for
+// escaped terminals that also represent the string closer (suffix).
 func (sc *Scanner) scanStringTemplate() (_ lexeme.Token, _ bool) {
 
 	const (
@@ -255,13 +297,17 @@ func (sc *Scanner) scanStringTemplate() (_ lexeme.Token, _ bool) {
 		escaped := prevEscaped
 		prevEscaped = false
 
-		switch {
-		case i == 0:
+		if i == 0 {
+			// If the initial terminal does not signify a string template then exit
+			// straight away, n will be 0.
 			return sc.IsMatch(i, PREFIX)
+		}
+
+		switch { // We must panic if we can't find the end of the template.
 		case sc.IsMatch(i, ESCAPE_SYMBOL):
 			prevEscaped = true
 			return true
-		case !escaped && sc.IsMatch(i, SUFFIX):
+		case !escaped && sc.IsMatch(i, SUFFIX): // Ensure the suffix is not escaped
 			return false
 		case sc.IsNewline(i):
 			panic(sc.terror(0,
@@ -285,7 +331,9 @@ func (sc *Scanner) scanStringTemplate() (_ lexeme.Token, _ bool) {
 	return tk, true
 }
 
-func (sc *Scanner) tokenize(runeCount int, lex lexeme.Lexeme) lexeme.Token {
+// tokenize creates a new token from the next non-terminal. It reads off n
+// symbols from the embedded SymbolStream ready for scanning the next token.
+func (sc *Scanner) tokenize(n int, lex lexeme.Lexeme) lexeme.Token {
 
 	tk := lexeme.Token{
 		Lexeme: lex,
@@ -293,11 +341,13 @@ func (sc *Scanner) tokenize(runeCount int, lex lexeme.Lexeme) lexeme.Token {
 		Col:    sc.ColIndex(),
 	}
 
-	tk.Value = sc.SymbolStream.Read(runeCount, lex == lexeme.LEXEME_NEWLINE)
+	tk.Value = sc.SymbolStream.Read(n, lex == lexeme.LEXEME_NEWLINE)
 
 	return tk
 }
 
+// terror was created because I am lazy. It will probably be removed when I
+// update the error handling.
 func (sc *Scanner) terror(colOffset int, msg string) bard.Terror {
 	return bard.NewTerror(
 		sc.LineIndex(),

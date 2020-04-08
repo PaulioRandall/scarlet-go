@@ -1,5 +1,9 @@
 package lexeme
 
+import (
+	"unicode"
+)
+
 // Lexeme represents a token type.
 type Lexeme string
 
@@ -56,15 +60,27 @@ type Symbol struct {
 	Lexeme Lexeme
 }
 
-// Keywords maps a non-terminal keyword to a token kind.
-func Keywords() []Symbol {
-	return []Symbol{
-		Symbol{`F`, 1, LEXEME_FUNC},
-		Symbol{`DO`, 2, LEXEME_DO},
-		Symbol{`END`, 3, LEXEME_END},
-		Symbol{`TRUE`, 4, LEXEME_BOOL},
-		Symbol{`FALSE`, 5, LEXEME_BOOL},
+// IsWordTerminal returns true if the terminal symbol (rune) is allowed within
+// a keyword or identifier.
+func IsWordTerminal(ru rune) bool {
+	return ru == '_' || unicode.IsLetter(ru)
+}
+
+func FindKeywordLexeme(kw string) Lexeme {
+	switch kw {
+	case `F`:
+		return LEXEME_FUNC
+	case `DO`:
+		return LEXEME_DO
+	case `END`:
+		return LEXEME_END
+	case `TRUE`:
+		return LEXEME_BOOL
+	case `FALSE`:
+		return LEXEME_BOOL
 	}
+
+	return LEXEME_UNDEFINED
 }
 
 const (
@@ -76,7 +92,7 @@ const (
 )
 
 const (
-	SYMBOL_COMMENT_START    string = "/"
+	SYMBOL_COMMENT_START    string = "//"
 	SYMBOL_FRACTIONAL_DELIM string = "."
 )
 

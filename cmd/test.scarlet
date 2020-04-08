@@ -31,21 +31,3 @@ two := 1 + 1
 three := 1.5 + 1.5
 twelve := 3 * 3 + 3 // Error
 
-// FIX: Operations should be order from left to right.
-// FIX: Chains of operations are performed in the wrong order.
-//      Perhaps defer could be used to resolve the issue?
-
-// GOAL: Clean, refactor, & optimise algebra parsing.
-
-// MAYBE: REAL should be renamed FLOAT?
-
-// GOAL: Parse and evaluate conditional statements.
-
-// GOAL: Document each package including the concepts that drive them.
-// GOAL: Describe the language axiomatically.
-// GOAL: Rename Bard package as Rhapsodist.
-
-// MAYBE: variables should be strongly typed?
-// MAYBE: all variables should start with a lower case?
-
-// GOAL: Improve parsing errors so the offending line is always printed.
