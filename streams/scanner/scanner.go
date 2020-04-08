@@ -23,8 +23,8 @@ func New(s string) token.TokenStream {
 	}
 }
 
-// Next satisfies the TokenStream interface.
-func (sc *Scanner) Next() lexeme.Token {
+// Read satisfies the TokenStream interface.
+func (sc *Scanner) Read() lexeme.Token {
 
 	if sc.Empty() {
 		return lexeme.Token{
@@ -287,7 +287,7 @@ func (sc *Scanner) tokenize(runeCount int, lex lexeme.Lexeme) lexeme.Token {
 		Col:    sc.ColIndex(),
 	}
 
-	tk.Value = sc.Read(runeCount, lex == lexeme.LEXEME_NEWLINE)
+	tk.Value = sc.SymbolStream.Read(runeCount, lex == lexeme.LEXEME_NEWLINE)
 
 	return tk
 }

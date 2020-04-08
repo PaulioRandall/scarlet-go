@@ -17,14 +17,14 @@ func New(delegate token.TokenStream) token.TokenStream {
 	}
 }
 
-// Next satisfies the TokenStream interface.
-func (ev *evaluator) Next() (_ lexeme.Token) {
+// Read satisfies the TokenStream interface.
+func (ev *evaluator) Read() (_ lexeme.Token) {
 
 	var tk lexeme.Token
 	var lex lexeme.Lexeme
 	prev := ev.prev
 
-	for tk = ev.ts.Next(); tk != (lexeme.Token{}); tk = ev.ts.Next() {
+	for tk = ev.ts.Read(); tk != (lexeme.Token{}); tk = ev.ts.Read() {
 
 		lex = tk.Lexeme
 

@@ -18,7 +18,7 @@ func doTest(t *testing.T, ts token.TokenStream, exp ...lexeme.Token) {
 
 	for i := 0; i < len(exp); i++ {
 
-		tk := ts.Next()
+		tk := ts.Read()
 
 		if tk == (lexeme.Token{}) {
 			require.Equal(t, len(exp), i, "Expected scanner to return more tokens")
@@ -80,11 +80,11 @@ func TestScanner_Next_1(t *testing.T) {
 		Col:    0,
 	}
 
-	require.Equal(t, expEOF, sc.Next())
+	require.Equal(t, expEOF, sc.Read())
 }
 
 func TestScanner_Next_2(t *testing.T) {
 	require.Panics(t, func() {
-		New("123.a").Next()
+		New("123.a").Read()
 	})
 }

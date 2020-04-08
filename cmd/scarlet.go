@@ -57,7 +57,7 @@ func collectTokens(src string) (r []lexeme.Token) {
 	st = scanner.New(src)
 	st = evaluator.New(st)
 
-	for tk = st.Next(); tk.Lexeme != lexeme.LEXEME_EOF; tk = st.Next() {
+	for tk = st.Read(); tk.Lexeme != lexeme.LEXEME_EOF; tk = st.Read() {
 		r = append(r, tk)
 	}
 	r = append(r, tk)
