@@ -97,7 +97,9 @@ func (sc *scanner) scanComment() (_ token.Token, _ bool) {
 
 func (sc *scanner) scanWord() (_ token.Token, _ bool) {
 
-	n := sc.CountConsecutiveLetters(0)
+	n := sc.CountSymbolsWhile(0, func(i int, ru rune) bool {
+		return ru == '_' || unicode.IsLetter(ru)
+	})
 
 	if n == 0 {
 		return
@@ -154,7 +156,11 @@ func (sc *scanner) scanNumberLiteral() (_ token.Token, _ bool) {
 		DELIM_LEN = len(DELIM)
 	)
 
-	intLen := sc.CountConsecutiveDigits(0)
+	isDigit := func(_ int, ru rune) bool {
+		return unicode.IsDigit(ru)
+	}
+
+	intLen := sc.CountSymbolsWhile(0, isDigit)
 
 	if intLen == 0 {
 		// If there are no digits then this is not a number.
@@ -169,7 +175,7 @@ func (sc *scanner) scanNumberLiteral() (_ token.Token, _ bool) {
 		return tk, true
 	}
 
-	fractionalLen := sc.CountConsecutiveDigits(intLen + DELIM_LEN)
+	fractionalLen := sc.CountSymbolsWhile(intLen+DELIM_LEN, isDigit)
 
 	if fractionalLen == 0 {
 		// One or many fractional digits must follow a delimiter. Zero following

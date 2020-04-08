@@ -1,9 +1,5 @@
 package symbol
 
-import (
-	"unicode"
-)
-
 // SymbolStream provides access to an ordered stream of terminal symbols (runes)
 // representing a script. The stream also monitors the current cursor position
 // in the form of line and column indexes.
@@ -48,16 +44,6 @@ type SymbolStream interface {
 	// break at the start index within the symbol stream. If no line break occurs
 	// at start then 0 is returned.
 	CountNewlineSymbols(start int) int
-
-	// CountConsecutiveLetters returns the number of consecutive letters
-	// (unicode category L) and underscores '_', starting at start, within the
-	// symbol stream.
-	CountConsecutiveLetters(start int) int
-
-	// CountConsecutiveDigits returns the number of consecutive digits
-	// (unicode category Nd) and underscores '_', starting at start, within the
-	// symbol stream.
-	CountConsecutiveDigits(start int) int
 
 	// IndexOfNextNewline returns the index within the symbol stream, starting
 	// at start, where the next line break occurs.
@@ -154,20 +140,6 @@ func (ss *impl) LineIndex() int {
 // ColIndex satisfies the SymbolStream interface.
 func (ss *impl) ColIndex() int {
 	return ss.col
-}
-
-// CountConsecutiveLetters satisfies the SymbolStream interface.
-func (ss *impl) CountConsecutiveLetters(start int) int {
-	return ss.CountSymbolsWhile(start, func(i int, ru rune) bool {
-		return ru == '_' || unicode.IsLetter(ru)
-	})
-}
-
-// CountConsecutiveDigits satisfies the SymbolStream interface.
-func (ss *impl) CountConsecutiveDigits(start int) int {
-	return ss.CountSymbolsWhile(start, func(_ int, ru rune) bool {
-		return unicode.IsDigit(ru)
-	})
 }
 
 // IsNewline satisfies the SymbolStream interface.
