@@ -149,7 +149,7 @@ func (sc *Scanner) scanComment() (_ lexeme.Token, _ bool) {
 // next within the script, i.e. :=, +, <, etc.
 func (sc *Scanner) scanSymbol() (_ lexeme.Token, _ bool) {
 
-	for _, sym := range lexeme.LoneSymbols() {
+	for _, sym := range lexeme.Symbols() {
 
 		if sc.Len() < sym.Len {
 			// Ignore symbols that are shorter than the stream as they won't match

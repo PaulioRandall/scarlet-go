@@ -1,12 +1,40 @@
+// lexeme package was created to define the range of possible types of tokens,
+// or lexemes as they have been named here. The package also defines the actual
+// terminal and non-terminal symbols used in the language.
+//
+// Key decisions:
+// 1. To be honest, I really don't know if it was a good idea to use the word
+// lexeme in the manner I have. Usage in other literature doesn't seem
+// consistent with each other so I'm just going to run with what I've got until
+// I have a better understanding and alternative word.
+// 2. I centralised the definition of terminal and non-terminal symbols here
+// so they could be modified and tweaked easily. I'm not sure that was a good
+// idea either. It is highly coupled with the logic which parses tokens so I'm
+// thinking about moving them back to the scanner package, but perhaps defined
+// in their own file to maintain ease of modification.
+//
+// TODO: Consider moving the terminal and non-terminal definitions back to the
+// 			 scanner package but in their own file for ease of readability and
+// 			 modification.
+// TODO: Some of the const lexeme names are not very meaningful or accurate,
+//			 consider making them more precise.
+// TODO: Scanning of keywords and symbols could be combined with identifier
+//       scanning being attempted after symbol and keyword scanning. The
+//       advantage is that keywords and lone symbols would be interchangable,
+//			 which I argue they should be. It would allow `DO` `END` blocks to be
+//			 redefined using `{` `}` if need be, with changes to list definitions
+//			 as well of course.
 package lexeme
 
 import (
 	"unicode"
 )
 
-// Lexeme represents a token type.
+// Lexeme represents a the type of a token. Each lexeme may have multiple
+// representations but usually just one.
 type Lexeme string
 
+// Enumeration of all possible Lexemes.
 const (
 	LEXEME_UNDEFINED Lexeme = ``
 	// ------------------
@@ -36,7 +64,6 @@ const (
 	LEXEME_INT         Lexeme = `INT`
 	LEXEME_FLOAT       Lexeme = `FLOAT`
 	LEXEME_BOOL        Lexeme = `BOOL`
-	LEXEME_NOT         Lexeme = `NOT`
 	LEXEME_ADD         Lexeme = `ADD`
 	LEXEME_SUBTRACT    Lexeme = `SUBTRACT`
 	LEXEME_MULTIPLY    Lexeme = `MULTIPLY`
@@ -54,18 +81,14 @@ const (
 	LEXEME_TERMINATOR  Lexeme = `TERMINATOR`
 )
 
-type Symbol struct {
-	Symbol string
-	Len    int
-	Lexeme Lexeme
-}
-
 // IsWordTerminal returns true if the terminal symbol (rune) is allowed within
 // a keyword or identifier.
 func IsWordTerminal(ru rune) bool {
 	return ru == '_' || unicode.IsLetter(ru)
 }
 
+// FindKeywordLexeme returns the lexeme that kw represents or LEXEME_UNDEFINED
+// if no match is found.
 func FindKeywordLexeme(kw string) Lexeme {
 	switch kw {
 	case `F`:
@@ -83,6 +106,7 @@ func FindKeywordLexeme(kw string) Lexeme {
 	return LEXEME_UNDEFINED
 }
 
+// Defining the non-terminals used for delimiting strings.
 const (
 	STRING_SYMBOL_START    string = "`"
 	STRING_SYMBOL_END      string = "`"
@@ -91,12 +115,23 @@ const (
 	TEMPLATE_SYMBOL_END    string = `"`
 )
 
+// Defining non-terminals that have no other sensible home.
 const (
 	SYMBOL_COMMENT_START    string = "//"
 	SYMBOL_FRACTIONAL_DELIM string = "."
 )
 
-func LoneSymbols() []Symbol {
+// Symbol represents a non-terminal symbol that is not a keyword, yet has a
+// lexeme of it's own.
+type Symbol struct {
+	Symbol string
+	Len    int
+	Lexeme Lexeme
+}
+
+// Symbols returns an array of all possible non-terminal symbols that are not
+// keywords, yet have a lexeme of their own.
+func Symbols() []Symbol {
 	return []Symbol{
 		Symbol{`:=`, 2, LEXEME_ASSIGN},
 		Symbol{`->`, 2, LEXEME_RETURNS},
@@ -110,8 +145,6 @@ func LoneSymbols() []Symbol {
 		Symbol{`_`, 1, LEXEME_VOID},
 		Symbol{`;`, 1, LEXEME_TERMINATOR},
 		Symbol{`@`, 1, LEXEME_SPELL},
-		Symbol{`~`, 1, LEXEME_NOT},
-		Symbol{`¬`, 1, LEXEME_NOT},
 		Symbol{`+`, 1, LEXEME_ADD},
 		Symbol{`-`, 1, LEXEME_SUBTRACT},
 		Symbol{`*`, 1, LEXEME_MULTIPLY},

@@ -37,7 +37,7 @@ func TestScanner_Next_1(t *testing.T) {
 		"`abc`" + `"abc"` + "\n" +
 		"abc_xyz" + "\r\n" +
 		"F" + " " + "TRUE" + "\n" +
-		"@" + "~" + ":=" + "*" + "->" + ")" + "\r\n")
+		"@" + ":=" + "*" + "->" + ")" + "\r\n")
 
 	doTest(t, sc,
 		// Line 0
@@ -65,12 +65,11 @@ func TestScanner_Next_1(t *testing.T) {
 		tok(lexeme.LEXEME_NEWLINE, "\n", 5, 6),
 		// Line 6
 		tok(lexeme.LEXEME_SPELL, "@", 6, 0),
-		tok(lexeme.LEXEME_NOT, "~", 6, 1),
-		tok(lexeme.LEXEME_ASSIGN, ":=", 6, 2),
-		tok(lexeme.LEXEME_MULTIPLY, "*", 6, 4),
-		tok(lexeme.LEXEME_RETURNS, "->", 6, 5),
-		tok(lexeme.LEXEME_CLOSE_PAREN, ")", 6, 7),
-		tok(lexeme.LEXEME_NEWLINE, "\r\n", 6, 8),
+		tok(lexeme.LEXEME_ASSIGN, ":=", 6, 1),
+		tok(lexeme.LEXEME_MULTIPLY, "*", 6, 3),
+		tok(lexeme.LEXEME_RETURNS, "->", 6, 4),
+		tok(lexeme.LEXEME_CLOSE_PAREN, ")", 6, 6),
+		tok(lexeme.LEXEME_NEWLINE, "\r\n", 6, 7),
 		// Line 7
 	)
 
