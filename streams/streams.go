@@ -1,5 +1,10 @@
-// streams package provides a set of components that are to be piped together to
-// form a Scarlet interpreter.
+// streams package was created to combine multiple streams into higher level
+// functionality including lexical analysis and parsing. While the individual
+// parts of the scanning and parsing workflows can be executed separatly,
+// primary usage is through this package's API. All functions in this package
+// are pure.
+//
+// Key decisions: N/A
 package streams
 
 import (
