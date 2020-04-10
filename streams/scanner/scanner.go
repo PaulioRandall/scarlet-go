@@ -77,8 +77,8 @@ func (sc *Scanner) Read() lexeme.Token {
 		sc.scanNewline,    // LF & CRLF
 		sc.scanWhitespace, // Any whitespace except newlines
 		sc.scanComment,
-		sc.scanSymbol,         // :=, +, <, etc
-		sc.scanWord,           // Identifiers & keywords
+		sc.scanSymbol, // DO, END, :=, +, <, etc
+		sc.scanIdentifier,
 		sc.scanNumberLiteral,  // Ints & floats
 		sc.scanStringLiteral,  // `literal`
 		sc.scanStringTemplate, // "Template: {identifier}"
@@ -166,9 +166,9 @@ func (sc *Scanner) scanSymbol() (_ lexeme.Token, _ bool) {
 	return
 }
 
-// scanWord implements the scanFunc signiture to return a non-zero token if
-// either a keyword or identifier appear next within the script.
-func (sc *Scanner) scanWord() (tk lexeme.Token, _ bool) {
+// scanIdentifier implements the scanFunc signiture to return a non-zero token
+// if an identifier appears next within the script.
+func (sc *Scanner) scanIdentifier() (tk lexeme.Token, _ bool) {
 
 	n := sc.CountSymbolsWhile(0, func(_ int, ru rune) bool {
 		return lexeme.IsWordTerminal(ru)
@@ -178,16 +178,7 @@ func (sc *Scanner) scanWord() (tk lexeme.Token, _ bool) {
 		return
 	}
 
-	w := sc.Peek(n)
-	lex := lexeme.FindKeywordLexeme(w)
-
-	if lex != lexeme.LEXEME_UNDEFINED {
-		tk = sc.tokenize(n, lex)
-	} else {
-		// Any word that is not a keyword (reserved word) must be an identifier.
-		tk = sc.tokenize(n, lexeme.LEXEME_ID)
-	}
-
+	tk = sc.tokenize(n, lexeme.LEXEME_ID)
 	return tk, true
 }
 
