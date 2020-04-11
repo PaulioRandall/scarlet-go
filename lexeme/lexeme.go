@@ -76,12 +76,3 @@ const (
 	LEXEME_VOID        Lexeme = `VOID`
 	LEXEME_TERMINATOR  Lexeme = `TERMINATOR`
 )
-
-// Defining the non-terminals used for delimiting strings.
-const (
-	STRING_SYMBOL_START    string = "`"
-	STRING_SYMBOL_END      string = "`"
-	TEMPLATE_SYMBOL_START  string = `"`
-	TEMPLATE_SYMBOL_ESCAPE string = `\`
-	TEMPLATE_SYMBOL_END    string = `"`
-)

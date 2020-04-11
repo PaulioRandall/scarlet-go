@@ -145,8 +145,8 @@ func nonTerminals() []nonTerminal {
 			const (
 				PREFIX     = "`"
 				SUFFIX     = "`"
-				PREFIX_LEN = len(PREFIX)
-				SUFFIX_LEN = len(SUFFIX)
+				PREFIX_LEN = 1
+				SUFFIX_LEN = 1
 			)
 
 			if !ss.IsMatch(0, PREFIX) {
@@ -172,11 +172,11 @@ func nonTerminals() []nonTerminal {
 			// closer (suffix).
 
 			const (
-				PREFIX          = `"`
-				SUFFIX          = `"`
-				ESCAPE_TERMINAL = `/`
-				PREFIX_LEN      = len(PREFIX)
-				SUFFIX_LEN      = len(SUFFIX)
+				PREFIX     = `"`
+				SUFFIX     = `"`
+				ESCAPE     = `/`
+				PREFIX_LEN = 1
+				SUFFIX_LEN = 1
 			)
 
 			if !ss.IsMatch(0, PREFIX) {
@@ -190,7 +190,7 @@ func nonTerminals() []nonTerminal {
 				escaped := prevEscaped
 				prevEscaped = false
 
-				if ss.IsMatch(i, ESCAPE_TERMINAL) {
+				if ss.IsMatch(i, ESCAPE) {
 					prevEscaped = !escaped
 					return true
 				}

@@ -80,7 +80,7 @@ func isRedundantLexeme(l, prev lexeme.Lexeme) bool {
 }
 
 // Applies any special formatting to the token such as converting its lexeme
-// type or trimming runes of its value.
+// type or trimming runes off its value.
 func formatToken(tk lexeme.Token) lexeme.Token {
 
 	switch tk.Lexeme {
@@ -89,30 +89,11 @@ func formatToken(tk lexeme.Token) lexeme.Token {
 		// in disguise.
 		tk.Lexeme = lexeme.LEXEME_TERMINATOR
 
-	case lexeme.LEXEME_STRING:
-		// Removes back ticks from start and end of tk.Value
-		tk = trimStringTokenValue(tk,
-			lexeme.STRING_SYMBOL_START,
-			lexeme.STRING_SYMBOL_END)
-
-	case lexeme.LEXEME_TEMPLATE:
-		// Removes double quotes from start and end of tk.Value
-		tk = trimStringTokenValue(tk,
-			lexeme.TEMPLATE_SYMBOL_START,
-			lexeme.TEMPLATE_SYMBOL_END)
+	case lexeme.LEXEME_STRING, lexeme.LEXEME_TEMPLATE:
+		// Removes prefix and suffix from tk.Value
+		s := tk.Value
+		tk.Value = s[1 : len(s)-1]
 	}
 
-	return tk
-}
-
-// trimStringTokenValue removes the prefix and suffix (usually quotes) from
-// string literals and templates.
-func trimStringTokenValue(tk lexeme.Token, pre, suf string) lexeme.Token {
-
-	s := tk.Value
-	valStart := len(pre)
-	valEnd := len(s) - len(suf)
-
-	tk.Value = s[valStart:valEnd]
 	return tk
 }

@@ -113,7 +113,7 @@ func (ss *impl) IsMatch(start int, s string) bool {
 	haystack := ss.runes[start:]
 
 	if len(s) > len(haystack) {
-		codingError("Bad argument, `s` is bigger than the `haystack`")
+		return false
 	}
 
 	for i, ru := range s {
