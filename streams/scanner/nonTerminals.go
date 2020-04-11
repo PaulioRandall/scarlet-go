@@ -248,7 +248,7 @@ func keywordMatcher(ss symbol.SymbolStream, kw string) int {
 	var WORD_LEN = len(kw)
 
 	if stringMatcher(ss, kw) > 0 {
-		if ss.Len() == WORD_LEN || !unicode.IsLetter(ss.PeekSymbol(WORD_LEN)) {
+		if ss.Len() == WORD_LEN || !unicode.IsLetter(ss.PeekTerminal(WORD_LEN)) {
 			return WORD_LEN
 		}
 	}

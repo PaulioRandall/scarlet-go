@@ -94,7 +94,7 @@ func (sc *Scanner) tokenize(n int, l lexeme.Lexeme) lexeme.Token {
 		Col:    sc.ColIndex(),
 	}
 
-	tk.Value = sc.SymbolStream.Slice(n)
+	tk.Value = sc.SymbolStream.ReadNonTerminal(n)
 	return tk
 }
 

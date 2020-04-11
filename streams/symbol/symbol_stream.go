@@ -49,18 +49,19 @@ type SymbolStream interface {
 	// at the beginning of each iteration like a traditional while loop.
 	CountSymbolsWhile(start int, f func(int, rune) bool) int
 
-	// Peek performs a read for a single symbol without eating it up from the
-	// stream or updating the line and column indexes.
-	PeekSymbol(index int) rune
+	// PeekTerminal performs a read for a single terminal symbol without eating it
+	// up from the stream or updating the line and column indexes.
+	PeekTerminal(index int) rune
 
-	// Peek performs a read without eating up the symbols in the stream or
-	// updating the line and column indexes.
-	Peek(runeCount int) string
+	// PeekNonTerminal performs a read for a non-terminal without eating up the
+	// terminal symbols from the stream or updating the line and column indexes.
+	PeekNonTerminal(runeCount int) string
 
-	// Slice reads the specified number of symbols from the stream updating the
-	// line and column indexes accordingly. If you want to record the line or
-	// column index of the read symbols, get them before performing the slice.
-	Slice(runeCount int) string
+	// ReadNonTerminal reads the specified number of terminal symbols from the
+	// stream updating the line and column indexes accordingly. If you want to
+	// record the line or column index of the read terminals, get them before
+	// performing the slice.
+	ReadNonTerminal(runeCount int) string
 
 	// LineIndex returns the current line index within the text being read.
 	LineIndex() int
@@ -139,21 +140,21 @@ func (ss *impl) CountSymbolsWhile(start int, f func(int, rune) bool) (i int) {
 	return i
 }
 
-// Peek satisfies the SymbolStream interface.
-func (ss *impl) PeekSymbol(index int) rune {
+// Peek satisfies the PeekTerminal interface.
+func (ss *impl) PeekTerminal(index int) rune {
 	return ss.runes[index]
 }
 
-// Peek satisfies the SymbolStream interface.
-func (ss *impl) Peek(runeCount int) string {
+// PeekNonTerminal satisfies the SymbolStream interface.
+func (ss *impl) PeekNonTerminal(runeCount int) string {
 	return string(ss.runes[:runeCount])
 }
 
-// Slice satisfies the SymbolStream interface.
-func (ss *impl) Slice(runeCount int) string {
+// ReadNonTerminal satisfies the SymbolStream interface.
+func (ss *impl) ReadNonTerminal(runeCount int) string {
 
-	if ss.Len() < runeCount {
-		codingError("Bad argument, " +
+	if runeCount > ss.Len() {
+		panic("PROGRAMMERS ERROR! Bad argument, " +
 			"requested slice amount is bigger than the number of remaining runes")
 	}
 
@@ -170,7 +171,7 @@ func (ss *impl) Slice(runeCount int) string {
 		}
 	}
 
-	r := ss.Peek(runeCount)
+	r := ss.PeekNonTerminal(runeCount)
 	ss.runes = ss.runes[runeCount:]
 
 	return r
@@ -218,10 +219,4 @@ func (ss *impl) IndexOfNextNewline(start int) int {
 	return ss.CountSymbolsWhile(start, func(i int, ru rune) bool {
 		return !ss.IsNewline(i)
 	})
-}
-
-// codingError generates a panic. It should be used when invalid API usage
-// is detected.
-func codingError(msg string) {
-	panic("PROGRAMMERS ERROR! " + msg)
 }
