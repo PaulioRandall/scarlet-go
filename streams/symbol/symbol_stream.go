@@ -128,9 +128,10 @@ func (ss *impl) IsMatch(start int, s string) bool {
 }
 
 // CountSymbolsWhile satisfies the SymbolStream interface.
-func (ss *impl) CountSymbolsWhile(start int, f func(int, rune) bool) (i int) {
+func (ss *impl) CountSymbolsWhile(start int, f func(int, rune) bool) int {
 
 	var ru rune
+	var i int
 
 	for i, ru = range ss.runes[start:] {
 		if !f(i, ru) {
@@ -202,13 +203,11 @@ func (ss *impl) CountNewlineSymbols(start int) int {
 		NOT_FOUND = 0
 	)
 
-	size := ss.Len()
-
-	if size > 0 && ss.IsMatch(start, LF) {
+	if ss.IsMatch(start, LF) {
 		return len(LF)
 	}
 
-	if size > 1 && ss.IsMatch(start, CRLF) {
+	if ss.IsMatch(start, CRLF) {
 		return len(CRLF)
 	}
 
@@ -217,7 +216,7 @@ func (ss *impl) CountNewlineSymbols(start int) int {
 
 // IndexOfNextNewline satisfies the SymbolStream interface.
 func (ss *impl) IndexOfNextNewline(start int) int {
-	return ss.CountSymbolsWhile(start, func(i int, ru rune) bool {
+	return ss.CountSymbolsWhile(start, func(i int, _ rune) bool {
 		return !ss.IsNewline(i)
 	})
 }

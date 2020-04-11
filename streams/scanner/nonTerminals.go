@@ -19,8 +19,8 @@ type nonTerminal struct {
 }
 
 // nonTerminals returns an array of all possible non-terminal symbols and their
-// mapping to a lexeme. Longest and highest priority symbols should be at the
-// beginning of the array to ensure the correct token is scanned.
+// mapping to a lexeme. Longest and highest priority static symbols should be at
+// the beginning of the array to ensure the correct token is scanned.
 func nonTerminals() []nonTerminal {
 	return []nonTerminal{
 		nonTerminal{lexeme.LEXEME_NEWLINE, func(ss symbol.SymbolStream) int {
@@ -35,7 +35,7 @@ func nonTerminals() []nonTerminal {
 		}},
 		nonTerminal{lexeme.LEXEME_COMMENT, func(ss symbol.SymbolStream) int {
 			if ss.IsMatch(0, "//") {
-				return ss.IndexOfNextNewline(2)
+				return ss.IndexOfNextNewline(0)
 			}
 			return 0
 		}},
@@ -44,6 +44,9 @@ func nonTerminals() []nonTerminal {
 		}},
 		nonTerminal{lexeme.LEXEME_BOOL, func(ss symbol.SymbolStream) int {
 			return keywordMatcher(ss, "TRUE")
+		}},
+		nonTerminal{lexeme.LEXEME_LIST, func(ss symbol.SymbolStream) int {
+			return keywordMatcher(ss, "LIST")
 		}},
 		nonTerminal{lexeme.LEXEME_END, func(ss symbol.SymbolStream) int {
 			return keywordMatcher(ss, "END")
@@ -143,7 +146,6 @@ func nonTerminals() []nonTerminal {
 		nonTerminal{lexeme.LEXEME_MT, func(ss symbol.SymbolStream) int {
 			return stringMatcher(ss, ">")
 		}},
-		// TODO: string templates
 		nonTerminal{lexeme.LEXEME_STRING, func(ss symbol.SymbolStream) int {
 
 			const (

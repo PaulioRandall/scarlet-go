@@ -38,6 +38,7 @@ const (
 	LEXEME_ASSIGN      Lexeme = `ASSIGNMENT`
 	LEXEME_RETURNS     Lexeme = `RETURNS`
 	LEXEME_DO          Lexeme = `BLOCK_OPEN`
+	LEXEME_LIST        Lexeme = `LIST`
 	LEXEME_END         Lexeme = `BLOCK_CLOSE`
 	LEXEME_OPEN_PAREN  Lexeme = `PAREN_OPEN`
 	LEXEME_CLOSE_PAREN Lexeme = `PAREN_CLOSE`

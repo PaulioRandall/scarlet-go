@@ -22,4 +22,3 @@ x, y := h(e, f)
 two := 1 + 1
 three := 1.5 + 1.5
 twelve := 3 * 3 + 3 // Error
-
