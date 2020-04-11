@@ -60,7 +60,7 @@ type SymbolStream interface {
 	// Slice reads the specified number of symbols from the stream updating the
 	// line and column indexes accordingly. If you want to record the line or
 	// column index of the read symbols, get them before performing the slice.
-	Slice(runeCount int, isNewline bool) string
+	Slice(runeCount int) string
 
 	// LineIndex returns the current line index within the text being read.
 	LineIndex() int
@@ -150,22 +150,28 @@ func (ss *impl) Peek(runeCount int) string {
 }
 
 // Slice satisfies the SymbolStream interface.
-func (ss *impl) Slice(runeCount int, isNewline bool) string {
+func (ss *impl) Slice(runeCount int) string {
 
 	if ss.Len() < runeCount {
 		codingError("Bad argument, " +
 			"requested slice amount is bigger than the number of remaining runes")
 	}
 
+	for i := 0; i < runeCount; i++ {
+		switch ss.CountNewlineSymbols(i) {
+		case 2:
+			i++
+			fallthrough
+		case 1:
+			ss.line++
+			ss.col = 0
+		case 0:
+			ss.col++
+		}
+	}
+
 	r := ss.Peek(runeCount)
 	ss.runes = ss.runes[runeCount:]
-
-	if isNewline {
-		ss.line++
-		ss.col = 0
-	} else {
-		ss.col += runeCount
-	}
 
 	return r
 }

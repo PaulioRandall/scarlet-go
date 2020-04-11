@@ -8,10 +8,14 @@ import (
 	"github.com/PaulioRandall/scarlet-go/streams/symbol"
 )
 
-// nonTerminal represents a non-terminal symbol mapping to a lexeme.
+// Matcher implementations will return the number of terminals token, but only
+// if the token appears next in the SymbolStream else 0 is returned.
+type Matcher func(symbol.SymbolStream) int
+
+// nonTerminal represents a mapping between a lexeme and a Matcher function.
 type nonTerminal struct {
 	Lexeme  lexeme.Lexeme
-	Matcher func(symbol.SymbolStream) int
+	Matcher Matcher
 }
 
 // nonTerminals returns an array of all possible non-terminal symbols and their
@@ -236,11 +240,14 @@ func nonTerminals() []nonTerminal {
 	}
 }
 
-func keywordMatcher(ss symbol.SymbolStream, w string) int {
+// keywordMatcher returns the number of terminal symbols in kw, but only if the
+// next sequence of terminals matches the contents of kw and the symbol after
+// is not a valid keyword terminal.
+func keywordMatcher(ss symbol.SymbolStream, kw string) int {
 
-	var WORD_LEN = len(w)
+	var WORD_LEN = len(kw)
 
-	if stringMatcher(ss, w) > 0 {
+	if stringMatcher(ss, kw) > 0 {
 		if ss.Len() == WORD_LEN || !unicode.IsLetter(ss.PeekSymbol(WORD_LEN)) {
 			return WORD_LEN
 		}
@@ -249,6 +256,8 @@ func keywordMatcher(ss symbol.SymbolStream, w string) int {
 	return 0
 }
 
+// stringMatcher returns the number of terminal symbols in s, but only if the
+// next sequence of terminals matches the contents of s.
 func stringMatcher(ss symbol.SymbolStream, s string) int {
 
 	if ss.Len() >= len(s) && ss.IsMatch(0, s) {
@@ -258,12 +267,17 @@ func stringMatcher(ss symbol.SymbolStream, s string) int {
 	return 0
 }
 
+// integerMatcher returns the number of terminal symbols of the next integer
+// in the SymbolStream, but only if the next token is an integer else 0 is
+// returned.
 func integerMatcher(ss symbol.SymbolStream, start int) int {
 	return ss.CountSymbolsWhile(start, func(_ int, ru rune) bool {
 		return unicode.IsDigit(ru)
 	})
 }
 
+// checkForMissingTermination panics if a string or template is found to be
+// unterminated.
 func checkForMissingTermination(ss symbol.SymbolStream, i int) {
 	if ss.IsNewline(i) {
 		panic(terror(ss, 0,

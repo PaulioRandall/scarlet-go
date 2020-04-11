@@ -85,16 +85,16 @@ func (sc *Scanner) parseNextToken() (_ lexeme.Token) {
 }
 
 // tokenize creates a new token from the next non-terminal. It reads off n
-// symbols from the embedded SymbolStream ready for scanning the next token.
-func (sc *Scanner) tokenize(n int, lex lexeme.Lexeme) lexeme.Token {
+// symbols from the embedded SymbolStream ready for scanning the token after.
+func (sc *Scanner) tokenize(n int, l lexeme.Lexeme) lexeme.Token {
 
 	tk := lexeme.Token{
-		Lexeme: lex,
+		Lexeme: l,
 		Line:   sc.LineIndex(),
 		Col:    sc.ColIndex(),
 	}
 
-	tk.Value = sc.SymbolStream.Slice(n, lex == lexeme.LEXEME_NEWLINE)
+	tk.Value = sc.SymbolStream.Slice(n)
 	return tk
 }
 
