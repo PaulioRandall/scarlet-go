@@ -6,7 +6,6 @@ import (
 )
 
 // Token represents a grammar token within a script.
-//
 type Token struct {
 	Lexeme Lexeme // Meaning
 	Value  string // Representation

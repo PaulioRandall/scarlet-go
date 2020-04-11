@@ -15,7 +15,7 @@
 package scanner
 
 import (
-	"github.com/PaulioRandall/scarlet-go/bard"
+	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 
 	"github.com/PaulioRandall/scarlet-go/streams/symbol"
@@ -100,8 +100,8 @@ func (sc *Scanner) tokenize(n int, l lexeme.Lexeme) lexeme.Token {
 
 // terror was created because I am lazy. It will probably be removed when I
 // update the error handling.
-func terror(ss symbol.SymbolStream, colOffset int, msg string) bard.Terror {
-	return bard.NewTerror(
+func terror(ss symbol.SymbolStream, colOffset int, msg string) err.Terror {
+	return err.NewTerror(
 		ss.LineIndex(),
 		ss.ColIndex()+colOffset,
 		nil,

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/PaulioRandall/scarlet-go/bard"
+	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
@@ -65,7 +65,7 @@ func NewValue(tk lexeme.Token) Value {
 		k = VOID
 
 	default:
-		panic(bard.NewHorror(tk, nil,
+		panic(err.NewHorror(tk, nil,
 			"An UNDEFINED token may not be converted to a Value",
 		))
 	}
@@ -86,13 +86,13 @@ func parseNum(k Kind, tk lexeme.Token) (v interface{}) {
 	} else if k == REAL {
 		v, e = strconv.ParseFloat(tk.Value, 64)
 	} else {
-		panic(bard.NewHorror(tk, nil,
+		panic(err.NewHorror(tk, nil,
 			"SANITY CHECK! Illegal number type, cannot parse",
 		))
 	}
 
 	if e != nil {
-		panic(bard.NewHorror(tk, e,
+		panic(err.NewHorror(tk, e,
 			"SANITY CHECK! Could not parse integer token",
 		))
 	}

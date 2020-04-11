@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/bard"
+	"github.com/PaulioRandall/scarlet-go/err"
 )
 
 // Context represents the current executing context. It contains all state
@@ -51,7 +51,7 @@ func (ctx Context) resolve(id string) (_ Value) {
 	v := ctx.get(id)
 
 	if v == (Value{}) {
-		panic(bard.NewNightmare(nil,
+		panic(err.NewNightmare(nil,
 			"Cannot resolve the variable '%v'", id,
 		))
 	}

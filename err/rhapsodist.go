@@ -1,4 +1,4 @@
-package bard
+package err
 
 import (
 	"fmt"

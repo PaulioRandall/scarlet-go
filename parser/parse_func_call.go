@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/bard"
+	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
@@ -48,7 +48,7 @@ func (call funcCallExpr) Eval(ctx Context) Value {
 
 	v := ctx.resolve(call.id.Value)
 	if v.k != FUNC {
-		panic(bard.NewHorror(call.id, nil,
+		panic(err.NewHorror(call.id, nil,
 			"Not a function, variable cannot be invoked",
 		))
 	}
@@ -56,9 +56,9 @@ func (call funcCallExpr) Eval(ctx Context) Value {
 	f := v.v.(funcValue)
 
 	if argCount := len(call.params) - len(f.input); argCount < 0 {
-		panic(bard.NewHorror(call.id, nil, "Not enough arguments"))
+		panic(err.NewHorror(call.id, nil, "Not enough arguments"))
 	} else if argCount > 0 {
-		panic(bard.NewHorror(call.id, nil, "Too many arguments"))
+		panic(err.NewHorror(call.id, nil, "Too many arguments"))
 	}
 
 	paramCount := len(call.params)

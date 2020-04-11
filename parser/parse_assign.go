@@ -3,7 +3,7 @@ package parser
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/bard"
+	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
@@ -50,7 +50,7 @@ func (p *Parser) checkNoDuplicates(ids []lexeme.Token) {
 	for i, sub := range ids {
 		for j, obj := range ids {
 			if i != j && sub.Value == obj.Value {
-				panic(bard.NewHorror(obj, nil, "Duplicate IDs not allowed"))
+				panic(err.NewHorror(obj, nil, "Duplicate IDs not allowed"))
 			}
 		}
 	}
@@ -105,7 +105,7 @@ func (ex assignStat) Eval(ctx Context) (_ Value) {
 	}
 
 	if idCount != len(values) {
-		panic(bard.NewHorror(ex.ass, nil,
+		panic(err.NewHorror(ex.ass, nil,
 			"Expected the left-hand ID count and "+
 				"right-hand value count to be equal",
 		))

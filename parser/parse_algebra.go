@@ -3,7 +3,7 @@ package parser
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/bard"
+	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
@@ -85,7 +85,7 @@ func (op operation) Eval(ctx Context) (_ Value) {
 	case BOOLEAN:
 		return op.evalBoolean(ctx)
 	default:
-		panic(bard.NewHorror(op.operator, nil, "SANITY CHECK! Unknown operator"))
+		panic(err.NewHorror(op.operator, nil, "SANITY CHECK! Unknown operator"))
 	}
 }
 
@@ -135,7 +135,7 @@ func (op operation) evalInt(l, r int64) (v Value) {
 		case lexeme.LEXEME_REMAINDER:
 			v.v = l % r
 		default:
-			panic(bard.NewHorror(op.operator, nil,
+			panic(err.NewHorror(op.operator, nil,
 				"SANITY CHECK! Unknown integer arithmetic operator",
 			))
 		}
@@ -159,7 +159,7 @@ func (op operation) evalInt(l, r int64) (v Value) {
 	case lexeme.LEXEME_MT_OR_EQU:
 		v.v = l >= r
 	default:
-		panic(bard.NewHorror(op.operator, nil,
+		panic(err.NewHorror(op.operator, nil,
 			"SANITY CHECK! Unknown int boolean operator",
 		))
 	}
@@ -182,11 +182,11 @@ func (op operation) evalReal(l, r float64) (v Value) {
 			v.v = l * r
 		case lexeme.LEXEME_DIVIDE:
 			if r == 0 {
-				panic(bard.NewHorror(op.operator, nil, "Cannot divide by zero"))
+				panic(err.NewHorror(op.operator, nil, "Cannot divide by zero"))
 			}
 			v.v = l / r
 		default:
-			panic(bard.NewHorror(op.operator, nil,
+			panic(err.NewHorror(op.operator, nil,
 				"SANITY CHECK! Unknown real arithmetic operator",
 			))
 		}
@@ -210,7 +210,7 @@ func (op operation) evalReal(l, r float64) (v Value) {
 	case lexeme.LEXEME_MT_OR_EQU:
 		v.v = l >= r
 	default:
-		panic(bard.NewHorror(op.operator, nil,
+		panic(err.NewHorror(op.operator, nil,
 			"SANITY CHECK! Unknown real boolean operator",
 		))
 	}
@@ -237,7 +237,7 @@ func (op operation) evalBoolean(ctx Context) (v Value) {
 	case lexeme.LEXEME_OR:
 		v.v = l || r
 	default:
-		panic(bard.NewHorror(op.operator, nil,
+		panic(err.NewHorror(op.operator, nil,
 			"SANITY CHECK! Unknown bool operator",
 		))
 	}

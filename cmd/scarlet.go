@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/bard"
+	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/parser"
 	"github.com/PaulioRandall/scarlet-go/streams"
@@ -19,7 +19,7 @@ func main() {
 		panic(e)
 	}
 
-	b := bard.NewRhapsodist(file)
+	b := err.NewRhapsodist(file)
 
 	b.CatchNightmare(func() {
 		run(string(src))

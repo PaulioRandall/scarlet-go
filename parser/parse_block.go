@@ -3,7 +3,7 @@ package parser
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/bard"
+	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
@@ -23,7 +23,7 @@ func (p *Parser) parseStats(opener lexeme.Token) Stat {
 		switch tk := p.peek(); tk.Lexeme {
 		case lexeme.LEXEME_END:
 			if opener.Lexeme == lexeme.LEXEME_SOF {
-				panic(bard.NewHorror(tk, nil,
+				panic(err.NewHorror(tk, nil,
 					"Expected EOF, found a block closing token instead",
 				))
 			}
@@ -31,7 +31,7 @@ func (p *Parser) parseStats(opener lexeme.Token) Stat {
 
 		case lexeme.LEXEME_EOF:
 			if opener.Lexeme != lexeme.LEXEME_SOF {
-				panic(bard.NewHorror(tk, nil,
+				panic(err.NewHorror(tk, nil,
 					"Expected a block closing token, found EOF instead",
 				))
 			}
