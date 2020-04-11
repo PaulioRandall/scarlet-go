@@ -4,10 +4,10 @@ a := `abc`
 b := "xyz"
 c, d := TRUE, FALSE
 e, f := 123, 123.789
-g := {
+g := [
 	123, c,
-	{a, "xyz"},
-}
+	[a, "xyz"],
+]
 h := F(a, b -> c, d) DO
 	c := a + b
 	d := a * b

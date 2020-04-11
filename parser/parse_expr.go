@@ -25,7 +25,7 @@ func (p *Parser) parseStat(inline bool) Stat {
 // parseDelimExpr parses a delimitered separated set of expressions.
 func (p *Parser) parseDelimExpr(allowVoid bool) (exs []Expr) {
 
-	for p.peek().Lexeme != lexeme.LEXEME_CLOSE_LIST {
+	for p.peek().Lexeme != lexeme.LEXEME_LIST_CLOSE {
 
 		ex := p.parseAssignable(allowVoid)
 		exs = append(exs, ex)
@@ -109,12 +109,12 @@ func (p *Parser) parseOperand() (ex Expr) {
 			tk: p.take(),
 			v:  NewValue(tk),
 		}
-	case lexeme.LEXEME_OPEN_LIST:
+	case lexeme.LEXEME_LIST_OPEN:
 		ex = p.parseList()
 	case lexeme.LEXEME_ID:
 		p.take()
 
-		if p.peek().Lexeme == lexeme.LEXEME_OPEN_PAREN {
+		if p.peek().Lexeme == lexeme.LEXEME_PAREN_OPEN {
 			ex = p.parseFuncCall(tk)
 			break
 		}

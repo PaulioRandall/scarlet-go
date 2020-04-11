@@ -13,9 +13,9 @@ func (p *Parser) parseFuncDef() Expr {
 		opener: p.takeEnsure(lexeme.LEXEME_FUNC),
 	}
 
-	p.takeEnsure(lexeme.LEXEME_OPEN_PAREN)
+	p.takeEnsure(lexeme.LEXEME_PAREN_OPEN)
 
-	if p.peek().Lexeme != lexeme.LEXEME_CLOSE_PAREN {
+	if p.peek().Lexeme != lexeme.LEXEME_PAREN_CLOSE {
 		if p.peek().Lexeme != lexeme.LEXEME_RETURNS {
 			f.input = p.parseIDs()
 		}
@@ -26,7 +26,7 @@ func (p *Parser) parseFuncDef() Expr {
 		}
 	}
 
-	closeParen := p.takeEnsure(lexeme.LEXEME_CLOSE_PAREN)
+	closeParen := p.takeEnsure(lexeme.LEXEME_PAREN_CLOSE)
 
 	if p.peek().Lexeme == lexeme.LEXEME_DO {
 		f.body = p.parseStats(p.take())

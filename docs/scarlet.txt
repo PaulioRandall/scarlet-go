@@ -34,10 +34,10 @@ printValues := F(_, v, _) @Println(v)
 e := calc(parseArgs)
 @PanicIf(e)
 
-list := { 
+list := LIST 
 	`abc`,
 	3,
-}
+END
 
 EOF
 

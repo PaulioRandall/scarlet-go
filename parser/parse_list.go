@@ -9,9 +9,9 @@ import (
 // parseList parses a list literal.
 func (p *Parser) parseList() Expr {
 
-	start := p.takeEnsure(lexeme.LEXEME_OPEN_LIST)
+	start := p.takeEnsure(lexeme.LEXEME_LIST_OPEN)
 	v := p.parseDelimExpr(false)
-	end := p.takeEnsure(lexeme.LEXEME_CLOSE_LIST)
+	end := p.takeEnsure(lexeme.LEXEME_LIST_CLOSE)
 
 	return listExpr{
 		start: start,

@@ -12,9 +12,9 @@ func (p *Parser) parseFuncCall(id lexeme.Token) Expr {
 		id: id,
 	}
 
-	p.takeEnsure(lexeme.LEXEME_OPEN_PAREN)
+	p.takeEnsure(lexeme.LEXEME_PAREN_OPEN)
 	c.params = p.parseDelimExpr(true)
-	p.takeEnsure(lexeme.LEXEME_CLOSE_PAREN)
+	p.takeEnsure(lexeme.LEXEME_PAREN_CLOSE)
 
 	return c
 }

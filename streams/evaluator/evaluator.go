@@ -72,7 +72,7 @@ func isRedundantLexeme(l, prev lexeme.Lexeme) bool {
 		return false
 	}
 
-	return prev == lexeme.LEXEME_OPEN_LIST ||
+	return prev == lexeme.LEXEME_LIST_OPEN ||
 		prev == lexeme.LEXEME_DELIM ||
 		prev == lexeme.LEXEME_TERMINATOR ||
 		prev == lexeme.LEXEME_DO ||

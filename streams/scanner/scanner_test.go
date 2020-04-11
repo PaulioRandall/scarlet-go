@@ -64,7 +64,7 @@ func TestScanner_Next_1(t *testing.T) {
 		Token{LEXEME_ASSIGN, ":=", 6, 1},
 		Token{LEXEME_MULTIPLY, "*", 6, 3},
 		Token{LEXEME_RETURNS, "->", 6, 4},
-		Token{LEXEME_CLOSE_PAREN, ")", 6, 6},
+		Token{LEXEME_PAREN_CLOSE, ")", 6, 6},
 		Token{LEXEME_NEWLINE, "\r\n", 6, 7},
 		// Line 7
 	)

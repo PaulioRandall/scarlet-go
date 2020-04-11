@@ -45,9 +45,6 @@ func nonTerminals() []nonTerminal {
 		nonTerminal{lexeme.LEXEME_BOOL, func(ss symbol.SymbolStream) int {
 			return keywordMatcher(ss, "TRUE")
 		}},
-		nonTerminal{lexeme.LEXEME_LIST, func(ss symbol.SymbolStream) int {
-			return keywordMatcher(ss, "LIST")
-		}},
 		nonTerminal{lexeme.LEXEME_END, func(ss symbol.SymbolStream) int {
 			return keywordMatcher(ss, "END")
 		}},
@@ -83,23 +80,17 @@ func nonTerminals() []nonTerminal {
 		nonTerminal{lexeme.LEXEME_MT_OR_EQU, func(ss symbol.SymbolStream) int {
 			return stringMatcher(ss, "=>")
 		}},
-		nonTerminal{lexeme.LEXEME_OPEN_PAREN, func(ss symbol.SymbolStream) int {
+		nonTerminal{lexeme.LEXEME_PAREN_OPEN, func(ss symbol.SymbolStream) int {
 			return stringMatcher(ss, "(")
 		}},
-		nonTerminal{lexeme.LEXEME_CLOSE_PAREN, func(ss symbol.SymbolStream) int {
+		nonTerminal{lexeme.LEXEME_PAREN_CLOSE, func(ss symbol.SymbolStream) int {
 			return stringMatcher(ss, ")")
 		}},
-		nonTerminal{lexeme.LEXEME_OPEN_GUARD, func(ss symbol.SymbolStream) int {
+		nonTerminal{lexeme.LEXEME_LIST_OPEN, func(ss symbol.SymbolStream) int {
 			return stringMatcher(ss, "[")
 		}},
-		nonTerminal{lexeme.LEXEME_CLOSE_GUARD, func(ss symbol.SymbolStream) int {
+		nonTerminal{lexeme.LEXEME_LIST_CLOSE, func(ss symbol.SymbolStream) int {
 			return stringMatcher(ss, "]")
-		}},
-		nonTerminal{lexeme.LEXEME_OPEN_LIST, func(ss symbol.SymbolStream) int {
-			return stringMatcher(ss, "{")
-		}},
-		nonTerminal{lexeme.LEXEME_CLOSE_LIST, func(ss symbol.SymbolStream) int {
-			return stringMatcher(ss, "}")
 		}},
 		nonTerminal{lexeme.LEXEME_DELIM, func(ss symbol.SymbolStream) int {
 			return stringMatcher(ss, ",")
