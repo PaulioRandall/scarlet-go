@@ -21,8 +21,6 @@
 package scanner
 
 import (
-	"unicode"
-
 	"github.com/PaulioRandall/scarlet-go/bard"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 
@@ -74,7 +72,7 @@ func (sc *Scanner) Read() lexeme.Token {
 	// 1. scanComment before scanSymbol
 	// 2. scanSymbol before scanWord
 	fs := []scanFunc{
-		sc.scanSymbol, // DO, END, :=, +, <, etc
+		sc.scanSymbol,         // DO, END, :=, +, <, etc
 		sc.scanStringLiteral,  // `literal`
 		sc.scanStringTemplate, // "Template: {identifier}"
 	}
