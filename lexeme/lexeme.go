@@ -13,17 +13,8 @@
 // thinking about moving them back to the scanner package, but perhaps defined
 // in their own file to maintain ease of modification.
 //
-// TODO: Consider moving the terminal and non-terminal definitions back to the
-// 			 scanner package but in their own file for ease of readability and
-// 			 modification.
 // TODO: Some of the const lexeme names are not very meaningful or accurate,
 //			 consider making them more precise.
-// TODO: Scanning of keywords and symbols could be combined with identifier
-//       scanning being attempted after symbol and keyword scanning. The
-//       advantage is that keywords and lone symbols would be interchangable,
-//			 which I argue they should be. It would allow `DO` `END` blocks to be
-//			 redefined using `{` `}` if need be, with changes to list definitions
-//			 as well of course.
 package lexeme
 
 // Lexeme represents a the type of a token. Each lexeme may have multiple

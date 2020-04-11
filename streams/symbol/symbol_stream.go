@@ -141,7 +141,7 @@ func (ss *impl) CountSymbolsWhile(start int, f func(int, rune) bool) (i int) {
 	return i
 }
 
-// Peek satisfies the PeekTerminal interface.
+// PeekTerminal satisfies the SymbolStream interface.
 func (ss *impl) PeekTerminal(index int) rune {
 	return ss.runes[index]
 }
