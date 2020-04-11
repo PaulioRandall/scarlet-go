@@ -13,9 +13,13 @@ h := F(a, b -> c, d) DO
 	d := a * b
 END
 
-// Multiple return & assignment + function calling
+// Multiple return & assignment
 x, y := c, d
+
+// Removing variables
 x, y := _, _
+
+// Function call
 x, y := h(e, f)
 
 // Arithmetic
