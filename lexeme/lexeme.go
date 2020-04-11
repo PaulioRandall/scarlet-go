@@ -26,10 +26,6 @@
 //			 as well of course.
 package lexeme
 
-import (
-	"unicode"
-)
-
 // Lexeme represents a the type of a token. Each lexeme may have multiple
 // representations but usually just one.
 type Lexeme string
@@ -81,12 +77,6 @@ const (
 	LEXEME_TERMINATOR  Lexeme = `TERMINATOR`
 )
 
-// IsWordTerminal returns true if the terminal symbol (rune) is allowed within
-// a keyword or identifier.
-func IsWordTerminal(ru rune) bool {
-	return ru == '_' || unicode.IsLetter(ru)
-}
-
 // Defining the non-terminals used for delimiting strings.
 const (
 	STRING_SYMBOL_START    string = "`"
@@ -95,57 +85,3 @@ const (
 	TEMPLATE_SYMBOL_ESCAPE string = `\`
 	TEMPLATE_SYMBOL_END    string = `"`
 )
-
-// Defining non-terminals that have no other sensible home.
-const (
-	SYMBOL_COMMENT_START    string = "//"
-	SYMBOL_FRACTIONAL_DELIM string = "."
-)
-
-// Symbol represents a non-terminal symbol that is not a keyword, yet has a
-// lexeme of it's own.
-type Symbol struct {
-	Symbol   string
-	Len      int
-	Lexeme   Lexeme
-	ScanFunc func([]rune) (Token, bool)
-}
-
-// Symbols returns an array of all possible non-terminal symbols that are not
-// keywords, yet have a lexeme of their own. Longest and highest priority
-// symbols should be at the beginning of the array to ensure the correct token
-// is scanned.
-func Symbols() []Symbol {
-	return []Symbol{
-		Symbol{`FALSE`, 5, LEXEME_BOOL, nil},
-		Symbol{`TRUE`, 4, LEXEME_BOOL, nil},
-		Symbol{`END`, 3, LEXEME_END, nil},
-		Symbol{`DO`, 2, LEXEME_DO, nil},
-		Symbol{`F`, 1, LEXEME_FUNC, nil},
-		Symbol{`:=`, 2, LEXEME_ASSIGN, nil},
-		Symbol{`->`, 2, LEXEME_RETURNS, nil},
-		Symbol{`<=`, 2, LEXEME_LT_OR_EQU, nil},
-		Symbol{`=>`, 2, LEXEME_MT_OR_EQU, nil},
-		Symbol{`(`, 1, LEXEME_OPEN_PAREN, nil},
-		Symbol{`)`, 1, LEXEME_CLOSE_PAREN, nil},
-		Symbol{`[`, 1, LEXEME_OPEN_GUARD, nil},
-		Symbol{`]`, 1, LEXEME_CLOSE_GUARD, nil},
-		Symbol{`{`, 1, LEXEME_OPEN_LIST, nil},
-		Symbol{`}`, 1, LEXEME_CLOSE_LIST, nil},
-		Symbol{`,`, 1, LEXEME_DELIM, nil},
-		Symbol{`_`, 1, LEXEME_VOID, nil},
-		Symbol{`;`, 1, LEXEME_TERMINATOR, nil},
-		Symbol{`@`, 1, LEXEME_SPELL, nil},
-		Symbol{`+`, 1, LEXEME_ADD, nil},
-		Symbol{`-`, 1, LEXEME_SUBTRACT, nil},
-		Symbol{`*`, 1, LEXEME_MULTIPLY, nil},
-		Symbol{`/`, 1, LEXEME_DIVIDE, nil},
-		Symbol{`%`, 1, LEXEME_REMAINDER, nil},
-		Symbol{`&`, 1, LEXEME_AND, nil},
-		Symbol{`|`, 1, LEXEME_OR, nil},
-		Symbol{`=`, 1, LEXEME_EQU, nil},
-		Symbol{`#`, 1, LEXEME_NEQ, nil},
-		Symbol{`<`, 1, LEXEME_LT, nil},
-		Symbol{`>`, 1, LEXEME_MT, nil},
-	}
-}

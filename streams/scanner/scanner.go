@@ -74,12 +74,7 @@ func (sc *Scanner) Read() lexeme.Token {
 	// 1. scanComment before scanSymbol
 	// 2. scanSymbol before scanWord
 	fs := []scanFunc{
-		sc.scanNewline,    // LF & CRLF
-		sc.scanWhitespace, // Any whitespace except newlines
-		sc.scanComment,
 		sc.scanSymbol, // DO, END, :=, +, <, etc
-		sc.scanIdentifier,
-		sc.scanNumberLiteral,  // Ints & floats
 		sc.scanStringLiteral,  // `literal`
 		sc.scanStringTemplate, // "Template: {identifier}"
 	}
@@ -92,56 +87,7 @@ func (sc *Scanner) Read() lexeme.Token {
 		}
 	}
 
-	panic(sc.terror(0, "Could not identify next token"))
-}
-
-// scanNewline implements the scanFunc signiture to return a non-zero token if
-// a newline appears next within the script, i.e. LF or CRLF.
-func (sc *Scanner) scanNewline() (_ lexeme.Token, _ bool) {
-
-	if n := sc.CountNewlineSymbols(0); n > 0 {
-		tk := sc.tokenize(n, lexeme.LEXEME_NEWLINE)
-		return tk, true
-	}
-
-	return
-}
-
-// scanWhitespace implements the scanFunc signiture to return a non-zero token
-// if one or many consecutive whitespace terminals appear next within the
-// script. Newlines are not counted as whitespace, instead they are scanned by
-// the scanNewline function.
-func (sc *Scanner) scanWhitespace() (_ lexeme.Token, _ bool) {
-
-	isSpace := func(i int, ru rune) bool {
-		return !sc.IsNewline(i) && unicode.IsSpace(ru)
-	}
-
-	if n := sc.CountSymbolsWhile(0, isSpace); n > 0 {
-		tk := sc.tokenize(n, lexeme.LEXEME_WHITESPACE)
-		return tk, true
-	}
-
-	return
-}
-
-// scanComment implements the scanFunc signiture to return a non-zero token if
-// an inline comment appears next within the script. Inline comments always
-// include all terminals within the remainder of the line.
-func (sc *Scanner) scanComment() (_ lexeme.Token, _ bool) {
-
-	const (
-		COMMENT_PREFIX     = lexeme.SYMBOL_COMMENT_START
-		COMMENT_PREFIX_LEN = len(COMMENT_PREFIX)
-	)
-
-	if sc.IsMatch(0, COMMENT_PREFIX) {
-		n := sc.IndexOfNextNewline(COMMENT_PREFIX_LEN)
-		tk := sc.tokenize(n, lexeme.LEXEME_COMMENT)
-		return tk, true
-	}
-
-	return
+	panic(terror(sc, 0, "Could not identify next token"))
 }
 
 // scanSymbol implements the scanFunc signiture to return a non-zero token if
@@ -149,81 +95,17 @@ func (sc *Scanner) scanComment() (_ lexeme.Token, _ bool) {
 // next within the script, i.e. :=, +, <, etc.
 func (sc *Scanner) scanSymbol() (_ lexeme.Token, _ bool) {
 
-	for _, sym := range lexeme.Symbols() {
+	for _, nt := range nonTerminals() {
 
-		if sc.Len() < sym.Len {
-			// Ignore symbols that are shorter than the stream as they won't match
-			// but will cause an out of range panic.
-			continue
-		}
+		matchLen := nt.Matcher(symbol.SymbolStream(sc))
 
-		if sc.IsMatch(0, sym.Symbol) {
-			tk := sc.tokenize(sym.Len, sym.Lexeme)
+		if matchLen > 0 {
+			tk := sc.tokenize(matchLen, nt.Lexeme)
 			return tk, true
 		}
 	}
 
 	return
-}
-
-// scanIdentifier implements the scanFunc signiture to return a non-zero token
-// if an identifier appears next within the script.
-func (sc *Scanner) scanIdentifier() (tk lexeme.Token, _ bool) {
-
-	n := sc.CountSymbolsWhile(0, func(_ int, ru rune) bool {
-		return lexeme.IsWordTerminal(ru)
-	})
-
-	if n == 0 {
-		return
-	}
-
-	tk = sc.tokenize(n, lexeme.LEXEME_ID)
-	return tk, true
-}
-
-// scanNumberLiteral implements the scanFunc signiture to return a non-zero
-// token if an int of float appear next within the script. Both integers and
-// floats are parsed by this function.
-func (sc *Scanner) scanNumberLiteral() (_ lexeme.Token, _ bool) {
-
-	const (
-		DELIM     = lexeme.SYMBOL_FRACTIONAL_DELIM
-		DELIM_LEN = len(DELIM)
-	)
-
-	isDigit := func(_ int, ru rune) bool {
-		return unicode.IsDigit(ru)
-	}
-
-	intLen := sc.CountSymbolsWhile(0, isDigit)
-
-	if intLen == 0 {
-		// If there are no digits then this is not a number.
-		return
-	}
-
-	if intLen == sc.Len() || !sc.IsMatch(intLen, DELIM) {
-		// This must be an int if this is the last token in the scanner or the next
-		// terminal is not the delimiter between a floats integral and fractional
-		// parts.
-		tk := sc.tokenize(intLen, lexeme.LEXEME_INT)
-		return tk, true
-	}
-
-	fractionalLen := sc.CountSymbolsWhile(intLen+DELIM_LEN, isDigit)
-
-	if fractionalLen == 0 {
-		// One or many fractional digits must follow a delimiter. Zero following
-		// digits is invalid syntax, so we must panic.
-		panic(sc.terror(intLen+DELIM_LEN,
-			"Invalid syntax, expected digit after decimal point",
-		))
-	}
-
-	n := intLen + DELIM_LEN + fractionalLen
-	tk := sc.tokenize(n, lexeme.LEXEME_FLOAT)
-	return tk, true
 }
 
 // scanStringLiteral implements the scanFunc signiture to return a non-zero
@@ -247,11 +129,11 @@ func (sc *Scanner) scanStringLiteral() (_ lexeme.Token, _ bool) {
 		case sc.IsMatch(i, SUFFIX):
 			return false
 		case sc.IsNewline(i):
-			panic(sc.terror(0,
+			panic(terror(sc, 0,
 				"Newline encountered before a string literal was terminated",
 			))
 		case i+1 == sc.Len():
-			panic(sc.terror(0,
+			panic(terror(sc, 0,
 				"EOF encountered before a string literal was terminated",
 			))
 		}
@@ -301,11 +183,11 @@ func (sc *Scanner) scanStringTemplate() (_ lexeme.Token, _ bool) {
 		case !escaped && sc.IsMatch(i, SUFFIX): // Ensure the suffix is not escaped
 			return false
 		case sc.IsNewline(i):
-			panic(sc.terror(0,
+			panic(terror(sc, 0,
 				"Newline encountered before a string template was terminated",
 			))
 		case i+1 == sc.Len():
-			panic(sc.terror(0,
+			panic(terror(sc, 0,
 				"EOF encountered before a string template was terminated",
 			))
 		}
@@ -332,17 +214,17 @@ func (sc *Scanner) tokenize(n int, lex lexeme.Lexeme) lexeme.Token {
 		Col:    sc.ColIndex(),
 	}
 
-	tk.Value = sc.SymbolStream.Read(n, lex == lexeme.LEXEME_NEWLINE)
+	tk.Value = sc.SymbolStream.Slice(n, lex == lexeme.LEXEME_NEWLINE)
 
 	return tk
 }
 
 // terror was created because I am lazy. It will probably be removed when I
 // update the error handling.
-func (sc *Scanner) terror(colOffset int, msg string) bard.Terror {
+func terror(ss symbol.SymbolStream, colOffset int, msg string) bard.Terror {
 	return bard.NewTerror(
-		sc.LineIndex(),
-		sc.ColIndex()+colOffset,
+		ss.LineIndex(),
+		ss.ColIndex()+colOffset,
 		nil,
 		msg,
 	)

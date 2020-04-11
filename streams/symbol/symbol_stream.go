@@ -49,14 +49,18 @@ type SymbolStream interface {
 	// at the beginning of each iteration like a traditional while loop.
 	CountSymbolsWhile(start int, f func(int, rune) bool) int
 
+	// Peek performs a read for a single symbol without eating it up from the
+	// stream or updating the line and column indexes.
+	PeekSymbol(index int) rune
+
 	// Peek performs a read without eating up the symbols in the stream or
 	// updating the line and column indexes.
 	Peek(runeCount int) string
 
-	// Read reads the specified number of symbols from the stream updating the
+	// Slice reads the specified number of symbols from the stream updating the
 	// line and column indexes accordingly. If you want to record the line or
-	// column index of the read symbols, get them before performing the read.
-	Read(runeCount int, isNewline bool) string
+	// column index of the read symbols, get them before performing the slice.
+	Slice(runeCount int, isNewline bool) string
 
 	// LineIndex returns the current line index within the text being read.
 	LineIndex() int
@@ -136,16 +140,21 @@ func (ss *impl) CountSymbolsWhile(start int, f func(int, rune) bool) (i int) {
 }
 
 // Peek satisfies the SymbolStream interface.
+func (ss *impl) PeekSymbol(index int) rune {
+	return ss.runes[index]
+}
+
+// Peek satisfies the SymbolStream interface.
 func (ss *impl) Peek(runeCount int) string {
 	return string(ss.runes[:runeCount])
 }
 
-// Peek satisfies the SymbolStream interface.
-func (ss *impl) Read(runeCount int, isNewline bool) string {
+// Slice satisfies the SymbolStream interface.
+func (ss *impl) Slice(runeCount int, isNewline bool) string {
 
 	if ss.Len() < runeCount {
 		codingError("Bad argument, " +
-			"requested read amount is bigger than the number of remaining runes")
+			"requested slice amount is bigger than the number of remaining runes")
 	}
 
 	r := ss.Peek(runeCount)
