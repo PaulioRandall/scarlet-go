@@ -6,8 +6,9 @@
 // columns within the streamed text.
 //
 // The API combines three responsibilities:
-// 1. The base functions exposes simple stream functionality such as Len, Empty,
-// IsMatch, CountSymbolsWhile, Peek, and Read.
+// 1. The base functions expose simple stream functionality such as Len, Empty,
+// IsMatch, CountSymbolsWhile, PeekTerminal, PeekNonTerminal, and
+// ReadNonTerminal.
 // 2. The tracking functions, LineIndex and ColIndex, return the position of the
 // stream relative to the text being streamed.
 // 3. The remaining functions build upon the base functions to provide slightly
