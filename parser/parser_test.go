@@ -9,7 +9,7 @@ import (
 )
 
 func tok(l lexeme.Lexeme, v string) lexeme.Token {
-	return lexeme.New(l, v, 0, 0)
+	return lexeme.Token{l, v, 0, 0}
 }
 
 func push(in chan lexeme.Token, tokens ...lexeme.Token) {

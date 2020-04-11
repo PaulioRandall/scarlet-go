@@ -32,8 +32,13 @@ func (p *Parser) parseFuncDef() Expr {
 		f.body = p.parseStats(p.take())
 	} else {
 		f.body = blockStat{
-			opener: lexeme.New(lexeme.LEXEME_INLINE, "", closeParen.Line, closeParen.Col),
-			block:  []Stat{p.parseStat(true)},
+			opener: lexeme.Token{
+				lexeme.LEXEME_INLINE,
+				"",
+				closeParen.Line,
+				closeParen.Col,
+			},
+			block: []Stat{p.parseStat(true)},
 		}
 	}
 
