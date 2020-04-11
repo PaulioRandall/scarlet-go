@@ -1,32 +1,24 @@
 
+// Types
 a := `abc`
 b := "xyz"
-
 c, d := TRUE, FALSE
-d, c := c, d
-d := _
-
-e, f := 123, 123.456
-
+e, f := 123, 123.789
 g := {
 	123, c,
 	{a, "xyz"},
 }
-
-h := F(a, b -> a, c) DO
-	x := F(x, y) DO
-		x := 1
-	END
+h := F(a, b -> c, d) DO
+	c := a + b
+	d := a * b
 END
 
-i := F(k, l -> k, l, m, n) DO
-	n := TRUE
-END
+// Multiple return & assignment + function calling
+x, y := c, d
+x, y := _, _
+x, y := h(e, f)
 
-j := i
-
-k, l, m, n := j(123, `:)`)
-
+// Arithmetic
 two := 1 + 1
 three := 1.5 + 1.5
 twelve := 3 * 3 + 3 // Error
