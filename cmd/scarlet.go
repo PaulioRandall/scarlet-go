@@ -54,8 +54,6 @@ func printToken(tk lexeme.Token) {
 	case lexeme.LEXEME_EOF:
 		println(k)
 		println()
-	case lexeme.LEXEME_ID:
-		print(tk.Value + " ")
 	default:
 		print(k + " ")
 	}
