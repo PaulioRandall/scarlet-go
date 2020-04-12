@@ -54,7 +54,7 @@ func GroupAll(tks []lexeme.Token) []Snippet {
 
 // PrintAll pretty prints all snippets in snips.
 func PrintAll(snips []Snippet) {
-	printSnippets(snips, 0)
+	printSnippets(snips, 1)
 }
 
 func printSnippets(snips []Snippet, indent int) {
@@ -70,6 +70,13 @@ func printSnippets(snips []Snippet, indent int) {
 
 func printSnippet(snip Snippet, indent int) {
 
+	if snip.Kind == SNIPPET_UNDEFINED {
+		print(`????`)
+	} else {
+		print(snip.Kind)
+	}
+
+	print(`:`)
 	printIndent(indent)
 
 	for i, tk := range snip.Tokens {

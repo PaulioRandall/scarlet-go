@@ -1,7 +1,7 @@
 
-divideAndFmt := F(a, b -> r, e) DO
+divideAndFmt := a, b -> r, e DO
 	WATCH e
-		[b = 0] DO
+		IF b = 0 DO
 			e := `Can't divide by zero`
 		END
 		
@@ -20,7 +20,7 @@ END
 
 parseArgs := F(args -> a, b, e) DO
 	WATCH e
-		[@Len(args) < 3] DO
+		IF @Len(args) < 3 DO
 			e := `Need at least two number arguments`
 		END
 
@@ -34,10 +34,10 @@ printValues := F(_, v, _) @Println(v)
 e := calc(parseArgs)
 @PanicIf(e)
 
-list := LIST 
+list := [ 
 	`abc`,
 	3,
-END
+]
 
 EOF
 

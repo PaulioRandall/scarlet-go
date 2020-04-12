@@ -57,7 +57,10 @@ func (uss *impl) readStatement(snip *Snippet) {
 	for tk := uss.readToken(); tk.Lexeme != TERMINATOR; tk = uss.readToken() {
 		snip.appendTokens(tk)
 
-		if tk.Lexeme == lexeme.LEXEME_DO {
+		switch tk.Lexeme {
+		case lexeme.LEXEME_FUNC:
+			snip.Kind = SNIPPET_FUNC
+		case lexeme.LEXEME_DO:
 			uss.readBlock(snip)
 		}
 	}

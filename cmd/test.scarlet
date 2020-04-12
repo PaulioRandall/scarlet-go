@@ -13,6 +13,7 @@ h := F(a, b -> c, d) DO
 	d := F(a -> b) DO
 		b := 1
 	END
+	c := a - b
 END
 
 x, y :=  h(e, f)
