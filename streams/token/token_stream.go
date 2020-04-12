@@ -27,13 +27,6 @@ type impl struct {
 	prev   lexeme.Token
 }
 
-// New creates a simple token stream which reads from a slice.
-func New(tokens []lexeme.Token) TokenStream {
-	return &impl{
-		tokens: tokens,
-	}
-}
-
 // Read satisfies the TokenStream interface.
 func (ts *impl) Read() lexeme.Token {
 
@@ -57,8 +50,15 @@ func (ts *impl) Read() lexeme.Token {
 	return ts.prev
 }
 
-// ReadAll reads all tokens from ts into an array.
-func ReadAll(ts TokenStream) []lexeme.Token {
+// ToStream creates a simple TokenStream which reads from the slice tks.
+func ToStream(tks []lexeme.Token) TokenStream {
+	return &impl{
+		tokens: tks,
+	}
+}
+
+// ToArray consumes all the tokens from ts into an array.
+func ToArray(ts TokenStream) []lexeme.Token {
 
 	var tk lexeme.Token
 	var tokens []lexeme.Token
@@ -68,4 +68,19 @@ func ReadAll(ts TokenStream) []lexeme.Token {
 	}
 
 	return append(tokens, tk)
+}
+
+// PrintAll pretty prints all tokens in tks.
+func PrintAll(tks []lexeme.Token) {
+	for _, tk := range tks {
+		switch k := tk.Lexeme; k {
+		case lexeme.LEXEME_TERMINATOR:
+			println(k)
+		case lexeme.LEXEME_EOF:
+			println(k)
+			println()
+		default:
+			print(k + " ")
+		}
+	}
 }

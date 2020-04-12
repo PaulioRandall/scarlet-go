@@ -6,7 +6,15 @@ import (
 
 // Snippet represents an unparsed statement.
 type Snippet struct {
-	Kind    Kind
-	Tokens  []lexeme.Token
-	Snippet []Snippet
+	Kind     Kind
+	Tokens   []lexeme.Token
+	Snippets []Snippet
+}
+
+func (base *Snippet) appendTokens(tks ...lexeme.Token) {
+	base.Tokens = append(base.Tokens, tks...)
+}
+
+func (base *Snippet) appendSnippets(snips ...Snippet) {
+	base.Snippets = append(base.Snippets, snips...)
 }

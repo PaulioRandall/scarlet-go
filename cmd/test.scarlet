@@ -1,7 +1,7 @@
 
 // Types
-a := `abc`
-b := "xyz"
+a := `abc`;
+b := "xyz";
 c, d := TRUE, FALSE
 e, f := 123, 123.789
 g := [
@@ -10,7 +10,9 @@ g := [
 ]
 h := F(a, b -> c, d) DO
 	c := a + b
-	d := a * b
+	d := F(a -> b) DO
+		b := 1
+	END
 END
 
 // Multiple return & assignment

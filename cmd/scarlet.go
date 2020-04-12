@@ -10,6 +10,8 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/streams/evaluator"
 	"github.com/PaulioRandall/scarlet-go/streams/scanner"
+	"github.com/PaulioRandall/scarlet-go/streams/snippet"
+	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
 
 func main() {
@@ -33,10 +35,20 @@ func main() {
 // run executes the input source code.
 func run(s string) {
 
-	tokens := analyseScript(s)
-	for _, tk := range tokens {
-		printToken(tk)
-	}
+	var tokens []lexeme.Token
+	var snippets []snippet.Snippet
+
+	tokens = scanner.ScanAll(s)
+	println("***After scanning***\n")
+	token.PrintAll(tokens)
+
+	println("***After evaluation***\n")
+	tokens = evaluator.EvalAll(tokens)
+	token.PrintAll(tokens)
+
+	println("***After grouping***\n")
+	snippets = snippet.GroupAll(tokens)
+	snippet.PrintAll(snippets)
 
 	exe := parseTokens(tokens)
 
@@ -47,28 +59,6 @@ func run(s string) {
 	exe.Eval(ctx)
 
 	println(ctx.String())
-}
-
-// analyseScript performs lexical analysis (scans and evaluates) on the script
-// s returning an array of tokens.
-func analyseScript(s string) []lexeme.Token {
-	tokens := scanner.ScanAll(s)
-	tokens = evaluator.EvalAll(tokens)
-	return tokens
-}
-
-// printToken prints a token nicely.
-func printToken(tk lexeme.Token) {
-
-	switch k := tk.Lexeme; k {
-	case lexeme.LEXEME_TERMINATOR:
-		println(k)
-	case lexeme.LEXEME_EOF:
-		println(k)
-		println()
-	default:
-		print(k + " ")
-	}
 }
 
 // parseTokens parses the token slice into an executable statement.

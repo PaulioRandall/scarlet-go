@@ -14,10 +14,10 @@ import (
 
 // EvalAll creates an evaluator from s and evaluates all tokens from it into a
 // new array.
-func EvalAll(s []lexeme.Token) []lexeme.Token {
-	ts := token.New(s)
+func EvalAll(tks []lexeme.Token) []lexeme.Token {
+	ts := token.ToStream(tks)
 	ev := New(ts)
-	return token.ReadAll(ev)
+	return token.ToArray(ev)
 }
 
 // evaluator is a TokenStream providing functionality for evaluating a stream

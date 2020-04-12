@@ -10,7 +10,9 @@
 package snippet
 
 import (
-	//"github.com/PaulioRandall/scarlet-go/lexeme"
+	"strings"
+
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 
 	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
@@ -34,24 +36,13 @@ type SnippetStream interface {
 	Read() Snippet
 }
 
-// impl is the on and only implementation of the SnippetStream.
-type impl struct {
-	tkStream token.TokenStream
-}
-
-func (uss *impl) Read() Snippet {
-	// TODO
-	return Snippet{
-		Kind: SNIPPET_EOF,
-	}
-}
-
-// ReadAll reads all tokens from ts, runs them through a SnippetStream, then
+// GroupAll consumes all tokens from ts, runs them through a SnippetStream, then
 // returns the resultant snippets as an array.
-func ReadAll(ts token.TokenStream) []Snippet {
+func GroupAll(tks []lexeme.Token) []Snippet {
 
 	var snippets []Snippet
 	var snip Snippet
+	ts := token.ToStream(tks)
 	ss := impl{ts}
 
 	for snip = ss.Read(); snip.Kind != SNIPPET_EOF; snip = ss.Read() {
@@ -59,4 +50,41 @@ func ReadAll(ts token.TokenStream) []Snippet {
 	}
 
 	return append(snippets, snip)
+}
+
+// PrintAll pretty prints all snippets in snips.
+func PrintAll(snips []Snippet) {
+	printSnippets(snips, 0)
+}
+
+func printSnippets(snips []Snippet, indent int) {
+	for _, snip := range snips {
+		if snip.Kind == SNIPPET_EOF {
+			println(SNIPPET_EOF)
+			println()
+		} else {
+			printSnippet(snip, indent)
+		}
+	}
+}
+
+func printSnippet(snip Snippet, indent int) {
+
+	printIndent(indent)
+
+	for i, tk := range snip.Tokens {
+		if i != 0 {
+			print(" ")
+		}
+
+		print(tk.Lexeme)
+	}
+
+	println()
+	printSnippets(snip.Snippets, indent+1)
+}
+
+func printIndent(indent int) {
+	s := strings.Repeat("  ", indent)
+	print(s)
 }
