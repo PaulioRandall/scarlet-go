@@ -1,6 +1,6 @@
 
 // Types
-a := `abc`;
+a := `abc`
 b := "xyz";
 c, d := TRUE, FALSE
 e, f := 123, 123.789
@@ -15,16 +15,5 @@ h := F(a, b -> c, d) DO
 	END
 END
 
-// Multiple return & assignment
-x, y := c, d
-
-// Removing variables
-x, y := _, _
-
-// Function call
-x, y := h(e, f)
-
-// Arithmetic
-two := 1 + 1
-three := 1.5 + 1.5
-twelve := 3 * 3 + 3 // Error
+x, y :=  h(e, f)
+z := _

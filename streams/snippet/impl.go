@@ -52,8 +52,9 @@ func (uss *impl) readBlock(snip *Snippet) {
 
 	for tk = uss.ts.Read(); tk.Lexeme != lexeme.LEXEME_END; tk = uss.ts.Read() {
 
-		// TODO: If its a TERMINATOR or EOF then missing the END token, panic!
-		// 			 WIll need to create a new Err frist.
+		if tk.Lexeme == lexeme.LEXEME_TERMINATOR || tk.Lexeme == lexeme.LEXEME_EOF {
+			panic(newErr(tk, `Expected a statement or 'END', not '%s'`, tk.Value))
+		}
 
 		var sub Snippet
 		uss.readNext(&sub)

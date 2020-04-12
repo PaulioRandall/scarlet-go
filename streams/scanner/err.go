@@ -3,6 +3,7 @@ package scanner
 import (
 	"fmt"
 
+	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/streams/symbol"
 )
 
@@ -15,7 +16,7 @@ type scannerErr struct {
 }
 
 // newErr returns a new scanner error.
-func newErr(ss symbol.SymbolStream, colOffset int, msg string, args ...interface{}) *scannerErr {
+func newErr(ss symbol.SymbolStream, colOffset int, msg string, args ...interface{}) err.Err {
 	return &scannerErr{
 		lineIndex: ss.LineIndex(),
 		colIndex:  ss.ColIndex() + colOffset,

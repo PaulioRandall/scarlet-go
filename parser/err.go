@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 
+	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
@@ -16,14 +17,14 @@ type parseErr struct {
 }
 
 // newErr returns a new parse error.
-func newErr(msg string, args ...interface{}) *parseErr {
+func newErr(msg string, args ...interface{}) err.Err {
 	return &parseErr{
 		msg: fmt.Sprintf(msg, args...),
 	}
 }
 
 // newTkErr returns a new parse error.
-func newTkErr(tk lexeme.Token, msg string, args ...interface{}) *parseErr {
+func newTkErr(tk lexeme.Token, msg string, args ...interface{}) err.Err {
 	return &parseErr{
 		msg:       fmt.Sprintf(msg, args...),
 		lineIndex: tk.Line,
@@ -32,7 +33,7 @@ func newTkErr(tk lexeme.Token, msg string, args ...interface{}) *parseErr {
 }
 
 // newTkError returns a new parse error.
-func newTkError(cause error, tk lexeme.Token, msg string, args ...interface{}) *parseErr {
+func newTkError(cause error, tk lexeme.Token, msg string, args ...interface{}) err.Err {
 	return &parseErr{
 		msg:       fmt.Sprintf(msg, args...),
 		cause:     cause,
