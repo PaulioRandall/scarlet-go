@@ -17,6 +17,12 @@ import (
 	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
 
+// Snippet represents an unparsed statement, perhaps containing sub-statements.
+type Snippet struct {
+	Tokens   []lexeme.Token
+	Snippets []Snippet
+}
+
 // SnippetStream provides access to an ordered stream of snippets.
 type SnippetStream interface {
 
@@ -52,27 +58,27 @@ func GroupAll(tks []lexeme.Token) []Snippet {
 	return snippets
 }
 
-// PrintAll pretty prints all snippets in snips.
-func PrintAll(snips []Snippet) {
-	printSnippets(snips, 0)
+// PrintAll pretty prints all snippets in s.
+func PrintAll(s []Snippet) {
+	printSnippets(s, 0)
+	println(lexeme.LEXEME_EOF)
+	println()
 }
 
-func printSnippets(snips []Snippet, indent int) {
-	for _, snip := range snips {
-		if snip.Tokens == nil {
-			println(lexeme.LEXEME_EOF)
-			println()
-		} else {
-			printSnippet(snip, indent)
-		}
+// printSnippet prints all snippets in s indenting all output to the specified
+// level.
+func printSnippets(s []Snippet, indent int) {
+	for _, snip := range s {
+		printSnippet(snip, indent)
 	}
 }
 
-func printSnippet(snip Snippet, indent int) {
+// printSnippet prints the s indenting all output to the specified level.
+func printSnippet(s Snippet, indent int) {
 
-	printIndent(indent)
+	print(strings.Repeat("  ", indent))
 
-	for i, tk := range snip.Tokens {
+	for i, tk := range s.Tokens {
 		if i != 0 {
 			print(" ")
 		}
@@ -81,10 +87,5 @@ func printSnippet(snip Snippet, indent int) {
 	}
 
 	println()
-	printSnippets(snip.Snippets, indent+1)
-}
-
-func printIndent(indent int) {
-	s := strings.Repeat("  ", indent)
-	print(s)
+	printSnippets(s.Snippets, indent+1)
 }

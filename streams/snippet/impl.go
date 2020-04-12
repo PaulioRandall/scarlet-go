@@ -8,7 +8,7 @@ import (
 
 // impl is the one and only implementation of the SnippetStream interface.
 type impl struct {
-	ts  token.TokenStream
+	ts  token.TokenStream // Do not access directly, use readToken & peekToken
 	buf *lexeme.Token
 }
 
@@ -25,17 +25,21 @@ func (uss *impl) Read() Snippet {
 		return uss.Read() // Consecutive terminators can be ignored
 	}
 
-	var snip Snippet
-	uss.readStatement(&snip)
-	return snip
+	return uss.readSnippet()
 }
 
+// readToken reads a token from the underlying TokenStream. The TokenStream
+// must NOT be accessed directly as buffer management is required.
 func (uss *impl) readToken() lexeme.Token {
 	tk := uss.peekToken()
 	uss.buf = nil
 	return tk
 }
 
+// peekToken reads a token from the underlying TokenStream. The token is cached
+// so further calls to peekToken or a subsequent call to readToken will return
+// the peeked token rather than a new one. The TokenStream must NOT be accessed
+// directly as buffer management is required.
 func (uss *impl) peekToken() lexeme.Token {
 
 	if uss.buf == nil {
@@ -48,33 +52,38 @@ func (uss *impl) peekToken() lexeme.Token {
 	return tk
 }
 
-func (uss *impl) readStatement(snip *Snippet) {
+// readSnippet reads all tokens representing the next statement from the
+// TokenStream and returns a new snippet.
+func (uss *impl) readSnippet() Snippet {
 
 	const TERMINATOR = lexeme.LEXEME_TERMINATOR
+	var snip Snippet
 
 	for tk := uss.readToken(); tk.Lexeme != TERMINATOR; tk = uss.readToken() {
-		snip.appendTokens(tk)
+		snip.Tokens = append(snip.Tokens, tk)
 
 		if tk.Lexeme == lexeme.LEXEME_DO {
-			uss.readBlock(snip)
+			snip.Snippets = uss.readBlock()
 		}
 	}
+
+	return snip
 }
 
-func (uss *impl) readBlock(snip *Snippet) {
+// readBlock reads all statements in the current block into an array.
+func (uss *impl) readBlock() []Snippet {
 
-	var tk lexeme.Token
+	var snips []Snippet
 
-	for tk = uss.peekToken(); tk.Lexeme != lexeme.LEXEME_END; tk = uss.peekToken() {
+	for tk := uss.peekToken(); tk.Lexeme != lexeme.LEXEME_END; tk = uss.peekToken() {
 
 		if tk.Lexeme == lexeme.LEXEME_TERMINATOR || tk.Lexeme == lexeme.LEXEME_EOF {
 			panic(newErr(tk, `Expected a statement or 'END', not '%s'`, tk.Value))
 		}
 
-		var sub Snippet
-		uss.readStatement(&sub)
-		snip.appendSnippets(sub)
+		sub := uss.readSnippet()
+		snips = append(snips, sub)
 	}
 
-	snip.appendTokens(tk)
+	return snips
 }
