@@ -15,20 +15,18 @@ type impl struct {
 // Read satisfies the SnippetStream interface.
 func (uss *impl) Read() Snippet {
 
-	tk := uss.peekToken()
-	var snip Snippet
+	lex := uss.peekToken().Lexeme
 
-	switch tk.Lexeme {
-	case lexeme.LEXEME_EOF:
-		snip.Kind = SNIPPET_EOF
-
-	case lexeme.LEXEME_TERMINATOR:
-		snip = uss.Read() // Consecutive terminators can be ignored
-
-	default:
-		uss.readStatement(&snip)
+	if lex == lexeme.LEXEME_EOF {
+		return Snippet{}
 	}
 
+	if lex == lexeme.LEXEME_TERMINATOR {
+		return uss.Read() // Consecutive terminators can be ignored
+	}
+
+	var snip Snippet
+	uss.readStatement(&snip)
 	return snip
 }
 
@@ -57,10 +55,7 @@ func (uss *impl) readStatement(snip *Snippet) {
 	for tk := uss.readToken(); tk.Lexeme != TERMINATOR; tk = uss.readToken() {
 		snip.appendTokens(tk)
 
-		switch tk.Lexeme {
-		case lexeme.LEXEME_FUNC:
-			snip.Kind = SNIPPET_FUNC
-		case lexeme.LEXEME_DO:
+		if tk.Lexeme == lexeme.LEXEME_DO {
 			uss.readBlock(snip)
 		}
 	}

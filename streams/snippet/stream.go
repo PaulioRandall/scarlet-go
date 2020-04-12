@@ -20,9 +20,10 @@ import (
 // SnippetStream provides access to an ordered stream of snippets.
 type SnippetStream interface {
 
-	// Read returns the next Snippet in the stream. An EOF snippet is always
-	// returned if the stream is empty. Within Scarlet, an expression is only a
-	// statement if it does not form the immediate tokens of another statement.
+	// Read returns the next Snippet in the stream. If the stream is empty a
+	// snippet with both values a nil will be returned. Within Scarlet, an
+	// expression is only a statement if it does not form the immediate tokens of
+	// another statement.
 	//
 	// E.g.
 	// Consider `x := 1 + 1`:
@@ -41,26 +42,25 @@ type SnippetStream interface {
 func GroupAll(tks []lexeme.Token) []Snippet {
 
 	var snippets []Snippet
-	var snip Snippet
 	ts := token.ToStream(tks)
 	ss := impl{ts, nil}
 
-	for snip = ss.Read(); snip.Kind != SNIPPET_EOF; snip = ss.Read() {
+	for snip := ss.Read(); snip.Tokens != nil; snip = ss.Read() {
 		snippets = append(snippets, snip)
 	}
 
-	return append(snippets, snip)
+	return snippets
 }
 
 // PrintAll pretty prints all snippets in snips.
 func PrintAll(snips []Snippet) {
-	printSnippets(snips, 1)
+	printSnippets(snips, 0)
 }
 
 func printSnippets(snips []Snippet, indent int) {
 	for _, snip := range snips {
-		if snip.Kind == SNIPPET_EOF {
-			println(SNIPPET_EOF)
+		if snip.Tokens == nil {
+			println(lexeme.LEXEME_EOF)
 			println()
 		} else {
 			printSnippet(snip, indent)
@@ -70,13 +70,6 @@ func printSnippets(snips []Snippet, indent int) {
 
 func printSnippet(snip Snippet, indent int) {
 
-	if snip.Kind == SNIPPET_UNDEFINED {
-		print(`????`)
-	} else {
-		print(snip.Kind)
-	}
-
-	print(`:`)
 	printIndent(indent)
 
 	for i, tk := range snip.Tokens {

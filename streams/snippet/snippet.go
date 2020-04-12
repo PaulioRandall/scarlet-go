@@ -6,7 +6,6 @@ import (
 
 // Snippet represents an unparsed statement.
 type Snippet struct {
-	Kind     Kind
 	Tokens   []lexeme.Token
 	Snippets []Snippet
 }
