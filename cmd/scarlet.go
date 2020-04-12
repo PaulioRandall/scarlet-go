@@ -7,7 +7,9 @@ import (
 	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/parser"
-	"github.com/PaulioRandall/scarlet-go/streams"
+
+	"github.com/PaulioRandall/scarlet-go/streams/evaluator"
+	"github.com/PaulioRandall/scarlet-go/streams/scanner"
 )
 
 func main() {
@@ -31,7 +33,7 @@ func main() {
 // run executes the input source code.
 func run(s string) {
 
-	tokens := streams.AnalyseScript(s)
+	tokens := analyseScript(s)
 	for _, tk := range tokens {
 		printToken(tk)
 	}
@@ -45,6 +47,14 @@ func run(s string) {
 	exe.Eval(ctx)
 
 	println(ctx.String())
+}
+
+// analyseScript performs lexical analysis (scans and evaluates) on the script
+// s returning an array of tokens.
+func analyseScript(s string) []lexeme.Token {
+	tokens := scanner.ScanAll(s)
+	tokens = evaluator.EvalAll(tokens)
+	return tokens
 }
 
 // printToken prints a token nicely.
