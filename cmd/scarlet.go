@@ -39,16 +39,19 @@ func run(s string) {
 	var snippets []snippet.Snippet
 
 	tokens = scanner.ScanAll(s)
-	println("***After scanning***\n")
+	println("***After token scanning***\n")
 	token.PrintAll(tokens)
 
-	println("***After evaluation***\n")
+	println("***After token evaluation***\n")
 	tokens = evaluator.EvalAll(tokens)
 	token.PrintAll(tokens)
 
-	println("***After grouping***\n")
+	println("***After statement snipping***\n")
 	snippets = snippet.GroupAll(tokens)
 	snippet.PrintAll(snippets)
+
+	println("***After assignment snipping***")
+	println("TODO\n")
 
 	exe := parseTokens(tokens)
 
