@@ -43,7 +43,7 @@ func GroupAll(tks []lexeme.Token) []Snippet {
 	var snippets []Snippet
 	var snip Snippet
 	ts := token.ToStream(tks)
-	ss := impl{ts}
+	ss := impl{ts, nil}
 
 	for snip = ss.Read(); snip.Kind != SNIPPET_EOF; snip = ss.Read() {
 		snippets = append(snippets, snip)
