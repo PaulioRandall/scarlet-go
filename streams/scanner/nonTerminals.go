@@ -220,7 +220,7 @@ func nonTerminals() []nonTerminal {
 			if fractionalLen == 0 {
 				// One or many fractional digits must follow a delimiter. Zero following
 				// digits is invalid syntax, so we must panic.
-				panic(terror(ss, n+DELIM_LEN,
+				panic(newErr(ss, n+DELIM_LEN,
 					"Invalid syntax, expected digit after decimal point",
 				))
 			}
@@ -273,13 +273,13 @@ func integerMatcher(ss symbol.SymbolStream, start int) int {
 // unterminated.
 func checkForMissingTermination(ss symbol.SymbolStream, i int) {
 	if ss.IsNewline(i) {
-		panic(terror(ss, 0,
+		panic(newErr(ss, 0,
 			"Newline encountered before a string or template was terminated",
 		))
 	}
 
 	if i+1 == ss.Len() {
-		panic(terror(ss, 0,
+		panic(newErr(ss, 0,
 			"EOF encountered before a string or template was terminated",
 		))
 	}

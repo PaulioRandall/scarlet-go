@@ -15,7 +15,6 @@
 package scanner
 
 import (
-	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 
 	"github.com/PaulioRandall/scarlet-go/streams/symbol"
@@ -57,7 +56,7 @@ func (sc *Scanner) Read() lexeme.Token {
 	tk := sc.parseNextToken()
 
 	if tk == (lexeme.Token{}) {
-		panic(terror(sc, 0, "Could not identify next token"))
+		panic(newErr(sc, 0, "Could not identify next token"))
 	}
 
 	return tk
@@ -96,15 +95,4 @@ func (sc *Scanner) tokenize(n int, l lexeme.Lexeme) lexeme.Token {
 
 	tk.Value = sc.SymbolStream.ReadNonTerminal(n)
 	return tk
-}
-
-// terror was created because I am lazy. It will probably be removed when I
-// update the error handling.
-func terror(ss symbol.SymbolStream, colOffset int, msg string) err.Terror {
-	return err.NewTerror(
-		ss.LineIndex(),
-		ss.ColIndex()+colOffset,
-		nil,
-		msg,
-	)
 }

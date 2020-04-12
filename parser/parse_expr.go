@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
@@ -16,7 +15,7 @@ func (p *Parser) parseStat(inline bool) Stat {
 	case lexeme.LEXEME_ID:
 		return p.parseAssign(inline)
 	default:
-		panic(err.NewHorror(tk, nil,
+		panic(newTkErr(tk,
 			"Unexpected token or maybe parsing has not been implemented for it yet",
 		))
 	}
@@ -56,7 +55,7 @@ func (p *Parser) parseAssignable(allowVoid bool) Expr {
 	switch tk := p.peek(); tk.Lexeme {
 	case lexeme.LEXEME_VOID:
 		if !allowVoid {
-			panic(err.NewHorror(tk, nil, "Naughty use of void expression"))
+			panic(newTkErr(tk, "Naughty use of void expression"))
 		}
 
 		return valueExpr{
@@ -81,7 +80,7 @@ func (p *Parser) parseExpr() Expr {
 	left := p.parseOperand()
 
 	if left == nil {
-		panic(err.NewHorror(tk, nil,
+		panic(newTkErr(tk,
 			"Token does not start a valid expression or "+
 				"parsing has not been implemented for it yet",
 		))

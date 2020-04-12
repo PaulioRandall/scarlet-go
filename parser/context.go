@@ -1,9 +1,5 @@
 package parser
 
-import (
-	"github.com/PaulioRandall/scarlet-go/err"
-)
-
 // Context represents the current executing context. It contains all state
 // available to the current scope such as available variables.
 type Context struct {
@@ -51,9 +47,7 @@ func (ctx Context) resolve(id string) (_ Value) {
 	v := ctx.get(id)
 
 	if v == (Value{}) {
-		panic(err.NewNightmare(nil,
-			"Cannot resolve the variable '%v'", id,
-		))
+		panic(newErr("Cannot resolve the variable '%v'", id))
 	}
 
 	return v

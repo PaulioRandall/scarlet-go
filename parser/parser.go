@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/err"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
@@ -36,9 +35,7 @@ func (p *Parser) peek() lexeme.Token {
 		tk, ok := <-p.in
 
 		if !ok {
-			panic(err.NewHorror(tk, nil,
-				"Token input channel closed prematurely",
-			))
+			panic(newTkErr(tk, "Token input channel closed prematurely"))
 		}
 
 		p.buf = &tk
@@ -82,7 +79,7 @@ func (p *Parser) ensure(tk lexeme.Token, lexs ...lexeme.Lexeme) {
 	}
 
 	errMsg += " but was " + string(tk.Lexeme)
-	panic(err.NewHorror(tk, nil, errMsg))
+	panic(newTkErr(tk, errMsg))
 }
 
 // peekEnsure returns the next token in the input channel but will panic if

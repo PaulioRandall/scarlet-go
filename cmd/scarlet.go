@@ -14,16 +14,18 @@ func main() {
 
 	file := "./test.scarlet"
 
-	src, e := ioutil.ReadFile(file)
-	if e != nil {
-		panic(e)
-	}
+	errErr := err.Try(func() {
+		src, e := ioutil.ReadFile(file)
+		if e != nil {
+			panic(e)
+		}
 
-	b := err.NewRhapsodist(file)
-
-	b.CatchNightmare(func() {
 		run(string(src))
 	})
+
+	if errErr != nil {
+		err.PrintErr(errErr, file)
+	}
 }
 
 // run executes the input source code.
