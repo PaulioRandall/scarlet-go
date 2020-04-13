@@ -20,6 +20,7 @@ func main() {
 	file := "./test.scarlet"
 
 	errErr := err.Try(func() {
+
 		src, e := ioutil.ReadFile(file)
 		if e != nil {
 			panic(e)

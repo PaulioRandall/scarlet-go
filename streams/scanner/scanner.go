@@ -17,6 +17,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/streams/symbol"
 )
 
+// Method represents a scanning method
 type Method string
 
 const (
@@ -33,5 +34,5 @@ func ScanAll(s string, m Method) []lexeme.Token {
 		return matching.ReadAll(ss)
 	}
 
-	panic(`Unknown scanning method '` + m + `'`)
+	panic(string(`Unknown scanning method '` + m + `'`))
 }
