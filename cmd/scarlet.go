@@ -8,8 +8,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/parser"
 
+	"github.com/PaulioRandall/scarlet-go/streams/parser/alpha"
 	"github.com/PaulioRandall/scarlet-go/streams/parser/articulator"
-	"github.com/PaulioRandall/scarlet-go/streams/parser/partitioner"
 	"github.com/PaulioRandall/scarlet-go/streams/sanitiser"
 	"github.com/PaulioRandall/scarlet-go/streams/scanner"
 )
@@ -44,9 +44,9 @@ func run(s string) {
 	println("***After token sanitisation***\n")
 	lexeme.PrintTokens(sanitisedTokens)
 
-	stats := partitioner.PartitionAll(sanitisedTokens)
+	stats := alpha.PartitionAll(sanitisedTokens)
 	println("***After statement partitioning***\n")
-	partitioner.PrintAll(stats)
+	alpha.PrintAll(stats)
 
 	arts := articulator.ArticulateAll(stats)
 	println("***After articulation***\n")

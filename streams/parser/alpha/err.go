@@ -1,4 +1,4 @@
-package partitioner
+package alpha
 
 import (
 	"fmt"

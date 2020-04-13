@@ -1,4 +1,4 @@
-// partitioner package was created to separate the concern of grouping tokens into
+// alpha package was created to separate the concern of grouping tokens into
 // statements from the parsing of those statements. The API uses a TokenStream
 // create a SnippetStream which is uses the production rules to produce
 // Snippets; a group of tokens and sub-snippets.
@@ -7,7 +7,7 @@
 //
 // This package does not identify expressions or parse the statements. It just
 // groups tokens and sub-statement together so further processing is easier.
-package partitioner
+package alpha
 
 import (
 	"strings"

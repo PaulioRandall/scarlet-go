@@ -16,7 +16,7 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/streams/parser/partitioner"
+	"github.com/PaulioRandall/scarlet-go/streams/parser/alpha"
 )
 
 // Articulate represents an unparsed statement with separate members for storing
@@ -44,11 +44,11 @@ type Articulate struct {
 
 // ArticulateAll consumes all statements from stats, runs them through a
 // ArticulateStream, then returns the resultant articulates as an array.
-func ArticulateAll(stats []partitioner.Statement) []Articulate {
+func ArticulateAll(stats []alpha.Statement) []Articulate {
 	return articulateStatments(stats)
 }
 
-func articulateStatments(stats []partitioner.Statement) []Articulate {
+func articulateStatments(stats []alpha.Statement) []Articulate {
 
 	var arts []Articulate
 	itr := statItr{stats, len(stats), 0}
@@ -61,7 +61,7 @@ func articulateStatments(stats []partitioner.Statement) []Articulate {
 	return arts
 }
 
-func articulateStatment(stat partitioner.Statement) Articulate {
+func articulateStatment(stat alpha.Statement) Articulate {
 
 	var art Articulate
 	tks := stat.Tokens

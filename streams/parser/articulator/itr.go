@@ -1,20 +1,20 @@
 package articulator
 
 import (
-	"github.com/PaulioRandall/scarlet-go/streams/parser/partitioner"
+	"github.com/PaulioRandall/scarlet-go/streams/parser/alpha"
 )
 
 // statItr represents an iterator of Statements.
 type statItr struct {
-	stats []partitioner.Statement
+	stats []alpha.Statement
 	size  int
 	index int
 }
 
-func (itr *statItr) next() (partitioner.Statement, bool) {
+func (itr *statItr) next() (alpha.Statement, bool) {
 
 	if itr.index >= itr.size {
-		return partitioner.Statement{}, false
+		return alpha.Statement{}, false
 	}
 
 	s := itr.stats[itr.index]
