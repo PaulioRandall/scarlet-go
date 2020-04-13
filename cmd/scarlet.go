@@ -8,8 +8,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/parser"
 
-	"github.com/PaulioRandall/scarlet-go/streams/articulator"
 	"github.com/PaulioRandall/scarlet-go/streams/partitioner"
+	"github.com/PaulioRandall/scarlet-go/streams/partitioner/articulator"
 	"github.com/PaulioRandall/scarlet-go/streams/sanitiser"
 	"github.com/PaulioRandall/scarlet-go/streams/scanner"
 )
