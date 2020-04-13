@@ -16,7 +16,7 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/streams/partitioner"
+	"github.com/PaulioRandall/scarlet-go/streams/parser/partitioner"
 )
 
 // Articulate represents an unparsed statement with separate members for storing

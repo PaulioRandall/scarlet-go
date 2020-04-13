@@ -1,7 +1,7 @@
 package articulator
 
 import (
-	"github.com/PaulioRandall/scarlet-go/streams/partitioner"
+	"github.com/PaulioRandall/scarlet-go/streams/parser/partitioner"
 )
 
 // statItr represents an iterator of Statements.
