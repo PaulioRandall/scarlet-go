@@ -30,8 +30,8 @@ func ScanAll(s string, m Method) []lexeme.Token {
 
 	switch m {
 	case DEFAULT, PATTERN_MATCHING:
-		ss := symbol.New(s)
-		return matching.ReadAll(ss)
+		ts := symbol.New(s)
+		return matching.ReadAll(ts)
 	}
 
 	panic(string(`Unknown scanning method '` + m + `'`))

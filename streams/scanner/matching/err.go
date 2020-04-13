@@ -16,10 +16,10 @@ type scannerErr struct {
 }
 
 // newErr returns a new scanner error.
-func newErr(ss symbol.SymbolStream, colOffset int, msg string, args ...interface{}) err.Err {
+func newErr(ts *symbol.TerminalStream, colOffset int, msg string, args ...interface{}) err.Err {
 	return &scannerErr{
-		lineIndex: ss.LineIndex(),
-		colIndex:  ss.ColIndex() + colOffset,
+		lineIndex: ts.LineIndex(),
+		colIndex:  ts.ColIndex() + colOffset,
 		msg:       fmt.Sprintf(msg, args...),
 	}
 }
