@@ -42,24 +42,6 @@ type Articulate struct {
 	Arts   []Articulate
 }
 
-// statItr represents an iterator of Statements.
-type statItr struct {
-	stats []partitioner.Statement
-	size  int
-	index int
-}
-
-func (itr *statItr) next() (partitioner.Statement, bool) {
-
-	if itr.index >= itr.size {
-		return partitioner.Statement{}, false
-	}
-
-	s := itr.stats[itr.index]
-	itr.index++
-	return s, true
-}
-
 // ArticulateAll consumes all statements from stats, runs them through a
 // ArticulateStream, then returns the resultant articulates as an array.
 func ArticulateAll(stats []partitioner.Statement) []Articulate {
