@@ -9,8 +9,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/parser"
 
 	"github.com/PaulioRandall/scarlet-go/streams/articulator"
-	"github.com/PaulioRandall/scarlet-go/streams/evaluator"
 	"github.com/PaulioRandall/scarlet-go/streams/partitioner"
+	"github.com/PaulioRandall/scarlet-go/streams/sanitiser"
 	"github.com/PaulioRandall/scarlet-go/streams/scanner"
 	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
@@ -41,11 +41,11 @@ func run(s string) {
 	println("***After token scanning***\n")
 	token.PrintAll(scannedTokens)
 
-	evaluatedTokens := evaluator.EvalAll(scannedTokens)
-	println("***After token evaluation***\n")
-	token.PrintAll(evaluatedTokens)
+	sanitisedTokens := sanitiser.SanitiseAll(scannedTokens)
+	println("***After token sanitisation***\n")
+	token.PrintAll(sanitisedTokens)
 
-	stats := partitioner.PartitionAll(evaluatedTokens)
+	stats := partitioner.PartitionAll(sanitisedTokens)
 	println("***After statement partitioning***\n")
 	partitioner.PrintAll(stats)
 
@@ -57,7 +57,7 @@ func run(s string) {
 	println("THEN: Parse assignment tokens\n")
 	println("THEN: Parse expression tokens\n")
 
-	exe := parseTokens(evaluatedTokens)
+	exe := parseTokens(sanitisedTokens)
 
 	println(strings.ReplaceAll(exe.String(), "\t", "  "))
 

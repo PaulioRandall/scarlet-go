@@ -31,3 +31,18 @@ func (tk Token) String() string {
 	// +1 for line index to number
 	return fmt.Sprintf(`%d:%d %s %v`, tk.Line+1, tk.Col, tk.Lexeme, v)
 }
+
+// PrintAll pretty prints all tokens in tks.
+func PrintAll(tks []Token) {
+	for _, tk := range tks {
+		switch k := tk.Lexeme; k {
+		case LEXEME_TERMINATOR:
+			println(k)
+		case LEXEME_EOF:
+			println(k)
+			println()
+		default:
+			print(k + " ")
+		}
+	}
+}

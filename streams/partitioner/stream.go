@@ -33,16 +33,22 @@ type Statement struct {
 }
 
 func PartitionAll(tks []lexeme.Token) []Statement {
-	itr := tkItr{tks, len(tks), 0}
-	return partitionStatements(&itr)
+	itr := lexeme.NewIterator(tks)
+	return partitionStatements(itr)
 }
 
-func partitionStatements(itr *tkItr) []Statement {
+func partitionStatements(itr *lexeme.TokenIterator) []Statement {
 
-	const EOF = lexeme.LEXEME_EOF
 	var stats []Statement
 
-	for tk := itr.peek(); tk.Lexeme != EOF; tk = itr.peek() {
+	for tk := itr.Peek(); tk.Lexeme != lexeme.LEXEME_EOF; tk = itr.Peek() {
+
+		if tk.Lexeme == lexeme.LEXEME_TERMINATOR {
+			_ = itr.Next()
+			continue
+		}
+
+		expectNotEmpty(tk, itr)
 		s := partitionStatement(itr)
 		stats = append(stats, s)
 	}
@@ -50,16 +56,14 @@ func partitionStatements(itr *tkItr) []Statement {
 	return stats
 }
 
-func partitionStatement(itr *tkItr) Statement {
+func partitionStatement(itr *lexeme.TokenIterator) Statement {
 
 	const TERMINATOR = lexeme.LEXEME_TERMINATOR
 	var stat Statement
 
-	for tk := itr.next(); tk.Lexeme != TERMINATOR; tk = itr.next() {
+	for tk := itr.Next(); tk.Lexeme != TERMINATOR; tk = itr.Next() {
 
-		if tk == (lexeme.Token{}) {
-			panic(newErr(tk, `Unexpected empty token at index %d`, itr.index))
-		}
+		expectNotEmpty(tk, itr)
 
 		stat.Tokens = append(stat.Tokens, tk)
 
@@ -71,15 +75,13 @@ func partitionStatement(itr *tkItr) Statement {
 	return stat
 }
 
-func partitionBlock(itr *tkItr) []Statement {
+func partitionBlock(itr *lexeme.TokenIterator) []Statement {
 
 	var stats []Statement
 
-	for tk := itr.next(); tk.Lexeme != lexeme.LEXEME_END; tk = itr.next() {
+	for tk := itr.Next(); tk.Lexeme != lexeme.LEXEME_END; tk = itr.Next() {
 
-		if tk == (lexeme.Token{}) {
-			panic(newErr(tk, `Unexpected empty token at index %d`, itr.index))
-		}
+		expectNotEmpty(tk, itr)
 
 		if tk.Lexeme == lexeme.LEXEME_TERMINATOR || tk.Lexeme == lexeme.LEXEME_EOF {
 			// Duplicate TERMINATORS should have been removed by this stage
@@ -91,6 +93,12 @@ func partitionBlock(itr *tkItr) []Statement {
 	}
 
 	return stats
+}
+
+func expectNotEmpty(tk lexeme.Token, itr *lexeme.TokenIterator) {
+	if tk == (lexeme.Token{}) {
+		panic(newErr(tk, `[Partitioner] Unexpected empty token at index %d`, itr.Index()))
+	}
 }
 
 // PrintAll pretty prints all statement in s.
