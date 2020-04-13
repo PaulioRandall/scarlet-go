@@ -8,6 +8,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/parser"
 
+	"github.com/PaulioRandall/scarlet-go/streams/articulator"
 	"github.com/PaulioRandall/scarlet-go/streams/evaluator"
 	"github.com/PaulioRandall/scarlet-go/streams/scanner"
 	"github.com/PaulioRandall/scarlet-go/streams/statement"
@@ -35,25 +36,27 @@ func main() {
 // run executes the input source code.
 func run(s string) {
 
-	var tokens []lexeme.Token
-	var stats []statement.Statement
-
-	tokens = scanner.ScanAll(s)
+	scannedTokens := scanner.ScanAll(s)
 	println("***After token scanning***\n")
-	token.PrintAll(tokens)
+	token.PrintAll(scannedTokens)
 
+	evaluatedTokens := evaluator.EvalAll(scannedTokens)
 	println("***After token evaluation***\n")
-	tokens = evaluator.EvalAll(tokens)
-	token.PrintAll(tokens)
+	token.PrintAll(evaluatedTokens)
 
+	stats := statement.PartitionAll(evaluatedTokens)
 	println("***After statement partitioning***\n")
-	stats = statement.PartitionAll(tokens)
 	statement.PrintAll(stats)
 
-	println("***After assignment partitioning***")
-	println("TODO\n")
+	arts := articulator.ArticulateAll(stats)
+	println("***After articulation***\n")
+	articulator.PrintAll(arts)
 
-	exe := parseTokens(tokens)
+	println("NEXT: Go back and remove StatementStream, mimic API in articulator package\n")
+	println("THEN: Parse assignment tokens\n")
+	println("THEN: Parse expression tokens\n")
+
+	exe := parseTokens(evaluatedTokens)
 
 	println(strings.ReplaceAll(exe.String(), "\t", "  "))
 
