@@ -9,90 +9,29 @@
 //
 // This package is responsible for scanning scripts only, evaluation is
 // performed by the streams/evaluator package.
-//
-// TODO: Error handling needs to be simplified and the logger renamed to
-// 			 something more meaningful.
 package scanner
 
 import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
-
+	"github.com/PaulioRandall/scarlet-go/streams/scanner/matching"
 	"github.com/PaulioRandall/scarlet-go/streams/symbol"
-	"github.com/PaulioRandall/scarlet-go/streams/token"
+)
+
+type Method string
+
+const (
+	DEFAULT         Method = `DEFAULT_SCANNER`
+	STRING_MATCHING Method = `STRING_MATCHING_SCANNER`
 )
 
 // ScanAll creates a scanner from s and reads all tokens from it into an array.
-func ScanAll(s string) []lexeme.Token {
-	sc := New(s)
-	return token.ToArray(sc)
-}
+func ScanAll(s string, m Method) []lexeme.Token {
 
-// Scanner is a TokenStream providing functionality for parsing written scripts
-// into a sequence of tokens. It provides the high level scanning code whilst
-// the low level has been embedded.
-type Scanner struct {
-	symbol.SymbolStream
-}
-
-// New creates a new token Scanner as a TokenStream.
-func New(s string) token.TokenStream {
-	return &Scanner{
-		symbol.NewSymbolStream(s),
-	}
-}
-
-// Read satisfies the TokenStream interface.
-func (sc *Scanner) Read() lexeme.Token {
-
-	if sc.Empty() {
-		// TokenStream.Read requires an EOF token be returned upon an empty stream.
-		return lexeme.Token{
-			Lexeme: lexeme.LEXEME_EOF,
-			Line:   sc.LineIndex(),
-			Col:    sc.ColIndex(),
-		}
+	switch m {
+	case DEFAULT, STRING_MATCHING:
+		ss := symbol.NewSymbolStream(s)
+		return matching.ReadAll(ss)
 	}
 
-	tk := sc.parseNextToken()
-
-	if tk == (lexeme.Token{}) {
-		panic(newErr(sc, 0, "Could not identify next token"))
-	}
-
-	return tk
-}
-
-// parseNextToken attempts to match one of the non-terminal patterns to the next
-// set of terminals in the script. If found, the terminals are removed and used
-// to create a token.
-func (sc *Scanner) parseNextToken() (_ lexeme.Token) {
-
-	matchers := nonTerminals()
-	size := len(matchers)
-
-	for i := 0; i < size; i++ {
-
-		nonTerminal := matchers[i]
-		n := nonTerminal.Matcher(symbol.SymbolStream(sc))
-
-		if n > 0 {
-			return sc.tokenize(n, nonTerminal.Lexeme)
-		}
-	}
-
-	return
-}
-
-// tokenize creates a new token from the next non-terminal. It reads off n
-// symbols from the embedded SymbolStream ready for scanning the token after.
-func (sc *Scanner) tokenize(n int, l lexeme.Lexeme) lexeme.Token {
-
-	tk := lexeme.Token{
-		Lexeme: l,
-		Line:   sc.LineIndex(),
-		Col:    sc.ColIndex(),
-	}
-
-	tk.Value = sc.SymbolStream.ReadNonTerminal(n)
-	return tk
+	panic(`Unknown scanning method '` + m + `'`)
 }

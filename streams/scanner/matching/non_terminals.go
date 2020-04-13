@@ -1,4 +1,4 @@
-package scanner
+package matching
 
 import (
 	"unicode"
@@ -8,14 +8,14 @@ import (
 	"github.com/PaulioRandall/scarlet-go/streams/symbol"
 )
 
-// Matcher implementations will return the number of terminals token, but only
-// if the token appears next in the SymbolStream else 0 is returned.
-type Matcher func(symbol.SymbolStream) int
+// matcher implementations will return the number of terminals in a token, but
+// only if the token appears next in the SymbolStream else 0 is returned.
+type matcher func(symbol.SymbolStream) int
 
 // nonTerminal represents a mapping between a lexeme and a Matcher function.
 type nonTerminal struct {
-	Lexeme  lexeme.Lexeme
-	Matcher Matcher
+	lexeme  lexeme.Lexeme
+	matcher matcher
 }
 
 // nonTerminals returns an array of all possible non-terminal symbols and their

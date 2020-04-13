@@ -1,23 +1,23 @@
-package scanner
+package matching
 
 import (
 	"testing"
 
 	. "github.com/PaulioRandall/scarlet-go/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/streams/token"
+	"github.com/PaulioRandall/scarlet-go/streams/symbol"
 
 	"github.com/stretchr/testify/require"
 )
 
-func doTest(t *testing.T, ts token.TokenStream, exp ...Token) {
+func doTest(t *testing.T, ss symbol.SymbolStream, exp ...Token) {
 
 	for i := 0; i < len(exp); i++ {
 
-		tk := ts.Read()
+		tk := Read(ss)
 
 		if tk == (Token{}) {
-			require.Equal(t, len(exp), i, "Expected scanner to return more tokens")
+			require.Equal(t, len(exp), i, "Expected scanning to return more tokens")
 			return
 		}
 
@@ -27,15 +27,17 @@ func doTest(t *testing.T, ts token.TokenStream, exp ...Token) {
 
 func TestScanner_Next_1(t *testing.T) {
 
-	sc := New("\r\n" +
-		" \t\r\v\f" + "// comment" + "\n" +
-		"123" + " " + "123.456" + "\r\n" +
-		"`abc`" + `"abc"` + "\n" +
-		"abc_xyz" + "\r\n" +
-		"F" + " " + "TRUE" + "\n" +
-		"@" + ":=" + "*" + "->" + ")" + "\r\n")
+	ss := symbol.NewSymbolStream(
+		"\r\n" +
+			" \t\r\v\f" + "// comment" + "\n" +
+			"123" + " " + "123.456" + "\r\n" +
+			"`abc`" + `"abc"` + "\n" +
+			"abc_xyz" + "\r\n" +
+			"F" + " " + "TRUE" + "\n" +
+			"@" + ":=" + "*" + "->" + ")" + "\r\n",
+	)
 
-	doTest(t, sc,
+	doTest(t, ss,
 		// Line 0
 		Token{LEXEME_NEWLINE, "\r\n", 0, 0},
 		// Line 1
@@ -75,11 +77,12 @@ func TestScanner_Next_1(t *testing.T) {
 		Col:    0,
 	}
 
-	require.Equal(t, expEOF, sc.Read())
+	require.Equal(t, expEOF, Read(ss))
 }
 
 func TestScanner_Next_2(t *testing.T) {
 	require.Panics(t, func() {
-		New("123.a").Read()
+		ss := symbol.NewSymbolStream("123.a")
+		Read(ss)
 	})
 }

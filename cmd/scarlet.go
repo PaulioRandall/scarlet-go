@@ -36,7 +36,7 @@ func main() {
 // run executes the input source code.
 func run(s string) {
 
-	scannedTokens := scanner.ScanAll(s)
+	scannedTokens := scanner.ScanAll(s, scanner.DEFAULT)
 	println("***After token scanning***\n")
 	token.PrintAll(scannedTokens)
 
@@ -52,6 +52,7 @@ func run(s string) {
 	println("***After articulation***\n")
 	articulator.PrintAll(arts)
 
+	println("TODO: Parse assignment tokens\n")
 	println("THEN: Parse assignment tokens\n")
 	println("THEN: Parse expression tokens\n")
 
