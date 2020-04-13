@@ -1,7 +1,5 @@
 // alpha package was created to separate the concern of grouping tokens into
-// statements from the parsing of those statements. The API uses a TokenStream
-// create a SnippetStream which is uses the production rules to produce
-// Snippets; a group of tokens and sub-snippets.
+// statements from the parsing of those statements.
 //
 // Key decisions: N/A
 //
@@ -15,31 +13,31 @@ import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
-// statement represents an unparsed statement, perhaps containing
+// AlphaStatement represents an unparsed statement, perhaps containing
 // sub-statements.
 //
 // E.g.
 // Consider `x := 1 + 1`:
 // - the whole thing is a statement
 // - `x := 1 + 1` will all become tokens in the statement
-// - `1 + 1` is an expression which the StatementStream nor Statement know
-// about. Now consider `f := F(a, b -> c) c := a + b`:
+// - `1 + 1` is an expression which the AlphaStatement knows nothing about.
+// Now consider `f := F(a, b -> c) c := a + b`:
 // - the whole thing is a statement
 // - `f := F(a, b -> c)` will all become the statement tokens
 // - `c := a + b` will become a sub-statement
-type Statement struct {
+type AlphaStatement struct {
 	Tokens []lexeme.Token
-	Stats  []Statement
+	Stats  []AlphaStatement
 }
 
-func PartitionAll(tks []lexeme.Token) []Statement {
+func PartitionAll(tks []lexeme.Token) []AlphaStatement {
 	itr := lexeme.NewIterator(tks)
 	return partitionStatements(itr)
 }
 
-func partitionStatements(itr *lexeme.TokenIterator) []Statement {
+func partitionStatements(itr *lexeme.TokenIterator) []AlphaStatement {
 
-	var stats []Statement
+	var stats []AlphaStatement
 
 	for tk := itr.Peek(); tk.Lexeme != lexeme.LEXEME_EOF; tk = itr.Peek() {
 
@@ -56,10 +54,10 @@ func partitionStatements(itr *lexeme.TokenIterator) []Statement {
 	return stats
 }
 
-func partitionStatement(itr *lexeme.TokenIterator) Statement {
+func partitionStatement(itr *lexeme.TokenIterator) AlphaStatement {
 
 	const TERMINATOR = lexeme.LEXEME_TERMINATOR
-	var stat Statement
+	var stat AlphaStatement
 
 	for tk := itr.Next(); tk.Lexeme != TERMINATOR; tk = itr.Next() {
 
@@ -75,9 +73,9 @@ func partitionStatement(itr *lexeme.TokenIterator) Statement {
 	return stat
 }
 
-func partitionBlock(itr *lexeme.TokenIterator) []Statement {
+func partitionBlock(itr *lexeme.TokenIterator) []AlphaStatement {
 
-	var stats []Statement
+	var stats []AlphaStatement
 	var tk lexeme.Token
 
 	for tk = itr.Next(); tk.Lexeme != lexeme.LEXEME_END; tk = itr.Next() {
@@ -103,7 +101,7 @@ func expectNotEmpty(tk lexeme.Token, itr *lexeme.TokenIterator) {
 }
 
 // PrintAll pretty prints all statement in s.
-func PrintAll(s []Statement) {
+func PrintAll(s []AlphaStatement) {
 	printStatements(s, 0)
 	println(lexeme.LEXEME_EOF)
 	println()
@@ -111,14 +109,14 @@ func PrintAll(s []Statement) {
 
 // printStatements prints all statements in stats indenting all output to the
 // specified level.
-func printStatements(stats []Statement, indent int) {
+func printStatements(stats []AlphaStatement, indent int) {
 	for _, s := range stats {
 		printStatement(s, indent)
 	}
 }
 
 // printStatement prints s indenting all output to the specified level.
-func printStatement(s Statement, indent int) {
+func printStatement(s AlphaStatement, indent int) {
 
 	print(strings.Repeat("  ", indent))
 

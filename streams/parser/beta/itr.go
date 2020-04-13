@@ -6,15 +6,15 @@ import (
 
 // statItr represents an iterator of Statements.
 type statItr struct {
-	stats []alpha.Statement
+	stats []alpha.AlphaStatement
 	size  int
 	index int
 }
 
-func (itr *statItr) next() (alpha.Statement, bool) {
+func (itr *statItr) next() (alpha.AlphaStatement, bool) {
 
 	if itr.index >= itr.size {
-		return alpha.Statement{}, false
+		return alpha.AlphaStatement{}, false
 	}
 
 	s := itr.stats[itr.index]

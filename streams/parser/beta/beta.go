@@ -19,9 +19,9 @@ import (
 	"github.com/PaulioRandall/scarlet-go/streams/parser/alpha"
 )
 
-// Articulate represents an unparsed statement with separate members for storing
-// assignment token (Assign), it it has one, the assignment targets (IDs), if
-// it has any, and any expressions (Exprs).
+// BetaStatement represents an unparsed statement with separate members for
+// storing assignment token (Assign), it it has one, the assignment targets
+// (IDs), if it has any, and any expressions (Exprs).
 //
 // E.g.
 // Consider `x := 1 + 1`:
@@ -35,22 +35,22 @@ import (
 // - `:=` will become the assignment token (Assign)
 // - `a, b` will become the identifier tokens (IDs)
 // - `1 + 2, 4 - 3` will all become the expression tokens (Exprs)
-type Articulate struct {
+type BetaStatement struct {
 	Assign lexeme.Token
 	IDs    []lexeme.Token
 	Exprs  []lexeme.Token
-	Arts   []Articulate
+	Arts   []BetaStatement
 }
 
 // ArticulateAll consumes all statements from stats, runs them through a
 // ArticulateStream, then returns the resultant articulates as an array.
-func ArticulateAll(stats []alpha.Statement) []Articulate {
+func ArticulateAll(stats []alpha.AlphaStatement) []BetaStatement {
 	return articulateStatments(stats)
 }
 
-func articulateStatments(stats []alpha.Statement) []Articulate {
+func articulateStatments(stats []alpha.AlphaStatement) []BetaStatement {
 
-	var arts []Articulate
+	var arts []BetaStatement
 	itr := statItr{stats, len(stats), 0}
 
 	for stat, ok := itr.next(); ok; stat, ok = itr.next() {
@@ -61,9 +61,9 @@ func articulateStatments(stats []alpha.Statement) []Articulate {
 	return arts
 }
 
-func articulateStatment(stat alpha.Statement) Articulate {
+func articulateStatment(stat alpha.AlphaStatement) BetaStatement {
 
-	var art Articulate
+	var art BetaStatement
 	tks := stat.Tokens
 	i := indexOfAssignment(tks)
 
@@ -96,23 +96,23 @@ func indexOfAssignment(tks []lexeme.Token) int {
 	return -1
 }
 
-// PrintAll pretty prints all Articulates in arts.
-func PrintAll(arts []Articulate) {
-	printArticulates(arts, 0)
+// PrintAll pretty prints all BetaStatement in arts.
+func PrintAll(arts []BetaStatement) {
+	printBetaStatements(arts, 0)
 	println(lexeme.LEXEME_EOF)
 	println()
 }
 
-// printArticulates prints all Articulates in arts indenting all output to the
+// printBetaStatement prints all BetaStatement in arts indenting all output to the
 // specified level.
-func printArticulates(arts []Articulate, indent int) {
+func printBetaStatements(arts []BetaStatement, indent int) {
 	for _, a := range arts {
-		printArticulate(a, indent)
+		printBetaStatement(a, indent)
 	}
 }
 
-// printArticulate prints a indenting all output to the specified level.
-func printArticulate(a Articulate, indent int) {
+// printBetaStatement prints a indenting all output to the specified level.
+func printBetaStatement(a BetaStatement, indent int) {
 
 	print(strings.Repeat("  ", indent))
 
@@ -124,7 +124,7 @@ func printArticulate(a Articulate, indent int) {
 	printTokens(a.Exprs)
 
 	println()
-	printArticulates(a.Arts, indent+1)
+	printBetaStatements(a.Arts, indent+1)
 }
 
 // printTokens prints a slice of tokens.
