@@ -78,8 +78,9 @@ func partitionStatement(itr *lexeme.TokenIterator) Statement {
 func partitionBlock(itr *lexeme.TokenIterator) []Statement {
 
 	var stats []Statement
+	var tk lexeme.Token
 
-	for tk := itr.Next(); tk.Lexeme != lexeme.LEXEME_END; tk = itr.Next() {
+	for tk = itr.Next(); tk.Lexeme != lexeme.LEXEME_END; tk = itr.Next() {
 
 		expectNotEmpty(tk, itr)
 

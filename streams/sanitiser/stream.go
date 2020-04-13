@@ -49,7 +49,7 @@ func isRedundantLexeme(l, prev lexeme.Lexeme) bool {
 		return true
 	}
 
-	if l != lexeme.LEXEME_NEWLINE {
+	if l != lexeme.LEXEME_NEWLINE && l != lexeme.LEXEME_TERMINATOR {
 		return false
 	}
 
