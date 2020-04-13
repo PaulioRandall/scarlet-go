@@ -1,4 +1,4 @@
-package articulator
+package beta
 
 import (
 	"github.com/PaulioRandall/scarlet-go/streams/parser/alpha"

@@ -1,4 +1,4 @@
-// articulator package was created to split statements into separate assignment
+// beta package was created to split statements into separate assignment
 // and expression parts. The API uses a StatementStream to create an
 // ArticulateStream which uses the production rules to produce Articulates; a
 // statement with an identified type (Kind) with separate stores for assignment
@@ -9,7 +9,7 @@
 // This package does not identify expressions or parse the statement parts. It
 // just identifies splits the assignment targets from their sources for easier
 // processing down the line.
-package articulator
+package beta
 
 import (
 	"strings"

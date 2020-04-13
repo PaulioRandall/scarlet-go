@@ -9,7 +9,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/parser"
 
 	"github.com/PaulioRandall/scarlet-go/streams/parser/alpha"
-	"github.com/PaulioRandall/scarlet-go/streams/parser/articulator"
+	"github.com/PaulioRandall/scarlet-go/streams/parser/beta"
 	"github.com/PaulioRandall/scarlet-go/streams/sanitiser"
 	"github.com/PaulioRandall/scarlet-go/streams/scanner"
 )
@@ -48,9 +48,9 @@ func run(s string) {
 	println("***After statement partitioning***\n")
 	alpha.PrintAll(stats)
 
-	arts := articulator.ArticulateAll(stats)
+	arts := beta.ArticulateAll(stats)
 	println("***After articulation***\n")
-	articulator.PrintAll(arts)
+	beta.PrintAll(arts)
 
 	println("TODO: Parse assignment tokens\n")
 	println("THEN: Parse assignment tokens\n")
