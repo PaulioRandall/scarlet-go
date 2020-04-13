@@ -27,7 +27,7 @@ func doTest(t *testing.T, ss symbol.SymbolStream, exp ...Token) {
 
 func TestScanner_Next_1(t *testing.T) {
 
-	ss := symbol.NewSymbolStream(
+	ss := symbol.New(
 		"\r\n" +
 			" \t\r\v\f" + "// comment" + "\n" +
 			"123" + " " + "123.456" + "\r\n" +
@@ -82,7 +82,7 @@ func TestScanner_Next_1(t *testing.T) {
 
 func TestScanner_Next_2(t *testing.T) {
 	require.Panics(t, func() {
-		ss := symbol.NewSymbolStream("123.a")
+		ss := symbol.New("123.a")
 		Read(ss)
 	})
 }

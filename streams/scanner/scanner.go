@@ -21,16 +21,16 @@ import (
 type Method string
 
 const (
-	DEFAULT         Method = `DEFAULT_SCANNER`
-	STRING_MATCHING Method = `STRING_MATCHING_SCANNER`
+	DEFAULT          Method = `DEFAULT_SCANNER`
+	PATTERN_MATCHING Method = `PATTERN_MATCHING_SCANNER`
 )
 
 // ScanAll creates a scanner from s and reads all tokens from it into an array.
 func ScanAll(s string, m Method) []lexeme.Token {
 
 	switch m {
-	case DEFAULT, STRING_MATCHING:
-		ss := symbol.NewSymbolStream(s)
+	case DEFAULT, PATTERN_MATCHING:
+		ss := symbol.New(s)
 		return matching.ReadAll(ss)
 	}
 
