@@ -10,7 +10,7 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/streams/evaluator"
 	"github.com/PaulioRandall/scarlet-go/streams/scanner"
-	"github.com/PaulioRandall/scarlet-go/streams/snippet"
+	"github.com/PaulioRandall/scarlet-go/streams/statement"
 	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
 
@@ -36,7 +36,7 @@ func main() {
 func run(s string) {
 
 	var tokens []lexeme.Token
-	var snippets []snippet.Snippet
+	var stats []statement.Statement
 
 	tokens = scanner.ScanAll(s)
 	println("***After token scanning***\n")
@@ -46,11 +46,11 @@ func run(s string) {
 	tokens = evaluator.EvalAll(tokens)
 	token.PrintAll(tokens)
 
-	println("***After statement snipping***\n")
-	snippets = snippet.GroupAll(tokens)
-	snippet.PrintAll(snippets)
+	println("***After statement partitioning***\n")
+	stats = statement.PartitionAll(tokens)
+	statement.PrintAll(stats)
 
-	println("***After assignment snipping***")
+	println("***After assignment partitioning***")
 	println("TODO\n")
 
 	exe := parseTokens(tokens)

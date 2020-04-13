@@ -1,4 +1,4 @@
-package snippet
+package statement
 
 import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
@@ -6,26 +6,26 @@ import (
 	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
 
-// impl is the one and only implementation of the SnippetStream interface.
+// impl is the one and only implementation of the StatementStream interface.
 type impl struct {
 	ts  token.TokenStream // Do not access directly, use readToken & peekToken
 	buf *lexeme.Token
 }
 
-// Read satisfies the SnippetStream interface.
-func (uss *impl) Read() Snippet {
+// Read satisfies the StatementStream interface.
+func (uss *impl) Read() Statement {
 
 	lex := uss.peekToken().Lexeme
 
 	if lex == lexeme.LEXEME_EOF {
-		return Snippet{}
+		return Statement{}
 	}
 
 	if lex == lexeme.LEXEME_TERMINATOR {
 		return uss.Read() // Consecutive terminators can be ignored
 	}
 
-	return uss.readSnippet()
+	return uss.readStatement()
 }
 
 // readToken reads a token from the underlying TokenStream. The TokenStream
@@ -52,28 +52,28 @@ func (uss *impl) peekToken() lexeme.Token {
 	return tk
 }
 
-// readSnippet reads all tokens representing the next statement from the
-// TokenStream and returns a new snippet.
-func (uss *impl) readSnippet() Snippet {
+// readStatement reads all tokens representing the next statement from the
+// TokenStream and returns a new Statement.
+func (uss *impl) readStatement() Statement {
 
 	const TERMINATOR = lexeme.LEXEME_TERMINATOR
-	var snip Snippet
+	var stat Statement
 
 	for tk := uss.readToken(); tk.Lexeme != TERMINATOR; tk = uss.readToken() {
-		snip.Tokens = append(snip.Tokens, tk)
+		stat.Tokens = append(stat.Tokens, tk)
 
 		if tk.Lexeme == lexeme.LEXEME_DO {
-			snip.Snippets = uss.readBlock()
+			stat.Stats = uss.readBlock()
 		}
 	}
 
-	return snip
+	return stat
 }
 
 // readBlock reads all statements in the current block into an array.
-func (uss *impl) readBlock() []Snippet {
+func (uss *impl) readBlock() []Statement {
 
-	var snips []Snippet
+	var subs []Statement
 
 	for tk := uss.peekToken(); tk.Lexeme != lexeme.LEXEME_END; tk = uss.peekToken() {
 
@@ -81,9 +81,9 @@ func (uss *impl) readBlock() []Snippet {
 			panic(newErr(tk, `Expected a statement or 'END', not '%s'`, tk.Value))
 		}
 
-		sub := uss.readSnippet()
-		snips = append(snips, sub)
+		sub := uss.readStatement()
+		subs = append(subs, sub)
 	}
 
-	return snips
+	return subs
 }

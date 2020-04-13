@@ -1,4 +1,4 @@
-package snippet
+package statement
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
-// snippetErr represents an error with syntax.
-type snippetErr struct {
+// statErr represents an error while partitioning statements.
+type statErr struct {
 	msg       string
 	cause     error
 	lineIndex int
@@ -16,9 +16,9 @@ type snippetErr struct {
 	length    int
 }
 
-// newErr returns a new snippet error.
+// newErr returns a new statement error.
 func newErr(tk lexeme.Token, msg string, args ...interface{}) err.Err {
-	return &snippetErr{
+	return &statErr{
 		msg:       fmt.Sprintf(msg, args...),
 		lineIndex: tk.Line,
 		colIndex:  tk.Col,
@@ -26,26 +26,26 @@ func newErr(tk lexeme.Token, msg string, args ...interface{}) err.Err {
 }
 
 // Error satisfies the error interface.
-func (se snippetErr) Error() string {
+func (se statErr) Error() string {
 	return se.msg
 }
 
 // Cause satisfies the Err interface.
-func (se snippetErr) Cause() error {
+func (se statErr) Cause() error {
 	return se.cause
 }
 
 // LineIndex satisfies the Err interface.
-func (se snippetErr) LineIndex() int {
+func (se statErr) LineIndex() int {
 	return se.lineIndex
 }
 
 // ColIndex satisfies the Err interface.
-func (se snippetErr) ColIndex() int {
+func (se statErr) ColIndex() int {
 	return se.colIndex
 }
 
 // Length satisfies the Err interface.
-func (se snippetErr) Length() int {
+func (se statErr) Length() int {
 	return se.length
 }
