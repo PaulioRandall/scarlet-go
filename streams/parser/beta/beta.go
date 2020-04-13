@@ -39,45 +39,45 @@ type BetaStatement struct {
 	Assign lexeme.Token
 	IDs    []lexeme.Token
 	Exprs  []lexeme.Token
-	Arts   []BetaStatement
+	Subs   []BetaStatement
 }
 
-// ArticulateAll consumes all statements from stats, runs them through a
+// ArticulateAll consumes all statements from as, runs them through a
 // ArticulateStream, then returns the resultant articulates as an array.
-func ArticulateAll(stats []alpha.AlphaStatement) []BetaStatement {
-	return articulateStatments(stats)
+func ArticulateAll(as []alpha.AlphaStatement) []BetaStatement {
+	return articulateStatments(as)
 }
 
-func articulateStatments(stats []alpha.AlphaStatement) []BetaStatement {
+func articulateStatments(as []alpha.AlphaStatement) []BetaStatement {
 
-	var arts []BetaStatement
-	itr := statItr{stats, len(stats), 0}
+	var bs []BetaStatement
+	itr := statItr{as, len(as), 0}
 
-	for stat, ok := itr.next(); ok; stat, ok = itr.next() {
-		a := articulateStatment(stat)
-		arts = append(arts, a)
+	for a, ok := itr.next(); ok; a, ok = itr.next() {
+		b := articulateStatment(a)
+		bs = append(bs, b)
 	}
 
-	return arts
+	return bs
 }
 
-func articulateStatment(stat alpha.AlphaStatement) BetaStatement {
+func articulateStatment(a alpha.AlphaStatement) BetaStatement {
 
-	var art BetaStatement
-	tks := stat.Tokens
+	var b BetaStatement
+	tks := a.Tokens
 	i := indexOfAssignment(tks)
 
 	if i != -1 {
-		art.Assign = tks[i]
-		art.IDs = tks[:i]
-		art.Exprs = tks[i+1:]
+		b.Assign = tks[i]
+		b.IDs = tks[:i]
+		b.Exprs = tks[i+1:]
 	} else {
-		art.Exprs = tks
+		b.Exprs = tks
 	}
 
-	art.Arts = articulateStatments(stat.Stats)
+	b.Subs = articulateStatments(a.Subs)
 
-	return art
+	return b
 }
 
 func indexOfAssignment(tks []lexeme.Token) int {
@@ -96,35 +96,35 @@ func indexOfAssignment(tks []lexeme.Token) int {
 	return -1
 }
 
-// PrintAll pretty prints all BetaStatement in arts.
-func PrintAll(arts []BetaStatement) {
-	printBetaStatements(arts, 0)
+// PrintAll pretty prints all BetaStatement in bs.
+func PrintAll(bs []BetaStatement) {
+	printBetaStatements(bs, 0)
 	println(lexeme.LEXEME_EOF)
 	println()
 }
 
-// printBetaStatement prints all BetaStatement in arts indenting all output to the
+// printBetaStatement prints all BetaStatement in bs indenting all output to the
 // specified level.
-func printBetaStatements(arts []BetaStatement, indent int) {
-	for _, a := range arts {
-		printBetaStatement(a, indent)
+func printBetaStatements(bs []BetaStatement, indent int) {
+	for _, b := range bs {
+		printBetaStatement(b, indent)
 	}
 }
 
-// printBetaStatement prints a indenting all output to the specified level.
-func printBetaStatement(a BetaStatement, indent int) {
+// printBetaStatement prints b indenting all output to the specified level.
+func printBetaStatement(b BetaStatement, indent int) {
 
 	print(strings.Repeat("  ", indent))
 
-	if a.Assign != (lexeme.Token{}) {
-		printTokens(a.IDs)
-		print(" " + a.Assign.Lexeme + " ")
+	if b.Assign != (lexeme.Token{}) {
+		printTokens(b.IDs)
+		print(" " + b.Assign.Lexeme + " ")
 	}
 
-	printTokens(a.Exprs)
+	printTokens(b.Exprs)
 
 	println()
-	printBetaStatements(a.Arts, indent+1)
+	printBetaStatements(b.Subs, indent+1)
 }
 
 // printTokens prints a slice of tokens.

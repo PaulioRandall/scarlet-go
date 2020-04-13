@@ -44,13 +44,13 @@ func run(s string) {
 	println("***After token sanitisation***\n")
 	lexeme.PrintTokens(sanitisedTokens)
 
-	stats := alpha.PartitionAll(sanitisedTokens)
-	println("***After statement partitioning***\n")
-	alpha.PrintAll(stats)
+	alphaStats := alpha.PartitionAll(sanitisedTokens)
+	println("***After alpha statement partitioning***\n")
+	alpha.PrintAll(alphaStats)
 
-	arts := beta.ArticulateAll(stats)
-	println("***After articulation***\n")
-	beta.PrintAll(arts)
+	betaStats := beta.ArticulateAll(alphaStats)
+	println("***After beta statement partitioning***\n")
+	beta.PrintAll(betaStats)
 
 	println("TODO: Parse assignment tokens\n")
 	println("THEN: Parse assignment tokens\n")

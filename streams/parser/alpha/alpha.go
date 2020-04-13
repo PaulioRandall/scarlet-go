@@ -27,7 +27,7 @@ import (
 // - `c := a + b` will become a sub-statement
 type AlphaStatement struct {
 	Tokens []lexeme.Token
-	Stats  []AlphaStatement
+	Subs   []AlphaStatement
 }
 
 func PartitionAll(tks []lexeme.Token) []AlphaStatement {
@@ -37,7 +37,7 @@ func PartitionAll(tks []lexeme.Token) []AlphaStatement {
 
 func partitionStatements(itr *lexeme.TokenIterator) []AlphaStatement {
 
-	var stats []AlphaStatement
+	var as []AlphaStatement
 
 	for tk := itr.Peek(); tk.Lexeme != lexeme.LEXEME_EOF; tk = itr.Peek() {
 
@@ -48,34 +48,34 @@ func partitionStatements(itr *lexeme.TokenIterator) []AlphaStatement {
 
 		expectNotEmpty(tk, itr)
 		s := partitionStatement(itr)
-		stats = append(stats, s)
+		as = append(as, s)
 	}
 
-	return stats
+	return as
 }
 
 func partitionStatement(itr *lexeme.TokenIterator) AlphaStatement {
 
 	const TERMINATOR = lexeme.LEXEME_TERMINATOR
-	var stat AlphaStatement
+	var a AlphaStatement
 
 	for tk := itr.Next(); tk.Lexeme != TERMINATOR; tk = itr.Next() {
 
 		expectNotEmpty(tk, itr)
 
-		stat.Tokens = append(stat.Tokens, tk)
+		a.Tokens = append(a.Tokens, tk)
 
 		if tk.Lexeme == lexeme.LEXEME_DO {
-			stat.Stats = partitionBlock(itr)
+			a.Subs = partitionBlock(itr)
 		}
 	}
 
-	return stat
+	return a
 }
 
 func partitionBlock(itr *lexeme.TokenIterator) []AlphaStatement {
 
-	var stats []AlphaStatement
+	var as []AlphaStatement
 	var tk lexeme.Token
 
 	for tk = itr.Next(); tk.Lexeme != lexeme.LEXEME_END; tk = itr.Next() {
@@ -87,11 +87,11 @@ func partitionBlock(itr *lexeme.TokenIterator) []AlphaStatement {
 			panic(newErr(tk, `Expected a statement or 'END', not '%s'`, tk.Value))
 		}
 
-		s := partitionStatement(itr)
-		stats = append(stats, s)
+		a := partitionStatement(itr)
+		as = append(as, a)
 	}
 
-	return stats
+	return as
 }
 
 func expectNotEmpty(tk lexeme.Token, itr *lexeme.TokenIterator) {
@@ -100,27 +100,27 @@ func expectNotEmpty(tk lexeme.Token, itr *lexeme.TokenIterator) {
 	}
 }
 
-// PrintAll pretty prints all statement in s.
-func PrintAll(s []AlphaStatement) {
-	printStatements(s, 0)
+// PrintAll pretty prints all statement in as.
+func PrintAll(as []AlphaStatement) {
+	printStatements(as, 0)
 	println(lexeme.LEXEME_EOF)
 	println()
 }
 
-// printStatements prints all statements in stats indenting all output to the
+// printStatements prints all statements in as indenting all output to the
 // specified level.
-func printStatements(stats []AlphaStatement, indent int) {
-	for _, s := range stats {
-		printStatement(s, indent)
+func printStatements(as []AlphaStatement, indent int) {
+	for _, a := range as {
+		printStatement(a, indent)
 	}
 }
 
-// printStatement prints s indenting all output to the specified level.
-func printStatement(s AlphaStatement, indent int) {
+// printStatement prints a indenting all output to the specified level.
+func printStatement(a AlphaStatement, indent int) {
 
 	print(strings.Repeat("  ", indent))
 
-	for i, tk := range s.Tokens {
+	for i, tk := range a.Tokens {
 		if i != 0 {
 			print(" ")
 		}
@@ -129,5 +129,5 @@ func printStatement(s AlphaStatement, indent int) {
 	}
 
 	println()
-	printStatements(s.Stats, indent+1)
+	printStatements(a.Subs, indent+1)
 }
