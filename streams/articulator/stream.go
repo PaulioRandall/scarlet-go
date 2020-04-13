@@ -16,7 +16,7 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/streams/statement"
+	"github.com/PaulioRandall/scarlet-go/streams/partitioner"
 )
 
 // Articulate represents an unparsed statement with separate members for storing
@@ -44,15 +44,15 @@ type Articulate struct {
 
 // statItr represents an iterator of Statements.
 type statItr struct {
-	stats []statement.Statement
+	stats []partitioner.Statement
 	size  int
 	index int
 }
 
-func (itr *statItr) next() (statement.Statement, bool) {
+func (itr *statItr) next() (partitioner.Statement, bool) {
 
 	if itr.index >= itr.size {
-		return statement.Statement{}, false
+		return partitioner.Statement{}, false
 	}
 
 	s := itr.stats[itr.index]
@@ -62,11 +62,11 @@ func (itr *statItr) next() (statement.Statement, bool) {
 
 // ArticulateAll consumes all statements from stats, runs them through a
 // ArticulateStream, then returns the resultant articulates as an array.
-func ArticulateAll(stats []statement.Statement) []Articulate {
+func ArticulateAll(stats []partitioner.Statement) []Articulate {
 	return articulateStatments(stats)
 }
 
-func articulateStatments(stats []statement.Statement) []Articulate {
+func articulateStatments(stats []partitioner.Statement) []Articulate {
 
 	var arts []Articulate
 	itr := statItr{stats, len(stats), 0}
@@ -79,7 +79,7 @@ func articulateStatments(stats []statement.Statement) []Articulate {
 	return arts
 }
 
-func articulateStatment(stat statement.Statement) Articulate {
+func articulateStatment(stat partitioner.Statement) Articulate {
 
 	var art Articulate
 	tks := stat.Tokens

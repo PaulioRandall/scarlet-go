@@ -10,8 +10,8 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/streams/articulator"
 	"github.com/PaulioRandall/scarlet-go/streams/evaluator"
+	"github.com/PaulioRandall/scarlet-go/streams/partitioner"
 	"github.com/PaulioRandall/scarlet-go/streams/scanner"
-	"github.com/PaulioRandall/scarlet-go/streams/statement"
 	"github.com/PaulioRandall/scarlet-go/streams/token"
 )
 
@@ -44,15 +44,14 @@ func run(s string) {
 	println("***After token evaluation***\n")
 	token.PrintAll(evaluatedTokens)
 
-	stats := statement.PartitionAll(evaluatedTokens)
+	stats := partitioner.PartitionAll(evaluatedTokens)
 	println("***After statement partitioning***\n")
-	statement.PrintAll(stats)
+	partitioner.PrintAll(stats)
 
 	arts := articulator.ArticulateAll(stats)
 	println("***After articulation***\n")
 	articulator.PrintAll(arts)
 
-	println("NEXT: Go back and remove StatementStream, mimic API in articulator package\n")
 	println("THEN: Parse assignment tokens\n")
 	println("THEN: Parse expression tokens\n")
 
