@@ -1,4 +1,4 @@
-// symbol package was created to separate the concern of managing access to
+// terminal package was created to separate the concern of managing access to
 // terminal symbols within a stream with the concern of scanning tokens from a
 // script; this package manages access to the terminal symbols. Users of the
 // SymbolStream interface are able to inspect and read off sequences of terminal
@@ -28,7 +28,7 @@
 // This package does not hold any knowledge about the text being scanned except
 // that it may be written over multiple lines. For simplicity and lack of
 // requirement, no back tracking functionality is provided.
-package symbol
+package terminal
 
 // TerminalStream provides access to an ordered stream of terminal symbols
 // (runes) representing a script. The stream also monitors the current cursor

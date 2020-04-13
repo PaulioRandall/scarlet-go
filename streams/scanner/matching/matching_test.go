@@ -5,12 +5,12 @@ import (
 
 	. "github.com/PaulioRandall/scarlet-go/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/streams/symbol"
+	"github.com/PaulioRandall/scarlet-go/streams/terminal"
 
 	"github.com/stretchr/testify/require"
 )
 
-func doTest(t *testing.T, ts *symbol.TerminalStream, exp ...Token) {
+func doTest(t *testing.T, ts *terminal.TerminalStream, exp ...Token) {
 
 	for i := 0; i < len(exp); i++ {
 
@@ -27,7 +27,7 @@ func doTest(t *testing.T, ts *symbol.TerminalStream, exp ...Token) {
 
 func TestScanner_Next_1(t *testing.T) {
 
-	ts := symbol.New(
+	ts := terminal.New(
 		"\r\n" +
 			" \t\r\v\f" + "// comment" + "\n" +
 			"123" + " " + "123.456" + "\r\n" +
@@ -82,7 +82,7 @@ func TestScanner_Next_1(t *testing.T) {
 
 func TestScanner_Next_2(t *testing.T) {
 	require.Panics(t, func() {
-		ts := symbol.New("123.a")
+		ts := terminal.New("123.a")
 		Read(ts)
 	})
 }
