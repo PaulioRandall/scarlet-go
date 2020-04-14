@@ -95,8 +95,8 @@ func valueOf(tk lexeme.Token) Value {
 	case lexeme.LEXEME_TEMPLATE:
 		return Template(tk.Value)
 	}
-	//panic(newTkErr(tk, "An UNDEFINED token may not be converted to a Value"))
-	panic(string("TODO: Create Err `Invalid value type " + tk.Lexeme + "`"))
+
+	panic(err("parseFloat", tk, "Invalid value type (%s)", tk.String()))
 }
 
 // parseInt parses an INT token into an Int value.
@@ -104,8 +104,7 @@ func parseInt(tk lexeme.Token) Int {
 	i, e := strconv.ParseInt(tk.Value, 10, 64)
 
 	if e != nil {
-		//panic(newTkError(e, tk, "SANITY CHECK! Could not parse integer token"))
-		panic(string("TODO: Create Err `Could not parse integer`"))
+		panic(err("parseInt", tk, "Could not parse integer"))
 	}
 
 	return Int(i)
@@ -116,8 +115,7 @@ func parseFloat(tk lexeme.Token) Float {
 	f, e := strconv.ParseFloat(tk.Value, 64)
 
 	if e != nil {
-		//panic(newTkError(e, tk, "SANITY CHECK! Could not parse integer token"))
-		panic(string("TODO: Create Err `Could not parse float`"))
+		panic(err("parseFloat", tk, "Could not parse float"))
 	}
 
 	return Float(f)

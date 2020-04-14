@@ -1,8 +1,6 @@
 package runtime
 
 import (
-	"github.com/PaulioRandall/scarlet-go/lexeme"
-
 	"github.com/PaulioRandall/scarlet-go/streams/parser/recursive"
 )
 
@@ -23,10 +21,18 @@ func ExeStatement(ctx *Context, stat recursive.Statement) {
 	values := EvalExpressions(ctx, stat.Exprs)
 
 	if stat.IDs != nil {
+
 		if len(stat.IDs) > len(values) {
-			runtimeError(stat.Assign, "Not enough expression results to populate variables")
+			panic(err("ExeStatement", stat.Assign,
+				"Missing expression values to populate variables... have %d, want %d",
+				len(stat.IDs), len(values),
+			))
+
 		} else if len(stat.IDs) < len(values) {
-			runtimeError(stat.Assign, "Not enough variables to contain expression results")
+			panic(err("ExeStatement", stat.Assign,
+				"Too many expression values to populate variables... have %d, want %d",
+				len(stat.IDs), len(values),
+			))
 		}
 	}
 
@@ -53,10 +59,11 @@ func EvalExpression(ctx *Context, expr recursive.Expression) Value {
 		return valueOf(v.Source)
 	}
 
-	runtimeError(expr.Token(), `Unknown expression type`)
+	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
 	return nil
 }
 
+/*
 func runtimeError(tk lexeme.Token, msg string) {
 	if tk == (lexeme.Token{}) {
 		panic("[RUNTIME] " + msg)
@@ -64,3 +71,4 @@ func runtimeError(tk lexeme.Token, msg string) {
 		panic("[RUNTIME] (" + tk.String() + ") " + msg)
 	}
 }
+*/
