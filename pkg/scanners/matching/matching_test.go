@@ -5,16 +5,14 @@ import (
 
 	. "github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/terminal"
-
 	"github.com/stretchr/testify/require"
 )
 
-func doTest(t *testing.T, ts *terminal.TerminalStream, exp ...Token) {
+func doTest(t *testing.T, ss *symbolStream, exp ...Token) {
 
 	for i := 0; i < len(exp); i++ {
 
-		tk := Read(ts)
+		tk := read(ss)
 
 		if tk == (Token{}) {
 			require.Equal(t, len(exp), i, "Expected scanning to return more tokens")
@@ -27,17 +25,19 @@ func doTest(t *testing.T, ts *terminal.TerminalStream, exp ...Token) {
 
 func TestScanner_Next_1(t *testing.T) {
 
-	ts := terminal.New(
-		"\r\n" +
-			" \t\r\v\f" + "// comment" + "\n" +
-			"123" + " " + "123.456" + "\r\n" +
-			"`abc`" + `"abc"` + "\n" +
-			"abc_xyz" + "\r\n" +
-			"F" + " " + "TRUE" + "\n" +
-			"@" + ":=" + "*" + "->" + ")" + "\r\n",
-	)
+	s := "\r\n" +
+		" \t\r\v\f" + "// comment" + "\n" +
+		"123" + " " + "123.456" + "\r\n" +
+		"`abc`" + `"abc"` + "\n" +
+		"abc_xyz" + "\r\n" +
+		"F" + " " + "TRUE" + "\n" +
+		"@" + ":=" + "*" + "->" + ")" + "\r\n"
 
-	doTest(t, ts,
+	ss := &symbolStream{
+		runes: []rune(s),
+	}
+
+	doTest(t, ss,
 		// Line 0
 		Token{LEXEME_NEWLINE, "\r\n", 0, 0},
 		// Line 1
@@ -77,12 +77,14 @@ func TestScanner_Next_1(t *testing.T) {
 		Col:    0,
 	}
 
-	require.Equal(t, expEOF, Read(ts))
+	require.Equal(t, expEOF, read(ss))
 }
 
 func TestScanner_Next_2(t *testing.T) {
 	require.Panics(t, func() {
-		ts := terminal.New("123.a")
-		Read(ts)
+		ss := &symbolStream{
+			runes: []rune("123.a"),
+		}
+		read(ss)
 	})
 }

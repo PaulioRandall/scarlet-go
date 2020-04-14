@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
-	"github.com/PaulioRandall/scarlet-go/pkg/terminal"
 )
 
 // scannerErr represents an error with syntax.
@@ -16,10 +15,10 @@ type scannerErr struct {
 }
 
 // newErr returns a new scanner error.
-func newErr(ts *terminal.TerminalStream, colOffset int, msg string, args ...interface{}) err.Err {
+func newErr(ss *symbolStream, colOffset int, msg string, args ...interface{}) err.Err {
 	return &scannerErr{
-		lineIndex: ts.LineIndex(),
-		colIndex:  ts.ColIndex() + colOffset,
+		lineIndex: ss.lineIndex(),
+		colIndex:  ss.colIndex() + colOffset,
 		msg:       fmt.Sprintf(msg, args...),
 	}
 }

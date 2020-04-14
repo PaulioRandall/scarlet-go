@@ -1,5 +1,5 @@
 // scanners package was created to handle scanning of tokens from a script at a
-// high level; low level aspects live in the streams/terminal package.
+// high level; low level aspects live in the symbol package.
 //
 // Key decisions:
 // 1. This could be rewritten to be much more performant, but I decided that
@@ -14,7 +14,6 @@ package scanners
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 	"github.com/PaulioRandall/scarlet-go/pkg/scanners/matching"
-	"github.com/PaulioRandall/scarlet-go/pkg/terminal"
 )
 
 // Method represents a scanning method
@@ -30,8 +29,7 @@ func ScanAll(s string, m Method) []lexeme.Token {
 
 	switch m {
 	case DEFAULT, PATTERN_MATCHING:
-		ts := terminal.New(s)
-		return matching.ReadAll(ts)
+		return matching.ReadAll(s)
 	}
 
 	panic(string(`Unknown scanning method '` + m + `'`))

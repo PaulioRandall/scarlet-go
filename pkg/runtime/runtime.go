@@ -4,13 +4,13 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func Run(stats statement.Statements) Context {
+func Run(stats []statement.Statement) Context {
 	ctx := Context{make(map[string]Value), nil}
 	ExeStatements(&ctx, stats)
 	return ctx
 }
 
-func ExeStatements(ctx *Context, stats statement.Statements) {
+func ExeStatements(ctx *Context, stats []statement.Statement) {
 	for _, s := range []statement.Statement(stats) {
 		ExeStatement(ctx, s)
 	}

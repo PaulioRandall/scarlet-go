@@ -15,7 +15,7 @@ const (
 	RECURSIVE_DECENT Method = `RECURSIVE_DECENT_PARSER`
 )
 
-func ParseAll(tks []lexeme.Token, m Method) statement.Statements {
+func ParseAll(tks []lexeme.Token, m Method) []statement.Statement {
 
 	switch m {
 	case DEFAULT, RECURSIVE_DECENT:

@@ -13,7 +13,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/scanners"
 )
 
-func main() {
+func main() { // Run it with `./godo run`
 
 	file := "./test.scarlet"
 

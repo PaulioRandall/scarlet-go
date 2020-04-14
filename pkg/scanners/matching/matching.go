@@ -2,39 +2,40 @@ package matching
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
-
-	"github.com/PaulioRandall/scarlet-go/pkg/terminal"
 )
 
-// ReadAll parses all tokens from ts into an array.
-func ReadAll(ts *terminal.TerminalStream) []lexeme.Token {
+// ReadAll parses all tokens from s into an array.
+func ReadAll(s string) []lexeme.Token {
 
 	var tk lexeme.Token
 	var tokens []lexeme.Token
+	ss := &symbolStream{
+		runes: []rune(s),
+	}
 
 	for tk.Lexeme != lexeme.LEXEME_EOF {
-		tk = Read(ts)
+		tk = read(ss)
 		tokens = append(tokens, tk)
 	}
 
 	return tokens
 }
 
-func Read(ts *terminal.TerminalStream) lexeme.Token {
+func read(ss *symbolStream) lexeme.Token {
 
-	if ts.Empty() {
+	if ss.empty() {
 		// TokenStream.Read requires an EOF token be returned upon an empty stream.
 		return lexeme.Token{
 			Lexeme: lexeme.LEXEME_EOF,
-			Line:   ts.LineIndex(),
-			Col:    ts.ColIndex(),
+			Line:   ss.lineIndex(),
+			Col:    ss.colIndex(),
 		}
 	}
 
-	tk := readToken(ts)
+	tk := readToken(ss)
 
 	if tk == (lexeme.Token{}) {
-		panic(newErr(ts, 0, "Could not identify next token"))
+		panic(newErr(ss, 0, "Could not identify next token"))
 	}
 
 	return tk
@@ -43,7 +44,7 @@ func Read(ts *terminal.TerminalStream) lexeme.Token {
 // readToken attempts to match one of the non-terminal patterns to the next
 // set of terminals in the script. If found, the terminals are removed and used
 // to create a token.
-func readToken(ts *terminal.TerminalStream) (_ lexeme.Token) {
+func readToken(ss *symbolStream) (_ lexeme.Token) {
 
 	ps := patterns()
 	size := len(ps)
@@ -51,10 +52,10 @@ func readToken(ts *terminal.TerminalStream) (_ lexeme.Token) {
 	for i := 0; i < size; i++ {
 
 		p := ps[i]
-		n := p.matcher(ts)
+		n := p.matcher(ss)
 
 		if n > 0 {
-			return tokenize(ts, n, p.lexeme)
+			return tokenize(ss, n, p.lexeme)
 		}
 	}
 
@@ -62,15 +63,15 @@ func readToken(ts *terminal.TerminalStream) (_ lexeme.Token) {
 }
 
 // tokenize creates a new token from the next non-terminal. It reads off n
-// symbols from ts ready for scanning the next token.
-func tokenize(ts *terminal.TerminalStream, n int, l lexeme.Lexeme) lexeme.Token {
+// symbols from ss ready for scanning the next token.
+func tokenize(ss *symbolStream, n int, l lexeme.Lexeme) lexeme.Token {
 
 	tk := lexeme.Token{
 		Lexeme: l,
-		Line:   ts.LineIndex(),
-		Col:    ts.ColIndex(),
+		Line:   ss.lineIndex(),
+		Col:    ss.colIndex(),
 	}
 
-	tk.Value = ts.ReadNonTerminal(n)
+	tk.Value = ss.readNonTerminal(n)
 	return tk
 }

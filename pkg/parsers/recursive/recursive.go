@@ -6,11 +6,11 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func ParseAll(tks []lexeme.Token) Statements {
+func ParseAll(tks []lexeme.Token) []Statement {
 	p := parser{
 		itr: lexeme.NewIterator(tks),
 	}
-	return Statements(p.statements())
+	return p.statements()
 }
 
 type parser struct {
