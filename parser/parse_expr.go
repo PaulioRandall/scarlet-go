@@ -16,7 +16,8 @@ func (p *Parser) parseStat(inline bool) Stat {
 		return p.parseAssign(inline)
 	default:
 		panic(newTkErr(tk,
-			"Unexpected token or maybe parsing has not been implemented for it yet",
+			"Unexpected token %s or maybe parsing has not been implemented for it yet",
+			tk.Lexeme,
 		))
 	}
 }

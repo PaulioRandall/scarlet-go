@@ -42,26 +42,26 @@ type BetaStatement struct {
 	Subs   []BetaStatement
 }
 
-// ArticulateAll consumes all statements from as, runs them through a
+// TransformAll consumes all statements from as, runs them through a
 // ArticulateStream, then returns the resultant articulates as an array.
-func ArticulateAll(as []alpha.AlphaStatement) []BetaStatement {
-	return articulateStatments(as)
+func TransformAll(as []alpha.AlphaStatement) []BetaStatement {
+	return transformStatments(as)
 }
 
-func articulateStatments(as []alpha.AlphaStatement) []BetaStatement {
+func transformStatments(as []alpha.AlphaStatement) []BetaStatement {
 
 	var bs []BetaStatement
 	itr := statItr{as, len(as), 0}
 
 	for a, ok := itr.next(); ok; a, ok = itr.next() {
-		b := articulateStatment(a)
+		b := transformStatment(a)
 		bs = append(bs, b)
 	}
 
 	return bs
 }
 
-func articulateStatment(a alpha.AlphaStatement) BetaStatement {
+func transformStatment(a alpha.AlphaStatement) BetaStatement {
 
 	var b BetaStatement
 	tks := a.Tokens
@@ -75,7 +75,7 @@ func articulateStatment(a alpha.AlphaStatement) BetaStatement {
 		b.Exprs = tks
 	}
 
-	b.Subs = articulateStatments(a.Subs)
+	b.Subs = transformStatments(a.Subs)
 
 	return b
 }

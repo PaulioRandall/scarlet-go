@@ -30,73 +30,77 @@ type AlphaStatement struct {
 	Subs   []AlphaStatement
 }
 
-func PartitionAll(tks []lexeme.Token) []AlphaStatement {
+func TransformAll(tks []lexeme.Token) []AlphaStatement {
 	itr := lexeme.NewIterator(tks)
-	return partitionStatements(itr)
+	return transformStatements(itr)
 }
 
-func partitionStatements(itr *lexeme.TokenIterator) []AlphaStatement {
+func transformStatements(itr *lexeme.TokenIterator) []AlphaStatement {
 
 	var as []AlphaStatement
 
 	for tk := itr.Peek(); tk.Lexeme != lexeme.LEXEME_EOF; tk = itr.Peek() {
 
 		if tk.Lexeme == lexeme.LEXEME_TERMINATOR {
-			_ = itr.Next()
+			itr.Skip()
 			continue
 		}
 
-		expectNotEmpty(tk, itr)
-		s := partitionStatement(itr)
+		expectNot(itr, tk, lexeme.LEXEME_UNDEFINED)
+
+		s := transformStatement(itr)
 		as = append(as, s)
 	}
 
 	return as
 }
 
-func partitionStatement(itr *lexeme.TokenIterator) AlphaStatement {
+func transformStatement(itr *lexeme.TokenIterator) AlphaStatement {
 
-	const TERMINATOR = lexeme.LEXEME_TERMINATOR
 	var a AlphaStatement
 
-	for tk := itr.Next(); tk.Lexeme != TERMINATOR; tk = itr.Next() {
+	for tk := itr.Peek(); tk.Lexeme != lexeme.LEXEME_TERMINATOR; tk = itr.Peek() {
 
-		expectNotEmpty(tk, itr)
+		expectNot(itr, tk, lexeme.LEXEME_UNDEFINED)
+		expectNot(itr, tk, lexeme.LEXEME_EOF)
 
-		a.Tokens = append(a.Tokens, tk)
+		a.Tokens = append(a.Tokens, itr.Next())
 
 		if tk.Lexeme == lexeme.LEXEME_DO {
-			a.Subs = partitionBlock(itr)
+			a.Subs = transformBlock(itr)
 		}
 	}
 
+	expect(itr, itr.Next(), lexeme.LEXEME_TERMINATOR)
 	return a
 }
 
-func partitionBlock(itr *lexeme.TokenIterator) []AlphaStatement {
+func transformBlock(itr *lexeme.TokenIterator) []AlphaStatement {
 
 	var as []AlphaStatement
-	var tk lexeme.Token
 
-	for tk = itr.Next(); tk.Lexeme != lexeme.LEXEME_END; tk = itr.Next() {
+	for tk := itr.Peek(); tk.Lexeme != lexeme.LEXEME_END; tk = itr.Peek() {
 
-		expectNotEmpty(tk, itr)
+		expectNot(itr, tk, lexeme.LEXEME_UNDEFINED)
+		expectNot(itr, tk, lexeme.LEXEME_TERMINATOR)
+		expectNot(itr, tk, lexeme.LEXEME_EOF)
 
-		if tk.Lexeme == lexeme.LEXEME_TERMINATOR || tk.Lexeme == lexeme.LEXEME_EOF {
-			// Duplicate TERMINATORS should have been removed by this stage
-			panic(newErr(tk, `Expected a statement or 'END', not '%s'`, tk.Value))
-		}
-
-		a := partitionStatement(itr)
+		a := transformStatement(itr)
 		as = append(as, a)
 	}
 
 	return as
 }
 
-func expectNotEmpty(tk lexeme.Token, itr *lexeme.TokenIterator) {
-	if tk == (lexeme.Token{}) {
-		panic(newErr(tk, `[Partitioner] Unexpected empty token at index %d`, itr.Index()))
+func expect(itr *lexeme.TokenIterator, tk lexeme.Token, lex lexeme.Lexeme) {
+	if tk.Lexeme != lex {
+		panic(newErr(tk, `[alpha] Expected %s, but got %s at index %d`, lex, tk.Lexeme, itr.Index()))
+	}
+}
+
+func expectNot(itr *lexeme.TokenIterator, tk lexeme.Token, lex lexeme.Lexeme) {
+	if tk.Lexeme == lex {
+		panic(newErr(tk, `[alpha] Unexpected %s at index %d`, lex, itr.Index()))
 	}
 }
 

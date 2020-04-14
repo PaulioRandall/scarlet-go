@@ -31,7 +31,9 @@ type sanitiser struct {
 
 func (sn *sanitiser) read() (_ lexeme.Token) {
 
-	for tk := sn.itr.Next(); !sn.itr.Empty(); tk = sn.itr.Next() {
+	for tk := sn.itr.Peek(); !sn.itr.Empty(); tk = sn.itr.Peek() {
+		sn.itr.Skip()
+
 		if !isRedundantLexeme(tk.Lexeme, sn.prev.Lexeme) {
 			tk = formatToken(tk)
 			sn.prev = tk

@@ -14,7 +14,7 @@ func NewIterator(tks []Token) *TokenIterator {
 
 // Index returns the current index of the iterator.
 func (itr *TokenIterator) Index() int {
-	return itr.index
+	return itr.index - 1
 }
 
 func (itr *TokenIterator) Empty() bool {
@@ -38,6 +38,15 @@ func (itr *TokenIterator) Next() Token {
 		return Token{}
 	}
 
+	tk := itr.Peek()
 	itr.index++
-	return itr.Peek()
+	println(tk.String())
+	return tk
+}
+
+// Skip sjips the next token in the iterator.
+func (itr *TokenIterator) Skip() {
+	if !itr.Empty() {
+		itr.index++
+	}
 }

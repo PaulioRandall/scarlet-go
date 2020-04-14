@@ -29,7 +29,7 @@ func PrintErr(e Err, file string) {
 		writeLines(script, line-LINES_BEFORE, line)
 		writeln("---")
 		writeLines(script, line, line+1)
-		writeln("--- [%d:%d->%d] %s", line, col, col+length, msg)
+		writeln("--- [%d:%d->%d] %s", line+1, col, col+length, msg)
 		writeLines(script, line+1, line+1+LINES_AFTER)
 	}
 

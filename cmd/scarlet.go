@@ -10,6 +10,7 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/streams/parser/alpha"
 	"github.com/PaulioRandall/scarlet-go/streams/parser/beta"
+	"github.com/PaulioRandall/scarlet-go/streams/parser/charlie"
 	"github.com/PaulioRandall/scarlet-go/streams/sanitiser"
 	"github.com/PaulioRandall/scarlet-go/streams/scanner"
 )
@@ -44,17 +45,19 @@ func run(s string) {
 	println("***After token sanitisation***\n")
 	lexeme.PrintTokens(sanitisedTokens)
 
-	alphaStats := alpha.PartitionAll(sanitisedTokens)
+	alphaStats := alpha.TransformAll(sanitisedTokens)
 	println("***After alpha statement partitioning***\n")
 	alpha.PrintAll(alphaStats)
 
-	betaStats := beta.ArticulateAll(alphaStats)
+	betaStats := beta.TransformAll(alphaStats)
 	println("***After beta statement partitioning***\n")
 	beta.PrintAll(betaStats)
 
-	println("TODO: Parse assignment tokens\n")
-	println("THEN: Parse assignment tokens\n")
-	println("THEN: Parse expression tokens\n")
+	charlieStats := charlie.TransformAll(betaStats)
+	println("***After charlie statement partitioning***\n")
+	charlie.PrintAll(charlieStats)
+
+	println("TODO: Parse expression tokens\n")
 
 	exe := parseTokens(sanitisedTokens)
 
