@@ -1,7 +1,7 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 )
 
 func (p *parser) inspect(lex lexeme.Lexeme) bool {

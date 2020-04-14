@@ -1,7 +1,9 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
 func ParseAll(tks []lexeme.Token) Statements {
@@ -108,17 +110,13 @@ func (p *parser) factor(s *Statement, loaded, required bool) bool {
 	}
 
 	switch {
-	case p.was(lexeme.LEXEME_VOID):
-		fallthrough
-	case p.was(lexeme.LEXEME_BOOL):
-		fallthrough
-	case p.was(lexeme.LEXEME_INT):
-		fallthrough
-	case p.was(lexeme.LEXEME_FLOAT):
-		fallthrough
-	case p.was(lexeme.LEXEME_STRING):
-		fallthrough
-	case p.was(lexeme.LEXEME_TEMPLATE):
+	case p.was(lexeme.LEXEME_VOID),
+		p.was(lexeme.LEXEME_BOOL),
+		p.was(lexeme.LEXEME_INT),
+		p.was(lexeme.LEXEME_FLOAT),
+		p.was(lexeme.LEXEME_STRING),
+		p.was(lexeme.LEXEME_TEMPLATE):
+
 		s.Exprs = append(s.Exprs, Value{p.tk})
 
 	default:

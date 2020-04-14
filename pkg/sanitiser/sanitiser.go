@@ -6,7 +6,7 @@
 package sanitiser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 )
 
 // SanitiseAll creates a sanitisers all tokens from s returning a new array.

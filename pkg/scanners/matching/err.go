@@ -3,8 +3,8 @@ package matching
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/err"
-	"github.com/PaulioRandall/scarlet-go/streams/terminal"
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/terminal"
 )
 
 // scannerErr represents an error with syntax.

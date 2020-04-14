@@ -1,9 +1,9 @@
-package recursive
+package statement
 
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 )
 
 func Print(ss Statements) {

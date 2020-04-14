@@ -1,4 +1,4 @@
-// scanner package was created to handle scanning of tokens from a script at a
+// scanners package was created to handle scanning of tokens from a script at a
 // high level; low level aspects live in the streams/terminal package.
 //
 // Key decisions:
@@ -9,12 +9,12 @@
 //
 // This package is responsible for scanning scripts only, evaluation is
 // performed by the streams/evaluator package.
-package scanner
+package scanners
 
 import (
-	"github.com/PaulioRandall/scarlet-go/lexeme"
-	"github.com/PaulioRandall/scarlet-go/streams/scanner/matching"
-	"github.com/PaulioRandall/scarlet-go/streams/terminal"
+	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/scanners/matching"
+	"github.com/PaulioRandall/scarlet-go/pkg/terminal"
 )
 
 // Method represents a scanning method

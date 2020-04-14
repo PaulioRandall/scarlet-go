@@ -3,9 +3,9 @@ package matching
 import (
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/streams/terminal"
+	"github.com/PaulioRandall/scarlet-go/pkg/terminal"
 )
 
 // matcher implementations will return the number of terminals in a token, but

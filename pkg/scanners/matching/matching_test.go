@@ -3,9 +3,9 @@ package matching
 import (
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/lexeme"
+	. "github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/streams/terminal"
+	"github.com/PaulioRandall/scarlet-go/pkg/terminal"
 
 	"github.com/stretchr/testify/require"
 )

@@ -3,8 +3,8 @@ package runtime
 import (
 	"fmt"
 
-	e "github.com/PaulioRandall/scarlet-go/err"
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	e "github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 )
 
 // runtimeErr represents an error while executing statements or evaluating

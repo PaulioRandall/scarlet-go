@@ -3,8 +3,8 @@ package recursive
 import (
 	"fmt"
 
-	e "github.com/PaulioRandall/scarlet-go/err"
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	e "github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 )
 
 // parseErr represents an error while parsing.

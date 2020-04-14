@@ -34,7 +34,6 @@ const (
 	LEXEME_NEWLINE     Lexeme = `NEWLINE`
 	LEXEME_FUNC        Lexeme = `FUNCTION_KEYWORD`
 	LEXEME_MATCH       Lexeme = `MATCH_BLOCK_KEYWORD`
-	LEXEME_INLINE      Lexeme = `INLINE_BLOCK_IMPLIED`
 	LEXEME_ID          Lexeme = `ID`
 	LEXEME_DELIM       Lexeme = `DELIMITER`
 	LEXEME_ASSIGN      Lexeme = `ASSIGNMENT`

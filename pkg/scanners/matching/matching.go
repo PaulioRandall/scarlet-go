@@ -1,9 +1,9 @@
 package matching
 
 import (
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/streams/terminal"
+	"github.com/PaulioRandall/scarlet-go/pkg/terminal"
 )
 
 // ReadAll parses all tokens from ts into an array.

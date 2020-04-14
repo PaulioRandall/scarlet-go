@@ -1,22 +1,22 @@
 package runtime
 
 import (
-	"github.com/PaulioRandall/scarlet-go/streams/parser/recursive"
+	"github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func Run(stats recursive.Statements) Context {
+func Run(stats statement.Statements) Context {
 	ctx := Context{make(map[string]Value), nil}
 	ExeStatements(&ctx, stats)
 	return ctx
 }
 
-func ExeStatements(ctx *Context, stats recursive.Statements) {
-	for _, s := range []recursive.Statement(stats) {
+func ExeStatements(ctx *Context, stats statement.Statements) {
+	for _, s := range []statement.Statement(stats) {
 		ExeStatement(ctx, s)
 	}
 }
 
-func ExeStatement(ctx *Context, stat recursive.Statement) {
+func ExeStatement(ctx *Context, stat statement.Statement) {
 
 	values := EvalExpressions(ctx, stat.Exprs)
 
@@ -41,7 +41,7 @@ func ExeStatement(ctx *Context, stat recursive.Statement) {
 	}
 }
 
-func EvalExpressions(ctx *Context, exprs []recursive.Expression) []Value {
+func EvalExpressions(ctx *Context, exprs []statement.Expression) []Value {
 
 	var values []Value
 
@@ -53,22 +53,12 @@ func EvalExpressions(ctx *Context, exprs []recursive.Expression) []Value {
 	return values
 }
 
-func EvalExpression(ctx *Context, expr recursive.Expression) Value {
+func EvalExpression(ctx *Context, expr statement.Expression) Value {
 	switch v := expr.(type) {
-	case recursive.Value:
+	case statement.Value:
 		return valueOf(v.Source)
 	}
 
 	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
 	return nil
 }
-
-/*
-func runtimeError(tk lexeme.Token, msg string) {
-	if tk == (lexeme.Token{}) {
-		panic("[RUNTIME] " + msg)
-	} else {
-		panic("[RUNTIME] (" + tk.String() + ") " + msg)
-	}
-}
-*/

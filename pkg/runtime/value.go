@@ -3,7 +3,7 @@ package runtime
 import (
 	"strconv"
 
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 )
 
 // Value represents a value within the executing program, either the value of
