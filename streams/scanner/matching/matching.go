@@ -45,16 +45,16 @@ func Read(ts *terminal.TerminalStream) lexeme.Token {
 // to create a token.
 func readToken(ts *terminal.TerminalStream) (_ lexeme.Token) {
 
-	matchers := nonTerminals()
-	size := len(matchers)
+	ps := patterns()
+	size := len(ps)
 
 	for i := 0; i < size; i++ {
 
-		nonTerminal := matchers[i]
-		n := nonTerminal.matcher(ts)
+		p := ps[i]
+		n := p.matcher(ts)
 
 		if n > 0 {
-			return tokenize(ts, n, nonTerminal.lexeme)
+			return tokenize(ts, n, p.lexeme)
 		}
 	}
 

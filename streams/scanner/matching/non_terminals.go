@@ -12,49 +12,50 @@ import (
 // only if the token appears next in the TerminalStream else 0 is returned.
 type matcher func(*terminal.TerminalStream) int
 
-// nonTerminal represents a mapping between a lexeme and a Matcher function.
-type nonTerminal struct {
+// pattern represents a pattern for matching a specific representation of a
+// lexeme. The pattern is provided as a matcher function.
+type pattern struct {
 	lexeme  lexeme.Lexeme
 	matcher matcher
 }
 
-// nonTerminals returns an array of all possible non-terminal symbols and their
+// patterns returns an array of all possible non-terminal symbols and their
 // mapping to a lexeme. Longest and highest priority static symbols should be at
 // the beginning of the array to ensure the correct token is scanned.
-func nonTerminals() []nonTerminal {
-	return []nonTerminal{
-		nonTerminal{lexeme.LEXEME_NEWLINE, func(ts *terminal.TerminalStream) int {
+func patterns() []pattern {
+	return []pattern{
+		pattern{lexeme.LEXEME_NEWLINE, func(ts *terminal.TerminalStream) int {
 			return ts.CountNewlineSymbols(0)
 		}},
-		nonTerminal{lexeme.LEXEME_WHITESPACE, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_WHITESPACE, func(ts *terminal.TerminalStream) int {
 			// Returns the number of consecutive whitespace terminals.
 			// Newlines are not counted as whitespace.
 			return ts.CountSymbolsWhile(0, func(i int, ru rune) bool {
 				return !ts.IsNewline(i) && unicode.IsSpace(ru)
 			})
 		}},
-		nonTerminal{lexeme.LEXEME_COMMENT, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_COMMENT, func(ts *terminal.TerminalStream) int {
 			if ts.IsMatch(0, "//") {
 				return ts.IndexOfNextNewline(0)
 			}
 			return 0
 		}},
-		nonTerminal{lexeme.LEXEME_BOOL, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_BOOL, func(ts *terminal.TerminalStream) int {
 			return keywordMatcher(ts, "FALSE")
 		}},
-		nonTerminal{lexeme.LEXEME_BOOL, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_BOOL, func(ts *terminal.TerminalStream) int {
 			return keywordMatcher(ts, "TRUE")
 		}},
-		nonTerminal{lexeme.LEXEME_END, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_END, func(ts *terminal.TerminalStream) int {
 			return keywordMatcher(ts, "END")
 		}},
-		nonTerminal{lexeme.LEXEME_DO, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_DO, func(ts *terminal.TerminalStream) int {
 			return keywordMatcher(ts, "DO")
 		}},
-		nonTerminal{lexeme.LEXEME_FUNC, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_FUNC, func(ts *terminal.TerminalStream) int {
 			return keywordMatcher(ts, "F")
 		}},
-		nonTerminal{lexeme.LEXEME_ID, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_ID, func(ts *terminal.TerminalStream) int {
 			return ts.CountSymbolsWhile(0, func(i int, ru rune) bool {
 
 				if unicode.IsLetter(ru) {
@@ -68,76 +69,76 @@ func nonTerminals() []nonTerminal {
 				return true
 			})
 		}},
-		nonTerminal{lexeme.LEXEME_ASSIGN, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_ASSIGN, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, ":=")
 		}},
-		nonTerminal{lexeme.LEXEME_RETURNS, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_RETURNS, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "->")
 		}},
-		nonTerminal{lexeme.LEXEME_LT_OR_EQU, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_LT_OR_EQU, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "<=")
 		}},
-		nonTerminal{lexeme.LEXEME_MT_OR_EQU, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_MT_OR_EQU, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "=>")
 		}},
-		nonTerminal{lexeme.LEXEME_PAREN_OPEN, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_PAREN_OPEN, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "(")
 		}},
-		nonTerminal{lexeme.LEXEME_PAREN_CLOSE, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_PAREN_CLOSE, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, ")")
 		}},
-		nonTerminal{lexeme.LEXEME_LIST_OPEN, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_LIST_OPEN, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "[")
 		}},
-		nonTerminal{lexeme.LEXEME_LIST_CLOSE, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_LIST_CLOSE, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "]")
 		}},
-		nonTerminal{lexeme.LEXEME_DELIM, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_DELIM, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, ",")
 		}},
-		nonTerminal{lexeme.LEXEME_VOID, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_VOID, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "_")
 		}},
-		nonTerminal{lexeme.LEXEME_TERMINATOR, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_TERMINATOR, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, ";")
 		}},
-		nonTerminal{lexeme.LEXEME_SPELL, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_SPELL, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "@")
 		}},
-		nonTerminal{lexeme.LEXEME_ADD, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_ADD, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "+")
 		}},
-		nonTerminal{lexeme.LEXEME_SUBTRACT, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_SUBTRACT, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "-")
 		}},
-		nonTerminal{lexeme.LEXEME_MULTIPLY, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_MULTIPLY, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "*")
 		}},
-		nonTerminal{lexeme.LEXEME_DIVIDE, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_DIVIDE, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "/")
 		}},
-		nonTerminal{lexeme.LEXEME_REMAINDER, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_REMAINDER, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "%")
 		}},
-		nonTerminal{lexeme.LEXEME_AND, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_AND, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "&")
 		}},
-		nonTerminal{lexeme.LEXEME_OR, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_OR, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "|")
 		}},
-		nonTerminal{lexeme.LEXEME_EQU, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_EQU, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "=")
 		}},
-		nonTerminal{lexeme.LEXEME_NEQ, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_NEQ, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "#")
 		}},
-		nonTerminal{lexeme.LEXEME_LT, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_LT, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, "<")
 		}},
-		nonTerminal{lexeme.LEXEME_MT, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_MT, func(ts *terminal.TerminalStream) int {
 			return stringMatcher(ts, ">")
 		}},
-		nonTerminal{lexeme.LEXEME_STRING, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_STRING, func(ts *terminal.TerminalStream) int {
 
 			const (
 				PREFIX     = "`"
@@ -162,7 +163,7 @@ func nonTerminals() []nonTerminal {
 
 			return PREFIX_LEN + n + SUFFIX_LEN
 		}},
-		nonTerminal{lexeme.LEXEME_TEMPLATE, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_TEMPLATE, func(ts *terminal.TerminalStream) int {
 			// As the name suggests, templates can be populated with the value of
 			// identifiers, but the scanner is not concerned with parsing these. It does
 			// need to watch out for escaped terminals that also represent the string
@@ -202,7 +203,7 @@ func nonTerminals() []nonTerminal {
 
 			return PREFIX_LEN + n + SUFFIX_LEN
 		}},
-		nonTerminal{lexeme.LEXEME_FLOAT, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_FLOAT, func(ts *terminal.TerminalStream) int {
 
 			const (
 				DELIM     = "."
@@ -227,7 +228,7 @@ func nonTerminals() []nonTerminal {
 
 			return n + DELIM_LEN + fractionalLen
 		}},
-		nonTerminal{lexeme.LEXEME_INT, func(ts *terminal.TerminalStream) int {
+		pattern{lexeme.LEXEME_INT, func(ts *terminal.TerminalStream) int {
 			return integerMatcher(ts, 0)
 		}},
 	}
