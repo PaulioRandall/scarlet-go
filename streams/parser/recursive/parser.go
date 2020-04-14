@@ -108,6 +108,8 @@ func (p *parser) factor(s *Statement, loaded, required bool) bool {
 	}
 
 	switch {
+	case p.was(lexeme.LEXEME_VOID):
+		fallthrough
 	case p.was(lexeme.LEXEME_BOOL):
 		fallthrough
 	case p.was(lexeme.LEXEME_INT):
