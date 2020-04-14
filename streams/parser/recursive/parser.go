@@ -41,7 +41,7 @@ func (p *parser) statement() Statement {
 	}
 
 	if !p.expressions(&s, true) {
-		p.error("statement", p.tk, lexeme.LEXEME_ANY)
+		panic(unexpected("statement", p.tk, lexeme.LEXEME_ANY))
 	}
 
 	return s
@@ -123,7 +123,7 @@ func (p *parser) factor(s *Statement, loaded, required bool) bool {
 
 	default:
 		if required {
-			p.error("factor", p.tk, lexeme.LEXEME_ANOTHER)
+			panic(unexpected("factor", p.tk, lexeme.LEXEME_ANOTHER))
 		}
 
 		return false

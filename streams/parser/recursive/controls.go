@@ -36,12 +36,6 @@ func (p *parser) was(lex lexeme.Lexeme) bool {
 
 func (p *parser) expect(lex lexeme.Lexeme) {
 	if !p.accept(lex) {
-		p.error("expect", p.itr.Peek(), lex)
+		panic(unexpected("expect", p.itr.Peek(), lex))
 	}
-}
-
-func (p *parser) error(f string, tk lexeme.Token, expected lexeme.Lexeme) {
-	msg := "[parser." + f + "] "
-	msg += "Expected " + string(expected) + ", got " + tk.String()
-	panic(string(msg))
 }
