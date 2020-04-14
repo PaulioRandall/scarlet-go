@@ -37,14 +37,23 @@ func ExeStatement(ctx *Context, stat recursive.Statement) {
 
 func EvalExpressions(ctx *Context, exprs []recursive.Expression) []Value {
 
-	for _, _ = range exprs {
+	var values []Value
 
+	for _, expr := range exprs {
+		v := EvalExpression(ctx, expr)
+		values = append(values, v)
 	}
 
-	return nil
+	return values
 }
 
 func EvalExpression(ctx *Context, expr recursive.Expression) Value {
+	switch v := expr.(type) {
+	case recursive.Value:
+		return valueOf(v.Source)
+	}
+
+	runtimeError(expr.Token(), `Unknown expression type`)
 	return nil
 }
 

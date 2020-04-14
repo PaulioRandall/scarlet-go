@@ -58,31 +58,22 @@ func (s *Statement) String(i int) string {
 	return str
 }
 
-type Kind string
-
-const (
-	EXPR_VALUE      Kind = `VALUE`
-	EXPR_ARITHMETIC Kind = `ARITHMETIC`
-	EXPR_LOGIC      Kind = `LOGIC`
-	EXPR_FUNC_CALL  Kind = `FUNC_CALL`
-	EXPR_SPELL_CALL Kind = `SPELL_CALL`
-)
-
 type Expression interface {
-	Kind() Kind
+	Token() lexeme.Token
+
 	String(indent int) string
 }
 
 type Value struct {
-	Token lexeme.Token
+	Source lexeme.Token
 }
 
-func (_ Value) Kind() Kind {
-	return EXPR_VALUE
+func (v Value) Token() lexeme.Token {
+	return v.Source
 }
 
 func (v Value) String(i int) string {
-	return indent(i) + "[Value] " + v.Token.String()
+	return indent(i) + "[Value] " + v.Source.String()
 }
 
 type Arithmetic struct {
@@ -91,8 +82,8 @@ type Arithmetic struct {
 	Right    Expression
 }
 
-func (_ Arithmetic) Kind() Kind {
-	return EXPR_ARITHMETIC
+func (a Arithmetic) Token() lexeme.Token {
+	return a.Operator
 }
 
 func (a Arithmetic) String(i int) string {
@@ -112,8 +103,8 @@ type Logic struct {
 	Right    Expression
 }
 
-func (_ Logic) Kind() Kind {
-	return EXPR_LOGIC
+func (l Logic) Token() lexeme.Token {
+	return l.Operator
 }
 
 func (l Logic) String(i int) string {
@@ -133,8 +124,8 @@ type FuncCall struct {
 	Output []lexeme.Token
 }
 
-func (_ FuncCall) Kind() Kind {
-	return EXPR_FUNC_CALL
+func (f FuncCall) Token() lexeme.Token {
+	return f.ID
 }
 
 func (f FuncCall) String(i int) string {

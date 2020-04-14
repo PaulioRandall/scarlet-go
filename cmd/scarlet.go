@@ -8,9 +8,11 @@ import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/parser"
 
-	"github.com/PaulioRandall/scarlet-go/streams/parser/recursive"
+	"github.com/PaulioRandall/scarlet-go/streams/runtime"
 	"github.com/PaulioRandall/scarlet-go/streams/sanitiser"
 	"github.com/PaulioRandall/scarlet-go/streams/scanner"
+
+	"github.com/PaulioRandall/scarlet-go/streams/parser/recursive"
 )
 
 func main() {
@@ -47,13 +49,15 @@ func run(s string) {
 	println("***After alpha statement partitioning***\n")
 	recursive.Print(statements)
 
-	exe := parseTokens(sanitisedTokens)
+	//exe := parseTokens(sanitisedTokens)
 
 	//println(strings.ReplaceAll(exe.String(), "\t", "  "))
 
 	println("\nExecuting...\n")
-	ctx := parser.NewContext()
-	exe.Eval(ctx)
+	ctx := runtime.Run(statements)
+
+	//ctx := parser.NewContext()
+	//exe.Eval(ctx)
 
 	println(ctx.String())
 }
