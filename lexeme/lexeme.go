@@ -24,6 +24,8 @@ type Lexeme string
 // Enumeration of all possible Lexemes.
 const (
 	LEXEME_UNDEFINED Lexeme = ``
+	LEXEME_ANY       Lexeme = `ANY`
+	LEXEME_ANOTHER   Lexeme = `ANOTHER`
 	// ------------------
 	LEXEME_SOF         Lexeme = `SOF`
 	LEXEME_EOF         Lexeme = `EOF`

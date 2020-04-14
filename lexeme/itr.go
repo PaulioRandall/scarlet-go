@@ -40,7 +40,6 @@ func (itr *TokenIterator) Next() Token {
 
 	tk := itr.Peek()
 	itr.index++
-	println(tk.String())
 	return tk
 }
 
