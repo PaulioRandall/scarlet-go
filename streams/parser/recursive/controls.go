@@ -41,7 +41,7 @@ func (p *parser) expect(lex lexeme.Lexeme) {
 }
 
 func (p *parser) error(f string, tk lexeme.Token, expected lexeme.Lexeme) {
-	msg := "[" + f + "] "
+	msg := "[parser." + f + "] "
 	msg += "Expected " + string(expected) + ", got " + tk.String()
 	panic(string(msg))
 }

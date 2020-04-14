@@ -20,7 +20,7 @@ func (p *parser) statements() []Statement {
 
 	var ss []Statement
 
-	for !p.itr.Empty() {
+	for !p.itr.Empty() && !p.accept(lexeme.LEXEME_EOF) {
 		s := p.statement()
 		ss = append(ss, s)
 	}
@@ -30,31 +30,21 @@ func (p *parser) statements() []Statement {
 
 func (p *parser) statement() Statement {
 
-	s := &Statement{}
+	s := Statement{}
 
-	for p.accept(lexeme.LEXEME_ANY) {
+	p.accept(lexeme.LEXEME_ANY)
 
-		if p.was(lexeme.LEXEME_ID) {
-			if p.assignment(s) {
-				p.accept(lexeme.LEXEME_ANY)
-			}
-		}
-
-		for p.factor(s, true) {
-			p.expect(lexeme.LEXEME_TERMINATOR)
-			p.expect(lexeme.LEXEME_ANY)
-
-			if p.was(lexeme.LEXEME_EOF) {
-				break
-			}
-		}
-
-		if p.was(lexeme.LEXEME_EOF) {
-			break
+	if p.was(lexeme.LEXEME_ID) {
+		if p.assignment(&s) {
+			return s
 		}
 	}
 
-	return *s
+	if !p.expressions(&s, true) {
+		p.error("statement", p.tk, lexeme.LEXEME_ANY)
+	}
+
+	return s
 }
 
 func (p *parser) assignment(s *Statement) bool {
@@ -66,30 +56,74 @@ func (p *parser) assignment(s *Statement) bool {
 		p.expect(lexeme.LEXEME_ID)    // Must be an ID after a delimitier
 	}
 
-	// ? :=
-	if p.inspect(lexeme.LEXEME_ASSIGN) {
-		s.IDs = append(s.IDs, p.tk)    // Append last ID
-		p.expect(lexeme.LEXEME_ASSIGN) // Load assignment
-		s.Assign = p.tk                // Store assignment
-		return true
+	if !p.inspect(lexeme.LEXEME_ASSIGN) {
+		return false
 	}
 
-	return false
+	// ? :=
+	s.IDs = append(s.IDs, p.tk)    // Append last ID
+	p.expect(lexeme.LEXEME_ASSIGN) // Load assignment
+	s.Assign = p.tk                // Store assignment
+
+	p.expressions(s, false)
+	return true
 }
 
-func (p *parser) factor(s *Statement, loaded bool) bool {
+func (p *parser) expressions(s *Statement, loaded bool) bool {
+
+	var found bool
+
+	if !loaded {
+		p.accept(lexeme.LEXEME_ANY)
+	}
+
+	for p.expression(s, true, true) {
+		found = true
+
+		if !p.accept(lexeme.LEXEME_DELIM) {
+			break
+		}
+
+		p.expect(lexeme.LEXEME_ANY)
+	}
+
+	p.expect(lexeme.LEXEME_TERMINATOR)
+	return found
+}
+
+func (p *parser) expression(s *Statement, loaded, required bool) bool {
+	switch {
+	case p.factor(s, loaded, required):
+	default:
+		return false
+	}
+
+	return true
+}
+
+func (p *parser) factor(s *Statement, loaded, required bool) bool {
 
 	if !loaded {
 		p.accept(lexeme.LEXEME_ANY)
 	}
 
 	switch {
+	case p.was(lexeme.LEXEME_BOOL):
+		fallthrough
+	case p.was(lexeme.LEXEME_INT):
+		fallthrough
+	case p.was(lexeme.LEXEME_FLOAT):
+		fallthrough
 	case p.was(lexeme.LEXEME_STRING):
 		fallthrough
 	case p.was(lexeme.LEXEME_TEMPLATE):
 		s.Exprs = append(s.Exprs, Value{p.tk})
 
 	default:
+		if required {
+			p.error("factor", p.tk, lexeme.LEXEME_ANOTHER)
+		}
+
 		return false
 	}
 

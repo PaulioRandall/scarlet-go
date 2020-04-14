@@ -20,7 +20,7 @@ type Statements []Statement
 func (ss *Statements) String() string {
 
 	slice := []Statement(*ss)
-	str := "[Trees]"
+	str := "[Statements]"
 
 	for _, s := range slice {
 		str += newline()
@@ -49,9 +49,10 @@ func (s *Statement) String(i int) string {
 		str += indent(i+2) + tk.String() + newline()
 	}
 
-	str += indent(i+1) + "Exprs:" + newline()
+	str += indent(i+1) + "Exprs:"
 	for _, expr := range s.Exprs {
-		str += expr.String(i+2) + newline()
+		str += newline()
+		str += expr.String(i + 2)
 	}
 
 	return str
@@ -81,7 +82,7 @@ func (_ Value) Kind() Kind {
 }
 
 func (v Value) String(i int) string {
-	return indent(i) + "[Value] " + v.Token.String() + newline()
+	return indent(i) + "[Value] " + v.Token.String()
 }
 
 type Arithmetic struct {
