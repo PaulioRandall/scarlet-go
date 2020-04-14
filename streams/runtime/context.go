@@ -1,13 +1,14 @@
 package runtime
 
-// context represents the current executing context. It contains all state
+// Context represents the current executing context. It contains all state
 // available to the current scope such as available variables.
-type context struct {
-	vars map[string]Value
+type Context struct {
+	vars   map[string]Value
+	parent *Context
 }
 
 // String returns a human readable string representation of the context.
-func (ctx *context) String() (s string) {
+func (ctx *Context) String() (s string) {
 
 	const NEWLINE = "\n"
 	const TAB = "\t"
@@ -28,16 +29,16 @@ func (ctx *context) String() (s string) {
 
 // get returns the value assigned to a specified variable. If the ID does not
 // exist an empty value is returned.
-func (ctx *context) get(id string) (_ Value) {
+func (ctx *Context) Get(id string) (_ Value) {
 	v, _ := ctx.vars[id]
 	return v
 }
 
 // expect returns the value assigned to a specified variable. If the ID does
 // not exist a panic ensues.
-func (ctx *context) expect(id string) Value {
+func (ctx *Context) Expect(id string) Value {
 
-	if v := ctx.get(id); v != nil {
+	if v := ctx.Get(id); v != nil {
 		return v
 	}
 
@@ -47,7 +48,7 @@ func (ctx *context) expect(id string) Value {
 
 // set creates or updates a variable. Passing a VOID value deletes the entry if
 // it exists.
-func (ctx *context) set(id string, v Value) {
+func (ctx *Context) Set(id string, v Value) {
 
 	if _, ok := v.(Void); ok {
 		delete(ctx.vars, id)
@@ -55,4 +56,15 @@ func (ctx *context) set(id string, v Value) {
 	}
 
 	ctx.vars[id] = v
+}
+
+func (ctx *Context) Spawn() *Context {
+	return &Context{
+		vars:   make(map[string]Value),
+		parent: ctx,
+	}
+}
+
+func (ctx *Context) Parent() *Context {
+	return ctx.parent
 }

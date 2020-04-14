@@ -1,9 +1,9 @@
 package runtime
 
 import (
-	//	"fmt"
-	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"strconv"
+
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // Value represents a value within the executing program, either the value of
