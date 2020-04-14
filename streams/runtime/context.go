@@ -29,25 +29,20 @@ func (ctx *context) String() (s string) {
 // get returns the value assigned to a specified variable. If the ID does not
 // exist an empty value is returned.
 func (ctx *context) get(id string) (_ Value) {
-
-	if v, ok := ctx.vars[id]; ok {
-		return v
-	}
-
-	return
+	v, _ := ctx.vars[id]
+	return v
 }
 
 // expect returns the value assigned to a specified variable. If the ID does
 // not exist a panic ensues.
 func (ctx *context) expect(id string) Value {
-	v := ctx.get(id)
 
-	if v == nil {
-		//panic(newErr("Expected variable '%v'", id))
-		panic(string("Expected variable '" + id + "'"))
+	if v := ctx.get(id); v != nil {
+		return v
 	}
 
-	return v
+	//panic(newErr("Expected variable '%v'", id))
+	panic(string("Expected variable '" + id + "'"))
 }
 
 // set creates or updates a variable. Passing a VOID value deletes the entry if

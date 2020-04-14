@@ -2,8 +2,8 @@ package runtime
 
 import (
 	//	"fmt"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"strconv"
-	//"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 // Value represents a value within the executing program, either the value of
@@ -74,70 +74,51 @@ func (t Template) String() string {
 	return "(TEMPLATE) " + string(t)
 }
 
-/*
-// NewValue creates a new value from a lexeme.
-func NewValue(tk lexeme.Token) Value {
-
-	var (
-		k Kind
-		v interface{}
-	)
+func valueOf(tk lexeme.Token) Value {
 
 	switch tk.Lexeme {
-	case lexeme.LEXEME_STRING, lexeme.LEXEME_TEMPLATE:
-		k, v = STR, tk.Value
+	case lexeme.LEXEME_VOID:
+		return Void{}
 
 	case lexeme.LEXEME_BOOL:
-		k, v = BOOL, (tk.Value == "TRUE")
+		return Bool(tk.Value == `TRUE`)
 
 	case lexeme.LEXEME_INT:
-		k, v = INT, parseNum(INT, tk)
+		return parseInt(tk)
 
 	case lexeme.LEXEME_FLOAT:
-		k, v = REAL, parseNum(REAL, tk)
+		return parseFloat(tk)
 
-	case lexeme.LEXEME_VOID:
-		k = VOID
+	case lexeme.LEXEME_STRING:
+		return String(tk.Value)
 
-	default:
-		panic(newTkErr(tk, "An UNDEFINED token may not be converted to a Value"))
+	case lexeme.LEXEME_TEMPLATE:
+		return Template(tk.Value)
 	}
-
-	return Value{
-		k: k,
-		v: v,
-	}
+	//panic(newTkErr(tk, "An UNDEFINED token may not be converted to a Value"))
+	panic(string("TODO: Create Err `Invalid value type " + tk.Lexeme + "`"))
 }
 
-// parseNum parses an INT or REAL token value into its Go counterpart.
-func parseNum(k Kind, tk lexeme.Token) (v interface{}) {
-
-	var e error
-
-	if k == INT {
-		v, e = strconv.ParseInt(tk.Value, 10, 64)
-	} else if k == REAL {
-		v, e = strconv.ParseFloat(tk.Value, 64)
-	} else {
-		panic(newTkErr(tk, "SANITY CHECK! Illegal number type, cannot parse"))
-	}
+// parseInt parses an INT token into an Int value.
+func parseInt(tk lexeme.Token) Int {
+	i, e := strconv.ParseInt(tk.Value, 10, 64)
 
 	if e != nil {
-		panic(newTkError(e, tk, "SANITY CHECK! Could not parse integer token"))
+		//panic(newTkError(e, tk, "SANITY CHECK! Could not parse integer token"))
+		panic(string("TODO: Create Err `Could not parse integer`"))
 	}
 
-	return
+	return Int(i)
 }
 
-// String returns a human readable string representation of the value.
-func (v Value) String() string {
-	switch v.k {
-	case FUNC:
-		return v.v.(funcValue).String()
-	case STR:
-		return "\"" + v.v.(string) + "\""
-	default:
-		return fmt.Sprintf("%v", v.v)
+// parseFloat parses an FLOAT token into an Float value.
+func parseFloat(tk lexeme.Token) Float {
+	f, e := strconv.ParseFloat(tk.Value, 64)
+
+	if e != nil {
+		//panic(newTkError(e, tk, "SANITY CHECK! Could not parse integer token"))
+		panic(string("TODO: Create Err `Could not parse float`"))
 	}
+
+	return Float(f)
 }
-*/
