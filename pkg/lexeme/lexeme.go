@@ -27,8 +27,9 @@ const (
 	LEXEME_ANY       Lexeme = `ANY`
 	LEXEME_ANOTHER   Lexeme = `ANOTHER`
 	// ------------------
-	LEXEME_SOF         Lexeme = `SOF`
-	LEXEME_EOF         Lexeme = `EOF`
+	LEXEME_SOF Lexeme = `SOF`
+	LEXEME_EOF Lexeme = `EOF`
+	// ------------------
 	LEXEME_COMMENT     Lexeme = `COMMENT`
 	LEXEME_WHITESPACE  Lexeme = `WHITESPACE`
 	LEXEME_NEWLINE     Lexeme = `NEWLINE`
