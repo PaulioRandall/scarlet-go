@@ -36,6 +36,10 @@ func (b Bool) String() string {
 
 type Int int64
 
+func (i Int) ToFloat() Float {
+	return Float(i)
+}
+
 func (i Int) Get() interface{} {
 	return int64(i)
 }

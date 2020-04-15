@@ -102,3 +102,13 @@ func (f FuncCall) String(i int) string {
 
 	return str
 }
+
+// ExpressionOf returns either a Value or Identifier expression depending on the
+// token type.
+func ExpressionOf(tk token.Token) Expression {
+	if tk.Type == token.ID {
+		return Identifier{tk}
+	}
+
+	return Value{tk}
+}

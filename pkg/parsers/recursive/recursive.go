@@ -128,12 +128,10 @@ func (p *parser) expressions(s *Statement) bool {
 // Preconditions:
 // - p.tk = <Any>
 func (p *parser) expression(s *Statement, required bool) (Expression, bool) {
-	switch {
-	case p.confirm(token.ID):
-		return Identifier{p.tk}, true
 
-	case p.factor(s):
-		return Value{p.tk}, true
+	switch {
+	case p.term():
+		return p.lowArithmetic(), true
 
 	default:
 		if required {
@@ -144,23 +142,45 @@ func (p *parser) expression(s *Statement, required bool) (Expression, bool) {
 	return nil, false
 }
 
-// factor to parse
+// term is used to determine if p.tk is a term, e.g. identifier, bool, int, etc.
 //
 // Preconditions:
 // - p.tk = <Any>
-func (p *parser) factor(s *Statement) bool {
+func (p *parser) term() bool {
 
 	switch {
-	case p.confirm(token.VOID),
+	case p.confirm(token.ID),
+		p.confirm(token.VOID),
 		p.confirm(token.BOOL),
 		p.confirm(token.INT),
 		p.confirm(token.FLOAT),
 		p.confirm(token.STRING),
 		p.confirm(token.TEMPLATE):
 
-	default:
-		return false
+		return true
 	}
 
-	return true
+	return false
+}
+
+// lowArithmetic?
+//
+// Preconditions:
+// - p.tk = term
+func (p *parser) lowArithmetic() Expression {
+
+	expr := ExpressionOf(p.tk) // Term is expression if no algebra takes place
+
+	if p.inspect(token.ADD) || p.inspect(token.SUBTRACT) {
+		op := p.proceed() // + or -
+
+		if p.expect(token.ANY); !p.term() { // Right side must be a term
+			panic(unexpected("lowArithmetic", p.itr.Peek(), token.ANOTHER))
+		}
+
+		right := ExpressionOf(p.tk)
+		expr = Arithmetic{expr, op, right}
+	}
+
+	return expr
 }

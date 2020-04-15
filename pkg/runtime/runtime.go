@@ -2,6 +2,7 @@ package runtime
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/statement"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func Run(stats []statement.Statement) Context {
@@ -60,7 +61,68 @@ func EvalExpression(ctx *Context, expr statement.Expression) Value {
 
 	case statement.Value:
 		return valueOf(v.Source)
+
+	case statement.Arithmetic:
+		return EvalArithmetic(ctx, v)
 	}
 
 	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
+}
+
+func EvalArithmetic(ctx *Context, a statement.Arithmetic) Value {
+
+	leftExpr := EvalExpression(ctx, a.Left)
+	leftInt, isLeftInt := leftExpr.(Int)
+	leftFloat, isLeftFloat := leftExpr.(Float)
+
+	rightExpr := EvalExpression(ctx, a.Right)
+	rightInt, isRightInt := rightExpr.(Int)
+	rightFloat, isRightFloat := rightExpr.(Float)
+
+	switch {
+	case isLeftInt && isRightInt:
+		return intArithmetic(a.Operator, leftInt, rightInt)
+	case isLeftInt && isRightFloat:
+		return floatArithmetic(a.Operator, leftInt.ToFloat(), rightFloat)
+	case isLeftFloat && isRightInt:
+		return floatArithmetic(a.Operator, leftFloat, rightInt.ToFloat())
+	case isLeftFloat && isRightFloat:
+		return floatArithmetic(a.Operator, leftFloat, rightFloat)
+	}
+
+	if !isLeftInt && !isLeftFloat {
+		panic(err("EvalArithmetic", a.Left.Token(), "Expected Int or Float"))
+	} else {
+		panic(err("EvalArithmetic", a.Right.Token(), "Expected Int or Float"))
+	}
+}
+
+func floatArithmetic(op token.Token, a, b Float) Value {
+
+	x := float64(a)
+	y := float64(b)
+
+	switch op.Type {
+	case token.ADD:
+		return Float(x + y)
+	case token.SUBTRACT:
+		return Float(x - y)
+	}
+
+	panic(err("floatArithmetic", op, "Unknown operator"))
+}
+
+func intArithmetic(op token.Token, a, b Int) Value {
+
+	x := int64(a)
+	y := int64(b)
+
+	switch op.Type {
+	case token.ADD:
+		return Int(x + y)
+	case token.SUBTRACT:
+		return Int(x - y)
+	}
+
+	panic(err("intArithmetic", op, "Unknown operator"))
 }

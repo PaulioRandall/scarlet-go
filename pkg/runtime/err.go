@@ -7,6 +7,12 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
+func assertTrue(f string, tk token.Token, arg bool, errMsg string, args ...interface{}) {
+	if !arg {
+		panic(err(f, tk, errMsg, args...))
+	}
+}
+
 // runtimeErr represents an error while executing statements or evaluating
 // expressions.
 type runtimeErr struct {

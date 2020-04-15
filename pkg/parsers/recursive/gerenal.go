@@ -39,6 +39,14 @@ func (p *parser) expect(lex token.TokenType) {
 	}
 }
 
+// proceed is used when you've already checked the next token is of an
+// acceptable type and want it loaded into p.tk. It may as well be returned
+// since you're likely to use it immediately.
+func (p *parser) proceed() token.Token {
+	p.tk = p.itr.Next()
+	return p.tk
+}
+
 // confirm is used when you want to check if p.tk is of a specific token type.
 func (p *parser) confirm(lex token.TokenType) bool {
 	if lex == token.ANY {
