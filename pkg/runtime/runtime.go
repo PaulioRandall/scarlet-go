@@ -80,14 +80,18 @@ func EvalArithmetic(ctx *Context, a statement.Arithmetic) Value {
 	rightFloat, isRightFloat := rightExpr.(Float)
 
 	switch {
-	case isLeftInt && isRightInt:
-		return intArithmetic(a.Operator, leftInt, rightInt)
+	case isLeftFloat && isRightFloat:
+		return floatArithmetic(a.Operator, leftFloat, rightFloat)
 	case isLeftInt && isRightFloat:
 		return floatArithmetic(a.Operator, leftInt.ToFloat(), rightFloat)
 	case isLeftFloat && isRightInt:
 		return floatArithmetic(a.Operator, leftFloat, rightInt.ToFloat())
-	case isLeftFloat && isRightFloat:
-		return floatArithmetic(a.Operator, leftFloat, rightFloat)
+	case isLeftInt && isRightInt:
+		if a.Operator.Type == token.DIVIDE {
+			return floatArithmetic(a.Operator, leftInt.ToFloat(), rightInt.ToFloat())
+		}
+
+		return intArithmetic(a.Operator, leftInt, rightInt)
 	}
 
 	if !isLeftInt && !isLeftFloat {
@@ -128,8 +132,6 @@ func intArithmetic(op token.Token, a, b Int) Value {
 		return Int(x - y)
 	case token.MULTIPLY:
 		return Int(x * y)
-	case token.DIVIDE:
-		return Int(x / y)
 	}
 
 	panic(err("intArithmetic", op, "Unknown operator"))

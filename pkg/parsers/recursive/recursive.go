@@ -131,11 +131,7 @@ func (p *parser) expression(s *Statement, required bool) (Expression, bool) {
 
 	switch {
 	case p.term():
-		if expr, ok := p.arithmetic(); ok {
-			return expr, true
-		}
-
-		return ExpressionOf(p.tk), true
+		return p.arithmetic(), true
 
 	default:
 		if required {
@@ -171,13 +167,13 @@ func (p *parser) term() bool {
 //
 // Preconditions:
 // - p.tk = term
-func (p *parser) arithmetic() (Expression, bool) {
+func (p *parser) arithmetic() Expression {
 
 	expr := ExpressionOf(p.tk)
 	expr = p.highArithmetic(expr)
 	expr = p.lowArithmetic(expr)
 
-	return expr, true
+	return expr
 }
 
 // highArithmetic?
