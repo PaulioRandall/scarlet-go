@@ -4,8 +4,8 @@ import (
 	"io/ioutil"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 	"github.com/PaulioRandall/scarlet-go/pkg/statement"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/parsers"
 	"github.com/PaulioRandall/scarlet-go/pkg/runtime"
@@ -37,11 +37,11 @@ func run(s string) {
 
 	println("# Scanned:")
 	scannedTokens := scanners.ScanAll(s, scanners.DEFAULT)
-	lexeme.PrintTokens(scannedTokens)
+	token.PrintTokens(scannedTokens)
 
 	println("# Sanitised:")
 	sanitisedTokens := sanitiser.SanitiseAll(scannedTokens)
-	lexeme.PrintTokens(sanitisedTokens)
+	token.PrintTokens(sanitisedTokens)
 
 	println("# Parsed:")
 	statements := parsers.ParseAll(sanitisedTokens, parsers.DEFAULT)

@@ -3,7 +3,7 @@ package runtime
 import (
 	"strconv"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // Value represents a value within the executing program, either the value of
@@ -74,25 +74,25 @@ func (t Template) String() string {
 	return "(TEMPLATE) " + string(t)
 }
 
-func valueOf(tk lexeme.Token) Value {
+func valueOf(tk token.Token) Value {
 
-	switch tk.Lexeme {
-	case lexeme.LEXEME_VOID:
+	switch tk.Type {
+	case token.VOID:
 		return Void{}
 
-	case lexeme.LEXEME_BOOL:
+	case token.BOOL:
 		return Bool(tk.Value == `TRUE`)
 
-	case lexeme.LEXEME_INT:
+	case token.INT:
 		return parseInt(tk)
 
-	case lexeme.LEXEME_FLOAT:
+	case token.FLOAT:
 		return parseFloat(tk)
 
-	case lexeme.LEXEME_STRING:
+	case token.STRING:
 		return String(tk.Value)
 
-	case lexeme.LEXEME_TEMPLATE:
+	case token.TEMPLATE:
 		return Template(tk.Value)
 	}
 
@@ -100,7 +100,7 @@ func valueOf(tk lexeme.Token) Value {
 }
 
 // parseInt parses an INT token into an Int value.
-func parseInt(tk lexeme.Token) Int {
+func parseInt(tk token.Token) Int {
 	i, e := strconv.ParseInt(tk.Value, 10, 64)
 
 	if e != nil {
@@ -111,7 +111,7 @@ func parseInt(tk lexeme.Token) Int {
 }
 
 // parseFloat parses an FLOAT token into an Float value.
-func parseFloat(tk lexeme.Token) Float {
+func parseFloat(tk token.Token) Float {
 	f, e := strconv.ParseFloat(tk.Value, 64)
 
 	if e != nil {

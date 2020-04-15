@@ -1,20 +1,20 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type Expression interface {
-	Token() lexeme.Token
+	Token() token.Token
 
 	String(indent int) string
 }
 
 type Value struct {
-	Source lexeme.Token
+	Source token.Token
 }
 
-func (v Value) Token() lexeme.Token {
+func (v Value) Token() token.Token {
 	return v.Source
 }
 
@@ -24,11 +24,11 @@ func (v Value) String(i int) string {
 
 type Arithmetic struct {
 	Left     Expression
-	Operator lexeme.Token
+	Operator token.Token
 	Right    Expression
 }
 
-func (a Arithmetic) Token() lexeme.Token {
+func (a Arithmetic) Token() token.Token {
 	return a.Operator
 }
 
@@ -45,11 +45,11 @@ func (a Arithmetic) String(i int) string {
 
 type Logic struct {
 	Left     Expression
-	Operator lexeme.Token
+	Operator token.Token
 	Right    Expression
 }
 
-func (l Logic) Token() lexeme.Token {
+func (l Logic) Token() token.Token {
 	return l.Operator
 }
 
@@ -65,12 +65,12 @@ func (l Logic) String(i int) string {
 }
 
 type FuncCall struct {
-	ID     lexeme.Token
-	Input  []lexeme.Token
-	Output []lexeme.Token
+	ID     token.Token
+	Input  []token.Token
+	Output []token.Token
 }
 
-func (f FuncCall) Token() lexeme.Token {
+func (f FuncCall) Token() token.Token {
 	return f.ID
 }
 

@@ -3,57 +3,57 @@ package matching
 import (
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // matcher implementations will return the number of terminals in a token, but
 // only if the token appears next in the symbolStream else 0 is returned.
 type matcher func(*symbolStream) int
 
-// pattern represents a pattern for matching a specific representation of a
-// lexeme. The pattern is provided as a matcher function.
+// pattern represents a pattern for matching a specific lexeme of a token type.
+// The pattern is provided as a matcher function.
 type pattern struct {
-	lexeme  lexeme.Lexeme
-	matcher matcher
+	tokenType token.TokenType
+	matcher   matcher
 }
 
 // patterns returns an array of all possible non-terminal symbols and their
-// mapping to a lexeme. Longest and highest priority static symbols should be at
-// the beginning of the array to ensure the correct token is scanned.
+// mapping to a token type. Longest and highest priority static symbols should
+// be at the beginning of the array to ensure the correct token is scanned.
 func patterns() []pattern {
 	return []pattern{
-		pattern{lexeme.LEXEME_NEWLINE, func(ss *symbolStream) int {
+		pattern{token.NEWLINE, func(ss *symbolStream) int {
 			return ss.countNewlineSymbols(0)
 		}},
-		pattern{lexeme.LEXEME_WHITESPACE, func(ss *symbolStream) int {
+		pattern{token.WHITESPACE, func(ss *symbolStream) int {
 			// Returns the number of consecutive whitespace terminals.
 			// Newlines are not counted as whitespace.
 			return ss.countSymbolsWhile(0, func(i int, ru rune) bool {
 				return !ss.isNewline(i) && unicode.IsSpace(ru)
 			})
 		}},
-		pattern{lexeme.LEXEME_COMMENT, func(ss *symbolStream) int {
+		pattern{token.COMMENT, func(ss *symbolStream) int {
 			if ss.isMatch(0, "//") {
 				return ss.indexOfNextNewline(0)
 			}
 			return 0
 		}},
-		pattern{lexeme.LEXEME_BOOL, func(ss *symbolStream) int {
+		pattern{token.BOOL, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "FALSE")
 		}},
-		pattern{lexeme.LEXEME_BOOL, func(ss *symbolStream) int {
+		pattern{token.BOOL, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "TRUE")
 		}},
-		pattern{lexeme.LEXEME_END, func(ss *symbolStream) int {
+		pattern{token.BLOCK_CLOSE, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "END")
 		}},
-		pattern{lexeme.LEXEME_DO, func(ss *symbolStream) int {
+		pattern{token.BLOCK_OPEN, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "DO")
 		}},
-		pattern{lexeme.LEXEME_FUNC, func(ss *symbolStream) int {
+		pattern{token.FUNC, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "F")
 		}},
-		pattern{lexeme.LEXEME_ID, func(ss *symbolStream) int {
+		pattern{token.ID, func(ss *symbolStream) int {
 			return ss.countSymbolsWhile(0, func(i int, ru rune) bool {
 
 				if unicode.IsLetter(ru) {
@@ -67,76 +67,76 @@ func patterns() []pattern {
 				return true
 			})
 		}},
-		pattern{lexeme.LEXEME_ASSIGN, func(ss *symbolStream) int {
+		pattern{token.ASSIGN, func(ss *symbolStream) int {
 			return stringMatcher(ss, ":=")
 		}},
-		pattern{lexeme.LEXEME_RETURNS, func(ss *symbolStream) int {
+		pattern{token.RETURNS, func(ss *symbolStream) int {
 			return stringMatcher(ss, "->")
 		}},
-		pattern{lexeme.LEXEME_LT_OR_EQU, func(ss *symbolStream) int {
+		pattern{token.LESS_THAN_OR_EQUAL, func(ss *symbolStream) int {
 			return stringMatcher(ss, "<=")
 		}},
-		pattern{lexeme.LEXEME_MT_OR_EQU, func(ss *symbolStream) int {
+		pattern{token.MORE_THAN_OR_EQUAL, func(ss *symbolStream) int {
 			return stringMatcher(ss, "=>")
 		}},
-		pattern{lexeme.LEXEME_PAREN_OPEN, func(ss *symbolStream) int {
+		pattern{token.PAREN_OPEN, func(ss *symbolStream) int {
 			return stringMatcher(ss, "(")
 		}},
-		pattern{lexeme.LEXEME_PAREN_CLOSE, func(ss *symbolStream) int {
+		pattern{token.PAREN_CLOSE, func(ss *symbolStream) int {
 			return stringMatcher(ss, ")")
 		}},
-		pattern{lexeme.LEXEME_LIST_OPEN, func(ss *symbolStream) int {
+		pattern{token.LIST_OPEN, func(ss *symbolStream) int {
 			return stringMatcher(ss, "[")
 		}},
-		pattern{lexeme.LEXEME_LIST_CLOSE, func(ss *symbolStream) int {
+		pattern{token.LIST_CLOSE, func(ss *symbolStream) int {
 			return stringMatcher(ss, "]")
 		}},
-		pattern{lexeme.LEXEME_DELIM, func(ss *symbolStream) int {
+		pattern{token.DELIM, func(ss *symbolStream) int {
 			return stringMatcher(ss, ",")
 		}},
-		pattern{lexeme.LEXEME_VOID, func(ss *symbolStream) int {
+		pattern{token.VOID, func(ss *symbolStream) int {
 			return stringMatcher(ss, "_")
 		}},
-		pattern{lexeme.LEXEME_TERMINATOR, func(ss *symbolStream) int {
+		pattern{token.TERMINATOR, func(ss *symbolStream) int {
 			return stringMatcher(ss, ";")
 		}},
-		pattern{lexeme.LEXEME_SPELL, func(ss *symbolStream) int {
+		pattern{token.SPELL, func(ss *symbolStream) int {
 			return stringMatcher(ss, "@")
 		}},
-		pattern{lexeme.LEXEME_ADD, func(ss *symbolStream) int {
+		pattern{token.ADD, func(ss *symbolStream) int {
 			return stringMatcher(ss, "+")
 		}},
-		pattern{lexeme.LEXEME_SUBTRACT, func(ss *symbolStream) int {
+		pattern{token.SUBTRACT, func(ss *symbolStream) int {
 			return stringMatcher(ss, "-")
 		}},
-		pattern{lexeme.LEXEME_MULTIPLY, func(ss *symbolStream) int {
+		pattern{token.MULTIPLY, func(ss *symbolStream) int {
 			return stringMatcher(ss, "*")
 		}},
-		pattern{lexeme.LEXEME_DIVIDE, func(ss *symbolStream) int {
+		pattern{token.DIVIDE, func(ss *symbolStream) int {
 			return stringMatcher(ss, "/")
 		}},
-		pattern{lexeme.LEXEME_REMAINDER, func(ss *symbolStream) int {
+		pattern{token.REMAINDER, func(ss *symbolStream) int {
 			return stringMatcher(ss, "%")
 		}},
-		pattern{lexeme.LEXEME_AND, func(ss *symbolStream) int {
+		pattern{token.AND, func(ss *symbolStream) int {
 			return stringMatcher(ss, "&")
 		}},
-		pattern{lexeme.LEXEME_OR, func(ss *symbolStream) int {
+		pattern{token.OR, func(ss *symbolStream) int {
 			return stringMatcher(ss, "|")
 		}},
-		pattern{lexeme.LEXEME_EQU, func(ss *symbolStream) int {
+		pattern{token.EQUAL, func(ss *symbolStream) int {
 			return stringMatcher(ss, "=")
 		}},
-		pattern{lexeme.LEXEME_NEQ, func(ss *symbolStream) int {
+		pattern{token.NOT_EQUAL, func(ss *symbolStream) int {
 			return stringMatcher(ss, "#")
 		}},
-		pattern{lexeme.LEXEME_LT, func(ss *symbolStream) int {
+		pattern{token.LESS_THAN, func(ss *symbolStream) int {
 			return stringMatcher(ss, "<")
 		}},
-		pattern{lexeme.LEXEME_MT, func(ss *symbolStream) int {
+		pattern{token.MORE_THAN, func(ss *symbolStream) int {
 			return stringMatcher(ss, ">")
 		}},
-		pattern{lexeme.LEXEME_STRING, func(ss *symbolStream) int {
+		pattern{token.STRING, func(ss *symbolStream) int {
 
 			const (
 				PREFIX     = "`"
@@ -161,7 +161,7 @@ func patterns() []pattern {
 
 			return PREFIX_LEN + n + SUFFIX_LEN
 		}},
-		pattern{lexeme.LEXEME_TEMPLATE, func(ss *symbolStream) int {
+		pattern{token.TEMPLATE, func(ss *symbolStream) int {
 			// As the name suggests, templates can be populated with the value of
 			// identifiers, but the scanner is not concerned with parsing these. It does
 			// need to watch out for escaped terminals that also represent the string
@@ -201,7 +201,7 @@ func patterns() []pattern {
 
 			return PREFIX_LEN + n + SUFFIX_LEN
 		}},
-		pattern{lexeme.LEXEME_FLOAT, func(ss *symbolStream) int {
+		pattern{token.FLOAT, func(ss *symbolStream) int {
 
 			const (
 				DELIM     = "."
@@ -226,7 +226,7 @@ func patterns() []pattern {
 
 			return n + DELIM_LEN + fractionalLen
 		}},
-		pattern{lexeme.LEXEME_INT, func(ss *symbolStream) int {
+		pattern{token.INT, func(ss *symbolStream) int {
 			return integerMatcher(ss, 0)
 		}},
 	}

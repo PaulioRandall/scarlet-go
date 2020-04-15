@@ -1,19 +1,19 @@
 package matching
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // ReadAll parses all tokens from s into an array.
-func ReadAll(s string) []lexeme.Token {
+func ReadAll(s string) []token.Token {
 
-	var tk lexeme.Token
-	var tokens []lexeme.Token
+	var tk token.Token
+	var tokens []token.Token
 	ss := &symbolStream{
 		runes: []rune(s),
 	}
 
-	for tk.Lexeme != lexeme.LEXEME_EOF {
+	for tk.Type != token.EOF {
 		tk = read(ss)
 		tokens = append(tokens, tk)
 	}
@@ -21,20 +21,20 @@ func ReadAll(s string) []lexeme.Token {
 	return tokens
 }
 
-func read(ss *symbolStream) lexeme.Token {
+func read(ss *symbolStream) token.Token {
 
 	if ss.empty() {
 		// TokenStream.Read requires an EOF token be returned upon an empty stream.
-		return lexeme.Token{
-			Lexeme: lexeme.LEXEME_EOF,
-			Line:   ss.lineIndex(),
-			Col:    ss.colIndex(),
+		return token.Token{
+			Type: token.EOF,
+			Line: ss.lineIndex(),
+			Col:  ss.colIndex(),
 		}
 	}
 
 	tk := readToken(ss)
 
-	if tk == (lexeme.Token{}) {
+	if tk == (token.Token{}) {
 		panic(newErr(ss, 0, "Could not identify next token"))
 	}
 
@@ -44,7 +44,7 @@ func read(ss *symbolStream) lexeme.Token {
 // readToken attempts to match one of the non-terminal patterns to the next
 // set of terminals in the script. If found, the terminals are removed and used
 // to create a token.
-func readToken(ss *symbolStream) (_ lexeme.Token) {
+func readToken(ss *symbolStream) (_ token.Token) {
 
 	ps := patterns()
 	size := len(ps)
@@ -55,7 +55,7 @@ func readToken(ss *symbolStream) (_ lexeme.Token) {
 		n := p.matcher(ss)
 
 		if n > 0 {
-			return tokenize(ss, n, p.lexeme)
+			return tokenize(ss, n, p.tokenType)
 		}
 	}
 
@@ -64,12 +64,12 @@ func readToken(ss *symbolStream) (_ lexeme.Token) {
 
 // tokenize creates a new token from the next non-terminal. It reads off n
 // symbols from ss ready for scanning the next token.
-func tokenize(ss *symbolStream, n int, l lexeme.Lexeme) lexeme.Token {
+func tokenize(ss *symbolStream, n int, l token.TokenType) token.Token {
 
-	tk := lexeme.Token{
-		Lexeme: l,
-		Line:   ss.lineIndex(),
-		Col:    ss.colIndex(),
+	tk := token.Token{
+		Type: l,
+		Line: ss.lineIndex(),
+		Col:  ss.colIndex(),
 	}
 
 	tk.Value = ss.readNonTerminal(n)

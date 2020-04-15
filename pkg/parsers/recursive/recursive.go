@@ -1,21 +1,21 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
 // ParseAll parses all tokens in tks into Statements.
-func ParseAll(tks []lexeme.Token) []Statement {
-	p := parser{itr: lexeme.NewIterator(tks)}
+func ParseAll(tks []token.Token) []Statement {
+	p := parser{itr: token.NewIterator(tks)}
 	return p.script()
 }
 
 // parser stores a single read token to enable look ahead by one behaviour.
 type parser struct {
-	itr *lexeme.TokenIterator
-	tk  lexeme.Token
+	itr *token.TokenIterator
+	tk  token.Token
 }
 
 // script parses all statements within the parsers iterator.
@@ -25,7 +25,7 @@ func (p *parser) script() []Statement {
 
 	var ss []Statement
 
-	for !p.itr.Empty() && !p.accept(lexeme.LEXEME_EOF) {
+	for !p.itr.Empty() && !p.accept(token.EOF) {
 		s := p.statement()
 		ss = append(ss, s)
 	}
@@ -41,16 +41,16 @@ func (p *parser) statement() Statement {
 
 	s := Statement{}
 
-	p.accept(lexeme.LEXEME_ANY)
+	p.accept(token.ANY)
 
-	if p.confirm(lexeme.LEXEME_ID) {
+	if p.confirm(token.ID) {
 		if p.identifiers(&s) {
 			return s
 		}
 	}
 
 	if !p.expressions(&s) {
-		panic(unexpected("statement", p.tk, lexeme.LEXEME_ANY))
+		panic(unexpected("statement", p.tk, token.ANY))
 	}
 
 	return s
@@ -60,42 +60,42 @@ func (p *parser) statement() Statement {
 // the approriate function to parse the remainder of the statement.
 //
 // Preconditions:
-// - p.tk = LEXEME_ID
+// - p.tk = ID
 func (p *parser) identifiers(s *Statement) bool {
 
 	switch {
-	case p.inspect(lexeme.LEXEME_DELIM):
-	case p.inspect(lexeme.LEXEME_ASSIGN):
+	case p.inspect(token.DELIM):
+	case p.inspect(token.ASSIGN):
 
 	default:
 		return false
 	}
 
-	ids := []lexeme.Token{p.tk}
+	ids := []token.Token{p.tk}
 
-	for p.inspect(lexeme.LEXEME_DELIM) { // a, b, c...
-		p.expect(lexeme.LEXEME_DELIM) // Skip delimitier
-		p.expect(lexeme.LEXEME_ID)    // Must be an ID after a delimitier
-		ids = append(ids, p.tk)       // Append next ID
+	for p.inspect(token.DELIM) { // a, b, c...
+		p.expect(token.DELIM)   // Skip delimitier
+		p.expect(token.ID)      // Must be an ID after a delimitier
+		ids = append(ids, p.tk) // Append next ID
 	}
 
-	if p.accept(lexeme.LEXEME_ASSIGN) {
+	if p.accept(token.ASSIGN) {
 		p.assignment(s, ids)
 		return true
 	}
 
-	p.expect(lexeme.LEXEME_ANOTHER)
+	p.expect(token.ANOTHER)
 	return true
 }
 
 // assignment?
 //
 // Preconditions:
-// - p.tk = LEXEME_ASSIGN
-func (p *parser) assignment(s *Statement, ids []lexeme.Token) {
+// - p.tk = ASSIGN
+func (p *parser) assignment(s *Statement, ids []token.Token) {
 	s.IDs = ids
 	s.Assign = p.tk
-	p.accept(lexeme.LEXEME_ANY)
+	p.accept(token.ANY)
 	p.expressions(s)
 }
 
@@ -110,14 +110,14 @@ func (p *parser) expressions(s *Statement) bool {
 	for p.expression(s, true) {
 		found = true
 
-		if !p.accept(lexeme.LEXEME_DELIM) {
+		if !p.accept(token.DELIM) {
 			break
 		}
 
-		p.expect(lexeme.LEXEME_ANY)
+		p.expect(token.ANY)
 	}
 
-	p.expect(lexeme.LEXEME_TERMINATOR)
+	p.expect(token.TERMINATOR)
 	return found
 }
 
@@ -132,7 +132,7 @@ func (p *parser) expression(s *Statement, required bool) bool {
 
 	default:
 		if required {
-			panic(unexpected("expression", p.tk, lexeme.LEXEME_ANOTHER))
+			panic(unexpected("expression", p.tk, token.ANOTHER))
 		}
 		return false
 	}
@@ -147,12 +147,12 @@ func (p *parser) expression(s *Statement, required bool) bool {
 func (p *parser) factor(s *Statement) bool {
 
 	switch {
-	case p.confirm(lexeme.LEXEME_VOID),
-		p.confirm(lexeme.LEXEME_BOOL),
-		p.confirm(lexeme.LEXEME_INT),
-		p.confirm(lexeme.LEXEME_FLOAT),
-		p.confirm(lexeme.LEXEME_STRING),
-		p.confirm(lexeme.LEXEME_TEMPLATE):
+	case p.confirm(token.VOID),
+		p.confirm(token.BOOL),
+		p.confirm(token.INT),
+		p.confirm(token.FLOAT),
+		p.confirm(token.STRING),
+		p.confirm(token.TEMPLATE):
 
 	default:
 		return false

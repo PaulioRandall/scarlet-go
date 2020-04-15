@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	e "github.com/PaulioRandall/scarlet-go/pkg/err"
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // runtimeErr represents an error while executing statements or evaluating
@@ -18,7 +18,7 @@ type runtimeErr struct {
 }
 
 // err returns a new runtime error.
-func err(f string, tk lexeme.Token, msg string, args ...interface{}) e.Err {
+func err(f string, tk token.Token, msg string, args ...interface{}) e.Err {
 
 	s := "[runtime." + f + "] " + fmt.Sprintf(msg, args...)
 

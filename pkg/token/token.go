@@ -1,4 +1,4 @@
-package lexeme
+package token
 
 import (
 	"fmt"
@@ -7,10 +7,10 @@ import (
 
 // Token represents a grammar token within a script.
 type Token struct {
-	Lexeme Lexeme // Meaning
-	Value  string // Representation
-	Line   int    // Location within script
-	Col    int    // Location within line
+	Type  TokenType // Meaning
+	Value string    // Representation
+	Line  int       // Location within script
+	Col   int       // Location within line
 }
 
 // String returns a string representation of the token.
@@ -18,10 +18,10 @@ func (tk Token) String() string {
 
 	var v interface{}
 
-	if tk.Lexeme == LEXEME_TEMPLATE {
+	if tk.Type == TEMPLATE {
 		v = strconv.QuoteToGraphic(tk.Value)
 
-	} else if tk.Lexeme == LEXEME_STRING {
+	} else if tk.Type == STRING {
 		v = "`" + tk.Value + "`"
 
 	} else {
@@ -29,14 +29,14 @@ func (tk Token) String() string {
 	}
 
 	// +1 for line index to number
-	return fmt.Sprintf(`%d:%d %s %v`, tk.Line+1, tk.Col, tk.Lexeme, v)
+	return fmt.Sprintf(`%d:%d %s %v`, tk.Line+1, tk.Col, tk.Type, v)
 }
 
 // PrintTokens pretty prints all tokens in tks.
 func PrintTokens(tks []Token) {
 	for _, tk := range tks {
-		switch k := tk.Lexeme; k {
-		case LEXEME_EOF:
+		switch k := tk.Type; k {
+		case EOF:
 			println(k)
 			println()
 		default:

@@ -6,14 +6,14 @@
 package sanitiser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // SanitiseAll creates a sanitisers all tokens from s returning a new array.
-func SanitiseAll(in []lexeme.Token) (out []lexeme.Token) {
+func SanitiseAll(in []token.Token) (out []token.Token) {
 
 	sn := sanitiser{
-		itr: lexeme.NewIterator(in),
+		itr: token.NewIterator(in),
 	}
 
 	for !sn.itr.Empty() {
@@ -25,16 +25,16 @@ func SanitiseAll(in []lexeme.Token) (out []lexeme.Token) {
 }
 
 type sanitiser struct {
-	itr  *lexeme.TokenIterator
-	prev lexeme.Token
+	itr  *token.TokenIterator
+	prev token.Token
 }
 
-func (sn *sanitiser) read() (_ lexeme.Token) {
+func (sn *sanitiser) read() (_ token.Token) {
 
 	for tk := sn.itr.Peek(); !sn.itr.Empty(); tk = sn.itr.Peek() {
 		sn.itr.Skip()
 
-		if !isRedundantLexeme(tk.Lexeme, sn.prev.Lexeme) {
+		if !isRedundantType(tk.Type, sn.prev.Type) {
 			tk = formatToken(tk)
 			sn.prev = tk
 			return tk
@@ -44,35 +44,35 @@ func (sn *sanitiser) read() (_ lexeme.Token) {
 	return
 }
 
-// isRedundantLexeme returns true if l is considered redundant to parsing.
-func isRedundantLexeme(l, prev lexeme.Lexeme) bool {
+// isRedundantType returns true if l is considered redundant to parsing.
+func isRedundantType(l, prev token.TokenType) bool {
 
-	if l == lexeme.LEXEME_WHITESPACE || l == lexeme.LEXEME_COMMENT {
+	if l == token.WHITESPACE || l == token.COMMENT {
 		return true
 	}
 
-	if l != lexeme.LEXEME_NEWLINE && l != lexeme.LEXEME_TERMINATOR {
+	if l != token.NEWLINE && l != token.TERMINATOR {
 		return false
 	}
 
-	return prev == lexeme.LEXEME_LIST_OPEN ||
-		prev == lexeme.LEXEME_DELIM ||
-		prev == lexeme.LEXEME_TERMINATOR ||
-		prev == lexeme.LEXEME_DO ||
-		prev == lexeme.LEXEME_UNDEFINED
+	return prev == token.LIST_OPEN ||
+		prev == token.DELIM ||
+		prev == token.TERMINATOR ||
+		prev == token.BLOCK_OPEN ||
+		prev == token.UNDEFINED
 }
 
-// Applies any special formatting to the token such as converting its lexeme
+// Applies any special formatting to the token such as converting its token
 // type or trimming runes off its value.
-func formatToken(tk lexeme.Token) lexeme.Token {
+func formatToken(tk token.Token) token.Token {
 
-	switch tk.Lexeme {
-	case lexeme.LEXEME_NEWLINE:
+	switch tk.Type {
+	case token.NEWLINE:
 		// Non-redundant newline tokens are expression and statement terminators
 		// in disguise.
-		tk.Lexeme = lexeme.LEXEME_TERMINATOR
+		tk.Type = token.TERMINATOR
 
-	case lexeme.LEXEME_STRING, lexeme.LEXEME_TEMPLATE:
+	case token.STRING, token.TEMPLATE:
 		// Removes prefix and suffix from tk.Value
 		s := tk.Value
 		tk.Value = s[1 : len(s)-1]

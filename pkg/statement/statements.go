@@ -3,7 +3,7 @@ package statement
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func Print(ss []Statement) {
@@ -18,20 +18,20 @@ func Print(ss []Statement) {
 	s = strings.ReplaceAll(s, "\t", "  ")
 
 	println(s)
-	println(lexeme.LEXEME_EOF)
+	println(token.EOF)
 	println()
 }
 
 type Statement struct {
-	IDs    []lexeme.Token
-	Assign lexeme.Token
+	IDs    []token.Token
+	Assign token.Token
 	Exprs  []Expression
 }
 
 func (s *Statement) String(i int) string {
 
 	str := indent(i) + "[Statement]"
-	if s.Assign != (lexeme.Token{}) {
+	if s.Assign != (token.Token{}) {
 		str += " " + s.Assign.String()
 	}
 	str += newline()

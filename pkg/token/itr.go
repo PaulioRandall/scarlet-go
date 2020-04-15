@@ -1,15 +1,15 @@
-package lexeme
+package token
+
+// NewIterator creates a new iterator from the token slice.
+func NewIterator(tks []Token) *TokenIterator {
+	return &TokenIterator{tks, len(tks), 0}
+}
 
 // TokenIterator is a ...token ...iterator.
 type TokenIterator struct {
 	tks   []Token
 	size  int
 	index int
-}
-
-// NewIterator creates a new iterator from the token slice.
-func NewIterator(tks []Token) *TokenIterator {
-	return &TokenIterator{tks, len(tks), 0}
 }
 
 // Index returns the current index of the iterator.

@@ -12,8 +12,8 @@
 package scanners
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
 	"github.com/PaulioRandall/scarlet-go/pkg/scanners/matching"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // Method represents a scanning method
@@ -25,7 +25,7 @@ const (
 )
 
 // ScanAll creates a scanner from s and reads all tokens from it into an array.
-func ScanAll(s string, m Method) []lexeme.Token {
+func ScanAll(s string, m Method) []token.Token {
 
 	switch m {
 	case DEFAULT, PATTERN_MATCHING:

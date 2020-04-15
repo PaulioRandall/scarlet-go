@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	e "github.com/PaulioRandall/scarlet-go/pkg/err"
-	"github.com/PaulioRandall/scarlet-go/pkg/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // parseErr represents an error while parsing.
@@ -17,7 +17,7 @@ type parseErr struct {
 }
 
 // err returns a new parse error.
-func err(f string, tk lexeme.Token, msg string, args ...interface{}) e.Err {
+func err(f string, tk token.Token, msg string, args ...interface{}) e.Err {
 
 	s := "[parser." + f + "] " + fmt.Sprintf(msg, args...)
 
@@ -28,11 +28,11 @@ func err(f string, tk lexeme.Token, msg string, args ...interface{}) e.Err {
 	}
 }
 
-func unexpected(f string, tk lexeme.Token, expected lexeme.Lexeme) e.Err {
+func unexpected(f string, tk token.Token, expected token.TokenType) e.Err {
 	return err(
 		"factor",
 		tk,
-		"Expected %v, got %s", lexeme.LEXEME_ANOTHER, tk.String(),
+		"Expected %v, got %s", token.ANOTHER, tk.String(),
 	)
 }
 
