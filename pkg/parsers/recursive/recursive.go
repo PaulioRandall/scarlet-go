@@ -107,8 +107,10 @@ func (p *parser) expressions(s *Statement) bool {
 
 	var found bool
 
-	for p.expression(s, true) {
+	for expr, ok := p.expression(s, true); ok; expr, ok = p.expression(s, true) {
+
 		found = true
+		s.Exprs = append(s.Exprs, expr)
 
 		if !p.accept(token.DELIM) {
 			break
@@ -125,22 +127,21 @@ func (p *parser) expressions(s *Statement) bool {
 //
 // Preconditions:
 // - p.tk = <Any>
-func (p *parser) expression(s *Statement, required bool) bool {
+func (p *parser) expression(s *Statement, required bool) (Expression, bool) {
 	switch {
 	case p.confirm(token.ID):
-		s.Exprs = append(s.Exprs, Identifier{p.tk})
+		return Identifier{p.tk}, true
 
 	case p.factor(s):
-		s.Exprs = append(s.Exprs, Value{p.tk})
+		return Value{p.tk}, true
 
 	default:
 		if required {
 			panic(unexpected("expression", p.tk, token.ANOTHER))
 		}
-		return false
 	}
 
-	return true
+	return nil, false
 }
 
 // factor to parse

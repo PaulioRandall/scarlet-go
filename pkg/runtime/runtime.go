@@ -63,5 +63,4 @@ func EvalExpression(ctx *Context, expr statement.Expression) Value {
 	}
 
 	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
-	return nil
 }
