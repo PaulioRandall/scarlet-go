@@ -50,7 +50,7 @@ func (a Arithmetic) String(i int) string {
 	str += indent(i+1) + "Left:" + newline()
 	str += a.Left.String(i+2) + newline()
 	str += indent(i+1) + "Right: " + newline()
-	str += a.Right.String(i+2) + newline()
+	str += a.Right.String(i + 2)
 
 	return str
 }
@@ -71,7 +71,7 @@ func (l Logic) String(i int) string {
 	str += indent(i+1) + "Left:" + newline()
 	str += l.Left.String(i+2) + newline()
 	str += indent(i+1) + "Right: " + newline()
-	str += l.Right.String(i+2) + newline()
+	str += l.Right.String(i + 2)
 
 	return str
 }

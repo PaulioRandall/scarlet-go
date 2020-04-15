@@ -1,8 +1,5 @@
 
-// Types
-a := `abc`
-b := "efg"
-c, d := 123, 123.456
-e, f := TRUE, FALSE
+NINE := 3 + 3 + 3
+TEN := 4 * 5 / 2
 
-x := 1 - 2 - 3 + 8
+

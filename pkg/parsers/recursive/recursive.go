@@ -131,7 +131,15 @@ func (p *parser) expression(s *Statement, required bool) (Expression, bool) {
 
 	switch {
 	case p.term():
-		return p.lowArithmetic(), true
+		if expr, ok := p.highArithmetic(); ok {
+			return expr, true
+		}
+
+		if expr, ok := p.lowArithmetic(); ok {
+			return expr, true
+		}
+
+		return ExpressionOf(p.tk), true
 
 	default:
 		if required {
@@ -167,20 +175,53 @@ func (p *parser) term() bool {
 //
 // Preconditions:
 // - p.tk = term
-func (p *parser) lowArithmetic() Expression {
+func (p *parser) lowArithmetic() (Expression, bool) {
 
-	expr := ExpressionOf(p.tk) // Term is expression if no algebra takes place
+	var expr Expression
 
-	for p.inspect(token.ADD) || p.inspect(token.SUBTRACT) {
-		op := p.proceed() // + or -
+	if p.inspect(token.ADD) || p.inspect(token.SUBTRACT) {
+		expr = ExpressionOf(p.tk)
+		expr = p.closeArithmetic(expr)
 
-		if p.expect(token.ANY); !p.term() { // Right side must be a term
-			panic(unexpected("lowArithmetic", p.itr.Peek(), token.ANOTHER))
+		for p.inspect(token.ADD) || p.inspect(token.SUBTRACT) {
+			expr = p.closeArithmetic(expr)
 		}
-
-		right := ExpressionOf(p.tk)
-		expr = Arithmetic{expr, op, right}
 	}
 
-	return expr
+	return expr, expr != nil
+}
+
+// highArithmetic?
+//
+// Preconditions:
+// - p.tk = term
+func (p *parser) highArithmetic() (Expression, bool) {
+
+	var expr Expression
+
+	if p.inspect(token.MULTIPLY) || p.inspect(token.DIVIDE) {
+		expr = ExpressionOf(p.tk)
+		expr = p.closeArithmetic(expr)
+
+		for p.inspect(token.MULTIPLY) || p.inspect(token.DIVIDE) {
+			expr = p.closeArithmetic(expr)
+		}
+	}
+
+	return expr, expr != nil
+}
+
+// closeArithmetic?
+//
+// Preconditions:
+// - accept = <operator>
+func (p *parser) closeArithmetic(left Expression) Expression {
+	op := p.proceed() // + or -
+
+	if p.expect(token.ANY); !p.term() { // Right side must be a term
+		panic(unexpected("closeArithmetic", p.itr.Peek(), token.ANOTHER))
+	}
+
+	right := ExpressionOf(p.tk)
+	return Arithmetic{left, op, right}
 }

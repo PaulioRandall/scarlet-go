@@ -107,6 +107,10 @@ func floatArithmetic(op token.Token, a, b Float) Value {
 		return Float(x + y)
 	case token.SUBTRACT:
 		return Float(x - y)
+	case token.MULTIPLY:
+		return Float(x * y)
+	case token.DIVIDE:
+		return Float(x / y)
 	}
 
 	panic(err("floatArithmetic", op, "Unknown operator"))
@@ -122,6 +126,10 @@ func intArithmetic(op token.Token, a, b Int) Value {
 		return Int(x + y)
 	case token.SUBTRACT:
 		return Int(x - y)
+	case token.MULTIPLY:
+		return Int(x * y)
+	case token.DIVIDE:
+		return Int(x / y)
 	}
 
 	panic(err("intArithmetic", op, "Unknown operator"))
