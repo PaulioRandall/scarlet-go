@@ -171,7 +171,7 @@ func (p *parser) lowArithmetic() Expression {
 
 	expr := ExpressionOf(p.tk) // Term is expression if no algebra takes place
 
-	if p.inspect(token.ADD) || p.inspect(token.SUBTRACT) {
+	for p.inspect(token.ADD) || p.inspect(token.SUBTRACT) {
 		op := p.proceed() // + or -
 
 		if p.expect(token.ANY); !p.term() { // Right side must be a term
