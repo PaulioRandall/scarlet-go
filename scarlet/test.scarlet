@@ -4,4 +4,5 @@ a := `abc`
 b := "efg"
 c, d := 123, 123.456
 e, f := TRUE, FALSE
-a, b := _, _
+
+a, b := b, _

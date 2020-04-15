@@ -127,6 +127,9 @@ func (p *parser) expressions(s *Statement) bool {
 // - p.tk = <Any>
 func (p *parser) expression(s *Statement, required bool) bool {
 	switch {
+	case p.confirm(token.ID):
+		s.Exprs = append(s.Exprs, Identifier{p.tk})
+
 	case p.factor(s):
 		s.Exprs = append(s.Exprs, Value{p.tk})
 

@@ -10,6 +10,18 @@ type Expression interface {
 	String(indent int) string
 }
 
+type Identifier struct {
+	Source token.Token
+}
+
+func (id Identifier) Token() token.Token {
+	return id.Source
+}
+
+func (id Identifier) String(i int) string {
+	return indent(i) + "[Identifier] " + id.Source.String()
+}
+
 type Value struct {
 	Source token.Token
 }

@@ -55,6 +55,9 @@ func EvalExpressions(ctx *Context, exprs []statement.Expression) []Value {
 
 func EvalExpression(ctx *Context, expr statement.Expression) Value {
 	switch v := expr.(type) {
+	case statement.Identifier:
+		return ctx.Get(v.Source.Value)
+
 	case statement.Value:
 		return valueOf(v.Source)
 	}
