@@ -39,6 +39,12 @@ func (p *parser) expect(lex token.TokenType) {
 	}
 }
 
+// snoop is used when you want to see the next token without loading it into
+// p.tk.
+func (p *parser) snoop() token.Token {
+	return p.itr.Peek()
+}
+
 // proceed is used when you've already checked the next token is of an
 // acceptable type and want it loaded into p.tk. It may as well be returned
 // since you're likely to use it immediately.

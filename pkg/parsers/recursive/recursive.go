@@ -131,7 +131,9 @@ func (p *parser) expression(s *Statement, required bool) (Expression, bool) {
 
 	switch {
 	case p.term():
-		return p.arithmetic(), true
+		expr := ExpressionOf(p.tk)
+		return p.arithmetic(expr, 0), true
+		//return p.arithmetic(), true
 
 	default:
 		if required {
@@ -165,54 +167,37 @@ func (p *parser) term() bool {
 
 // arithmetic?
 //
-// Preconditions:
-// - p.tk = term
-func (p *parser) arithmetic() Expression {
-
-	expr := ExpressionOf(p.tk)
-	expr = p.highArithmetic(expr)
-	expr = p.lowArithmetic(expr)
-
-	return expr
-}
-
-// highArithmetic?
-//
 // Preconditions: NONE
-func (p *parser) highArithmetic(left Expression) Expression {
+func (p *parser) arithmetic(left Expression, leftPriority int) Expression {
 
-	if p.inspect(token.MULTIPLY) || p.inspect(token.DIVIDE) {
-		op := p.proceed() // * or /
+	op := p.snoop()
+	opPriority := precedence(op)
 
-		if p.expect(token.ANY); !p.term() { // Right side must be a term
-			panic(unexpected("highArithmetic", p.itr.Peek(), token.ANOTHER))
-		}
-
-		right := ExpressionOf(p.tk)
-		left = Arithmetic{left, op, right}
-		left = p.highArithmetic(left)
+	if leftPriority >= opPriority {
+		return left
 	}
+
+	p.expect(op.Type)
+
+	if p.expect(token.ANY); !p.term() { // Right side must be a term
+		panic(unexpected("????", p.tk, token.ANOTHER))
+	}
+
+	right := ExpressionOf(p.tk)
+	right = p.arithmetic(right, opPriority)
+	left = Arithmetic{left, op, right}
+	left = p.arithmetic(left, leftPriority)
 
 	return left
 }
 
-// lowArithmetic?
-//
-// Preconditions: NONE
-func (p *parser) lowArithmetic(left Expression) Expression {
-
-	if p.inspect(token.ADD) || p.inspect(token.SUBTRACT) {
-		op := p.proceed() // + or -
-
-		if p.expect(token.ANY); !p.term() { // Right side must be a term
-			panic(unexpected("lowArithmetic", p.itr.Peek(), token.ANOTHER))
-		}
-
-		right := ExpressionOf(p.tk)
-		right = p.highArithmetic(right)
-		left = Arithmetic{left, op, right}
-		left = p.lowArithmetic(left)
+func precedence(tk token.Token) int {
+	switch tk.Type {
+	case token.ADD, token.SUBTRACT:
+		return 1
+	case token.MULTIPLY, token.DIVIDE:
+		return 2
+	default:
+		return 0
 	}
-
-	return left
 }

@@ -1,15 +1,18 @@
 
 nine := 3 + 3 + 3
-ten := 4 * 5 / 2
-twelve := 2 * 9 / 3 + 12 / 4 * 2
 meh := 1 / 2
+ten := 4 * 5 / 2
 
-// a_true := TRUE && TRUE
-// b_false := TRUE && FALSE 
-// c_false := FALSE && FALSE
-// d_true := TRUE || TRUE
-// e_true := TRUE || FALSE
-// f_false := FALSE || FALSE
+twelve := 2 * 9 / 3 + 12 / 4 * 2
 
-// g_false := a_true && b_false
-// h_true := c_false || d_true
+
+
+// a_true := TRUE & TRUE
+// b_false := TRUE & FALSE 
+// c_false := FALSE & FALSE
+// d_true := TRUE | TRUE
+// e_true := TRUE | FALSE
+// f_false := FALSE | FALSE
+
+// g_false := a_true & b_false
+// h_true := c_false | d_true
