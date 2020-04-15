@@ -131,11 +131,7 @@ func (p *parser) expression(s *Statement, required bool) (Expression, bool) {
 
 	switch {
 	case p.term():
-		if expr, ok := p.highArithmetic(); ok {
-			return expr, true
-		}
-
-		if expr, ok := p.lowArithmetic(); ok {
+		if expr, ok := p.arithmetic(); ok {
 			return expr, true
 		}
 
@@ -171,57 +167,56 @@ func (p *parser) term() bool {
 	return false
 }
 
-// lowArithmetic?
+// arithmetic?
 //
 // Preconditions:
 // - p.tk = term
-func (p *parser) lowArithmetic() (Expression, bool) {
+func (p *parser) arithmetic() (Expression, bool) {
 
-	var expr Expression
+	expr := ExpressionOf(p.tk)
+	expr = p.highArithmetic(expr)
+	expr = p.lowArithmetic(expr)
 
-	if p.inspect(token.ADD) || p.inspect(token.SUBTRACT) {
-		expr = ExpressionOf(p.tk)
-		expr = p.closeArithmetic(expr)
-
-		for p.inspect(token.ADD) || p.inspect(token.SUBTRACT) {
-			expr = p.closeArithmetic(expr)
-		}
-	}
-
-	return expr, expr != nil
+	return expr, true
 }
 
 // highArithmetic?
 //
-// Preconditions:
-// - p.tk = term
-func (p *parser) highArithmetic() (Expression, bool) {
-
-	var expr Expression
+// Preconditions: NONE
+func (p *parser) highArithmetic(left Expression) Expression {
 
 	if p.inspect(token.MULTIPLY) || p.inspect(token.DIVIDE) {
-		expr = ExpressionOf(p.tk)
-		expr = p.closeArithmetic(expr)
+		op := p.proceed() // * or /
 
-		for p.inspect(token.MULTIPLY) || p.inspect(token.DIVIDE) {
-			expr = p.closeArithmetic(expr)
+		if p.expect(token.ANY); !p.term() { // Right side must be a term
+			panic(unexpected("highArithmetic", p.itr.Peek(), token.ANOTHER))
 		}
+
+		right := ExpressionOf(p.tk)
+		left = Arithmetic{left, op, right}
+		left = p.highArithmetic(left)
 	}
 
-	return expr, expr != nil
+	return left
 }
 
-// closeArithmetic?
+// lowArithmetic?
 //
-// Preconditions:
-// - accept = <operator>
-func (p *parser) closeArithmetic(left Expression) Expression {
-	op := p.proceed() // + or -
+// Preconditions: NONE
+func (p *parser) lowArithmetic(left Expression) Expression {
 
-	if p.expect(token.ANY); !p.term() { // Right side must be a term
-		panic(unexpected("closeArithmetic", p.itr.Peek(), token.ANOTHER))
+	if p.inspect(token.ADD) || p.inspect(token.SUBTRACT) {
+		op := p.proceed() // + or -
+
+		if p.expect(token.ANY); !p.term() { // Right side must be a term
+			panic(unexpected("lowArithmetic", p.itr.Peek(), token.ANOTHER))
+		}
+
+		right := ExpressionOf(p.tk)
+		right = p.highArithmetic(right)
+		left = Arithmetic{left, op, right}
+		left = p.lowArithmetic(left)
 	}
 
-	right := ExpressionOf(p.tk)
-	return Arithmetic{left, op, right}
+	return left
 }
