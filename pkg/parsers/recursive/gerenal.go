@@ -33,10 +33,12 @@ func (p *parser) accept(lex token.TokenType) bool {
 
 // expect is used when you want to load the next token into p.tk and it must be
 // of the specified kind. A panic ensues if your demands are not met.
-func (p *parser) expect(lex token.TokenType) {
+func (p *parser) expect(lex token.TokenType) bool {
 	if !p.accept(lex) {
 		panic(unexpected("expect", p.itr.Peek(), lex))
 	}
+
+	return true
 }
 
 // snoop is used when you want to see the next token without loading it into

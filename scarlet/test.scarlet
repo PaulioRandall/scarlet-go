@@ -1,19 +1,7 @@
 
 //nine := 3 + 3 + 3
-//meh := 1 / 2
+//meh := 1 / (2 + 3)
 //ten := 4 * 5 / 2
 
-twelve := 2 * 9 / 3 + 12 / 4 * 2
+naught_six := 2 * 9 / (3 + 12) * 2 / 4
 
-
-
-a_true := TRUE & TRUE & TRUE & TRUE
-b_false := TRUE & TRUE & FALSE & TRUE & TRUE 
-c_false := FALSE & FALSE
-
-d_true := TRUE | TRUE
-e_true := TRUE | FALSE
-f_false := FALSE | FALSE
-
-g_false := a_true & b_false
-h_true := c_false | d_true

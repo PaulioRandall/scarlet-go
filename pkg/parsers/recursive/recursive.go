@@ -130,9 +130,9 @@ func (p *parser) expressions(s *Statement) bool {
 func (p *parser) expression(s *Statement, required bool) (Expression, bool) {
 
 	switch {
-	case p.term():
-		expr := ExpressionOf(p.tk)
-		return p.operation(expr, 0), true
+	case p.confirm(token.PAREN_OPEN), p.term():
+		left := p.newOperation(s)
+		return p.operation(s, left, 0), true
 
 	default:
 		if required {
@@ -166,8 +166,28 @@ func (p *parser) term() bool {
 
 // operation?
 //
+// Preconditions:
+// - p.tk = <ANY>
+func (p *parser) newOperation(s *Statement) Expression {
+	switch {
+	case p.confirm(token.PAREN_OPEN):
+		p.expect(token.ANY)
+		expr, _ := p.expression(s, true)
+		p.expect(token.PAREN_CLOSE)
+		return expr
+
+	case p.term():
+		return ExpressionOf(p.tk)
+
+	default:
+		panic(unexpected("newOperation", p.tk, token.ANOTHER))
+	}
+}
+
+// operation?
+//
 // Preconditions: NONE
-func (p *parser) operation(left Expression, leftPriority int) Expression {
+func (p *parser) operation(s *Statement, left Expression, leftPriority int) Expression {
 
 	op := p.snoop()
 	opPriority := precedence(op)
@@ -177,13 +197,10 @@ func (p *parser) operation(left Expression, leftPriority int) Expression {
 	}
 
 	p.expect(op.Type)
+	p.expect(token.ANY)
 
-	if p.expect(token.ANY); !p.term() { // Right side must be a term
-		panic(unexpected("????", p.tk, token.ANOTHER))
-	}
-
-	right := ExpressionOf(p.tk)
-	right = p.operation(right, opPriority)
+	right := p.newOperation(s)
+	right = p.operation(s, right, opPriority)
 
 	if operator(op) {
 		left = Arithmetic{left, op, right}
@@ -191,7 +208,7 @@ func (p *parser) operation(left Expression, leftPriority int) Expression {
 		left = Logic{left, op, right}
 	}
 
-	left = p.operation(left, leftPriority)
+	left = p.operation(s, left, leftPriority)
 
 	return left
 }
