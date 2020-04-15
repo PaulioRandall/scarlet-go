@@ -64,6 +64,9 @@ func EvalExpression(ctx *Context, expr statement.Expression) Value {
 
 	case statement.Arithmetic:
 		return EvalArithmetic(ctx, v)
+
+	case statement.Logic:
+		return EvalLogic(ctx, v)
 	}
 
 	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
@@ -135,4 +138,33 @@ func intArithmetic(op token.Token, a, b Int) Value {
 	}
 
 	panic(err("intArithmetic", op, "Unknown operator"))
+}
+
+func EvalLogic(ctx *Context, l statement.Logic) Value {
+
+	op := l.Operator
+
+	leftExpr := EvalExpression(ctx, l.Left)
+	left, ok := leftExpr.(Bool)
+	if !ok {
+		panic(err("EvalLogic", op, "Expected bool value on left"))
+	}
+
+	rightExpr := EvalExpression(ctx, l.Right)
+	right, ok := rightExpr.(Bool)
+	if !ok {
+		panic(err("EvalLogic", op, "Expected bool value on right"))
+	}
+
+	a := bool(left)
+	b := bool(right)
+
+	switch op.Type {
+	case token.AND:
+		return Bool(a && b)
+	case token.OR:
+		return Bool(a || b)
+	}
+
+	panic(err("EvalLogic", op, "Unknown operator"))
 }

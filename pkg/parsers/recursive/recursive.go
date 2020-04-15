@@ -132,8 +132,7 @@ func (p *parser) expression(s *Statement, required bool) (Expression, bool) {
 	switch {
 	case p.term():
 		expr := ExpressionOf(p.tk)
-		return p.arithmetic(expr, 0), true
-		//return p.arithmetic(), true
+		return p.operation(expr, 0), true
 
 	default:
 		if required {
@@ -165,10 +164,10 @@ func (p *parser) term() bool {
 	return false
 }
 
-// arithmetic?
+// operation?
 //
 // Preconditions: NONE
-func (p *parser) arithmetic(left Expression, leftPriority int) Expression {
+func (p *parser) operation(left Expression, leftPriority int) Expression {
 
 	op := p.snoop()
 	opPriority := precedence(op)
@@ -184,19 +183,39 @@ func (p *parser) arithmetic(left Expression, leftPriority int) Expression {
 	}
 
 	right := ExpressionOf(p.tk)
-	right = p.arithmetic(right, opPriority)
-	left = Arithmetic{left, op, right}
-	left = p.arithmetic(left, leftPriority)
+	right = p.operation(right, opPriority)
+
+	if operator(op) {
+		left = Arithmetic{left, op, right}
+	} else {
+		left = Logic{left, op, right}
+	}
+
+	left = p.operation(left, leftPriority)
 
 	return left
 }
 
+func operator(tk token.Token) bool {
+	switch tk.Type {
+	case token.ADD,
+		token.SUBTRACT,
+		token.MULTIPLY,
+		token.DIVIDE:
+		return true
+	}
+
+	return false
+}
+
 func precedence(tk token.Token) int {
 	switch tk.Type {
-	case token.ADD, token.SUBTRACT:
+	case token.AND, token.OR:
 		return 1
-	case token.MULTIPLY, token.DIVIDE:
+	case token.ADD, token.SUBTRACT:
 		return 2
+	case token.MULTIPLY, token.DIVIDE:
+		return 3
 	default:
 		return 0
 	}
