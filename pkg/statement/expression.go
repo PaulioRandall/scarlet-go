@@ -55,6 +55,27 @@ func (a Arithmetic) String(i int) string {
 	return str
 }
 
+type Relation struct {
+	Left     Expression
+	Operator token.Token
+	Right    Expression
+}
+
+func (r Relation) Token() token.Token {
+	return r.Operator
+}
+
+func (r Relation) String(i int) string {
+
+	str := indent(i) + "[Relation] " + r.Operator.String() + newline()
+	str += indent(i+1) + "Left:" + newline()
+	str += r.Left.String(i+2) + newline()
+	str += indent(i+1) + "Right: " + newline()
+	str += r.Right.String(i + 2)
+
+	return str
+}
+
 type Logic struct {
 	Left     Expression
 	Operator token.Token
@@ -103,12 +124,37 @@ func (f FuncCall) String(i int) string {
 	return str
 }
 
-// ExpressionOf returns either a Value or Identifier expression depending on the
-// token type.
-func ExpressionOf(tk token.Token) Expression {
-	if tk.Type == token.ID {
+// NewValueExpression returns either a Value or Identifier expression depending
+// on the token type.
+func NewValueExpression(tk token.Token) Expression {
+	switch tk.Type {
+	case token.ID:
 		return Identifier{tk}
+	default:
+		return Value{tk}
+	}
+}
+
+// NewMathExpression returns either an Arithmetic, Relation, or Logic
+// expression depending on the operator token type.
+func NewMathExpression(left Expression, op token.Token, right Expression) Expression {
+	switch op.Type {
+	case token.ADD,
+		token.SUBTRACT,
+		token.MULTIPLY,
+		token.DIVIDE,
+		token.REMAINDER:
+		return Arithmetic{left, op, right}
+
+	case token.LESS_THAN,
+		token.LESS_THAN_OR_EQUAL,
+		token.MORE_THAN,
+		token.MORE_THAN_OR_EQUAL:
+		return Relation{left, op, right}
+
+	case token.AND, token.OR:
+		return Logic{left, op, right}
 	}
 
-	return Value{tk}
+	panic(string("[NewMathExpression] Unknown operator '" + string(op.Type) + "'"))
 }

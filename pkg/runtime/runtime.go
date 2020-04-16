@@ -65,6 +65,9 @@ func EvalExpression(ctx *Context, expr statement.Expression) Value {
 	case statement.Arithmetic:
 		return EvalArithmetic(ctx, v)
 
+	case statement.Relation:
+		return EvalRelation(ctx, v)
+
 	case statement.Logic:
 		return EvalLogic(ctx, v)
 	}
@@ -137,7 +140,7 @@ func intArithmetic(op token.Token, a, b Int) Value {
 		return Int(x * y)
 	}
 
-	panic(err("intArithmetic", op, "Unknown operator"))
+	panic(err("intArithmetic", op, "Unknown arithmetic operator"))
 }
 
 func EvalLogic(ctx *Context, l statement.Logic) Value {
@@ -147,13 +150,13 @@ func EvalLogic(ctx *Context, l statement.Logic) Value {
 	leftExpr := EvalExpression(ctx, l.Left)
 	left, ok := leftExpr.(Bool)
 	if !ok {
-		panic(err("EvalLogic", op, "Expected bool value on left"))
+		panic(err("EvalLogic", op, "Expected Bool value on left"))
 	}
 
 	rightExpr := EvalExpression(ctx, l.Right)
 	right, ok := rightExpr.(Bool)
 	if !ok {
-		panic(err("EvalLogic", op, "Expected bool value on right"))
+		panic(err("EvalLogic", op, "Expected Bool value on right"))
 	}
 
 	a := bool(left)
@@ -166,5 +169,40 @@ func EvalLogic(ctx *Context, l statement.Logic) Value {
 		return Bool(a || b)
 	}
 
-	panic(err("EvalLogic", op, "Unknown operator"))
+	panic(err("EvalLogic", op, "Unknown logical operator"))
+}
+
+func EvalRelation(ctx *Context, r statement.Relation) Value {
+
+	op := r.Operator
+
+	resolve := func(expr statement.Expression) float64 {
+		v := EvalExpression(ctx, expr)
+
+		if vInt, ok := v.(Int); ok {
+			return float64(vInt.ToFloat())
+		}  
+
+		if vFloat, ok := v.(Float); ok {
+			return float64(vFloat)
+		}
+
+		panic(err("EvalRelation", op, "Expected Int or Float value on left"))
+	}
+
+	left := resolve(r.Left)
+	right := resolve(r.Right)
+
+	switch op.Type {
+	case token.LESS_THAN:
+		return Bool(left < right)
+	case token.MORE_THAN:
+		return Bool(left > right)
+	case token.LESS_THAN_OR_EQUAL:
+		return Bool(left <= right)
+	case token.MORE_THAN_OR_EQUAL:
+		return Bool(left >= right)
+	}
+
+	panic(err("EvalRelation", op, "Unknown relational operator"))
 }

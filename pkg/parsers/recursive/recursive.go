@@ -177,7 +177,7 @@ func (p *parser) newOperation(s *Statement) Expression {
 		return expr
 
 	case p.term():
-		return ExpressionOf(p.tk)
+		return NewValueExpression(p.tk)
 
 	default:
 		panic(unexpected("newOperation", p.tk, token.ANOTHER))
@@ -202,23 +202,19 @@ func (p *parser) operation(s *Statement, left Expression, leftPriority int) Expr
 	right := p.newOperation(s)
 	right = p.operation(s, right, opPriority)
 
-	if operator(op) {
-		left = Arithmetic{left, op, right}
-	} else {
-		left = Logic{left, op, right}
-	}
-
+	left = NewMathExpression(left, op, right)
 	left = p.operation(s, left, leftPriority)
 
 	return left
 }
 
-func operator(tk token.Token) bool {
+func arithmeticOperator(tk token.Token) bool {
 	switch tk.Type {
 	case token.ADD,
 		token.SUBTRACT,
 		token.MULTIPLY,
 		token.DIVIDE:
+
 		return true
 	}
 
@@ -227,12 +223,18 @@ func operator(tk token.Token) bool {
 
 func precedence(tk token.Token) int {
 	switch tk.Type {
-	case token.AND, token.OR:
-		return 1
-	case token.ADD, token.SUBTRACT:
-		return 2
-	case token.MULTIPLY, token.DIVIDE:
+	case token.MULTIPLY, token.DIVIDE: // Multiplicative
+		return 5
+	case token.ADD, token.SUBTRACT: // Additive
+		return 4
+	case token.LESS_THAN, token.LESS_THAN_OR_EQUAL: // Relational
+		fallthrough
+	case token.MORE_THAN, token.MORE_THAN_OR_EQUAL: // Relational
 		return 3
+	case token.AND:
+		return 2
+	case token.OR:
+		return 1
 	default:
 		return 0
 	}
