@@ -126,7 +126,7 @@ func floatArithmetic(op token.Token, a, b Float) Value {
 		return Float(x / y)
 	}
 
-	panic(err("floatArithmetic", op, "Unknown operator"))
+	panic(err("floatArithmetic", op, "Unknown arithmetic Float operator"))
 }
 
 func intArithmetic(op token.Token, a, b Int) Value {
@@ -141,9 +141,11 @@ func intArithmetic(op token.Token, a, b Int) Value {
 		return Int(x - y)
 	case token.MULTIPLY:
 		return Int(x * y)
+	case token.REMAINDER:
+		return Int(x % y)
 	}
 
-	panic(err("intArithmetic", op, "Unknown arithmetic operator"))
+	panic(err("intArithmetic", op, "Unknown arithmetic Int operator"))
 }
 
 func EvalLogic(ctx *Context, l statement.Logic) Value {

@@ -223,7 +223,7 @@ func arithmeticOperator(tk token.Token) bool {
 
 func precedence(tk token.Token) int {
 	switch tk.Type {
-	case token.MULTIPLY, token.DIVIDE: // Multiplicative
+	case token.MULTIPLY, token.DIVIDE, token.REMAINDER: // Multiplicative
 		return 6
 	case token.ADD, token.SUBTRACT: // Additive
 		return 5
