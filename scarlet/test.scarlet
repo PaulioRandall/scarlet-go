@@ -5,6 +5,4 @@
 
 //naught_six := 2 * 9 / (3 + 12) * 2 / 4
 
-a_true := 1 < 2
-b_false := 1 > 2
-c_true := 1 < 2 & 2 > 1
+abc := 2 * 2 < 8 / (2 + 1) = FALSE 

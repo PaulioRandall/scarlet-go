@@ -224,12 +224,14 @@ func arithmeticOperator(tk token.Token) bool {
 func precedence(tk token.Token) int {
 	switch tk.Type {
 	case token.MULTIPLY, token.DIVIDE: // Multiplicative
-		return 5
+		return 6
 	case token.ADD, token.SUBTRACT: // Additive
-		return 4
+		return 5
 	case token.LESS_THAN, token.LESS_THAN_OR_EQUAL: // Relational
 		fallthrough
 	case token.MORE_THAN, token.MORE_THAN_OR_EQUAL: // Relational
+		return 4
+	case token.EQUAL, token.NOT_EQUAL: // Equality
 		return 3
 	case token.AND:
 		return 2

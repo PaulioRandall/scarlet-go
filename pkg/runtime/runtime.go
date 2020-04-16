@@ -68,6 +68,9 @@ func EvalExpression(ctx *Context, expr statement.Expression) Value {
 	case statement.Relation:
 		return EvalRelation(ctx, v)
 
+	case statement.Equality:
+		return EvalEquality(ctx, v)
+
 	case statement.Logic:
 		return EvalLogic(ctx, v)
 	}
@@ -181,7 +184,7 @@ func EvalRelation(ctx *Context, r statement.Relation) Value {
 
 		if vInt, ok := v.(Int); ok {
 			return float64(vInt.ToFloat())
-		}  
+		}
 
 		if vFloat, ok := v.(Float); ok {
 			return float64(vFloat)
@@ -205,4 +208,30 @@ func EvalRelation(ctx *Context, r statement.Relation) Value {
 	}
 
 	panic(err("EvalRelation", op, "Unknown relational operator"))
+}
+
+func EvalEquality(ctx *Context, eq statement.Equality) Value {
+
+	op := eq.Operator
+	left := EvalExpression(ctx, eq.Left)
+	right := EvalExpression(ctx, eq.Right)
+
+	intToFloat := func(v Value) Value {
+		if vInt, ok := v.(Int); ok {
+			return vInt.ToFloat()
+		}
+		return v
+	}
+
+	left = intToFloat(left)
+	right = intToFloat(right)
+
+	switch op.Type {
+	case token.EQUAL:
+		return Bool(left == right)
+	case token.NOT_EQUAL:
+		return Bool(left != right)
+	}
+
+	panic(err("EvalEquality", op, "Unknown equality operator"))
 }

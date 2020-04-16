@@ -76,6 +76,27 @@ func (r Relation) String(i int) string {
 	return str
 }
 
+type Equality struct {
+	Left     Expression
+	Operator token.Token
+	Right    Expression
+}
+
+func (e Equality) Token() token.Token {
+	return e.Operator
+}
+
+func (e Equality) String(i int) string {
+
+	str := indent(i) + "[Equality] " + e.Operator.String() + newline()
+	str += indent(i+1) + "Left:" + newline()
+	str += e.Left.String(i+2) + newline()
+	str += indent(i+1) + "Right: " + newline()
+	str += e.Right.String(i + 2)
+
+	return str
+}
+
 type Logic struct {
 	Left     Expression
 	Operator token.Token
@@ -151,6 +172,9 @@ func NewMathExpression(left Expression, op token.Token, right Expression) Expres
 		token.MORE_THAN,
 		token.MORE_THAN_OR_EQUAL:
 		return Relation{left, op, right}
+
+	case token.EQUAL, token.NOT_EQUAL:
+		return Equality{left, op, right}
 
 	case token.AND, token.OR:
 		return Logic{left, op, right}
