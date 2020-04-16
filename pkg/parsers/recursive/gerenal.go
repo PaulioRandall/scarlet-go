@@ -77,4 +77,5 @@ func (p *parser) affirm(tag string, lex token.TokenType) bool {
 // retract is used when you want to backtrack one token.
 func (p *parser) retract() {
 	p.itr.Back()
+	p.tk = token.Token{}
 }
