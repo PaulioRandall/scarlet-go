@@ -4,71 +4,9 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-type Operation interface {
-	Expression
-
-	Left() Expression
-
-	Operator() token.Token
-
-	Right() Expression
-}
-
-// baseOp is the base structure embeded in Operations to avoid redefining
-// idententical methods.
-type baseOp struct {
-	name  string
-	left  Expression
-	op    token.Token
-	right Expression
-}
-
-func (bo baseOp) Left() Expression {
-	return bo.left
-}
-
-func (bo baseOp) Operator() token.Token {
-	return bo.op
-}
-
-func (bo baseOp) Right() Expression {
-	return bo.right
-}
-
-func (bo baseOp) Token() token.Token {
-	return bo.op
-}
-
-func (bo baseOp) String(i int) string {
-
-	str := indent(i) + "[" + bo.name + "] " + bo.op.String() + newline()
-	str += indent(i+1) + "Left:" + newline()
-	str += bo.left.String(i+2) + newline()
-	str += indent(i+1) + "Right: " + newline()
-	str += bo.right.String(i + 2)
-
-	return str
-}
-
-type Arithmetic struct {
-	baseOp
-}
-
-type Relation struct {
-	baseOp
-}
-
-type Equality struct {
-	baseOp
-}
-
-type Logic struct {
-	baseOp
-}
-
-// NewMathExpression returns either an Arithmetic, Relation, or Logic
+// NewOperation returns either an Arithmetic, Relation, Equality, or Logic
 // expression depending on the operator token type.
-func NewMathExpression(left Expression, op token.Token, right Expression) Expression {
+func NewOperation(left Expression, op token.Token, right Expression) Expression {
 
 	switch op.Type {
 	case token.ADD,
@@ -91,5 +29,81 @@ func NewMathExpression(left Expression, op token.Token, right Expression) Expres
 		return Logic{baseOp{`Logic`, left, op, right}}
 	}
 
-	panic(string("[NewMathExpression] Unknown operator '" + string(op.Type) + "'"))
+	panic(string("[NewOperation] Unknown operator '" + string(op.Type) + "'"))
+}
+
+// Operation represents an mathematical operation, an expression with a left
+// side, opertor, and right side.
+type Operation interface {
+	Expression
+
+	// Left returns the expression for obtaining the left hand value.
+	Left() Expression
+
+	// Operator returns the token representing the operator.
+	Operator() token.Token
+
+	// Right returns the expression for obtaining the right hand value.
+	Right() Expression
+}
+
+// baseOp is the base structure embeded in Operations to avoid redefining
+// idententical methods.
+type baseOp struct {
+	name  string
+	left  Expression
+	op    token.Token
+	right Expression
+}
+
+// Left satisfies the Operation interface.
+func (bo baseOp) Left() Expression {
+	return bo.left
+}
+
+// Operator satisfies the Operation interface.
+func (bo baseOp) Operator() token.Token {
+	return bo.op
+}
+
+// Right satisfies the Operation interface.
+func (bo baseOp) Right() Expression {
+	return bo.right
+}
+
+// Token satisfies the Expression interface.
+func (bo baseOp) Token() token.Token {
+	return bo.op
+}
+
+// String satisfies the Expression interface.
+func (bo baseOp) String(i int) string {
+
+	str := indent(i) + "[" + bo.name + "] " + bo.op.String() + newline()
+	str += indent(i+1) + "Left:" + newline()
+	str += bo.left.String(i+2) + newline()
+	str += indent(i+1) + "Right: " + newline()
+	str += bo.right.String(i + 2)
+
+	return str
+}
+
+// Arithmetic operations are for simple maths such as ADD and MULTIPLY.
+type Arithmetic struct {
+	baseOp
+}
+
+// Relation operations are for relational expressions such as LESS_THAN.
+type Relation struct {
+	baseOp
+}
+
+// Equality operations are for EQUAL and NOT_EQUAL expressions.
+type Equality struct {
+	baseOp
+}
+
+// Logic operations are for boolean algebra such as AND and OR
+type Logic struct {
+	baseOp
 }

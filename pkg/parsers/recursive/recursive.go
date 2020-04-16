@@ -187,7 +187,7 @@ func (p *parser) operation(left Expression, leftPriority int) Expression {
 	right, _ := p.operationInit(true)
 	right = p.operation(right, opPriority)
 
-	left = NewMathExpression(left, op, right)
+	left = NewOperation(left, op, right)
 	left = p.operation(left, leftPriority)
 
 	return left
