@@ -83,33 +83,35 @@ func EvalExpression(ctx *Context, expr statement.Expression) Value {
 
 func EvalArithmetic(ctx *Context, a statement.Arithmetic) Value {
 
-	leftExpr := EvalExpression(ctx, a.Left)
+	leftExpr := EvalExpression(ctx, a.Left())
 	leftInt, isLeftInt := leftExpr.(Int)
 	leftFloat, isLeftFloat := leftExpr.(Float)
 
-	rightExpr := EvalExpression(ctx, a.Right)
+	rightExpr := EvalExpression(ctx, a.Right())
 	rightInt, isRightInt := rightExpr.(Int)
 	rightFloat, isRightFloat := rightExpr.(Float)
 
+	op := a.Operator()
+
 	switch {
 	case isLeftFloat && isRightFloat:
-		return floatArithmetic(a.Operator, leftFloat, rightFloat)
+		return floatArithmetic(op, leftFloat, rightFloat)
 	case isLeftInt && isRightFloat:
-		return floatArithmetic(a.Operator, leftInt.ToFloat(), rightFloat)
+		return floatArithmetic(op, leftInt.ToFloat(), rightFloat)
 	case isLeftFloat && isRightInt:
-		return floatArithmetic(a.Operator, leftFloat, rightInt.ToFloat())
+		return floatArithmetic(op, leftFloat, rightInt.ToFloat())
 	case isLeftInt && isRightInt:
-		if a.Operator.Type == token.DIVIDE {
-			return floatArithmetic(a.Operator, leftInt.ToFloat(), rightInt.ToFloat())
+		if op.Type == token.DIVIDE {
+			return floatArithmetic(op, leftInt.ToFloat(), rightInt.ToFloat())
 		}
 
-		return intArithmetic(a.Operator, leftInt, rightInt)
+		return intArithmetic(op, leftInt, rightInt)
 	}
 
 	if !isLeftInt && !isLeftFloat {
-		panic(err("EvalArithmetic", a.Left.Token(), "Expected Int or Float"))
+		panic(err("EvalArithmetic", a.Left().Token(), "Expected Int or Float"))
 	} else {
-		panic(err("EvalArithmetic", a.Right.Token(), "Expected Int or Float"))
+		panic(err("EvalArithmetic", a.Right().Token(), "Expected Int or Float"))
 	}
 }
 
@@ -153,15 +155,15 @@ func intArithmetic(op token.Token, a, b Int) Value {
 
 func EvalLogic(ctx *Context, l statement.Logic) Value {
 
-	op := l.Operator
+	op := l.Operator()
 
-	leftExpr := EvalExpression(ctx, l.Left)
+	leftExpr := EvalExpression(ctx, l.Left())
 	left, ok := leftExpr.(Bool)
 	if !ok {
 		panic(err("EvalLogic", op, "Expected Bool value on left"))
 	}
 
-	rightExpr := EvalExpression(ctx, l.Right)
+	rightExpr := EvalExpression(ctx, l.Right())
 	right, ok := rightExpr.(Bool)
 	if !ok {
 		panic(err("EvalLogic", op, "Expected Bool value on right"))
@@ -182,7 +184,7 @@ func EvalLogic(ctx *Context, l statement.Logic) Value {
 
 func EvalRelation(ctx *Context, r statement.Relation) Value {
 
-	op := r.Operator
+	op := r.Operator()
 
 	resolve := func(expr statement.Expression) float64 {
 		v := EvalExpression(ctx, expr)
@@ -198,8 +200,8 @@ func EvalRelation(ctx *Context, r statement.Relation) Value {
 		panic(err("EvalRelation", op, "Expected Int or Float value on left"))
 	}
 
-	left := resolve(r.Left)
-	right := resolve(r.Right)
+	left := resolve(r.Left())
+	right := resolve(r.Right())
 
 	switch op.Type {
 	case token.LESS_THAN:
@@ -217,9 +219,9 @@ func EvalRelation(ctx *Context, r statement.Relation) Value {
 
 func EvalEquality(ctx *Context, eq statement.Equality) Value {
 
-	op := eq.Operator
-	left := EvalExpression(ctx, eq.Left)
-	right := EvalExpression(ctx, eq.Right)
+	op := eq.Operator()
+	left := EvalExpression(ctx, eq.Left())
+	right := EvalExpression(ctx, eq.Right())
 
 	intToFloat := func(v Value) Value {
 		if vInt, ok := v.(Int); ok {
