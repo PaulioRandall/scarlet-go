@@ -49,11 +49,13 @@ func (p *parser) statement() Statement {
 		}
 	}
 
-	if !p.expressions(&s) {
-		panic(unexpected("statement", p.tk, token.ANY))
+	if exprs, ok := p.expressions(&s, true); ok {
+		p.expect(`statement`, token.TERMINATOR)
+		s.Exprs = exprs
+		return s
 	}
 
-	return s
+	panic(unexpected("statement", p.tk, token.ANY))
 }
 
 // identifiers parses a delimiter separated list of identifiers then invokes
@@ -74,9 +76,9 @@ func (p *parser) identifiers(s *Statement) bool {
 	ids := []token.Token{p.tk}
 
 	for p.inspect(token.DELIM) { // a, b, c...
-		p.expect(token.DELIM)   // Skip delimitier
-		p.expect(token.ID)      // Must be an ID after a delimitier
-		ids = append(ids, p.tk) // Append next ID
+		p.expect(`identifiers`, token.DELIM) // Skip delimitier
+		p.expect(`identifiers`, token.ID)    // Must be an ID after a delimitier
+		ids = append(ids, p.tk)              // Append next ID
 	}
 
 	if p.accept(token.ASSIGN) {
@@ -84,7 +86,7 @@ func (p *parser) identifiers(s *Statement) bool {
 		return true
 	}
 
-	p.expect(token.ANOTHER)
+	p.expect(`identifiers`, token.ANOTHER)
 	return true
 }
 
@@ -93,34 +95,35 @@ func (p *parser) identifiers(s *Statement) bool {
 // Preconditions:
 // - p.tk = ASSIGN
 func (p *parser) assignment(s *Statement, ids []token.Token) {
+
 	s.IDs = ids
 	s.Assign = p.tk
+
 	p.accept(token.ANY)
-	p.expressions(s)
+	exprs, _ := p.expressions(s, true)
+	p.expect(`assignment`, token.TERMINATOR)
+	s.Exprs = exprs
 }
 
 // expressions?
 //
 // Preconditions:
 // - p.tk = <Any>
-func (p *parser) expressions(s *Statement) bool {
+func (p *parser) expressions(s *Statement, required bool) (exprs []Expression, found bool) {
 
-	var found bool
-
-	for expr, ok := p.expression(s, true); ok; expr, ok = p.expression(s, true) {
+	for expr, ok := p.expression(s, required); ok; expr, ok = p.expression(s, true) {
 
 		found = true
-		s.Exprs = append(s.Exprs, expr)
+		exprs = append(exprs, expr)
 
 		if !p.accept(token.DELIM) {
 			break
 		}
 
-		p.expect(token.ANY)
+		p.expect(`expressions`, token.ANY)
 	}
 
-	p.expect(token.TERMINATOR)
-	return found
+	return
 }
 
 // expression?
@@ -130,9 +133,15 @@ func (p *parser) expressions(s *Statement) bool {
 func (p *parser) expression(s *Statement, required bool) (Expression, bool) {
 
 	switch {
-	case p.confirm(token.PAREN_OPEN), p.term():
+	case p.term():
+		fallthrough
+
+	case p.confirm(token.PAREN_OPEN):
 		left := p.newOperation(s)
 		return p.operation(s, left, 0), true
+
+	case p.confirm(token.LIST_OPEN):
+		return p.list(s), true
 
 	default:
 		if required {
@@ -171,9 +180,9 @@ func (p *parser) term() bool {
 func (p *parser) newOperation(s *Statement) Expression {
 	switch {
 	case p.confirm(token.PAREN_OPEN):
-		p.expect(token.ANY)
+		p.expect(`newOperation`, token.ANY)
 		expr, _ := p.expression(s, true)
-		p.expect(token.PAREN_CLOSE)
+		p.expect(`newOperation`, token.PAREN_CLOSE)
 		return expr
 
 	case p.term():
@@ -196,8 +205,8 @@ func (p *parser) operation(s *Statement, left Expression, leftPriority int) Expr
 		return left
 	}
 
-	p.expect(op.Type)
-	p.expect(token.ANY)
+	p.expect(`operation`, op.Type)
+	p.expect(`operation`, token.ANY)
 
 	right := p.newOperation(s)
 	right = p.operation(s, right, opPriority)
@@ -206,6 +215,21 @@ func (p *parser) operation(s *Statement, left Expression, leftPriority int) Expr
 	left = p.operation(s, left, leftPriority)
 
 	return left
+}
+
+func (p *parser) list(s *Statement) Expression {
+
+	start := p.tk
+	p.expect(`list`, token.ANY)
+	exprs, ok := p.expressions(s, false)
+
+	if ok {
+		p.expect(`list`, token.LIST_CLOSE)
+	} else {
+		p.affirm(`list`, token.LIST_CLOSE)
+	}
+
+	return List{start, exprs, p.tk}
 }
 
 func arithmeticOperator(tk token.Token) bool {

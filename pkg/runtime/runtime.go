@@ -73,6 +73,9 @@ func EvalExpression(ctx *Context, expr statement.Expression) Value {
 
 	case statement.Logic:
 		return EvalLogic(ctx, v)
+
+	case statement.List:
+		return EvalList(ctx, v)
 	}
 
 	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
@@ -236,4 +239,9 @@ func EvalEquality(ctx *Context, eq statement.Equality) Value {
 	}
 
 	panic(err("EvalEquality", op, "Unknown equality operator"))
+}
+
+func EvalList(ctx *Context, list statement.List) Value {
+	items := EvalExpressions(ctx, list.Exprs)
+	return List(items)
 }

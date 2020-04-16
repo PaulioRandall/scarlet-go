@@ -33,9 +33,9 @@ func (p *parser) accept(lex token.TokenType) bool {
 
 // expect is used when you want to load the next token into p.tk and it must be
 // of the specified kind. A panic ensues if your demands are not met.
-func (p *parser) expect(lex token.TokenType) bool {
+func (p *parser) expect(tag string, lex token.TokenType) bool {
 	if !p.accept(lex) {
-		panic(unexpected("expect", p.itr.Peek(), lex))
+		panic(unexpected(tag, p.itr.Peek(), lex))
 	}
 
 	return true
@@ -62,4 +62,14 @@ func (p *parser) confirm(lex token.TokenType) bool {
 	}
 
 	return p.tk.Type == lex
+}
+
+// affirm is used when you want to assert that p.tk is of a specific token type
+// and if not, panic
+func (p *parser) affirm(tag string, lex token.TokenType) bool {
+	if p.confirm(lex) {
+		return true
+	}
+
+	panic(unexpected(tag, p.tk, lex))
 }

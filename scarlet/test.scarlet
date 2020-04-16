@@ -5,4 +5,9 @@
 
 //naught_six := 2 * 9 / (3 + 12) * 2 / 4
 
-a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE 
+//a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE
+
+alpha, beta := [], [1, (6 * 7 + 2) / 4, `:)`]
+
+a, b := TRUE, FALSE
+abc := a = a # b

@@ -118,6 +118,27 @@ func (l Logic) String(i int) string {
 	return str
 }
 
+type List struct {
+	Start token.Token
+	Exprs []Expression
+	End   token.Token
+}
+
+func (l List) Token() token.Token {
+	return l.Start
+}
+
+func (l List) String(i int) string {
+
+	str := indent(i) + "[List] " + l.Start.String() + newline()
+	for _, ex := range l.Exprs {
+		str += ex.String(i+1) + newline()
+	}
+	str += indent(i+1) + l.End.String()
+
+	return str
+}
+
 type FuncCall struct {
 	ID     token.Token
 	Input  []token.Token

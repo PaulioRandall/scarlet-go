@@ -78,6 +78,23 @@ func (t Template) String() string {
 	return "(TEMPLATE) " + string(t)
 }
 
+type List []Value
+
+func (l List) Get() interface{} {
+	return []Value(l)
+}
+
+func (l List) String() string {
+	s := "(LIST) " + "{"
+	for i, item := range []Value(l) {
+		if i != 0 {
+			s += ","
+		}
+		s += item.String()
+	}
+	return s + "}"
+}
+
 func valueOf(tk token.Token) Value {
 
 	switch tk.Type {

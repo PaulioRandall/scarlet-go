@@ -29,7 +29,7 @@ func err(f string, tk token.Token, msg string, args ...interface{}) e.Err {
 }
 
 func unexpected(f string, tk token.Token, expected token.TokenType) e.Err {
-	return err(f, tk, "Expected %v, got %s", token.ANOTHER, tk.String())
+	return err(f, tk, "Expected %v, got %s", expected, tk.String())
 }
 
 // Error satisfies the error interface.
