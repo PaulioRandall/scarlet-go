@@ -17,6 +17,7 @@ func (itr *TokenIterator) Index() int {
 	return itr.index - 1
 }
 
+// Empty returns true if there are no more tokens to return.
 func (itr *TokenIterator) Empty() bool {
 	return itr.index >= itr.size
 }
@@ -43,9 +44,18 @@ func (itr *TokenIterator) Next() Token {
 	return tk
 }
 
-// Skip sjips the next token in the iterator.
+// Skip skips the next token in the iterator.
 func (itr *TokenIterator) Skip() {
 	if !itr.Empty() {
 		itr.index++
+	}
+}
+
+// Back returns the previous token to the front of the iterator but only if the
+// index is not currently zero.
+// Axiom: Next() == Next() -> BACK() -> Next()
+func (itr *TokenIterator) Back() {
+	if itr.index != 0 {
+		itr.index--
 	}
 }

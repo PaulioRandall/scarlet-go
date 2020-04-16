@@ -21,35 +21,28 @@ type parser struct {
 // script parses all statements within the parsers iterator.
 //
 // Preconditions: None
-func (p *parser) script() []Statement {
-
-	var ss []Statement
+func (p *parser) script() (ss []Statement) {
 
 	for !p.itr.Empty() && !p.accept(token.EOF) {
 		s := p.statement()
 		ss = append(ss, s)
 	}
 
-	return ss
+	return
 }
 
 // statement parses a single statement from the parsers iterator.
 //
 // Preconditions:
 // - p.itr is not empty
-func (p *parser) statement() Statement {
+func (p *parser) statement() (s Statement) {
 
-	s := Statement{}
+	p.assignment(&s)
 
 	p.accept(token.ANY)
+	exprs, ok := p.expressions(true)
 
-	if p.confirm(token.ID) {
-		if p.identifiers(&s) {
-			return s
-		}
-	}
-
-	if exprs, ok := p.expressions(true); ok {
+	if ok {
 		p.expect(`statement`, token.TERMINATOR)
 		s.Exprs = exprs
 		return s
@@ -58,51 +51,42 @@ func (p *parser) statement() Statement {
 	panic(unexpected("statement", p.tk, token.ANY))
 }
 
-// identifiers parses a delimiter separated list of identifiers then invokes
-// the approriate function to parse the remainder of the statement.
+// E.g. `a, b, c`
 //
 // Preconditions:
-// - p.tk = ID
-func (p *parser) identifiers(s *Statement) bool {
-
-	switch {
-	case p.inspect(token.DELIM):
-	case p.inspect(token.ASSIGN):
-
-	default:
-		return false
-	}
+// - p.tk = token.ID
+func (p *parser) multipleIdentifiers() []token.Token {
 
 	ids := []token.Token{p.tk}
 
-	for p.inspect(token.DELIM) { // a, b, c...
-		p.expect(`identifiers`, token.DELIM) // Skip delimitier
-		p.expect(`identifiers`, token.ID)    // Must be an ID after a delimitier
-		ids = append(ids, p.tk)              // Append next ID
+	for p.accept(token.DELIM) {
+		p.expect(`identifiers`, token.ID)
+		ids = append(ids, p.tk)
 	}
 
-	if p.accept(token.ASSIGN) {
-		p.assignment(s, ids)
-		return true
-	}
-
-	p.expect(`identifiers`, token.ANOTHER)
-	return true
+	return ids
 }
 
-// assignment?
-//
-// Preconditions:
-// - p.tk = ASSIGN
-func (p *parser) assignment(s *Statement, ids []token.Token) {
+func (p *parser) assignment(s *Statement) {
 
-	s.IDs = ids
-	s.Assign = p.tk
+	if !p.accept(token.ID) {
+		return
+	}
 
-	p.accept(token.ANY)
-	exprs, _ := p.expressions(true)
-	p.expect(`assignment`, token.TERMINATOR)
-	s.Exprs = exprs
+	if !p.inspect(token.DELIM) && !p.inspect(token.ASSIGN) {
+		p.retract()
+		return
+	}
+
+	ids := p.multipleIdentifiers()
+
+	if p.accept(token.ASSIGN) {
+		s.IDs = ids
+		s.Assign = p.tk
+		return
+	}
+
+	panic(unexpected("assignment", p.tk, token.ANOTHER))
 }
 
 // expressions?
