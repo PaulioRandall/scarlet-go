@@ -159,8 +159,12 @@ func (p *parser) operationInit(required bool) (Expression, bool) {
 	case p.accept(token.PAREN_OPEN):
 		left, _ := p.expression(true)
 		p.expect(`newOperation`, token.PAREN_CLOSE)
-		priority := precedence(left.Token())
-		return p.operation(left, priority), true
+
+		if op, ok := left.(Operation); ok {
+			return p.operation(left, op.Precedence()), true
+		}
+
+		return p.operation(left, 0), true
 	}
 
 	if required {
@@ -176,16 +180,15 @@ func (p *parser) operationInit(required bool) (Expression, bool) {
 func (p *parser) operation(left Expression, leftPriority int) Expression {
 
 	op := p.snoop()
-	opPriority := precedence(op)
 
-	if leftPriority >= opPriority {
+	if leftPriority >= Precedence(op.Type) {
 		return left
 	}
 
 	p.expect(`operation`, op.Type) // Because we only snooped at it previously
 
 	right, _ := p.operationInit(true)
-	right = p.operation(right, opPriority)
+	right = p.operation(right, Precedence(op.Type))
 
 	left = NewOperation(left, op, right)
 	left = p.operation(left, leftPriority)
@@ -200,25 +203,4 @@ func (p *parser) list() Expression {
 	p.expect(`list`, token.LIST_CLOSE)
 
 	return List{start, exprs, p.tk}
-}
-
-func precedence(tk token.Token) int {
-	switch tk.Type {
-	case token.MULTIPLY, token.DIVIDE, token.REMAINDER: // Multiplicative
-		return 6
-	case token.ADD, token.SUBTRACT: // Additive
-		return 5
-	case token.LESS_THAN, token.LESS_THAN_OR_EQUAL: // Relational
-		fallthrough
-	case token.MORE_THAN, token.MORE_THAN_OR_EQUAL: // Relational
-		return 4
-	case token.EQUAL, token.NOT_EQUAL: // Equality
-		return 3
-	case token.AND:
-		return 2
-	case token.OR:
-		return 1
-	default:
-		return 0
-	}
 }

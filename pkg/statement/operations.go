@@ -4,34 +4,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-// NewOperation returns either an Arithmetic, Relation, Equality, or Logic
-// expression depending on the operator token type.
-func NewOperation(left Expression, op token.Token, right Expression) Expression {
-
-	switch op.Type {
-	case token.ADD,
-		token.SUBTRACT,
-		token.MULTIPLY,
-		token.DIVIDE,
-		token.REMAINDER:
-		return Arithmetic{baseOp{`Arithmetic`, left, op, right}}
-
-	case token.LESS_THAN,
-		token.LESS_THAN_OR_EQUAL,
-		token.MORE_THAN,
-		token.MORE_THAN_OR_EQUAL:
-		return Relation{baseOp{`Relation`, left, op, right}}
-
-	case token.EQUAL, token.NOT_EQUAL:
-		return Equality{baseOp{`Equality`, left, op, right}}
-
-	case token.AND, token.OR:
-		return Logic{baseOp{`Logic`, left, op, right}}
-	}
-
-	panic(string("[NewOperation] Unknown operator '" + string(op.Type) + "'"))
-}
-
 // Operation represents an mathematical operation, an expression with a left
 // side, opertor, and right side.
 type Operation interface {
@@ -45,6 +17,10 @@ type Operation interface {
 
 	// Right returns the expression for obtaining the right hand value.
 	Right() Expression
+
+	// precedence returns the precedence of the operation so it may be compared
+	// with other operations for evaluation priority.
+	Precedence() int
 }
 
 // baseOp is the base structure embeded in Operations to avoid redefining
@@ -69,6 +45,11 @@ func (bo baseOp) Operator() token.Token {
 // Right satisfies the Operation interface.
 func (bo baseOp) Right() Expression {
 	return bo.right
+}
+
+// Precedence satisfies the Operation interface.
+func (bo baseOp) Precedence() int {
+	return Precedence(bo.op.Type)
 }
 
 // Token satisfies the Expression interface.
@@ -106,4 +87,54 @@ type Equality struct {
 // Logic operations are for boolean algebra such as AND and OR
 type Logic struct {
 	baseOp
+}
+
+// Precedence returns the precedences of the token type.
+func Precedence(tt token.TokenType) int {
+	switch tt {
+	case token.MULTIPLY, token.DIVIDE, token.REMAINDER: // Multiplicative
+		return 6
+	case token.ADD, token.SUBTRACT: // Additive
+		return 5
+	case token.LESS_THAN, token.LESS_THAN_OR_EQUAL: // Relational
+		fallthrough
+	case token.MORE_THAN, token.MORE_THAN_OR_EQUAL: // Relational
+		return 4
+	case token.EQUAL, token.NOT_EQUAL: // Equality
+		return 3
+	case token.AND:
+		return 2
+	case token.OR:
+		return 1
+	default:
+		return 0
+	}
+}
+
+// NewOperation returns either an Arithmetic, Relation, Equality, or Logic
+// expression depending on the operator token type.
+func NewOperation(left Expression, op token.Token, right Expression) Expression {
+
+	switch op.Type {
+	case token.ADD,
+		token.SUBTRACT,
+		token.MULTIPLY,
+		token.DIVIDE,
+		token.REMAINDER:
+		return Arithmetic{baseOp{`Arithmetic`, left, op, right}}
+
+	case token.LESS_THAN,
+		token.LESS_THAN_OR_EQUAL,
+		token.MORE_THAN,
+		token.MORE_THAN_OR_EQUAL:
+		return Relation{baseOp{`Relation`, left, op, right}}
+
+	case token.EQUAL, token.NOT_EQUAL:
+		return Equality{baseOp{`Equality`, left, op, right}}
+
+	case token.AND, token.OR:
+		return Logic{baseOp{`Logic`, left, op, right}}
+	}
+
+	panic(string("[NewOperation] Unknown operator '" + string(op.Type) + "'"))
 }
