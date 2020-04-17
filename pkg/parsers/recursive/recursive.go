@@ -113,12 +113,16 @@ func (p *parser) expressions(required bool) (exprs []Expression, found bool) {
 // - p.tk = <Any>
 func (p *parser) expression(required bool) (Expression, bool) {
 
-	switch left, isOperation := p.operationInit(false); {
-	case isOperation:
+	switch {
+	case p.isOperation():
+		left := p.operationInit(false)
 		return p.operation(left, 0), true
 
 	case p.inspect(token.LIST_OPEN):
 		return p.list(), true
+
+	case p.inspect(token.LIST_CLOSE):
+		return nil, false
 
 	default:
 		if required {
@@ -129,49 +133,56 @@ func (p *parser) expression(required bool) (Expression, bool) {
 	return nil, false
 }
 
-// term is used to determine if p.tk is a term, e.g. identifier, bool, int, etc.
+// isTerm is used to determine if p.tk is a term, e.g. identifier, bool, int, etc.
 //
 // Preconditions:
 // - p.tk = <Any>
-func (p *parser) term() bool {
+func (p *parser) isTerm(accept bool) bool {
 
 	switch {
-	case p.accept(token.ID),
-		p.accept(token.VOID),
-		p.accept(token.BOOL),
-		p.accept(token.INT),
-		p.accept(token.FLOAT),
-		p.accept(token.STRING),
-		p.accept(token.TEMPLATE):
+	case p.inspect(token.ID),
+		p.inspect(token.VOID),
+		p.inspect(token.BOOL),
+		p.inspect(token.INT),
+		p.inspect(token.FLOAT),
+		p.inspect(token.STRING),
+		p.inspect(token.TEMPLATE):
 
+		if accept {
+			p.proceed()
+		}
 		return true
 	}
 
 	return false
 }
 
-func (p *parser) operationInit(required bool) (Expression, bool) {
+func (p *parser) isOperation() bool {
+	return p.isTerm(false) || p.inspect(token.PAREN_OPEN)
+}
+
+func (p *parser) operationInit(required bool) Expression {
 
 	switch {
-	case p.term():
-		return NewValueExpression(p.tk), true
+	case p.isTerm(true):
+		return NewValueExpression(p.tk)
 
 	case p.accept(token.PAREN_OPEN):
 		left, _ := p.expression(true)
 		p.expect(`newOperation`, token.PAREN_CLOSE)
 
 		if op, ok := left.(Operation); ok {
-			return p.operation(left, op.Precedence()), true
+			return p.operation(left, op.Precedence())
 		}
 
-		return p.operation(left, 0), true
+		return p.operation(left, 0)
 	}
 
 	if required {
 		panic(unexpected("operationInit", p.snoop(), `<term> | PAREN_OPEN`))
 	}
 
-	return nil, false
+	return nil
 }
 
 // operation?
@@ -187,7 +198,7 @@ func (p *parser) operation(left Expression, leftPriority int) Expression {
 
 	p.expect(`operation`, op.Type) // Because we only snooped at it previously
 
-	right, _ := p.operationInit(true)
+	right := p.operationInit(true)
 	right = p.operation(right, Precedence(op.Type))
 
 	left = NewOperation(left, op, right)
@@ -197,10 +208,8 @@ func (p *parser) operation(left Expression, leftPriority int) Expression {
 }
 
 func (p *parser) list() Expression {
-
 	start := p.proceed()
 	exprs, _ := p.expressions(false)
 	p.expect(`list`, token.LIST_CLOSE)
-
 	return List{start, exprs, p.tk}
 }
