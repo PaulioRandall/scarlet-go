@@ -3,11 +3,11 @@ package recursive
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
 // ParseAll parses all tokens in tks into Statements.
-func ParseAll(tks []token.Token) []Statement {
+func ParseAll(tks []token.Token) []st.Statement {
 	p := parser{itr: token.NewIterator(tks)}
 	return p.script()
 }
@@ -21,7 +21,7 @@ type parser struct {
 // script parses all statements within the parsers iterator.
 //
 // Preconditions: None
-func (p *parser) script() (ss []Statement) {
+func (p *parser) script() (ss []st.Statement) {
 
 	for !p.itr.Empty() && !p.accept(token.EOF) {
 		s := p.statement()
@@ -35,7 +35,7 @@ func (p *parser) script() (ss []Statement) {
 //
 // Preconditions:
 // - p.itr is not empty
-func (p *parser) statement() (s Statement) {
+func (p *parser) statement() (s st.Statement) {
 
 	p.assignment(&s)
 
@@ -66,7 +66,7 @@ func (p *parser) multipleIdentifiers() []token.Token {
 	return ids
 }
 
-func (p *parser) assignment(s *Statement) {
+func (p *parser) assignment(s *st.Statement) {
 
 	if !p.accept(token.ID) {
 		return
@@ -92,7 +92,7 @@ func (p *parser) assignment(s *Statement) {
 //
 // Preconditions:
 // - p.tk = <Any>
-func (p *parser) expressions(required bool) (exprs []Expression, found bool) {
+func (p *parser) expressions(required bool) (exprs []st.Expression, found bool) {
 
 	for expr, ok := p.expression(required); ok; expr, ok = p.expression(true) {
 
@@ -111,11 +111,14 @@ func (p *parser) expressions(required bool) (exprs []Expression, found bool) {
 //
 // Preconditions:
 // - p.tk = <Any>
-func (p *parser) expression(required bool) (Expression, bool) {
+func (p *parser) expression(required bool) (st.Expression, bool) {
 
-	switch {
-	case p.isOperation():
-		left := p.operationInit(false)
+	switch left := p.term(); {
+	case left != nil:
+		return p.operation(left, 0), true
+
+	case p.inspect(token.PAREN_OPEN):
+		left = p.grouping()
 		return p.operation(left, 0), true
 
 	case p.inspect(token.LIST_OPEN):
@@ -133,83 +136,77 @@ func (p *parser) expression(required bool) (Expression, bool) {
 	return nil, false
 }
 
-// isTerm is used to determine if p.tk is a term, e.g. identifier, bool, int, etc.
+// term is used to determine if p.tk is a term, e.g. identifier, bool, int, etc.
 //
 // Preconditions:
 // - p.tk = <Any>
-func (p *parser) isTerm(accept bool) bool {
+func (p *parser) term() st.Expression {
 
 	switch {
-	case p.inspect(token.ID),
-		p.inspect(token.VOID),
-		p.inspect(token.BOOL),
-		p.inspect(token.INT),
-		p.inspect(token.FLOAT),
-		p.inspect(token.STRING),
-		p.inspect(token.TEMPLATE):
+	case p.accept(token.ID),
+		p.accept(token.VOID),
+		p.accept(token.BOOL),
+		p.accept(token.INT),
+		p.accept(token.FLOAT),
+		p.accept(token.STRING),
+		p.accept(token.TEMPLATE):
 
-		if accept {
-			p.proceed()
-		}
-		return true
-	}
-
-	return false
-}
-
-func (p *parser) isOperation() bool {
-	return p.isTerm(false) || p.inspect(token.PAREN_OPEN)
-}
-
-func (p *parser) operationInit(required bool) Expression {
-
-	switch {
-	case p.isTerm(true):
-		return NewValueExpression(p.tk)
-
-	case p.accept(token.PAREN_OPEN):
-		left, _ := p.expression(true)
-		p.expect(`newOperation`, token.PAREN_CLOSE)
-
-		if op, ok := left.(Operation); ok {
-			return p.operation(left, op.Precedence())
-		}
-
-		return p.operation(left, 0)
-	}
-
-	if required {
-		panic(unexpected("operationInit", p.snoop(), `<term> | PAREN_OPEN`))
+		return st.NewValueExpression(p.tk)
 	}
 
 	return nil
 }
 
+// Preconditions:
+// - next = token.PAREN_OPEN
+func (p *parser) grouping() st.Expression {
+	p.expect(`grouping`, token.PAREN_OPEN)
+	left, _ := p.expression(true)
+	p.expect(`grouping`, token.PAREN_CLOSE)
+	return left
+}
+
 // operation?
 //
 // Preconditions: NONE
-func (p *parser) operation(left Expression, leftPriority int) Expression {
+func (p *parser) operation(left st.Expression, leftPriority int) st.Expression {
 
 	op := p.snoop()
 
-	if leftPriority >= Precedence(op.Type) {
+	if leftPriority >= st.Precedence(op.Type) {
 		return left
 	}
 
 	p.expect(`operation`, op.Type) // Because we only snooped at it previously
 
-	right := p.operationInit(true)
-	right = p.operation(right, Precedence(op.Type))
+	right := p.rightExpression(true)
+	right = p.operation(right, st.Precedence(op.Type))
 
-	left = NewOperation(left, op, right)
+	left = st.NewOperation(left, op, right)
 	left = p.operation(left, leftPriority)
 
 	return left
 }
 
-func (p *parser) list() Expression {
+func (p *parser) rightExpression(required bool) st.Expression {
+
+	switch left := p.term(); {
+	case left != nil:
+		return left
+
+	case p.inspect(token.PAREN_OPEN):
+		return p.grouping()
+
+	case required:
+		panic(unexpected("rightExpression", p.snoop(), `<term> | PAREN_OPEN`))
+	}
+
+	return nil
+}
+
+func (p *parser) list() st.Expression {
 	start := p.proceed()
 	exprs, _ := p.expressions(false)
 	p.expect(`list`, token.LIST_CLOSE)
-	return List{start, exprs, p.tk}
+	return st.List{start, exprs, p.tk}
 }
