@@ -12,54 +12,55 @@ import (
 // SanitiseAll creates a sanitisers all tokens from s returning a new array.
 func SanitiseAll(in []token.Token) (out []token.Token) {
 
-	sn := sanitiser{
-		itr: token.NewIterator(in),
-	}
+	itr := token.NewIterator(in)
+	var prev token.Token
 
-	for !sn.itr.Empty() {
-		tk := sn.read()
-		out = append(out, tk)
+	for prev.Type != token.EOF && !itr.Empty() {
+		prev = sanitise(itr, prev)
+		out = append(out, prev)
 	}
 
 	return out
 }
 
-type sanitiser struct {
-	itr  *token.TokenIterator
-	prev token.Token
-}
+func sanitise(itr *token.TokenIterator, prev token.Token) token.Token {
 
-func (sn *sanitiser) read() (_ token.Token) {
-
-	for tk := sn.itr.Peek(); !sn.itr.Empty(); tk = sn.itr.Peek() {
-		sn.itr.Skip()
-
-		if !isRedundantType(tk.Type, sn.prev.Type) {
-			tk = formatToken(tk)
-			sn.prev = tk
-			return tk
+	for !isParsableToken(prev, itr.Next()) {
+		if itr.Empty() {
+			return token.Token{}
 		}
 	}
 
-	return
+	return formatToken(itr.Past())
 }
 
-// isRedundantType returns true if l is considered redundant to parsing.
-func isRedundantType(l, prev token.TokenType) bool {
+// isParsableToken returns true if next is a toke of value to the parser.
+func isParsableToken(prev, next token.Token) bool {
 
-	if l == token.WHITESPACE || l == token.COMMENT {
-		return true
-	}
+	past := prev.Type
+	curr := next.Type
 
-	if l != token.NEWLINE && l != token.TERMINATOR {
+	switch curr {
+
+	case token.UNDEFINED, token.WHITESPACE, token.COMMENT:
 		return false
+
+	case token.NEWLINE, token.TERMINATOR:
+
+		switch past {
+		// Sometimes the extra terminator or newline is redundant.
+		// Removing them makes parsing easier.
+		case token.LIST_OPEN,
+			token.DELIM,
+			token.TERMINATOR,
+			token.BLOCK_OPEN,
+			token.UNDEFINED:
+
+			return false
+		}
 	}
 
-	return prev == token.LIST_OPEN ||
-		prev == token.DELIM ||
-		prev == token.TERMINATOR ||
-		prev == token.BLOCK_OPEN ||
-		prev == token.UNDEFINED
+	return true
 }
 
 // Applies any special formatting to the token such as converting its token
