@@ -15,7 +15,6 @@ func ParseAll(tks []token.Token) []st.Statement {
 // parser stores a single read token to enable look ahead by one behaviour.
 type parser struct {
 	itr *token.TokenIterator
-	tk  token.Token
 }
 
 // script parses all statements within the parsers iterator.
@@ -47,23 +46,7 @@ func (p *parser) statement() (s st.Statement) {
 		return s
 	}
 
-	panic(unexpected("statement", p.tk, token.ANY))
-}
-
-// E.g. `a, b, c`
-//
-// Preconditions:
-// - p.tk = token.ID
-func (p *parser) multipleIdentifiers() []token.Token {
-
-	ids := []token.Token{p.tk}
-
-	for p.accept(token.DELIM) {
-		p.expect(`identifiers`, token.ID)
-		ids = append(ids, p.tk)
-	}
-
-	return ids
+	panic(unexpected("statement", p.prior(), token.ANY))
 }
 
 func (p *parser) assignment(s *st.Statement) {
@@ -77,21 +60,39 @@ func (p *parser) assignment(s *st.Statement) {
 		return
 	}
 
-	ids := p.multipleIdentifiers()
+	p.retract()
+	ids := p.identifiers()
 
 	if p.accept(token.ASSIGN) {
 		s.IDs = ids
-		s.Assign = p.tk
+		s.Assign = p.prior()
 		return
 	}
 
-	panic(unexpected("assignment", p.tk, token.ANOTHER))
+	panic(unexpected("assignment", p.prior(), token.ANOTHER))
+}
+
+// E.g. `a, b, c`
+//
+// Preconditions:
+// - next = token.ID
+func (p *parser) identifiers() []token.Token {
+
+	p.expect(`identifiers`, token.ID)
+	ids := []token.Token{p.prior()}
+
+	for p.accept(token.DELIM) {
+		p.expect(`identifiers`, token.ID)
+		ids = append(ids, p.prior())
+	}
+
+	return ids
 }
 
 // expressions?
 //
 // Preconditions:
-// - p.tk = <Any>
+// - p.prior() = <Any>
 func (p *parser) expressions(required bool) (exprs []st.Expression, found bool) {
 
 	for expr, ok := p.expression(required); ok; expr, ok = p.expression(true) {
@@ -110,7 +111,7 @@ func (p *parser) expressions(required bool) (exprs []st.Expression, found bool) 
 // expression?
 //
 // Preconditions:
-// - p.tk = <Any>
+// - p.prior() = <Any>
 func (p *parser) expression(required bool) (st.Expression, bool) {
 
 	switch left := p.term(); {
@@ -129,17 +130,17 @@ func (p *parser) expression(required bool) (st.Expression, bool) {
 
 	default:
 		if required {
-			panic(unexpected("expression", p.tk, token.ANOTHER))
+			panic(unexpected("expression", p.prior(), token.ANOTHER))
 		}
 	}
 
 	return nil, false
 }
 
-// term is used to determine if p.tk is a term, e.g. identifier, bool, int, etc.
+// term is used to determine if p.prior() is a term, e.g. identifier, bool, int, etc.
 //
 // Preconditions:
-// - p.tk = <Any>
+// - p.prior() = <Any>
 func (p *parser) term() st.Expression {
 
 	switch {
@@ -151,7 +152,7 @@ func (p *parser) term() st.Expression {
 		p.accept(token.STRING),
 		p.accept(token.TEMPLATE):
 
-		return st.NewValueExpression(p.tk)
+		return st.NewValueExpression(p.prior())
 	}
 
 	return nil
@@ -179,7 +180,7 @@ func (p *parser) operation(left st.Expression, leftPriority int) st.Expression {
 
 	p.expect(`operation`, op.Type) // Because we only snooped at it previously
 
-	right := p.rightExpression(true)
+	right := p.rightSide()
 	right = p.operation(right, st.Precedence(op.Type))
 
 	left = st.NewOperation(left, op, right)
@@ -188,7 +189,7 @@ func (p *parser) operation(left st.Expression, leftPriority int) st.Expression {
 	return left
 }
 
-func (p *parser) rightExpression(required bool) st.Expression {
+func (p *parser) rightSide() st.Expression {
 
 	switch left := p.term(); {
 	case left != nil:
@@ -196,17 +197,14 @@ func (p *parser) rightExpression(required bool) st.Expression {
 
 	case p.inspect(token.PAREN_OPEN):
 		return p.grouping()
-
-	case required:
-		panic(unexpected("rightExpression", p.snoop(), `<term> | PAREN_OPEN`))
 	}
 
-	return nil
+	panic(unexpected("rightSide", p.snoop(), `<term> | PAREN_OPEN`))
 }
 
 func (p *parser) list() st.Expression {
 	start := p.proceed()
 	exprs, _ := p.expressions(false)
 	p.expect(`list`, token.LIST_CLOSE)
-	return st.List{start, exprs, p.tk}
+	return st.List{start, exprs, p.prior()}
 }

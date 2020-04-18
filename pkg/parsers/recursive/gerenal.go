@@ -24,7 +24,7 @@ func (p *parser) accept(lex token.TokenType) bool {
 	}
 
 	if lex == token.ANY || p.inspect(lex) {
-		p.tk = p.itr.Next()
+		p.itr.Next()
 		return true
 	}
 
@@ -51,17 +51,16 @@ func (p *parser) snoop() token.Token {
 // acceptable type and want it loaded into p.tk. It may as well be returned
 // since you're likely to use it immediately.
 func (p *parser) proceed() token.Token {
-	p.tk = p.itr.Next()
-	return p.tk
+	return p.itr.Next()
 }
 
 // confirm is used when you want to check if p.tk is of a specific token type.
 func (p *parser) confirm(lex token.TokenType) bool {
 	if lex == token.ANY {
-		return p.tk.Type != token.UNDEFINED
+		return p.itr.Past().Type != token.UNDEFINED
 	}
 
-	return p.tk.Type == lex
+	return p.itr.Past().Type == lex
 }
 
 // affirm is used when you want to assert that p.tk is of a specific token type
@@ -71,11 +70,15 @@ func (p *parser) affirm(tag string, lex token.TokenType) bool {
 		return true
 	}
 
-	panic(unexpected(tag, p.tk, lex))
+	panic(unexpected(tag, p.itr.Past(), lex))
+}
+
+// Prior is used when you want the last token that was accepted.
+func (p *parser) prior() token.Token {
+	return p.itr.Past()
 }
 
 // retract is used when you want to backtrack one token.
 func (p *parser) retract() {
 	p.itr.Back()
-	p.tk = token.Token{}
 }

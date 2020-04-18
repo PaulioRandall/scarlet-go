@@ -51,6 +51,15 @@ func (itr *TokenIterator) Skip() {
 	}
 }
 
+// Past returns the previous token without iterating.
+func (itr *TokenIterator) Past() Token {
+	if itr.index > 1 {
+		return itr.tks[itr.index-1]
+	}
+
+	return Token{}
+}
+
 // Back returns the previous token to the front of the iterator but only if the
 // index is not currently zero.
 // Axiom: Next() == Next() -> BACK() -> Next()
