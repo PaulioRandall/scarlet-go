@@ -36,8 +36,7 @@ const (
 	SPELL              TokenType = `SPELL`
 	STRING             TokenType = `STRING`
 	TEMPLATE           TokenType = `TEMPLATE`
-	INT                TokenType = `INT`
-	FLOAT              TokenType = `FLOAT`
+	NUMBER             TokenType = `NUMBER`
 	BOOL               TokenType = `BOOL`
 	ADD                TokenType = `ADD`
 	SUBTRACT           TokenType = `SUBTRACT`

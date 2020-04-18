@@ -197,7 +197,7 @@ func patterns() []pattern {
 
 			return PREFIX_LEN + n + SUFFIX_LEN
 		}},
-		pattern{token.FLOAT, func(ss *symbolStream) int {
+		pattern{token.NUMBER, func(ss *symbolStream) int {
 
 			const (
 				DELIM     = "."
@@ -207,7 +207,7 @@ func patterns() []pattern {
 			n := integerMatcher(ss, 0)
 
 			if n == 0 || n == ss.len() || !ss.isMatch(n, DELIM) {
-				return 0
+				return n
 			}
 
 			fractionalLen := integerMatcher(ss, n+DELIM_LEN)
@@ -221,9 +221,6 @@ func patterns() []pattern {
 			}
 
 			return n + DELIM_LEN + fractionalLen
-		}},
-		pattern{token.INT, func(ss *symbolStream) int {
-			return integerMatcher(ss, 0)
 		}},
 	}
 }

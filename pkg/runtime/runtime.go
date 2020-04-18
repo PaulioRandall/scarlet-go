@@ -61,17 +61,8 @@ func EvalExpression(ctx *Context, expr statement.Expression) Value {
 	case statement.Value:
 		return valueOf(v.Source)
 
-	case statement.Arithmetic:
-		return EvalArithmetic(ctx, v)
-
-	case statement.Relation:
-		return EvalRelation(ctx, v)
-
-	case statement.Equality:
-		return EvalEquality(ctx, v)
-
-	case statement.Logic:
-		return EvalLogic(ctx, v)
+	case statement.Operation:
+		return EvalOperation(ctx, v)
 
 	case statement.List:
 		return EvalList(ctx, v)
@@ -81,6 +72,5 @@ func EvalExpression(ctx *Context, expr statement.Expression) Value {
 }
 
 func EvalList(ctx *Context, list statement.List) Value {
-	items := EvalExpressions(ctx, list.Exprs)
-	return List(items)
+	return List(EvalExpressions(ctx, list.Exprs))
 }

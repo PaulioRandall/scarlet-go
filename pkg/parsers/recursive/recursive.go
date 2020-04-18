@@ -111,7 +111,7 @@ func expressions(p *pipe) []st.Expression {
 // Preconditions: NONE
 func expression(p *pipe) st.Expression {
 
-	switch left := term(p); {
+	switch left := literal(p); {
 	case left != nil:
 		return operation(p, left, 0)
 
@@ -126,18 +126,18 @@ func expression(p *pipe) st.Expression {
 	return nil
 }
 
-// term is used to determine if p.prior() is a term, e.g. identifier, bool, int, etc.
+// literal is used to determine if p.prior() is a literal value.
+// E.g.identifier, bool, int, etc.
 //
 // Preconditions:
 // - p.prior() = <Any>
-func term(p *pipe) st.Expression {
+func literal(p *pipe) st.Expression {
 
 	switch {
 	case p.accept(token.ID),
 		p.accept(token.VOID),
 		p.accept(token.BOOL),
-		p.accept(token.INT),
-		p.accept(token.FLOAT),
+		p.accept(token.NUMBER),
 		p.accept(token.STRING),
 		p.accept(token.TEMPLATE):
 
@@ -177,7 +177,7 @@ func operation(p *pipe, left st.Expression, leftPriority int) st.Expression {
 	right := rightSide(p)
 	right = operation(p, right, st.Precedence(op.Type))
 
-	left = st.NewOperation(left, op, right)
+	left = st.Operation{left, op, right}
 	left = operation(p, left, leftPriority)
 
 	return left
@@ -185,7 +185,7 @@ func operation(p *pipe, left st.Expression, leftPriority int) st.Expression {
 
 func rightSide(p *pipe) st.Expression {
 
-	switch left := term(p); {
+	switch left := literal(p); {
 	case left != nil:
 		return left
 
@@ -193,7 +193,7 @@ func rightSide(p *pipe) st.Expression {
 		return group(p)
 	}
 
-	panic(unexpected("rightSide", p.snoop(), `<term> | PAREN_OPEN`))
+	panic(unexpected("rightSide", p.snoop(), `<literal> | PAREN_OPEN`))
 }
 
 func list(p *pipe) st.Expression {

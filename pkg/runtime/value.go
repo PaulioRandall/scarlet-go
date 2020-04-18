@@ -34,28 +34,18 @@ func (b Bool) String() string {
 	return "(BOOL) " + strconv.FormatBool(bool(b))
 }
 
-type Int int64
+type Number float64
 
-func (i Int) ToFloat() Float {
-	return Float(i)
+func (n Number) Get() interface{} {
+	return float64(n)
 }
 
-func (i Int) Get() interface{} {
-	return int64(i)
+func (n Number) ToInt() int64 {
+	return int64(float64(n))
 }
 
-func (i Int) String() string {
-	return "(INT) " + strconv.FormatInt(int64(i), 10)
-}
-
-type Float float64
-
-func (f Float) Get() interface{} {
-	return float64(f)
-}
-
-func (f Float) String() string {
-	return "(FLOAT) " + strconv.FormatFloat(float64(f), 'f', -1, 64)
+func (n Number) String() string {
+	return "(NUMBER) " + strconv.FormatFloat(float64(n), 'f', -1, 64)
 }
 
 type String string
@@ -104,10 +94,7 @@ func valueOf(tk token.Token) Value {
 	case token.BOOL:
 		return Bool(tk.Value == `TRUE`)
 
-	case token.INT:
-		return parseInt(tk)
-
-	case token.FLOAT:
+	case token.NUMBER:
 		return parseFloat(tk)
 
 	case token.STRING:
@@ -117,27 +104,16 @@ func valueOf(tk token.Token) Value {
 		return Template(tk.Value)
 	}
 
-	panic(err("parseFloat", tk, "Invalid value type (%s)", tk.String()))
+	panic(err("valueOf", tk, "Invalid value type (%s)", tk.String()))
 }
 
-// parseInt parses an INT token into an Int value.
-func parseInt(tk token.Token) Int {
-	i, e := strconv.ParseInt(tk.Value, 10, 64)
-
-	if e != nil {
-		panic(err("parseInt", tk, "Could not parse integer"))
-	}
-
-	return Int(i)
-}
-
-// parseFloat parses an FLOAT token into an Float value.
-func parseFloat(tk token.Token) Float {
+// parseFloat parses an NUMBER token into a Number value.
+func parseFloat(tk token.Token) Number {
 	f, e := strconv.ParseFloat(tk.Value, 64)
 
 	if e != nil {
-		panic(err("parseFloat", tk, "Could not parse float"))
+		panic(err("parseFloat", tk, "Could not parse number"))
 	}
 
-	return Float(f)
+	return Number(f)
 }

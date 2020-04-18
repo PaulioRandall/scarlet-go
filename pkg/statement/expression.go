@@ -34,6 +34,17 @@ func (v Value) String(i int) string {
 	return indent(i) + "[Value] " + v.Source.String()
 }
 
+// NewValueExpression returns either a Value or Identifier expression depending
+// on the token type.
+func NewValueExpression(tk token.Token) Expression {
+	switch tk.Type {
+	case token.ID:
+		return Identifier{tk}
+	default:
+		return Value{tk}
+	}
+}
+
 type List struct {
 	Start token.Token
 	Exprs []Expression
@@ -80,15 +91,4 @@ func (f FuncCall) String(i int) string {
 	}
 
 	return str
-}
-
-// NewValueExpression returns either a Value or Identifier expression depending
-// on the token type.
-func NewValueExpression(tk token.Token) Expression {
-	switch tk.Type {
-	case token.ID:
-		return Identifier{tk}
-	default:
-		return Value{tk}
-	}
 }

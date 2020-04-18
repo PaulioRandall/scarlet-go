@@ -45,9 +45,9 @@ func TestScanner_Next_1(t *testing.T) {
 		Token{COMMENT, "// comment", 1, 5},
 		Token{NEWLINE, "\n", 1, 15},
 		// Line 2
-		Token{INT, "123", 2, 0},
+		Token{NUMBER, "123", 2, 0},
 		Token{WHITESPACE, " ", 2, 3},
-		Token{FLOAT, "123.456", 2, 4},
+		Token{NUMBER, "123.456", 2, 4},
 		Token{NEWLINE, "\r\n", 2, 11},
 		// Line 3
 		Token{STRING, "`abc`", 3, 0},
