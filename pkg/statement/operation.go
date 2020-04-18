@@ -12,16 +12,16 @@ type Operation struct {
 	Right    Expression
 }
 
-// Precedence returns the priority of the operation type so it may be compared
-// against other operation types. E.g. Multiplication has a higher precedence
-// than addition.
-func (op Operation) Precedence() int {
-	return Precedence(op.Operator.Type)
-}
-
 // Token satisfies the Expression interface.
 func (op Operation) Token() token.Token {
 	return op.Operator
+}
+
+// Precedence returns the priority of the expression type so it may be compared
+// against other expression types. This is mostly useful for ordering oprations
+// such as ensuring multiplications happen before additions.
+func (op Operation) Precedence() int {
+	return Precedence(op.Operator.Type)
 }
 
 // String satisfies the Expression interface.
