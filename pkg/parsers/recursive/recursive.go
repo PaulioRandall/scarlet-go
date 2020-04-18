@@ -8,23 +8,17 @@ import (
 
 // ParseAll parses all tokens in tks into Statements.
 func ParseAll(tks []token.Token) []st.Statement {
-	p := parser{pipe{token.NewIterator(tks)}}
-	return p.script()
-}
-
-// parser is used a struct used specifcally for being a function reciever. It
-// avoids the need to pass a pipe from parser function to parser function.
-type parser struct {
-	pipe
+	p := &pipe{token.NewIterator(tks)}
+	return script(p)
 }
 
 // script parses all statements within the parsers iterator.
 //
 // Preconditions: None
-func (p *parser) script() (ss []st.Statement) {
+func script(p *pipe) (ss []st.Statement) {
 
 	for !p.itr.Empty() && !p.accept(token.EOF) {
-		s := p.statement()
+		s := statement(p)
 		ss = append(ss, s)
 	}
 
@@ -35,10 +29,10 @@ func (p *parser) script() (ss []st.Statement) {
 //
 // Preconditions:
 // - Next token is not empty
-func (p *parser) statement() (s st.Statement) {
+func statement(p *pipe) (s st.Statement) {
 
-	p.assignment(&s)
-	exprs := p.expressions()
+	assignment(p, &s)
+	exprs := expressions(p)
 
 	if exprs == nil {
 		panic(unexpected("statement", p.prior(), token.ANY))
@@ -53,7 +47,7 @@ func (p *parser) statement() (s st.Statement) {
 //
 // Preconditions:
 // - Next token is not empty
-func (p *parser) assignment(s *st.Statement) {
+func assignment(p *pipe, s *st.Statement) {
 
 	if !p.accept(token.ID) {
 		return
@@ -65,7 +59,7 @@ func (p *parser) assignment(s *st.Statement) {
 	}
 
 	p.retract()
-	ids := p.identifiers()
+	ids := identifiers(p)
 
 	if p.accept(token.ASSIGN) {
 		s.IDs = ids
@@ -80,7 +74,7 @@ func (p *parser) assignment(s *st.Statement) {
 //
 // Preconditions:
 // - next = token.ID
-func (p *parser) identifiers() []token.Token {
+func identifiers(p *pipe) []token.Token {
 
 	p.expect(`identifiers`, token.ID)
 	ids := []token.Token{p.prior()}
@@ -97,11 +91,11 @@ func (p *parser) identifiers() []token.Token {
 //
 // Preconditions:
 // - p.prior() = <Any>
-func (p *parser) expressions() []st.Expression {
+func expressions(p *pipe) []st.Expression {
 
 	var exprs []st.Expression
 
-	for ex := p.expression(); ex != nil; ex = p.expression() {
+	for ex := expression(p); ex != nil; ex = expression(p) {
 		exprs = append(exprs, ex)
 
 		if !p.accept(token.DELIM) {
@@ -115,18 +109,18 @@ func (p *parser) expressions() []st.Expression {
 // expression?
 //
 // Preconditions: NONE
-func (p *parser) expression() st.Expression {
+func expression(p *pipe) st.Expression {
 
-	switch left := p.term(); {
+	switch left := term(p); {
 	case left != nil:
-		return p.operation(left, 0)
+		return operation(p, left, 0)
 
 	case p.inspect(token.PAREN_OPEN):
-		left = p.grouping()
-		return p.operation(left, 0)
+		left = grouping(p)
+		return operation(p, left, 0)
 
 	case p.inspect(token.LIST_OPEN):
-		return p.list()
+		return list(p)
 	}
 
 	return nil
@@ -136,7 +130,7 @@ func (p *parser) expression() st.Expression {
 //
 // Preconditions:
 // - p.prior() = <Any>
-func (p *parser) term() st.Expression {
+func term(p *pipe) st.Expression {
 
 	switch {
 	case p.accept(token.ID),
@@ -155,10 +149,10 @@ func (p *parser) term() st.Expression {
 
 // Preconditions:
 // - next = token.PAREN_OPEN
-func (p *parser) grouping() st.Expression {
+func grouping(p *pipe) st.Expression {
 	p.expect(`grouping`, token.PAREN_OPEN)
 
-	left := p.expression()
+	left := expression(p)
 	if left == nil {
 		panic(unexpected("grouping", p.prior(), token.ANOTHER))
 	}
@@ -170,7 +164,7 @@ func (p *parser) grouping() st.Expression {
 // operation?
 //
 // Preconditions: NONE
-func (p *parser) operation(left st.Expression, leftPriority int) st.Expression {
+func operation(p *pipe, left st.Expression, leftPriority int) st.Expression {
 
 	op := p.snoop()
 
@@ -180,31 +174,31 @@ func (p *parser) operation(left st.Expression, leftPriority int) st.Expression {
 
 	p.expect(`operation`, op.Type) // Because we only snooped at it previously
 
-	right := p.rightSide()
-	right = p.operation(right, st.Precedence(op.Type))
+	right := rightSide(p)
+	right = operation(p, right, st.Precedence(op.Type))
 
 	left = st.NewOperation(left, op, right)
-	left = p.operation(left, leftPriority)
+	left = operation(p, left, leftPriority)
 
 	return left
 }
 
-func (p *parser) rightSide() st.Expression {
+func rightSide(p *pipe) st.Expression {
 
-	switch left := p.term(); {
+	switch left := term(p); {
 	case left != nil:
 		return left
 
 	case p.inspect(token.PAREN_OPEN):
-		return p.grouping()
+		return grouping(p)
 	}
 
 	panic(unexpected("rightSide", p.snoop(), `<term> | PAREN_OPEN`))
 }
 
-func (p *parser) list() st.Expression {
+func list(p *pipe) st.Expression {
 	start := p.proceed()
-	exprs := p.expressions()
+	exprs := expressions(p)
 	p.expect(`list`, token.LIST_CLOSE)
 	return st.List{start, exprs, p.prior()}
 }
