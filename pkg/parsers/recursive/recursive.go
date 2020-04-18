@@ -116,7 +116,7 @@ func expression(p *pipe) st.Expression {
 		return operation(p, left, 0)
 
 	case p.inspect(token.PAREN_OPEN):
-		left = grouping(p)
+		left = group(p)
 		return operation(p, left, 0)
 
 	case p.inspect(token.LIST_OPEN):
@@ -149,15 +149,15 @@ func term(p *pipe) st.Expression {
 
 // Preconditions:
 // - next = token.PAREN_OPEN
-func grouping(p *pipe) st.Expression {
-	p.expect(`grouping`, token.PAREN_OPEN)
+func group(p *pipe) st.Expression {
+	p.expect(`group`, token.PAREN_OPEN)
 
 	left := expression(p)
 	if left == nil {
-		panic(unexpected("grouping", p.prior(), token.ANOTHER))
+		panic(unexpected("group", p.prior(), token.ANOTHER))
 	}
 
-	p.expect(`grouping`, token.PAREN_CLOSE)
+	p.expect(`group`, token.PAREN_CLOSE)
 	return left
 }
 
@@ -190,7 +190,7 @@ func rightSide(p *pipe) st.Expression {
 		return left
 
 	case p.inspect(token.PAREN_OPEN):
-		return grouping(p)
+		return group(p)
 	}
 
 	panic(unexpected("rightSide", p.snoop(), `<term> | PAREN_OPEN`))
