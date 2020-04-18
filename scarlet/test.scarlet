@@ -1,12 +1,11 @@
 
-naught_six := 2 * 9 / (3 + 12) * 2 / 4
+//naught_six := 2 * 9 / (3 + 12) * 2 / 4
 
-a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE
+//a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE
 //       ((2 * 6) % 8) < (8 / (2 + 1)) = FALSE
 
-alpha := [1, (6 * 7 + 2) / 4, `:)`]
+//alpha := {1, (6 * 7 + 2) / 4, `:)`}
 
-a := [
-	1 + 1,
-]
-
+one_gt_two, two_gt_one := FALSE, FALSE
+//[1 > 2] one_gt_two := true
+//[2 > 1] two_gt_one := true

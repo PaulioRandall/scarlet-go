@@ -31,15 +31,14 @@ func script(p *pipe) (ss []st.Statement) {
 // - Next token is not empty
 func statement(p *pipe) (s st.Statement) {
 
-	assignment(p, &s)
-	exprs := expressions(p)
+	switch {
+	case assignment(p, s):
 
-	if exprs == nil {
-		panic(unexpected("statement", p.prior(), token.ANY))
+	default:
+		panic(unexpected("statement", p.snoop(), token.ANY))
 	}
 
 	p.expect(`statement`, token.TERMINATOR)
-	s.Exprs = exprs
 	return s
 }
 
@@ -47,24 +46,31 @@ func statement(p *pipe) (s st.Statement) {
 //
 // Preconditions:
 // - Next token is not empty
-func assignment(p *pipe, s *st.Statement) {
+func assignment(p *pipe, s st.Statement) bool {
 
 	if !p.accept(token.ID) {
-		return
+		return false
 	}
 
 	if !p.inspect(token.DELIM) && !p.inspect(token.ASSIGN) {
 		p.retract()
-		return
+		return false
 	}
 
 	p.retract()
 	ids := identifiers(p)
 
 	if p.accept(token.ASSIGN) {
-		s.IDs = ids
-		s.Assign = p.prior()
-		return
+
+		tk := p.prior()
+		exprs := expressions(p)
+
+		if exprs == nil {
+			panic(unexpected("statement", p.snoop(), token.ANY))
+		}
+
+		s = st.Assignment{ids, tk, exprs}
+		return true
 	}
 
 	panic(unexpected("assignment", p.prior(), token.ANOTHER))

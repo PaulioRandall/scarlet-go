@@ -22,27 +22,37 @@ func Print(ss []Statement) {
 	println()
 }
 
-type Statement struct {
+type Statement interface {
+	Token() token.Token
+
+	String(indent int) string
+}
+
+type Assignment struct {
 	IDs    []token.Token
 	Assign token.Token
 	Exprs  []Expression
 }
 
-func (s *Statement) String(i int) string {
+func (a Assignment) Token() token.Token {
+	return a.Assign
+}
 
-	str := indent(i) + "[Statement]"
-	if s.Assign != (token.Token{}) {
-		str += " " + s.Assign.String()
+func (a Assignment) String(i int) string {
+
+	str := indent(i) + "[Assignment]"
+	if a.Assign != (token.Token{}) {
+		str += " " + a.Assign.String()
 	}
 	str += newline()
 
 	str += indent(i+1) + "IDs:" + newline()
-	for _, tk := range s.IDs {
+	for _, tk := range a.IDs {
 		str += indent(i+2) + tk.String() + newline()
 	}
 
 	str += indent(i+1) + "Exprs:"
-	for _, expr := range s.Exprs {
+	for _, expr := range a.Exprs {
 		str += newline()
 		str += expr.String(i + 2)
 	}

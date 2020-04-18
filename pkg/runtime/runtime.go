@@ -1,47 +1,53 @@
 package runtime
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/statement"
+	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func Run(stats []statement.Statement) Context {
+func Run(ss []st.Statement) Context {
 	ctx := Context{make(map[string]Value), nil}
-	ExeStatements(&ctx, stats)
+	ExeStatements(&ctx, ss)
 	return ctx
 }
 
-func ExeStatements(ctx *Context, stats []statement.Statement) {
-	for _, s := range []statement.Statement(stats) {
-		ExeStatement(ctx, s)
+func ExeStatements(ctx *Context, ss []st.Statement) {
+	for _, s := range []st.Statement(ss) {
+		switch v := s.(type) {
+		case st.Assignment:
+			ExeAssignment(ctx, v)
+
+		default:
+			panic(err("ExeStatements", s.Token(), "Unknown statement type"))
+		}
 	}
 }
 
-func ExeStatement(ctx *Context, stat statement.Statement) {
+func ExeAssignment(ctx *Context, a st.Assignment) {
 
-	values := EvalExpressions(ctx, stat.Exprs)
+	values := EvalExpressions(ctx, a.Exprs)
 
-	if stat.IDs != nil {
+	if a.IDs != nil {
 
-		if len(stat.IDs) > len(values) {
-			panic(err("ExeStatement", stat.Assign,
+		if len(a.IDs) > len(values) {
+			panic(err("ExeStatement", a.Assign,
 				"Missing expression values to populate variables... have %d, want %d",
-				len(stat.IDs), len(values),
+				len(a.IDs), len(values),
 			))
 
-		} else if len(stat.IDs) < len(values) {
-			panic(err("ExeStatement", stat.Assign,
+		} else if len(a.IDs) < len(values) {
+			panic(err("ExeStatement", a.Assign,
 				"Too many expression values to populate variables... have %d, want %d",
-				len(stat.IDs), len(values),
+				len(a.IDs), len(values),
 			))
 		}
 	}
 
-	for i, id := range stat.IDs {
+	for i, id := range a.IDs {
 		ctx.Set(id.Value, values[i])
 	}
 }
 
-func EvalExpressions(ctx *Context, exprs []statement.Expression) []Value {
+func EvalExpressions(ctx *Context, exprs []st.Expression) []Value {
 
 	var values []Value
 
@@ -53,24 +59,24 @@ func EvalExpressions(ctx *Context, exprs []statement.Expression) []Value {
 	return values
 }
 
-func EvalExpression(ctx *Context, expr statement.Expression) Value {
+func EvalExpression(ctx *Context, expr st.Expression) Value {
 	switch v := expr.(type) {
-	case statement.Identifier:
+	case st.Identifier:
 		return ctx.Get(v.Source.Value)
 
-	case statement.Value:
+	case st.Value:
 		return valueOf(v.Source)
 
-	case statement.Operation:
+	case st.Operation:
 		return EvalOperation(ctx, v)
 
-	case statement.List:
+	case st.List:
 		return EvalList(ctx, v)
 	}
 
 	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
 }
 
-func EvalList(ctx *Context, list statement.List) Value {
+func EvalList(ctx *Context, list st.List) Value {
 	return List(EvalExpressions(ctx, list.Exprs))
 }

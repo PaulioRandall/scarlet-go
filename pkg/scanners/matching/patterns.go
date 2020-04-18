@@ -82,9 +82,15 @@ func patterns() []pattern {
 			return stringMatcher(ss, ")")
 		}},
 		pattern{token.LIST_OPEN, func(ss *symbolStream) int {
-			return stringMatcher(ss, "[")
+			return stringMatcher(ss, "{")
 		}},
 		pattern{token.LIST_CLOSE, func(ss *symbolStream) int {
+			return stringMatcher(ss, "}")
+		}},
+		pattern{token.GUARD_OPEN, func(ss *symbolStream) int {
+			return stringMatcher(ss, "[")
+		}},
+		pattern{token.GUARD_CLOSE, func(ss *symbolStream) int {
 			return stringMatcher(ss, "]")
 		}},
 		pattern{token.DELIM, func(ss *symbolStream) int {

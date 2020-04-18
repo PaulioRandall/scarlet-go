@@ -33,6 +33,8 @@ const (
 	PAREN_CLOSE        TokenType = `PAREN_CLOSE`
 	LIST_OPEN          TokenType = `LIST_OPEN`
 	LIST_CLOSE         TokenType = `LIST_CLOSE`
+	GUARD_OPEN         TokenType = `GUARD_OPEN`
+	GUARD_CLOSE        TokenType = `GUARD_CLOSE`
 	SPELL              TokenType = `SPELL`
 	STRING             TokenType = `STRING`
 	TEMPLATE           TokenType = `TEMPLATE`
