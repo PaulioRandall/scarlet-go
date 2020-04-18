@@ -34,22 +34,25 @@ func (p *parser) script() (ss []st.Statement) {
 // statement parses a single statement from the parsers iterator.
 //
 // Preconditions:
-// - p.itr is not empty
+// - Next token is not empty
 func (p *parser) statement() (s st.Statement) {
 
 	p.assignment(&s)
+	exprs := p.expressions()
 
-	exprs, ok := p.expressions(true)
-
-	if ok {
-		p.expect(`statement`, token.TERMINATOR)
-		s.Exprs = exprs
-		return s
+	if exprs == nil {
+		panic(unexpected("statement", p.prior(), token.ANY))
 	}
 
-	panic(unexpected("statement", p.prior(), token.ANY))
+	p.expect(`statement`, token.TERMINATOR)
+	s.Exprs = exprs
+	return s
 }
 
+// assignment?
+//
+// Preconditions:
+// - Next token is not empty
 func (p *parser) assignment(s *st.Statement) {
 
 	if !p.accept(token.ID) {
@@ -94,48 +97,39 @@ func (p *parser) identifiers() []token.Token {
 //
 // Preconditions:
 // - p.prior() = <Any>
-func (p *parser) expressions(required bool) (exprs []st.Expression, found bool) {
+func (p *parser) expressions() []st.Expression {
 
-	for expr, ok := p.expression(required); ok; expr, ok = p.expression(true) {
+	var exprs []st.Expression
 
-		found = true
-		exprs = append(exprs, expr)
+	for ex := p.expression(); ex != nil; ex = p.expression() {
+		exprs = append(exprs, ex)
 
 		if !p.accept(token.DELIM) {
 			break
 		}
 	}
 
-	return
+	return exprs
 }
 
 // expression?
 //
-// Preconditions:
-// - p.prior() = <Any>
-func (p *parser) expression(required bool) (st.Expression, bool) {
+// Preconditions: NONE
+func (p *parser) expression() st.Expression {
 
 	switch left := p.term(); {
 	case left != nil:
-		return p.operation(left, 0), true
+		return p.operation(left, 0)
 
 	case p.inspect(token.PAREN_OPEN):
 		left = p.grouping()
-		return p.operation(left, 0), true
+		return p.operation(left, 0)
 
 	case p.inspect(token.LIST_OPEN):
-		return p.list(), true
-
-	case p.inspect(token.LIST_CLOSE):
-		return nil, false
-
-	default:
-		if required {
-			panic(unexpected("expression", p.prior(), token.ANOTHER))
-		}
+		return p.list()
 	}
 
-	return nil, false
+	return nil
 }
 
 // term is used to determine if p.prior() is a term, e.g. identifier, bool, int, etc.
@@ -163,7 +157,12 @@ func (p *parser) term() st.Expression {
 // - next = token.PAREN_OPEN
 func (p *parser) grouping() st.Expression {
 	p.expect(`grouping`, token.PAREN_OPEN)
-	left, _ := p.expression(true)
+
+	left := p.expression()
+	if left == nil {
+		panic(unexpected("grouping", p.prior(), token.ANOTHER))
+	}
+
 	p.expect(`grouping`, token.PAREN_CLOSE)
 	return left
 }
@@ -205,7 +204,7 @@ func (p *parser) rightSide() st.Expression {
 
 func (p *parser) list() st.Expression {
 	start := p.proceed()
-	exprs, _ := p.expressions(false)
+	exprs := p.expressions()
 	p.expect(`list`, token.LIST_CLOSE)
 	return st.List{start, exprs, p.prior()}
 }

@@ -60,11 +60,7 @@ func patterns() []pattern {
 					return true
 				}
 
-				if i == 0 || ru != '_' {
-					return false
-				}
-
-				return true
+				return i != 0 && ru == '_'
 			})
 		}},
 		pattern{token.ASSIGN, func(ss *symbolStream) int {

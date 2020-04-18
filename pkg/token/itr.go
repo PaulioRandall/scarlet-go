@@ -53,7 +53,7 @@ func (itr *TokenIterator) Skip() {
 
 // Past returns the previous token without iterating.
 func (itr *TokenIterator) Past() Token {
-	if itr.index > 1 {
+	if itr.index > 0 {
 		return itr.tks[itr.index-1]
 	}
 

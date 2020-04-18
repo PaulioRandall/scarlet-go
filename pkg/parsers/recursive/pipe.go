@@ -82,7 +82,7 @@ func (p *pipe) accept(lex token.TokenType) bool {
 	}
 
 	if lex == token.ANY || p.inspect(lex) {
-		p.itr.Next()
+		p.itr.Skip()
 		return true
 	}
 
