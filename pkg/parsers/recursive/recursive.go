@@ -8,13 +8,14 @@ import (
 
 // ParseAll parses all tokens in tks into Statements.
 func ParseAll(tks []token.Token) []st.Statement {
-	p := parser{itr: token.NewIterator(tks)}
+	p := parser{pipe{token.NewIterator(tks)}}
 	return p.script()
 }
 
-// parser stores a single read token to enable look ahead by one behaviour.
+// parser is used a struct used specifcally for being a function reciever. It
+// avoids the need to pass a pipe from parser function to parser function.
 type parser struct {
-	itr *token.TokenIterator
+	pipe
 }
 
 // script parses all statements within the parsers iterator.
