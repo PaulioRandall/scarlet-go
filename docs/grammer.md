@@ -2,6 +2,8 @@
 
 ## Production Rules (WSN)
 
+> This is very out of date!
+
 P := {  
 - COMMENT          := "//" * Any visible unicode character * NEWLINE .
 - PROGRAM          := STATEMENT BLOCK .
