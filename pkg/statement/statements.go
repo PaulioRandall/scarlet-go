@@ -73,10 +73,13 @@ func (g Guard) Token() token.Token {
 
 func (g Guard) String(i int) string {
 
-	str := indent(i) + "[Guard] " + g.Open.String() + newline()
-	str += g.Cond.String(i+1) + newline()
-	str += indent(i+1) + g.Close.String() + newline()
-	str += g.Stat.String(i + 1)
+	str := indent(i) + "[Guard]" + newline()
+	str += indent(i+1) + "Open: " + g.Open.String() + newline()
+	str += indent(i+1) + "Condition:" + newline()
+	str += g.Cond.String(i+2) + newline()
+	str += indent(i+1) + "Close: " + g.Close.String() + newline()
+	str += indent(i+1) + "Statement:" + newline()
+	str += g.Stat.String(i + 2)
 
 	return str
 }

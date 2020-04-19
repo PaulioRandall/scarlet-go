@@ -46,23 +46,26 @@ func NewValueExpression(tk token.Token) Expression {
 }
 
 type List struct {
-	Start token.Token
+	Open  token.Token
 	Exprs []Expression
-	End   token.Token
+	Close token.Token
 }
 
 func (l List) Token() token.Token {
-	return l.Start
+	return l.Open
 }
 
 func (l List) String(i int) string {
 
-	str := indent(i) + "[List] " + l.Start.String() + newline()
-	for _, ex := range l.Exprs {
-		str += ex.String(i+1) + newline()
-	}
-	str += indent(i+1) + l.End.String()
+	str := indent(i) + "[List]" + newline()
+	str += indent(i+1) + "Open: " + l.Open.String() + newline()
 
+	str += indent(i+1) + "Exprs: " + newline()
+	for _, ex := range l.Exprs {
+		str += ex.String(i+2) + newline()
+	}
+
+	str += indent(i+1) + "Close: " + l.Close.String()
 	return str
 }
 
