@@ -9,15 +9,15 @@ import (
 // ParseAll parses all tokens in tks into Statements.
 func ParseAll(tks []token.Token) []st.Statement {
 	p := &pipe{token.NewIterator(tks)}
-	return script(p)
+	return statements(p)
 }
 
-// script parses all statements within the parsers iterator.
+// statements parses all statements within the parsers iterator.
 //
 // Preconditions: None
-func script(p *pipe) (ss []st.Statement) {
+func statements(p *pipe) (ss []st.Statement) {
 
-	for !p.itr.Empty() && !p.accept(token.EOF) {
+	for !p.itr.Empty() && !p.accept(token.EOF) && !p.inspect(token.BLOCK_CLOSE) {
 		s := statement(p)
 		ss = append(ss, s)
 	}
@@ -103,22 +103,42 @@ func guard(p *pipe, s *st.Statement) bool {
 	g.Cond = condition
 	p.expect(`guard`, token.GUARD_CLOSE)
 	g.Close = p.prior()
-	g.Stat = statement(p)
+
+	if b := block(p); b != nil {
+		g.Block = *b
+	} else {
+		g.Block = inlineBlock(p)
+	}
 
 	*s = g
 	return true
 }
 
-/*
-func block(p *pipe) st.Expression {
+func block(p *pipe) *st.Block {
 
 	if !p.accept(token.BLOCK_OPEN) {
 		return nil
 	}
 
+	b := &st.Block{
+		Open:  p.prior(),
+		Stats: statements(p),
+	}
 
+	p.expect(`block`, token.BLOCK_CLOSE)
+	b.Close = p.prior()
+	p.expect(`block`, token.TERMINATOR)
+
+	return b
 }
-*/
+
+func inlineBlock(p *pipe) st.Block {
+	return st.Block{
+		Open:  p.snoop(),
+		Stats: []st.Statement{statement(p)},
+		Close: p.prior(),
+	}
+}
 
 func boolOperator(ex st.Expression) bool {
 	if v, ok := ex.(st.Operation); ok {

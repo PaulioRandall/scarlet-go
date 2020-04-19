@@ -10,6 +10,10 @@ func Run(ss []st.Statement) Context {
 	return ctx
 }
 
+func ExeBlock(ctx *Context, b st.Block) {
+	ExeStatements(ctx, b.Stats)
+}
+
 func ExeStatements(ctx *Context, ss []st.Statement) {
 	for _, s := range ss {
 		ExeStatement(ctx, s)
@@ -58,7 +62,7 @@ func ExeGuard(ctx *Context, g st.Guard) {
 	if pass, ok := EvalExpression(ctx, g.Cond).(Bool); !ok {
 		panic(err("ExeGuard", g.Open, "Unexpected non-boolean result"))
 	} else if pass {
-		ExeStatement(ctx, g.Stat)
+		ExeBlock(ctx, g.Block)
 	}
 }
 

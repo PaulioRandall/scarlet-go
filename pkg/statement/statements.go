@@ -64,7 +64,7 @@ type Guard struct {
 	Open  token.Token
 	Cond  Expression
 	Close token.Token
-	Stat  Statement
+	Block Block
 }
 
 func (g Guard) Token() token.Token {
@@ -79,7 +79,7 @@ func (g Guard) String(i int) string {
 	s += g.Cond.String(i+2) + newline()
 	s += indent(i+1) + "Close: " + g.Close.String() + newline()
 	s += indent(i+1) + "Statement:" + newline()
-	s += g.Stat.String(i + 2)
+	s += g.Block.String(i + 2)
 
 	return s
 }

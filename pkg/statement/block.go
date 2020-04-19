@@ -24,6 +24,6 @@ func (b Block) String(i int) string {
 		s += st.String(i+2) + newline()
 	}
 
-	s += indent(i+1) + "Close: " + b.Close.String() + newline()
+	s += indent(i+1) + "Close: " + b.Close.String()
 	return s
 }
