@@ -60,30 +60,6 @@ func (a Assignment) String(i int) string {
 	return s
 }
 
-type Guard struct {
-	Open  token.Token
-	Cond  Expression
-	Close token.Token
-	Block Block
-}
-
-func (g Guard) Token() token.Token {
-	return g.Open
-}
-
-func (g Guard) String(i int) string {
-
-	s := indent(i) + "[Guard]" + newline()
-	s += indent(i+1) + "Open: " + g.Open.String() + newline()
-	s += indent(i+1) + "Condition:" + newline()
-	s += g.Cond.String(i+2) + newline()
-	s += indent(i+1) + "Close: " + g.Close.String() + newline()
-	s += indent(i+1) + "Statement:" + newline()
-	s += g.Block.String(i + 2)
-
-	return s
-}
-
 func indent(indent int) string {
 	return strings.Repeat("\t", indent)
 }

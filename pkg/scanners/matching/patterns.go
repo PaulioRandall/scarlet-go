@@ -38,6 +38,9 @@ func patterns() []pattern {
 			}
 			return 0
 		}},
+		pattern{token.MATCH_OPEN, func(ss *symbolStream) int {
+			return keywordMatcher(ss, "MATCH")
+		}},
 		pattern{token.BOOL, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "FALSE")
 		}},

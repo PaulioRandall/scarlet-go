@@ -31,17 +31,20 @@ func statements(p *pipe) (ss []st.Statement) {
 // - Next token is not empty
 func statement(p *pipe) (s st.Statement) {
 
-	switch {
-	case assignment(p, &s):
+	if assignment(p, &s) {
 		p.expect(`statement`, token.TERMINATOR)
-
-	case guard(p, &s):
-
-	default:
-		panic(unexpected("statement", p.snoop(), token.ANY))
+		return
 	}
 
-	return s
+	if g := guard(p); g != nil {
+		return *g
+	}
+
+	if m := match(p); m != nil {
+		return *m
+	}
+
+	panic(unexpected("statement", p.snoop(), token.ANY))
 }
 
 // assignment?
@@ -78,17 +81,52 @@ func assignment(p *pipe, s *st.Statement) bool {
 	panic(unexpected("assignment", p.prior(), token.ANOTHER))
 }
 
+func match(p *pipe) *st.Match {
+
+	if !p.accept(token.MATCH_OPEN) {
+		return nil
+	}
+
+	m := st.Match{
+		Open: p.prior(),
+	}
+
+	p.expect(`match`, token.TERMINATOR)
+
+	m.Cases = guards(p)
+	if m.Cases == nil {
+		panic(unexpected("match", p.snoop(), token.GUARD_OPEN))
+	}
+
+	p.expect(`match`, token.BLOCK_CLOSE)
+	m.Close = p.prior()
+	p.expect(`block`, token.TERMINATOR)
+
+	return &m
+}
+
+func guards(p *pipe) []st.Guard {
+
+	var gs []st.Guard
+
+	for g := guard(p); g != nil; g = guard(p) {
+		gs = append(gs, *g)
+	}
+
+	return gs
+}
+
 // guard?
 //
 // Preconditions:
 // - Next token is not empty
-func guard(p *pipe, s *st.Statement) bool {
+func guard(p *pipe) *st.Guard {
 
 	if !p.accept(token.GUARD_OPEN) {
-		return false
+		return nil
 	}
 
-	g := st.Guard{
+	g := &st.Guard{
 		Open: p.prior(),
 	}
 
@@ -110,8 +148,7 @@ func guard(p *pipe, s *st.Statement) bool {
 		g.Block = inlineBlock(p)
 	}
 
-	*s = g
-	return true
+	return g
 }
 
 func block(p *pipe) *st.Block {

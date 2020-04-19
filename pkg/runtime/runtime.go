@@ -25,6 +25,9 @@ func ExeStatement(ctx *Context, s st.Statement) {
 	case st.Assignment:
 		ExeAssignment(ctx, v)
 
+	case st.Match:
+		ExeMatch(ctx, v)
+
 	case st.Guard:
 		ExeGuard(ctx, v)
 
@@ -58,12 +61,27 @@ func ExeAssignment(ctx *Context, a st.Assignment) {
 	}
 }
 
-func ExeGuard(ctx *Context, g st.Guard) {
-	if pass, ok := EvalExpression(ctx, g.Cond).(Bool); !ok {
+func ExeMatch(ctx *Context, m st.Match) {
+	for _, g := range m.Cases {
+		if ExeGuard(ctx, g) {
+			break
+		}
+	}
+}
+
+func ExeGuard(ctx *Context, g st.Guard) bool {
+
+	pass, ok := EvalExpression(ctx, g.Cond).(Bool)
+
+	if !ok {
 		panic(err("ExeGuard", g.Open, "Unexpected non-boolean result"))
-	} else if pass {
+	}
+
+	if pass {
 		ExeBlock(ctx, g.Block)
 	}
+
+	return bool(pass)
 }
 
 func EvalExpressions(ctx *Context, exprs []st.Expression) []Value {

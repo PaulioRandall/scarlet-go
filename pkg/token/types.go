@@ -27,6 +27,7 @@ const (
 	DELIM              TokenType = `DELIMITER`
 	ASSIGN             TokenType = `ASSIGNS`
 	RETURNS            TokenType = `RETURNS`
+	MATCH_OPEN         TokenType = `MATCH`
 	BLOCK_OPEN         TokenType = `DO`
 	BLOCK_CLOSE        TokenType = `END`
 	PAREN_OPEN         TokenType = `PAREN_OPEN`
