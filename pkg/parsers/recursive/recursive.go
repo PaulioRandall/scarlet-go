@@ -141,6 +141,15 @@ func inlineBlock(p *pipe) st.Block {
 }
 
 func boolOperator(ex st.Expression) bool {
+
+	if _, ok := ex.(st.Identifier); ok {
+		return true
+	}
+
+	if v, ok := ex.(st.Value); ok {
+		return v.Source.Type == token.BOOL
+	}
+
 	if v, ok := ex.(st.Operation); ok {
 		return st.IsBoolOperator(v.Operator.Type)
 	}

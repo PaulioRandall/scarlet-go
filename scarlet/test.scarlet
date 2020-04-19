@@ -10,7 +10,7 @@ a, b := FALSE, FALSE
 
 [1 = (3 - 2)] a := TRUE
 
-[1 < 2] DO
+[b] DO
 	b := TRUE
 	c := `(:`
 END

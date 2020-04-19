@@ -6,6 +6,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
+// TODO: Consider renaming this to `Result`
+
 // Value represents a value within the executing program, either the value of
 // a variable or an intermediate within a statement.
 type Value interface {
