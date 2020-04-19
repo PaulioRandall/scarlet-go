@@ -34,6 +34,7 @@ func statement(p *pipe) (s st.Statement) {
 	switch {
 	case assignment(p, &s):
 		p.expect(`statement`, token.TERMINATOR)
+
 	case guard(p, &s):
 
 	default:
@@ -107,6 +108,17 @@ func guard(p *pipe, s *st.Statement) bool {
 	*s = g
 	return true
 }
+
+/*
+func block(p *pipe) st.Expression {
+
+	if !p.accept(token.BLOCK_OPEN) {
+		return nil
+	}
+
+
+}
+*/
 
 func boolOperator(ex st.Expression) bool {
 	if v, ok := ex.(st.Operation); ok {
@@ -196,6 +208,7 @@ func literal(p *pipe) st.Expression {
 // Preconditions:
 // - next = token.PAREN_OPEN
 func group(p *pipe) st.Expression {
+
 	p.expect(`group`, token.PAREN_OPEN)
 
 	left := expression(p)

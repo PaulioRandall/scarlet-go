@@ -40,24 +40,24 @@ func (a Assignment) Token() token.Token {
 
 func (a Assignment) String(i int) string {
 
-	str := indent(i) + "[Assignment]"
+	s := indent(i) + "[Assignment]"
 	if a.Assign != (token.Token{}) {
-		str += " " + a.Assign.String()
+		s += " " + a.Assign.String()
 	}
-	str += newline()
+	s += newline()
 
-	str += indent(i+1) + "IDs:" + newline()
+	s += indent(i+1) + "IDs:" + newline()
 	for _, tk := range a.IDs {
-		str += indent(i+2) + tk.String() + newline()
+		s += indent(i+2) + tk.String() + newline()
 	}
 
-	str += indent(i+1) + "Exprs:"
+	s += indent(i+1) + "Exprs:"
 	for _, expr := range a.Exprs {
-		str += newline()
-		str += expr.String(i + 2)
+		s += newline()
+		s += expr.String(i + 2)
 	}
 
-	return str
+	return s
 }
 
 type Guard struct {
@@ -73,15 +73,15 @@ func (g Guard) Token() token.Token {
 
 func (g Guard) String(i int) string {
 
-	str := indent(i) + "[Guard]" + newline()
-	str += indent(i+1) + "Open: " + g.Open.String() + newline()
-	str += indent(i+1) + "Condition:" + newline()
-	str += g.Cond.String(i+2) + newline()
-	str += indent(i+1) + "Close: " + g.Close.String() + newline()
-	str += indent(i+1) + "Statement:" + newline()
-	str += g.Stat.String(i + 2)
+	s := indent(i) + "[Guard]" + newline()
+	s += indent(i+1) + "Open: " + g.Open.String() + newline()
+	s += indent(i+1) + "Condition:" + newline()
+	s += g.Cond.String(i+2) + newline()
+	s += indent(i+1) + "Close: " + g.Close.String() + newline()
+	s += indent(i+1) + "Statement:" + newline()
+	s += g.Stat.String(i + 2)
 
-	return str
+	return s
 }
 
 func indent(indent int) string {
