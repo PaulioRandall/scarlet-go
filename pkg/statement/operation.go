@@ -36,6 +36,25 @@ func (op Operation) String(i int) string {
 	return str
 }
 
+// IsBoolOperator returns true if tt represents an operator that produces a
+// boolean value when evaluated.
+func IsBoolOperator(tt token.TokenType) bool {
+	switch tt {
+	case token.LESS_THAN,
+		token.LESS_THAN_OR_EQUAL,
+		token.MORE_THAN,
+		token.MORE_THAN_OR_EQUAL,
+		token.EQUAL,
+		token.NOT_EQUAL,
+		token.AND,
+		token.OR:
+
+		return true
+	}
+
+	return false
+}
+
 // Precedence returns the precedences of the token type.
 func Precedence(tt token.TokenType) int {
 	switch tt {

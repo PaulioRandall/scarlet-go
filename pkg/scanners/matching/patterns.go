@@ -73,7 +73,7 @@ func patterns() []pattern {
 			return stringMatcher(ss, "<=")
 		}},
 		pattern{token.MORE_THAN_OR_EQUAL, func(ss *symbolStream) int {
-			return stringMatcher(ss, "=>")
+			return stringMatcher(ss, ">=")
 		}},
 		pattern{token.PAREN_OPEN, func(ss *symbolStream) int {
 			return stringMatcher(ss, "(")

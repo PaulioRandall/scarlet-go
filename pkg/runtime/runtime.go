@@ -11,14 +11,21 @@ func Run(ss []st.Statement) Context {
 }
 
 func ExeStatements(ctx *Context, ss []st.Statement) {
-	for _, s := range []st.Statement(ss) {
-		switch v := s.(type) {
-		case st.Assignment:
-			ExeAssignment(ctx, v)
+	for _, s := range ss {
+		ExeStatement(ctx, s)
+	}
+}
 
-		default:
-			panic(err("ExeStatements", s.Token(), "Unknown statement type"))
-		}
+func ExeStatement(ctx *Context, s st.Statement) {
+	switch v := s.(type) {
+	case st.Assignment:
+		ExeAssignment(ctx, v)
+
+	case st.Guard:
+		ExeGuard(ctx, v)
+
+	default:
+		panic(err("ExeStatement", s.Token(), "Unknown statement type"))
 	}
 }
 
@@ -47,6 +54,14 @@ func ExeAssignment(ctx *Context, a st.Assignment) {
 	}
 }
 
+func ExeGuard(ctx *Context, g st.Guard) {
+	if pass, ok := EvalExpression(ctx, g.Cond).(Bool); !ok {
+		panic(err("ExeGuard", g.Open, "Unexpected non-boolean result"))
+	} else if pass {
+		ExeStatement(ctx, g.Stat)
+	}
+}
+
 func EvalExpressions(ctx *Context, exprs []st.Expression) []Value {
 
 	var values []Value
@@ -62,7 +77,11 @@ func EvalExpressions(ctx *Context, exprs []st.Expression) []Value {
 func EvalExpression(ctx *Context, expr st.Expression) Value {
 	switch v := expr.(type) {
 	case st.Identifier:
-		return ctx.Get(v.Source.Value)
+		val := ctx.Get(v.Source.Value)
+		if val == nil {
+			panic(err("EvalExpression", v.Source, "Undefined identifier"))
+		}
+		return val
 
 	case st.Value:
 		return valueOf(v.Source)

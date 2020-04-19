@@ -32,13 +32,14 @@ func script(p *pipe) (ss []st.Statement) {
 func statement(p *pipe) (s st.Statement) {
 
 	switch {
-	case assignment(p, s):
+	case assignment(p, &s):
+		p.expect(`statement`, token.TERMINATOR)
+	case guard(p, &s):
 
 	default:
 		panic(unexpected("statement", p.snoop(), token.ANY))
 	}
 
-	p.expect(`statement`, token.TERMINATOR)
 	return s
 }
 
@@ -46,7 +47,7 @@ func statement(p *pipe) (s st.Statement) {
 //
 // Preconditions:
 // - Next token is not empty
-func assignment(p *pipe, s st.Statement) bool {
+func assignment(p *pipe, s *st.Statement) bool {
 
 	if !p.accept(token.ID) {
 		return false
@@ -66,14 +67,53 @@ func assignment(p *pipe, s st.Statement) bool {
 		exprs := expressions(p)
 
 		if exprs == nil {
-			panic(unexpected("statement", p.snoop(), token.ANY))
+			panic(unexpected("assignment", p.snoop(), token.ANY))
 		}
 
-		s = st.Assignment{ids, tk, exprs}
+		*s = st.Assignment{ids, tk, exprs}
 		return true
 	}
 
 	panic(unexpected("assignment", p.prior(), token.ANOTHER))
+}
+
+// guard?
+//
+// Preconditions:
+// - Next token is not empty
+func guard(p *pipe, s *st.Statement) bool {
+
+	if !p.accept(token.GUARD_OPEN) {
+		return false
+	}
+
+	g := st.Guard{
+		Open: p.prior(),
+	}
+
+	condition := expression(p)
+
+	if condition == nil || !boolOperator(condition) {
+		panic(err("guard", condition.Token(),
+			`Expected expression with a bool result`,
+		))
+	}
+
+	g.Cond = condition
+	p.expect(`guard`, token.GUARD_CLOSE)
+	g.Close = p.prior()
+	g.Stat = statement(p)
+
+	*s = g
+	return true
+}
+
+func boolOperator(ex st.Expression) bool {
+	if v, ok := ex.(st.Operation); ok {
+		return st.IsBoolOperator(v.Operator.Type)
+	}
+
+	return false
 }
 
 // E.g. `a, b, c`
