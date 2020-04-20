@@ -31,9 +31,8 @@ func statements(p *pipe) (ss []st.Statement) {
 // - Next token is not empty
 func statement(p *pipe) (s st.Statement) {
 
-	if assignment(p, &s) {
-		p.expect(`statement`, token.TERMINATOR)
-		return
+	if a := assignment(p); a != nil {
+		return *a
 	}
 
 	if g := guard(p); g != nil {
@@ -51,15 +50,15 @@ func statement(p *pipe) (s st.Statement) {
 //
 // Preconditions:
 // - Next token is not empty
-func assignment(p *pipe, s *st.Statement) bool {
+func assignment(p *pipe) *st.Assignment {
 
 	if !p.accept(token.ID) {
-		return false
+		return nil
 	}
 
 	if !p.inspect(token.DELIM) && !p.inspect(token.ASSIGN) {
 		p.retract()
-		return false
+		return nil
 	}
 
 	p.retract()
@@ -74,8 +73,8 @@ func assignment(p *pipe, s *st.Statement) bool {
 			panic(unexpected("assignment", p.snoop(), token.ANY))
 		}
 
-		*s = st.Assignment{ids, tk, exprs}
-		return true
+		p.expect(`assignment`, token.TERMINATOR)
+		return &st.Assignment{ids, tk, exprs}
 	}
 
 	panic(unexpected("assignment", p.prior(), token.ANOTHER))
@@ -243,6 +242,9 @@ func expression(p *pipe) st.Expression {
 		left = group(p)
 		return operation(p, left, 0)
 
+	case p.inspect(token.FUNC):
+		return function(p)
+
 	case p.inspect(token.LIST_OPEN):
 		return list(p)
 	}
@@ -319,6 +321,36 @@ func rightSide(p *pipe) st.Expression {
 	}
 
 	panic(unexpected("rightSide", p.snoop(), `<literal> | PAREN_OPEN`))
+}
+
+func function(p *pipe) st.Expression {
+
+	p.expect(`function`, token.FUNC)
+	f := st.FuncDef{
+		Open: p.prior(),
+	}
+
+	p.expect(`function`, token.PAREN_OPEN)
+
+	if p.inspect(token.ID) {
+		f.Input = identifiers(p)
+	}
+
+	if p.accept(token.RETURNS) {
+		f.Output = identifiers(p)
+	}
+
+	p.expect(`function`, token.PAREN_CLOSE)
+
+	if b := block(p); b != nil {
+		f.Body = *b
+	} else {
+		f.Body = inlineBlock(p)
+	}
+
+	p.retract() // Put TERMINATOR back for the statement to end correctly
+
+	return f
 }
 
 func list(p *pipe) st.Expression {
