@@ -2,7 +2,19 @@
 
 add := F(a, b -> c) c := a + b
 
-alpha := LIST {add(3, 3), (6 * 7 + 2) / 4, `:)`}
+alpha := LIST {
+	add(3, 3),
+	(6 * 7 + 2) / 4,
+	`:)`,
+}
+
+factorial := F(f, n -> n) DO
+	[n # 0] DO
+		n := n + f(f, n - 1)
+	END
+END
+
+answer := factorial(factorial, 3)
 
 EOF
 

@@ -67,7 +67,20 @@ func EvalOperation(ctx *Context, op statement.Operation) Value {
 }
 
 func EvalValues(ctx *Context, left, right statement.Expression) (Value, Value) {
-	return EvalExpression(ctx, left), EvalExpression(ctx, right)
+	l := EvalExpression(ctx, left)
+	r := EvalExpression(ctx, right)
+
+	if _, ok := l.(Void); ok {
+		panic(err("EvalValues", left.Token(),
+			"Left side evaluated to Void, but it's not allowed here"))
+	}
+
+	if _, ok := r.(Void); ok {
+		panic(err("EvalValues", right.Token(),
+			"Right side evaluated to Void, but it's not allowed here"))
+	}
+
+	return l, r
 }
 
 func EvalNumbers(ctx *Context, left, right statement.Expression) (float64, float64) {
@@ -75,7 +88,11 @@ func EvalNumbers(ctx *Context, left, right statement.Expression) (float64, float
 }
 
 func EvalNumber(ctx *Context, ex statement.Expression) float64 {
-	if v, ok := EvalExpression(ctx, ex).(Number); ok {
+
+	v := EvalExpression(ctx, ex)
+	v = single(v, ex.Token())
+
+	if v, ok := v.(Number); ok {
 		return float64(v)
 	}
 
