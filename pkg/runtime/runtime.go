@@ -2,6 +2,7 @@ package runtime
 
 import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func Run(ss []st.Statement) Context {
@@ -90,7 +91,15 @@ func EvalExpressions(ctx *Context, exprs []st.Expression) []Value {
 
 	for _, expr := range exprs {
 		v := EvalExpression(ctx, expr)
-		values = append(values, v)
+
+		if t, ok := v.(Tuple); ok {
+			for _, v := range []Value(t) {
+				values = append(values, v)
+			}
+
+		} else {
+			values = append(values, v)
+		}
 	}
 
 	return values
@@ -116,6 +125,9 @@ func EvalExpression(ctx *Context, expr st.Expression) Value {
 
 	case st.FuncDef:
 		return EvalFuncDef(ctx, v)
+
+	case st.FuncCall:
+		return EvalFuncCall(ctx, v)
 	}
 
 	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
@@ -127,4 +139,57 @@ func EvalList(ctx *Context, list st.List) Value {
 
 func EvalFuncDef(ctx *Context, f st.FuncDef) Value {
 	return Function(f)
+}
+
+func EvalFuncCall(ctx *Context, call st.FuncCall) Value {
+
+	v := EvalExpression(ctx, call.ID)
+	def, ok := v.(Function)
+
+	if !ok {
+		panic(err("EvalFuncCall", call.ID.Token(), "Expected function value"))
+	}
+
+	if len(def.Input) != len(call.Input) {
+		panic(err("EvalFuncCall", call.ID.Token(),
+			"Expected %d parameters, got %d", len(def.Input), len(call.Input),
+		))
+	}
+
+	subCtx := ctx.Spawn()
+
+	for i, paramExpr := range call.Input {
+
+		v := EvalExpression(ctx, paramExpr)
+		id := def.Input[i]
+		v = single(v, call.ID.Token())
+
+		subCtx.Set(id.Value, v)
+	}
+
+	ExeBlock(subCtx, def.Body)
+
+	r := make([]Value, len(def.Output))
+
+	for i, id := range def.Output {
+		r[i] = subCtx.Get(id.Value)
+	}
+
+	return Tuple(r)
+}
+
+func single(v Value, tk token.Token) Value {
+
+	t, ok := v.(Tuple)
+	if !ok {
+		return v
+	}
+
+	a := []Value(t)
+
+	if t == nil || len(a) != 1 {
+		panic(err("singletonTuple", tk, "Expected exactly one result"))
+	}
+
+	return a[0]
 }

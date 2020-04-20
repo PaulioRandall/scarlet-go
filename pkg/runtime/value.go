@@ -88,6 +88,23 @@ func (l List) String() string {
 	return s + "}"
 }
 
+type Tuple []Value
+
+func (t Tuple) Get() interface{} {
+	return []Value(t)
+}
+
+func (t Tuple) String() string {
+	s := "(Tuple) " + "("
+	for i, item := range []Value(t) {
+		if i != 0 {
+			s += ","
+		}
+		s += item.String()
+	}
+	return s + ")"
+}
+
 type Function st.FuncDef
 
 func (f Function) Get() interface{} {

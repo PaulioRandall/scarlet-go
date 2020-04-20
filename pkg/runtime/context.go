@@ -29,8 +29,13 @@ func (ctx *Context) String() (s string) {
 
 // get returns the value assigned to a specified variable. If the ID does not
 // exist an empty value is returned.
-func (ctx *Context) Get(id string) (_ Value) {
-	v, _ := ctx.vars[id]
+func (ctx *Context) Get(id string) Value {
+	v, ok := ctx.vars[id]
+
+	if !ok {
+		v = Void{}
+	}
+
 	return v
 }
 

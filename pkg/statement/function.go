@@ -24,9 +24,9 @@ func (f FuncDef) String(i int) string {
 		str += indent(i+2) + tk.String() + newline()
 	}
 
-	str += indent(i+1) + "Output: " + newline()
+	str += indent(i+1) + "Output: "
 	for _, tk := range f.Output {
-		str += indent(i+2) + tk.String() + newline()
+		str += newline() + indent(i+2) + tk.String()
 	}
 
 	return str
