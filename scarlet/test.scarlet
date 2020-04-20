@@ -1,11 +1,13 @@
 
-f := F(a, b -> c, d) DO
-	c := 9
+add := F(a, b -> c) DO
+	c := a + b
 END
 
-g := F(a, b -> c, d) c := 12
+//g := F(a, b -> c, d) c := 12
 
-h := F(-> x) x := 9
+//h := F(-> x) x := 9
+
+answer := add(1, 2)
 
 EOF
 

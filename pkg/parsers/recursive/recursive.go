@@ -234,8 +234,16 @@ func expressions(p *pipe) []st.Expression {
 // Preconditions: NONE
 func expression(p *pipe) st.Expression {
 
-	switch left := literal(p); {
-	case left != nil:
+	var left st.Expression
+
+	switch {
+	case isFuncCall(p):
+		p.expect(`rightSide`, token.ID)
+		left := st.NewValueExpression(p.prior())
+		return funcCall(p, left)
+
+	case literal(p):
+		left = st.NewValueExpression(p.proceed())
 		return operation(p, left, 0)
 
 	case p.inspect(token.PAREN_OPEN):
@@ -243,7 +251,7 @@ func expression(p *pipe) st.Expression {
 		return operation(p, left, 0)
 
 	case p.inspect(token.FUNC):
-		return function(p)
+		return funcDef(p)
 
 	case p.inspect(token.LIST_OPEN):
 		return list(p)
@@ -257,20 +265,20 @@ func expression(p *pipe) st.Expression {
 //
 // Preconditions:
 // - p.prior() = <Any>
-func literal(p *pipe) st.Expression {
+func literal(p *pipe) bool {
 
 	switch {
-	case p.accept(token.ID),
-		p.accept(token.VOID),
-		p.accept(token.BOOL),
-		p.accept(token.NUMBER),
-		p.accept(token.STRING),
-		p.accept(token.TEMPLATE):
+	case p.inspect(token.ID),
+		p.inspect(token.VOID),
+		p.inspect(token.BOOL),
+		p.inspect(token.NUMBER),
+		p.inspect(token.STRING),
+		p.inspect(token.TEMPLATE):
 
-		return st.NewValueExpression(p.prior())
+		return true
 	}
 
-	return nil
+	return false
 }
 
 // Preconditions:
@@ -312,9 +320,14 @@ func operation(p *pipe, left st.Expression, leftPriority int) st.Expression {
 
 func rightSide(p *pipe) st.Expression {
 
-	switch left := literal(p); {
-	case left != nil:
-		return left
+	switch {
+	case isFuncCall(p):
+		p.expect(`rightSide`, token.ID)
+		left := st.NewValueExpression(p.prior())
+		return funcCall(p, left)
+
+	case literal(p):
+		return st.NewValueExpression(p.proceed())
 
 	case p.inspect(token.PAREN_OPEN):
 		return group(p)
@@ -323,14 +336,14 @@ func rightSide(p *pipe) st.Expression {
 	panic(unexpected("rightSide", p.snoop(), `<literal> | PAREN_OPEN`))
 }
 
-func function(p *pipe) st.Expression {
+func funcDef(p *pipe) st.Expression {
 
-	p.expect(`function`, token.FUNC)
+	p.expect(`funcDef`, token.FUNC)
 	f := st.FuncDef{
 		Open: p.prior(),
 	}
 
-	p.expect(`function`, token.PAREN_OPEN)
+	p.expect(`funcDef`, token.PAREN_OPEN)
 
 	if p.inspect(token.ID) {
 		f.Input = identifiers(p)
@@ -340,7 +353,7 @@ func function(p *pipe) st.Expression {
 		f.Output = identifiers(p)
 	}
 
-	p.expect(`function`, token.PAREN_CLOSE)
+	p.expect(`funcDef`, token.PAREN_CLOSE)
 
 	if b := block(p); b != nil {
 		f.Body = *b
@@ -349,6 +362,30 @@ func function(p *pipe) st.Expression {
 	}
 
 	p.retract() // Put TERMINATOR back for the statement to end correctly
+
+	return f
+}
+
+func isFuncCall(p *pipe) (is bool) {
+
+	if p.accept(token.ID) {
+		is = p.inspect(token.PAREN_OPEN)
+		p.retract()
+	}
+
+	return is
+}
+
+func funcCall(p *pipe, left st.Expression) st.Expression {
+
+	p.expect(`funcCall`, token.PAREN_OPEN)
+
+	f := st.FuncCall{
+		ID:    left,
+		Input: expressions(p),
+	}
+
+	p.expect(`funcCall`, token.PAREN_CLOSE)
 
 	return f
 }
