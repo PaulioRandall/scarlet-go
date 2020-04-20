@@ -1,22 +1,26 @@
 
-//naught_six := 2 * 9 / (3 + 12) * 2 / 4
-
-//a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE
-//       ((2 * 6) % 8) < (8 / (2 + 1)) = FALSE
-
-//alpha := {1, (6 * 7 + 2) / 4, `:)`}
-
-//a, b := FALSE, FALSE
-
-//[1 = (3 - 2)] a := TRUE
-
-//[a] DO
-	//[b] DO
-		//c := `(:`
-	//END
+//f := F(a, b -> c, d) DO
+	//x := 9
 //END
 
-//f := F(a, b -> c, d)
+//EOF
+
+naught_six := 2 * 9 / (3 + 12) * 2 / 4
+
+a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE
+//       ((2 * 6) % 8) < (8 / (2 + 1)) = FALSE
+
+alpha := {1, (6 * 7 + 2) / 4, `:)`}
+
+a, b := FALSE, FALSE
+
+[1 = (3 - 2)] a := TRUE
+
+[a] DO
+	[b] DO
+		c := `(:`
+	END
+END
 
 MATCH
 	[FALSE] x := `1st`
@@ -27,11 +31,3 @@ MATCH
 	[TRUE ] x := `4th`
 END
 
-MATCH
-	[FALSE] [TRUE] x := `1st`
-	[1 = 1] MATCH
-		[1 < 2] x := `2nd Alpha`
-		[TRUE ] x := `2nd Beta`
-	END
-	[TRUE] x := `3rd`
-END

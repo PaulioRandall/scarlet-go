@@ -49,6 +49,11 @@ func (ss *symbolStream) len() int {
 	return len(ss.runes)
 }
 
+// drain removes all remaining symbols in the stream.
+func (ss *symbolStream) drain() {
+	ss.runes = []rune{}
+}
+
 // isMatch returns true if s matches the sequence of symbols starting from
 // start.
 func (ss *symbolStream) isMatch(start int, s string) bool {

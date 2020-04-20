@@ -38,6 +38,10 @@ func read(ss *symbolStream) token.Token {
 		panic(newErr(ss, 0, "Could not identify next token"))
 	}
 
+	if tk.Type == token.EOF {
+		ss.drain()
+	}
+
 	return tk
 }
 
