@@ -47,6 +47,9 @@ func patterns() []pattern {
 		pattern{token.BOOL, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "TRUE")
 		}},
+		pattern{token.LIST, func(ss *symbolStream) int {
+			return keywordMatcher(ss, "LIST")
+		}},
 		pattern{token.EOF, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "EOF")
 		}},

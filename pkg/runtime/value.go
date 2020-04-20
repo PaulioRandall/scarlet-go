@@ -95,7 +95,7 @@ func (t Tuple) Get() interface{} {
 }
 
 func (t Tuple) String() string {
-	s := "(Tuple) " + "("
+	s := "(TUPLE) " + "("
 	for i, item := range []Value(t) {
 		if i != 0 {
 			s += ","
@@ -113,7 +113,7 @@ func (f Function) Get() interface{} {
 
 func (f Function) String() string {
 
-	s := "(Function) F("
+	s := "(FUNCTION) F("
 
 	if f.Input != nil {
 		for i, item := range f.Input {

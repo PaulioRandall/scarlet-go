@@ -2,9 +2,7 @@
 
 add := F(a, b -> c) c := a + b
 
-//h := F(-> x) x := 9
-
-answer := add(add(3, 3), 3)
+alpha := LIST {add(3, 3), (6 * 7 + 2) / 4, `:)`}
 
 EOF
 
@@ -12,8 +10,6 @@ naught_six := 2 * 9 / (3 + 12) * 2 / 4
 
 a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE
 //       ((2 * 6) % 8) < (8 / (2 + 1)) = FALSE
-
-alpha := {1, (6 * 7 + 2) / 4, `:)`}
 
 a, b := FALSE, FALSE
 

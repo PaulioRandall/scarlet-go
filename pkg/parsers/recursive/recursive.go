@@ -253,7 +253,7 @@ func expression(p *pipe) st.Expression {
 	case p.inspect(token.FUNC):
 		return funcDef(p)
 
-	case p.inspect(token.LIST_OPEN):
+	case p.inspect(token.LIST):
 		return list(p)
 	}
 
@@ -391,8 +391,17 @@ func funcCall(p *pipe, left st.Expression) st.Expression {
 }
 
 func list(p *pipe) st.Expression {
-	start := p.proceed()
+
+	p.expect(`list`, token.LIST)
+	key := p.prior()
+
+	p.expect(`list`, token.LIST_OPEN)
+	open := p.prior()
+
 	exprs := expressions(p)
+
 	p.expect(`list`, token.LIST_CLOSE)
-	return st.List{start, exprs, p.prior()}
+	close := p.prior()
+
+	return st.List{key, open, exprs, close}
 }

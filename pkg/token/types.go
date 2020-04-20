@@ -32,6 +32,7 @@ const (
 	BLOCK_CLOSE        TokenType = `END`
 	PAREN_OPEN         TokenType = `PAREN_OPEN`
 	PAREN_CLOSE        TokenType = `PAREN_CLOSE`
+	LIST               TokenType = `LIST`
 	LIST_OPEN          TokenType = `LIST_OPEN`
 	LIST_CLOSE         TokenType = `LIST_CLOSE`
 	GUARD_OPEN         TokenType = `GUARD_OPEN`
