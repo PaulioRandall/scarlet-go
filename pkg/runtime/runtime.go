@@ -113,6 +113,9 @@ func EvalExpression(ctx *Context, expr st.Expression) Value {
 
 	case st.List:
 		return EvalList(ctx, v)
+
+	case st.FuncDef:
+		return EvalFuncDef(ctx, v)
 	}
 
 	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
@@ -120,4 +123,8 @@ func EvalExpression(ctx *Context, expr st.Expression) Value {
 
 func EvalList(ctx *Context, list st.List) Value {
 	return List(EvalExpressions(ctx, list.Exprs))
+}
+
+func EvalFuncDef(ctx *Context, f st.FuncDef) Value {
+	return Function(f)
 }

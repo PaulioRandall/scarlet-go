@@ -3,6 +3,7 @@ package runtime
 import (
 	"strconv"
 
+	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
@@ -85,6 +86,42 @@ func (l List) String() string {
 		s += item.String()
 	}
 	return s + "}"
+}
+
+type Function st.FuncDef
+
+func (f Function) Get() interface{} {
+	return st.FuncDef(f)
+}
+
+func (f Function) String() string {
+
+	s := "(Function) F("
+
+	if f.Input != nil {
+		for i, item := range f.Input {
+			if i != 0 {
+				s += ", "
+			}
+
+			s += item.Value
+		}
+		s += " "
+	}
+
+	if f.Output != nil {
+		s += "-> "
+
+		for i, item := range f.Output {
+			if i != 0 {
+				s += ", "
+			}
+
+			s += item.Value
+		}
+	}
+
+	return s + ")"
 }
 
 func valueOf(tk token.Token) Value {

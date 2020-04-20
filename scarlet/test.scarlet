@@ -1,11 +1,13 @@
 
-//f := F(a, b -> c, d) DO
-	//c := 9
-//END
+f := F(a, b -> c, d) DO
+	c := 9
+END
 
-//g := F(a, b -> c, d) c := 12
+g := F(a, b -> c, d) c := 12
 
-//EOF
+h := F(-> x) x := 9
+
+EOF
 
 naught_six := 2 * 9 / (3 + 12) * 2 / 4
 
@@ -32,4 +34,3 @@ MATCH
 	[1 < 2] x := `3rd`
 	[TRUE ] x := `4th`
 END
-
