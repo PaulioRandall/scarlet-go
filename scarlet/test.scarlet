@@ -1,4 +1,14 @@
 
+
+list := LIST {1,2,3}
+a := list[0]
+b := list[1]
+
+
+
+
+EOF
+
 FIX factorial := F(n -> n) DO
 	[n > 1] DO
 		n := n * factorial(n - 1)
@@ -6,6 +16,12 @@ FIX factorial := F(n -> n) DO
 END
 
 answer := factorial(5)
+
+
+
+
+
+
 
 
 
@@ -22,8 +38,14 @@ EOF
 
 
 
-list := {`a`,`b`,`c`}
-a := list(0)
+list := LIST {`a`,`b`,`c`}
+a := list[0]
+b := list[1]
+list[2] := `z`
+
+
+// Clean statement pkg
+// Clean parsers/recursive pkg
 
 
 

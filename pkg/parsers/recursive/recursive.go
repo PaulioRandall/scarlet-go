@@ -273,6 +273,9 @@ func expression(p *pipe) st.Expression {
 		left := st.NewValueExpression(p.prior())
 		return funcCall(p, left)
 
+	case isListAccess(p):
+		return listAccess(p)
+
 	case literal(p):
 		left = st.NewValueExpression(p.proceed())
 		return operation(p, left, 0)
@@ -435,4 +438,34 @@ func list(p *pipe) st.Expression {
 	close := p.prior()
 
 	return st.List{key, open, exprs, close}
+}
+
+func isListAccess(p *pipe) (is bool) {
+
+	if p.accept(token.ID) {
+		is = p.inspect(token.GUARD_OPEN)
+		p.retract()
+	}
+
+	return is
+}
+
+func listAccess(p *pipe) st.ListAccess {
+
+	p.expect(`listAccess`, token.ID)
+	id := st.Identifier{false, p.prior()}
+
+	p.expect(`listAccess`, token.GUARD_OPEN)
+	index := expression(p)
+
+	if index == nil {
+		panic(err("listAccess", p.prior(), `Expected an expression`))
+	}
+
+	p.expect(`listAccess`, token.GUARD_CLOSE)
+
+	return st.ListAccess{
+		ID:    id,
+		Index: index,
+	}
 }

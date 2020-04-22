@@ -79,3 +79,18 @@ func (l List) String(i int) string {
 	str += indent(i+1) + "Close: " + l.Close.String()
 	return str
 }
+
+type ListAccess struct {
+	ID    Identifier
+	Index Expression
+}
+
+func (la ListAccess) Token() token.Token {
+	return la.ID.Source
+}
+
+func (la ListAccess) String(i int) string {
+	str := indent(i) + "[ListAccess] " + la.ID.Source.String() + newline()
+	str += indent(i+1) + "Index: " + newline()
+	return str + la.Index.String(i+2) + newline()
+}

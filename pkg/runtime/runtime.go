@@ -113,11 +113,7 @@ func EvalExpressions(ctx *Context, exprs []st.Expression) []Value {
 func EvalExpression(ctx *Context, expr st.Expression) Value {
 	switch v := expr.(type) {
 	case st.Identifier:
-		val := ctx.Get(v.Source.Value)
-		if val == nil {
-			panic(err("EvalExpression", v.Source, "Undefined identifier"))
-		}
-		return val
+		return EvalIdentifier(ctx, v)
 
 	case st.Value:
 		return valueOf(v.Source)
@@ -127,6 +123,9 @@ func EvalExpression(ctx *Context, expr st.Expression) Value {
 
 	case st.List:
 		return EvalList(ctx, v)
+
+	case st.ListAccess:
+		return EvalListAccess(ctx, v)
 
 	case st.FuncDef:
 		return EvalFuncDef(ctx, v)
@@ -138,8 +137,48 @@ func EvalExpression(ctx *Context, expr st.Expression) Value {
 	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
 }
 
+func EvalIdentifier(ctx *Context, id st.Identifier) Value {
+
+	v := ctx.Get(id.Source.Value)
+
+	if v == nil {
+		panic(err("EvalExpression", id.Source, "Undefined identifier"))
+	}
+
+	return v
+}
+
 func EvalList(ctx *Context, list st.List) Value {
 	return List(EvalExpressions(ctx, list.Exprs))
+}
+
+func EvalListAccess(ctx *Context, la st.ListAccess) Value {
+
+	v := EvalIdentifier(ctx, la.ID)
+	list, ok := v.(List)
+
+	if !ok {
+		panic(err("EvalListAccess", la.ID.Source, "Can't get item of a non-list"))
+	}
+
+	n := EvalExpression(ctx, la.Index)
+	index, ok := n.(Number)
+
+	if !ok {
+		panic(err("EvalListAccess", la.Index.Token(), "Expected number as result"))
+	}
+
+	i := index.ToInt()
+	if i < 0 {
+		panic(err("EvalListAccess", la.ID.Source, "Index must be greater than zero"))
+	}
+
+	items := []Value(list)
+	if i >= int64(len(items)) {
+		panic(err("EvalListAccess", la.Index.Token(), "Index out of range"))
+	}
+
+	return items[i]
 }
 
 func EvalFuncDef(ctx *Context, f st.FuncDef) Value {
@@ -152,7 +191,7 @@ func EvalFuncCall(ctx *Context, call st.FuncCall) Value {
 	def, ok := v.(Function)
 
 	if !ok {
-		panic(err("EvalFuncCall", call.ID.Token(), "Expected function value"))
+		panic(err("EvalFuncCall", call.ID.Token(), "Expected function as result"))
 	}
 
 	if len(def.Input) != len(call.Input) {
