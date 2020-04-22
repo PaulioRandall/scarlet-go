@@ -43,6 +43,13 @@ func statement(p *pipe) (s st.Statement) {
 		return *m
 	}
 
+	if ex := expression(p); ex != nil {
+		p.expect(`statement`, token.TERMINATOR)
+		return st.Assignment{
+			Exprs: []st.Expression{ex},
+		}
+	}
+
 	panic(unexpected("statement", p.snoop(), token.ANY))
 }
 
@@ -52,32 +59,37 @@ func statement(p *pipe) (s st.Statement) {
 // - Next token is not empty
 func assignment(p *pipe) *st.Assignment {
 
-	if !p.accept(token.ID) {
-		return nil
-	}
+	a := &st.Assignment{}
 
-	if !p.inspect(token.DELIM) && !p.inspect(token.ASSIGN) {
-		p.retract()
-		return nil
-	}
+	switch {
+	case p.accept(token.FIX):
+		a.IDs = assignmentIdentifiers(p, true)
 
-	p.retract()
-	ids := identifiers(p)
-
-	if p.accept(token.ASSIGN) {
-
-		tk := p.prior()
-		exprs := expressions(p)
-
-		if exprs == nil {
-			panic(unexpected("assignment", p.snoop(), token.ANY))
+	case p.accept(token.ID):
+		if p.inspect(token.DELIM) || p.inspect(token.ASSIGN) {
+			p.retract()
+			a.IDs = assignmentIdentifiers(p, false)
+			break
 		}
 
-		p.expect(`assignment`, token.TERMINATOR)
-		return &st.Assignment{ids, tk, exprs}
+		p.retract()
+		fallthrough
+
+	default:
+		return nil
 	}
 
-	panic(unexpected("assignment", p.prior(), token.ANOTHER))
+	p.expect(`assignment`, token.ASSIGN)
+
+	a.Assign = p.prior()
+	a.Exprs = expressions(p)
+
+	if a.Exprs == nil {
+		panic(unexpected("assignment", p.snoop(), token.ANY))
+	}
+
+	p.expect(`assignment`, token.TERMINATOR)
+	return a
 }
 
 func match(p *pipe) *st.Match {
@@ -191,6 +203,25 @@ func boolOperator(ex st.Expression) bool {
 	}
 
 	return false
+}
+
+// E.g. `a, b, c`
+//
+// Preconditions:
+// - next = token.ID
+func assignmentIdentifiers(p *pipe, fixed bool) []st.Identifier {
+
+	p.expect(`identifiers`, token.ID)
+	id := st.Identifier{fixed, p.prior()}
+	ids := []st.Identifier{id}
+
+	for p.accept(token.DELIM) {
+		p.expect(`identifiers`, token.ID)
+		id = st.Identifier{fixed, p.prior()}
+		ids = append(ids, id)
+	}
+
+	return ids
 }
 
 // E.g. `a, b, c`
@@ -323,7 +354,7 @@ func rightSide(p *pipe) st.Expression {
 	switch {
 	case isFuncCall(p):
 		p.expect(`rightSide`, token.ID)
-		left := st.NewValueExpression(p.prior())
+		left := st.Identifier{false, p.prior()}
 		return funcCall(p, left)
 
 	case literal(p):

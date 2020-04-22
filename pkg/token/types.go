@@ -23,6 +23,7 @@ const (
 	WHITESPACE         TokenType = `WHITESPACE`
 	NEWLINE            TokenType = `NEWLINE`
 	FUNC               TokenType = `FUNCTION`
+	FIX                TokenType = `FIX`
 	ID                 TokenType = `ID`
 	DELIM              TokenType = `DELIMITER`
 	ASSIGN             TokenType = `ASSIGNS`

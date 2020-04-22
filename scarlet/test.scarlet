@@ -1,43 +1,18 @@
 
-
-add := F(a, b -> c) c := a + b
-
-alpha := LIST {
-	add(3, 3),
-	(6 * 7 + 2) / 4,
-	`:)`,
-}
-
-factorial := F(f, n -> n) DO
-	[n # 0] DO
-		n := n + f(f, n - 1)
+FIX factorial := F(n -> n) DO
+	[n > 1] DO
+		n := n * factorial(n - 1)
 	END
 END
 
-answer := factorial(factorial, 3)
+answer := factorial(5)
 
-EOF
 
-naught_six := 2 * 9 / (3 + 12) * 2 / 4
 
-a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE
+
+
+
+//naught_six := 2 * 9 / (3 + 12) * 2 / 4
+
+//a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE
 //       ((2 * 6) % 8) < (8 / (2 + 1)) = FALSE
-
-a, b := FALSE, FALSE
-
-[1 = (3 - 2)] a := TRUE
-
-[a] DO
-	[b] DO
-		c := `(:`
-	END
-END
-
-MATCH
-	[FALSE] x := `1st`
-	[1 = 2] DO
-		x := `2nd`
-	END
-	[1 < 2] x := `3rd`
-	[TRUE ] x := `4th`
-END

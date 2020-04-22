@@ -6,7 +6,12 @@ import (
 )
 
 func Run(ss []st.Statement) Context {
-	ctx := Context{make(map[string]Value), nil}
+	ctx := Context{
+		make(map[string]Value),
+		make(map[string]Value),
+		nil,
+	}
+
 	ExeStatements(&ctx, ss)
 	return ctx
 }
@@ -58,7 +63,7 @@ func ExeAssignment(ctx *Context, a st.Assignment) {
 	}
 
 	for i, id := range a.IDs {
-		ctx.Set(id.Value, values[i])
+		ctx.Set(id, values[i])
 	}
 }
 
@@ -164,7 +169,8 @@ func EvalFuncCall(ctx *Context, call st.FuncCall) Value {
 		id := def.Input[i]
 		v = single(v, call.ID.Token())
 
-		subCtx.Set(id.Value, v)
+		ident := st.Identifier{false, id}
+		subCtx.Set(ident, v)
 	}
 
 	ExeBlock(subCtx, def.Body)

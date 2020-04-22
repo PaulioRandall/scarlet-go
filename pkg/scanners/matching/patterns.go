@@ -50,6 +50,9 @@ func patterns() []pattern {
 		pattern{token.LIST, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "LIST")
 		}},
+		pattern{token.FIX, func(ss *symbolStream) int {
+			return keywordMatcher(ss, "FIX")
+		}},
 		pattern{token.EOF, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "EOF")
 		}},

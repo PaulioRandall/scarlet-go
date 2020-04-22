@@ -24,10 +24,13 @@ func (f FuncDef) String(i int) string {
 		str += indent(i+2) + tk.String() + newline()
 	}
 
-	str += indent(i+1) + "Output: "
+	str += indent(i+1) + "Output: " + newline()
 	for _, tk := range f.Output {
-		str += newline() + indent(i+2) + tk.String()
+		str += indent(i+2) + tk.String() + newline()
 	}
+
+	str += indent(i+1) + "Body: " + newline()
+	str += f.Body.String(i + 2)
 
 	return str
 }

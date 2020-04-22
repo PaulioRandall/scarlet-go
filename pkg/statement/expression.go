@@ -11,6 +11,7 @@ type Expression interface {
 }
 
 type Identifier struct {
+	Fixed  bool
 	Source token.Token
 }
 
@@ -19,7 +20,14 @@ func (id Identifier) Token() token.Token {
 }
 
 func (id Identifier) String(i int) string {
-	return indent(i) + "[Identifier] " + id.Source.String()
+
+	s := indent(i) + "[Identifier] "
+
+	if id.Fixed {
+		s += "(FIXED) "
+	}
+
+	return s + id.Source.String()
 }
 
 type Value struct {
@@ -39,7 +47,9 @@ func (v Value) String(i int) string {
 func NewValueExpression(tk token.Token) Expression {
 	switch tk.Type {
 	case token.ID:
-		return Identifier{tk}
+		return Identifier{
+			Source: tk,
+		}
 	default:
 		return Value{tk}
 	}

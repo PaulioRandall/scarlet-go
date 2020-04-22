@@ -29,7 +29,7 @@ type Statement interface {
 }
 
 type Assignment struct {
-	IDs    []token.Token
+	IDs    []Identifier
 	Assign token.Token
 	Exprs  []Expression
 }
@@ -47,8 +47,14 @@ func (a Assignment) String(i int) string {
 	s += newline()
 
 	s += indent(i+1) + "IDs:" + newline()
-	for _, tk := range a.IDs {
-		s += indent(i+2) + tk.String() + newline()
+	for _, id := range a.IDs {
+		s += indent(i + 2)
+
+		if id.Fixed {
+			s += "FIXED "
+		}
+
+		s += id.Source.String() + newline()
 	}
 
 	s += indent(i+1) + "Exprs:"
