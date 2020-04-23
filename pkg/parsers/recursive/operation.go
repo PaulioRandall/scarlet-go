@@ -6,6 +6,9 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
+// Expects the following token pattern:
+// pattern := {operator operand}
+// operand := literal | expression
 func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression {
 
 	op := p.snoop()
@@ -25,10 +28,8 @@ func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression
 	return left
 }
 
-// Expects one of the following to appear next in the pipe:
-// - Function
-// - Literal value
-// - Expression group
+// Expects the following token pattern:
+// pattern := function | literal | group
 func parseRightSide(p *pipe) st.Expression {
 
 	switch {
@@ -56,7 +57,8 @@ func isLiteral(p *pipe) bool {
 	)
 }
 
-// Assumes isLiteral returns true.
+// Expects the following token pattern:
+// pattern := literal
 func parseLiteral(p *pipe) st.Expression {
 	tk := p.proceed()
 
@@ -71,8 +73,8 @@ func isGroup(p *pipe) bool {
 	return p.inspect(token.PAREN_OPEN)
 }
 
-// Expects one of the following token patterns:
-// - PAREN_OPEN, ..., PAREN_CLOSE
+// Expects the following token pattern:
+// pattern := PAREN_OPEN expression PAREN_CLOSE
 func parseGroup(p *pipe) st.Expression {
 
 	p.expect(`group`, token.PAREN_OPEN)
@@ -84,4 +86,21 @@ func parseGroup(p *pipe) st.Expression {
 
 	p.expect(`group`, token.PAREN_CLOSE)
 	return g
+}
+
+func isBoolOperator(typ token.TokenType) bool {
+	switch typ {
+	case token.LESS_THAN,
+		token.LESS_THAN_OR_EQUAL,
+		token.MORE_THAN,
+		token.MORE_THAN_OR_EQUAL,
+		token.EQUAL,
+		token.NOT_EQUAL,
+		token.AND,
+		token.OR:
+
+		return true
+	}
+
+	return false
 }

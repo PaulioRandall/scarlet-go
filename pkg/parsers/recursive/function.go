@@ -101,13 +101,7 @@ func parseFuncInline(p *pipe) st.Block {
 }
 
 func isFuncCall(p *pipe) (is bool) {
-
-	if p.accept(token.ID) {
-		is = p.inspect(token.PAREN_OPEN)
-		p.retract()
-	}
-
-	return is
+	return p.isSequence(token.ID, token.PAREN_OPEN)
 }
 
 // Expects the following token pattern:

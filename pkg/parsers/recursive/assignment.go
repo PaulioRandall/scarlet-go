@@ -6,10 +6,6 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-// True if one of the following token patterns match:
-// - FIX, ...
-// - ID, DELIM, ...
-// - ID, ASSIGN, ...
 func isAssignment(p *pipe) bool {
 
 	if p.inspect(token.FIX) ||
@@ -22,7 +18,8 @@ func isAssignment(p *pipe) bool {
 	return false
 }
 
-// Assumes isAssignment returns true.
+// Expects the following token pattern:
+// pattern := [FIX] ID { DELIM ID } ASSIGN expression {expression}
 func parseAssignment(p *pipe) st.Assignment {
 
 	fixed := p.accept(token.FIX)
@@ -41,7 +38,7 @@ func parseAssignment(p *pipe) st.Assignment {
 }
 
 // Expects the following token pattern:
-// - ID { DELIM ID }
+// pattern := ID { DELIM ID }
 func parseAssignmentIds(p *pipe, fixed bool) []st.Identifier {
 
 	var ids []st.Identifier

@@ -104,7 +104,7 @@ func guard(p *pipe) *st.Guard {
 
 	condition := parseExpression(p)
 
-	if condition == nil || !boolOperator(condition) {
+	if condition == nil || !isBoolOperation(condition) {
 		panic(err("guard", condition.Token(),
 			`Expected expression with a bool result`,
 		))
@@ -149,7 +149,7 @@ func inlineBlock(p *pipe) st.Block {
 	}
 }
 
-func boolOperator(ex st.Expression) bool {
+func isBoolOperation(ex st.Expression) bool {
 
 	if _, ok := ex.(st.Identifier); ok {
 		return true
@@ -160,7 +160,7 @@ func boolOperator(ex st.Expression) bool {
 	}
 
 	if v, ok := ex.(st.Operation); ok {
-		return st.IsBoolOperator(v.Operator.Type)
+		return isBoolOperator(v.Operator.Type)
 	}
 
 	return false
