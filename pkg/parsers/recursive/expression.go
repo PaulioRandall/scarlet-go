@@ -43,7 +43,7 @@ func parseExpression(p *pipe) st.Expression {
 		return parseFuncCall(p)
 
 	case isListAccess(p):
-		return listAccess(p)
+		return parseListAccess(p)
 
 	case isLiteral(p):
 		left = parseLiteral(p)
@@ -56,8 +56,8 @@ func parseExpression(p *pipe) st.Expression {
 	case isFuncDef(p):
 		return parseFuncDef(p)
 
-	case p.inspect(token.LIST):
-		return list(p)
+	case isList(p):
+		return parseList(p)
 	}
 
 	return nil
