@@ -31,20 +31,20 @@ func parseExpression(p *pipe) st.Expression {
 
 	switch {
 	case isFuncCall(p):
-		p.expect(`rightSide`, token.ID)
-		left := st.NewValueExpression(p.prior())
+		tk := p.expect(`parseExpression`, token.ID)
+		left = st.Identifier{false, tk}
 		return funcCall(p, left)
 
 	case isListAccess(p):
 		return listAccess(p)
 
-	case literal(p):
-		left = st.NewValueExpression(p.proceed())
-		return operation(p, left, 0)
+	case isLiteral(p):
+		left = parseLiteral(p)
+		return parseOperation(p, left, 0)
 
-	case p.inspect(token.PAREN_OPEN):
-		left = group(p)
-		return operation(p, left, 0)
+	case isGroup(p):
+		left = parseGroup(p)
+		return parseOperation(p, left, 0)
 
 	case p.inspect(token.FUNC):
 		return funcDef(p)

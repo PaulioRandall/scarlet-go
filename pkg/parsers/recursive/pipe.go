@@ -56,6 +56,16 @@ func (p *pipe) isSequence(types ...token.TokenType) bool {
 	return true
 }
 
+func (p *pipe) matchesNext(types ...token.TokenType) bool {
+	for _, t := range types {
+		if p.inspect(t) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // snoop is used to obtain the next token without moving forward in the pipe.
 func (p *pipe) snoop() token.Token {
 	return p.itr.Peek()
