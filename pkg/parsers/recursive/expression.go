@@ -6,6 +6,9 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
+// Expects the following token pattern:
+// pattern := {expression} [TERMINATOR]
+// expression := func_call | list_access | literal | group | func_def | list
 func parseExpressions(p *pipe) []st.Expression {
 
 	var exps []st.Expression
@@ -29,6 +32,8 @@ func parseExpressions(p *pipe) []st.Expression {
 	return exps
 }
 
+// Expects the following token pattern:
+// pattern := func_call | list_access | literal | group | func_def | list
 func parseExpression(p *pipe) st.Expression {
 
 	var left st.Expression
