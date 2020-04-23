@@ -25,7 +25,7 @@ func parseFuncDef(p *pipe) st.Expression {
 	if isFuncBlock(p) {
 		f.Body = parseFuncBlock(p)
 	} else {
-		f.Body = parseFuncInline(p)
+		f.Body = parseFuncStatement(p)
 	}
 
 	return f
@@ -76,28 +76,21 @@ func isFuncBlock(p *pipe) bool {
 // Expects the following token pattern:
 // pattern := BLOCK_OPEN {statement} BLOCK_CLOSE
 func parseFuncBlock(p *pipe) st.Block {
-
-	b := st.Block{
+	return st.Block{
 		Open:  p.expect(`parseFuncBlock`, token.BLOCK_OPEN),
 		Stats: statements(p),
+		Close: p.expect(`parseFuncBlock`, token.BLOCK_CLOSE),
 	}
-
-	b.Close = p.expect(`parseFuncBlock`, token.BLOCK_CLOSE)
-	return b
 }
 
 // Expects the following token pattern:
 // pattern := statement
-func parseFuncInline(p *pipe) st.Block {
-
-	b := st.Block{
+func parseFuncStatement(p *pipe) st.Block {
+	return st.Block{
 		Open:  p.snoop(),
 		Stats: []st.Statement{statement(p)},
 		Close: p.prior(),
 	}
-
-	p.retract() // Put TERMINATOR back for the statement to end correctly
-	return b
 }
 
 func isFuncCall(p *pipe) (is bool) {

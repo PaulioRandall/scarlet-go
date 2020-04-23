@@ -22,6 +22,10 @@ func parseExpressions(p *pipe) []st.Expression {
 		}
 	}
 
+	if p.inspect(token.TERMINATOR) {
+		p.proceed()
+	}
+
 	return exps
 }
 

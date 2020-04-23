@@ -87,20 +87,3 @@ func parseGroup(p *pipe) st.Expression {
 	p.expect(`group`, token.PAREN_CLOSE)
 	return g
 }
-
-func isBoolOperator(typ token.TokenType) bool {
-	switch typ {
-	case token.LESS_THAN,
-		token.LESS_THAN_OR_EQUAL,
-		token.MORE_THAN,
-		token.MORE_THAN_OR_EQUAL,
-		token.EQUAL,
-		token.NOT_EQUAL,
-		token.AND,
-		token.OR:
-
-		return true
-	}
-
-	return false
-}

@@ -54,6 +54,8 @@ func isParsableToken(prev, next token.Token) bool {
 			token.DELIM,
 			token.TERMINATOR,
 			token.BLOCK_OPEN,
+			token.MATCH_OPEN,
+			token.BLOCK_CLOSE,
 			token.UNDEFINED:
 
 			return false

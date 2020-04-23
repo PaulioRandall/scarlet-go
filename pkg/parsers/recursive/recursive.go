@@ -35,12 +35,12 @@ func statement(p *pipe) (s st.Statement) {
 		return parseAssignment(p)
 	}
 
-	if g := guard(p); g != nil {
-		return *g
+	if isGuard(p) {
+		return parseGuard(p)
 	}
 
-	if m := match(p); m != nil {
-		return *m
+	if isMatch(p) {
+		return parseMatch(p)
 	}
 
 	if ex := parseExpression(p); ex != nil {
@@ -51,119 +51,6 @@ func statement(p *pipe) (s st.Statement) {
 	}
 
 	panic(unexpected("statement", p.snoop(), token.ANY))
-}
-
-func match(p *pipe) *st.Match {
-
-	if !p.accept(token.MATCH_OPEN) {
-		return nil
-	}
-
-	m := st.Match{
-		Open: p.prior(),
-	}
-
-	p.expect(`match`, token.TERMINATOR)
-
-	m.Cases = guards(p)
-	if m.Cases == nil {
-		panic(unexpected("match", p.snoop(), token.GUARD_OPEN))
-	}
-
-	p.expect(`match`, token.BLOCK_CLOSE)
-	m.Close = p.prior()
-	p.expect(`block`, token.TERMINATOR)
-
-	return &m
-}
-
-func guards(p *pipe) []st.Guard {
-
-	var gs []st.Guard
-
-	for g := guard(p); g != nil; g = guard(p) {
-		gs = append(gs, *g)
-	}
-
-	return gs
-}
-
-// guard?
-//
-// Preconditions:
-// - Next token is not empty
-func guard(p *pipe) *st.Guard {
-
-	if !p.accept(token.GUARD_OPEN) {
-		return nil
-	}
-
-	g := &st.Guard{
-		Open: p.prior(),
-	}
-
-	condition := parseExpression(p)
-
-	if condition == nil || !isBoolOperation(condition) {
-		panic(err("guard", condition.Token(),
-			`Expected expression with a bool result`,
-		))
-	}
-
-	g.Cond = condition
-	p.expect(`guard`, token.GUARD_CLOSE)
-	g.Close = p.prior()
-
-	if b := block(p); b != nil {
-		g.Block = *b
-	} else {
-		g.Block = inlineBlock(p)
-	}
-
-	return g
-}
-
-func block(p *pipe) *st.Block {
-
-	if !p.accept(token.BLOCK_OPEN) {
-		return nil
-	}
-
-	b := &st.Block{
-		Open:  p.prior(),
-		Stats: statements(p),
-	}
-
-	p.expect(`block`, token.BLOCK_CLOSE)
-	b.Close = p.prior()
-	p.expect(`block`, token.TERMINATOR)
-
-	return b
-}
-
-func inlineBlock(p *pipe) st.Block {
-	return st.Block{
-		Open:  p.snoop(),
-		Stats: []st.Statement{statement(p)},
-		Close: p.prior(),
-	}
-}
-
-func isBoolOperation(ex st.Expression) bool {
-
-	if _, ok := ex.(st.Identifier); ok {
-		return true
-	}
-
-	if v, ok := ex.(st.Value); ok {
-		return v.Source.Type == token.BOOL
-	}
-
-	if v, ok := ex.(st.Operation); ok {
-		return isBoolOperator(v.Operator.Type)
-	}
-
-	return false
 }
 
 func list(p *pipe) st.Expression {

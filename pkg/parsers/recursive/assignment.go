@@ -33,7 +33,6 @@ func parseAssignment(p *pipe) st.Assignment {
 		panic(unexpected("parseAssignment", p.snoop(), token.ANY))
 	}
 
-	p.expect(`parseAssignment`, token.TERMINATOR)
 	return a
 }
 
