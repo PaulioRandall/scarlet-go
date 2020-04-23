@@ -40,8 +40,8 @@ func parseAssignment(p *pipe) st.Assignment {
 	return a
 }
 
-// Expects one of the following token patterns:
-// - ID, ...
+// Expects the following token pattern:
+// - ID { DELIM ID }
 func parseAssignmentIds(p *pipe, fixed bool) []st.Identifier {
 
 	var ids []st.Identifier

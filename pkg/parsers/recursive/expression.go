@@ -31,9 +31,7 @@ func parseExpression(p *pipe) st.Expression {
 
 	switch {
 	case isFuncCall(p):
-		tk := p.expect(`parseExpression`, token.ID)
-		left = st.Identifier{false, tk}
-		return funcCall(p, left)
+		return parseFuncCall(p)
 
 	case isListAccess(p):
 		return listAccess(p)
@@ -46,8 +44,8 @@ func parseExpression(p *pipe) st.Expression {
 		left = parseGroup(p)
 		return parseOperation(p, left, 0)
 
-	case p.inspect(token.FUNC):
-		return funcDef(p)
+	case isFuncDef(p):
+		return parseFuncDef(p)
 
 	case p.inspect(token.LIST):
 		return list(p)

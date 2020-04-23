@@ -33,9 +33,7 @@ func parseRightSide(p *pipe) st.Expression {
 
 	switch {
 	case isFuncCall(p):
-		p.expect(`rightSide`, token.ID)
-		left := st.Identifier{false, p.prior()}
-		return funcCall(p, left)
+		return parseFuncCall(p)
 
 	case isLiteral(p):
 		return parseLiteral(p)
@@ -44,7 +42,7 @@ func parseRightSide(p *pipe) st.Expression {
 		return parseGroup(p)
 	}
 
-	panic(unexpected("rightSide", p.snoop(), `<literal> | PAREN_OPEN`))
+	panic(unexpected("parseRightSide", p.snoop(), `function_call | literal | group`))
 }
 
 func isLiteral(p *pipe) bool {
