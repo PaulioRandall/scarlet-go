@@ -30,7 +30,7 @@ func parseAssignment(p *pipe) st.Assignment {
 
 	a.IDs = parseAssignmentIdentifiers(p, fixed)
 	a.Assign = p.expect(`assignment`, token.ASSIGN)
-	a.Exprs = expressions(p)
+	a.Exprs = parseExpressions(p)
 
 	if a.Exprs == nil {
 		panic(unexpected("assignment", p.snoop(), token.ANY))

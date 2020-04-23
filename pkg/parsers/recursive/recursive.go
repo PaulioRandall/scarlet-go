@@ -43,7 +43,7 @@ func statement(p *pipe) (s st.Statement) {
 		return *m
 	}
 
-	if ex := expression(p); ex != nil {
+	if ex := parseExpression(p); ex != nil {
 		p.expect(`statement`, token.TERMINATOR)
 		return st.Assignment{
 			Exprs: []st.Expression{ex},
@@ -102,7 +102,7 @@ func guard(p *pipe) *st.Guard {
 		Open: p.prior(),
 	}
 
-	condition := expression(p)
+	condition := parseExpression(p)
 
 	if condition == nil || !boolOperator(condition) {
 		panic(err("guard", condition.Token(),
@@ -183,59 +183,6 @@ func identifiers(p *pipe) []token.Token {
 	return ids
 }
 
-// expressions?
-//
-// Preconditions:
-// - p.prior() = <Any>
-func expressions(p *pipe) []st.Expression {
-
-	var exprs []st.Expression
-
-	for ex := expression(p); ex != nil; ex = expression(p) {
-		exprs = append(exprs, ex)
-
-		if !p.accept(token.DELIM) {
-			break
-		}
-	}
-
-	return exprs
-}
-
-// expression?
-//
-// Preconditions: NONE
-func expression(p *pipe) st.Expression {
-
-	var left st.Expression
-
-	switch {
-	case isFuncCall(p):
-		p.expect(`rightSide`, token.ID)
-		left := st.NewValueExpression(p.prior())
-		return funcCall(p, left)
-
-	case isListAccess(p):
-		return listAccess(p)
-
-	case literal(p):
-		left = st.NewValueExpression(p.proceed())
-		return operation(p, left, 0)
-
-	case p.inspect(token.PAREN_OPEN):
-		left = group(p)
-		return operation(p, left, 0)
-
-	case p.inspect(token.FUNC):
-		return funcDef(p)
-
-	case p.inspect(token.LIST):
-		return list(p)
-	}
-
-	return nil
-}
-
 // literal is used to determine if p.prior() is a literal value.
 // E.g.identifier, bool, int, etc.
 //
@@ -263,7 +210,7 @@ func group(p *pipe) st.Expression {
 
 	p.expect(`group`, token.PAREN_OPEN)
 
-	left := expression(p)
+	left := parseExpression(p)
 	if left == nil {
 		panic(unexpected("group", p.prior(), token.ANOTHER))
 	}
@@ -358,7 +305,7 @@ func funcCall(p *pipe, left st.Expression) st.Expression {
 
 	f := st.FuncCall{
 		ID:    left,
-		Input: expressions(p),
+		Input: parseExpressions(p),
 	}
 
 	p.expect(`funcCall`, token.PAREN_CLOSE)
@@ -374,7 +321,7 @@ func list(p *pipe) st.Expression {
 	p.expect(`list`, token.LIST_OPEN)
 	open := p.prior()
 
-	exprs := expressions(p)
+	exprs := parseExpressions(p)
 
 	p.expect(`list`, token.LIST_CLOSE)
 	close := p.prior()
@@ -398,7 +345,7 @@ func listAccess(p *pipe) st.ListAccess {
 	id := st.Identifier{false, p.prior()}
 
 	p.expect(`listAccess`, token.GUARD_OPEN)
-	index := expression(p)
+	index := parseExpression(p)
 
 	if index == nil {
 		panic(err("listAccess", p.prior(), `Expected an expression`))
