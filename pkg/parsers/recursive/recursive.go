@@ -31,8 +31,8 @@ func statements(p *pipe) (ss []st.Statement) {
 // - Next token is not empty
 func statement(p *pipe) (s st.Statement) {
 
-	if a := assignment(p); a != nil {
-		return *a
+	if isAssignment(p) {
+		return parseAssignment(p)
 	}
 
 	if g := guard(p); g != nil {
@@ -51,45 +51,6 @@ func statement(p *pipe) (s st.Statement) {
 	}
 
 	panic(unexpected("statement", p.snoop(), token.ANY))
-}
-
-// assignment?
-//
-// Preconditions:
-// - Next token is not empty
-func assignment(p *pipe) *st.Assignment {
-
-	a := &st.Assignment{}
-
-	switch {
-	case p.accept(token.FIX):
-		a.IDs = assignmentIdentifiers(p, true)
-
-	case p.accept(token.ID):
-		if p.inspect(token.DELIM) || p.inspect(token.ASSIGN) {
-			p.retract()
-			a.IDs = assignmentIdentifiers(p, false)
-			break
-		}
-
-		p.retract()
-		fallthrough
-
-	default:
-		return nil
-	}
-
-	p.expect(`assignment`, token.ASSIGN)
-
-	a.Assign = p.prior()
-	a.Exprs = expressions(p)
-
-	if a.Exprs == nil {
-		panic(unexpected("assignment", p.snoop(), token.ANY))
-	}
-
-	p.expect(`assignment`, token.TERMINATOR)
-	return a
 }
 
 func match(p *pipe) *st.Match {
@@ -203,25 +164,6 @@ func boolOperator(ex st.Expression) bool {
 	}
 
 	return false
-}
-
-// E.g. `a, b, c`
-//
-// Preconditions:
-// - next = token.ID
-func assignmentIdentifiers(p *pipe, fixed bool) []st.Identifier {
-
-	p.expect(`identifiers`, token.ID)
-	id := st.Identifier{fixed, p.prior()}
-	ids := []st.Identifier{id}
-
-	for p.accept(token.DELIM) {
-		p.expect(`identifiers`, token.ID)
-		id = st.Identifier{fixed, p.prior()}
-		ids = append(ids, id)
-	}
-
-	return ids
 }
 
 // E.g. `a, b, c`
