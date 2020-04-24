@@ -53,6 +53,19 @@ func (s *str) appendStats(indent int, stats []Statement) *str {
 	return s
 }
 
+func (s *str) appendGuards(indent int, guards []Guard) *str {
+
+	for i, g := range guards {
+		if i != 0 {
+			s.newline()
+		}
+
+		s.append(g.String(indent))
+	}
+
+	return s
+}
+
 func (s *str) appendExps(indent int, exps []Expression) *str {
 
 	for i, exp := range exps {

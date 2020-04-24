@@ -16,14 +16,27 @@ func (b Block) Token() token.Token {
 
 func (b Block) String(i int) string {
 
-	s := indent(i) + "[Block]" + newline()
-	s += indent(i+1) + "Open: " + b.Open.String() + newline()
+	var s str
 
-	s += indent(i+1) + "Statements:" + newline()
-	for _, st := range b.Stats {
-		s += st.String(i+2) + newline()
-	}
+	s.indent(i).
+		append("[Block]")
 
-	s += indent(i+1) + "Close: " + b.Close.String()
-	return s
+	s.newline().
+		indent(i + 1).
+		append("Open: ").
+		append(b.Open.String())
+
+	s.newline().
+		indent(i + 1).
+		append("Statements:")
+
+	s.newline().
+		appendStats(i+2, b.Stats)
+
+	s.newline().
+		indent(i + 1).
+		append("Close: ").
+		append(b.Close.String())
+
+	return s.String()
 }

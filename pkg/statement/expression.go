@@ -23,12 +23,11 @@ func (id Identifier) String(i int) string {
 
 	var s str
 
-	s.indent(i).
+	return s.indent(i).
 		append("[Identifier] ").
 		appendIf(id.Fixed, "(FIXED) ").
-		append(id.Source.String())
-
-	return s.String()
+		append(id.Source.String()).
+		String()
 }
 
 type Value struct {
@@ -40,20 +39,13 @@ func (v Value) Token() token.Token {
 }
 
 func (v Value) String(i int) string {
-	return indent(i) + "[Value] " + v.Source.String()
-}
 
-// NewValueExpression returns either a Value or Identifier expression depending
-// on the token type.
-func NewValueExpression(tk token.Token) Expression {
-	switch tk.Type {
-	case token.ID:
-		return Identifier{
-			Source: tk,
-		}
-	default:
-		return Value{tk}
-	}
+	var s str
+
+	return s.indent(i).
+		append("[Value] ").
+		append(v.Source.String()).
+		String()
 }
 
 type List struct {
@@ -69,16 +61,30 @@ func (l List) Token() token.Token {
 
 func (l List) String(i int) string {
 
-	str := indent(i) + "[List] " + l.Key.String() + newline()
-	str += indent(i+1) + "Open: " + l.Open.String() + newline()
+	var s str
 
-	str += indent(i+1) + "Exprs: " + newline()
-	for _, ex := range l.Exprs {
-		str += ex.String(i+2) + newline()
-	}
+	s.indent(i).
+		append("[List] ").
+		append(l.Key.String())
 
-	str += indent(i+1) + "Close: " + l.Close.String()
-	return str
+	s.newline().
+		indent(i + 1).
+		append("Open: ").
+		append(l.Open.String())
+
+	s.newline().
+		indent(i + 1).
+		append("Exprs:")
+
+	s.newline().
+		appendExps(i+2, l.Exprs)
+
+	s.newline().
+		indent(i + 1).
+		append("Close: ").
+		append(l.Close.String())
+
+	return s.String()
 }
 
 type ListAccess struct {
@@ -91,7 +97,19 @@ func (la ListAccess) Token() token.Token {
 }
 
 func (la ListAccess) String(i int) string {
-	str := indent(i) + "[ListAccess] " + la.ID.Source.String() + newline()
-	str += indent(i+1) + "Index: " + newline()
-	return str + la.Index.String(i+2) + newline()
+
+	var s str
+
+	s.indent(i).
+		append("[ListAccess] ").
+		append(la.ID.Source.String())
+
+	s.newline().
+		indent(i + 1).
+		append("Index:")
+
+	s.newline().
+		append(la.Index.String(i + 2))
+
+	return s.String()
 }
