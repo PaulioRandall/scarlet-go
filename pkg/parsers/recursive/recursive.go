@@ -18,7 +18,7 @@ func parseStatements(p *pipe) []st.Statement {
 
 	var stats []st.Statement
 
-	for !p.itr.Empty() && !p.accept(token.EOF) && !p.inspect(token.BLOCK_CLOSE) {
+	for !p.itr.Empty() && !p.accept(token.EOF) && !p.match(token.BLOCK_CLOSE) {
 		stat := parseStatement(p)
 		stats = append(stats, stat)
 	}
@@ -41,10 +41,12 @@ func parseStatement(p *pipe) st.Statement {
 		return parseMatch(p)
 	}
 
-	if exp := parseExpression(p); exp != nil {
+	exp := parseExpression(p)
+
+	if exp != nil {
 		p.expect(`parseStatement`, token.TERMINATOR)
 		return exp
 	}
 
-	panic(unexpected("parseStatement", p.snoop(), token.ANY))
+	panic(unexpected("parseStatement", p.peek(), token.ANY))
 }

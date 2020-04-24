@@ -6,7 +6,7 @@ import (
 )
 
 func isFuncDef(p *pipe) bool {
-	return p.inspect(token.FUNC)
+	return p.match(token.FUNC)
 }
 
 // Expects the following token pattern:
@@ -34,7 +34,7 @@ func parseFuncParams(p *pipe) (in, out []token.Token) {
 
 	p.expect(`parseFuncParams`, token.PAREN_OPEN)
 
-	if p.inspect(token.ID) {
+	if p.match(token.ID) {
 		in = parseFuncIds(p)
 	}
 
@@ -66,7 +66,7 @@ func parseFuncIds(p *pipe) []token.Token {
 }
 
 func isFuncBlock(p *pipe) bool {
-	return p.inspect(token.BLOCK_OPEN)
+	return p.match(token.BLOCK_OPEN)
 }
 
 // Expects the following token pattern:
@@ -83,14 +83,14 @@ func parseFuncBlock(p *pipe) st.Block {
 // pattern := statement
 func parseFuncStatement(p *pipe) st.Block {
 	return st.Block{
-		Open:  p.snoop(),
+		Open:  p.peek(),
 		Stats: []st.Statement{parseStatement(p)},
-		Close: p.prior(),
+		Close: p.past(),
 	}
 }
 
 func isFuncCall(p *pipe) (is bool) {
-	return p.isSequence(token.ID, token.PAREN_OPEN)
+	return p.matchSequence(token.ID, token.PAREN_OPEN)
 }
 
 // Expects the following token pattern:

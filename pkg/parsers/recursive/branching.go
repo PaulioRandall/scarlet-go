@@ -7,7 +7,7 @@ import (
 )
 
 func isMatch(p *pipe) bool {
-	return p.inspect(token.MATCH_OPEN)
+	return p.match(token.MATCH_OPEN)
 }
 
 // Expects the following token pattern:
@@ -20,7 +20,7 @@ func parseMatch(p *pipe) st.Match {
 	}
 
 	if m.Cases == nil {
-		panic(unexpected("parseMatch", p.snoop(), token.GUARD_OPEN))
+		panic(unexpected("parseMatch", p.peek(), token.GUARD_OPEN))
 	}
 
 	m.Close = p.expect(`parseMatch`, token.BLOCK_CLOSE)
@@ -42,7 +42,7 @@ func parseGuards(p *pipe) []st.Guard {
 }
 
 func isGuard(p *pipe) bool {
-	return p.inspect(token.GUARD_OPEN)
+	return p.match(token.GUARD_OPEN)
 }
 
 // Expects the following token pattern:
@@ -55,7 +55,7 @@ func parseGuard(p *pipe) st.Guard {
 	}
 
 	if g.Cond == nil {
-		panic(err("parseGuard", p.snoop(), `Expected expression`))
+		panic(err("parseGuard", p.peek(), `Expected expression`))
 	}
 
 	if !isBoolOperation(g.Cond) {
@@ -110,7 +110,7 @@ func isBoolOperator(typ token.TokenType) bool {
 }
 
 func isGuardBlock(p *pipe) bool {
-	return p.inspect(token.BLOCK_OPEN)
+	return p.match(token.BLOCK_OPEN)
 }
 
 // Expects the following token pattern:
@@ -127,8 +127,8 @@ func parseGuardBlock(p *pipe) st.Block {
 // pattern := statement
 func parseGuardStatement(p *pipe) st.Block {
 	return st.Block{
-		Open:  p.snoop(),
+		Open:  p.peek(),
 		Stats: []st.Statement{parseStatement(p)},
-		Close: p.prior(),
+		Close: p.past(),
 	}
 }

@@ -8,9 +8,9 @@ import (
 
 func isAssignment(p *pipe) bool {
 
-	if p.inspect(token.FIX) ||
-		p.isSequence(token.ID, token.DELIM) ||
-		p.isSequence(token.ID, token.ASSIGN) {
+	if p.match(token.FIX) ||
+		p.matchSequence(token.ID, token.DELIM) ||
+		p.matchSequence(token.ID, token.ASSIGN) {
 
 		return true
 	}
@@ -30,7 +30,7 @@ func parseAssignment(p *pipe) st.Assignment {
 	a.Exprs = parseExpressions(p)
 
 	if a.Exprs == nil {
-		panic(unexpected("parseAssignment", p.snoop(), token.ANY))
+		panic(unexpected("parseAssignment", p.peek(), token.ANY))
 	}
 
 	return a

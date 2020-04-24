@@ -24,10 +24,7 @@ func parseExpressions(p *pipe) []st.Expression {
 		}
 	}
 
-	if p.inspect(token.TERMINATOR) {
-		p.proceed()
-	}
-
+	p.accept(token.TERMINATOR) // Terminator in some cases
 	return exps
 }
 

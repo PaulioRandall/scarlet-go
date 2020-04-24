@@ -7,7 +7,7 @@ import (
 )
 
 func isList(p *pipe) bool {
-	return p.inspect(token.LIST)
+	return p.match(token.LIST)
 }
 
 // Expects the following token pattern:
@@ -22,7 +22,7 @@ func parseList(p *pipe) st.Expression {
 }
 
 func isListAccess(p *pipe) bool {
-	return p.isSequence(token.ID, token.GUARD_OPEN)
+	return p.matchSequence(token.ID, token.GUARD_OPEN)
 }
 
 // Expects the following token pattern:
@@ -38,7 +38,7 @@ func parseListAccess(p *pipe) st.ListAccess {
 	indexExp := parseExpression(p)
 
 	if indexExp == nil {
-		panic(err("listAccess", p.prior(), `Expected an expression`))
+		panic(err("listAccess", p.past(), `Expected an expression`))
 	}
 
 	p.expect(`listAccess`, token.GUARD_CLOSE)

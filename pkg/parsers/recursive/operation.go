@@ -11,7 +11,7 @@ import (
 // operand := literal | expression
 func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression {
 
-	op := p.snoop()
+	op := p.peek()
 
 	if leftPriority >= st.Precedence(op.Type) {
 		return left
@@ -43,11 +43,11 @@ func parseRightSide(p *pipe) st.Expression {
 		return parseGroup(p)
 	}
 
-	panic(unexpected("parseRightSide", p.snoop(), `function_call | literal | group`))
+	panic(unexpected("parseRightSide", p.peek(), `function_call | literal | group`))
 }
 
 func isLiteral(p *pipe) bool {
-	return p.matchesNext(
+	return p.matchAny(
 		token.ID,
 		token.VOID,
 		token.BOOL,
@@ -60,7 +60,7 @@ func isLiteral(p *pipe) bool {
 // Expects the following token pattern:
 // pattern := literal
 func parseLiteral(p *pipe) st.Expression {
-	tk := p.proceed()
+	tk := p.next()
 
 	if tk.Type == token.ID {
 		return st.Identifier{false, tk}
@@ -70,7 +70,7 @@ func parseLiteral(p *pipe) st.Expression {
 }
 
 func isGroup(p *pipe) bool {
-	return p.inspect(token.PAREN_OPEN)
+	return p.match(token.PAREN_OPEN)
 }
 
 // Expects the following token pattern:
@@ -81,7 +81,7 @@ func parseGroup(p *pipe) st.Expression {
 
 	g := parseExpression(p)
 	if g == nil {
-		panic(unexpected("group", p.prior(), token.ANOTHER))
+		panic(unexpected("group", p.past(), token.ANOTHER))
 	}
 
 	p.expect(`group`, token.PAREN_CLOSE)
