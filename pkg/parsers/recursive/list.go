@@ -15,9 +15,9 @@ func isList(p *pipe) bool {
 func parseList(p *pipe) st.Expression {
 	return st.List{
 		Key:   p.expect(`parseList`, token.LIST),
-		Open:  p.expect(`parseList`, token.LIST_OPEN),
+		Open:  p.expect(`parseList`, token.BLOCK_OPEN),
 		Exprs: parseExpressions(p),
-		Close: p.expect(`parseList`, token.LIST_CLOSE),
+		Close: p.expect(`parseList`, token.BLOCK_CLOSE),
 	}
 }
 

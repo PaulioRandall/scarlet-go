@@ -28,14 +28,12 @@ const (
 	DELIM              TokenType = `DELIMITER`
 	ASSIGN             TokenType = `ASSIGNS`
 	RETURNS            TokenType = `RETURNS`
-	MATCH_OPEN         TokenType = `MATCH`
-	BLOCK_OPEN         TokenType = `DO`
-	BLOCK_CLOSE        TokenType = `END`
+	BLOCK_OPEN         TokenType = `NEW_BLOCK`
+	BLOCK_CLOSE        TokenType = `END_BLOCK`
 	PAREN_OPEN         TokenType = `PAREN_OPEN`
 	PAREN_CLOSE        TokenType = `PAREN_CLOSE`
 	LIST               TokenType = `LIST`
-	LIST_OPEN          TokenType = `LIST_OPEN`
-	LIST_CLOSE         TokenType = `LIST_CLOSE`
+	MATCH              TokenType = `MATCH`
 	GUARD_OPEN         TokenType = `GUARD_OPEN`
 	GUARD_CLOSE        TokenType = `GUARD_CLOSE`
 	SPELL              TokenType = `SPELL`

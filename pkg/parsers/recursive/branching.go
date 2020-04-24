@@ -7,7 +7,7 @@ import (
 )
 
 func isMatch(p *pipe) bool {
-	return p.match(token.MATCH_OPEN)
+	return p.match(token.MATCH)
 }
 
 // Expects the following token pattern:
@@ -15,7 +15,8 @@ func isMatch(p *pipe) bool {
 func parseMatch(p *pipe) st.Match {
 
 	m := st.Match{
-		Open:  p.expect(`parseMatch`, token.MATCH_OPEN),
+		Key:   p.expect(`parseMatch`, token.MATCH),
+		Open:  p.expect(`parseMatch`, token.BLOCK_OPEN),
 		Cases: parseGuards(p),
 	}
 

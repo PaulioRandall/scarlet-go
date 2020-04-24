@@ -38,7 +38,7 @@ func patterns() []pattern {
 			}
 			return 0
 		}},
-		pattern{token.MATCH_OPEN, func(ss *symbolStream) int {
+		pattern{token.MATCH, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "MATCH")
 		}},
 		pattern{token.BOOL, func(ss *symbolStream) int {
@@ -55,12 +55,6 @@ func patterns() []pattern {
 		}},
 		pattern{token.EOF, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "EOF")
-		}},
-		pattern{token.BLOCK_CLOSE, func(ss *symbolStream) int {
-			return keywordMatcher(ss, "END")
-		}},
-		pattern{token.BLOCK_OPEN, func(ss *symbolStream) int {
-			return keywordMatcher(ss, "DO")
 		}},
 		pattern{token.FUNC, func(ss *symbolStream) int {
 			return keywordMatcher(ss, "F")
@@ -87,17 +81,17 @@ func patterns() []pattern {
 		pattern{token.MORE_THAN_OR_EQUAL, func(ss *symbolStream) int {
 			return stringMatcher(ss, ">=")
 		}},
+		pattern{token.BLOCK_OPEN, func(ss *symbolStream) int {
+			return stringMatcher(ss, "{")
+		}},
+		pattern{token.BLOCK_CLOSE, func(ss *symbolStream) int {
+			return stringMatcher(ss, "}")
+		}},
 		pattern{token.PAREN_OPEN, func(ss *symbolStream) int {
 			return stringMatcher(ss, "(")
 		}},
 		pattern{token.PAREN_CLOSE, func(ss *symbolStream) int {
 			return stringMatcher(ss, ")")
-		}},
-		pattern{token.LIST_OPEN, func(ss *symbolStream) int {
-			return stringMatcher(ss, "{")
-		}},
-		pattern{token.LIST_CLOSE, func(ss *symbolStream) int {
-			return stringMatcher(ss, "}")
 		}},
 		pattern{token.GUARD_OPEN, func(ss *symbolStream) int {
 			return stringMatcher(ss, "[")

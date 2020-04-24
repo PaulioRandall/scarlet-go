@@ -1,9 +1,9 @@
 
 
-MATCH
-	[1 = 1] DO END
-	[TRUE] DO END
-END
+MATCH {
+	[1 = 1] {}
+	[TRUE] {}
+}
 
 naught_six := 2 * 9 / (3 + 12) * 2 / 4
 
@@ -17,11 +17,11 @@ a := list[0]
 b := list[1]
 
 
-FIX factorial := F(n -> n) DO
-	[n > 1] DO
+FIX factorial := F(n -> n) {
+	[n > 1] {
 		n := n * factorial(n - 1)
-	END
-END
+	}
+}
 
 answer := factorial(5)
 

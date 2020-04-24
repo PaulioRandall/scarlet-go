@@ -29,18 +29,19 @@ func (g Guard) String(i int) string {
 }
 
 type Match struct {
+	Key   token.Token
 	Open  token.Token
 	Cases []Guard
 	Close token.Token
 }
 
 func (m Match) Token() token.Token {
-	return m.Open
+	return m.Key
 }
 
 func (m Match) String(i int) string {
 
-	s := indent(i) + "[Match]" + newline()
+	s := indent(i) + "[Match] " + m.Key.String() + newline()
 	s += indent(i+1) + "Open: " + m.Open.String() + newline()
 
 	s += indent(i+1) + "Cases:" + newline()

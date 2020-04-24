@@ -50,12 +50,12 @@ func isParsableToken(prev, next token.Token) bool {
 		switch past {
 		// Sometimes the extra terminator or newline is redundant.
 		// Removing them makes parsing easier.
-		case token.LIST_OPEN,
-			token.DELIM,
+		case token.DELIM,
 			token.TERMINATOR,
 			token.BLOCK_OPEN,
-			token.MATCH_OPEN,
 			token.BLOCK_CLOSE,
+			token.MATCH,
+			token.LIST,
 			token.UNDEFINED:
 
 			return false
