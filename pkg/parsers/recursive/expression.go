@@ -29,7 +29,7 @@ func parseExpressions(p *pipe) []st.Expression {
 }
 
 // Expects the following token pattern:
-// pattern := func_call | list_access | literal | group | func_def | list
+// pattern := func_call | list_access | literal | group | list
 func parseExpression(p *pipe) st.Expression {
 
 	var left st.Expression
@@ -48,9 +48,6 @@ func parseExpression(p *pipe) st.Expression {
 	case isGroup(p):
 		left = parseGroup(p)
 		return parseOperation(p, left, 0)
-
-	case isFuncDef(p):
-		return parseFuncDef(p)
 
 	case isList(p):
 		return parseList(p)

@@ -5,11 +5,12 @@
 EXE_NAME="scarlet"
 MAIN_GO_FILE="scarlet/scarlet.go"
 TEST_TIMEOUT="3s"
-OUTPUT_FILE=-o $EXE_NAME
-#BUILD_FLAGS=-ldflags "-s -w"
+BUILD_FLAGS=""
+#BUILD_FLAGS=-gcflags -m -ldflags "-s -w"
 RESOURCE_FILES="scarlet/test.scarlet"
 # *********************************
 
+OUTPUT_FILE="-o $EXE_NAME"
 ROOT_DIR="$PWD"
 BUILD_DIR="build"
 EXE_FILE="$BUILD_DIR/$EXE_NAME"
@@ -52,7 +53,7 @@ checkExitCode() {
 goBuild() {
   println "Building..."
  	rm -f "$BUILD_DIR/*"
-  go build -o "$EXE_FILE" "$MAIN_GO_FILE"
+  go build -o "$EXE_FILE" $BUILD_FLAGS "$MAIN_GO_FILE"
   checkExitCode $? "'go build ...' failed"
 }
 
@@ -70,8 +71,8 @@ goTest() {
   checkExitCode $? "'go test ...' failed"
 }
 
-# runBuild runs the built program.
-runBuild() {
+# runExe runs the built executable.
+runExe() {
   println "Running..." "\n"
   cd "$BUILD_DIR"
   ./"$EXE_NAME"
@@ -85,12 +86,7 @@ upxCompress() {
   cd $BUILD_DIR
 
 	if [ "command -v upx" ]; then
-		if [ "$1" == "atomic" ]; then
-  		upx --ultra-brute $EXE_NAME
-  	else
-  		upx $EXE_NAME
-  	fi
-
+  	upx --ultra-brute $EXE_NAME
   	checkExitCode $? "'upx ...' failed"
   else
   	println "Can't compress because you don't have 'upx' installed"
@@ -120,7 +116,7 @@ if [[ "$1" == "run" ]]; then
   goFmt
   goTest
   copyResources
-  runBuild
+  runExe
   println
   exit 0
 fi

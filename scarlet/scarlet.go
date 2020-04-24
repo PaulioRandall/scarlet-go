@@ -17,7 +17,7 @@ func main() { // Run it with `./godo run`
 
 	file := "./test.scarlet"
 
-	errErr := err.Try(func() {
+	e := err.Try(func() {
 
 		src, e := ioutil.ReadFile(file)
 		if e != nil {
@@ -27,8 +27,8 @@ func main() { // Run it with `./godo run`
 		run(string(src))
 	})
 
-	if errErr != nil {
-		err.PrintErr(errErr, file)
+	if e != nil {
+		err.PrintErr(e, file)
 	}
 }
 

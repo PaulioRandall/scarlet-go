@@ -35,11 +35,11 @@ func parseFuncParams(p *pipe) (in, out []token.Token) {
 	p.expect(`parseFuncParams`, token.PAREN_OPEN)
 
 	if p.match(token.ID) {
-		in = parseFuncIds(p)
+		in = parseFuncParamIds(p)
 	}
 
 	if p.accept(token.RETURNS) {
-		out = parseFuncIds(p)
+		out = parseFuncParamIds(p)
 	}
 
 	p.expect(`parseFuncParams`, token.PAREN_CLOSE)
@@ -49,12 +49,12 @@ func parseFuncParams(p *pipe) (in, out []token.Token) {
 
 // Expects the following token pattern:
 // pattern := ID {DELIM ID}
-func parseFuncIds(p *pipe) []token.Token {
+func parseFuncParamIds(p *pipe) []token.Token {
 
 	var ids []token.Token
 
 	for {
-		tk := p.expect(`parseFuncIds`, token.ID)
+		tk := p.expect(`parseFuncParamIds`, token.ID)
 		ids = append(ids, tk)
 
 		if !p.accept(token.DELIM) {

@@ -17,20 +17,28 @@ func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression
 		return left
 	}
 
-	p.expect(`parseOperation`, op.Type) // Because operator not taken yet
+	// Because operator not taken yet.
+	p.expect(`parseOperation`, op.Type)
 
-	right := parseRightSide(p)
+	// Parse the terminal or expression on the right.
+	right := parseSubOperation(p)
+
+	// Recursively parse the expression on the right until an operator with
+	// less or equal precedence to this operations operator is encountered.
 	right = parseOperation(p, right, st.Precedence(op.Type))
 
+	// Create this operations.
 	left = st.Operation{left, op, right}
+
+	// Parse the remaining operations in this expression.
 	left = parseOperation(p, left, leftPriority)
 
 	return left
 }
 
 // Expects the following token pattern:
-// pattern := function | literal | group
-func parseRightSide(p *pipe) st.Expression {
+// pattern := func_call | literal | group
+func parseSubOperation(p *pipe) st.Expression {
 
 	switch {
 	case isFuncCall(p):
