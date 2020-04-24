@@ -36,9 +36,6 @@ EOF
 list[2] := `z`
 
 
-// Clean statement pkg
-
-
 
 s := "alpha = {list(0)}, beta = {list(1)}"
 
