@@ -35,8 +35,8 @@ func (a Assignment) String(indent int) string {
 	var s str
 
 	s.indent(indent).
-		append("[Assignment]").
-		appendIf(a.Assign != (token.Token{}), " "+a.Assign.String())
+		append("[Assignment] ").
+		append(a.Assign.String())
 
 	s.newline().
 		indent(indent + 1).

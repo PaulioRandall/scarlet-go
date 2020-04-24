@@ -90,7 +90,7 @@ func EvalNumbers(ctx *Context, left, right statement.Expression) (float64, float
 func EvalNumber(ctx *Context, ex statement.Expression) float64 {
 
 	v := EvalExpression(ctx, ex)
-	v = single(v, ex.Token())
+	v = expectOneValue(v, ex.Token())
 
 	if v, ok := v.(Number); ok {
 		return float64(v)

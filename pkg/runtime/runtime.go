@@ -48,25 +48,29 @@ func ExeStatement(ctx *Context, s st.Statement) {
 func ExeAssignment(ctx *Context, a st.Assignment) {
 
 	values := EvalExpressions(ctx, a.Exprs)
-
-	if a.IDs != nil {
-
-		if len(a.IDs) > len(values) {
-			panic(err("ExeStatement", a.Assign,
-				"Missing expression values to populate variables... have %d, want %d",
-				len(a.IDs), len(values),
-			))
-
-		} else if len(a.IDs) < len(values) {
-			panic(err("ExeStatement", a.Assign,
-				"Too many expression values to populate variables... have %d, want %d",
-				len(a.IDs), len(values),
-			))
-		}
-	}
+	checkAssignments(a.IDs, values, a.Assign)
 
 	for i, id := range a.IDs {
 		ctx.Set(id, values[i])
+	}
+}
+
+func checkAssignments(ids []st.Identifier, vals []Value, operator token.Token) {
+
+	a, b := len(ids), len(vals)
+
+	if a > b {
+		panic(err("ExeStatement", operator,
+			"Missing expression values to populate variables... have %d, want %d",
+			len(ids), len(vals),
+		))
+	}
+
+	if a < b {
+		panic(err("ExeStatement", operator,
+			"Too many expression values to populate variables... have %d, want %d",
+			len(ids), len(vals),
+		))
 	}
 }
 
@@ -182,62 +186,4 @@ func EvalListAccess(ctx *Context, la st.ListAccess) Value {
 	}
 
 	return items[i]
-}
-
-func EvalFuncDef(ctx *Context, f st.FuncDef) Value {
-	return Function(f)
-}
-
-func EvalFuncCall(ctx *Context, call st.FuncCall) Value {
-
-	v := EvalExpression(ctx, call.ID)
-	def, ok := v.(Function)
-
-	if !ok {
-		panic(err("EvalFuncCall", call.ID.Token(), "Expected function as result"))
-	}
-
-	if len(def.Input) != len(call.Input) {
-		panic(err("EvalFuncCall", call.ID.Token(),
-			"Expected %d parameters, got %d", len(def.Input), len(call.Input),
-		))
-	}
-
-	subCtx := ctx.Spawn()
-
-	for i, paramExpr := range call.Input {
-
-		v := EvalExpression(ctx, paramExpr)
-		id := def.Input[i]
-		v = single(v, call.ID.Token())
-
-		ident := st.Identifier{false, id}
-		subCtx.Set(ident, v)
-	}
-
-	ExeBlock(subCtx, def.Body)
-
-	r := make([]Value, len(def.Output))
-
-	for i, id := range def.Output {
-		r[i] = subCtx.Get(id.Value)
-	}
-
-	return Tuple(r)
-}
-
-func single(v Value, tk token.Token) Value {
-
-	t, ok := v.(Tuple)
-	if !ok {
-		return v
-	}
-
-	a := []Value(t)
-
-	if t == nil || len(a) != 1 {
-		panic(err("singletonTuple", tk, "Expected exactly one result"))
-	}
-
-	return a[0]
 }
