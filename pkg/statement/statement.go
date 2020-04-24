@@ -40,36 +40,30 @@ func (a Assignment) Token() token.Token {
 
 func (a Assignment) String(i int) string {
 
-	s := indent(i) + "[Assignment]"
+	var s str
+
+	s.indent(i)
+	s.concat("[Assignment]")
+
 	if a.Assign != (token.Token{}) {
-		s += " " + a.Assign.String()
-	}
-	s += newline()
-
-	s += indent(i+1) + "IDs:" + newline()
-	for _, id := range a.IDs {
-		s += indent(i + 2)
-
-		if id.Fixed {
-			s += "FIXED "
-		}
-
-		s += id.Source.String() + newline()
+		s.concat(" ", a.Assign.String())
 	}
 
-	s += indent(i+1) + "Exprs:"
+	s.newline()
+
+	s.indent(i + 1)
+	s.concat("IDs:")
+	s.newline()
+
+	s.ids(a.IDs, i+2)
+	s.newline()
+
+	s.indent(i + 1)
+	s.concat("Exprs:")
 	for _, expr := range a.Exprs {
-		s += newline()
-		s += expr.String(i + 2)
+		s.newline()
+		s.concat(expr.String(i + 2))
 	}
 
-	return s
-}
-
-func indent(indent int) string {
-	return strings.Repeat("\t", indent)
-}
-
-func newline() string {
-	return "\n"
+	return string(s)
 }

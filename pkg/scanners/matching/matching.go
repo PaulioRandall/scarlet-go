@@ -5,20 +5,19 @@ import (
 )
 
 // ReadAll parses all tokens from s into an array.
-func ReadAll(s string) []token.Token {
+func ReadAll(src string) []token.Token {
 
 	var tk token.Token
-	var tokens []token.Token
-	ss := &symbolStream{
-		runes: []rune(s),
-	}
+	var tks []token.Token
+
+	s := &symbolStream{[]rune(src), 0, 0}
 
 	for tk.Type != token.EOF {
-		tk = read(ss)
-		tokens = append(tokens, tk)
+		tk = read(s)
+		tks = append(tks, tk)
 	}
 
-	return tokens
+	return tks
 }
 
 func read(ss *symbolStream) token.Token {

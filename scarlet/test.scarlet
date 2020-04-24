@@ -31,43 +31,12 @@ answer := factorial(5)
 
 EOF
 
-FIX factorial := F(n -> n) DO
-	[n > 1] DO
-		n := n * factorial(n - 1)
-	END
-END
-
-answer := factorial(5)
 
 
-
-
-
-
-
-
-
-
-
-//naught_six := 2 * 9 / (3 + 12) * 2 / 4
-
-//a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE
-//       ((2 * 6) % 8) < (8 / (2 + 1)) = FALSE
-
-
-
-EOF
-
-
-
-list := LIST {`a`,`b`,`c`}
-a := list[0]
-b := list[1]
 list[2] := `z`
 
 
 // Clean statement pkg
-// Clean parsers/recursive pkg
 
 
 
