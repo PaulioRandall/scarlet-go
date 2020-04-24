@@ -120,7 +120,7 @@ func isGuardBlock(p *pipe) bool {
 func parseGuardBlock(p *pipe) st.Block {
 	return st.Block{
 		Open:  p.expect(`parseGuardBlock`, token.BLOCK_OPEN),
-		Stats: statements(p),
+		Stats: parseStatements(p),
 		Close: p.expect(`parseGuardBlock`, token.BLOCK_CLOSE),
 	}
 }
@@ -130,7 +130,7 @@ func parseGuardBlock(p *pipe) st.Block {
 func parseGuardStatement(p *pipe) st.Block {
 	return st.Block{
 		Open:  p.snoop(),
-		Stats: []st.Statement{statement(p)},
+		Stats: []st.Statement{parseStatement(p)},
 		Close: p.prior(),
 	}
 }

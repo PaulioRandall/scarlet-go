@@ -9,46 +9,44 @@ import (
 // ParseAll parses all tokens in tks into Statements.
 func ParseAll(tks []token.Token) []st.Statement {
 	p := &pipe{token.NewIterator(tks)}
-	return statements(p)
+	return parseStatements(p)
 }
 
-// statements parses all statements within the parsers iterator.
-//
-// Preconditions: None
-func statements(p *pipe) (ss []st.Statement) {
+// Expects the following token pattern:
+// pattern := {statement}
+func parseStatements(p *pipe) []st.Statement {
+
+	var sts []st.Statement
 
 	for !p.itr.Empty() && !p.accept(token.EOF) && !p.inspect(token.BLOCK_CLOSE) {
-		s := statement(p)
-		ss = append(ss, s)
+		st := parseStatement(p)
+		sts = append(sts, st)
 	}
 
-	return
+	return sts
 }
 
-// statement parses a single statement from the parsers iterator.
-//
-// Preconditions:
-// - Next token is not empty
-func statement(p *pipe) (s st.Statement) {
+// Expects the following token pattern:
+// pattern := assignment | guard | match | expression
+func parseStatement(p *pipe) st.Statement {
 
-	if isAssignment(p) {
+	switch {
+	case isAssignment(p):
 		return parseAssignment(p)
-	}
 
-	if isGuard(p) {
+	case isGuard(p):
 		return parseGuard(p)
-	}
 
-	if isMatch(p) {
+	case isMatch(p):
 		return parseMatch(p)
 	}
 
 	if ex := parseExpression(p); ex != nil {
-		p.expect(`statement`, token.TERMINATOR)
+		p.expect(`parseStatement`, token.TERMINATOR)
 		return st.Assignment{
 			Exprs: []st.Expression{ex},
 		}
 	}
 
-	panic(unexpected("statement", p.snoop(), token.ANY))
+	panic(unexpected("parseStatement", p.snoop(), token.ANY))
 }

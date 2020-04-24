@@ -78,7 +78,7 @@ func isFuncBlock(p *pipe) bool {
 func parseFuncBlock(p *pipe) st.Block {
 	return st.Block{
 		Open:  p.expect(`parseFuncBlock`, token.BLOCK_OPEN),
-		Stats: statements(p),
+		Stats: parseStatements(p),
 		Close: p.expect(`parseFuncBlock`, token.BLOCK_CLOSE),
 	}
 }
@@ -88,7 +88,7 @@ func parseFuncBlock(p *pipe) st.Block {
 func parseFuncStatement(p *pipe) st.Block {
 	return st.Block{
 		Open:  p.snoop(),
-		Stats: []st.Statement{statement(p)},
+		Stats: []st.Statement{parseStatement(p)},
 		Close: p.prior(),
 	}
 }
