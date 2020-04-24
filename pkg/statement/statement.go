@@ -1,25 +1,17 @@
 package statement
 
 import (
-	"strings"
-
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func Print(ss []Statement) {
+func Print(stats []Statement) {
 
-	s := "[Statements]"
+	var s str
 
-	for _, st := range ss {
-		s += newline()
-		s += st.String(1)
-	}
-
-	s = strings.ReplaceAll(s, "\t", "  ")
-
-	println(s)
-	println(token.EOF)
-	println()
+	s.append("[Statements]").
+		newline()
+	s.appendStats(1, stats)
+	s.print()
 }
 
 type Statement interface {
@@ -38,30 +30,27 @@ func (a Assignment) Token() token.Token {
 	return a.Assign
 }
 
-func (a Assignment) String(i int) string {
+func (a Assignment) String(indent int) string {
 
 	var s str
 
-	s.indent(i)
-	s.concat("[Assignment]")
+	s.indent(indent).
+		append("[Assignment]").
+		appendIf(a.Assign != (token.Token{}), " "+a.Assign.String())
 
-	if a.Assign != (token.Token{}) {
-		s.concat(" ", a.Assign.String())
-	}
+	s.newline().
+		indent(indent + 1).
+		append("IDs:")
 
-	s.newline()
+	s.newline().
+		appendIds(indent+2, a.IDs)
 
-	s.indent(i + 1)
-	s.concat("IDs:")
-	s.newline()
+	s.newline().
+		indent(indent + 1).
+		append("Exprs:")
 
-	s.ids(a.IDs, i+2)
-	s.newline()
+	s.newline().
+		appendExps(indent+2, a.Exprs)
 
-	s.indent(i + 1)
-	s.concat("Exprs:")
-	s.newline()
-	s.exps(a.Exprs, i+2)
-
-	return string(s)
+	return s.String()
 }

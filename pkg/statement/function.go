@@ -17,22 +17,34 @@ func (f FuncDef) Token() token.Token {
 
 func (f FuncDef) String(i int) string {
 
-	str := indent(i) + "[FuncDef] " + f.Open.String() + newline()
+	var s str
 
-	str += indent(i+1) + "Input:" + newline()
-	for _, tk := range f.Input {
-		str += indent(i+2) + tk.String() + newline()
-	}
+	s.indent(i).
+		append("[FuncDef] ").
+		append(f.Open.String())
 
-	str += indent(i+1) + "Output: " + newline()
-	for _, tk := range f.Output {
-		str += indent(i+2) + tk.String() + newline()
-	}
+	s.newline().
+		indent(i + 1).
+		append("Input:")
 
-	str += indent(i+1) + "Body: " + newline()
-	str += f.Body.String(i + 2)
+	s.newline().
+		appendTks(i+2, f.Input)
 
-	return str
+	s.newline().
+		indent(i + 1).
+		append("Output:")
+
+	s.newline().
+		appendTks(i+2, f.Output)
+
+	s.newline().
+		indent(i + 1).
+		append("Body:")
+
+	s.newline().
+		append(f.Body.String(i + 2))
+
+	return s.String()
 }
 
 type FuncCall struct {
@@ -46,14 +58,24 @@ func (f FuncCall) Token() token.Token {
 
 func (f FuncCall) String(i int) string {
 
-	str := indent(i) + "[FuncCall] " + newline()
-	str += indent(i+1) + "ID:" + newline()
-	str += f.ID.String(i+2) + newline()
+	var s str
 
-	str += indent(i+1) + "Input:"
-	for _, ex := range f.Input {
-		str += newline() + ex.String(i+2)
-	}
+	s.indent(i).
+		append("[FuncCall]")
 
-	return str
+	s.newline().
+		indent(i + 1).
+		append("ID:")
+
+	s.newline().
+		append(f.ID.String(i + 2))
+
+	s.newline().
+		indent(i + 1).
+		append("Input:")
+
+	s.newline().
+		appendExps(i+2, f.Input)
+
+	return s.String()
 }

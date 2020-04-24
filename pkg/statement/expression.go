@@ -21,13 +21,14 @@ func (id Identifier) Token() token.Token {
 
 func (id Identifier) String(i int) string {
 
-	s := indent(i) + "[Identifier] "
+	var s str
 
-	if id.Fixed {
-		s += "(FIXED) "
-	}
+	s.indent(i).
+		append("[Identifier] ").
+		appendIf(id.Fixed, "(FIXED) ").
+		append(id.Source.String())
 
-	return s + id.Source.String()
+	return s.String()
 }
 
 type Value struct {

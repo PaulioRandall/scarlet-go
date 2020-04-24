@@ -27,13 +27,27 @@ func (op Operation) Precedence() int {
 // String satisfies the Expression interface.
 func (op Operation) String(i int) string {
 
-	str := indent(i) + "[Operation] " + op.Operator.String() + newline()
-	str += indent(i+1) + "Left:" + newline()
-	str += op.Left.String(i+2) + newline()
-	str += indent(i+1) + "Right: " + newline()
-	str += op.Right.String(i + 2)
+	var s str
 
-	return str
+	s.indent(i).
+		append("[Operation] ").
+		append(op.Operator.String())
+
+	s.newline().
+		indent(i + 1).
+		append("Left:")
+
+	s.newline().
+		append(op.Left.String(i + 2))
+
+	s.newline().
+		indent(i + 1).
+		append("Right:")
+
+	s.newline().
+		append(op.Right.String(i + 2))
+
+	return s.String()
 }
 
 // Precedence returns the precedences of the token type.
