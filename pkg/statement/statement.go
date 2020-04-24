@@ -60,10 +60,8 @@ func (a Assignment) String(i int) string {
 
 	s.indent(i + 1)
 	s.concat("Exprs:")
-	for _, expr := range a.Exprs {
-		s.newline()
-		s.concat(expr.String(i + 2))
-	}
+	s.newline()
+	s.exps(a.Exprs, i+2)
 
 	return string(s)
 }

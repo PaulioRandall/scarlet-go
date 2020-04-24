@@ -37,6 +37,16 @@ func (s *str) ids(ids []Identifier, indent int) {
 	}
 }
 
+func (s *str) exps(exps []Expression, indent int) {
+	for i, exp := range exps {
+		if i != 0 {
+			s.newline()
+		}
+
+		s.concat(exp.String(indent))
+	}
+}
+
 func indent(indent int) string {
 	return strings.Repeat("\t", indent)
 }
