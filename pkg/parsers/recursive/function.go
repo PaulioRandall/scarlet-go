@@ -11,9 +11,6 @@ func isFuncDef(p *pipe) bool {
 
 // Expects the following token pattern:
 // pattern := FUNC params (statement | block)
-// block := BLOCK_OPEN {statement} BLOCK_CLOSE
-// params := PAREN_OPEN [ids] [RETURNS ids] PAREN_CLOSE
-// ids := ID {DELIM ID}
 func parseFuncDef(p *pipe) st.Expression {
 
 	f := st.FuncDef{
@@ -33,7 +30,6 @@ func parseFuncDef(p *pipe) st.Expression {
 
 // Expects the following token pattern:
 // pattern := PAREN_OPEN [ids] [RETURNS ids] PAREN_CLOSE
-// ids := ID {DELIM ID}
 func parseFuncParams(p *pipe) (in, out []token.Token) {
 
 	p.expect(`parseFuncParams`, token.PAREN_OPEN)

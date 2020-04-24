@@ -25,7 +25,7 @@ END
 
 answer := factorial(5)
 
-
+list[0]
 
 
 

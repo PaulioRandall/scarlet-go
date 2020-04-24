@@ -12,7 +12,6 @@ func isMatch(p *pipe) bool {
 
 // Expects the following token pattern:
 // pattern := MATCH_OPEN guard {guard} BLOCK_END
-// guard := GUARD_OPEN expression GUARD_CLOSE (statement | block)
 func parseMatch(p *pipe) st.Match {
 
 	m := st.Match{
@@ -30,7 +29,6 @@ func parseMatch(p *pipe) st.Match {
 
 // Expects the following token pattern:
 // pattern := {guard}
-// guard := GUARD_OPEN expression GUARD_CLOSE (statement | block)
 func parseGuards(p *pipe) []st.Guard {
 
 	var gs []st.Guard

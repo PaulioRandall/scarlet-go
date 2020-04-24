@@ -16,18 +16,18 @@ func ParseAll(tks []token.Token) []st.Statement {
 // pattern := {statement}
 func parseStatements(p *pipe) []st.Statement {
 
-	var sts []st.Statement
+	var stats []st.Statement
 
 	for !p.itr.Empty() && !p.accept(token.EOF) && !p.inspect(token.BLOCK_CLOSE) {
-		st := parseStatement(p)
-		sts = append(sts, st)
+		stat := parseStatement(p)
+		stats = append(stats, stat)
 	}
 
-	return sts
+	return stats
 }
 
 // Expects the following token pattern:
-// pattern := assignment | guard | match | expression
+// pattern := assignment | guard | match | (expression TERMINATOR)
 func parseStatement(p *pipe) st.Statement {
 
 	switch {
@@ -41,11 +41,9 @@ func parseStatement(p *pipe) st.Statement {
 		return parseMatch(p)
 	}
 
-	if ex := parseExpression(p); ex != nil {
+	if exp := parseExpression(p); exp != nil {
 		p.expect(`parseStatement`, token.TERMINATOR)
-		return st.Assignment{
-			Exprs: []st.Expression{ex},
-		}
+		return exp
 	}
 
 	panic(unexpected("parseStatement", p.snoop(), token.ANY))

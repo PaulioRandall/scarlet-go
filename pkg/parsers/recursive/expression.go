@@ -8,7 +8,6 @@ import (
 
 // Expects the following token pattern:
 // pattern := {expression} [TERMINATOR]
-// expression := func_call | list_access | literal | group | func_def | list
 func parseExpressions(p *pipe) []st.Expression {
 
 	var exps []st.Expression

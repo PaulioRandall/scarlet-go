@@ -37,6 +37,9 @@ func ExeStatement(ctx *Context, s st.Statement) {
 	case st.Guard:
 		ExeGuard(ctx, v)
 
+	case st.Expression:
+		_ = EvalExpression(ctx, v)
+
 	default:
 		panic(err("ExeStatement", s.Token(), "Unknown statement type"))
 	}
