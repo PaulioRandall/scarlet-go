@@ -26,12 +26,10 @@ func (id Identifier) String(i int) string {
 		String()
 }
 
-type Value struct {
-	Source token.Token
-}
+type Value token.Token
 
 func (v Value) Token() token.Token {
-	return v.Source
+	return token.Token(v)
 }
 
 func (v Value) String(i int) string {
@@ -40,6 +38,6 @@ func (v Value) String(i int) string {
 
 	return s.indent(i).
 		append("[Value] ").
-		append(v.Source.String()).
+		append(v.Token().String()).
 		String()
 }

@@ -77,7 +77,7 @@ func parseLiteral(p *pipe) st.Expression {
 	if tk.Type == token.ID {
 		return st.Identifier(tk)
 	} else {
-		return st.Value{tk}
+		return st.Value(tk)
 	}
 }
 

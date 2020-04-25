@@ -83,7 +83,7 @@ func isBoolOperation(ex st.Expression) bool {
 		return true
 
 	case st.Value:
-		return v.Source.Type == token.BOOL
+		return v.Token().Type == token.BOOL
 
 	case st.Operation:
 		return isBoolOperator(v.Operator.Type)

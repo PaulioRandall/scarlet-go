@@ -30,7 +30,7 @@ func EvalExpression(ctx *Context, expr st.Expression) Value {
 		return EvalIdentifier(ctx, v)
 
 	case st.Value:
-		return valueOf(v.Source)
+		return valueOf(v.Token())
 
 	case st.Operation:
 		return EvalOperation(ctx, v)
