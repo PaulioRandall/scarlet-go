@@ -26,7 +26,7 @@ func parseAssignment(p *pipe) st.Assignment {
 		Fixed: p.accept(token.FIX),
 	}
 
-	a.IDs = parseAssignmentIds(p, a.Fixed)
+	a.IDs = parseAssignmentIds(p)
 	a.Assign = p.expect(`parseAssignment`, token.ASSIGN)
 
 	if isFuncDef(p) {
@@ -44,13 +44,12 @@ func parseAssignment(p *pipe) st.Assignment {
 
 // Expects the following token pattern:
 // pattern := ID { DELIM ID }
-func parseAssignmentIds(p *pipe, fixed bool) []st.Identifier {
+func parseAssignmentIds(p *pipe) []token.Token {
 
-	var ids []st.Identifier
+	var ids []token.Token
 
-	for {
-		idTk := p.expect(`parseAssignmentIds`, token.ID)
-		id := st.Identifier{fixed, idTk}
+	for !p.itr.Empty() {
+		id := p.expect(`parseAssignmentIds`, token.ID)
 		ids = append(ids, id)
 
 		if !p.accept(token.DELIM) {

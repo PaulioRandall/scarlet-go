@@ -52,28 +52,28 @@ func ExeAssignment(ctx *Context, a st.Assignment) {
 
 	for i, id := range a.IDs {
 		if a.Fixed {
-			ctx.SetFixed(id.Source, values[i])
+			ctx.SetFixed(id, values[i])
 		} else {
-			ctx.Set(id.Source, values[i])
+			ctx.Set(id, values[i])
 		}
 	}
 }
 
-func checkAssignments(ids []st.Identifier, vals []Value, operator token.Token) {
+func checkAssignments(ids []token.Token, vals []Value, operator token.Token) {
 
 	a, b := len(ids), len(vals)
 
 	if a > b {
 		panic(err("ExeStatement", operator,
 			"Missing expression values to populate variables... have %d, want %d",
-			len(ids), len(vals),
+			a, b,
 		))
 	}
 
 	if a < b {
 		panic(err("ExeStatement", operator,
 			"Too many expression values to populate variables... have %d, want %d",
-			len(ids), len(vals),
+			a, b,
 		))
 	}
 }
