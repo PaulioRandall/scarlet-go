@@ -101,53 +101,6 @@ func ExeGuard(ctx *Context, g st.Guard) bool {
 	return bool(pass)
 }
 
-func EvalExpressions(ctx *Context, exprs []st.Expression) []Value {
-
-	var values []Value
-
-	for _, expr := range exprs {
-		v := EvalExpression(ctx, expr)
-
-		if t, ok := v.(Tuple); ok {
-			for _, v := range []Value(t) {
-				values = append(values, v)
-			}
-
-		} else {
-			values = append(values, v)
-		}
-	}
-
-	return values
-}
-
-func EvalExpression(ctx *Context, expr st.Expression) Value {
-	switch v := expr.(type) {
-	case st.Identifier:
-		return EvalIdentifier(ctx, v)
-
-	case st.Value:
-		return valueOf(v.Source)
-
-	case st.Operation:
-		return EvalOperation(ctx, v)
-
-	case st.List:
-		return EvalList(ctx, v)
-
-	case st.ListAccess:
-		return EvalListAccess(ctx, v)
-
-	case st.FuncDef:
-		return EvalFuncDef(ctx, v)
-
-	case st.FuncCall:
-		return EvalFuncCall(ctx, v)
-	}
-
-	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
-}
-
 func EvalIdentifier(ctx *Context, id st.Identifier) Value {
 
 	v := ctx.Get(id.Source.Value)
@@ -157,37 +110,4 @@ func EvalIdentifier(ctx *Context, id st.Identifier) Value {
 	}
 
 	return v
-}
-
-func EvalList(ctx *Context, list st.List) Value {
-	return List(EvalExpressions(ctx, list.Exprs))
-}
-
-func EvalListAccess(ctx *Context, la st.ListAccess) Value {
-
-	v := EvalIdentifier(ctx, la.ID)
-	list, ok := v.(List)
-
-	if !ok {
-		panic(err("EvalListAccess", la.ID.Source, "Can't get item of a non-list"))
-	}
-
-	n := EvalExpression(ctx, la.Index)
-	index, ok := n.(Number)
-
-	if !ok {
-		panic(err("EvalListAccess", la.Index.Token(), "Expected number as result"))
-	}
-
-	i := index.ToInt()
-	if i < 0 {
-		panic(err("EvalListAccess", la.ID.Source, "Index must be greater than zero"))
-	}
-
-	items := []Value(list)
-	if i >= int64(len(items)) {
-		panic(err("EvalListAccess", la.Index.Token(), "Index out of range"))
-	}
-
-	return items[i]
 }
