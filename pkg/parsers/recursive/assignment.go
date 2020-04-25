@@ -22,10 +22,11 @@ func isAssignment(p *pipe) bool {
 // pattern := [FIX] ID { DELIM ID } ASSIGN expression {expression}
 func parseAssignment(p *pipe) st.Assignment {
 
-	fixed := p.accept(token.FIX)
-	a := st.Assignment{}
+	a := st.Assignment{
+		Fixed: p.accept(token.FIX),
+	}
 
-	a.IDs = parseAssignmentIds(p, fixed)
+	a.IDs = parseAssignmentIds(p, a.Fixed)
 	a.Assign = p.expect(`parseAssignment`, token.ASSIGN)
 
 	if isFuncDef(p) {

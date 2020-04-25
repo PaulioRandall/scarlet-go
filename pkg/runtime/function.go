@@ -54,9 +54,7 @@ func evalFuncCallArgs(ctx *Context, ids []token.Token, params []st.Expression) *
 		v := EvalExpression(ctx, p)
 		v = expectOneValue(v, p.Token())
 
-		id := st.Identifier{false, ids[i]}
-
-		subCtx.Set(id, v)
+		subCtx.Set(ids[i], v)
 	}
 
 	return subCtx

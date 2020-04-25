@@ -78,15 +78,14 @@ func parseGuard(p *pipe) st.Guard {
 
 func isBoolOperation(ex st.Expression) bool {
 
-	if _, ok := ex.(st.Identifier); ok {
+	switch v := ex.(type) {
+	case st.Identifier:
 		return true
-	}
 
-	if v, ok := ex.(st.Value); ok {
+	case st.Value:
 		return v.Source.Type == token.BOOL
-	}
 
-	if v, ok := ex.(st.Operation); ok {
+	case st.Operation:
 		return isBoolOperator(v.Operator.Type)
 	}
 

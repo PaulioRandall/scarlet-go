@@ -1,7 +1,7 @@
 package runtime
 
 import (
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // Context represents the current executing context. It contains all state
@@ -52,18 +52,24 @@ func (ctx *Context) Get(id string) Value {
 	return v
 }
 
-func (ctx *Context) Set(id st.Identifier, v Value) {
+func (ctx *Context) SetFixed(id token.Token, v Value) {
 
-	name := id.Source.Value
+	name := id.Value
 
 	if _, ok := ctx.fixed[name]; ok {
-		panic(err("Set", id.Token(), "Cannot change a fixed variable"))
+		panic(err("SetFixed", id, "Cannot change a fixed variable"))
 	}
 
-	if id.Fixed {
-		delete(ctx.vars, name)
-		ctx.fixed[name] = v
-		return
+	delete(ctx.vars, name)
+	ctx.fixed[name] = v
+}
+
+func (ctx *Context) Set(id token.Token, v Value) {
+
+	name := id.Value
+
+	if _, ok := ctx.fixed[name]; ok {
+		panic(err("Set", id, "Cannot change a fixed variable"))
 	}
 
 	if _, ok := v.(Void); ok {

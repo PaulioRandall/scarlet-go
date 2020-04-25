@@ -21,6 +21,7 @@ type Statement interface {
 }
 
 type Assignment struct {
+	Fixed  bool
 	IDs    []Identifier
 	Assign token.Token
 	Exprs  []Expression

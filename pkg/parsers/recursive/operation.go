@@ -60,7 +60,7 @@ func parseSubOperation(p *pipe) st.Expression {
 
 func isLiteral(p *pipe) bool {
 	return p.matchAny(
-		token.ID,
+		token.ID, // Yes I know, but it works
 		token.VOID,
 		token.BOOL,
 		token.NUMBER,

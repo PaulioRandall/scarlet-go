@@ -51,7 +51,11 @@ func ExeAssignment(ctx *Context, a st.Assignment) {
 	checkAssignments(a.IDs, values, a.Assign)
 
 	for i, id := range a.IDs {
-		ctx.Set(id, values[i])
+		if a.Fixed {
+			ctx.SetFixed(id.Source, values[i])
+		} else {
+			ctx.Set(id.Source, values[i])
+		}
 	}
 }
 
