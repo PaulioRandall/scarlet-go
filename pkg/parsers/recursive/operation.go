@@ -11,9 +11,13 @@ import (
 // operand := literal | expression
 func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression {
 
+	// Warning: this is where parsing gets a little complicated!!
+
 	op := p.peek()
 
-	if leftPriority >= st.Precedence(op.Type) {
+	if leftPriority >= op.Precedence() {
+		// Any token that is not an operator has a precedence of zero, so the left
+		// hand expression will always be returned in such a case.
 		return left
 	}
 
@@ -25,7 +29,7 @@ func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression
 
 	// Recursively parse the expression on the right until an operator with
 	// less or equal precedence to this operations operator is encountered.
-	right = parseOperation(p, right, st.Precedence(op.Type))
+	right = parseOperation(p, right, op.Precedence())
 
 	// Create this operations.
 	left = st.Operation{left, op, right}
