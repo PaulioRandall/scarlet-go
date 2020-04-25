@@ -49,6 +49,7 @@ func parseAssignmentIds(p *pipe) []token.Token {
 	var ids []token.Token
 
 	for !p.itr.Empty() {
+		
 		id := p.expect(`parseAssignmentIds`, token.ID)
 		ids = append(ids, id)
 
