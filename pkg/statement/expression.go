@@ -10,12 +10,10 @@ type Expression interface {
 	String(indent int) string
 }
 
-type Identifier struct {
-	Source token.Token
-}
+type Identifier token.Token
 
 func (id Identifier) Token() token.Token {
-	return id.Source
+	return token.Token(id)
 }
 
 func (id Identifier) String(i int) string {
@@ -24,7 +22,7 @@ func (id Identifier) String(i int) string {
 
 	return s.indent(i).
 		append("[Identifier] ").
-		append(id.Source.String()).
+		append(id.Token().String()).
 		String()
 }
 

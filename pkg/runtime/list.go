@@ -14,7 +14,7 @@ func EvalListAccess(ctx *Context, la st.ListAccess) Value {
 	list, ok := v.(List)
 
 	if !ok {
-		panic(err("EvalListAccess", la.ID.Source, "Can't get item of a non-list"))
+		panic(err("EvalListAccess", la.ID.Token(), "Can't get item of a non-list"))
 	}
 
 	n := EvalExpression(ctx, la.Index)
@@ -26,7 +26,7 @@ func EvalListAccess(ctx *Context, la st.ListAccess) Value {
 
 	i := index.ToInt()
 	if i < 0 {
-		panic(err("EvalListAccess", la.ID.Source, "Index must be greater than zero"))
+		panic(err("EvalListAccess", la.ID.Token(), "Index must be greater than zero"))
 	}
 
 	items := []Value(list)

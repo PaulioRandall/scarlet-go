@@ -46,10 +46,10 @@ func ExeStatement(ctx *Context, s st.Statement) {
 
 func EvalIdentifier(ctx *Context, id st.Identifier) Value {
 
-	v := ctx.Get(id.Source.Value)
+	v := ctx.Get(id.Value)
 
 	if v == nil {
-		panic(err("EvalExpression", id.Source, "Undefined identifier"))
+		panic(err("EvalExpression", id.Token(), "Undefined identifier"))
 	}
 
 	return v

@@ -49,7 +49,7 @@ type ListAccess struct {
 }
 
 func (la ListAccess) Token() token.Token {
-	return la.ID.Source
+	return la.ID.Token()
 }
 
 func (la ListAccess) String(i int) string {
@@ -58,7 +58,7 @@ func (la ListAccess) String(i int) string {
 
 	s.indent(i).
 		append("[ListAccess] ").
-		append(la.ID.Source.String())
+		append(la.ID.Token().String())
 
 	s.newline().
 		indent(i + 1).

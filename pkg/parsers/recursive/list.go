@@ -29,9 +29,8 @@ func isListAccess(p *pipe) bool {
 // pattern := ID GUARD_OPEN expression GUARD_CLOSE
 func parseListAccess(p *pipe) st.ListAccess {
 
-	id := st.Identifier{
-		Source: p.expect(`listAccess`, token.ID),
-	}
+	tk := p.expect(`listAccess`, token.ID)
+	id := st.Identifier(tk)
 
 	p.expect(`listAccess`, token.GUARD_OPEN)
 	indexExp := parseExpression(p)

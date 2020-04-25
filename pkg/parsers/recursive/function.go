@@ -97,9 +97,8 @@ func isFuncCall(p *pipe) (is bool) {
 // pattern := ID PAREN_OPEN {expression} PAREN_CLOSE
 func parseFuncCall(p *pipe) st.Expression {
 
-	left := st.Identifier{
-		Source: p.expect(`parseFuncCall`, token.ID),
-	}
+	id := p.expect(`parseFuncCall`, token.ID)
+	left := st.Identifier(id)
 
 	p.expect(`parseFuncCall`, token.PAREN_OPEN)
 

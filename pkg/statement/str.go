@@ -86,8 +86,7 @@ func (s *str) appendIds(indent int, ids []Identifier) *str {
 			s.newline()
 		}
 
-		s.indent(indent).
-			append(id.Source.String())
+		s.append(id.String(indent))
 	}
 
 	return s
