@@ -86,13 +86,8 @@ func (s *str) appendIds(indent int, ids []Identifier) *str {
 			s.newline()
 		}
 
-		s.indent(indent)
-
-		if id.Fixed {
-			s.append("FIXED ")
-		}
-
-		s.append(id.Source.String())
+		s.indent(indent).
+			append(id.Source.String())
 	}
 
 	return s

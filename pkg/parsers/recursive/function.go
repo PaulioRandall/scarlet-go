@@ -98,7 +98,6 @@ func isFuncCall(p *pipe) (is bool) {
 func parseFuncCall(p *pipe) st.Expression {
 
 	left := st.Identifier{
-		Fixed:  false,
 		Source: p.expect(`parseFuncCall`, token.ID),
 	}
 

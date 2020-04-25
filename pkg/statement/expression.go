@@ -11,7 +11,6 @@ type Expression interface {
 }
 
 type Identifier struct {
-	Fixed  bool
 	Source token.Token
 }
 
@@ -25,7 +24,6 @@ func (id Identifier) String(i int) string {
 
 	return s.indent(i).
 		append("[Identifier] ").
-		appendIf(id.Fixed, "(FIXED) ").
 		append(id.Source.String()).
 		String()
 }

@@ -30,7 +30,6 @@ func isListAccess(p *pipe) bool {
 func parseListAccess(p *pipe) st.ListAccess {
 
 	id := st.Identifier{
-		Fixed:  false,
 		Source: p.expect(`listAccess`, token.ID),
 	}
 

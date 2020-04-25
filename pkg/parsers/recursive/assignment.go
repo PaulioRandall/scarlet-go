@@ -1,9 +1,8 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
-
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func isAssignment(p *pipe) bool {
