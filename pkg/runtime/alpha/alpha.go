@@ -6,8 +6,8 @@ import (
 
 func Run(ss []st.Statement) alphaContext {
 	ctx := alphaContext{
-		make(map[string]Value),
-		make(map[string]Value),
+		make(map[string]value),
+		make(map[string]value),
 		nil,
 	}
 
@@ -15,7 +15,7 @@ func Run(ss []st.Statement) alphaContext {
 	return ctx
 }
 
-func evalIdentifier(ctx *alphaContext, id st.Identifier) Value {
+func evalIdentifier(ctx *alphaContext, id st.Identifier) value {
 
 	v := ctx.Get(id.Value)
 

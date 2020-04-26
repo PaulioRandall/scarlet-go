@@ -5,11 +5,11 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func evalFuncDef(ctx *alphaContext, f st.FuncDef) Value {
+func evalFuncDef(ctx *alphaContext, f st.FuncDef) value {
 	return Function(f)
 }
 
-func evalFuncCall(ctx *alphaContext, call st.FuncCall) Value {
+func evalFuncCall(ctx *alphaContext, call st.FuncCall) value {
 
 	def := findFunction(ctx, call.ID)
 
@@ -19,7 +19,7 @@ func evalFuncCall(ctx *alphaContext, call st.FuncCall) Value {
 	exeBlock(subCtx, def.Body)
 	results := collectFuncCallResults(subCtx, def.Output)
 
-	return Tuple(results)
+	return tuple(results)
 }
 
 func findFunction(ctx *alphaContext, idExp st.Expression) Function {
@@ -60,9 +60,9 @@ func evalFuncCallArgs(ctx *alphaContext, ids []token.Token, params []st.Expressi
 	return subCtx
 }
 
-func collectFuncCallResults(ctx *alphaContext, ids []token.Token) []Value {
+func collectFuncCallResults(ctx *alphaContext, ids []token.Token) []value {
 
-	r := make([]Value, len(ids))
+	r := make([]value, len(ids))
 
 	for i, id := range ids {
 		r[i] = ctx.Get(id.Value)
@@ -71,14 +71,14 @@ func collectFuncCallResults(ctx *alphaContext, ids []token.Token) []Value {
 	return r
 }
 
-func expectOneValue(v Value, tk token.Token) Value {
+func expectOneValue(v value, tk token.Token) value {
 
-	t, ok := v.(Tuple)
+	t, ok := v.(tuple)
 	if !ok {
 		return v
 	}
 
-	a := []Value(t)
+	a := []value(t)
 
 	if t == nil || len(a) != 1 {
 		panic(err("expectOneValue", tk, "Expected exactly one result"))

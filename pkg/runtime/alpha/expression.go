@@ -4,27 +4,27 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func evalExpressions(ctx *alphaContext, exprs []st.Expression) []Value {
+func evalExpressions(ctx *alphaContext, exprs []st.Expression) []value {
 
-	var values []Value
+	var vs []value
 
 	for _, expr := range exprs {
 		v := evalExpression(ctx, expr)
 
-		if t, ok := v.(Tuple); ok {
-			for _, v := range []Value(t) {
-				values = append(values, v)
+		if t, ok := v.(tuple); ok {
+			for _, v := range []value(t) {
+				vs = append(vs, v)
 			}
 
 		} else {
-			values = append(values, v)
+			vs = append(vs, v)
 		}
 	}
 
-	return values
+	return vs
 }
 
-func evalExpression(ctx *alphaContext, expr st.Expression) Value {
+func evalExpression(ctx *alphaContext, expr st.Expression) value {
 	switch v := expr.(type) {
 	case st.Identifier:
 		return evalIdentifier(ctx, v)

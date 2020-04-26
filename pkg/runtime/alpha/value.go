@@ -9,77 +9,77 @@ import (
 
 // TODO: Consider renaming this to `Result`
 
-// Value represents a value within the executing program, either the value of
+// value represents a value within the executing program, either the value of
 // a variable or an intermediate within a statement.
-type Value interface {
+type value interface {
 	Get() interface{}
 
 	String() string
 }
 
-type Void struct{}
+type voidLiteral struct{}
 
-func (_ Void) Get() interface{} {
+func (_ voidLiteral) Get() interface{} {
 	return nil
 }
 
-func (_ Void) String() string {
+func (_ voidLiteral) String() string {
 	return "(VOID) _"
 }
 
-type Bool bool
+type boolLiteral bool
 
-func (b Bool) Get() interface{} {
+func (b boolLiteral) Get() interface{} {
 	return bool(b)
 }
 
-func (b Bool) String() string {
+func (b boolLiteral) String() string {
 	return "(BOOL) " + strconv.FormatBool(bool(b))
 }
 
-type Number float64
+type numberLiteral float64
 
-func (n Number) Get() interface{} {
+func (n numberLiteral) Get() interface{} {
 	return float64(n)
 }
 
-func (n Number) ToInt() int64 {
+func (n numberLiteral) ToInt() int64 {
 	return int64(float64(n))
 }
 
-func (n Number) String() string {
+func (n numberLiteral) String() string {
 	return "(NUMBER) " + strconv.FormatFloat(float64(n), 'f', -1, 64)
 }
 
-type String string
+type stringLiteral string
 
-func (s String) Get() interface{} {
+func (s stringLiteral) Get() interface{} {
 	return string(s)
 }
 
-func (s String) String() string {
+func (s stringLiteral) String() string {
 	return "(STRING) " + string(s)
 }
 
-type Template string
+type templateLiteral string
 
-func (t Template) Get() interface{} {
+func (t templateLiteral) Get() interface{} {
 	return string(t)
 }
 
-func (t Template) String() string {
+func (t templateLiteral) String() string {
 	return "(TEMPLATE) " + string(t)
 }
 
-type List []Value
+type listLiteral []value
 
-func (l List) Get() interface{} {
-	return []Value(l)
+func (l listLiteral) Get() interface{} {
+	return []value(l)
 }
 
-func (l List) String() string {
+func (l listLiteral) String() string {
 	s := "(LIST) " + "{"
-	for i, item := range []Value(l) {
+	for i, item := range []value(l) {
 		if i != 0 {
 			s += ","
 		}
@@ -88,15 +88,15 @@ func (l List) String() string {
 	return s + "}"
 }
 
-type Tuple []Value
+type tuple []value
 
-func (t Tuple) Get() interface{} {
-	return []Value(t)
+func (t tuple) Get() interface{} {
+	return []value(t)
 }
 
-func (t Tuple) String() string {
+func (t tuple) String() string {
 	s := "(TUPLE) " + "("
-	for i, item := range []Value(t) {
+	for i, item := range []value(t) {
 		if i != 0 {
 			s += ","
 		}
@@ -141,35 +141,35 @@ func (f Function) String() string {
 	return s + ")"
 }
 
-func valueOf(tk token.Token) Value {
+func valueOf(tk token.Token) value {
 
 	switch tk.Type {
 	case token.VOID:
-		return Void{}
+		return voidLiteral{}
 
 	case token.BOOL:
-		return Bool(tk.Value == `TRUE`)
+		return boolLiteral(tk.Value == `TRUE`)
 
 	case token.NUMBER:
 		return parseFloat(tk)
 
 	case token.STRING:
-		return String(tk.Value)
+		return stringLiteral(tk.Value)
 
 	case token.TEMPLATE:
-		return Template(tk.Value)
+		return templateLiteral(tk.Value)
 	}
 
 	panic(err("valueOf", tk, "Invalid value type (%s)", tk.String()))
 }
 
-// parseFloat parses an NUMBER token into a Number value.
-func parseFloat(tk token.Token) Number {
+// parseFloat parses an NUMBER token into a numberLiteral.
+func parseFloat(tk token.Token) numberLiteral {
 	f, e := strconv.ParseFloat(tk.Value, 64)
 
 	if e != nil {
 		panic(err("parseFloat", tk, "Could not parse number"))
 	}
 
-	return Number(f)
+	return numberLiteral(f)
 }

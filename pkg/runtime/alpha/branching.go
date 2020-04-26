@@ -14,7 +14,7 @@ func exeMatch(ctx *alphaContext, m st.Match) {
 
 func exeGuard(ctx *alphaContext, g st.Guard) bool {
 
-	pass, ok := evalExpression(ctx, g.Cond).(Bool)
+	pass, ok := evalExpression(ctx, g.Cond).(boolLiteral)
 
 	if !ok {
 		panic(err("ExeGuard", g.Open, "Unexpected non-boolean result"))

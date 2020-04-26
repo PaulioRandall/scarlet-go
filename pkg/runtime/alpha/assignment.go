@@ -7,19 +7,19 @@ import (
 
 func exeAssignment(ctx *alphaContext, a st.Assignment) {
 
-	values := evalExpressions(ctx, a.Exprs)
-	checkAssignments(a.IDs, values, a.Assign)
+	vs := evalExpressions(ctx, a.Exprs)
+	checkAssignments(a.IDs, vs, a.Assign)
 
 	for i, id := range a.IDs {
 		if a.Fixed {
-			ctx.SetFixed(id, values[i])
+			ctx.SetFixed(id, vs[i])
 		} else {
-			ctx.Set(id, values[i])
+			ctx.Set(id, vs[i])
 		}
 	}
 }
 
-func checkAssignments(ids []token.Token, vals []Value, operator token.Token) {
+func checkAssignments(ids []token.Token, vals []value, operator token.Token) {
 
 	a, b := len(ids), len(vals)
 
