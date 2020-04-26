@@ -1,11 +1,11 @@
-package runtime
+package alpha
 
 import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func ExeAssignment(ctx *Context, a st.Assignment) {
+func ExeAssignment(ctx *alphaContext, a st.Assignment) {
 
 	values := EvalExpressions(ctx, a.Exprs)
 	checkAssignments(a.IDs, values, a.Assign)

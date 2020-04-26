@@ -1,15 +1,15 @@
-package runtime
+package alpha
 
 import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func EvalFuncDef(ctx *Context, f st.FuncDef) Value {
+func EvalFuncDef(ctx *alphaContext, f st.FuncDef) Value {
 	return Function(f)
 }
 
-func EvalFuncCall(ctx *Context, call st.FuncCall) Value {
+func EvalFuncCall(ctx *alphaContext, call st.FuncCall) Value {
 
 	def := findFunction(ctx, call.ID)
 
@@ -22,7 +22,7 @@ func EvalFuncCall(ctx *Context, call st.FuncCall) Value {
 	return Tuple(results)
 }
 
-func findFunction(ctx *Context, idExp st.Expression) Function {
+func findFunction(ctx *alphaContext, idExp st.Expression) Function {
 
 	v := EvalExpression(ctx, idExp)
 	f, ok := v.(Function)
@@ -45,7 +45,7 @@ func checkFuncCallArgs(exp []token.Token, act []st.Expression, callTk token.Toke
 	}
 }
 
-func evalFuncCallArgs(ctx *Context, ids []token.Token, params []st.Expression) *Context {
+func evalFuncCallArgs(ctx *alphaContext, ids []token.Token, params []st.Expression) *alphaContext {
 
 	subCtx := ctx.Spawn()
 
@@ -60,7 +60,7 @@ func evalFuncCallArgs(ctx *Context, ids []token.Token, params []st.Expression) *
 	return subCtx
 }
 
-func collectFuncCallResults(ctx *Context, ids []token.Token) []Value {
+func collectFuncCallResults(ctx *alphaContext, ids []token.Token) []Value {
 
 	r := make([]Value, len(ids))
 

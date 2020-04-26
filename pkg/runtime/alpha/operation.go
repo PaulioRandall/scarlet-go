@@ -1,11 +1,11 @@
-package runtime
+package alpha
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/statement"
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func EvalOperation(ctx *Context, op statement.Operation) Value {
+func EvalOperation(ctx *alphaContext, op statement.Operation) Value {
 
 	tk := op.Operator
 
@@ -66,7 +66,7 @@ func EvalOperation(ctx *Context, op statement.Operation) Value {
 	panic(err("EvalOperation", tk, "Unknown operation type"))
 }
 
-func EvalValues(ctx *Context, left, right statement.Expression) (Value, Value) {
+func EvalValues(ctx *alphaContext, left, right statement.Expression) (Value, Value) {
 	l := EvalExpression(ctx, left)
 	r := EvalExpression(ctx, right)
 
@@ -83,11 +83,11 @@ func EvalValues(ctx *Context, left, right statement.Expression) (Value, Value) {
 	return l, r
 }
 
-func EvalNumbers(ctx *Context, left, right statement.Expression) (float64, float64) {
+func EvalNumbers(ctx *alphaContext, left, right statement.Expression) (float64, float64) {
 	return EvalNumber(ctx, left), EvalNumber(ctx, right)
 }
 
-func EvalNumber(ctx *Context, ex statement.Expression) float64 {
+func EvalNumber(ctx *alphaContext, ex statement.Expression) float64 {
 
 	v := EvalExpression(ctx, ex)
 	v = expectOneValue(v, ex.Token())
@@ -99,11 +99,11 @@ func EvalNumber(ctx *Context, ex statement.Expression) float64 {
 	panic(err("EvalNumber", ex.Token(), "Expected Number as result"))
 }
 
-func EvalBools(ctx *Context, left, right statement.Expression) (bool, bool) {
+func EvalBools(ctx *alphaContext, left, right statement.Expression) (bool, bool) {
 	return EvalBool(ctx, left), EvalBool(ctx, right)
 }
 
-func EvalBool(ctx *Context, ex statement.Expression) bool {
+func EvalBool(ctx *alphaContext, ex statement.Expression) bool {
 	if v, ok := EvalExpression(ctx, ex).(Bool); ok {
 		return bool(v)
 	}

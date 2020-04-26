@@ -1,10 +1,10 @@
-package runtime
+package alpha
 
 import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func EvalExpressions(ctx *Context, exprs []st.Expression) []Value {
+func EvalExpressions(ctx *alphaContext, exprs []st.Expression) []Value {
 
 	var values []Value
 
@@ -24,7 +24,7 @@ func EvalExpressions(ctx *Context, exprs []st.Expression) []Value {
 	return values
 }
 
-func EvalExpression(ctx *Context, expr st.Expression) Value {
+func EvalExpression(ctx *alphaContext, expr st.Expression) Value {
 	switch v := expr.(type) {
 	case st.Identifier:
 		return EvalIdentifier(ctx, v)

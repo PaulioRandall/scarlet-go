@@ -48,7 +48,7 @@ func run(s string) {
 	statement.Print(statements)
 
 	print("# Executing...")
-	ctx := runtime.Run(statements)
+	ctx := runtime.Run(statements, runtime.DEFAULT)
 	println("...done!\n")
 
 	println(ctx.String())

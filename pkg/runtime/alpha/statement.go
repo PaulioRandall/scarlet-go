@@ -1,20 +1,20 @@
-package runtime
+package alpha
 
 import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func ExeBlock(ctx *Context, b st.Block) {
+func ExeBlock(ctx *alphaContext, b st.Block) {
 	ExeStatements(ctx, b.Stats)
 }
 
-func ExeStatements(ctx *Context, ss []st.Statement) {
+func ExeStatements(ctx *alphaContext, ss []st.Statement) {
 	for _, s := range ss {
 		ExeStatement(ctx, s)
 	}
 }
 
-func ExeStatement(ctx *Context, s st.Statement) {
+func ExeStatement(ctx *alphaContext, s st.Statement) {
 	switch v := s.(type) {
 	case st.Assignment:
 		ExeAssignment(ctx, v)

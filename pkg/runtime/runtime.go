@@ -1,27 +1,31 @@
 package runtime
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/runtime/alpha"
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func Run(ss []st.Statement) Context {
-	ctx := Context{
-		make(map[string]Value),
-		make(map[string]Value),
-		nil,
-	}
-
-	ExeStatements(&ctx, ss)
-	return ctx
+// Context represents the environment of the runtime holding such information
+// as current variables.
+type Context interface {
+	String() string
 }
 
-func EvalIdentifier(ctx *Context, id st.Identifier) Value {
+// Method represents a runtime method.
+type Method string
 
-	v := ctx.Get(id.Value)
+const (
+	DEFAULT Method = `DEFAULT_RUNTIME`
+	ALPHA   Method = `ALPHA_RUNTIME`
+)
 
-	if v == nil {
-		panic(err("EvalExpression", id.Token(), "Undefined identifier"))
+// Run creates a new runtime and executes all statements in s.
+func Run(s []st.Statement, m Method) Context {
+
+	switch m {
+	case DEFAULT, ALPHA:
+		return alpha.Run(s)
 	}
 
-	return v
+	panic(string(`Unknown runtime method '` + m + `'`))
 }

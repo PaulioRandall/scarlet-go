@@ -1,14 +1,14 @@
-package runtime
+package alpha
 
 import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func EvalList(ctx *Context, list st.List) Value {
+func EvalList(ctx *alphaContext, list st.List) Value {
 	return List(EvalExpressions(ctx, list.Exprs))
 }
 
-func EvalListAccess(ctx *Context, la st.ListAccess) Value {
+func EvalListAccess(ctx *alphaContext, la st.ListAccess) Value {
 
 	v := EvalIdentifier(ctx, la.ID)
 	list, ok := v.(List)

@@ -1,19 +1,19 @@
-package runtime
+package alpha
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-// Context represents the current executing context. It contains all state
+// alphaContext represents the current executing context. It contains all state
 // available to the current scope such as available variables.
-type Context struct {
+type alphaContext struct {
 	fixed  map[string]Value
 	vars   map[string]Value
-	parent *Context
+	parent *alphaContext
 }
 
 // String returns a human readable string representation of the context.
-func (ctx *Context) String() (s string) {
+func (ctx alphaContext) String() (s string) {
 
 	const NEWLINE = "\n"
 	const TAB = "\t"
@@ -38,7 +38,7 @@ func (ctx *Context) String() (s string) {
 
 // Get returns the value assigned to a specified variable. If the ID does not
 // exist an empty value is returned.
-func (ctx *Context) Get(id string) Value {
+func (ctx *alphaContext) Get(id string) Value {
 	v, ok := ctx.fixed[id]
 
 	if !ok {
@@ -52,7 +52,7 @@ func (ctx *Context) Get(id string) Value {
 	return v
 }
 
-func (ctx *Context) SetFixed(id token.Token, v Value) {
+func (ctx *alphaContext) SetFixed(id token.Token, v Value) {
 
 	name := id.Value
 
@@ -64,7 +64,7 @@ func (ctx *Context) SetFixed(id token.Token, v Value) {
 	ctx.fixed[name] = v
 }
 
-func (ctx *Context) Set(id token.Token, v Value) {
+func (ctx *alphaContext) Set(id token.Token, v Value) {
 
 	name := id.Value
 
@@ -80,7 +80,7 @@ func (ctx *Context) Set(id token.Token, v Value) {
 	ctx.vars[name] = v
 }
 
-func (ctx *Context) Spawn() *Context {
+func (ctx *alphaContext) Spawn() *alphaContext {
 
 	fixed := make(map[string]Value, len(ctx.fixed))
 
@@ -88,13 +88,13 @@ func (ctx *Context) Spawn() *Context {
 		fixed[k] = v
 	}
 
-	return &Context{
+	return &alphaContext{
 		fixed:  fixed,
 		vars:   make(map[string]Value),
 		parent: ctx,
 	}
 }
 
-func (ctx *Context) Parent() *Context {
+func (ctx *alphaContext) Parent() *alphaContext {
 	return ctx.parent
 }
