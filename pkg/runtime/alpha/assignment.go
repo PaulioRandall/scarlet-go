@@ -5,9 +5,9 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func ExeAssignment(ctx *alphaContext, a st.Assignment) {
+func exeAssignment(ctx *alphaContext, a st.Assignment) {
 
-	values := EvalExpressions(ctx, a.Exprs)
+	values := evalExpressions(ctx, a.Exprs)
 	checkAssignments(a.IDs, values, a.Assign)
 
 	for i, id := range a.IDs {

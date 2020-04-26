@@ -5,18 +5,18 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func EvalFuncDef(ctx *alphaContext, f st.FuncDef) Value {
+func evalFuncDef(ctx *alphaContext, f st.FuncDef) Value {
 	return Function(f)
 }
 
-func EvalFuncCall(ctx *alphaContext, call st.FuncCall) Value {
+func evalFuncCall(ctx *alphaContext, call st.FuncCall) Value {
 
 	def := findFunction(ctx, call.ID)
 
 	checkFuncCallArgs(def.Input, call.Input, call.ID.Token())
 	subCtx := evalFuncCallArgs(ctx, def.Input, call.Input)
 
-	ExeBlock(subCtx, def.Body)
+	exeBlock(subCtx, def.Body)
 	results := collectFuncCallResults(subCtx, def.Output)
 
 	return Tuple(results)
@@ -24,7 +24,7 @@ func EvalFuncCall(ctx *alphaContext, call st.FuncCall) Value {
 
 func findFunction(ctx *alphaContext, idExp st.Expression) Function {
 
-	v := EvalExpression(ctx, idExp)
+	v := evalExpression(ctx, idExp)
 	f, ok := v.(Function)
 
 	if !ok {
@@ -51,7 +51,7 @@ func evalFuncCallArgs(ctx *alphaContext, ids []token.Token, params []st.Expressi
 
 	for i, p := range params {
 
-		v := EvalExpression(ctx, p)
+		v := evalExpression(ctx, p)
 		v = expectOneValue(v, p.Token())
 
 		subCtx.Set(ids[i], v)

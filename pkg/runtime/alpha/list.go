@@ -4,20 +4,20 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func EvalList(ctx *alphaContext, list st.List) Value {
-	return List(EvalExpressions(ctx, list.Exprs))
+func evalList(ctx *alphaContext, list st.List) Value {
+	return List(evalExpressions(ctx, list.Exprs))
 }
 
-func EvalListAccess(ctx *alphaContext, la st.ListAccess) Value {
+func evalListAccess(ctx *alphaContext, la st.ListAccess) Value {
 
-	v := EvalIdentifier(ctx, la.ID)
+	v := evalIdentifier(ctx, la.ID)
 	list, ok := v.(List)
 
 	if !ok {
 		panic(err("EvalListAccess", la.ID.Token(), "Can't get item of a non-list"))
 	}
 
-	n := EvalExpression(ctx, la.Index)
+	n := evalExpression(ctx, la.Index)
 	index, ok := n.(Number)
 
 	if !ok {

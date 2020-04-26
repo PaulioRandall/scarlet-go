@@ -5,106 +5,106 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func EvalOperation(ctx *alphaContext, op statement.Operation) Value {
+func evalOperation(ctx *alphaContext, op statement.Operation) Value {
 
 	tk := op.Operator
 
 	switch tk.Type {
 	case token.ADD:
-		left, right := EvalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return Number(left + right)
 
 	case token.SUBTRACT:
-		left, right := EvalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return Number(left - right)
 
 	case token.MULTIPLY:
-		left, right := EvalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return Number(left * right)
 
 	case token.DIVIDE:
-		left, right := EvalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return Number(left / right)
 
 	case token.REMAINDER:
-		left, right := EvalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return Number(int64(left) % int64(right))
 
 	case token.LESS_THAN:
-		left, right := EvalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return Bool(left < right)
 
 	case token.MORE_THAN:
-		left, right := EvalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return Bool(left > right)
 
 	case token.LESS_THAN_OR_EQUAL:
-		left, right := EvalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return Bool(left <= right)
 
 	case token.MORE_THAN_OR_EQUAL:
-		left, right := EvalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return Bool(left >= right)
 
 	case token.AND:
-		left, right := EvalBools(ctx, op.Left, op.Right)
+		left, right := evalBools(ctx, op.Left, op.Right)
 		return Bool(left && right)
 
 	case token.OR:
-		left, right := EvalBools(ctx, op.Left, op.Right)
+		left, right := evalBools(ctx, op.Left, op.Right)
 		return Bool(left || right)
 
 	case token.EQUAL:
-		left, right := EvalValues(ctx, op.Left, op.Right)
+		left, right := evalValues(ctx, op.Left, op.Right)
 		return Bool(left == right)
 
 	case token.NOT_EQUAL:
-		left, right := EvalValues(ctx, op.Left, op.Right)
+		left, right := evalValues(ctx, op.Left, op.Right)
 		return Bool(left != right)
 	}
 
-	panic(err("EvalOperation", tk, "Unknown operation type"))
+	panic(err("evalOperation", tk, "Unknown operation type"))
 }
 
-func EvalValues(ctx *alphaContext, left, right statement.Expression) (Value, Value) {
-	l := EvalExpression(ctx, left)
-	r := EvalExpression(ctx, right)
+func evalValues(ctx *alphaContext, left, right statement.Expression) (Value, Value) {
+	l := evalExpression(ctx, left)
+	r := evalExpression(ctx, right)
 
 	if _, ok := l.(Void); ok {
-		panic(err("EvalValues", left.Token(),
+		panic(err("evalValues", left.Token(),
 			"Left side evaluated to Void, but it's not allowed here"))
 	}
 
 	if _, ok := r.(Void); ok {
-		panic(err("EvalValues", right.Token(),
+		panic(err("evalValues", right.Token(),
 			"Right side evaluated to Void, but it's not allowed here"))
 	}
 
 	return l, r
 }
 
-func EvalNumbers(ctx *alphaContext, left, right statement.Expression) (float64, float64) {
-	return EvalNumber(ctx, left), EvalNumber(ctx, right)
+func evalNumbers(ctx *alphaContext, left, right statement.Expression) (float64, float64) {
+	return evalNumber(ctx, left), evalNumber(ctx, right)
 }
 
-func EvalNumber(ctx *alphaContext, ex statement.Expression) float64 {
+func evalNumber(ctx *alphaContext, ex statement.Expression) float64 {
 
-	v := EvalExpression(ctx, ex)
+	v := evalExpression(ctx, ex)
 	v = expectOneValue(v, ex.Token())
 
 	if v, ok := v.(Number); ok {
 		return float64(v)
 	}
 
-	panic(err("EvalNumber", ex.Token(), "Expected Number as result"))
+	panic(err("evalNumber", ex.Token(), "Expected Number as result"))
 }
 
-func EvalBools(ctx *alphaContext, left, right statement.Expression) (bool, bool) {
-	return EvalBool(ctx, left), EvalBool(ctx, right)
+func evalBools(ctx *alphaContext, left, right statement.Expression) (bool, bool) {
+	return evalBool(ctx, left), evalBool(ctx, right)
 }
 
-func EvalBool(ctx *alphaContext, ex statement.Expression) bool {
-	if v, ok := EvalExpression(ctx, ex).(Bool); ok {
+func evalBool(ctx *alphaContext, ex statement.Expression) bool {
+	if v, ok := evalExpression(ctx, ex).(Bool); ok {
 		return bool(v)
 	}
 

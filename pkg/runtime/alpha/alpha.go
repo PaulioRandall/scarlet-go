@@ -11,16 +11,16 @@ func Run(ss []st.Statement) alphaContext {
 		nil,
 	}
 
-	ExeStatements(&ctx, ss)
+	exeStatements(&ctx, ss)
 	return ctx
 }
 
-func EvalIdentifier(ctx *alphaContext, id st.Identifier) Value {
+func evalIdentifier(ctx *alphaContext, id st.Identifier) Value {
 
 	v := ctx.Get(id.Value)
 
 	if v == nil {
-		panic(err("EvalExpression", id.Token(), "Undefined identifier"))
+		panic(err("evalExpression", id.Token(), "Undefined identifier"))
 	}
 
 	return v

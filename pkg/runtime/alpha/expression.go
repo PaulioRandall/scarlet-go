@@ -4,12 +4,12 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func EvalExpressions(ctx *alphaContext, exprs []st.Expression) []Value {
+func evalExpressions(ctx *alphaContext, exprs []st.Expression) []Value {
 
 	var values []Value
 
 	for _, expr := range exprs {
-		v := EvalExpression(ctx, expr)
+		v := evalExpression(ctx, expr)
 
 		if t, ok := v.(Tuple); ok {
 			for _, v := range []Value(t) {
@@ -24,28 +24,28 @@ func EvalExpressions(ctx *alphaContext, exprs []st.Expression) []Value {
 	return values
 }
 
-func EvalExpression(ctx *alphaContext, expr st.Expression) Value {
+func evalExpression(ctx *alphaContext, expr st.Expression) Value {
 	switch v := expr.(type) {
 	case st.Identifier:
-		return EvalIdentifier(ctx, v)
+		return evalIdentifier(ctx, v)
 
 	case st.Value:
 		return valueOf(v.Token())
 
 	case st.Operation:
-		return EvalOperation(ctx, v)
+		return evalOperation(ctx, v)
 
 	case st.List:
-		return EvalList(ctx, v)
+		return evalList(ctx, v)
 
 	case st.ListAccess:
-		return EvalListAccess(ctx, v)
+		return evalListAccess(ctx, v)
 
 	case st.FuncDef:
-		return EvalFuncDef(ctx, v)
+		return evalFuncDef(ctx, v)
 
 	case st.FuncCall:
-		return EvalFuncCall(ctx, v)
+		return evalFuncCall(ctx, v)
 	}
 
 	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
