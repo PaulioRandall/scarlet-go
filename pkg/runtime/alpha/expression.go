@@ -4,15 +4,26 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func evalExpressions(ctx *alphaContext, exprs []st.Expression) []value {
+func evalIdentifier(ctx *alphaContext, id st.Identifier) result {
 
-	var vs []value
+	v := ctx.Get(id.Value)
+
+	if v == nil {
+		panic(err("evalExpression", id.Token(), "Undefined identifier"))
+	}
+
+	return v
+}
+
+func evalExpressions(ctx *alphaContext, exprs []st.Expression) []result {
+
+	var vs []result
 
 	for _, expr := range exprs {
 		v := evalExpression(ctx, expr)
 
 		if t, ok := v.(tuple); ok {
-			for _, v := range []value(t) {
+			for _, v := range []result(t) {
 				vs = append(vs, v)
 			}
 
@@ -24,7 +35,7 @@ func evalExpressions(ctx *alphaContext, exprs []st.Expression) []value {
 	return vs
 }
 
-func evalExpression(ctx *alphaContext, expr st.Expression) value {
+func evalExpression(ctx *alphaContext, expr st.Expression) result {
 	switch v := expr.(type) {
 	case st.Identifier:
 		return evalIdentifier(ctx, v)

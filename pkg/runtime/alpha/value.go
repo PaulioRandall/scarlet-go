@@ -9,17 +9,17 @@ import (
 
 // TODO: Consider renaming this to `Result`
 
-// value represents a value within the executing program, either the value of
+// result represents a value within the executing program, either the value of
 // a variable or an intermediate within a statement.
-type value interface {
-	Get() interface{}
+type result interface {
+	get() interface{}
 
 	String() string
 }
 
 type voidLiteral struct{}
 
-func (_ voidLiteral) Get() interface{} {
+func (_ voidLiteral) get() interface{} {
 	return nil
 }
 
@@ -29,7 +29,7 @@ func (_ voidLiteral) String() string {
 
 type boolLiteral bool
 
-func (b boolLiteral) Get() interface{} {
+func (b boolLiteral) get() interface{} {
 	return bool(b)
 }
 
@@ -39,7 +39,7 @@ func (b boolLiteral) String() string {
 
 type numberLiteral float64
 
-func (n numberLiteral) Get() interface{} {
+func (n numberLiteral) get() interface{} {
 	return float64(n)
 }
 
@@ -53,7 +53,7 @@ func (n numberLiteral) String() string {
 
 type stringLiteral string
 
-func (s stringLiteral) Get() interface{} {
+func (s stringLiteral) get() interface{} {
 	return string(s)
 }
 
@@ -63,7 +63,7 @@ func (s stringLiteral) String() string {
 
 type templateLiteral string
 
-func (t templateLiteral) Get() interface{} {
+func (t templateLiteral) get() interface{} {
 	return string(t)
 }
 
@@ -71,15 +71,15 @@ func (t templateLiteral) String() string {
 	return "(TEMPLATE) " + string(t)
 }
 
-type listLiteral []value
+type listLiteral []result
 
-func (l listLiteral) Get() interface{} {
-	return []value(l)
+func (l listLiteral) get() interface{} {
+	return []result(l)
 }
 
 func (l listLiteral) String() string {
 	s := "(LIST) " + "{"
-	for i, item := range []value(l) {
+	for i, item := range []result(l) {
 		if i != 0 {
 			s += ","
 		}
@@ -88,15 +88,15 @@ func (l listLiteral) String() string {
 	return s + "}"
 }
 
-type tuple []value
+type tuple []result
 
-func (t tuple) Get() interface{} {
-	return []value(t)
+func (t tuple) get() interface{} {
+	return []result(t)
 }
 
 func (t tuple) String() string {
 	s := "(TUPLE) " + "("
-	for i, item := range []value(t) {
+	for i, item := range []result(t) {
 		if i != 0 {
 			s += ","
 		}
@@ -105,13 +105,13 @@ func (t tuple) String() string {
 	return s + ")"
 }
 
-type Function st.FuncDef
+type functionLiteral st.FuncDef
 
-func (f Function) Get() interface{} {
+func (f functionLiteral) get() interface{} {
 	return st.FuncDef(f)
 }
 
-func (f Function) String() string {
+func (f functionLiteral) String() string {
 
 	s := "(FUNCTION) F("
 
@@ -141,7 +141,7 @@ func (f Function) String() string {
 	return s + ")"
 }
 
-func valueOf(tk token.Token) value {
+func valueOf(tk token.Token) result {
 
 	switch tk.Type {
 	case token.VOID:

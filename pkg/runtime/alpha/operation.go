@@ -5,7 +5,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func evalOperation(ctx *alphaContext, op statement.Operation) value {
+func evalOperation(ctx *alphaContext, op statement.Operation) result {
 
 	tk := op.Operator
 
@@ -66,7 +66,7 @@ func evalOperation(ctx *alphaContext, op statement.Operation) value {
 	panic(err("evalOperation", tk, "Unknown operation type"))
 }
 
-func evalValues(ctx *alphaContext, left, right statement.Expression) (value, value) {
+func evalValues(ctx *alphaContext, left, right statement.Expression) (result, result) {
 	l := evalExpression(ctx, left)
 	r := evalExpression(ctx, right)
 

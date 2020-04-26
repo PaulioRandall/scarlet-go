@@ -19,20 +19,20 @@ func exeAssignment(ctx *alphaContext, a st.Assignment) {
 	}
 }
 
-func checkAssignments(ids []token.Token, vals []value, operator token.Token) {
+func checkAssignments(ids []token.Token, vals []result, operator token.Token) {
 
 	a, b := len(ids), len(vals)
 
 	if a > b {
 		panic(err("ExeStatement", operator,
-			"Missing expression values to populate variables... have %d, want %d",
+			"Missing expression results to populate variables... have %d, want %d",
 			a, b,
 		))
 	}
 
 	if a < b {
 		panic(err("ExeStatement", operator,
-			"Too many expression values to populate variables... have %d, want %d",
+			"Too many expression results to populate variables... have %d, want %d",
 			a, b,
 		))
 	}

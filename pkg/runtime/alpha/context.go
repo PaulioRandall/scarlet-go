@@ -7,8 +7,8 @@ import (
 // alphaContext represents the current executing context. It contains all state
 // available to the current scope such as available variables.
 type alphaContext struct {
-	fixed  map[string]value
-	vars   map[string]value
+	fixed  map[string]result
+	vars   map[string]result
 	parent *alphaContext
 }
 
@@ -37,8 +37,8 @@ func (ctx alphaContext) String() (s string) {
 }
 
 // Get returns the value assigned to a specified variable. If the ID does not
-// exist an empty value is returned.
-func (ctx *alphaContext) Get(id string) value {
+// exist an empty result is returned.
+func (ctx *alphaContext) Get(id string) result {
 	v, ok := ctx.fixed[id]
 
 	if !ok {
@@ -52,7 +52,7 @@ func (ctx *alphaContext) Get(id string) value {
 	return v
 }
 
-func (ctx *alphaContext) SetFixed(id token.Token, v value) {
+func (ctx *alphaContext) SetFixed(id token.Token, v result) {
 
 	name := id.Value
 
@@ -64,7 +64,7 @@ func (ctx *alphaContext) SetFixed(id token.Token, v value) {
 	ctx.fixed[name] = v
 }
 
-func (ctx *alphaContext) Set(id token.Token, v value) {
+func (ctx *alphaContext) Set(id token.Token, v result) {
 
 	name := id.Value
 
@@ -82,7 +82,7 @@ func (ctx *alphaContext) Set(id token.Token, v value) {
 
 func (ctx *alphaContext) Spawn() *alphaContext {
 
-	fixed := make(map[string]value, len(ctx.fixed))
+	fixed := make(map[string]result, len(ctx.fixed))
 
 	for k, v := range ctx.fixed {
 		fixed[k] = v
@@ -90,7 +90,7 @@ func (ctx *alphaContext) Spawn() *alphaContext {
 
 	return &alphaContext{
 		fixed:  fixed,
-		vars:   make(map[string]value),
+		vars:   make(map[string]result),
 		parent: ctx,
 	}
 }

@@ -4,11 +4,11 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func evalList(ctx *alphaContext, list st.List) value {
+func evalList(ctx *alphaContext, list st.List) result {
 	return listLiteral(evalExpressions(ctx, list.Exprs))
 }
 
-func evalListAccess(ctx *alphaContext, la st.ListAccess) value {
+func evalListAccess(ctx *alphaContext, la st.ListAccess) result {
 
 	v := evalIdentifier(ctx, la.ID)
 	list, ok := v.(listLiteral)
@@ -29,7 +29,7 @@ func evalListAccess(ctx *alphaContext, la st.ListAccess) value {
 		panic(err("EvalListAccess", la.ID.Token(), "Index must be greater than zero"))
 	}
 
-	items := []value(list)
+	items := []result(list)
 	if i >= int64(len(items)) {
 		panic(err("EvalListAccess", la.Index.Token(), "Index out of range"))
 	}
