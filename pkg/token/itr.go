@@ -1,28 +1,23 @@
 package token
 
-// NewIterator creates a new iterator from the token slice.
 func NewIterator(tks []Token) *TokenIterator {
 	return &TokenIterator{tks, len(tks), 0}
 }
 
-// TokenIterator is a ...token ...iterator.
 type TokenIterator struct {
 	tks   []Token
 	size  int
 	index int
 }
 
-// Index returns the current index of the iterator.
 func (itr *TokenIterator) Index() int {
 	return itr.index - 1
 }
 
-// Empty returns true if there are no more tokens to return.
 func (itr *TokenIterator) Empty() bool {
 	return itr.index >= itr.size
 }
 
-// Peek returns the next token in the iterator without removing it.
 func (itr *TokenIterator) Peek() Token {
 
 	if itr.Empty() {
@@ -32,7 +27,6 @@ func (itr *TokenIterator) Peek() Token {
 	return itr.tks[itr.index]
 }
 
-// Next returns the next token in the iterator.
 func (itr *TokenIterator) Next() Token {
 
 	if itr.Empty() {
@@ -44,14 +38,12 @@ func (itr *TokenIterator) Next() Token {
 	return tk
 }
 
-// Skip skips the next token in the iterator.
 func (itr *TokenIterator) Skip() {
 	if !itr.Empty() {
 		itr.index++
 	}
 }
 
-// Past returns the previous token without iterating.
 func (itr *TokenIterator) Past() Token {
 	if itr.index > 0 {
 		return itr.tks[itr.index-1]
@@ -60,9 +52,6 @@ func (itr *TokenIterator) Past() Token {
 	return Token{}
 }
 
-// Back returns the previous token to the front of the iterator but only if the
-// index is not currently zero.
-// Axiom: Next() == Next() -> BACK() -> Next()
 func (itr *TokenIterator) Back() {
 	if itr.index != 0 {
 		itr.index--

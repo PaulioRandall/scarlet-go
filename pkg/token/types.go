@@ -1,15 +1,9 @@
-// token package was created to define the range of possible token types and
-// house the Token structure, which is core to all components.
-//
-// Key decisions: Can you think of any decisions that need explaining?
-//
-// TODO: Some of the const token types don't have meaningful or accurate names,
-//			 consider improving matters.
 package token
 
-// TokenType represents the type of a token. Each may have multiple lexemes
-// but usually just the one (lemma).
 type TokenType string
+
+// TODO: Some of the const token types don't have meaningful or accurate names,
+//			 consider improving matters.
 
 const (
 	UNDEFINED TokenType = ``

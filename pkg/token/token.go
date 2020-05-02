@@ -5,12 +5,11 @@ import (
 	"strconv"
 )
 
-// Token represents a grammar token within a script.
 type Token struct {
 	Type  TokenType // Meaning
 	Value string    // Representation
-	Line  int       // Location within script
-	Col   int       // Location within line
+	Line  int
+	Col   int
 }
 
 // Precedence returns the priorty of the token within an expression.
@@ -38,7 +37,6 @@ func (tk Token) Precedence() int {
 	return 0
 }
 
-// String returns a string representation of the token.
 func (tk Token) String() string {
 
 	var v interface{}
@@ -57,15 +55,14 @@ func (tk Token) String() string {
 	return fmt.Sprintf(`%d:%d %s %v`, tk.Line+1, tk.Col, tk.Type, v)
 }
 
-// PrintTokens pretty prints all tokens in tks.
-func PrintTokens(tks []Token) {
+func PrettyPrint(tks []Token) {
 	for _, tk := range tks {
 		switch k := tk.Type; k {
 		case EOF:
-			println(k)
-			println()
+			fmt.Println(k)
+			fmt.Println()
 		default:
-			print(k + " ")
+			fmt.Print(k + " ")
 		}
 	}
 }

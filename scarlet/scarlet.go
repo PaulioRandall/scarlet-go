@@ -32,16 +32,15 @@ func main() { // Run it with `./godo run`
 	}
 }
 
-// run executes the input source code.
 func run(s string) {
 
 	println("# Scanned:")
 	scannedTokens := scanners.ScanAll(s, scanners.DEFAULT)
-	token.PrintTokens(scannedTokens)
+	token.PrettyPrint(scannedTokens)
 
 	println("# Sanitised:")
 	sanitisedTokens := sanitiser.SanitiseAll(scannedTokens)
-	token.PrintTokens(sanitisedTokens)
+	token.PrettyPrint(sanitisedTokens)
 
 	println("# Parsed:")
 	statements := parsers.ParseAll(sanitisedTokens, parsers.DEFAULT)
