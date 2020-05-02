@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// PrintErr prints an error.
+// PrintErr prints an error using fmt library.
 func PrintErr(e Err, file string) {
 
 	var (
@@ -22,23 +22,22 @@ func PrintErr(e Err, file string) {
 	)
 
 	if line < 0 || col < 0 {
-		writeln("[ERROR] %s", msg)
+		fPrintln("[ERROR] %s", msg)
 
 	} else {
 		// +1 converts from index to count
-		writeLines(script, line-LINES_BEFORE, line)
-		writeln("---")
-		writeLines(script, line, line+1)
-		writeln("--- [%d:%d->%d] %s", line+1, col, col+length, msg)
-		writeLines(script, line+1, line+1+LINES_AFTER)
+		fPrintLines(script, line-LINES_BEFORE, line)
+		fPrintln("---")
+		fPrintLines(script, line, line+1)
+		fPrintln("--- [%d:%d->%d] %s", line+1, col, col+length, msg)
+		fPrintLines(script, line+1, line+1+LINES_AFTER)
 	}
 
 	if cause != nil {
-		writeln("[CAUSE] %s", cause.Error())
+		fPrintln("[CAUSE] %s", cause.Error())
 	}
 }
 
-// loadScript loads a file.
 func loadScript(file string) []string {
 
 	bytes, e := ioutil.ReadFile(file)
@@ -51,21 +50,12 @@ func loadScript(file string) []string {
 	return strings.Split(code, "\n")
 }
 
-// write writes the specified string to the output.
-func write(s string, args ...interface{}) {
-	s = fmt.Sprintf(s, args...)
-	print(s)
+func fPrintln(s string, args ...interface{}) {
+	fmt.Printf(s, args...)
+	fmt.Println()
 }
 
-// writeln writes the specified string to the output appending a newline
-// afterward.
-func writeln(s string, args ...interface{}) {
-	s = fmt.Sprintf(s, args...)
-	println(s)
-}
-
-// writeLines prints a specified number of lines from the script.
-func writeLines(script []string, start, end int) {
+func fPrintLines(script []string, start, end int) {
 
 	size := len(script)
 
@@ -78,6 +68,6 @@ func writeLines(script []string, start, end int) {
 	}
 
 	for i := start; i < end; i++ {
-		writeln("%d: %s", i+1, script[i])
+		fPrintln("%d: %s", i+1, script[i])
 	}
 }

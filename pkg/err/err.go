@@ -4,7 +4,6 @@ import (
 	"errors"
 )
 
-// Err represents an error .
 type Err interface {
 	Error() string
 
@@ -17,8 +16,7 @@ type Err interface {
 	Length() int
 }
 
-// Try executes f. If f panics, a recovery is made and an Err representing the
-// error is returned.
+// Try executes f. If f panics, a recovery is made and an Err returned.
 func Try(f func()) (err Err) {
 
 	func() {
