@@ -4,20 +4,16 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-// Operation represents an mathematical operation, an expression with a left
-// side, opertor, and right side.
 type Operation struct {
 	Left     Expression
 	Operator token.Token
 	Right    Expression
 }
 
-// Token satisfies the Expression interface.
 func (op Operation) Token() token.Token {
 	return op.Operator
 }
 
-// String satisfies the Expression interface.
 func (op Operation) String(i int) string {
 
 	var s str

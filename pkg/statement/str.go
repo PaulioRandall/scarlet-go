@@ -1,6 +1,7 @@
 package statement
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
@@ -15,9 +16,9 @@ func (s *str) String() string {
 func (s *str) print() {
 	out := strings.ReplaceAll(string(*s), "\t", "  ")
 
-	println(out)
-	println(token.EOF)
-	println()
+	fmt.Println(out)
+	fmt.Println(token.EOF)
+	fmt.Println()
 }
 
 func (s *str) append(txt string) *str {
