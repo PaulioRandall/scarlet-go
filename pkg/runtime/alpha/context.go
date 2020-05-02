@@ -4,15 +4,13 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-// alphaContext represents the current executing context. It contains all state
-// available to the current scope such as available variables.
+// alphaContext implements pkg/runtime/Context.
 type alphaContext struct {
 	fixed  map[string]result
 	vars   map[string]result
 	parent *alphaContext
 }
 
-// String returns a human readable string representation of the context.
 func (ctx alphaContext) String() (s string) {
 
 	const NEWLINE = "\n"
@@ -36,8 +34,7 @@ func (ctx alphaContext) String() (s string) {
 	return
 }
 
-// Get returns the value assigned to a specified variable. If the ID does not
-// exist an empty result is returned.
+// Get returns an empty result if the ID does not exist.
 func (ctx *alphaContext) Get(id string) result {
 	v, ok := ctx.fixed[id]
 

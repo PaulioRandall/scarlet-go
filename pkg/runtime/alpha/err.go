@@ -13,8 +13,6 @@ func assertTrue(f string, tk token.Token, arg bool, errMsg string, args ...inter
 	}
 }
 
-// runtimeErr represents an error while executing statements or evaluating
-// expressions.
 type runtimeErr struct {
 	msg       string
 	cause     error
@@ -23,7 +21,6 @@ type runtimeErr struct {
 	length    int
 }
 
-// err returns a new runtime error.
 func err(f string, tk token.Token, msg string, args ...interface{}) e.Err {
 
 	s := "[runtime." + f + "] " + fmt.Sprintf(msg, args...)
@@ -35,27 +32,22 @@ func err(f string, tk token.Token, msg string, args ...interface{}) e.Err {
 	}
 }
 
-// Error satisfies the error interface.
 func (re runtimeErr) Error() string {
 	return re.msg
 }
 
-// Cause satisfies the Err interface.
 func (re runtimeErr) Cause() error {
 	return re.cause
 }
 
-// LineIndex satisfies the Err interface.
 func (re runtimeErr) LineIndex() int {
 	return re.lineIndex
 }
 
-// ColIndex satisfies the Err interface.
 func (re runtimeErr) ColIndex() int {
 	return re.colIndex
 }
 
-// Length satisfies the Err interface.
 func (re runtimeErr) Length() int {
 	return re.length
 }

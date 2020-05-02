@@ -7,8 +7,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-// TODO: Consider renaming this to `Result`
-
 // result represents a value within the executing program, either the value of
 // a variable or an intermediate within a statement.
 type result interface {
@@ -163,7 +161,6 @@ func valueOf(tk token.Token) result {
 	panic(err("valueOf", tk, "Invalid value type (%s)", tk.String()))
 }
 
-// parseFloat parses an NUMBER token into a numberLiteral.
 func parseFloat(tk token.Token) numberLiteral {
 	f, e := strconv.ParseFloat(tk.Value, 64)
 

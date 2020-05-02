@@ -11,7 +11,6 @@ type Context interface {
 	String() string
 }
 
-// Method represents a runtime method.
 type Method string
 
 const (
@@ -19,7 +18,6 @@ const (
 	ALPHA   Method = `ALPHA_RUNTIME`
 )
 
-// Run creates a new runtime and executes all statements in s.
 func Run(s []st.Statement, m Method) Context {
 
 	switch m {
