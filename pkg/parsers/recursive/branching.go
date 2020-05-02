@@ -10,9 +10,8 @@ func isMatch(p *pipe) bool {
 	return p.match(token.MATCH)
 }
 
-// Expects the following token pattern:
-// pattern := MATCH_OPEN guard {guard} BLOCK_END
 func parseMatch(p *pipe) st.Match {
+	// pattern := MATCH BLOCK_OPEN guard {guard} BLOCK_CLOSE
 
 	m := st.Match{
 		Key:   p.expect(`parseMatch`, token.MATCH),
@@ -28,9 +27,8 @@ func parseMatch(p *pipe) st.Match {
 	return m
 }
 
-// Expects the following token pattern:
-// pattern := {guard}
 func parseGuards(p *pipe) []st.Guard {
+	// pattern := {guard}
 
 	var gs []st.Guard
 
@@ -46,9 +44,8 @@ func isGuard(p *pipe) bool {
 	return p.match(token.GUARD_OPEN)
 }
 
-// Expects the following token pattern:
-// pattern := GUARD_OPEN expression GUARD_CLOSE (statement | block)
 func parseGuard(p *pipe) st.Guard {
+	// pattern := GUARD_OPEN expression GUARD_CLOSE (statement | block)
 
 	g := st.Guard{
 		Open: p.expect(`parseGuard`, token.GUARD_OPEN),
@@ -113,9 +110,9 @@ func isGuardBlock(p *pipe) bool {
 	return p.match(token.BLOCK_OPEN)
 }
 
-// Expects the following token pattern:
-// pattern := BLOCK_OPEN {statement} BLOCK_CLOSE
 func parseGuardBlock(p *pipe) st.Block {
+	// pattern := BLOCK_OPEN {statement} BLOCK_CLOSE
+
 	return st.Block{
 		Open:  p.expect(`parseGuardBlock`, token.BLOCK_OPEN),
 		Stats: parseStatements(p),
@@ -123,8 +120,6 @@ func parseGuardBlock(p *pipe) st.Block {
 	}
 }
 
-// Expects the following token pattern:
-// pattern := statement
 func parseGuardStatement(p *pipe) st.Block {
 	return st.Block{
 		Open:  p.peek(),

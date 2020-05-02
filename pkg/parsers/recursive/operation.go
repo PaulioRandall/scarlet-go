@@ -6,10 +6,9 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-// Expects the following token pattern:
-// pattern := {operator operand}
-// operand := literal | expression
 func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression {
+	// pattern := {operator operand}
+	// operand := literal | expression
 
 	// Warning: this is where parsing gets a little complicated!!
 
@@ -28,10 +27,9 @@ func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression
 	right := parseSubOperation(p)
 
 	// Recursively parse the expression on the right until an operator with
-	// less or equal precedence to this operations operator is encountered.
+	// precedence less or equal to this one is encountered.
 	right = parseOperation(p, right, op.Precedence())
 
-	// Create this operations.
 	left = st.Operation{left, op, right}
 
 	// Parse the remaining operations in this expression.
@@ -40,9 +38,8 @@ func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression
 	return left
 }
 
-// Expects the following token pattern:
-// pattern := func_call | literal | group
 func parseSubOperation(p *pipe) st.Expression {
+	// pattern := func_call | literal | group
 
 	switch {
 	case isFuncCall(p):
@@ -60,7 +57,7 @@ func parseSubOperation(p *pipe) st.Expression {
 
 func isLiteral(p *pipe) bool {
 	return p.matchAny(
-		token.ID, // Yes I know, but it works
+		token.ID, // Yes I know, need to sort it out
 		token.VOID,
 		token.BOOL,
 		token.NUMBER,
@@ -69,8 +66,6 @@ func isLiteral(p *pipe) bool {
 	)
 }
 
-// Expects the following token pattern:
-// pattern := literal
 func parseLiteral(p *pipe) st.Expression {
 	tk := p.next()
 
@@ -85,9 +80,8 @@ func isGroup(p *pipe) bool {
 	return p.match(token.PAREN_OPEN)
 }
 
-// Expects the following token pattern:
-// pattern := PAREN_OPEN expression PAREN_CLOSE
 func parseGroup(p *pipe) st.Expression {
+	// pattern := PAREN_OPEN expression PAREN_CLOSE
 
 	p.expect(`group`, token.PAREN_OPEN)
 

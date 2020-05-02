@@ -9,9 +9,8 @@ func isFuncDef(p *pipe) bool {
 	return p.match(token.FUNC)
 }
 
-// Expects the following token pattern:
-// pattern := FUNC params (statement | block)
 func parseFuncDef(p *pipe) st.Expression {
+	// pattern := FUNC params (statement | block)
 
 	f := st.FuncDef{
 		Open: p.expect(`parseFuncDef`, token.FUNC),
@@ -28,9 +27,8 @@ func parseFuncDef(p *pipe) st.Expression {
 	return f
 }
 
-// Expects the following token pattern:
-// pattern := PAREN_OPEN [ids] [RETURNS ids] PAREN_CLOSE
 func parseFuncParams(p *pipe) (in, out []token.Token) {
+	// pattern := PAREN_OPEN [ids] [RETURNS ids] PAREN_CLOSE
 
 	p.expect(`parseFuncParams`, token.PAREN_OPEN)
 
@@ -47,9 +45,8 @@ func parseFuncParams(p *pipe) (in, out []token.Token) {
 	return in, out
 }
 
-// Expects the following token pattern:
-// pattern := ID {DELIM ID}
 func parseFuncParamIds(p *pipe) []token.Token {
+	// pattern := ID {DELIM ID}
 
 	var ids []token.Token
 
@@ -69,9 +66,9 @@ func isFuncBlock(p *pipe) bool {
 	return p.match(token.BLOCK_OPEN)
 }
 
-// Expects the following token pattern:
-// pattern := BLOCK_OPEN {statement} BLOCK_CLOSE
 func parseFuncBlock(p *pipe) st.Block {
+	// pattern := BLOCK_OPEN {statement} BLOCK_CLOSE
+
 	return st.Block{
 		Open:  p.expect(`parseFuncBlock`, token.BLOCK_OPEN),
 		Stats: parseStatements(p),
@@ -79,8 +76,6 @@ func parseFuncBlock(p *pipe) st.Block {
 	}
 }
 
-// Expects the following token pattern:
-// pattern := statement
 func parseFuncStatement(p *pipe) st.Block {
 	return st.Block{
 		Open:  p.peek(),
@@ -93,9 +88,8 @@ func isFuncCall(p *pipe) (is bool) {
 	return p.matchSequence(token.ID, token.PAREN_OPEN)
 }
 
-// Expects the following token pattern:
-// pattern := ID PAREN_OPEN {expression} PAREN_CLOSE
 func parseFuncCall(p *pipe) st.Expression {
+	// pattern := ID PAREN_OPEN {expression} PAREN_CLOSE
 
 	id := p.expect(`parseFuncCall`, token.ID)
 	left := st.Identifier(id)

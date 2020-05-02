@@ -10,9 +10,9 @@ func isList(p *pipe) bool {
 	return p.match(token.LIST)
 }
 
-// Expects the following token pattern:
-// pattern := LIST LIST_OPEN {expression} LIST_CLOSE
 func parseList(p *pipe) st.Expression {
+	// pattern := LIST LIST_OPEN {expression} LIST_CLOSE
+
 	return st.List{
 		Key:   p.expect(`parseList`, token.LIST),
 		Open:  p.expect(`parseList`, token.BLOCK_OPEN),
@@ -25,9 +25,8 @@ func isListAccess(p *pipe) bool {
 	return p.matchSequence(token.ID, token.GUARD_OPEN)
 }
 
-// Expects the following token pattern:
-// pattern := ID GUARD_OPEN expression GUARD_CLOSE
 func parseListAccess(p *pipe) st.ListAccess {
+	// pattern := ID GUARD_OPEN expression GUARD_CLOSE
 
 	tk := p.expect(`listAccess`, token.ID)
 	id := st.Identifier(tk)

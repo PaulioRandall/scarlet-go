@@ -6,6 +6,7 @@ import (
 )
 
 func isAssignment(p *pipe) bool {
+	// match := FIX | ID DELIM | ID ASSIGN
 
 	if p.match(token.FIX) ||
 		p.matchSequence(token.ID, token.DELIM) ||
@@ -17,9 +18,8 @@ func isAssignment(p *pipe) bool {
 	return false
 }
 
-// Expects the following token pattern:
-// pattern := [FIX] ID { DELIM ID } ASSIGN expression {expression}
 func parseAssignment(p *pipe) st.Assignment {
+	// pattern := [FIX] ID { DELIM ID } ASSIGN expression {expression}
 
 	a := st.Assignment{
 		Fixed: p.accept(token.FIX),
@@ -41,9 +41,8 @@ func parseAssignment(p *pipe) st.Assignment {
 	return a
 }
 
-// Expects the following token pattern:
-// pattern := ID { DELIM ID }
 func parseAssignmentIds(p *pipe) []token.Token {
+	// pattern := ID { DELIM ID }
 
 	var ids []token.Token
 

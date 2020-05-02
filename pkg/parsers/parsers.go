@@ -7,7 +7,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/parsers/recursive"
 )
 
-// Method represents a scanning method
 type Method string
 
 const (

@@ -6,9 +6,8 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-// Expects the following token pattern:
-// pattern := {statement}
 func parseStatements(p *pipe) []st.Statement {
+	// pattern := {statement}
 
 	var stats []st.Statement
 
@@ -20,9 +19,8 @@ func parseStatements(p *pipe) []st.Statement {
 	return stats
 }
 
-// Expects the following token pattern:
-// pattern := assignment | guard | match | (expression TERMINATOR)
 func parseStatement(p *pipe) st.Statement {
+	// pattern := assignment | guard | match | expression TERMINATOR
 
 	switch {
 	case isAssignment(p):
