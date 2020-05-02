@@ -6,44 +6,37 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
 )
 
-// scannerErr represents an error with syntax.
-type scannerErr struct {
+type scanErr struct {
 	msg       string
 	lineIndex int
 	colIndex  int
 	length    int
 }
 
-// newErr returns a new scanner error.
 func newErr(ss *symbolStream, colOffset int, msg string, args ...interface{}) err.Err {
-	return &scannerErr{
+	return &scanErr{
 		lineIndex: ss.lineIndex(),
 		colIndex:  ss.colIndex() + colOffset,
 		msg:       fmt.Sprintf(msg, args...),
 	}
 }
 
-// Error satisfies the error interface.
-func (se scannerErr) Error() string {
+func (se scanErr) Error() string {
 	return se.msg
 }
 
-// Cause satisfies the Err interface.
-func (se scannerErr) Cause() error {
+func (se scanErr) Cause() error {
 	return nil
 }
 
-// LineIndex satisfies the Err interface.
-func (se scannerErr) LineIndex() int {
+func (se scanErr) LineIndex() int {
 	return se.lineIndex
 }
 
-// ColIndex satisfies the Err interface.
-func (se scannerErr) ColIndex() int {
+func (se scanErr) ColIndex() int {
 	return se.colIndex
 }
 
-// Length satisfies the Err interface.
-func (se scannerErr) Length() int {
+func (se scanErr) Length() int {
 	return se.length
 }

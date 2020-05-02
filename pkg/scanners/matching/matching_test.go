@@ -12,7 +12,7 @@ func doTest(t *testing.T, ss *symbolStream, exp ...Token) {
 
 	for i := 0; i < len(exp); i++ {
 
-		tk := read(ss)
+		tk := scanNext(ss)
 
 		if tk == (Token{}) {
 			require.Equal(t, len(exp), i, "Expected scanning to return more tokens")
@@ -77,7 +77,7 @@ func TestScanner_Next_1(t *testing.T) {
 		Col:  0,
 	}
 
-	require.Equal(t, expEOF, read(ss))
+	require.Equal(t, expEOF, scanNext(ss))
 }
 
 func TestScanner_Next_2(t *testing.T) {
@@ -85,6 +85,6 @@ func TestScanner_Next_2(t *testing.T) {
 		ss := &symbolStream{
 			runes: []rune("123.a"),
 		}
-		read(ss)
+		scanNext(ss)
 	})
 }

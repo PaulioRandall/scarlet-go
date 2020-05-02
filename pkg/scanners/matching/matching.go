@@ -4,8 +4,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-// ReadAll parses all tokens from s into an array.
-func ReadAll(src string) []token.Token {
+func ScanAll(src string) []token.Token {
 
 	var tk token.Token
 	var tks []token.Token
@@ -13,14 +12,14 @@ func ReadAll(src string) []token.Token {
 	s := &symbolStream{[]rune(src), 0, 0}
 
 	for tk.Type != token.EOF {
-		tk = read(s)
+		tk = scanNext(s)
 		tks = append(tks, tk)
 	}
 
 	return tks
 }
 
-func read(ss *symbolStream) token.Token {
+func scanNext(ss *symbolStream) token.Token {
 
 	if ss.empty() {
 		// TokenStream.Read requires an EOF token be returned upon an empty stream.
@@ -31,7 +30,7 @@ func read(ss *symbolStream) token.Token {
 		}
 	}
 
-	tk := readToken(ss)
+	tk := scanToken(ss)
 
 	if tk == (token.Token{}) {
 		panic(newErr(ss, 0, "Could not identify next token"))
@@ -44,10 +43,7 @@ func read(ss *symbolStream) token.Token {
 	return tk
 }
 
-// readToken attempts to match one of the non-terminal patterns to the next
-// set of terminals in the script. If found, the terminals are removed and used
-// to create a token.
-func readToken(ss *symbolStream) (_ token.Token) {
+func scanToken(ss *symbolStream) (_ token.Token) {
 
 	ps := patterns()
 	size := len(ps)
@@ -65,8 +61,6 @@ func readToken(ss *symbolStream) (_ token.Token) {
 	return
 }
 
-// tokenize creates a new token from the next non-terminal. It reads off n
-// symbols from ss ready for scanning the next token.
 func tokenize(ss *symbolStream, n int, l token.TokenType) token.Token {
 
 	tk := token.Token{

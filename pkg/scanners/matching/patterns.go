@@ -10,16 +10,11 @@ import (
 // only if the token appears next in the symbolStream else 0 is returned.
 type matcher func(*symbolStream) int
 
-// pattern represents a pattern for matching a specific lexeme of a token type.
-// The pattern is provided as a matcher function.
 type pattern struct {
 	tokenType token.TokenType
 	matcher   matcher
 }
 
-// patterns returns an array of all possible non-terminal symbols and their
-// mapping to a token type. Longest and highest priority static symbols should
-// be at the beginning of the array to ensure the correct token is scanned.
 func patterns() []pattern {
 	return []pattern{
 		pattern{token.NEWLINE, func(ss *symbolStream) int {
@@ -39,25 +34,25 @@ func patterns() []pattern {
 			return 0
 		}},
 		pattern{token.MATCH, func(ss *symbolStream) int {
-			return keywordMatcher(ss, "MATCH")
+			return matchWord(ss, "MATCH")
 		}},
 		pattern{token.BOOL, func(ss *symbolStream) int {
-			return keywordMatcher(ss, "FALSE")
+			return matchWord(ss, "FALSE")
 		}},
 		pattern{token.BOOL, func(ss *symbolStream) int {
-			return keywordMatcher(ss, "TRUE")
+			return matchWord(ss, "TRUE")
 		}},
 		pattern{token.LIST, func(ss *symbolStream) int {
-			return keywordMatcher(ss, "LIST")
+			return matchWord(ss, "LIST")
 		}},
 		pattern{token.FIX, func(ss *symbolStream) int {
-			return keywordMatcher(ss, "FIX")
+			return matchWord(ss, "FIX")
 		}},
 		pattern{token.EOF, func(ss *symbolStream) int {
-			return keywordMatcher(ss, "EOF")
+			return matchWord(ss, "EOF")
 		}},
 		pattern{token.FUNC, func(ss *symbolStream) int {
-			return keywordMatcher(ss, "F")
+			return matchWord(ss, "F")
 		}},
 		pattern{token.ID, func(ss *symbolStream) int {
 			return ss.countSymbolsWhile(0, func(i int, ru rune) bool {
@@ -70,79 +65,79 @@ func patterns() []pattern {
 			})
 		}},
 		pattern{token.ASSIGN, func(ss *symbolStream) int {
-			return stringMatcher(ss, ":=")
+			return matchStr(ss, ":=")
 		}},
 		pattern{token.RETURNS, func(ss *symbolStream) int {
-			return stringMatcher(ss, "->")
+			return matchStr(ss, "->")
 		}},
 		pattern{token.LESS_THAN_OR_EQUAL, func(ss *symbolStream) int {
-			return stringMatcher(ss, "<=")
+			return matchStr(ss, "<=")
 		}},
 		pattern{token.MORE_THAN_OR_EQUAL, func(ss *symbolStream) int {
-			return stringMatcher(ss, ">=")
+			return matchStr(ss, ">=")
 		}},
 		pattern{token.BLOCK_OPEN, func(ss *symbolStream) int {
-			return stringMatcher(ss, "{")
+			return matchStr(ss, "{")
 		}},
 		pattern{token.BLOCK_CLOSE, func(ss *symbolStream) int {
-			return stringMatcher(ss, "}")
+			return matchStr(ss, "}")
 		}},
 		pattern{token.PAREN_OPEN, func(ss *symbolStream) int {
-			return stringMatcher(ss, "(")
+			return matchStr(ss, "(")
 		}},
 		pattern{token.PAREN_CLOSE, func(ss *symbolStream) int {
-			return stringMatcher(ss, ")")
+			return matchStr(ss, ")")
 		}},
 		pattern{token.GUARD_OPEN, func(ss *symbolStream) int {
-			return stringMatcher(ss, "[")
+			return matchStr(ss, "[")
 		}},
 		pattern{token.GUARD_CLOSE, func(ss *symbolStream) int {
-			return stringMatcher(ss, "]")
+			return matchStr(ss, "]")
 		}},
 		pattern{token.DELIM, func(ss *symbolStream) int {
-			return stringMatcher(ss, ",")
+			return matchStr(ss, ",")
 		}},
 		pattern{token.VOID, func(ss *symbolStream) int {
-			return stringMatcher(ss, "_")
+			return matchStr(ss, "_")
 		}},
 		pattern{token.TERMINATOR, func(ss *symbolStream) int {
-			return stringMatcher(ss, ";")
+			return matchStr(ss, ";")
 		}},
 		pattern{token.SPELL, func(ss *symbolStream) int {
-			return stringMatcher(ss, "@")
+			return matchStr(ss, "@")
 		}},
 		pattern{token.ADD, func(ss *symbolStream) int {
-			return stringMatcher(ss, "+")
+			return matchStr(ss, "+")
 		}},
 		pattern{token.SUBTRACT, func(ss *symbolStream) int {
-			return stringMatcher(ss, "-")
+			return matchStr(ss, "-")
 		}},
 		pattern{token.MULTIPLY, func(ss *symbolStream) int {
-			return stringMatcher(ss, "*")
+			return matchStr(ss, "*")
 		}},
 		pattern{token.DIVIDE, func(ss *symbolStream) int {
-			return stringMatcher(ss, "/")
+			return matchStr(ss, "/")
 		}},
 		pattern{token.REMAINDER, func(ss *symbolStream) int {
-			return stringMatcher(ss, "%")
+			return matchStr(ss, "%")
 		}},
 		pattern{token.AND, func(ss *symbolStream) int {
-			return stringMatcher(ss, "&")
+			return matchStr(ss, "&")
 		}},
 		pattern{token.OR, func(ss *symbolStream) int {
-			return stringMatcher(ss, "|")
+			return matchStr(ss, "|")
 		}},
 		pattern{token.EQUAL, func(ss *symbolStream) int {
-			return stringMatcher(ss, "=")
+			return matchStr(ss, "=")
 		}},
 		pattern{token.NOT_EQUAL, func(ss *symbolStream) int {
-			return stringMatcher(ss, "#")
+			return matchStr(ss, "#")
 		}},
 		pattern{token.LESS_THAN, func(ss *symbolStream) int {
-			return stringMatcher(ss, "<")
+			return matchStr(ss, "<")
 		}},
 		pattern{token.MORE_THAN, func(ss *symbolStream) int {
-			return stringMatcher(ss, ">")
+			return matchStr(ss, ">")
 		}},
 		pattern{token.STRING, func(ss *symbolStream) int {
 
@@ -171,9 +166,9 @@ func patterns() []pattern {
 		}},
 		pattern{token.TEMPLATE, func(ss *symbolStream) int {
 			// As the name suggests, templates can be populated with the value of
-			// identifiers, but the scanner is not concerned with parsing these. It does
-			// need to watch out for escaped terminals that also represent the string
-			// closer (suffix).
+			// identifiers, but the scanner is not concerned with parsing these. It
+			// does need to watch out for escaped terminals that also represent the
+			// string closer (suffix).
 
 			const (
 				PREFIX     = `"`
@@ -216,17 +211,16 @@ func patterns() []pattern {
 				DELIM_LEN = len(DELIM)
 			)
 
-			n := integerMatcher(ss, 0)
+			n := matchInt(ss, 0)
 
 			if n == 0 || n == ss.len() || !ss.isMatch(n, DELIM) {
 				return n
 			}
 
-			fractionalLen := integerMatcher(ss, n+DELIM_LEN)
+			fractionalLen := matchInt(ss, n+DELIM_LEN)
 
 			if fractionalLen == 0 {
-				// One or many fractional digits must follow a delimiter. Zero following
-				// digits is invalid syntax, so we must panic.
+				// One or many fractional digits must follow a delimiter.
 				panic(newErr(ss, n+DELIM_LEN,
 					"Invalid syntax, expected digit after decimal point",
 				))
@@ -237,14 +231,11 @@ func patterns() []pattern {
 	}
 }
 
-// keywordMatcher returns the number of terminal symbols in kw, but only if the
-// next sequence of terminals matches the contents of kw and the terminal after
-// is not a valid keyword terminal.
-func keywordMatcher(ss *symbolStream, kw string) int {
+func matchWord(ss *symbolStream, kw string) int {
 
 	var WORD_LEN = len(kw)
 
-	if stringMatcher(ss, kw) > 0 {
+	if matchStr(ss, kw) > 0 {
 		if ss.len() == WORD_LEN || !unicode.IsLetter(ss.peekTerminal(WORD_LEN)) {
 			return WORD_LEN
 		}
@@ -253,9 +244,7 @@ func keywordMatcher(ss *symbolStream, kw string) int {
 	return 0
 }
 
-// stringMatcher returns the number of terminal symbols in s, but only if the
-// next sequence of terminals matches the contents of s.
-func stringMatcher(ss *symbolStream, s string) int {
+func matchStr(ss *symbolStream, s string) int {
 
 	if ss.len() >= len(s) && ss.isMatch(0, s) {
 		return len(s)
@@ -264,10 +253,7 @@ func stringMatcher(ss *symbolStream, s string) int {
 	return 0
 }
 
-// integerMatcher returns the number of terminal symbols of the next integer
-// in the TerminalStream, but only if the next token is an integer else 0 is
-// returned.
-func integerMatcher(ss *symbolStream, start int) int {
+func matchInt(ss *symbolStream, start int) int {
 	return ss.countSymbolsWhile(start, func(_ int, ru rune) bool {
 		return unicode.IsDigit(ru)
 	})
