@@ -20,40 +20,46 @@ b := list[1]
 
 
 
-FIX factorial := F(n -> n) {
-	[n > 1] {
-		n := n * factorial(n - 1)
-	}
+FIX factorial := F(n -> n) [n > 1] {
+	n := n * factorial(n - 1)
 }
 
 answer := factorial(5)
-
-
-
 
 
 EOF
 
 
 
-list[2] := `z`
+// TODO
+// list[2] := `z` 
+// list[2] := _
 
+// TODO
+s := "alpha = {list[0]}, beta = {list[1]}"
 
+// TODO
+LOOP i [i < 10] {
+}
 
-s := "alpha = {list(0)}, beta = {list(1)}"
+// TODO
+LOOP list -> i, v, m {
+}
 
-
-
-LOOP i [TRUE] DO
-	
-END
-
-
-LOOP list -> i, v, m DO
-	
-END
-
-
-
-
+// TODO
 @Println(list)
+
+
+
+// MAYBE
+increment := E(n) n + 1
+
+// MAYBE
+x := list[>] // Take last item
+x := list[<] // Take first item
+list[>] := 4 // Append to end
+list[<] := 0 // Append to front
+
+// MAYBE
+p := "key": "value"
+k, v := p[K], p[V]
