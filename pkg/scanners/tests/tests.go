@@ -23,31 +23,31 @@ func A3_Comments(t *testing.T, f ScanFunc) {
 	checkOne(t, exp, f(in))
 }
 
-func A4_Key_Match(t *testing.T, f ScanFunc) {
+func A4_Match(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{MATCH, "MATCH", 0, 0}, f("MATCH"))
 }
 
-func A5_Key_False(t *testing.T, f ScanFunc) {
+func A5_False(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{BOOL, "FALSE", 0, 0}, f("FALSE"))
 }
 
-func A6_Key_True(t *testing.T, f ScanFunc) {
+func A6_True(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{BOOL, "TRUE", 0, 0}, f("TRUE"))
 }
 
-func A7_Key_List(t *testing.T, f ScanFunc) {
+func A7_List(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{LIST, "LIST", 0, 0}, f("LIST"))
 }
 
-func A8_Key_Fix(t *testing.T, f ScanFunc) {
+func A8_Fix(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{FIX, "FIX", 0, 0}, f("FIX"))
 }
 
-func A9_Key_Eof(t *testing.T, f ScanFunc) {
+func A9_Eof(t *testing.T, f ScanFunc) {
 	check(t, []Token{}, f("EOF"))
 }
 
-func A10_Key_F(t *testing.T, f ScanFunc) {
+func A10_F(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{FUNC, "F", 0, 0}, f("F"))
 }
 
@@ -58,18 +58,42 @@ func A11_Identifiers(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{ID, "ab_", 0, 0}, f("ab_"))
 }
 
-func A12_Sym_Assign(t *testing.T, f ScanFunc) {
+func A12_Assign(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{ASSIGN, ":=", 0, 0}, f(":="))
 }
 
-func A13_Sym_Returns(t *testing.T, f ScanFunc) {
+func A13_Returns(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{RETURNS, "->", 0, 0}, f("->"))
 }
 
-func A14_Sym_LessThanOrEqual(t *testing.T, f ScanFunc) {
+func A14_LessThanOrEqual(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{LESS_THAN_OR_EQUAL, "<=", 0, 0}, f("<="))
 }
 
-func A15_Sym_MoreThanOrEqual(t *testing.T, f ScanFunc) {
+func A15_MoreThanOrEqual(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{MORE_THAN_OR_EQUAL, ">=", 0, 0}, f(">="))
+}
+
+func A16_BlockOpen(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{BLOCK_OPEN, "{", 0, 0}, f("{"))
+}
+
+func A17_BlockClose(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{BLOCK_CLOSE, "}", 0, 0}, f("}"))
+}
+
+func A18_ParenOpen(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{PAREN_OPEN, "(", 0, 0}, f("("))
+}
+
+func A19_ParenClose(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{PAREN_CLOSE, ")", 0, 0}, f(")"))
+}
+
+func A20_GuardOpen(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{GUARD_OPEN, "[", 0, 0}, f("["))
+}
+
+func A21_GuardClose(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{GUARD_CLOSE, "]", 0, 0}, f("]"))
 }
