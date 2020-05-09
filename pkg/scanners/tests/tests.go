@@ -84,3 +84,53 @@ func A6_Bool_True(t *testing.T, f ScanFunc) {
 
 	check(t, exps, acts)
 }
+
+func A7_List(t *testing.T, f ScanFunc) {
+
+	in := "LIST"
+
+	exps := []Token{
+		Token{LIST, "LIST", 0, 0},
+	}
+
+	acts := f(in)
+
+	check(t, exps, acts)
+}
+
+func A8_Fix(t *testing.T, f ScanFunc) {
+
+	in := "FIX"
+
+	exps := []Token{
+		Token{FIX, "FIX", 0, 0},
+	}
+
+	acts := f(in)
+
+	check(t, exps, acts)
+}
+
+func A9_Eof(t *testing.T, f ScanFunc) {
+
+	in := "EOF"
+
+	exps := []Token{}
+
+	acts := f(in)
+
+	check(t, exps, acts)
+}
+
+func A10_F(t *testing.T, f ScanFunc) {
+
+	in := "F"
+
+	exps := []Token{
+		Token{FUNC, "F", 0, 0},
+	}
+
+	acts := f(in)
+
+	check(t, exps, acts)
+}
