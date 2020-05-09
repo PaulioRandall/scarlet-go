@@ -6,7 +6,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func A1_Newlines(t *testing.T, tag string, f ScanFunc) {
+func A1_Newlines(t *testing.T, f ScanFunc) {
 
 	in := "\n\r\n"
 
@@ -17,10 +17,10 @@ func A1_Newlines(t *testing.T, tag string, f ScanFunc) {
 
 	acts := f(in)
 
-	check(t, tag+".A1", exps, acts)
+	check(t, exps, acts)
 }
 
-func A2_Whitespace(t *testing.T, tag string, f ScanFunc) {
+func A2_Whitespace(t *testing.T, f ScanFunc) {
 
 	in := " \t\r\v\f"
 
@@ -30,10 +30,10 @@ func A2_Whitespace(t *testing.T, tag string, f ScanFunc) {
 
 	acts := f(in)
 
-	check(t, tag+".A2", exps, acts)
+	check(t, exps, acts)
 }
 
-func A3_Comments(t *testing.T, tag string, f ScanFunc) {
+func A3_Comments(t *testing.T, f ScanFunc) {
 
 	in := "// This is a comment"
 
@@ -43,10 +43,10 @@ func A3_Comments(t *testing.T, tag string, f ScanFunc) {
 
 	acts := f(in)
 
-	check(t, tag+".A3", exps, acts)
+	check(t, exps, acts)
 }
 
-func A4_Match(t *testing.T, tag string, f ScanFunc) {
+func A4_Match(t *testing.T, f ScanFunc) {
 
 	in := "MATCH"
 
@@ -56,10 +56,10 @@ func A4_Match(t *testing.T, tag string, f ScanFunc) {
 
 	acts := f(in)
 
-	check(t, tag+".A4", exps, acts)
+	check(t, exps, acts)
 }
 
-func A5_Bool_False(t *testing.T, tag string, f ScanFunc) {
+func A5_Bool_False(t *testing.T, f ScanFunc) {
 
 	in := "FALSE"
 
@@ -69,10 +69,10 @@ func A5_Bool_False(t *testing.T, tag string, f ScanFunc) {
 
 	acts := f(in)
 
-	check(t, tag+".A5", exps, acts)
+	check(t, exps, acts)
 }
 
-func A6_Bool_True(t *testing.T, tag string, f ScanFunc) {
+func A6_Bool_True(t *testing.T, f ScanFunc) {
 
 	in := "TRUE"
 
@@ -82,5 +82,5 @@ func A6_Bool_True(t *testing.T, tag string, f ScanFunc) {
 
 	acts := f(in)
 
-	check(t, tag+".A6", exps, acts)
+	check(t, exps, acts)
 }
