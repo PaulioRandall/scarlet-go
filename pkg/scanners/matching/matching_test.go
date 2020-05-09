@@ -165,3 +165,11 @@ func Test_T39_Number(t *testing.T) {
 func Test_S1_Assignment(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S1_Assignment)
 }
+
+func Test_S2_MultiAssignment(t *testing.T) {
+	tests.Run(t, ScanAll, tests.S2_MultiAssignment)
+}
+
+func Test_S3_GuardBlock(t *testing.T) {
+	tests.Run(t, ScanAll, tests.S3_GuardBlock)
+}
