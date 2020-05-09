@@ -12,9 +12,7 @@ func A1_Newlines(t *testing.T, f ScanFunc) {
 }
 
 func A2_Whitespace(t *testing.T, f ScanFunc) {
-	in := " \t\r\v\f"
-	exp := Token{WHITESPACE, " \t\r\v\f", 0, 0}
-	checkOne(t, exp, f(in))
+	checkOne(t, Token{WHITESPACE, " \t\r\v\f", 0, 0}, f(" \t\r\v\f"))
 }
 
 func A3_Comments(t *testing.T, f ScanFunc) {
@@ -49,7 +47,7 @@ func A8_Fix(t *testing.T, f ScanFunc) {
 }
 
 func A9_Eof(t *testing.T, f ScanFunc) {
-	check(t, []Token{}, f("EOF"))
+	checkMany(t, []Token{}, f("EOF"))
 }
 
 func A10_F(t *testing.T, f ScanFunc) {

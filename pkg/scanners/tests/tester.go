@@ -24,7 +24,7 @@ func Run(t *testing.T, sf ScanFunc, tf TestFunc) {
 	tf(t, sf)
 }
 
-func check(t *testing.T, exps, acts []Token) {
+func checkMany(t *testing.T, exps, acts []Token) {
 
 	checkEOF(t, acts)
 
