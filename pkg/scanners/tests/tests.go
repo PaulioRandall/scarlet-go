@@ -25,22 +25,27 @@ func A3_Comments(t *testing.T, f ScanFunc) {
 
 func A4_Match(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{MATCH, "MATCH", 0, 0}, f("MATCH"))
+	checkOneNot(t, Token{MATCH, "MATCH", 0, 0}, f("MATCHH"))
 }
 
 func A5_False(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{BOOL, "FALSE", 0, 0}, f("FALSE"))
+	checkOneNot(t, Token{BOOL, "FALSE", 0, 0}, f("FALSEE"))
 }
 
 func A6_True(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{BOOL, "TRUE", 0, 0}, f("TRUE"))
+	checkOneNot(t, Token{BOOL, "TRUE", 0, 0}, f("TRUEE"))
 }
 
 func A7_List(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{LIST, "LIST", 0, 0}, f("LIST"))
+	checkOneNot(t, Token{LIST, "LIST", 0, 0}, f("LISTT"))
 }
 
 func A8_Fix(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{FIX, "FIX", 0, 0}, f("FIX"))
+	checkOneNot(t, Token{FIX, "FIX", 0, 0}, f("FIXX"))
 }
 
 func A9_Eof(t *testing.T, f ScanFunc) {
@@ -49,6 +54,7 @@ func A9_Eof(t *testing.T, f ScanFunc) {
 
 func A10_F(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{FUNC, "F", 0, 0}, f("F"))
+	checkOneNot(t, Token{FUNC, "F", 0, 0}, f("FF"))
 }
 
 func A11_Identifiers(t *testing.T, f ScanFunc) {
@@ -56,6 +62,7 @@ func A11_Identifiers(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{ID, "abc", 0, 0}, f("abc"))
 	checkOne(t, Token{ID, "a_c", 0, 0}, f("a_c"))
 	checkOne(t, Token{ID, "ab_", 0, 0}, f("ab_"))
+	checkOneNot(t, Token{ID, "_", 0, 0}, f("_"))
 }
 
 func A12_Assign(t *testing.T, f ScanFunc) {

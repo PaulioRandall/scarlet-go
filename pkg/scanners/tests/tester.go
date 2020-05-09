@@ -52,7 +52,7 @@ func checkOne(t *testing.T, exp Token, acts []Token) {
 func checkOneNot(t *testing.T, notExp Token, acts []Token) {
 	checkSize(t, 2, acts)
 	require.NotEqual(t, notExp, acts[0],
-		"Expected any token except ("+notExp.String()+") but got it anyway")
+		"Expected any token except ("+notExp.String()+") but got it")
 	checkEOF(t, acts)
 }
 
