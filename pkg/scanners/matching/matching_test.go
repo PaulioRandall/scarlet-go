@@ -125,3 +125,27 @@ func Test_A29_Sym_Divide(t *testing.T) {
 func Test_A30_Sym_Remainder(t *testing.T) {
 	tests.Run(t, ScanAll, tests.A30_Remainder)
 }
+
+func Test_A31_Sym_And(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A31_And)
+}
+
+func Test_A32_Sym_Or(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A32_Or)
+}
+
+func Test_A33_Sym_Equal(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A33_Equal)
+}
+
+func Test_A34_Sym_NotEqual(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A34_NotEqual)
+}
+
+func Test_A35_Sym_LessThan(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A35_LessThan)
+}
+
+func Test_A36_Sym_MoreThan(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A36_MoreThan)
+}

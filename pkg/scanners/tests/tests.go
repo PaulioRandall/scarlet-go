@@ -133,3 +133,27 @@ func A29_Divide(t *testing.T, f ScanFunc) {
 func A30_Remainder(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{REMAINDER, "%", 0, 0}, f("%"))
 }
+
+func A31_And(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{AND, "&", 0, 0}, f("&"))
+}
+
+func A32_Or(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{OR, "|", 0, 0}, f("|"))
+}
+
+func A33_Equal(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{EQUAL, "=", 0, 0}, f("="))
+}
+
+func A34_NotEqual(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{NOT_EQUAL, "#", 0, 0}, f("#"))
+}
+
+func A35_LessThan(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{LESS_THAN, "<", 0, 0}, f("<"))
+}
+
+func A36_MoreThan(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{MORE_THAN, ">", 0, 0}, f(">"))
+}
