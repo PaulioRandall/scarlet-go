@@ -7,5 +7,5 @@ import (
 )
 
 func TestScanner(t *testing.T) {
-	tests.DoTests(t, ScanAll)
+	tests.DoTests(t, "matching", ScanAll)
 }

@@ -40,16 +40,16 @@ func (ss *symbolStream) isMatch(start int, s string) bool {
 
 func (ss *symbolStream) countSymbolsWhile(start int, f func(int, rune) bool) int {
 
-	var ru rune
-	var i int
+	runes := ss.runes[start:]
+	size := len(runes)
 
-	for i, ru = range ss.runes[start:] {
-		if !f(i, ru) {
-			break
+	for i := 0; i < size; i++ {
+		if !f(i, runes[i]) {
+			return i
 		}
 	}
 
-	return i
+	return size
 }
 
 func (ss *symbolStream) peekTerminal(index int) rune {

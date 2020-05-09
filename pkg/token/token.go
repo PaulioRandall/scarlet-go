@@ -41,13 +41,14 @@ func (tk Token) String() string {
 
 	var v interface{}
 
-	if tk.Type == TEMPLATE {
+	switch tk.Type {
+	case TEMPLATE, TERMINATOR, NEWLINE, WHITESPACE:
 		v = strconv.QuoteToGraphic(tk.Value)
 
-	} else if tk.Type == STRING {
+	case STRING:
 		v = "`" + tk.Value + "`"
 
-	} else {
+	default:
 		v = tk.Value
 	}
 
