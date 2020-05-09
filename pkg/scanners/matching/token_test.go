@@ -149,3 +149,11 @@ func Test_A35_LessThan(t *testing.T) {
 func Test_A36_MoreThan(t *testing.T) {
 	tests.Run(t, ScanAll, tests.A36_MoreThan)
 }
+
+func Test_A37_String(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A37_String)
+}
+
+func Test_A38_Template(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A38_Template)
+}

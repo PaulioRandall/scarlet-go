@@ -158,4 +158,23 @@ func A36_MoreThan(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{MORE_THAN, ">", 0, 0}, f(">"))
 }
 
-// NEXT: Write check function to catch expected panics
+func A37_String(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{STRING, "``", 0, 0}, f("``"))
+	checkOne(t, Token{STRING, "`abc`", 0, 0}, f("`abc`"))
+	checkPanic(t, func() { f("`") })
+	checkPanic(t, func() { f("`abc") })
+}
+
+func A38_Template(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{TEMPLATE, `""`, 0, 0}, f(`""`))
+	checkOne(t, Token{TEMPLATE, `"abc"`, 0, 0}, f(`"abc"`))
+	checkOne(t, Token{TEMPLATE, `"\""`, 0, 0}, f(`"\""`))
+	checkOne(t, Token{TEMPLATE, `"\\"`, 0, 0}, f(`"\\"`))
+	checkOne(t, Token{TEMPLATE, `"\\\\\\"`, 0, 0}, f(`"\\\\\\"`))
+	checkOne(t, Token{TEMPLATE, `"abc\"abc"`, 0, 0}, f(`"abc\"abc"`))
+	checkPanic(t, func() { f(`"`) })
+	checkPanic(t, func() { f(`"abc`) })
+	checkPanic(t, func() { f(`"\"`) })
+	checkPanic(t, func() { f(`"\\`) })
+	checkPanic(t, func() { f(`"\\\\\"`) })
+}

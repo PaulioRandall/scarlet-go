@@ -1,14 +1,10 @@
 
-divideAndFmt := a, b -> r, e DO
-	WATCH e
-		[b = 0] DO
-			e := `Can't divide by zero`
-		END
-		
-		r := a / b
-		r, e := @FmtReal(r, `.##`)
-	END
-END
+divideAndFmt := F a, b, ^r, ^e {
+	WATCH e {
+		[b = 0]: e := `Can't divide by zero`
+		r, e := @FmtReal(a / b, `.##`)
+	}
+}
 
 calc := F(argParser -> e) DO
 	WATCH e

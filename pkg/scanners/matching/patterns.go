@@ -173,8 +173,7 @@ func patterns() []pattern {
 			const (
 				PREFIX     = `"`
 				SUFFIX     = `"`
-				ESCAPE     = `/`
-				PREFIX_LEN = 1
+				ESCAPE     = `\`
 				SUFFIX_LEN = 1
 			)
 
@@ -182,27 +181,27 @@ func patterns() []pattern {
 				return 0
 			}
 
-			var prevEscaped bool
+			escaped := true // Init true to escape prefix
 
 			n := ss.countSymbolsWhile(0, func(i int, ru rune) bool {
 
-				escaped := prevEscaped
-				prevEscaped = false
+				switch {
+				case escaped:
+					escaped = false
 
-				if ss.isMatch(i, ESCAPE) {
-					prevEscaped = !escaped
-					return true
-				}
-
-				if !escaped && ss.isMatch(i+PREFIX_LEN, SUFFIX) {
+				case ss.isMatch(i, SUFFIX):
 					return false
+
+				case ss.isMatch(i, ESCAPE):
+					escaped = true
+					return true
 				}
 
 				checkForMissingTermination(ss, i)
 				return true
 			})
 
-			return PREFIX_LEN + n + SUFFIX_LEN
+			return n + SUFFIX_LEN
 		}},
 		pattern{token.NUMBER, func(ss *symbolStream) int {
 

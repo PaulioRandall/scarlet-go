@@ -23,10 +23,6 @@ func Run(t *testing.T, sf ScanFunc, tf TestFunc) {
 	tf(t, sf)
 }
 
-func checkOne(t *testing.T, exp Token, acts []Token) {
-	check(t, []Token{exp}, acts)
-}
-
 func check(t *testing.T, exps, acts []Token) {
 
 	tkStr := func(tks []Token, i int) (_ string) {
@@ -53,4 +49,12 @@ func check(t *testing.T, exps, acts []Token) {
 		require.Equal(t, exps[i], acts[i],
 			"Expected ("+tkStr(exps, i)+") but got ("+tkStr(acts, i)+")")
 	}
+}
+
+func checkOne(t *testing.T, exp Token, acts []Token) {
+	check(t, []Token{exp}, acts)
+}
+
+func checkPanic(t *testing.T, f func()) {
+	require.Panics(t, f, "Expected a panic")
 }
