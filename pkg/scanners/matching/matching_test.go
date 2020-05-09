@@ -14,6 +14,10 @@ func TestScanner(t *testing.T) {
 		F:   ScanAll,
 	}
 
-	tester.Run(tests.A1)
-	tester.Run(tests.A2)
+	tester.Run(tests.A1_Newlines)
+	tester.Run(tests.A2_Whitespace)
+	tester.Run(tests.A3_Comments)
+	tester.Run(tests.A4_Match)
+	tester.Run(tests.A5_Bool_False)
+	tester.Run(tests.A6_Bool_True)
 }
