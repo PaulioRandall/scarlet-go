@@ -56,3 +56,39 @@ func S3_GuardBlock(t *testing.T, f ScanFunc) {
 
 	checkMany(t, exps, f(in))
 }
+
+func S4_MatchBlock(t *testing.T, f ScanFunc) {
+
+	in := "MATCH {\n" +
+		"\t[FALSE] x:=FALSE\n" +
+		"\t[TRUE] x:=TRUE\n" +
+		"}"
+
+	exps := []Token{
+		Token{MATCH, "MATCH", 0, 0}, // Line start
+		Token{WHITESPACE, " ", 0, 5},
+		Token{BLOCK_OPEN, "{", 0, 6},
+		Token{NEWLINE, "\n", 0, 7}, // Line start
+		Token{WHITESPACE, "\t", 1, 0},
+		Token{GUARD_OPEN, "[", 1, 1},
+		Token{BOOL, "FALSE", 1, 2},
+		Token{GUARD_CLOSE, "]", 1, 7},
+		Token{WHITESPACE, " ", 1, 8},
+		Token{ID, "x", 1, 9},
+		Token{ASSIGN, ":=", 1, 10},
+		Token{BOOL, "FALSE", 1, 12},
+		Token{NEWLINE, "\n", 1, 17},
+		Token{WHITESPACE, "\t", 2, 0}, // Line start
+		Token{GUARD_OPEN, "[", 2, 1},
+		Token{BOOL, "TRUE", 2, 2},
+		Token{GUARD_CLOSE, "]", 2, 6},
+		Token{WHITESPACE, " ", 2, 7},
+		Token{ID, "x", 2, 8},
+		Token{ASSIGN, ":=", 2, 9},
+		Token{BOOL, "TRUE", 2, 11},
+		Token{NEWLINE, "\n", 2, 15},
+		Token{BLOCK_CLOSE, "}", 3, 0}, // Line start
+	}
+
+	checkMany(t, exps, f(in))
+}

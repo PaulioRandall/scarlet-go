@@ -173,3 +173,7 @@ func Test_S2_MultiAssignment(t *testing.T) {
 func Test_S3_GuardBlock(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S3_GuardBlock)
 }
+
+func Test_S4_MatchBlock(t *testing.T) {
+	tests.Run(t, ScanAll, tests.S4_MatchBlock)
+}
