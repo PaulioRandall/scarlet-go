@@ -45,3 +45,7 @@ func Test_A9_Eof(t *testing.T) {
 func Test_A10_F(t *testing.T) {
 	tests.Run(t, ScanAll, tests.A10_F)
 }
+
+func Test_A11_F(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A11_Identifiers)
+}

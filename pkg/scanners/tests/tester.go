@@ -23,6 +23,10 @@ func Run(t *testing.T, sf ScanFunc, tf TestFunc) {
 	tf(t, sf)
 }
 
+func checkOne(t *testing.T, exp Token, acts []Token) {
+	check(t, []Token{exp}, acts)
+}
+
 func check(t *testing.T, exps, acts []Token) {
 
 	tkStr := func(tks []Token, i int) (_ string) {
