@@ -6,160 +6,160 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/scanners/tests"
 )
 
-func Test_A1_Newlines(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A1_Newlines)
+func Test_T1_Newlines(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T1_Newlines)
 }
 
-func Test_A2_Whitespace(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A2_Whitespace)
+func Test_T2_Whitespace(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T2_Whitespace)
 }
 
-func Test_A3_Comments(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A3_Comments)
+func Test_T3_Comments(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T3_Comments)
 }
 
-func Test_A4_Match(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A4_Match)
+func Test_T4_Match(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T4_Match)
 }
 
-func Test_A5_False(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A5_False)
+func Test_T5_False(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T5_False)
 }
 
-func Test_A6_True(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A6_True)
+func Test_T6_True(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T6_True)
 }
 
-func Test_A7_List(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A7_List)
+func Test_T7_List(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T7_List)
 }
 
-func Test_A8_Fix(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A8_Fix)
+func Test_T8_Fix(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T8_Fix)
 }
 
-func Test_A9_Eof(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A9_Eof)
+func Test_T9_Eof(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T9_Eof)
 }
 
-func Test_A10_F(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A10_F)
+func Test_T10_F(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T10_F)
 }
 
-func Test_A11_Identifiers(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A11_Identifiers)
+func Test_T11_Identifiers(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T11_Identifiers)
 }
 
-func Test_A12_Assign(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A12_Assign)
+func Test_T12_Assign(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T12_Assign)
 }
 
-func Test_A13_Returns(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A13_Returns)
+func Test_T13_Returns(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T13_Returns)
 }
 
-func Test_A14_LessThanOrEqual(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A14_LessThanOrEqual)
+func Test_T14_LessThanOrEqual(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T14_LessThanOrEqual)
 }
 
-func Test_A15_MoreThanOrEqual(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A15_MoreThanOrEqual)
+func Test_T15_MoreThanOrEqual(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T15_MoreThanOrEqual)
 }
 
-func Test_A16_BlockOpen(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A16_BlockOpen)
+func Test_T16_BlockOpen(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T16_BlockOpen)
 }
 
-func Test_A17_BlockOpen(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A17_BlockClose)
+func Test_T17_BlockOpen(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T17_BlockClose)
 }
 
-func Test_A18_ParenOpen(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A18_ParenOpen)
+func Test_T18_ParenOpen(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T18_ParenOpen)
 }
 
-func Test_A19_ParenClose(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A19_ParenClose)
+func Test_T19_ParenClose(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T19_ParenClose)
 }
 
-func Test_A20_GuardOpen(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A20_GuardOpen)
+func Test_T20_GuardOpen(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T20_GuardOpen)
 }
 
-func Test_A21_GuardClose(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A21_GuardClose)
+func Test_T21_GuardClose(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T21_GuardClose)
 }
 
-func Test_A22_Delim(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A22_Delim)
+func Test_T22_Delim(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T22_Delim)
 }
 
-func Test_A23_Void(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A23_Void)
+func Test_T23_Void(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T23_Void)
 }
 
-func Test_A24_Terminator(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A24_Terminator)
+func Test_T24_Terminator(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T24_Terminator)
 }
 
-func Test_A25_Spell(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A25_Spell)
+func Test_T25_Spell(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T25_Spell)
 }
 
-func Test_A26_Add(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A26_Add)
+func Test_T26_Add(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T26_Add)
 }
 
-func Test_A27_Subtract(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A27_Subtract)
+func Test_T27_Subtract(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T27_Subtract)
 }
 
-func Test_A28_Multiply(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A28_Multiply)
+func Test_T28_Multiply(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T28_Multiply)
 }
 
-func Test_A29_Divide(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A29_Divide)
+func Test_T29_Divide(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T29_Divide)
 }
 
-func Test_A30_Remainder(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A30_Remainder)
+func Test_T30_Remainder(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T30_Remainder)
 }
 
-func Test_A31_And(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A31_And)
+func Test_T31_And(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T31_And)
 }
 
-func Test_A32_Or(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A32_Or)
+func Test_T32_Or(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T32_Or)
 }
 
-func Test_A33_Equal(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A33_Equal)
+func Test_T33_Equal(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T33_Equal)
 }
 
-func Test_A34_NotEqual(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A34_NotEqual)
+func Test_T34_NotEqual(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T34_NotEqual)
 }
 
-func Test_A35_LessThan(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A35_LessThan)
+func Test_T35_LessThan(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T35_LessThan)
 }
 
-func Test_A36_MoreThan(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A36_MoreThan)
+func Test_T36_MoreThan(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T36_MoreThan)
 }
 
-func Test_A37_String(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A37_String)
+func Test_T37_String(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T37_String)
 }
 
-func Test_A38_Template(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A38_Template)
+func Test_T38_Template(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T38_Template)
 }
 
-func Test_A39_Number(t *testing.T) {
-	tests.Run(t, ScanAll, tests.A39_Number)
+func Test_T39_Number(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T39_Number)
 }
 
 func Test_S1_Assignment(t *testing.T) {
