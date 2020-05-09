@@ -178,3 +178,11 @@ func A38_Template(t *testing.T, f ScanFunc) {
 	checkPanic(t, func() { f(`"\\`) })
 	checkPanic(t, func() { f(`"\\\\\"`) })
 }
+
+func A39_Number(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{NUMBER, "1", 0, 0}, f("1"))
+	checkOne(t, Token{NUMBER, "123", 0, 0}, f("123"))
+	checkOne(t, Token{NUMBER, "1.0", 0, 0}, f("1.0"))
+	checkOne(t, Token{NUMBER, "123.456", 0, 0}, f("123.456"))
+	checkPanic(t, func() { f("1.") })
+}

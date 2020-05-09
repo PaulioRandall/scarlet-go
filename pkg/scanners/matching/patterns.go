@@ -207,7 +207,7 @@ func patterns() []pattern {
 
 			const (
 				DELIM     = "."
-				DELIM_LEN = len(DELIM)
+				DELIM_LEN = 1
 			)
 
 			n := matchInt(ss, 0)

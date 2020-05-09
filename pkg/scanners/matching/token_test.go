@@ -157,3 +157,7 @@ func Test_A37_String(t *testing.T) {
 func Test_A38_Template(t *testing.T) {
 	tests.Run(t, ScanAll, tests.A38_Template)
 }
+
+func Test_A39_Number(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A39_Number)
+}
