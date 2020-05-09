@@ -97,3 +97,19 @@ func A20_GuardOpen(t *testing.T, f ScanFunc) {
 func A21_GuardClose(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{GUARD_CLOSE, "]", 0, 0}, f("]"))
 }
+
+func A22_Delim(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{DELIM, ",", 0, 0}, f(","))
+}
+
+func A23_Void(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{VOID, "_", 0, 0}, f("_"))
+}
+
+func A24_Terminator(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{TERMINATOR, ";", 0, 0}, f(";"))
+}
+
+func A25_Spell(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{SPELL, "@", 0, 0}, f("@"))
+}

@@ -89,3 +89,19 @@ func Test_A20_Sym_GuardOpen(t *testing.T) {
 func Test_A21_Sym_GuardClose(t *testing.T) {
 	tests.Run(t, ScanAll, tests.A21_GuardClose)
 }
+
+func Test_A22_Sym_Delim(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A22_Delim)
+}
+
+func Test_A23_Sym_Void(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A23_Void)
+}
+
+func Test_A24_Sym_Terminator(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A24_Terminator)
+}
+
+func Test_A25_Sym_Spell(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A25_Spell)
+}
