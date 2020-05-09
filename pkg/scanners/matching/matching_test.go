@@ -105,3 +105,23 @@ func Test_A24_Sym_Terminator(t *testing.T) {
 func Test_A25_Sym_Spell(t *testing.T) {
 	tests.Run(t, ScanAll, tests.A25_Spell)
 }
+
+func Test_A26_Sym_Add(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A26_Add)
+}
+
+func Test_A27_Sym_Subtract(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A27_Subtract)
+}
+
+func Test_A28_Sym_Multiply(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A28_Multiply)
+}
+
+func Test_A29_Sym_Divide(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A29_Divide)
+}
+
+func Test_A30_Sym_Remainder(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A30_Remainder)
+}

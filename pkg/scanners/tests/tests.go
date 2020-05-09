@@ -113,3 +113,23 @@ func A24_Terminator(t *testing.T, f ScanFunc) {
 func A25_Spell(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{SPELL, "@", 0, 0}, f("@"))
 }
+
+func A26_Add(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{ADD, "+", 0, 0}, f("+"))
+}
+
+func A27_Subtract(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{SUBTRACT, "-", 0, 0}, f("-"))
+}
+
+func A28_Multiply(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{MULTIPLY, "*", 0, 0}, f("*"))
+}
+
+func A29_Divide(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{DIVIDE, "/", 0, 0}, f("/"))
+}
+
+func A30_Remainder(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{REMAINDER, "%", 0, 0}, f("%"))
+}
