@@ -157,3 +157,5 @@ func A35_LessThan(t *testing.T, f ScanFunc) {
 func A36_MoreThan(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{MORE_THAN, ">", 0, 0}, f(">"))
 }
+
+// NEXT: Write check function to catch expected panics
