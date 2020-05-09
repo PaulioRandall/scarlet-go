@@ -41,3 +41,7 @@ func Test_A8_Fix(t *testing.T) {
 func Test_A9_Eof(t *testing.T) {
 	tests.Run(t, ScanAll, tests.A9_Eof)
 }
+
+func Test_A10_F(t *testing.T) {
+	tests.Run(t, ScanAll, tests.A10_F)
+}

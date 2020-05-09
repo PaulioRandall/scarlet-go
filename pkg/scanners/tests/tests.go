@@ -15,9 +15,7 @@ func A1_Newlines(t *testing.T, f ScanFunc) {
 		Token{NEWLINE, "\r\n", 1, 0},
 	}
 
-	acts := f(in)
-
-	check(t, exps, acts)
+	check(t, exps, f(in))
 }
 
 func A2_Whitespace(t *testing.T, f ScanFunc) {
@@ -28,9 +26,7 @@ func A2_Whitespace(t *testing.T, f ScanFunc) {
 		Token{WHITESPACE, " \t\r\v\f", 0, 0},
 	}
 
-	acts := f(in)
-
-	check(t, exps, acts)
+	check(t, exps, f(in))
 }
 
 func A3_Comments(t *testing.T, f ScanFunc) {
@@ -41,9 +37,7 @@ func A3_Comments(t *testing.T, f ScanFunc) {
 		Token{COMMENT, "// This is a comment", 0, 0},
 	}
 
-	acts := f(in)
-
-	check(t, exps, acts)
+	check(t, exps, f(in))
 }
 
 func A4_Match(t *testing.T, f ScanFunc) {
@@ -54,9 +48,7 @@ func A4_Match(t *testing.T, f ScanFunc) {
 		Token{MATCH, "MATCH", 0, 0},
 	}
 
-	acts := f(in)
-
-	check(t, exps, acts)
+	check(t, exps, f(in))
 }
 
 func A5_Bool_False(t *testing.T, f ScanFunc) {
@@ -67,9 +59,7 @@ func A5_Bool_False(t *testing.T, f ScanFunc) {
 		Token{BOOL, "FALSE", 0, 0},
 	}
 
-	acts := f(in)
-
-	check(t, exps, acts)
+	check(t, exps, f(in))
 }
 
 func A6_Bool_True(t *testing.T, f ScanFunc) {
@@ -80,9 +70,7 @@ func A6_Bool_True(t *testing.T, f ScanFunc) {
 		Token{BOOL, "TRUE", 0, 0},
 	}
 
-	acts := f(in)
-
-	check(t, exps, acts)
+	check(t, exps, f(in))
 }
 
 func A7_List(t *testing.T, f ScanFunc) {
@@ -93,9 +81,7 @@ func A7_List(t *testing.T, f ScanFunc) {
 		Token{LIST, "LIST", 0, 0},
 	}
 
-	acts := f(in)
-
-	check(t, exps, acts)
+	check(t, exps, f(in))
 }
 
 func A8_Fix(t *testing.T, f ScanFunc) {
@@ -106,9 +92,7 @@ func A8_Fix(t *testing.T, f ScanFunc) {
 		Token{FIX, "FIX", 0, 0},
 	}
 
-	acts := f(in)
-
-	check(t, exps, acts)
+	check(t, exps, f(in))
 }
 
 func A9_Eof(t *testing.T, f ScanFunc) {
@@ -117,9 +101,7 @@ func A9_Eof(t *testing.T, f ScanFunc) {
 
 	exps := []Token{}
 
-	acts := f(in)
-
-	check(t, exps, acts)
+	check(t, exps, f(in))
 }
 
 func A10_F(t *testing.T, f ScanFunc) {
@@ -130,7 +112,5 @@ func A10_F(t *testing.T, f ScanFunc) {
 		Token{FUNC, "F", 0, 0},
 	}
 
-	acts := f(in)
-
-	check(t, exps, acts)
+	check(t, exps, f(in))
 }
