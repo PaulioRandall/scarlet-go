@@ -15,6 +15,12 @@ func checkIgnores(t *testing.T, tk Token) {
 	checkToken(t, tk, out[0])
 }
 
+func checkFormats(t *testing.T, exp, in Token) {
+	out := SanitiseAll([]Token{in})
+	checkSize(t, 1, out)
+	checkToken(t, exp, out[0])
+}
+
 func checkRemoves(t *testing.T, tk Token) {
 	out := SanitiseAll([]Token{tk})
 	checkSize(t, 0, out)
