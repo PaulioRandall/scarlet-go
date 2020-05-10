@@ -13,3 +13,7 @@ func Test_A1_Assignment(t *testing.T) {
 func Test_A2_MultiAssignment(t *testing.T) {
 	tests.Run(t, ParseAll, tests.A2_MultiAssignment)
 }
+
+func Test_A3_FuncInline(t *testing.T) {
+	tests.Run(t, ParseAll, tests.A3_FuncInline)
+}

@@ -15,6 +15,7 @@ ROOT_DIR="$PWD"
 BUILD_DIR="build"
 EXE_FILE="$BUILD_DIR/$EXE_NAME"
 
+tabs -2
 clear
 mkdir -p "$BUILD_DIR"
 
