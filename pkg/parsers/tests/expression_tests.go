@@ -116,15 +116,19 @@ func E5_LongExpression(t *testing.T, f ParseFunc) { // Airty of 3 or more
 	}
 
 	exp := st.Operation{
-		st.Operation{
-			st.Operation{
-				st.Value(Token{NUMBER, "1", 0, 0}),
-				Token{ADD, "+", 0, 0},
-				st.Value(Token{NUMBER, "2", 0, 0}),
-			},
-			Token{ADD, "+", 0, 0},
-			st.Value(Token{NUMBER, "3", 0, 0}),
-		},
+		st.Value(Token{NUMBER, "1", 0, 0}),
+		Token{ADD, "+", 0, 0},
+		st.Value(Token{NUMBER, "2", 0, 0}),
+	}
+
+	exp = st.Operation{
+		exp,
+		Token{ADD, "+", 0, 0},
+		st.Value(Token{NUMBER, "3", 0, 0}),
+	}
+
+	exp = st.Operation{
+		exp,
 		Token{ADD, "+", 0, 0},
 		st.Value(Token{NUMBER, "4", 0, 0}),
 	}
