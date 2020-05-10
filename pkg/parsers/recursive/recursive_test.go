@@ -38,6 +38,10 @@ func Test_E4_Divide(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E4_Divide)
 }
 
-func Test_E5_LongExpression(t *testing.T) {
-	tests.Run(t, ParseAll, tests.E5_LongExpression)
+func Test_E5_AdditiveOrdering(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E5_AdditiveOrdering)
+}
+
+func Test_E6_AdditiveOrdering(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E6_AdditiveOrdering)
 }
