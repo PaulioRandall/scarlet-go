@@ -21,6 +21,13 @@ func parseFuncDef(p *pipe) st.Expression {
 	if isFuncBlock(p) {
 		f.Body = parseFuncBlock(p)
 	} else {
+
+		/*
+			if len(f.Output) != 1 {
+				panic(err("parseFuncDef", p.peek(),
+				"Inline function bodies must have a single output parameter"))
+			}
+		*/
 		f.Body = parseFuncStatement(p)
 	}
 
