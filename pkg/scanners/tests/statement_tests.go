@@ -114,3 +114,19 @@ func S5_FuncDef(t *testing.T, f ScanFunc) {
 
 	checkMany(t, exps, f(in))
 }
+
+func S6_FuncCall(t *testing.T, f ScanFunc) {
+
+	in := "xyz(a,b)"
+
+	exps := []Token{
+		Token{ID, "xyz", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 3},
+		Token{ID, "a", 0, 4},
+		Token{DELIM, ",", 0, 5},
+		Token{ID, "b", 0, 6},
+		Token{PAREN_CLOSE, ")", 0, 7},
+	}
+
+	checkMany(t, exps, f(in))
+}

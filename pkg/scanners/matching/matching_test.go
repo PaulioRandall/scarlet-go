@@ -181,3 +181,7 @@ func Test_S4_MatchBlock(t *testing.T) {
 func Test_S5_FuncDef(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S5_FuncDef)
 }
+
+func Test_S6_FuncCall(t *testing.T) {
+	tests.Run(t, ScanAll, tests.S6_FuncCall)
+}
