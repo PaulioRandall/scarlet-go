@@ -130,3 +130,24 @@ func S6_FuncCall(t *testing.T, f ScanFunc) {
 
 	checkMany(t, exps, f(in))
 }
+
+func S7_Expression(t *testing.T, f ScanFunc) {
+
+	in := "1+2-3*4/5%6"
+
+	exps := []Token{
+		Token{NUMBER, "1", 0, 0},
+		Token{ADD, "+", 0, 1},
+		Token{NUMBER, "2", 0, 2},
+		Token{SUBTRACT, "-", 0, 3},
+		Token{NUMBER, "3", 0, 4},
+		Token{MULTIPLY, "*", 0, 5},
+		Token{NUMBER, "4", 0, 6},
+		Token{DIVIDE, "/", 0, 7},
+		Token{NUMBER, "5", 0, 8},
+		Token{REMAINDER, "%", 0, 9},
+		Token{NUMBER, "6", 0, 10},
+	}
+
+	checkMany(t, exps, f(in))
+}

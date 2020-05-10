@@ -185,3 +185,7 @@ func Test_S5_FuncDef(t *testing.T) {
 func Test_S6_FuncCall(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S6_FuncCall)
 }
+
+func Test_S7_Expression(t *testing.T) {
+	tests.Run(t, ScanAll, tests.S7_Expression)
+}
