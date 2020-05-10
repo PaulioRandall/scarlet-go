@@ -6,6 +6,35 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
+func Test_F1_Newline(t *testing.T) {
+
+	in := []Token{
+		Token{ID, "", 0, 0},
+		Token{NEWLINE, "", 0, 0},
+	}
+
+	exp := []Token{
+		Token{ID, "", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+	}
+
+	checkMany(t, exp, in)
+}
+
+func Test_F2_String(t *testing.T) {
+	checkFormats(t,
+		Token{STRING, "string", 0, 0},
+		Token{STRING, "`string`", 0, 0},
+	)
+}
+
+func Test_F3_Template(t *testing.T) {
+	checkFormats(t,
+		Token{TEMPLATE, `template`, 0, 0},
+		Token{TEMPLATE, `"template"`, 0, 0},
+	)
+}
+
 func Test_I1_Func(t *testing.T) {
 	checkIgnores(t, Token{FUNC, "", 0, 0})
 }
@@ -184,33 +213,4 @@ func Test_R9_RepeatedTerminators(t *testing.T) {
 
 func Test_R10_RepeatedTerminators(t *testing.T) {
 	checkRemovesTerminators(t, Token{LIST, "", 0, 0})
-}
-
-func Test_F1_Newline(t *testing.T) {
-
-	in := []Token{
-		Token{ID, "", 0, 0},
-		Token{NEWLINE, "", 0, 0},
-	}
-
-	exp := []Token{
-		Token{ID, "", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-	}
-
-	checkMany(t, exp, in)
-}
-
-func Test_F2_String(t *testing.T) {
-	checkFormats(t,
-		Token{STRING, "string", 0, 0},
-		Token{STRING, "`string`", 0, 0},
-	)
-}
-
-func Test_F3_Template(t *testing.T) {
-	checkFormats(t,
-		Token{TEMPLATE, `template`, 0, 0},
-		Token{TEMPLATE, `"template"`, 0, 0},
-	)
 }
