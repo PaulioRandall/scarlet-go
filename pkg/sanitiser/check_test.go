@@ -60,7 +60,7 @@ func checkToken(t *testing.T, exp, act Token) {
 func checkSize(t *testing.T, exp int, acts []Token) {
 	require.Equal(t, exp, len(acts),
 		"Expected "+strconv.Itoa(exp)+
-			" tokens (inc EOF) but got "+strconv.Itoa(len(acts)))
+			" tokens but got "+strconv.Itoa(len(acts)))
 }
 
 func checkPanic(t *testing.T, f func()) {
