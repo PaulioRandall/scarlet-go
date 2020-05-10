@@ -15,8 +15,8 @@ type scanErr struct {
 
 func newErr(s *symbols, colOffset int, msg string, args ...interface{}) err.Err {
 	return &scanErr{
-		lineIndex: s.lineIndex(),
-		colIndex:  s.colIndex() + colOffset,
+		lineIndex: s.line,
+		colIndex:  s.col + colOffset,
 		msg:       fmt.Sprintf(msg, args...),
 	}
 }

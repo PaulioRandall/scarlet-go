@@ -86,14 +86,6 @@ func (s *symbols) readNonTerminal(runeCount int) string {
 	return r
 }
 
-func (s *symbols) lineIndex() int {
-	return s.line
-}
-
-func (s *symbols) colIndex() int {
-	return s.col
-}
-
 func (s *symbols) isNewline(start int) bool {
 	return s.countNewlineSymbols(start) > 0
 }

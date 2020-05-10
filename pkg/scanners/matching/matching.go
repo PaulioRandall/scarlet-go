@@ -23,11 +23,7 @@ func scanNext(s *symbols) token.Token {
 
 	if s.empty() {
 		// TokenStream.Read requires an EOF token be returned upon an empty stream.
-		return token.Token{
-			Type: token.EOF,
-			Line: s.lineIndex(),
-			Col:  s.colIndex(),
-		}
+		return newToken(s, token.EOF)
 	}
 
 	tk := scanToken(s)
@@ -61,14 +57,16 @@ func scanToken(s *symbols) (_ token.Token) {
 	return
 }
 
-func tokenize(s *symbols, n int, l token.TokenType) token.Token {
-
-	tk := token.Token{
-		Type: l,
-		Line: s.lineIndex(),
-		Col:  s.colIndex(),
-	}
-
+func tokenize(s *symbols, n int, t token.TokenType) token.Token {
+	tk := newToken(s, t)
 	tk.Value = s.readNonTerminal(n)
 	return tk
+}
+
+func newToken(s *symbols, t token.TokenType) token.Token {
+	return token.Token{
+		Type: t,
+		Line: s.line,
+		Col:  s.col,
+	}
 }
