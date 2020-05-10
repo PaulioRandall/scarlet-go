@@ -151,3 +151,29 @@ func S7_Expression(t *testing.T, f ScanFunc) {
 
 	checkMany(t, exps, f(in))
 }
+
+func S8_Block(t *testing.T, f ScanFunc) {
+
+	in := "{\n" +
+		"\tx:=1\n" +
+		"\ty:=2\n" +
+		"}"
+
+	exps := []Token{
+		Token{BLOCK_OPEN, "{", 0, 0}, // Line Start
+		Token{NEWLINE, "\n", 0, 1},
+		Token{WHITESPACE, "\t", 1, 0}, // Line Start
+		Token{ID, "x", 1, 1},
+		Token{ASSIGN, ":=", 1, 2},
+		Token{NUMBER, "1", 1, 4},
+		Token{NEWLINE, "\n", 1, 5},
+		Token{WHITESPACE, "\t", 2, 0}, // Line Start
+		Token{ID, "y", 2, 1},
+		Token{ASSIGN, ":=", 2, 2},
+		Token{NUMBER, "2", 2, 4},
+		Token{NEWLINE, "\n", 2, 5},
+		Token{BLOCK_CLOSE, "}", 3, 0}, // Line Start
+	}
+
+	checkMany(t, exps, f(in))
+}
