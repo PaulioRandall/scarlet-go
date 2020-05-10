@@ -18,7 +18,7 @@ calc := F(argParser, ^e) {
 
 parseArgs := F(args, ^a, ^b, ^e) {
 	WATCH e {
-		[@Len(args) < 3]: e := `Need at least two number arguments`
+		[@Len(args) < 3] e := `Need at least two number arguments`
 
 		a, e := @ToReal(args(1))
 		b, e := @ToReal(args(2))

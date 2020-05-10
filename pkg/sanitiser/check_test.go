@@ -1,4 +1,4 @@
-package tests
+package sanitiser
 
 import (
 	"strconv"
@@ -9,44 +9,34 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type ScanFunc func(in string) []Token
-type TestFunc func(t *testing.T, sf ScanFunc)
-
-func Run(t *testing.T, sf ScanFunc, tf TestFunc) {
-
-	defer func() {
-		if e := recover(); e != nil {
-			v, _ := e.(error)
-			require.Nil(t, e, v.Error())
-		}
-	}()
-
-	tf(t, sf)
+func checkIgnores(t *testing.T, tk Token) {
+	out := SanitiseAll([]Token{tk})
+	checkSize(t, 1, out)
+	checkToken(t, tk, out[0])
 }
 
-func checkMany(t *testing.T, exps, acts []Token) {
+func checkRemoves(t *testing.T, tk Token) {
+	out := SanitiseAll([]Token{tk})
+	checkSize(t, 0, out)
+}
 
-	checkEOF(t, acts)
+func checkMany(t *testing.T, exp, in []Token) {
 
-	expSize := len(exps)
-	actSize := len(acts) - 1
+	out := SanitiseAll(in)
 
-	for i := 0; i < expSize || i < actSize; i++ {
+	expSize := len(exp)
+	outSize := len(out)
 
-		require.True(t, i < actSize,
-			"Expected ("+tkStr(exps, i)+") but no actual tokens remain")
+	for i := 0; i < expSize || i < outSize; i++ {
+
+		require.True(t, i < outSize,
+			"Expected ("+tkStr(exp, i)+") but no actual tokens remain")
 
 		require.True(t, i < expSize,
-			"Didn't expect any more tokens but got ("+tkStr(acts, i)+")")
+			"Didn't expect any more tokens but got ("+tkStr(out, i)+")")
 
-		checkToken(t, exps[i], acts[i])
+		checkToken(t, exp[i], out[i])
 	}
-}
-
-func checkOne(t *testing.T, exp Token, acts []Token) {
-	checkSize(t, 2, acts)
-	checkToken(t, exp, acts[0])
-	checkEOF(t, acts)
 }
 
 func checkOneNot(t *testing.T, notExp Token, acts []Token) {

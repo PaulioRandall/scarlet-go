@@ -13,8 +13,12 @@ func SanitiseAll(in []token.Token) (out []token.Token) {
 	var prev token.Token
 
 	for prev.Type != token.EOF && !itr.Empty() {
-		prev = sanitise(itr, prev)
-		out = append(out, prev)
+		p := sanitise(itr, prev)
+
+		if p != (token.Token{}) {
+			out = append(out, p)
+			prev = p
+		}
 	}
 
 	return out
@@ -46,8 +50,8 @@ func isParsableToken(prev, next token.Token) bool {
 		switch past {
 		// Sometimes the extra terminator or newline is redundant.
 		// Removing them makes parsing easier.
-		case token.DELIM,
-			token.TERMINATOR,
+		case token.TERMINATOR,
+			token.DELIM,
 			token.BLOCK_OPEN,
 			token.BLOCK_CLOSE,
 			token.MATCH,
