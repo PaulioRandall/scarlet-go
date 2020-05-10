@@ -193,3 +193,7 @@ func Test_S7_Expression(t *testing.T) {
 func Test_S8_Block(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S8_Block)
 }
+
+func Test_S9_List(t *testing.T) {
+	tests.Run(t, ScanAll, tests.S9_List)
+}

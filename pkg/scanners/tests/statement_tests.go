@@ -177,3 +177,29 @@ func S8_Block(t *testing.T, f ScanFunc) {
 
 	checkMany(t, exps, f(in))
 }
+
+func S9_List(t *testing.T, f ScanFunc) {
+
+	in := "LIST {\n" +
+		"\t`There's a snake in my boot`,\n" +
+		"\t" + `"{x} + {y} = {x + y}"` + ",\n" +
+		"}"
+
+	exps := []Token{
+		Token{LIST, "LIST", 0, 0},
+		Token{WHITESPACE, " ", 0, 4},
+		Token{BLOCK_OPEN, "{", 0, 5},
+		Token{NEWLINE, "\n", 0, 6},
+		Token{WHITESPACE, "\t", 1, 0}, // Line Start
+		Token{STRING, "`There's a snake in my boot`", 1, 1},
+		Token{DELIM, ",", 1, 29},
+		Token{NEWLINE, "\n", 1, 30},
+		Token{WHITESPACE, "\t", 2, 0}, // Line Start
+		Token{TEMPLATE, `"{x} + {y} = {x + y}"`, 2, 1},
+		Token{DELIM, ",", 2, 22},
+		Token{NEWLINE, "\n", 2, 23},
+		Token{BLOCK_CLOSE, "}", 3, 0}, // Line Start
+	}
+
+	checkMany(t, exps, f(in))
+}

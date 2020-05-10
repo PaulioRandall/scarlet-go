@@ -39,7 +39,8 @@ EOF
 s := "alpha = {list[0]}, beta = {list[1]}"
 
 // TODO
-LOOP i [i < 10] {
+LOOP i [i < 10] +1 {
+	DONE LOOP
 }
 
 // TODO

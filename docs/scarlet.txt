@@ -1,36 +1,36 @@
 
-divideAndFmt := F a, b, ^r, ^e {
+divideAndFmt := F(a, b, ^r, ^e) {
 	WATCH e {
 		[b = 0]: e := `Can't divide by zero`
 		r, e := @FmtReal(a / b, `.##`)
+
+		DONE F
 	}
 }
 
-calc := F(argParser -> e) DO
-	WATCH e
+calc := F(argParser, ^e) {
+	WATCH e {
 		a, b := argParser(@Args())
 		r, e := divideAndFmt(a, b)
 		@Println("{a} / {b} = {r}")
-	END
-END
+	}
+}
 
-parseArgs := F(args -> a, b, e) DO
-	WATCH e
-		[@Len(args)] < 3 DO
-			e := `Need at least two number arguments`
-		END
+parseArgs := F(args -> a, b, e) {
+	WATCH e {
+		[@Len(args) < 3]: e := `Need at least two number arguments`
 
 		a, e := @ToReal(args(1))
 		b, e := @ToReal(args(2))
-	END
-END
+	}
+}
 
 printValues := F(_, v, _) @Println(v)
 @Foreach(@Args(), printValues)
 e := calc(parseArgs)
 @PanicIf(e)
 
-list := { 
+list := LIST { 
 	`abc`,
 	3,
 }
@@ -40,9 +40,9 @@ EOF
 // Future stuff
 
 // Looping
-LOOP i [exit]
-	// Repreated logic
-END
+LOOP i [exit] +1 {
+	DONE
+}
 
 LOOP i, item, more <- list
 	// Logic applied to each item
