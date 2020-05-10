@@ -29,3 +29,11 @@ func Test_E1_Add(t *testing.T) {
 func Test_E2_Subtract(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E2_Subtract)
 }
+
+func Test_E3_Multiply(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E3_Multiply)
+}
+
+func Test_E4_Divide(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E4_Divide)
+}

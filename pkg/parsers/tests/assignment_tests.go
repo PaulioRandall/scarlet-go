@@ -230,3 +230,49 @@ func E2_Subtract(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, exp, act)
 }
+
+func E3_Multiply(t *testing.T, f ParseFunc) {
+
+	// 6 * 7
+
+	given := []Token{
+		Token{NUMBER, "6", 0, 0},
+		Token{MULTIPLY, "*", 0, 0},
+		Token{NUMBER, "7", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	exp := st.Operation{
+		st.Value(Token{NUMBER, "6", 0, 0}),
+		Token{MULTIPLY, "*", 0, 0},
+		st.Value(Token{NUMBER, "7", 0, 0}),
+	}
+
+	act := f(given)
+
+	expectOneStat(t, exp, act)
+}
+
+func E4_Divide(t *testing.T, f ParseFunc) {
+
+	// 12 / 3
+
+	given := []Token{
+		Token{NUMBER, "12", 0, 0},
+		Token{DIVIDE, "/", 0, 0},
+		Token{NUMBER, "3", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	exp := st.Operation{
+		st.Value(Token{NUMBER, "12", 0, 0}),
+		Token{DIVIDE, "/", 0, 0},
+		st.Value(Token{NUMBER, "3", 0, 0}),
+	}
+
+	act := f(given)
+
+	expectOneStat(t, exp, act)
+}
