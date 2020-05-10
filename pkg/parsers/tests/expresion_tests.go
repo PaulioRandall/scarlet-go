@@ -98,3 +98,38 @@ func E4_Divide(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, exp, act)
 }
+
+func E5_LongExpression(t *testing.T, f ParseFunc) { // Airty of 3 or more
+
+	// 1 + 2 + 3 + 4
+
+	given := []Token{
+		Token{NUMBER, "1", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{NUMBER, "2", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{NUMBER, "3", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{NUMBER, "4", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	exp := st.Operation{
+		st.Operation{
+			st.Operation{
+				st.Value(Token{NUMBER, "1", 0, 0}),
+				Token{ADD, "+", 0, 0},
+				st.Value(Token{NUMBER, "2", 0, 0}),
+			},
+			Token{ADD, "+", 0, 0},
+			st.Value(Token{NUMBER, "3", 0, 0}),
+		},
+		Token{ADD, "+", 0, 0},
+		st.Value(Token{NUMBER, "4", 0, 0}),
+	}
+
+	act := f(given)
+
+	expectOneStat(t, exp, act)
+}

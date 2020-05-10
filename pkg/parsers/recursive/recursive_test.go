@@ -37,3 +37,7 @@ func Test_E3_Multiply(t *testing.T) {
 func Test_E4_Divide(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E4_Divide)
 }
+
+func Test_E5_LongExpression(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E5_LongExpression)
+}
