@@ -20,6 +20,19 @@ func checkRemoves(t *testing.T, tk Token) {
 	checkSize(t, 0, out)
 }
 
+func checkRemovesTerminators(t *testing.T, prev Token) {
+
+	in := []Token{
+		prev,
+		Token{TERMINATOR, "", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+	}
+
+	exp := []Token{prev}
+
+	checkMany(t, exp, in)
+}
+
 func checkMany(t *testing.T, exp, in []Token) {
 
 	out := SanitiseAll(in)
@@ -39,13 +52,6 @@ func checkMany(t *testing.T, exp, in []Token) {
 	}
 }
 
-func checkOneNot(t *testing.T, notExp Token, acts []Token) {
-	checkSize(t, 2, acts)
-	require.NotEqual(t, notExp, acts[0],
-		"Expected any token except ("+notExp.String()+") but got it")
-	checkEOF(t, acts)
-}
-
 func checkToken(t *testing.T, exp, act Token) {
 	require.Equal(t, exp, act,
 		"Expected ("+exp.String()+") but got ("+act.String()+")")
@@ -55,12 +61,6 @@ func checkSize(t *testing.T, exp int, acts []Token) {
 	require.Equal(t, exp, len(acts),
 		"Expected "+strconv.Itoa(exp)+
 			" tokens (inc EOF) but got "+strconv.Itoa(len(acts)))
-}
-
-func checkEOF(t *testing.T, acts []Token) {
-	i := len(acts) - 1
-	require.Equal(t, EOF, acts[i].Type,
-		"Expected EOF but got ("+tkStr(acts, i)+")")
 }
 
 func checkPanic(t *testing.T, f func()) {

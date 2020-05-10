@@ -39,31 +39,21 @@ func Test_R5(t *testing.T) {
 }
 
 func Test_R6(t *testing.T) {
-
-	in := []Token{
-		Token{DELIM, "", 0, 0},
-		Token{NEWLINE, "", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-	}
-
-	exp := []Token{
-		Token{DELIM, "", 0, 0},
-	}
-
-	checkMany(t, exp, in)
+	checkRemovesTerminators(t, Token{DELIM, "", 0, 0})
 }
 
 func Test_R7(t *testing.T) {
+	checkRemovesTerminators(t, Token{BLOCK_OPEN, "", 0, 0})
+}
 
-	in := []Token{
-		Token{BLOCK_OPEN, "", 0, 0},
-		Token{NEWLINE, "", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-	}
+func Test_R8(t *testing.T) {
+	checkRemovesTerminators(t, Token{BLOCK_CLOSE, "", 0, 0})
+}
 
-	exp := []Token{
-		Token{BLOCK_OPEN, "", 0, 0},
-	}
+func Test_R9(t *testing.T) {
+	checkRemovesTerminators(t, Token{MATCH, "", 0, 0})
+}
 
-	checkMany(t, exp, in)
+func Test_R10(t *testing.T) {
+	checkRemovesTerminators(t, Token{LIST, "", 0, 0})
 }
