@@ -4,7 +4,7 @@ divideAndFmt := F(a, b, ^r, ^e) {
 		[b = 0]: e := `Can't divide by zero`
 		r, e := @FmtReal(a / b, `.##`)
 
-		DONE F
+		EXIT FUNC
 	}
 }
 
@@ -16,7 +16,7 @@ calc := F(argParser, ^e) {
 	}
 }
 
-parseArgs := F(args -> a, b, e) {
+parseArgs := F(args, ^a, ^b, ^e) {
 	WATCH e {
 		[@Len(args) < 3]: e := `Need at least two number arguments`
 
@@ -35,6 +35,7 @@ list := LIST {
 	3,
 }
 
+EXIT SCRIPT
 EOF
 
 // Future stuff

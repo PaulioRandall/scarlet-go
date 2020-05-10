@@ -9,7 +9,7 @@ func ScanAll(src string) []token.Token {
 	var tk token.Token
 	var tks []token.Token
 
-	s := &symbolStream{[]rune(src), 0, 0}
+	s := &symbols{[]rune(src), 0, 0}
 
 	for tk.Type != token.EOF {
 		tk = scanNext(s)
@@ -19,31 +19,31 @@ func ScanAll(src string) []token.Token {
 	return tks
 }
 
-func scanNext(ss *symbolStream) token.Token {
+func scanNext(s *symbols) token.Token {
 
-	if ss.empty() {
+	if s.empty() {
 		// TokenStream.Read requires an EOF token be returned upon an empty stream.
 		return token.Token{
 			Type: token.EOF,
-			Line: ss.lineIndex(),
-			Col:  ss.colIndex(),
+			Line: s.lineIndex(),
+			Col:  s.colIndex(),
 		}
 	}
 
-	tk := scanToken(ss)
+	tk := scanToken(s)
 
 	if tk == (token.Token{}) {
-		panic(newErr(ss, 0, "Could not identify next token"))
+		panic(newErr(s, 0, "Could not identify next token"))
 	}
 
 	if tk.Type == token.EOF {
-		ss.drain()
+		s.drain()
 	}
 
 	return tk
 }
 
-func scanToken(ss *symbolStream) (_ token.Token) {
+func scanToken(s *symbols) (_ token.Token) {
 
 	ps := patterns()
 	size := len(ps)
@@ -51,24 +51,24 @@ func scanToken(ss *symbolStream) (_ token.Token) {
 	for i := 0; i < size; i++ {
 
 		p := ps[i]
-		n := p.matcher(ss)
+		n := p.matcher(s)
 
 		if n > 0 {
-			return tokenize(ss, n, p.tokenType)
+			return tokenize(s, n, p.tokenType)
 		}
 	}
 
 	return
 }
 
-func tokenize(ss *symbolStream, n int, l token.TokenType) token.Token {
+func tokenize(s *symbols, n int, l token.TokenType) token.Token {
 
 	tk := token.Token{
 		Type: l,
-		Line: ss.lineIndex(),
-		Col:  ss.colIndex(),
+		Line: s.lineIndex(),
+		Col:  s.colIndex(),
 	}
 
-	tk.Value = ss.readNonTerminal(n)
+	tk.Value = s.readNonTerminal(n)
 	return tk
 }

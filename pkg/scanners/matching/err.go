@@ -13,10 +13,10 @@ type scanErr struct {
 	length    int
 }
 
-func newErr(ss *symbolStream, colOffset int, msg string, args ...interface{}) err.Err {
+func newErr(s *symbols, colOffset int, msg string, args ...interface{}) err.Err {
 	return &scanErr{
-		lineIndex: ss.lineIndex(),
-		colIndex:  ss.colIndex() + colOffset,
+		lineIndex: s.lineIndex(),
+		colIndex:  s.colIndex() + colOffset,
 		msg:       fmt.Sprintf(msg, args...),
 	}
 }

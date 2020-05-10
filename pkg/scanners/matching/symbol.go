@@ -1,35 +1,35 @@
 package matching
 
-// symbolStream provides access to an ordered stream of terminal symbols
-// (runes) representing a script. The stream also monitors the current cursor
-// position in the form of line and column indexes.
-type symbolStream struct {
+// symbols provides access to an ordered stream of terminal symbols (runes)
+// representing a script. The stream also monitors the current cursor position
+// in the form of line and column indexes.
+type symbols struct {
 	runes []rune
 	line  int
 	col   int
 }
 
-func (ss *symbolStream) empty() bool {
-	return len(ss.runes) == 0
+func (s *symbols) empty() bool {
+	return len(s.runes) == 0
 }
 
-func (ss *symbolStream) len() int {
-	return len(ss.runes)
+func (s *symbols) len() int {
+	return len(s.runes)
 }
 
-func (ss *symbolStream) drain() {
-	ss.runes = []rune{}
+func (s *symbols) drain() {
+	s.runes = []rune{}
 }
 
-func (ss *symbolStream) isMatch(start int, s string) bool {
+func (s *symbols) isMatch(start int, str string) bool {
 
-	haystack := ss.runes[start:]
+	haystack := s.runes[start:]
 
-	if len(s) > len(haystack) {
+	if len(str) > len(haystack) {
 		return false
 	}
 
-	for i, ru := range s {
+	for i, ru := range str {
 		if haystack[i] != ru {
 			return false
 		}
@@ -38,9 +38,9 @@ func (ss *symbolStream) isMatch(start int, s string) bool {
 	return true
 }
 
-func (ss *symbolStream) countSymbolsWhile(start int, f func(int, rune) bool) int {
+func (s *symbols) countSymbolsWhile(start int, f func(int, rune) bool) int {
 
-	runes := ss.runes[start:]
+	runes := s.runes[start:]
 	size := len(runes)
 
 	for i := 0; i < size; i++ {
@@ -52,53 +52,53 @@ func (ss *symbolStream) countSymbolsWhile(start int, f func(int, rune) bool) int
 	return size
 }
 
-func (ss *symbolStream) peekTerminal(index int) rune {
-	return ss.runes[index]
+func (s *symbols) peekTerminal(index int) rune {
+	return s.runes[index]
 }
 
-func (ss *symbolStream) peekNonTerminal(runeCount int) string {
-	return string(ss.runes[:runeCount])
+func (s *symbols) peekNonTerminal(runeCount int) string {
+	return string(s.runes[:runeCount])
 }
 
-func (ss *symbolStream) readNonTerminal(runeCount int) string {
+func (s *symbols) readNonTerminal(runeCount int) string {
 
-	if runeCount > ss.len() {
+	if runeCount > s.len() {
 		panic("PROGRAMMERS ERROR! Bad argument, " +
 			"requested slice amount is bigger than the number of remaining runes")
 	}
 
 	for i := 0; i < runeCount; i++ {
-		switch ss.countNewlineSymbols(i) {
+		switch s.countNewlineSymbols(i) {
 		case 2:
 			i++
 			fallthrough
 		case 1:
-			ss.line++
-			ss.col = 0
+			s.line++
+			s.col = 0
 		case 0:
-			ss.col++
+			s.col++
 		}
 	}
 
-	r := ss.peekNonTerminal(runeCount)
-	ss.runes = ss.runes[runeCount:]
+	r := s.peekNonTerminal(runeCount)
+	s.runes = s.runes[runeCount:]
 
 	return r
 }
 
-func (ss *symbolStream) lineIndex() int {
-	return ss.line
+func (s *symbols) lineIndex() int {
+	return s.line
 }
 
-func (ss *symbolStream) colIndex() int {
-	return ss.col
+func (s *symbols) colIndex() int {
+	return s.col
 }
 
-func (ss *symbolStream) isNewline(start int) bool {
-	return ss.countNewlineSymbols(start) > 0
+func (s *symbols) isNewline(start int) bool {
+	return s.countNewlineSymbols(start) > 0
 }
 
-func (ss *symbolStream) countNewlineSymbols(start int) int {
+func (s *symbols) countNewlineSymbols(start int) int {
 
 	const (
 		LF        = "\n"
@@ -106,19 +106,19 @@ func (ss *symbolStream) countNewlineSymbols(start int) int {
 		NOT_FOUND = 0
 	)
 
-	if ss.isMatch(start, LF) {
+	if s.isMatch(start, LF) {
 		return len(LF)
 	}
 
-	if ss.isMatch(start, CRLF) {
+	if s.isMatch(start, CRLF) {
 		return len(CRLF)
 	}
 
 	return NOT_FOUND
 }
 
-func (ss *symbolStream) indexOfNextNewline(start int) int {
-	return ss.countSymbolsWhile(start, func(i int, _ rune) bool {
-		return !ss.isNewline(i)
+func (s *symbols) indexOfNextNewline(start int) int {
+	return s.countSymbolsWhile(start, func(i int, _ rune) bool {
+		return !s.isNewline(i)
 	})
 }
