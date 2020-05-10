@@ -184,3 +184,26 @@ func F2_Func(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, exp, act)
 }
+
+func E1_Add(t *testing.T, f ParseFunc) {
+
+	// 1 + 2
+
+	given := []Token{
+		Token{NUMBER, "1", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{NUMBER, "2", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	exp := st.Operation{
+		st.Value(Token{NUMBER, "1", 0, 0}),
+		Token{ADD, "+", 0, 0},
+		st.Value(Token{NUMBER, "2", 0, 0}),
+	}
+
+	act := f(given)
+
+	expectOneStat(t, exp, act)
+}

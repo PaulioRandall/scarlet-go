@@ -21,3 +21,7 @@ func Test_F1_FuncInline(t *testing.T) {
 func Test_F2_Func(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F2_Func)
 }
+
+func Test_E1_Add(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E1_Add)
+}
