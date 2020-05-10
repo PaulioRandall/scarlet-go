@@ -30,34 +30,38 @@ func F1_FuncInline(t *testing.T, f ParseFunc) {
 		Token{EOF, "", 0, 0},
 	}
 
+	funcBody := st.Block{ // c := a
+		Token{ID, "c", 0, 0},
+		[]st.Statement{
+			st.Assignment{
+				false,
+				[]Token{Token{ID, "c", 0, 0}},
+				Token{ASSIGN, ":=", 0, 0},
+				[]st.Expression{st.Identifier(Token{ID, "a", 0, 0})},
+			},
+		},
+		Token{TERMINATOR, "\n", 0, 0},
+	}
+
+	funcExpr := []st.Expression{ // F(a, b, ^c) c := a
+		st.FuncDef{
+			Token{FUNC, "F", 0, 0},
+			[]Token{ // a, b
+				Token{ID, "a", 0, 0},
+				Token{ID, "b", 0, 0},
+			},
+			[]Token{ // ^c
+				Token{ID, "c", 0, 0},
+			},
+			funcBody, // c := a
+		},
+	}
+
 	exp := st.Assignment{
 		false,
 		[]Token{Token{ID, "f", 0, 0}},
 		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{
-			st.FuncDef{ // F(a, b, ^c) c := a
-				Open: Token{FUNC, "F", 0, 0},
-				Input: []Token{ // a, b
-					Token{ID, "a", 0, 0},
-					Token{ID, "b", 0, 0},
-				},
-				Output: []Token{ // ^c
-					Token{ID, "c", 0, 0},
-				},
-				Body: st.Block{ // c := a
-					Open: Token{ID, "c", 0, 0},
-					Stats: []st.Statement{
-						st.Assignment{
-							false,
-							[]Token{Token{ID, "c", 0, 0}},
-							Token{ASSIGN, ":=", 0, 0},
-							[]st.Expression{st.Identifier(Token{ID, "a", 0, 0})},
-						},
-					},
-					Close: Token{TERMINATOR, "\n", 0, 0},
-				},
-			},
-		},
+		funcExpr,
 	}
 
 	act := f(given)
@@ -92,34 +96,38 @@ func F2_Func(t *testing.T, f ParseFunc) {
 		Token{EOF, "", 0, 0},
 	}
 
+	funcBody := st.Block{ // { c := a }
+		Token{BLOCK_OPEN, "{", 0, 0},
+		[]st.Statement{
+			st.Assignment{
+				false,
+				[]Token{Token{ID, "c", 0, 0}},
+				Token{ASSIGN, ":=", 0, 0},
+				[]st.Expression{st.Identifier(Token{ID, "a", 0, 0})},
+			},
+		},
+		Token{BLOCK_CLOSE, "}", 0, 0},
+	}
+
+	funcExpr := []st.Expression{ // F(a, b, ^c) { c := a }
+		st.FuncDef{
+			Token{FUNC, "F", 0, 0},
+			[]Token{ // a, b
+				Token{ID, "a", 0, 0},
+				Token{ID, "b", 0, 0},
+			},
+			[]Token{ // ^c
+				Token{ID, "c", 0, 0},
+			},
+			funcBody, // { c := a }
+		},
+	}
+
 	exp := st.Assignment{
 		false,
 		[]Token{Token{ID, "f", 0, 0}},
 		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{
-			st.FuncDef{ // F(a, b, ^c) { c := a }
-				Open: Token{FUNC, "F", 0, 0},
-				Input: []Token{ // a, b
-					Token{ID, "a", 0, 0},
-					Token{ID, "b", 0, 0},
-				},
-				Output: []Token{ // ^c
-					Token{ID, "c", 0, 0},
-				},
-				Body: st.Block{ // c := a
-					Open: Token{BLOCK_OPEN, "{", 0, 0},
-					Stats: []st.Statement{
-						st.Assignment{
-							false,
-							[]Token{Token{ID, "c", 0, 0}},
-							Token{ASSIGN, ":=", 0, 0},
-							[]st.Expression{st.Identifier(Token{ID, "a", 0, 0})},
-						},
-					},
-					Close: Token{BLOCK_CLOSE, "}", 0, 0},
-				},
-			},
-		},
+		funcExpr,
 	}
 
 	act := f(given)
