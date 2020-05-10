@@ -4,6 +4,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
+var patternCache []pattern = patterns()
+
 func ScanAll(src string) []token.Token {
 
 	var tk token.Token
@@ -41,12 +43,8 @@ func scanNext(s *symbols) token.Token {
 
 func scanToken(s *symbols) (_ token.Token) {
 
-	ps := patterns()
-	size := len(ps)
+	for _, p := range patternCache {
 
-	for i := 0; i < size; i++ {
-
-		p := ps[i]
 		n := p.matcher(s)
 
 		if n > 0 {
@@ -57,9 +55,9 @@ func scanToken(s *symbols) (_ token.Token) {
 	return
 }
 
-func tokenize(s *symbols, n int, t token.TokenType) token.Token {
+func tokenize(s *symbols, numOfTerminals int, t token.TokenType) token.Token {
 	tk := newToken(s, t)
-	tk.Value = s.readNonTerminal(n)
+	tk.Value = s.readNonTerminal(numOfTerminals)
 	return tk
 }
 

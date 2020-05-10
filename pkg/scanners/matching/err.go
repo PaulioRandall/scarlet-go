@@ -1,8 +1,6 @@
 package matching
 
 import (
-	"fmt"
-
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
 )
 
@@ -13,11 +11,11 @@ type scanErr struct {
 	length    int
 }
 
-func newErr(s *symbols, colOffset int, msg string, args ...interface{}) err.Err {
+func newErr(s *symbols, colOffset int, msg string) err.Err {
 	return &scanErr{
 		lineIndex: s.line,
 		colIndex:  s.col + colOffset,
-		msg:       fmt.Sprintf(msg, args...),
+		msg:       msg,
 	}
 }
 

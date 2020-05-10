@@ -63,7 +63,7 @@ func (s *symbols) peekNonTerminal(runeCount int) string {
 func (s *symbols) readNonTerminal(runeCount int) string {
 
 	if runeCount > s.len() {
-		panic("PROGRAMMERS ERROR! Bad argument, " +
+		panic("PROGRAMMING ERROR! Bad argument, " +
 			"requested slice amount is bigger than the number of remaining runes")
 	}
 
@@ -72,9 +72,11 @@ func (s *symbols) readNonTerminal(runeCount int) string {
 		case 2:
 			i++
 			fallthrough
+
 		case 1:
 			s.line++
 			s.col = 0
+
 		case 0:
 			s.col++
 		}
@@ -91,22 +93,16 @@ func (s *symbols) isNewline(start int) bool {
 }
 
 func (s *symbols) countNewlineSymbols(start int) int {
+	switch {
+	case s.isMatch(start, "\n"):
+		return 1
 
-	const (
-		LF        = "\n"
-		CRLF      = "\r\n"
-		NOT_FOUND = 0
-	)
+	case s.isMatch(start, "\r\n"):
+		return 2
 
-	if s.isMatch(start, LF) {
-		return len(LF)
+	default:
+		return 0
 	}
-
-	if s.isMatch(start, CRLF) {
-		return len(CRLF)
-	}
-
-	return NOT_FOUND
 }
 
 func (s *symbols) indexOfNextNewline(start int) int {
