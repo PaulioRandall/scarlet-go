@@ -20,7 +20,7 @@ b := list[1]
 
 
 
-FIX factorial := F(n -> n) [n > 1] {
+FIX factorial := F(n, ^n) [n > 1] {
 	n := n * factorial(n - 1)
 }
 

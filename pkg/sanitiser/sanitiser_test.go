@@ -55,8 +55,8 @@ func Test_I5_Assign(t *testing.T) {
 	checkIgnores(t, Token{ASSIGN, "", 0, 0})
 }
 
-func Test_I6_Returns(t *testing.T) {
-	checkIgnores(t, Token{RETURNS, "", 0, 0})
+func Test_I6_Output(t *testing.T) {
+	checkIgnores(t, Token{OUTPUT, "", 0, 0})
 }
 
 func Test_I7_BlockOpen(t *testing.T) {

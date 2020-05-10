@@ -54,8 +54,8 @@ func Test_T12_Assign(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T12_Assign)
 }
 
-func Test_T13_Returns(t *testing.T) {
-	tests.Run(t, ScanAll, tests.T13_Returns)
+func Test_T13_Output(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T13_Output)
 }
 
 func Test_T14_LessThanOrEqual(t *testing.T) {

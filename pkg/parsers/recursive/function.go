@@ -28,16 +28,12 @@ func parseFuncDef(p *pipe) st.Expression {
 }
 
 func parseFuncParams(p *pipe) (in, out []token.Token) {
-	// pattern := PAREN_OPEN [ids] [RETURNS ids] PAREN_CLOSE
+	// pattern := PAREN_OPEN [ids] PAREN_CLOSE
 
 	p.expect(`parseFuncParams`, token.PAREN_OPEN)
 
-	if p.match(token.ID) {
-		in = parseFuncParamIds(p)
-	}
-
-	if p.accept(token.RETURNS) {
-		out = parseFuncParamIds(p)
+	if p.match(token.ID) || p.match(token.OUTPUT) {
+		in, out = parseFuncParamIds(p)
 	}
 
 	p.expect(`parseFuncParams`, token.PAREN_CLOSE)
@@ -45,21 +41,25 @@ func parseFuncParams(p *pipe) (in, out []token.Token) {
 	return in, out
 }
 
-func parseFuncParamIds(p *pipe) []token.Token {
-	// pattern := ID {DELIM ID}
-
-	var ids []token.Token
+func parseFuncParamIds(p *pipe) (in []token.Token, out []token.Token) {
+	// pattern := [^] ID {DELIM [^] ID}
 
 	for {
-		tk := p.expect(`parseFuncParamIds`, token.ID)
-		ids = append(ids, tk)
+		if p.accept(token.OUTPUT) {
+			tk := p.expect(`parseFuncParamIds`, token.ID)
+			out = append(out, tk)
+
+		} else {
+			tk := p.expect(`parseFuncParamIds`, token.ID)
+			in = append(in, tk)
+		}
 
 		if !p.accept(token.DELIM) {
 			break
 		}
 	}
 
-	return ids
+	return
 }
 
 func isFuncBlock(p *pipe) bool {

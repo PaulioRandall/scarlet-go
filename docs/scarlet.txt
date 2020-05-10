@@ -1,7 +1,7 @@
 
 divideAndFmt := F(a, b, ^r, ^e) {
 	WATCH e {
-		[b = 0]: e := `Can't divide by zero`
+		[b = 0] e := `Can't divide by zero`
 		r, e := @FmtReal(a / b, `.##`)
 
 		EXIT FUNC

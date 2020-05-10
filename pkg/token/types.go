@@ -21,7 +21,7 @@ const (
 	ID                 TokenType = `ID`
 	DELIM              TokenType = `DELIMITER`
 	ASSIGN             TokenType = `ASSIGNS`
-	RETURNS            TokenType = `RETURNS`
+	OUTPUT             TokenType = `OUTPUT_PARAM`
 	BLOCK_OPEN         TokenType = `NEW_BLOCK`
 	BLOCK_CLOSE        TokenType = `END_BLOCK`
 	PAREN_OPEN         TokenType = `PAREN_OPEN`

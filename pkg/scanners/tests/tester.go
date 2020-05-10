@@ -10,6 +10,7 @@ import (
 )
 
 type ScanFunc func(in string) []Token
+
 type TestFunc func(t *testing.T, sf ScanFunc)
 
 func Run(t *testing.T, sf ScanFunc, tf TestFunc) {

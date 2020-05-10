@@ -95,7 +95,7 @@ func S4_MatchBlock(t *testing.T, f ScanFunc) {
 
 func S5_FuncDef(t *testing.T, f ScanFunc) {
 
-	in := "F(a,b -> c,d)"
+	in := "F(a,b,^c,^d)"
 
 	exps := []Token{
 		Token{FUNC, "F", 0, 0},
@@ -103,13 +103,13 @@ func S5_FuncDef(t *testing.T, f ScanFunc) {
 		Token{ID, "a", 0, 2},
 		Token{DELIM, ",", 0, 3},
 		Token{ID, "b", 0, 4},
-		Token{WHITESPACE, " ", 0, 5},
-		Token{RETURNS, "->", 0, 6},
-		Token{WHITESPACE, " ", 0, 8},
-		Token{ID, "c", 0, 9},
-		Token{DELIM, ",", 0, 10},
-		Token{ID, "d", 0, 11},
-		Token{PAREN_CLOSE, ")", 0, 12},
+		Token{DELIM, ",", 0, 5},
+		Token{OUTPUT, "^", 0, 6},
+		Token{ID, "c", 0, 7},
+		Token{DELIM, ",", 0, 8},
+		Token{OUTPUT, "^", 0, 9},
+		Token{ID, "d", 0, 10},
+		Token{PAREN_CLOSE, ")", 0, 11},
 	}
 
 	checkMany(t, exps, f(in))

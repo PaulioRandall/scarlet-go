@@ -67,8 +67,8 @@ func T12_Assign(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{ASSIGN, ":=", 0, 0}, f(":="))
 }
 
-func T13_Returns(t *testing.T, f ScanFunc) {
-	checkOne(t, Token{RETURNS, "->", 0, 0}, f("->"))
+func T13_Output(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{OUTPUT, "^", 0, 0}, f("^"))
 }
 
 func T14_LessThanOrEqual(t *testing.T, f ScanFunc) {

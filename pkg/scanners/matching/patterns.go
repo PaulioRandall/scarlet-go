@@ -67,9 +67,6 @@ func patterns() []pattern {
 		pattern{token.ASSIGN, func(s *symbols) int {
 			return matchStr(s, ":=")
 		}},
-		pattern{token.RETURNS, func(s *symbols) int {
-			return matchStr(s, "->")
-		}},
 		pattern{token.LESS_THAN_OR_EQUAL, func(s *symbols) int {
 			return matchStr(s, "<=")
 		}},
@@ -93,6 +90,9 @@ func patterns() []pattern {
 		}},
 		pattern{token.GUARD_CLOSE, func(s *symbols) int {
 			return matchStr(s, "]")
+		}},
+		pattern{token.OUTPUT, func(s *symbols) int {
+			return matchStr(s, "^")
 		}},
 		pattern{token.DELIM, func(s *symbols) int {
 			return matchStr(s, ",")
