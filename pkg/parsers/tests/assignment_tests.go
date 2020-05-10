@@ -207,3 +207,26 @@ func E1_Add(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, exp, act)
 }
+
+func E2_Subtract(t *testing.T, f ParseFunc) {
+
+	// 2 - 1
+
+	given := []Token{
+		Token{NUMBER, "2", 0, 0},
+		Token{SUBTRACT, "-", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	exp := st.Operation{
+		st.Value(Token{NUMBER, "2", 0, 0}),
+		Token{SUBTRACT, "-", 0, 0},
+		st.Value(Token{NUMBER, "1", 0, 0}),
+	}
+
+	act := f(given)
+
+	expectOneStat(t, exp, act)
+}

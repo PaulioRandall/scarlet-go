@@ -25,3 +25,7 @@ func Test_F2_Func(t *testing.T) {
 func Test_E1_Add(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E1_Add)
 }
+
+func Test_E2_Subtract(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E2_Subtract)
+}
