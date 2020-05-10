@@ -14,9 +14,7 @@ func (s *str) String() string {
 }
 
 func (s *str) print() {
-	out := strings.ReplaceAll(string(*s), "\t", "  ")
-
-	fmt.Println(out)
+	fmt.Println(string(*s))
 	fmt.Println(token.EOF)
 	fmt.Println()
 }

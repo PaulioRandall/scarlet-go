@@ -54,7 +54,9 @@ func expectOneStat(t *testing.T, exp st.Statement, acts []st.Statement) {
 
 func expectStat(t *testing.T, exp, act st.Statement) {
 	require.Equal(t, exp, act,
-		"Expected ("+exp.String(1)+") but got ("+act.String(1)+")")
+		"Expect: "+exp.String(0)+"\n"+
+			"Actual: "+act.String(0),
+	)
 }
 
 func expectSize(t *testing.T, exp int, acts []st.Statement) {
