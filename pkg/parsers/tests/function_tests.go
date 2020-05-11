@@ -30,12 +30,16 @@ func F1_FuncDef(t *testing.T, f ParseFunc) {
 		Token{EOF, "", 0, 0},
 	}
 
+	targets := []st.AssignTarget{
+		st.AssignTarget{Token{ID, "f", 0, 0}, nil},
+	}
+
 	funcBody := st.Block{ // c := a
 		Token{ID, "c", 0, 0},
 		[]st.Statement{
 			st.Assignment{
 				false,
-				[]Token{Token{ID, "c", 0, 0}},
+				[]st.AssignTarget{st.AssignTarget{Token{ID, "c", 0, 0}, nil}},
 				Token{ASSIGN, ":=", 0, 0},
 				[]st.Expression{st.Identifier(Token{ID, "a", 0, 0})},
 			},
@@ -59,7 +63,7 @@ func F1_FuncDef(t *testing.T, f ParseFunc) {
 
 	exp := st.Assignment{
 		false,
-		[]Token{Token{ID, "f", 0, 0}},
+		targets,
 		Token{ASSIGN, ":=", 0, 0},
 		funcExpr,
 	}
@@ -94,12 +98,16 @@ func F2_FuncDef(t *testing.T, f ParseFunc) {
 		Token{EOF, "", 0, 0},
 	}
 
+	targets := []st.AssignTarget{
+		st.AssignTarget{Token{ID, "f", 0, 0}, nil},
+	}
+
 	funcBody := st.Block{ // { c := a }
 		Token{BLOCK_OPEN, "{", 0, 0},
 		[]st.Statement{
 			st.Assignment{
 				false,
-				[]Token{Token{ID, "c", 0, 0}},
+				[]st.AssignTarget{st.AssignTarget{Token{ID, "c", 0, 0}, nil}},
 				Token{ASSIGN, ":=", 0, 0},
 				[]st.Expression{st.Identifier(Token{ID, "a", 0, 0})},
 			},
@@ -123,7 +131,7 @@ func F2_FuncDef(t *testing.T, f ParseFunc) {
 
 	exp := st.Assignment{
 		false,
-		[]Token{Token{ID, "f", 0, 0}},
+		targets,
 		Token{ASSIGN, ":=", 0, 0},
 		funcExpr,
 	}
@@ -321,6 +329,10 @@ func F11_FuncDef(t *testing.T, f ParseFunc) {
 		Token{EOF, "", 0, 0},
 	}
 
+	targets := []st.AssignTarget{
+		st.AssignTarget{Token{ID, "f", 0, 0}, nil},
+	}
+
 	funcBody := st.Block{
 		Token{BLOCK_OPEN, "{", 0, 0},
 		nil,
@@ -338,7 +350,7 @@ func F11_FuncDef(t *testing.T, f ParseFunc) {
 
 	exp := st.Assignment{
 		false,
-		[]Token{Token{ID, "f", 0, 0}},
+		targets,
 		Token{ASSIGN, ":=", 0, 0},
 		funcDef,
 	}

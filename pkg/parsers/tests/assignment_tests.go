@@ -19,9 +19,13 @@ func A1_Assignment(t *testing.T, f ParseFunc) {
 		Token{EOF, "", 0, 0},
 	}
 
+	targets := []st.AssignTarget{
+		st.AssignTarget{Token{ID, "x", 0, 0}, nil},
+	}
+
 	exp := st.Assignment{
 		false,
-		[]Token{Token{ID, "x", 0, 0}},
+		targets,
 		Token{ASSIGN, ":=", 0, 0},
 		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
 	}
@@ -45,12 +49,14 @@ func A2_MultiAssignment(t *testing.T, f ParseFunc) {
 		Token{EOF, "", 0, 0},
 	}
 
+	targets := []st.AssignTarget{
+		st.AssignTarget{Token{ID, "x", 0, 0}, nil},
+		st.AssignTarget{Token{ID, "y", 0, 0}, nil},
+	}
+
 	exp := st.Assignment{
 		false,
-		[]Token{
-			Token{ID, "x", 0, 0},
-			Token{ID, "y", 0, 0},
-		},
+		targets,
 		Token{ASSIGN, ":=", 0, 0},
 		[]st.Expression{
 			st.Value(Token{NUMBER, "1", 0, 0}),
@@ -74,9 +80,13 @@ func A3_Assignment(t *testing.T, f ParseFunc) {
 		Token{EOF, "", 0, 0},
 	}
 
+	targets := []st.AssignTarget{
+		st.AssignTarget{Token{ID, "x", 0, 0}, nil},
+	}
+
 	exp := st.Assignment{
 		true,
-		[]Token{Token{ID, "x", 0, 0}},
+		targets,
 		Token{ASSIGN, ":=", 0, 0},
 		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
 	}
@@ -100,12 +110,14 @@ func A4_MultiAssignment(t *testing.T, f ParseFunc) {
 		Token{EOF, "", 0, 0},
 	}
 
+	targets := []st.AssignTarget{
+		st.AssignTarget{Token{ID, "x", 0, 0}, nil},
+		st.AssignTarget{Token{ID, "y", 0, 0}, nil},
+	}
+
 	exp := st.Assignment{
 		false,
-		[]Token{
-			Token{ID, "x", 0, 0},
-			Token{ID, "y", 0, 0},
-		},
+		targets,
 		Token{ASSIGN, ":=", 0, 0},
 		[]st.Expression{
 			st.FuncCall{

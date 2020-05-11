@@ -25,7 +25,7 @@ func parseAssignment(p *pipe) st.Assignment {
 		Fixed: p.accept(token.FIX),
 	}
 
-	a.Targets = parseAssignmentIds(p)
+	a.Targets = parseAssignTargets(p)
 	a.Assign = p.expect(`parseAssignment`, token.ASSIGN)
 
 	if isFuncDef(p) {
@@ -41,20 +41,21 @@ func parseAssignment(p *pipe) st.Assignment {
 	return a
 }
 
-func parseAssignmentIds(p *pipe) []token.Token {
+func parseAssignTargets(p *pipe) []st.AssignTarget {
 	// pattern := ID { DELIM ID }
 
-	var ids []token.Token
+	var ats []st.AssignTarget
 
 	for !p.itr.Empty() {
 
-		id := p.expect(`parseAssignmentIds`, token.ID)
-		ids = append(ids, id)
+		id := p.expect(`parseAssignTargets`, token.ID)
+		at := st.AssignTarget{id, nil}
+		ats = append(ats, at)
 
 		if !p.accept(token.DELIM) {
 			break
 		}
 	}
 
-	return ids
+	return ats
 }
