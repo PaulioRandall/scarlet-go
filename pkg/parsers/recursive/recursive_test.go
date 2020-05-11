@@ -42,6 +42,10 @@ func Test_E7_MultiplicativeOrdering(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E7_MultiplicativeOrdering)
 }
 
+func Test_E8_MultiplicativeOrdering(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E8_MultiplicativeOrdering)
+}
+
 func Test_F1_FuncInline(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F1_FuncInline)
 }
