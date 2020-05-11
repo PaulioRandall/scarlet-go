@@ -22,6 +22,18 @@ func Test_A4_MultiAssignment(t *testing.T) {
 	tests.Run(t, ParseAll, tests.A4_MultiAssignment)
 }
 
+func Test_A5_Panics(t *testing.T) {
+	tests.Run(t, ParseAll, tests.A5_Panics)
+}
+
+func Test_A6_Panics(t *testing.T) {
+	tests.Run(t, ParseAll, tests.A6_Panics)
+}
+
+func Test_A7_Panics(t *testing.T) {
+	tests.Run(t, ParseAll, tests.A7_Panics)
+}
+
 func Test_E1_Add(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E1_Add)
 }

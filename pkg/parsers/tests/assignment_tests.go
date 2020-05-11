@@ -117,3 +117,53 @@ func A4_MultiAssignment(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, exp, f(given))
 }
+
+func A5_Panics(t *testing.T, f ParseFunc) {
+
+	// x, := 1
+
+	given := []Token{
+		Token{ID, "x", 0, 0},
+		Token{DELIM, ",", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	expectPanic(t, func() { f(given) })
+}
+
+func A6_Panics(t *testing.T, f ParseFunc) {
+
+	// x, 1 := 1
+
+	given := []Token{
+		Token{ID, "x", 0, 0},
+		Token{DELIM, ",", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	expectPanic(t, func() { f(given) })
+}
+
+func A7_Panics(t *testing.T, f ParseFunc) {
+
+	// x, F := 1
+
+	given := []Token{
+		Token{ID, "x", 0, 0},
+		Token{DELIM, ",", 0, 0},
+		Token{FUNC, "F", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	expectPanic(t, func() { f(given) })
+}
