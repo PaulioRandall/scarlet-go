@@ -93,3 +93,11 @@ func Test_F5_FuncCall(t *testing.T) {
 func Test_F6_FuncCall(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F6_FuncCall)
 }
+
+func Test_F7_Panics(t *testing.T) {
+	tests.Run(t, ParseAll, tests.F7_Panics)
+}
+
+func Test_F8_Panics(t *testing.T) {
+	tests.Run(t, ParseAll, tests.F8_Panics)
+}
