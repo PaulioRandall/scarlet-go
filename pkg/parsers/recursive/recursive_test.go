@@ -62,10 +62,14 @@ func Test_E12_WithFuncCall(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E12_WithFuncCall)
 }
 
-func Test_F1_FuncInline(t *testing.T) {
-	tests.Run(t, ParseAll, tests.F1_FuncInline)
+func Test_F1_FuncDefInline(t *testing.T) {
+	tests.Run(t, ParseAll, tests.F1_FuncDefInline)
 }
 
-func Test_F2_Func(t *testing.T) {
-	tests.Run(t, ParseAll, tests.F2_Func)
+func Test_F2_FuncDef(t *testing.T) {
+	tests.Run(t, ParseAll, tests.F2_FuncDef)
+}
+
+func Test_F3_FuncCallNoParams(t *testing.T) {
+	tests.Run(t, ParseAll, tests.F3_FuncCallNoParams)
 }
