@@ -25,7 +25,7 @@ func parseAssignment(p *pipe) st.Assignment {
 		Fixed: p.accept(token.FIX),
 	}
 
-	a.IDs = parseAssignmentIds(p)
+	a.Targets = parseAssignmentIds(p)
 	a.Assign = p.expect(`parseAssignment`, token.ASSIGN)
 
 	if isFuncDef(p) {

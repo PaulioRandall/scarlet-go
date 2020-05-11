@@ -21,10 +21,10 @@ type Statement interface {
 }
 
 type Assignment struct {
-	Fixed  bool
-	IDs    []token.Token
-	Assign token.Token
-	Exprs  []Expression
+	Fixed   bool
+	Targets []token.Token
+	Assign  token.Token
+	Exprs   []Expression
 }
 
 func (a Assignment) Token() token.Token {
@@ -41,10 +41,10 @@ func (a Assignment) String(indent int) string {
 
 	s.newline().
 		indent(indent + 1).
-		append("IDs:")
+		append("Targets:")
 
 	s.newline().
-		appendTks(indent+2, a.IDs)
+		appendTks(indent+2, a.Targets)
 
 	s.newline().
 		indent(indent + 1).

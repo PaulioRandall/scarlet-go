@@ -8,9 +8,9 @@ import (
 func exeAssignment(ctx *alphaContext, a st.Assignment) {
 
 	vs := evalExpressions(ctx, a.Exprs)
-	checkAssignments(a.IDs, vs, a.Assign)
+	checkAssignments(a.Targets, vs, a.Assign)
 
-	for i, id := range a.IDs {
+	for i, id := range a.Targets {
 		if a.Fixed {
 			ctx.SetFixed(id, vs[i])
 		} else {

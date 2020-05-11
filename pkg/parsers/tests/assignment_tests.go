@@ -167,3 +167,30 @@ func A7_Panics(t *testing.T, f ParseFunc) {
 
 	expectPanic(t, func() { f(given) })
 }
+
+/*
+func A8_Assignment(t *testing.T, f ParseFunc) {
+
+	// a[0] := 1
+
+	given := []Token{
+		Token{ID, "a", 0, 0},
+		Token{GUARD_OPEN, "[", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{GUARD_OPEN, "]", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	exp := st.Assignment{
+		false,
+		[]Token{Token{ID, "x", 0, 0}},
+		Token{ASSIGN, ":=", 0, 0},
+		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
+	}
+
+	expectOneStat(t, exp, f(given))
+}
+*/

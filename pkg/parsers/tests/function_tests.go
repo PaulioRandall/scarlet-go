@@ -345,32 +345,3 @@ func F11_FuncDef(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, exp, f(given))
 }
-
-/*
-func F11_FuncDefPanics(t *testing.T, f ParseFunc) {
-
-	// f := F(a, b, ^c) c := a
-
-	given := []Token{
-		Token{ID, "f", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{FUNC, "F", 0, 0},
-		Token{PAREN_OPEN, "(", 0, 0},
-		Token{ID, "a", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{ID, "b", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{OUTPUT, "^", 0, 0},
-		Token{ID, "c", 0, 0},
-		Token{PAREN_CLOSE, ")", 0, 0},
-		Token{ID, "c", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{ID, "a", 0, 0},
-		Token{TERMINATOR, "\n", 0, 0},
-		Token{EOF, "", 0, 0},
-	}
-
-
-	expectPanic(t, func() { f(given) })
-}
-*/
