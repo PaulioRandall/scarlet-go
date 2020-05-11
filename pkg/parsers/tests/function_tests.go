@@ -244,7 +244,7 @@ func F6_FuncCall(t *testing.T, f ParseFunc) {
 	expectOneStat(t, outer, f(given))
 }
 
-func F7_Panics(t *testing.T, f ParseFunc) {
+func F7_FuncCallPanics(t *testing.T, f ParseFunc) {
 
 	// f(
 
@@ -258,12 +258,29 @@ func F7_Panics(t *testing.T, f ParseFunc) {
 	expectPanic(t, func() { f(given) })
 }
 
-func F8_Panics(t *testing.T, f ParseFunc) {
+func F8_FuncCallPanics(t *testing.T, f ParseFunc) {
 
 	// f)
 
 	given := []Token{
 		Token{ID, "f", 0, 0},
+		Token{PAREN_CLOSE, ")", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	expectPanic(t, func() { f(given) })
+}
+
+func F9_FuncCallPanics(t *testing.T, f ParseFunc) {
+
+	// f(a,)
+
+	given := []Token{
+		Token{ID, "f", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 0},
+		Token{ID, "a", 0, 0},
+		Token{DELIM, ",", 0, 0},
 		Token{PAREN_CLOSE, ")", 0, 0},
 		Token{TERMINATOR, "", 0, 0},
 		Token{EOF, "", 0, 0},

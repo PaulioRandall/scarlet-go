@@ -13,11 +13,15 @@ func parseExpressions(p *pipe) []st.Expression {
 	exp := parseExpression(p)
 
 	for exp != nil {
-
 		exps = append(exps, exp)
 
 		if p.accept(token.DELIM) {
 			exp = parseExpression(p)
+
+			if exp == nil {
+				panic(unexpected("parseExpressions", p.past(), token.DELIM))
+			}
+
 		} else {
 			exp = nil
 		}
