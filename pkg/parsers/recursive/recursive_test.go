@@ -58,8 +58,16 @@ func Test_E11_OperationOrdering(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E11_OperationOrdering)
 }
 
-func Test_E12_WithFuncCall(t *testing.T) {
-	tests.Run(t, ParseAll, tests.E12_WithFuncCall)
+func Test_E12_FuncCall(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E12_FuncCall)
+}
+
+func Test_E13_Panics(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E13_Panics)
+}
+
+func Test_E14_Panics(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E14_Panics)
 }
 
 func Test_F1_FuncDef(t *testing.T) {

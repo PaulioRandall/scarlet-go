@@ -339,7 +339,7 @@ func E11_OperationOrdering(t *testing.T, f ParseFunc) {
 	expectOneStat(t, sub, f(given))
 }
 
-func E12_WithFuncCall(t *testing.T, f ParseFunc) {
+func E12_FuncCall(t *testing.T, f ParseFunc) {
 
 	// 1 + f(a,b)
 
@@ -370,4 +370,35 @@ func E12_WithFuncCall(t *testing.T, f ParseFunc) {
 	}
 
 	expectOneStat(t, exp, f(given))
+}
+
+func E13_Panics(t *testing.T, f ParseFunc) {
+
+	// 1 + +
+
+	given := []Token{
+		Token{NUMBER, "1", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	expectPanic(t, func() { f(given) })
+}
+
+func E14_Panics(t *testing.T, f ParseFunc) {
+
+	// + 1 + 1
+
+	given := []Token{
+		Token{ADD, "+", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	expectPanic(t, func() { f(given) })
 }
