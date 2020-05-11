@@ -14,6 +14,14 @@ func Test_A2_MultiAssignment(t *testing.T) {
 	tests.Run(t, ParseAll, tests.A2_MultiAssignment)
 }
 
+func Test_A3_Assignment(t *testing.T) {
+	tests.Run(t, ParseAll, tests.A3_Assignment)
+}
+
+func Test_A4_MultiAssignment(t *testing.T) {
+	tests.Run(t, ParseAll, tests.A4_MultiAssignment)
+}
+
 func Test_E1_Add(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E1_Add)
 }
