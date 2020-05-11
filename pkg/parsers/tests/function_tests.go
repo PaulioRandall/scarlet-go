@@ -7,7 +7,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func F1_FuncDefInline(t *testing.T, f ParseFunc) {
+func F1_FuncDef(t *testing.T, f ParseFunc) {
 
 	// f := F(a, b, ^c) c := a
 
@@ -131,7 +131,7 @@ func F2_FuncDef(t *testing.T, f ParseFunc) {
 	expectOneStat(t, exp, f(given))
 }
 
-func F3_FuncCallNoParams(t *testing.T, f ParseFunc) {
+func F3_FuncCall(t *testing.T, f ParseFunc) {
 
 	// f()
 
@@ -151,7 +151,7 @@ func F3_FuncCallNoParams(t *testing.T, f ParseFunc) {
 	expectOneStat(t, exp, f(given))
 }
 
-func F4_FuncCallIdParams(t *testing.T, f ParseFunc) {
+func F4_FuncCall(t *testing.T, f ParseFunc) {
 
 	// f(a, b)
 
@@ -177,7 +177,7 @@ func F4_FuncCallIdParams(t *testing.T, f ParseFunc) {
 	expectOneStat(t, exp, f(given))
 }
 
-func F5_FuncCallExprParam(t *testing.T, f ParseFunc) {
+func F5_FuncCall(t *testing.T, f ParseFunc) {
 
 	// f(1 + 2 - 3)
 
@@ -213,4 +213,33 @@ func F5_FuncCallExprParam(t *testing.T, f ParseFunc) {
 	exp.Input = []st.Expression{op}
 
 	expectOneStat(t, exp, f(given))
+}
+
+func F6_FuncCall(t *testing.T, f ParseFunc) {
+
+	// f(abc())
+
+	given := []Token{
+		Token{ID, "f", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 0},
+		Token{ID, "abc", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 0},
+		Token{PAREN_CLOSE, ")", 0, 0},
+		Token{PAREN_CLOSE, ")", 0, 0},
+		Token{TERMINATOR, "\n", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	outer := st.FuncCall{
+		ID: st.Identifier(Token{ID, "f", 0, 0}),
+	}
+
+	inner := st.FuncCall{
+		st.Identifier(Token{ID, "abc", 0, 0}),
+		nil,
+	}
+
+	outer.Input = []st.Expression{inner}
+
+	expectOneStat(t, outer, f(given))
 }
