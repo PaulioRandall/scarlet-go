@@ -14,14 +14,6 @@ func Test_A2_MultiAssignment(t *testing.T) {
 	tests.Run(t, ParseAll, tests.A2_MultiAssignment)
 }
 
-func Test_F1_FuncInline(t *testing.T) {
-	tests.Run(t, ParseAll, tests.F1_FuncInline)
-}
-
-func Test_F2_Func(t *testing.T) {
-	tests.Run(t, ParseAll, tests.F2_Func)
-}
-
 func Test_E1_Add(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E1_Add)
 }
@@ -44,4 +36,16 @@ func Test_E5_AdditiveOrdering(t *testing.T) {
 
 func Test_E6_AdditiveOrdering(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E6_AdditiveOrdering)
+}
+
+func Test_E7_MultiplicativeOrdering(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E7_MultiplicativeOrdering)
+}
+
+func Test_F1_FuncInline(t *testing.T) {
+	tests.Run(t, ParseAll, tests.F1_FuncInline)
+}
+
+func Test_F2_Func(t *testing.T) {
+	tests.Run(t, ParseAll, tests.F2_Func)
 }
