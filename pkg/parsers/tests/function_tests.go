@@ -176,3 +176,41 @@ func F4_FuncCallIdParams(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, exp, f(given))
 }
+
+func F5_FuncCallExprParam(t *testing.T, f ParseFunc) {
+
+	// f(1 + 2 - 3)
+
+	given := []Token{
+		Token{ID, "f", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{NUMBER, "2", 0, 0},
+		Token{SUBTRACT, "-", 0, 0},
+		Token{NUMBER, "3", 0, 0},
+		Token{PAREN_CLOSE, ")", 0, 0},
+		Token{TERMINATOR, "\n", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	exp := st.FuncCall{
+		ID: st.Identifier(Token{ID, "f", 0, 0}),
+	}
+
+	op := st.Operation{
+		st.Value(Token{NUMBER, "1", 0, 0}),
+		Token{ADD, "+", 0, 0},
+		st.Value(Token{NUMBER, "2", 0, 0}),
+	}
+
+	op = st.Operation{
+		op,
+		Token{SUBTRACT, "-", 0, 0},
+		st.Value(Token{NUMBER, "3", 0, 0}),
+	}
+
+	exp.Input = []st.Expression{op}
+
+	expectOneStat(t, exp, f(given))
+}
