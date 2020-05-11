@@ -288,3 +288,89 @@ func F9_FuncCallPanics(t *testing.T, f ParseFunc) {
 
 	expectPanic(t, func() { f(given) })
 }
+
+func F10_FuncCallPanics(t *testing.T, f ParseFunc) {
+
+	// f(a a)
+
+	given := []Token{
+		Token{ID, "f", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 0},
+		Token{ID, "a", 0, 0},
+		Token{ID, "a", 0, 0},
+		Token{PAREN_CLOSE, ")", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	expectPanic(t, func() { f(given) })
+}
+
+func F11_FuncDef(t *testing.T, f ParseFunc) {
+
+	// f := F() {}
+
+	given := []Token{
+		Token{ID, "f", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{FUNC, "F", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 0},
+		Token{PAREN_CLOSE, ")", 0, 0},
+		Token{BLOCK_OPEN, "{", 0, 0},
+		Token{BLOCK_CLOSE, "}", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	funcBody := st.Block{
+		Token{BLOCK_OPEN, "{", 0, 0},
+		nil,
+		Token{BLOCK_CLOSE, "}", 0, 0},
+	}
+
+	funcDef := []st.Expression{
+		st.FuncDef{
+			Token{FUNC, "F", 0, 0},
+			nil,
+			nil,
+			funcBody, // c := a
+		},
+	}
+
+	exp := st.Assignment{
+		false,
+		[]Token{Token{ID, "f", 0, 0}},
+		Token{ASSIGN, ":=", 0, 0},
+		funcDef,
+	}
+
+	expectOneStat(t, exp, f(given))
+}
+
+/*
+func F11_FuncDefPanics(t *testing.T, f ParseFunc) {
+
+	// f := F(a, b, ^c) c := a
+
+	given := []Token{
+		Token{ID, "f", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{FUNC, "F", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 0},
+		Token{ID, "a", 0, 0},
+		Token{DELIM, ",", 0, 0},
+		Token{ID, "b", 0, 0},
+		Token{DELIM, ",", 0, 0},
+		Token{OUTPUT, "^", 0, 0},
+		Token{ID, "c", 0, 0},
+		Token{PAREN_CLOSE, ")", 0, 0},
+		Token{ID, "c", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{ID, "a", 0, 0},
+		Token{TERMINATOR, "\n", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+
+	expectPanic(t, func() { f(given) })
+}
+*/
