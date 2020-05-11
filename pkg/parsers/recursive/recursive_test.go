@@ -73,3 +73,7 @@ func Test_F2_FuncDef(t *testing.T) {
 func Test_F3_FuncCallNoParams(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F3_FuncCallNoParams)
 }
+
+func Test_F4_FuncCallIdParams(t *testing.T) {
+	tests.Run(t, ParseAll, tests.F4_FuncCallIdParams)
+}

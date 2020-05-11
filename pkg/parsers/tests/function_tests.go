@@ -150,3 +150,29 @@ func F3_FuncCallNoParams(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, exp, f(given))
 }
+
+func F4_FuncCallIdParams(t *testing.T, f ParseFunc) {
+
+	// f(a, b)
+
+	given := []Token{
+		Token{ID, "f", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 0},
+		Token{ID, "a", 0, 0},
+		Token{DELIM, ",", 0, 0},
+		Token{ID, "b", 0, 0},
+		Token{PAREN_CLOSE, ")", 0, 0},
+		Token{TERMINATOR, "\n", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	exp := st.FuncCall{
+		st.Identifier(Token{ID, "f", 0, 0}),
+		[]st.Expression{
+			st.Identifier(Token{ID, "a", 0, 0}),
+			st.Identifier(Token{ID, "b", 0, 0}),
+		},
+	}
+
+	expectOneStat(t, exp, f(given))
+}
