@@ -34,6 +34,19 @@ func Test_A7_Panics(t *testing.T) {
 	tests.Run(t, ParseAll, tests.A7_Panics)
 }
 
+/*
+func Test_A8_Assignment(t *testing.T) {
+	tests.Run(t, ParseAll, tests.A8_Assignment)
+}
+
+func Test_A9_Assignment(t *testing.T) {
+	tests.Run(t, ParseAll, tests.A9_Assignment)
+}
+
+func Test_A10_Panics(t *testing.T) {
+	tests.Run(t, ParseAll, tests.A10_Panics)
+}
+*/
 func Test_E1_Add(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E1_Add)
 }

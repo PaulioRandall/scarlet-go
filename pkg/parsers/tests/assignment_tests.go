@@ -180,7 +180,6 @@ func A7_Panics(t *testing.T, f ParseFunc) {
 	expectPanic(t, func() { f(given) })
 }
 
-/*
 func A8_Assignment(t *testing.T, f ParseFunc) {
 
 	// a[0] := 1
@@ -188,7 +187,7 @@ func A8_Assignment(t *testing.T, f ParseFunc) {
 	given := []Token{
 		Token{ID, "a", 0, 0},
 		Token{GUARD_OPEN, "[", 0, 0},
-		Token{NUMBER, "1", 0, 0},
+		Token{NUMBER, "0", 0, 0},
 		Token{GUARD_OPEN, "]", 0, 0},
 		Token{ASSIGN, ":=", 0, 0},
 		Token{NUMBER, "1", 0, 0},
@@ -196,13 +195,79 @@ func A8_Assignment(t *testing.T, f ParseFunc) {
 		Token{EOF, "", 0, 0},
 	}
 
+	target := st.AssignTarget{
+		Token{ID, "a", 0, 0},
+		st.Value(Token{NUMBER, "0", 0, 0}),
+	}
+
 	exp := st.Assignment{
 		false,
-		[]Token{Token{ID, "x", 0, 0}},
+		[]st.AssignTarget{target},
 		Token{ASSIGN, ":=", 0, 0},
 		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
 	}
 
 	expectOneStat(t, exp, f(given))
 }
-*/
+
+func A9_Assignment(t *testing.T, f ParseFunc) {
+
+	// a[1 + 2 - 3] := 1
+
+	given := []Token{
+		Token{ID, "a", 0, 0},
+		Token{GUARD_OPEN, "[", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{NUMBER, "2", 0, 0},
+		Token{SUBTRACT, "-", 0, 0},
+		Token{NUMBER, "3", 0, 0},
+		Token{GUARD_OPEN, "]", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	target := st.AssignTarget{ID: Token{ID, "a", 0, 0}}
+
+	add := st.Operation{
+		st.Value(Token{NUMBER, "1", 0, 0}),
+		Token{ADD, "+", 0, 0},
+		st.Value(Token{NUMBER, "2", 0, 0}),
+	}
+
+	target.Index = st.Operation{
+		add,
+		Token{SUBTRACT, "-", 0, 0},
+		st.Value(Token{NUMBER, "3", 0, 0}),
+	}
+
+	exp := st.Assignment{
+		false,
+		[]st.AssignTarget{target},
+		Token{ASSIGN, ":=", 0, 0},
+		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
+	}
+
+	expectOneStat(t, exp, f(given))
+}
+
+func A10_Panics(t *testing.T, f ParseFunc) {
+
+	// FIX x[0] := 1
+
+	given := []Token{
+		Token{FIX, "FIX", 0, 0},
+		Token{ID, "x", 0, 0},
+		Token{GUARD_OPEN, "[", 0, 0},
+		Token{NUMBER, "0", 0, 0},
+		Token{GUARD_OPEN, "]", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	expectPanic(t, func() { f(given) })
+}
