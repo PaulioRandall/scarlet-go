@@ -58,6 +58,10 @@ func Test_E11_OperationOrdering(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E11_OperationOrdering)
 }
 
+func Test_E12_WithFuncCall(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E12_WithFuncCall)
+}
+
 func Test_F1_FuncInline(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F1_FuncInline)
 }

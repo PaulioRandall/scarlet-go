@@ -338,3 +338,36 @@ func E11_OperationOrdering(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, sub, f(given))
 }
+
+func E12_WithFuncCall(t *testing.T, f ParseFunc) {
+
+	// 1 + f(a,b)
+
+	given := []Token{
+		Token{NUMBER, "1", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{ID, "f", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 0},
+		Token{ID, "a", 0, 0},
+		Token{DELIM, ",", 0, 0},
+		Token{ID, "b", 0, 0},
+		Token{PAREN_CLOSE, ")", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	exp := st.Operation{
+		Left:     st.Value(Token{NUMBER, "1", 0, 0}),
+		Operator: Token{ADD, "+", 0, 0},
+	}
+
+	exp.Right = st.FuncCall{
+		st.Identifier(Token{ID, "f", 0, 0}),
+		[]st.Expression{
+			st.Identifier(Token{ID, "a", 0, 0}),
+			st.Identifier(Token{ID, "b", 0, 0}),
+		},
+	}
+
+	expectOneStat(t, exp, f(given))
+}
