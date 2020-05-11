@@ -26,9 +26,7 @@ func A1_Assignment(t *testing.T, f ParseFunc) {
 		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func A2_MultiAssignment(t *testing.T, f ParseFunc) {
@@ -60,7 +58,5 @@ func A2_MultiAssignment(t *testing.T, f ParseFunc) {
 		},
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }

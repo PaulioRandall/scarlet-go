@@ -64,9 +64,7 @@ func F1_FuncInline(t *testing.T, f ParseFunc) {
 		funcExpr,
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func F2_Func(t *testing.T, f ParseFunc) {
@@ -130,7 +128,5 @@ func F2_Func(t *testing.T, f ParseFunc) {
 		funcExpr,
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }

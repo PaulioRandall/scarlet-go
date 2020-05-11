@@ -25,9 +25,7 @@ func E1_Add(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "2", 0, 0}),
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func E2_Subtract(t *testing.T, f ParseFunc) {
@@ -48,9 +46,7 @@ func E2_Subtract(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "1", 0, 0}),
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func E3_Multiply(t *testing.T, f ParseFunc) {
@@ -71,9 +67,7 @@ func E3_Multiply(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "7", 0, 0}),
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func E4_Divide(t *testing.T, f ParseFunc) {
@@ -94,9 +88,7 @@ func E4_Divide(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "3", 0, 0}),
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func E5_AdditiveOrdering(t *testing.T, f ParseFunc) {
@@ -125,9 +117,7 @@ func E5_AdditiveOrdering(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "3", 0, 0}),
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func E6_AdditiveOrdering(t *testing.T, f ParseFunc) {
@@ -156,9 +146,7 @@ func E6_AdditiveOrdering(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "3", 0, 0}),
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func E7_MultiplicativeOrdering(t *testing.T, f ParseFunc) {
@@ -195,9 +183,7 @@ func E7_MultiplicativeOrdering(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "4", 0, 0}),
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func E8_MultiplicativeOrdering(t *testing.T, f ParseFunc) {
@@ -234,9 +220,7 @@ func E8_MultiplicativeOrdering(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "4", 0, 0}),
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func E9_OperationOrdering(t *testing.T, f ParseFunc) {
@@ -265,9 +249,7 @@ func E9_OperationOrdering(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "3", 0, 0}),
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
 func E10_OperationOrdering(t *testing.T, f ParseFunc) {
@@ -297,12 +279,62 @@ func E10_OperationOrdering(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "3", 0, 0}),
 	}
 
-	act := f(given)
-
-	expectOneStat(t, exp, act)
+	expectOneStat(t, exp, f(given))
 }
 
-// TODO: 1/2+3 -> 1/2+3
-// TODO: 1+2/3 -> 1+(2/3)
+func E11_OperationOrdering(t *testing.T, f ParseFunc) {
 
-// TODO: 1+2*3%4/5-6 -> 1+((2*3)%(4/5))-6
+	// 1 + 2 * 3 - 4 % 5 / 6
+
+	given := []Token{
+		Token{NUMBER, "1", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{NUMBER, "2", 0, 0},
+		Token{MULTIPLY, "*", 0, 0},
+		Token{NUMBER, "3", 0, 0},
+		Token{SUBTRACT, "-", 0, 0},
+		Token{NUMBER, "4", 0, 0},
+		Token{REMAINDER, "%", 0, 0},
+		Token{NUMBER, "5", 0, 0},
+		Token{DIVIDE, "/", 0, 0},
+		Token{NUMBER, "6", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	// 1 + (2 * 3) - ((4 % 5) / 6)
+
+	add := st.Operation{
+		Left:     st.Value(Token{NUMBER, "1", 0, 0}),
+		Operator: Token{ADD, "+", 0, 0},
+	}
+
+	mul := st.Operation{
+		st.Value(Token{NUMBER, "2", 0, 0}),
+		Token{MULTIPLY, "*", 0, 0},
+		st.Value(Token{NUMBER, "3", 0, 0}),
+	}
+
+	add.Right = mul
+
+	sub := st.Operation{
+		Left:     add,
+		Operator: Token{SUBTRACT, "-", 0, 0},
+	}
+
+	rem := st.Operation{
+		st.Value(Token{NUMBER, "4", 0, 0}),
+		Token{REMAINDER, "%", 0, 0},
+		st.Value(Token{NUMBER, "5", 0, 0}),
+	}
+
+	div := st.Operation{
+		rem,
+		Token{DIVIDE, "/", 0, 0},
+		st.Value(Token{NUMBER, "6", 0, 0}),
+	}
+
+	sub.Right = div
+
+	expectOneStat(t, sub, f(given))
+}
