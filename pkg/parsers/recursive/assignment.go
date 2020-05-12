@@ -6,20 +6,21 @@ import (
 )
 
 func isAssignment(p *pipe) bool {
-	// match := FIX | ID DELIM | ID ASSIGN
+	// match := FIX
+	// match := ID (DELIM | ASSIGN)
+	// match := ID GUARD_OPEN (NUMBER | ID) GUARD_CLOSE (DELIM | ASSIGN)
 
-	if p.match(token.FIX) ||
+	return p.match(token.FIX) ||
 		p.matchSequence(token.ID, token.DELIM) ||
-		p.matchSequence(token.ID, token.ASSIGN) {
-
-		return true
-	}
-
-	return false
+		p.matchSequence(token.ID, token.ASSIGN) ||
+		p.matchSequence(token.ID, token.GUARD_OPEN, token.NUMBER, token.GUARD_CLOSE, token.DELIM) ||
+		p.matchSequence(token.ID, token.GUARD_OPEN, token.NUMBER, token.GUARD_CLOSE, token.ASSIGN) ||
+		p.matchSequence(token.ID, token.GUARD_OPEN, token.ID, token.GUARD_CLOSE, token.DELIM) ||
+		p.matchSequence(token.ID, token.GUARD_OPEN, token.ID, token.GUARD_CLOSE, token.ASSIGN)
 }
 
 func parseAssignment(p *pipe) st.Assignment {
-	// pattern := [FIX] ID { DELIM ID } ASSIGN expression {expression}
+	// pattern := [FIX] assign_target {assign_target} ASSIGN expression {expression}
 
 	a := st.Assignment{
 		Fixed: p.accept(token.FIX),
@@ -42,14 +43,13 @@ func parseAssignment(p *pipe) st.Assignment {
 }
 
 func parseAssignTargets(p *pipe) []st.AssignTarget {
-	// pattern := ID { DELIM ID }
+	// pattern := assignTarget { DELIM assignTarget }
 
 	var ats []st.AssignTarget
 
 	for !p.itr.Empty() {
 
-		id := p.expect(`parseAssignTargets`, token.ID)
-		at := st.AssignTarget{id, nil}
+		at := parseAssignTarget(p)
 		ats = append(ats, at)
 
 		if !p.accept(token.DELIM) {
@@ -58,4 +58,28 @@ func parseAssignTargets(p *pipe) []st.AssignTarget {
 	}
 
 	return ats
+}
+
+func parseAssignTarget(p *pipe) st.AssignTarget {
+	// pattern := ID [GUARD_OPEN (NUMBER | ID) GUARD_CLOSE]
+
+	at := st.AssignTarget{
+		ID: p.expect(`parseAssignTarget`, token.ID),
+	}
+
+	if p.accept(token.GUARD_OPEN) {
+
+		switch {
+		case p.match(token.NUMBER):
+			at.Index = parseExpression(p)
+		case p.match(token.ID):
+			at.Index = parseExpression(p)
+		default:
+			panic(unexpected("parseAssignTarget", p.peek(), `token.NUMBER | token.ID`))
+		}
+
+		p.expect(`parseAssignTarget`, token.GUARD_CLOSE)
+	}
+
+	return at
 }

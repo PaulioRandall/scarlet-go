@@ -34,6 +34,21 @@ func (ctx alphaContext) String() (s string) {
 	return
 }
 
+func (ctx *alphaContext) GetNonFixed(id token.Token) result {
+
+	if _, ok := ctx.fixed[id.Value]; ok {
+		panic(err("GetNonFixed", id, "Cannot change a fixed variable"))
+	}
+
+	v, ok := ctx.vars[id.Value]
+
+	if !ok {
+		v = voidLiteral{}
+	}
+
+	return v
+}
+
 // Get returns an empty result if the ID does not exist.
 func (ctx *alphaContext) Get(id string) result {
 	v, ok := ctx.fixed[id]

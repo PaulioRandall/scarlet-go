@@ -28,7 +28,25 @@ func assignVar(ctx *alphaContext, id token.Token, fixed bool, v result) {
 }
 
 func assignListItem(ctx *alphaContext, id token.Token, index st.Expression, v result) {
-	panic(err("assignListItem", id, "Not yet implemented"))
+
+	n := evalNumber(ctx, index)
+	i := int64(n)
+
+	list, ok := ctx.GetNonFixed(id).(listLiteral)
+	if !ok {
+		panic(err("assignListItem", id, "Not a list"))
+	}
+
+	items := []result(list)
+	size := int64(len(items))
+
+	if i < 0 || i >= size {
+		panic(err("assignListItem", index.Token(),
+			"Index out of range, accessing %s[%d] from %s[0:%d]",
+			index.Token().Value, i, index.Token().Value, size))
+	}
+
+	items[i] = v
 }
 
 func checkAssignTargets(ats []st.AssignTarget, vals []result, operator token.Token) {

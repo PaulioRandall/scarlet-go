@@ -22,6 +22,10 @@ func (p *pipe) past() token.Token {
 	return p.itr.Past() // Previous token, no iteration
 }
 
+func (p *pipe) back() {
+	p.itr.Back()
+}
+
 func (p *pipe) match(typ token.TokenType) bool {
 	t := p.itr.Peek().Type
 	return t == token.ANY || t == typ
