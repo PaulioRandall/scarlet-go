@@ -1,26 +1,5 @@
 
 
-a := F(b,^b, ^c) [b<9] {
-	b := b+1
-}
-
-a, b := a(10)
-
-
-naught_six := 2 * 9 / (3 + 12) * 2 / 4
-
-a_true := 2 * 6 % 8 < 8 / (2 + 1) = FALSE
-//       ((2 * 6) % 8) < (8 / (2 + 1)) = FALSE
-
-
-
-list := LIST {1,2,3}
-a := list[0]
-b := list[1]
-list[2] := `:)`
-
-
-
 FIX factorial := F(n, ^n) [n > 1] {
 	n := n * factorial(n - 1)
 }
@@ -29,14 +8,6 @@ answer := factorial(5)
 
 
 EOF
-
-
-
-// TODO
-// list[2] := _
-
-// TODO
-s := "alpha = {list[0]}, beta = {list[1]}"
 
 // TODO
 LOOP i [i < 10] +1 {
@@ -48,19 +19,44 @@ LOOP list -> i, v, m {
 }
 
 // TODO
-@Println(list)
+@P(`x: `, 1 + 2, "\n")
+@PL(list)
 
+// TODO: NUMBER: float64 -> NUMBER: Float
 
+// TODO: Prepend assignments with LET
+LET x := 1
+
+// MAYBE: Keywords be case-insensitive
+
+// TODO: Access using expression
+list[1 + 2] := `:)`
+
+// TODO
+s := "alpha = {list[0]}, beta = {list[1]}"
+
+// MAYBE: = -> ==
+// MAYBE: # -> !=
 
 // MAYBE
 increment := E(n) n + 1
 
 // MAYBE
-x := list[>] // Take last item
-x := list[<] // Take first item
-list[>] := 4 // Append to end
-list[<] := 0 // Append to front
+list[0] := _ // Removes the item from the list
+x := list[>>] // Take last item
+x := list[<<] // Take first item
+list[>>] := 4 // Append to end
+list[<<] := 0 // Append to front
 
 // MAYBE
 p := "key": "value"
 k, v := p[K], p[V]
+
+// MAYBE
+@cd(`./scarlet-go`)
+@cd(`..`)
+@pushd(`./scarlet-go`)
+$ `go build -o` filename `scarlet.go`
+@popd()
+build := E(file) $ `go build -o` file `scarlet.go`
+
