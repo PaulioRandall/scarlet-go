@@ -154,11 +154,11 @@ func T32_Or(t *testing.T, f ScanFunc) {
 }
 
 func T33_Equal(t *testing.T, f ScanFunc) {
-	checkOne(t, Token{EQUAL, "=", 0, 0}, f("="))
+	checkOne(t, Token{EQUAL, "==", 0, 0}, f("=="))
 }
 
 func T34_NotEqual(t *testing.T, f ScanFunc) {
-	checkOne(t, Token{NOT_EQUAL, "#", 0, 0}, f("#"))
+	checkOne(t, Token{NOT_EQUAL, "!=", 0, 0}, f("!="))
 }
 
 func T35_LessThan(t *testing.T, f ScanFunc) {

@@ -131,10 +131,10 @@ func patterns() []pattern {
 			return matchStr(s, "|")
 		}},
 		pattern{token.EQUAL, func(s *symbols) int {
-			return matchStr(s, "=")
+			return matchStr(s, "==")
 		}},
 		pattern{token.NOT_EQUAL, func(s *symbols) int {
-			return matchStr(s, "#")
+			return matchStr(s, "!=")
 		}},
 		pattern{token.LESS_THAN, func(s *symbols) int {
 			return matchStr(s, "<")
