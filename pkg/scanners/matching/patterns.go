@@ -45,6 +45,9 @@ func patterns() []pattern {
 		pattern{token.LIST, func(s *symbols) int {
 			return matchWord(s, "LIST")
 		}},
+		pattern{token.LOOP, func(s *symbols) int {
+			return matchWord(s, "LOOP")
+		}},
 		pattern{token.FIX, func(s *symbols) int {
 			return matchWord(s, "FIX")
 		}},

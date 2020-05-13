@@ -24,26 +24,31 @@ func T3_Comments(t *testing.T, f ScanFunc) {
 func T4_Match(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{MATCH, "MATCH", 0, 0}, f("MATCH"))
 	checkOneNot(t, Token{MATCH, "MATCH", 0, 0}, f("MATCHH"))
+	checkOneNot(t, Token{MATCH, "MATCHH", 0, 0}, f("MATCHH"))
 }
 
 func T5_False(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{BOOL, "FALSE", 0, 0}, f("FALSE"))
 	checkOneNot(t, Token{BOOL, "FALSE", 0, 0}, f("FALSEE"))
+	checkOneNot(t, Token{BOOL, "FALSEE", 0, 0}, f("FALSEE"))
 }
 
 func T6_True(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{BOOL, "TRUE", 0, 0}, f("TRUE"))
 	checkOneNot(t, Token{BOOL, "TRUE", 0, 0}, f("TRUEE"))
+	checkOneNot(t, Token{BOOL, "TRUEE", 0, 0}, f("TRUEE"))
 }
 
 func T7_List(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{LIST, "LIST", 0, 0}, f("LIST"))
 	checkOneNot(t, Token{LIST, "LIST", 0, 0}, f("LISTT"))
+	checkOneNot(t, Token{LIST, "LISTT", 0, 0}, f("LISTT"))
 }
 
 func T8_Fix(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{FIX, "FIX", 0, 0}, f("FIX"))
 	checkOneNot(t, Token{FIX, "FIX", 0, 0}, f("FIXX"))
+	checkOneNot(t, Token{FIX, "FIXX", 0, 0}, f("FIXX"))
 }
 
 func T9_Eof(t *testing.T, f ScanFunc) {
@@ -53,6 +58,7 @@ func T9_Eof(t *testing.T, f ScanFunc) {
 func T10_F(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{FUNC, "F", 0, 0}, f("F"))
 	checkOneNot(t, Token{FUNC, "F", 0, 0}, f("FF"))
+	checkOneNot(t, Token{FUNC, "FF", 0, 0}, f("FF"))
 }
 
 func T11_Identifiers(t *testing.T, f ScanFunc) {
@@ -190,4 +196,10 @@ func T39_Number(t *testing.T, f ScanFunc) {
 	checkOne(t, Token{NUMBER, "1.0", 0, 0}, f("1.0"))
 	checkOne(t, Token{NUMBER, "123.456", 0, 0}, f("123.456"))
 	checkPanic(t, func() { f("1.") })
+}
+
+func T40_Loop(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{LOOP, "LOOP", 0, 0}, f("LOOP"))
+	checkOneNot(t, Token{LOOP, "LOOP", 0, 0}, f("LOOPP"))
+	checkOneNot(t, Token{LOOP, "LOOPP", 0, 0}, f("LOOPP"))
 }

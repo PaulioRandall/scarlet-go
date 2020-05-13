@@ -30,6 +30,7 @@ const (
 	MATCH              TokenType = `MATCH`
 	GUARD_OPEN         TokenType = `GUARD_OPEN`
 	GUARD_CLOSE        TokenType = `GUARD_CLOSE`
+	LOOP               TokenType = `LOOP`
 	SPELL              TokenType = `SPELL`
 	STRING             TokenType = `STRING`
 	TEMPLATE           TokenType = `TEMPLATE`

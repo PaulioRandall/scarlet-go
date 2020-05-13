@@ -162,6 +162,10 @@ func Test_T39_Number(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T39_Number)
 }
 
+func Test_T40_Loop(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T40_Loop)
+}
+
 func Test_S1_Assignment(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S1_Assignment)
 }
