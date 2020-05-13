@@ -25,6 +25,9 @@ func exeStatement(ctx *alphaContext, s st.Statement) {
 	case st.Guard:
 		exeGuard(ctx, v)
 
+	case st.Loop:
+		exeLoop(ctx, v)
+
 	case st.Expression:
 		_ = evalExpression(ctx, v)
 

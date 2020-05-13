@@ -1,34 +1,13 @@
 
 
-FIX factorial := F(n, ^n) [n > 1] {
-	n := n * factorial(n - 1)
+factorial := F(n, ^r) LOOP i [i < n] {
+	[i = 0] r := 1
+	[i > 0] r := r * (i + 1)
 }
 
-answer := factorial(5)
-
+answer := factorial(170)
 
 EOF
-
-
-
-[ADD count-based looping]
-
-	[Formats]
-		`LOOP` ID guard-block
-
-	[Examples]
-		LOOP index [index < 5] {}
-		LOOP i [TRUE] {}
-
-	[Steps]
-		3. Add pattern to parser
-		4. Add execution of Loop to runtime
-
-	[Tests]
-		4. Parser statement: LOOP ID GUARD_OPEN ID LESS_THAN NUMBER GUARD_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
-		5. Parser statement: LOOP ID GUARD_OPEN BOOL GUARD_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
-
-[-----------]
 
 
 
@@ -53,18 +32,43 @@ EOF
 		3. Scanner statement: LOOP i, v, m <- f() {}
 		4. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
 		5. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID PAREN_OPEN PAREN_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
-
 [-----------]
 
 
+[REMOVE `Close` tokens]
+	Remove the `Close` tokens from List/Guard/Block in the statement pkg
+[-----------]	
 
 
-// TODO: Remove open/close tokens from List/Guard/Block in statement pkg
+[ENHANCE loops]
 
+	[Current]
+		LOOP i [i < n]
 
-// TODO
-@P(`x: `, 1 + 2, "\n")
-@PL(list)
+	[Allow]
+		1. LOOP i := 0 [i < 5]
+		2. F(n, ^r) LOOP n [n < 5]
+[-----------]
+
+[UPDATE context struct]
+	Context getters and setters need to get their parents to handle a get or set
+	and only use their variable arrays if the parents don't know about the specific identifier.
+[-----------]
+
+[ADD inbuilt functions]
+
+	[Print function]
+		Prints the args (variable length) to console
+		@P(...)
+
+	[Print line function]
+		Prints the args (variable length) to console, and appends a linefeed
+		@PL(...)
+
+	[Examples]
+		@P(`x: `, 1 + 2, "; ")
+		@PL(list)
+[-----------]
 
 // TODO: NUMBER: float64 -> NUMBER: Float
 
@@ -103,4 +107,3 @@ k, v := p[K], p[V]
 $ `go build -o` filename `scarlet.go`
 @popd()
 build := E(file) $ `go build -o` file `scarlet.go`
-

@@ -92,19 +92,31 @@ func (ctx *alphaContext) Set(id token.Token, v result) {
 	ctx.vars[name] = v
 }
 
-func (ctx *alphaContext) Spawn() *alphaContext {
+func (ctx *alphaContext) Spawn(pure bool) *alphaContext {
 
-	fixed := make(map[string]result, len(ctx.fixed))
+	var (
+		fixed map[string]result
+		vars  map[string]result
+	)
+
+	fixed = make(map[string]result, len(ctx.fixed))
 
 	for k, v := range ctx.fixed {
 		fixed[k] = v
 	}
 
-	return &alphaContext{
-		fixed:  fixed,
-		vars:   make(map[string]result),
-		parent: ctx,
+	if pure {
+		vars = make(map[string]result)
+
+	} else {
+		vars = make(map[string]result, len(ctx.vars))
+
+		for k, v := range ctx.vars {
+			vars[k] = v
+		}
 	}
+
+	return &alphaContext{fixed, vars, ctx}
 }
 
 func (ctx *alphaContext) Parent() *alphaContext {
