@@ -141,3 +141,7 @@ func Test_F10_FuncCallPanics(t *testing.T) {
 func Test_F11_FuncDef(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F11_FuncDef)
 }
+
+func Test_LP1_Assignment(t *testing.T) {
+	tests.Run(t, ParseAll, tests.LP1_Assignment)
+}
