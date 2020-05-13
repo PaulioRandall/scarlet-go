@@ -18,6 +18,7 @@ const (
 	NEWLINE            TokenType = `NEWLINE`
 	FUNC               TokenType = `FUNCTION`
 	FIX                TokenType = `FIX`
+	LET                TokenType = `LET`
 	ID                 TokenType = `ID`
 	DELIM              TokenType = `DELIMITER`
 	ASSIGN             TokenType = `ASSIGNS`

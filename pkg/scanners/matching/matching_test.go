@@ -166,6 +166,10 @@ func Test_T40_Loop(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T40_Loop)
 }
 
+func Test_T41_Let(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T41_Let)
+}
+
 func Test_S1_Assignment(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S1_Assignment)
 }

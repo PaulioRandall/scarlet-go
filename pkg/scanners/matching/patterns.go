@@ -51,6 +51,9 @@ func patterns() []pattern {
 		pattern{token.FIX, func(s *symbols) int {
 			return matchWord(s, "FIX")
 		}},
+		pattern{token.LET, func(s *symbols) int {
+			return matchWord(s, "LET")
+		}},
 		pattern{token.EOF, func(s *symbols) int {
 			return matchWord(s, "EOF")
 		}},

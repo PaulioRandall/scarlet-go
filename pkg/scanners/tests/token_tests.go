@@ -203,3 +203,9 @@ func T40_Loop(t *testing.T, f ScanFunc) {
 	checkOneNot(t, Token{LOOP, "LOOP", 0, 0}, f("LOOPP"))
 	checkOneNot(t, Token{LOOP, "LOOPP", 0, 0}, f("LOOPP"))
 }
+
+func T41_Let(t *testing.T, f ScanFunc) {
+	checkOne(t, Token{LET, "LET", 0, 0}, f("LET"))
+	checkOneNot(t, Token{LET, "LET", 0, 0}, f("LETT"))
+	checkOneNot(t, Token{LET, "LETT", 0, 0}, f("LETT"))
+}
