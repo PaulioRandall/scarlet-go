@@ -11,99 +11,141 @@ EOF
 
 
 
-[ADD list-based looping]
+[*****************************************************************************]
+- Add list-based looping
 
-	[Formats]
-		`LOOP` ID DELIM ID DELIM ID updates expression<list> full-block
+- Formats
+`LOOP` ID DELIM ID DELIM ID updates expression<list> full-block
 
-	[Examples]
-		LOOP index, value, hasMore <- list {}
-		LOOP i, v, m <- f() {}
+- Examples
+LOOP index, value, hasMore <- list {}
+LOOP i, v, m <- f() {}
 
-	[Steps]
-		1. Add `<-` (UPDATES) symbol to scanner
-		2. Add Iterator struct to statement pkg
-		3. Add pattern to parser
-		4. Add execution of Iterator to runtime
+- Steps
+1. Add `<-` (UPDATES) symbol to scanner
+2. Add Iterator struct to statement pkg
+3. Add pattern to parser
+4. Add execution of Iterator to runtime
 
-	[Tests]
-		1. Scanner token: UPDATES `<-`
-		2. Scanner statement: LOOP i, v, m <- list {}
-		3. Scanner statement: LOOP i, v, m <- f() {}
-		4. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
-		5. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID PAREN_OPEN PAREN_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
-[-----------]
-
-
-[REMOVE `Close` tokens]
-	Remove the `Close` tokens from List/Guard/Block in the statement pkg
-[-----------]	
+- Tests
+1. Scanner token: UPDATES `<-`
+2. Scanner statement: LOOP i, v, m <- list {}
+3. Scanner statement: LOOP i, v, m <- f() {}
+4. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
+5. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID PAREN_OPEN PAREN_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
 
 
-[ENHANCE loops]
+[*****************************************************************************]
+- Remove `Close` tokens
+Remove the `Close` tokens from List/Guard/Block in the statement pkg
 
-	[Current]
-		LOOP i [i < n]
 
-	[Allow]
-		1. LOOP i := 0 [i < 5]
-		2. F(n, ^r) LOOP n [n < 5]
-[-----------]
+[*****************************************************************************]
+- Enhance loops
 
-[UPDATE context struct]
-	Context getters and setters need to get their parents to handle a get or set
-	and only use their variable arrays if the parents don't know about the specific identifier.
-[-----------]
+- Current
+LOOP i [i < n]
 
-[ADD inbuilt functions]
+- Allow
+1. LOOP i := 0 [i < 5]
+2. F(n, ^r) LOOP n [n < 5]
 
-	[Print function]
-		Prints the args (variable length) to console
-		@P(...)
 
-	[Print line function]
-		Prints the args (variable length) to console, and appends a linefeed
-		@PL(...)
+[*****************************************************************************]
+- Update context struct
+Context getters and setters need to get their parents to handle a get or set and only use their variable arrays if the parents don't know about the specific identifier.
 
-	[Examples]
-		@P(`x: `, 1 + 2, "; ")
-		@PL(list)
-[-----------]
 
-// TODO: NUMBER: float64 -> NUMBER: Float
+[*****************************************************************************]
+- Add inbuilt functions
 
-// TODO: Prepend assignments with LET
+- Print function
+Prints the args (variable length) to console
+@P(...)
+
+- Print line function
+Prints the args (variable length) to console, and appends a linefeed
+@PL(...)
+
+- Examples
+@P(`x: `, 1 + 2, "; ")
+@PL(list)
+
+
+[*****************************************************************************]
+- Change numbers to Float
+Change the type of number from float64 to Float, Go's std big float
+
+
+[*****************************************************************************]
+- Prepend assignments with LET
+
+- Example
 LET x := 1
 
-// MAYBE: Keywords be case-insensitive
 
-// TODO: Access using expression
+[*****************************************************************************]
+- Can Keywords be case-insensitive?
+
+
+[*****************************************************************************]
+- Access list items using numeric expressions
+
+- Example
 list[1 + 2] := `:)`
 
-// TODO
+
+[*****************************************************************************]
+- Template strings
+
+- Example
 s := "alpha = {list[0]}, beta = {list[1]}"
 
-// MAYBE: = -> ==
-// MAYBE: # -> !=
 
-// MAYBE
-increment := E(n) n + 1
+[*****************************************************************************]
+- Change equality symbols
 
-// MAYBE
+- Format
+`=` to `==`
+`#` to `!=`
+
+
+[*****************************************************************************]
+- Expression functions
+Expression functions have a single expression as their body. The result of the expression is returned.
+
+- Examples
+increment := E(n) n + 1 
+
+
+[*****************************************************************************]
+- List access
 list[0] := _ // Removes the item from the list
 x := list[>>] // Take last item
 x := list[<<] // Take first item
 list[>>] := 4 // Append to end
 list[<<] := 0 // Append to front
 
-// MAYBE
+
+[*****************************************************************************]
+- Key-value pairs
+
+- Example
 p := "key": "value"
 k, v := p[K], p[V]
 
-// MAYBE
+
+[*****************************************************************************]
+- Simple directory navigation spells
+
+- Spells
 @cd(`./scarlet-go`)
-@cd(`..`)
 @pushd(`./scarlet-go`)
-$ `go build -o` filename `scarlet.go`
 @popd()
-build := E(file) $ `go build -o` file `scarlet.go`
+
+
+[*****************************************************************************]
+- Quick shell commands
+
+- Example 
+$ `go build -o` filename `scarlet.go`

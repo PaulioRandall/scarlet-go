@@ -121,18 +121,15 @@ func (f functionLiteral) String() string {
 
 			s += item.Value
 		}
-		s += " "
 	}
 
 	if f.Output != nil {
-		s += "-> "
-
 		for i, item := range f.Output {
-			if i != 0 {
+			if i != 0 || f.Input != nil {
 				s += ", "
 			}
 
-			s += item.Value
+			s += "^" + item.Value
 		}
 	}
 
