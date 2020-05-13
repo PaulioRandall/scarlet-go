@@ -203,3 +203,25 @@ func S9_List(t *testing.T, f ScanFunc) {
 
 	checkMany(t, exps, f(in))
 }
+
+func S10_Loop(t *testing.T, f ScanFunc) {
+
+	in := "LOOP i [i<5] {}"
+
+	exps := []Token{
+		Token{LOOP, "LOOP", 0, 0},
+		Token{WHITESPACE, " ", 0, 4},
+		Token{ID, "i", 0, 5},
+		Token{WHITESPACE, " ", 0, 6},
+		Token{GUARD_OPEN, "[", 0, 7},
+		Token{ID, "i", 0, 8},
+		Token{LESS_THAN, "<", 0, 9},
+		Token{NUMBER, "5", 0, 10},
+		Token{GUARD_CLOSE, "]", 0, 11},
+		Token{WHITESPACE, " ", 0, 12},
+		Token{BLOCK_OPEN, "{", 0, 13},
+		Token{BLOCK_CLOSE, "}", 0, 14},
+	}
+
+	checkMany(t, exps, f(in))
+}
