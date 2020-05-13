@@ -9,14 +9,63 @@ answer := factorial(5)
 
 EOF
 
-// TODO
-LOOP i [i < 10] +1 {
-	DONE LOOP
-}
 
-// TODO
-LOOP list -> i, v, m {
-}
+
+[ADD count-based looping]
+
+	[Formats]
+		`LOOP` ID guard-block
+
+	[Examples]
+		LOOP index [index < 5] {}
+		LOOP i [TRUE] {}
+
+	[Steps]
+		1. Add `LOOP` keyword to scanner
+		2. Add Loop struct to statement pkg
+		3. Add pattern to parser
+		4. Add execution of Loop to runtime
+
+	[Tests]
+		1. Scanner token: LOOP
+		2. Scanner statement: LOOP i [i < 5] {}
+		3. Scanner statement: LOOP i [TRUE] {} 
+		4. Parser statement: LOOP ID GUARD_OPEN ID LESS_THAN NUMBER GUARD_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
+		5. Parser statement: LOOP ID GUARD_OPEN BOOL GUARD_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
+
+[-----------]
+
+
+
+[ADD list-based looping]
+
+	[Formats]
+		`LOOP` ID DELIM ID DELIM ID updates expression<list> full-block
+
+	[Examples]
+		LOOP index, value, hasMore <- list {}
+		LOOP i, v, m <- f() {}
+
+	[Steps]
+		1. Add `<-` (UPDATES) symbol to scanner
+		2. Add Iterator struct to statement pkg
+		3. Add pattern to parser
+		4. Add execution of Iterator to runtime
+
+	[Tests]
+		1. Scanner token: UPDATES `<-`
+		2. Scanner statement: LOOP i, v, m <- list {}
+		3. Scanner statement: LOOP i, v, m <- f() {}
+		4. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
+		5. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID PAREN_OPEN PAREN_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
+
+[-----------]
+
+
+
+
+
+
 
 // TODO
 @P(`x: `, 1 + 2, "\n")
