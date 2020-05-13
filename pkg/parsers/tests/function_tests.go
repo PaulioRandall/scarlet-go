@@ -218,7 +218,7 @@ func F5_FuncCall(t *testing.T, f ParseFunc) {
 		st.Value(Token{NUMBER, "3", 0, 0}),
 	}
 
-	exp.Input = []st.Expression{op}
+	exp.Inputs = []st.Expression{op}
 
 	expectOneStat(t, exp, f(given))
 }
@@ -247,7 +247,7 @@ func F6_FuncCall(t *testing.T, f ParseFunc) {
 		nil,
 	}
 
-	outer.Input = []st.Expression{inner}
+	outer.Inputs = []st.Expression{inner}
 
 	expectOneStat(t, outer, f(given))
 }

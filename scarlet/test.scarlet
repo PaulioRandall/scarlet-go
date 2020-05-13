@@ -36,11 +36,6 @@ LOOP i, v, m <- f() {}
 
 
 [*****************************************************************************]
-- Remove `Close` tokens
-Remove the `Close` tokens from List/Guard/Block in the statement pkg
-
-
-[*****************************************************************************]
 - Enhance loops
 
 - Current

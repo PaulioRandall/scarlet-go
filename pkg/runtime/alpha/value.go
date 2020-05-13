@@ -113,8 +113,8 @@ func (f functionLiteral) String() string {
 
 	s := "(FUNCTION) F("
 
-	if f.Input != nil {
-		for i, item := range f.Input {
+	if f.Inputs != nil {
+		for i, item := range f.Inputs {
 			if i != 0 {
 				s += ", "
 			}
@@ -123,9 +123,9 @@ func (f functionLiteral) String() string {
 		}
 	}
 
-	if f.Output != nil {
-		for i, item := range f.Output {
-			if i != 0 || f.Input != nil {
+	if f.Outputs != nil {
+		for i, item := range f.Outputs {
+			if i != 0 || f.Inputs != nil {
 				s += ", "
 			}
 

@@ -5,14 +5,14 @@ import (
 )
 
 type FuncDef struct {
-	Open   token.Token
-	Input  []token.Token
-	Output []token.Token
-	Body   Block
+	Key     token.Token
+	Inputs  []token.Token
+	Outputs []token.Token
+	Body    Block
 }
 
 func (f FuncDef) Token() token.Token {
-	return f.Open
+	return f.Key
 }
 
 func (f FuncDef) String(i int) string {
@@ -21,21 +21,21 @@ func (f FuncDef) String(i int) string {
 
 	s.indent(i).
 		append("[FuncDef] ").
-		append(f.Open.String())
+		append(f.Key.String())
 
 	s.newline().
 		indent(i + 1).
-		append("Input:")
+		append("Inputs:")
 
 	s.newline().
-		appendTks(i+2, f.Input)
+		appendTks(i+2, f.Inputs)
 
 	s.newline().
 		indent(i + 1).
-		append("Output:")
+		append("Outputs:")
 
 	s.newline().
-		appendTks(i+2, f.Output)
+		appendTks(i+2, f.Outputs)
 
 	s.newline().
 		indent(i + 1).
@@ -48,8 +48,8 @@ func (f FuncDef) String(i int) string {
 }
 
 type FuncCall struct {
-	ID    Expression
-	Input []Expression
+	ID     Expression
+	Inputs []Expression
 }
 
 func (f FuncCall) Token() token.Token {
@@ -72,10 +72,10 @@ func (f FuncCall) String(i int) string {
 
 	s.newline().
 		indent(i + 1).
-		append("Input:")
+		append("Inputs:")
 
 	s.newline().
-		appendExps(i+2, f.Input)
+		appendExps(i+2, f.Inputs)
 
 	return s.String()
 }

@@ -13,11 +13,11 @@ func evalFuncCall(ctx *alphaContext, call st.FuncCall) result {
 
 	def := findFunction(ctx, call.ID)
 
-	checkFuncCallArgs(def.Input, call.Input, call.ID.Token())
-	subCtx := evalFuncCallArgs(ctx, def.Input, call.Input)
+	checkFuncCallArgs(def.Inputs, call.Inputs, call.ID.Token())
+	subCtx := evalFuncCallArgs(ctx, def.Inputs, call.Inputs)
 
 	exeBlock(subCtx, def.Body)
-	results := collectFuncCallResults(subCtx, def.Output)
+	results := collectFuncCallResults(subCtx, def.Outputs)
 
 	return tuple(results)
 }

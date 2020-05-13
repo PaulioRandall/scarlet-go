@@ -13,10 +13,10 @@ func parseFuncDef(p *pipe) st.Expression {
 	// pattern := FUNC params (statement | block)
 
 	f := st.FuncDef{
-		Open: p.expect(`parseFuncDef`, token.FUNC),
+		Key: p.expect(`parseFuncDef`, token.FUNC),
 	}
 
-	f.Input, f.Output = parseFuncParams(p)
+	f.Inputs, f.Outputs = parseFuncParams(p)
 
 	if isFuncBlock(p) {
 		f.Body = parseFuncBlock(p)
@@ -104,8 +104,8 @@ func parseFuncCall(p *pipe) st.Expression {
 	p.expect(`parseFuncCall`, token.PAREN_OPEN)
 
 	f := st.FuncCall{
-		ID:    left,
-		Input: parseExpressions(p),
+		ID:     left,
+		Inputs: parseExpressions(p),
 	}
 
 	p.expect(`parseFuncCall`, token.PAREN_CLOSE)
