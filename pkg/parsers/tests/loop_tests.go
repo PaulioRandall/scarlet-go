@@ -42,9 +42,9 @@ func LP1_Assignment(t *testing.T, f ParseFunc) {
 	}
 
 	guard := st.Guard{
-		Open:  Token{GUARD_OPEN, "[", 0, 0},
-		Cond:  condition,
-		Close: Token{GUARD_CLOSE, "]", 0, 0},
+		Open:      Token{GUARD_OPEN, "[", 0, 0},
+		Condition: condition,
+		Close:     Token{GUARD_CLOSE, "]", 0, 0},
 	}
 
 	stat := st.Assignment{

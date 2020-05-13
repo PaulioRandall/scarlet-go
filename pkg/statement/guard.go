@@ -5,10 +5,10 @@ import (
 )
 
 type Guard struct {
-	Open  token.Token
-	Cond  Expression
-	Close token.Token
-	Block Block
+	Open      token.Token
+	Condition Expression
+	Close     token.Token
+	Block     Block
 }
 
 func (g Guard) Token() token.Token {
@@ -32,7 +32,7 @@ func (g Guard) String(i int) string {
 		append("Condition:")
 
 	s.newline().
-		append(g.Cond.String(i + 2))
+		append(g.Condition.String(i + 2))
 
 	s.newline().
 		indent(i + 1).

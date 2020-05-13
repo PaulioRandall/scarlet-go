@@ -48,16 +48,16 @@ func parseGuard(p *pipe) st.Guard {
 	// pattern := GUARD_OPEN expression GUARD_CLOSE (statement | block)
 
 	g := st.Guard{
-		Open: p.expect(`parseGuard`, token.GUARD_OPEN),
-		Cond: parseExpression(p),
+		Open:      p.expect(`parseGuard`, token.GUARD_OPEN),
+		Condition: parseExpression(p),
 	}
 
-	if g.Cond == nil {
+	if g.Condition == nil {
 		panic(err("parseGuard", p.peek(), `Expected expression`))
 	}
 
-	if !isBoolOperation(g.Cond) {
-		panic(err("parseGuard", g.Cond.Token(),
+	if !isBoolOperation(g.Condition) {
+		panic(err("parseGuard", g.Condition.Token(),
 			`Expected operation with bool result`,
 		))
 	}
