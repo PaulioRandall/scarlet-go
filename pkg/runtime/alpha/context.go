@@ -95,19 +95,33 @@ func (ctx *alphaContext) SetFixed(id token.Token, v result) {
 }
 
 func (ctx *alphaContext) Set(id token.Token, v result) {
+	if !ctx.set(id, v) {
+		ctx.local[id.Value] = v
+	}
+}
 
-	name := id.Value
+func (ctx *alphaContext) set(id token.Token, v result) bool {
 
-	if _, ok := ctx.fixed[name]; ok {
+	varName := id.Value
+
+	if _, ok := ctx.fixed[varName]; ok {
 		panic(err("Set", id, "Cannot change a fixed variable"))
 	}
 
-	if _, ok := v.(voidLiteral); ok {
-		delete(ctx.local, name)
-		return
+	if _, ok := ctx.local[varName]; ok {
+		ctx.setOrDelLocal(id, v)
+		return true
 	}
 
-	ctx.local[name] = v
+	return ctx.parent != nil && ctx.parent.set(id, v)
+}
+
+func (ctx *alphaContext) setOrDelLocal(id token.Token, v result) {
+	if _, ok := v.(voidLiteral); ok {
+		delete(ctx.local, id.Value)
+	} else {
+		ctx.local[id.Value] = v
+	}
 }
 
 func (ctx *alphaContext) Spawn() *alphaContext {
