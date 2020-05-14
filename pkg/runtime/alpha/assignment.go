@@ -32,9 +32,14 @@ func assignListItem(ctx *alphaContext, id token.Token, index st.Expression, v re
 	n := evalNumber(ctx, index)
 	i := int64(n)
 
-	list, ok := ctx.GetNonFixed(id).(listLiteral)
+	listVal := ctx.GetNonFixed(id)
+	if listVal == nil {
+		panic(err("assignListItem", id, "List variable does not exist"))
+	}
+
+	list, ok := listVal.(listLiteral)
 	if !ok {
-		panic(err("assignListItem", id, "Not a list"))
+		panic(err("assignListItem", id, "Variable is not a list"))
 	}
 
 	items := []result(list)

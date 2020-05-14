@@ -44,10 +44,9 @@ func (ctx *alphaContext) GetNonFixed(id token.Token) result {
 		return v
 	}
 
-	return voidLiteral{}
+	return nil
 }
 
-// Get returns an empty result if the ID does not exist.
 func (ctx *alphaContext) Get(id string) result {
 
 	if v := ctx.getFixed(id); v != nil {
@@ -58,7 +57,7 @@ func (ctx *alphaContext) Get(id string) result {
 		return v
 	}
 
-	return voidLiteral{}
+	return nil
 }
 
 func (ctx *alphaContext) getFixed(id string) result {

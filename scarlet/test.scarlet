@@ -50,8 +50,6 @@ LOOP i [i < n]
 - Update context struct
 
 - Updates
-2. Spawn function no longer needs to copy the contents of fixed.
-3. Get function should return nil if a variable doesn't exist.
 4. When updating a variable value the Set function should first check the value is not fixed (check parents too), then check to see if it already exists as var (check parents too), and finally create a new local variable if there is no variable existing to update.
 
 

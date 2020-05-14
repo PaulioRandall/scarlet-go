@@ -65,7 +65,14 @@ func collectFuncCallResults(ctx *alphaContext, ids []token.Token) []result {
 	r := make([]result, len(ids))
 
 	for i, id := range ids {
-		r[i] = ctx.Get(id.Value)
+
+		v := ctx.Get(id.Value)
+
+		if v != nil {
+			r[i] = v
+		} else {
+			r[i] = voidLiteral{}
+		}
 	}
 
 	return r
