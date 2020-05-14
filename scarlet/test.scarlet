@@ -7,8 +7,6 @@ factorial := F(n, ^r) LOOP i [i < n] {
 
 answer := factorial(170)
 
-a := LIST {`a`, `b`}
-
 EOF
 
 

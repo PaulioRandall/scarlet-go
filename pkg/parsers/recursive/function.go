@@ -18,8 +18,8 @@ func parseFuncDef(p *pipe) st.Expression {
 
 	f.Inputs, f.Outputs = parseFuncParams(p)
 
-	if isFuncBlock(p) {
-		f.Body = parseFuncBlock(p)
+	if isBlock(p) {
+		f.Body = parseBlock(p)
 	} else {
 
 		/*
@@ -28,7 +28,7 @@ func parseFuncDef(p *pipe) st.Expression {
 				"Inline function bodies must have a single output parameter"))
 			}
 		*/
-		f.Body = parseFuncStatement(p)
+		f.Body = parseStatBlock(p)
 	}
 
 	return f
@@ -67,28 +67,6 @@ func parseFuncParamIds(p *pipe) (in []token.Token, out []token.Token) {
 	}
 
 	return
-}
-
-func isFuncBlock(p *pipe) bool {
-	return p.match(token.BLOCK_OPEN)
-}
-
-func parseFuncBlock(p *pipe) st.Block {
-	// pattern := BLOCK_OPEN {statement} BLOCK_CLOSE
-
-	return st.Block{
-		Open:  p.expect(`parseFuncBlock`, token.BLOCK_OPEN),
-		Stats: parseStatements(p),
-		Close: p.expect(`parseFuncBlock`, token.BLOCK_CLOSE),
-	}
-}
-
-func parseFuncStatement(p *pipe) st.Block {
-	return st.Block{
-		Open:  p.peek(),
-		Stats: []st.Statement{parseStatement(p)},
-		Close: p.past(),
-	}
 }
 
 func isFuncCall(p *pipe) (is bool) {

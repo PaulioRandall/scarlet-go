@@ -43,10 +43,10 @@ func parseGuard(p *pipe) st.Guard {
 
 	g.Close = p.expect(`parseGuard`, token.GUARD_CLOSE)
 
-	if isGuardBlock(p) {
-		g.Block = parseGuardBlock(p)
+	if isBlock(p) {
+		g.Block = parseBlock(p)
 	} else {
-		g.Block = parseGuardStatement(p)
+		g.Block = parseStatBlock(p)
 	}
 
 	return g
@@ -83,26 +83,4 @@ func isBoolOperator(typ token.TokenType) bool {
 	}
 
 	return false
-}
-
-func isGuardBlock(p *pipe) bool {
-	return p.match(token.BLOCK_OPEN)
-}
-
-func parseGuardBlock(p *pipe) st.Block {
-	// pattern := BLOCK_OPEN {statement} BLOCK_CLOSE
-
-	return st.Block{
-		Open:  p.expect(`parseGuardBlock`, token.BLOCK_OPEN),
-		Stats: parseStatements(p),
-		Close: p.expect(`parseGuardBlock`, token.BLOCK_CLOSE),
-	}
-}
-
-func parseGuardStatement(p *pipe) st.Block {
-	return st.Block{
-		Open:  p.peek(),
-		Stats: []st.Statement{parseStatement(p)},
-		Close: p.past(),
-	}
 }
