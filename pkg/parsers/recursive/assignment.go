@@ -7,16 +7,12 @@ import (
 
 func isAssignment(p *pipe) bool {
 	// match := FIX
-	// match := ID (DELIM | ASSIGN)
-	// match := ID GUARD_OPEN (NUMBER | ID) GUARD_CLOSE (DELIM | ASSIGN)
+	// match := ID (DELIM | ASSIGN | GUARD_OPEN)
 
 	return p.match(token.FIX) ||
 		p.matchSequence(token.ID, token.DELIM) ||
 		p.matchSequence(token.ID, token.ASSIGN) ||
-		p.matchSequence(token.ID, token.GUARD_OPEN, token.NUMBER, token.GUARD_CLOSE, token.DELIM) ||
-		p.matchSequence(token.ID, token.GUARD_OPEN, token.NUMBER, token.GUARD_CLOSE, token.ASSIGN) ||
-		p.matchSequence(token.ID, token.GUARD_OPEN, token.ID, token.GUARD_CLOSE, token.DELIM) ||
-		p.matchSequence(token.ID, token.GUARD_OPEN, token.ID, token.GUARD_CLOSE, token.ASSIGN)
+		p.matchSequence(token.ID, token.GUARD_OPEN)
 }
 
 func parseAssignment(p *pipe) st.Assignment {

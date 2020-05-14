@@ -7,6 +7,8 @@ factorial := F(n, ^r) LOOP i [i < n] {
 
 answer := factorial(170)
 
+a := LIST {`a`, `b`}
+
 EOF
 
 
@@ -147,3 +149,31 @@ $ `go build -o` filename `scarlet.go`
 
 [*****************************************************************************]
 - Better token type naming
+
+
+[*****************************************************************************]
+- Everything that can fail with ASSIGN parsing
+
+
+[*****************************************************************************]
+- Everything that can fail with FUNC parsing
+
+
+[*****************************************************************************]
+- Everything that can fail with GUARD parsing
+
+
+[*****************************************************************************]
+- Everything that can fail with MAtCH parsing
+
+
+[*****************************************************************************]
+- Everything that can fail with LOOP parsing
+
+
+[*****************************************************************************]
+- Everything that can fail with EXPRESSION parsing
+
+
+[*****************************************************************************]
+- Everything that can fail with LIST parsing
