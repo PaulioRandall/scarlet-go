@@ -78,21 +78,7 @@ Change the type of number from float64 to Float, Go's std big float
 
 
 [*****************************************************************************]
-- Prepend assignments with LET
-
-- Example
-LET x := 1
-
-
-[*****************************************************************************]
 - Can Keywords be case-insensitive?
-
-
-[*****************************************************************************]
-- Access list items using numeric expressions
-
-- Example
-list[1 + 2] := `:)`
 
 
 [*****************************************************************************]
