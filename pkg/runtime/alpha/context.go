@@ -7,7 +7,7 @@ import (
 // alphaContext implements pkg/runtime/Context.
 type alphaContext struct {
 	fixed  map[string]result
-	vars   map[string]result
+	local  map[string]result
 	parent *alphaContext
 }
 
@@ -18,7 +18,7 @@ func (ctx alphaContext) String() (s string) {
 
 	s += "variables:" + NEWLINE
 
-	if len(ctx.vars) == 0 && len(ctx.fixed) == 0 {
+	if len(ctx.local) == 0 && len(ctx.fixed) == 0 {
 		s += TAB + "(Empty)" + NEWLINE
 		return
 	}
@@ -27,7 +27,7 @@ func (ctx alphaContext) String() (s string) {
 		s += TAB + "FIX " + id + " " + v.String() + NEWLINE
 	}
 
-	for id, v := range ctx.vars {
+	for id, v := range ctx.local {
 		s += TAB + id + " " + v.String() + NEWLINE
 	}
 
@@ -40,7 +40,7 @@ func (ctx *alphaContext) GetNonFixed(id token.Token) result {
 		panic(err("GetNonFixed", id, "Cannot change a fixed variable"))
 	}
 
-	if v, ok := ctx.vars[id.Value]; ok {
+	if v, ok := ctx.local[id.Value]; ok {
 		return v
 	}
 
@@ -63,7 +63,7 @@ func (ctx *alphaContext) get(id string) result {
 		return v
 	}
 
-	if v, ok := ctx.vars[id]; ok {
+	if v, ok := ctx.local[id]; ok {
 		return v
 	}
 
@@ -73,7 +73,7 @@ func (ctx *alphaContext) get(id string) result {
 func (ctx *alphaContext) getVar(id string) result {
 
 	for c := ctx; c != nil; c = c.parent {
-		if v, ok := c.vars[id]; ok {
+		if v, ok := c.local[id]; ok {
 			return v
 		}
 	}
@@ -100,7 +100,7 @@ func (ctx *alphaContext) SetFixed(id token.Token, v result) {
 		panic(err("SetFixed", id, "Cannot change a fixed variable"))
 	}
 
-	delete(ctx.vars, name)
+	delete(ctx.local, name)
 	ctx.fixed[name] = v
 }
 
@@ -113,18 +113,18 @@ func (ctx *alphaContext) Set(id token.Token, v result) {
 	}
 
 	if _, ok := v.(voidLiteral); ok {
-		delete(ctx.vars, name)
+		delete(ctx.local, name)
 		return
 	}
 
-	ctx.vars[name] = v
+	ctx.local[name] = v
 }
 
 func (ctx *alphaContext) Spawn(pure bool) *alphaContext {
 
 	var (
 		fixed map[string]result
-		vars  map[string]result
+		local map[string]result
 	)
 
 	fixed = make(map[string]result, len(ctx.fixed))
@@ -134,17 +134,17 @@ func (ctx *alphaContext) Spawn(pure bool) *alphaContext {
 	}
 
 	if pure {
-		vars = make(map[string]result)
+		local = make(map[string]result)
 
 	} else {
-		vars = make(map[string]result, len(ctx.vars))
+		local = make(map[string]result, len(ctx.local))
 
-		for k, v := range ctx.vars {
-			vars[k] = v
+		for k, v := range ctx.local {
+			local[k] = v
 		}
 	}
 
-	return &alphaContext{fixed, vars, ctx}
+	return &alphaContext{fixed, local, ctx}
 }
 
 func (ctx *alphaContext) Parent() *alphaContext {
