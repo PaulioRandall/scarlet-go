@@ -70,6 +70,28 @@ func (ctx *alphaContext) get(id string) result {
 	return nil
 }
 
+func (ctx *alphaContext) getVar(id string) result {
+
+	for c := ctx; c != nil; c = c.parent {
+		if v, ok := c.vars[id]; ok {
+			return v
+		}
+	}
+
+	return nil
+}
+
+func (ctx *alphaContext) getFixed(id string) result {
+
+	for c := ctx; c != nil; c = c.parent {
+		if v, ok := c.fixed[id]; ok {
+			return v
+		}
+	}
+
+	return nil
+}
+
 func (ctx *alphaContext) SetFixed(id token.Token, v result) {
 
 	name := id.Value
