@@ -50,21 +50,23 @@ func (ctx *alphaContext) GetNonFixed(id token.Token) result {
 // Get returns an empty result if the ID does not exist.
 func (ctx *alphaContext) Get(id string) result {
 
-	if v := ctx.get(id); v != nil {
+	if v := ctx.getFixed(id); v != nil {
+		return v
+	}
+
+	if v := ctx.getVar(id); v != nil {
 		return v
 	}
 
 	return voidLiteral{}
 }
 
-func (ctx *alphaContext) get(id string) result {
+func (ctx *alphaContext) getFixed(id string) result {
 
-	if v, ok := ctx.fixed[id]; ok {
-		return v
-	}
-
-	if v, ok := ctx.local[id]; ok {
-		return v
+	for c := ctx; c != nil; c = c.parent {
+		if v, ok := c.fixed[id]; ok {
+			return v
+		}
 	}
 
 	return nil
@@ -74,17 +76,6 @@ func (ctx *alphaContext) getVar(id string) result {
 
 	for c := ctx; c != nil; c = c.parent {
 		if v, ok := c.local[id]; ok {
-			return v
-		}
-	}
-
-	return nil
-}
-
-func (ctx *alphaContext) getFixed(id string) result {
-
-	for c := ctx; c != nil; c = c.parent {
-		if v, ok := c.fixed[id]; ok {
 			return v
 		}
 	}
@@ -120,31 +111,12 @@ func (ctx *alphaContext) Set(id token.Token, v result) {
 	ctx.local[name] = v
 }
 
-func (ctx *alphaContext) Spawn(pure bool) *alphaContext {
-
-	var (
-		fixed map[string]result
-		local map[string]result
-	)
-
-	fixed = make(map[string]result, len(ctx.fixed))
-
-	for k, v := range ctx.fixed {
-		fixed[k] = v
+func (ctx *alphaContext) Spawn() *alphaContext {
+	return &alphaContext{
+		fixed:  map[string]result{},
+		local:  map[string]result{},
+		parent: ctx,
 	}
-
-	if pure {
-		local = make(map[string]result)
-
-	} else {
-		local = make(map[string]result, len(ctx.local))
-
-		for k, v := range ctx.local {
-			local[k] = v
-		}
-	}
-
-	return &alphaContext{fixed, local, ctx}
 }
 
 func (ctx *alphaContext) Parent() *alphaContext {
