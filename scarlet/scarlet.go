@@ -46,7 +46,7 @@ func run(s string) {
 	statements := parsers.ParseAll(sanitisedTokens, parsers.DEFAULT)
 	statement.Print(statements)
 
-	print("# Executing...")
+	println("# Executing...")
 	ctx := runtime.Run(statements, runtime.DEFAULT)
 	println("...done!\n")
 

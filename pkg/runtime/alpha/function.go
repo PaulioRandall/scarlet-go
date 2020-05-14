@@ -14,10 +14,12 @@ func evalFuncCall(ctx *alphaContext, call st.FuncCall) result {
 	def := findFunction(ctx, call.ID)
 
 	checkFuncCallArgs(def.Inputs, call.Inputs, call.ID.Token())
-	subCtx := evalFuncCallArgs(ctx, def.Inputs, call.Inputs)
 
-	exeBlock(subCtx, def.Body)
-	results := collectFuncCallResults(subCtx, def.Outputs)
+	funcCtx := evalFuncCallArgs(ctx, def.Inputs, call.Inputs)
+	initFuncReturnArgs(funcCtx, def.Outputs)
+
+	exeBlock(funcCtx, def.Body)
+	results := collectFuncCallResults(funcCtx, def.Outputs)
 
 	return tuple(results)
 }
@@ -47,17 +49,25 @@ func checkFuncCallArgs(exp []token.Token, act []st.Expression, callTk token.Toke
 
 func evalFuncCallArgs(ctx *alphaContext, ids []token.Token, params []st.Expression) *alphaContext {
 
-	subCtx := ctx.Spawn()
+	funcCtx := ctx.Spawn()
 
 	for i, p := range params {
 
 		v := evalExpression(ctx, p)
 		v = expectOneValue(v, p.Token())
 
-		subCtx.Set(ids[i], v)
+		funcCtx.SetLocal(ids[i], v)
 	}
 
-	return subCtx
+	return funcCtx
+}
+
+func initFuncReturnArgs(ctx *alphaContext, outParams []token.Token) {
+	for _, p := range outParams {
+		if v := ctx.GetLocal(p.Value); v == nil {
+			ctx.SetLocal(p, voidLiteral{})
+		}
+	}
 }
 
 func collectFuncCallResults(ctx *alphaContext, ids []token.Token) []result {
@@ -66,7 +76,7 @@ func collectFuncCallResults(ctx *alphaContext, ids []token.Token) []result {
 
 	for i, id := range ids {
 
-		v := ctx.Get(id.Value)
+		v := ctx.GetLocal(id.Value)
 
 		if v != nil {
 			r[i] = v

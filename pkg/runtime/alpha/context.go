@@ -60,6 +60,15 @@ func (ctx *alphaContext) Get(id string) result {
 	return nil
 }
 
+func (ctx *alphaContext) GetLocal(id string) result {
+
+	if v, ok := ctx.local[id]; ok {
+		return v
+	}
+
+	return nil
+}
+
 func (ctx *alphaContext) getFixed(id string) result {
 
 	for c := ctx; c != nil; c = c.parent {
@@ -92,6 +101,17 @@ func (ctx *alphaContext) SetFixed(id token.Token, v result) {
 
 	delete(ctx.local, name)
 	ctx.fixed[name] = v
+}
+
+func (ctx *alphaContext) SetLocal(id token.Token, v result) {
+
+	for c := ctx; c != nil; c = c.parent {
+		if _, ok := c.fixed[id.Value]; ok {
+			panic(err("SetLocal", id, "Cannot change a fixed variable"))
+		}
+	}
+
+	ctx.local[id.Value] = v
 }
 
 func (ctx *alphaContext) Set(id token.Token, v result) {

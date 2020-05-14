@@ -1,11 +1,10 @@
 
-
-factorial := F(n, ^r) LOOP i [i < n] {
+f := F(n, ^r) LOOP i [i < n] {
 	[i == 0] r := 1
 	[i > 0] r := r * (i + 1)
 }
 
-answer := factorial(170)
+r := f(170)
 
 EOF
 
@@ -36,6 +35,14 @@ LOOP i, v, m <- f() {}
 
 
 [*****************************************************************************]
+- Loop step size and direction
+
+- Example
+LOOP i [i < n] +1 // Increment by one each loop
+LOOP i [i < n] -3 // Decrement by three each loop
+
+
+[*****************************************************************************]
 - Enhance loops
 
 - Current
@@ -44,13 +51,6 @@ LOOP i [i < n]
 - Allow
 1. LOOP i := 0 [i < 5]
 2. F(n, ^r) LOOP n [n < 5]
-
-
-[*****************************************************************************]
-- Update context struct
-
-- Updates
-4. When updating a variable value the Set function should first check the value is not fixed (check parents too), then check to see if it already exists as var (check parents too), and finally create a new local variable if there is no variable existing to update.
 
 
 [*****************************************************************************]

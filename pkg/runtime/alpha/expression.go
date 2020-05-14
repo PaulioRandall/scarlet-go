@@ -9,7 +9,7 @@ func evalIdentifier(ctx *alphaContext, id st.Identifier) result {
 	v := ctx.Get(id.Value)
 
 	if v == nil {
-		panic(err("evalExpression", id.Token(), "Undefined identifier"))
+		panic(err("evalIdentifier", id.Token(), "Undefined identifier"))
 	}
 
 	return v

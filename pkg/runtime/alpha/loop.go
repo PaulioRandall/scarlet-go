@@ -6,12 +6,14 @@ import (
 
 func exeLoop(ctx *alphaContext, l st.Loop) {
 
+	loopCtx := ctx.Spawn()
+
 	for i := 0; ; i++ {
 
 		n := numberLiteral(float64(i))
-		ctx.Set(l.IndexVar, n)
+		loopCtx.SetLocal(l.IndexVar, n)
 
-		if !exeGuard(ctx, l.Guard) {
+		if !exeGuard(loopCtx, l.Guard) {
 			break
 		}
 	}
