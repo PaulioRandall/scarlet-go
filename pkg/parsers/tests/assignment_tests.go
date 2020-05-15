@@ -277,3 +277,50 @@ func A10_ListItem(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, exp, f(given))
 }
+
+func A11_ListItems(t *testing.T, f ParseFunc) {
+
+	// a[<<], a[>>] := 1, 2
+
+	given := []Token{
+		Token{ID, "a", 0, 0},
+		Token{GUARD_OPEN, "[", 0, 0},
+		Token{PREPEND, "<<", 0, 0},
+		Token{GUARD_CLOSE, "]", 0, 0},
+		Token{DELIM, ",", 0, 0},
+		Token{ID, "a", 0, 0},
+		Token{GUARD_OPEN, "[", 0, 0},
+		Token{APPEND, ">>", 0, 0},
+		Token{GUARD_CLOSE, "]", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{DELIM, ",", 0, 0},
+		Token{NUMBER, "2", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	firstTarget := st.AssignTarget{
+		ID:    Token{ID, "a", 0, 0},
+		Index: st.ListItemRef(Token{PREPEND, "<<", 0, 0}),
+	}
+
+	secondTarget := st.AssignTarget{
+		ID:    Token{ID, "a", 0, 0},
+		Index: st.ListItemRef(Token{APPEND, ">>", 0, 0}),
+	}
+
+	values := []st.Expression{
+		st.Value(Token{NUMBER, "1", 0, 0}),
+		st.Value(Token{NUMBER, "2", 0, 0}),
+	}
+
+	a := st.Assignment{
+		false,
+		[]st.AssignTarget{firstTarget, secondTarget},
+		Token{ASSIGN, ":=", 0, 0},
+		values,
+	}
+
+	expectOneStat(t, a, f(given))
+}

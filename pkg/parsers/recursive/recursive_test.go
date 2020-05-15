@@ -46,6 +46,10 @@ func Test_A10_ListItem(t *testing.T) {
 	tests.Run(t, ParseAll, tests.A10_ListItem)
 }
 
+func Test_A11_ListItems(t *testing.T) {
+	tests.Run(t, ParseAll, tests.A11_ListItems)
+}
+
 func Test_E1_Add(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E1_Add)
 }
