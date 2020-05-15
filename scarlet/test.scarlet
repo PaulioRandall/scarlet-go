@@ -6,11 +6,14 @@ f := F(n, ^r) LOOP i [i < n] {
 
 r := f(170)
 
-a := LIST {`a`, `b`, `c`, `d`, `e`, `f`}
-a[2] := _
-//a[>>] := _
-//a[<<] := _
-a[1] := `z`
+x := LIST {`first`, `b`, `c`, `d`, `e`, `last`}
+x[2] := _
+//x[>>] := _
+//x[<<] := _
+x[1] := `z`
+
+a := x[<<]
+e := x[>>] 
 
 EOF
 
@@ -112,6 +115,8 @@ x := list[<<] // Take first item
 list[>>] := 4 // Append to end
 list[<<] := 0 // Append to front
 
+[Next]
+- Parsing done, but Still need to update the runtime for all four above
 
 [*****************************************************************************]
 - Key-value pairs
