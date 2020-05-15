@@ -78,3 +78,35 @@ func L2_ListDef(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, list, f(given))
 }
+
+func L3_ListAccess(t *testing.T, f ParseFunc) {
+
+	// x := y[1]
+
+	given := []Token{
+		Token{ID, "x", 0, 0},
+		Token{ASSIGN, ":=", 0, 0},
+		Token{ID, "y", 0, 0},
+		Token{GUARD_OPEN, "[", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{GUARD_CLOSE, "]", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	target := st.AssignTarget{Token{ID, "x", 0, 0}, nil}
+
+	listItem := st.ListAccess{
+		ID:    st.Identifier(Token{ID, "y", 0, 0}),
+		Index: st.Value(Token{NUMBER, "1", 0, 0}),
+	}
+
+	a := st.Assignment{
+		false,
+		[]st.AssignTarget{target},
+		Token{ASSIGN, ":=", 0, 0},
+		[]st.Expression{listItem},
+	}
+
+	expectOneStat(t, a, f(given))
+}
