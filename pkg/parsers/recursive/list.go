@@ -28,16 +28,30 @@ func isListAccess(p *pipe) bool {
 func parseListAccess(p *pipe) st.ListAccess {
 	// pattern := ID GUARD_OPEN expression GUARD_CLOSE
 
-	tk := p.expect(`listAccess`, token.ID)
+	tk := p.expect(`parseListAccess`, token.ID)
 	id := st.Identifier(tk)
 
-	p.expect(`listAccess`, token.GUARD_OPEN)
-	indexExp := parseExpression(p)
+	p.expect(`parseListAccess`, token.GUARD_OPEN)
+	indexExp := parseListItemExpr(p)
+	p.expect(`parseListAccess`, token.GUARD_CLOSE)
 
-	if indexExp == nil {
-		panic(err("listAccess", p.past(), `Expected an expression`))
+	return st.ListAccess{id, indexExp}
+}
+
+func parseListItemExpr(p *pipe) st.Expression {
+
+	var expr st.Expression
+
+	if p.matchAny(token.PREPEND, token.APPEND) {
+		expr = st.ListItemRef(p.next())
+	} else {
+		expr = parseExpression(p)
 	}
 
-	p.expect(`listAccess`, token.GUARD_CLOSE)
-	return st.ListAccess{id, indexExp}
+	if expr == nil {
+		panic(err("parseListItemExpr", p.past(),
+			`Expected an expression or list positional reference`))
+	}
+
+	return expr
 }

@@ -158,6 +158,14 @@ func Test_L3_ListAccess(t *testing.T) {
 	tests.Run(t, ParseAll, tests.L3_ListAccess)
 }
 
+func Test_L4_ListAccess(t *testing.T) {
+	tests.Run(t, ParseAll, tests.L4_ListAccess)
+}
+
+func Test_L5_ListAccess(t *testing.T) {
+	tests.Run(t, ParseAll, tests.L5_ListAccess)
+}
+
 func Test_LP1_Assignment(t *testing.T) {
 	tests.Run(t, ParseAll, tests.LP1_Assignment)
 }

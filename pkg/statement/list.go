@@ -69,3 +69,19 @@ func (la ListAccess) String(i int) string {
 
 	return s.String()
 }
+
+type ListItemRef token.Token
+
+func (r ListItemRef) Token() token.Token {
+	return token.Token(r)
+}
+
+func (r ListItemRef) String(i int) string {
+
+	var s str
+
+	return s.indent(i).
+		append("[ListItemRef] ").
+		append(r.Token().String()).
+		String()
+}
