@@ -31,14 +31,35 @@ func assignListItem(ctx *alphaContext, id token.Token, index st.Expression, v re
 
 	list := getListLiteral(ctx, id)
 	items := []result(list)
+	size := int64(len(items))
 
-	i := int64(evalNumber(ctx, index))
-	checkIndexInRange(items, i, index)
+	if void, ok := v.(voidLiteral); ok {
+		i := evalIndexExpr(ctx, size, index, true)
+		checkListIndexRange(i, size, id, index.Token())
+		items = deleteListItem(ctx, items, i, void)
 
-	items = updateListItems(ctx, items, i, v)
+	} else {
+		i := evalIndexExpr(ctx, size, index, false)
+		items = updateListItems(ctx, items, i, v)
+	}
+
 	list = listLiteral(items)
-
 	ctx.Set(id, list)
+}
+
+func deleteListItem(ctx *alphaContext, items []result, i int64, v result) []result {
+	switch {
+	case i == 0:
+		items = items[1:]
+
+	case i > int64(len(items)):
+		items = items[0 : len(items)-1]
+
+	default:
+		items = append(items[:i], items[i+1:]...)
+	}
+
+	return items
 }
 
 func getListLiteral(ctx *alphaContext, id token.Token) listLiteral {
@@ -56,31 +77,17 @@ func getListLiteral(ctx *alphaContext, id token.Token) listLiteral {
 	return list
 }
 
-func checkIndexInRange(items []result, i int64, index st.Expression) {
-
-	size := int64(len(items))
-
-	if i < 0 || i >= size {
-		panic(err("assignListItem", index.Token(),
-			"Index out of range, accessing %s[%d] from %s[0:%d]",
-			index.Token().Value, i, index.Token().Value, size))
-	}
-}
-
 func updateListItems(ctx *alphaContext, items []result, i int64, v result) []result {
 
-	switch _, ok := v.(voidLiteral); {
-	case !ok:
-		items[i] = v
+	switch i {
+	case -1:
+		items = append([]result{v}, items...)
 
-	case i == 0:
-		items = items[1:]
-
-	case i > int64(len(items)):
-		items = items[0 : len(items)-1]
+	case int64(len(items)):
+		items = append(items, v)
 
 	default:
-		items = append(items[:i], items[i+1:]...)
+		items[i] = v
 	}
 
 	return items
