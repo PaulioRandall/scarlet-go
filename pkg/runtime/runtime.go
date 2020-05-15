@@ -5,8 +5,6 @@ import (
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-// Context represents the environment of the runtime holding such information
-// as current variables.
 type Context interface {
 	String() string
 }
