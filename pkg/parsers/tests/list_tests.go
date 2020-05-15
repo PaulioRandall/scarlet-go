@@ -39,3 +39,42 @@ func L1_ListDef(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, list, f(given))
 }
+
+func L2_ListDef(t *testing.T, f ParseFunc) {
+
+	// LIST {1+2,f()}
+
+	given := []Token{
+		Token{LIST, "LIST", 0, 0},
+		Token{BLOCK_OPEN, "{", 0, 0},
+		Token{NUMBER, "1", 0, 0},
+		Token{ADD, "+", 0, 0},
+		Token{NUMBER, "2", 0, 0},
+		Token{DELIM, ",", 0, 0},
+		Token{ID, "f", 0, 0},
+		Token{PAREN_OPEN, "(", 0, 0},
+		Token{PAREN_CLOSE, ")", 0, 0},
+		Token{BLOCK_CLOSE, "}", 0, 0},
+		Token{TERMINATOR, "", 0, 0},
+		Token{EOF, "", 0, 0},
+	}
+
+	add := st.Operation{
+		Left:     st.Value(Token{NUMBER, "1", 0, 0}),
+		Operator: Token{ADD, "+", 0, 0},
+		Right:    st.Value(Token{NUMBER, "2", 0, 0}),
+	}
+
+	funcCall := st.FuncCall{
+		ID: st.Identifier(Token{ID, "f", 0, 0}),
+	}
+
+	list := st.List{
+		Key:   Token{LIST, "LIST", 0, 0},
+		Open:  Token{BLOCK_OPEN, "{", 0, 0},
+		Exprs: []st.Expression{add, funcCall},
+		Close: Token{BLOCK_CLOSE, "}", 0, 0},
+	}
+
+	expectOneStat(t, list, f(given))
+}

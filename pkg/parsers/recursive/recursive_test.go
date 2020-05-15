@@ -150,6 +150,10 @@ func Test_L1_ListDef(t *testing.T) {
 	tests.Run(t, ParseAll, tests.L1_ListDef)
 }
 
+func Test_L2_ListDef(t *testing.T) {
+	tests.Run(t, ParseAll, tests.L2_ListDef)
+}
+
 func Test_LP1_Assignment(t *testing.T) {
 	tests.Run(t, ParseAll, tests.LP1_Assignment)
 }
