@@ -285,12 +285,12 @@ func A11_ListItems(t *testing.T, f ParseFunc) {
 	given := []Token{
 		Token{ID, "a", 0, 0},
 		Token{GUARD_OPEN, "[", 0, 0},
-		Token{PREPEND, "<<", 0, 0},
+		Token{LIST_START, "<<", 0, 0},
 		Token{GUARD_CLOSE, "]", 0, 0},
 		Token{DELIM, ",", 0, 0},
 		Token{ID, "a", 0, 0},
 		Token{GUARD_OPEN, "[", 0, 0},
-		Token{APPEND, ">>", 0, 0},
+		Token{LIST_END, ">>", 0, 0},
 		Token{GUARD_CLOSE, "]", 0, 0},
 		Token{ASSIGN, ":=", 0, 0},
 		Token{NUMBER, "1", 0, 0},
@@ -302,12 +302,12 @@ func A11_ListItems(t *testing.T, f ParseFunc) {
 
 	firstTarget := st.AssignTarget{
 		ID:    Token{ID, "a", 0, 0},
-		Index: st.ListItemRef(Token{PREPEND, "<<", 0, 0}),
+		Index: st.ListItemRef(Token{LIST_START, "<<", 0, 0}),
 	}
 
 	secondTarget := st.AssignTarget{
 		ID:    Token{ID, "a", 0, 0},
-		Index: st.ListItemRef(Token{APPEND, ">>", 0, 0}),
+		Index: st.ListItemRef(Token{LIST_END, ">>", 0, 0}),
 	}
 
 	values := []st.Expression{

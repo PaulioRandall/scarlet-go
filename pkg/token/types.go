@@ -51,6 +51,6 @@ const (
 	MORE_THAN_OR_EQUAL TokenType = `MORE_THAN_OR_EQUAL`
 	VOID               TokenType = `VOID`
 	TERMINATOR         TokenType = `TERMINATOR`
-	APPEND             TokenType = `APPEND`
-	PREPEND            TokenType = `PREPEND`
+	LIST_START         TokenType = `LIST_START`
+	LIST_END           TokenType = `LIST_END`
 )

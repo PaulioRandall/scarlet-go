@@ -52,9 +52,6 @@ LOOP i [i < n] -3 // Decrement by three each loop
 [*****************************************************************************]
 - Enhance loops
 
-- Current
-LOOP i [i < n]
-
 - Allow
 1. LOOP i := 0 [i < 5]
 2. F(n, ^r) LOOP n [n < 5]
@@ -99,23 +96,6 @@ Expression functions have a single expression as their body. The result of the e
 - Examples
 increment := E(n) n + 1 
 
-
-[*****************************************************************************]
-- Rename APPEND to LIST_END
-- Rename PREPEND to LIST_START
-
-
-[*****************************************************************************]
-- List access
-
-- Access methods
-x := list[>>] // Take last item
-x := list[<<] // Take first item
-list[>>] := 4 // Append to end
-list[<<] := 0 // Append to front
-
-[Next]
-- Parsing done, but Still need to update the runtime for all four above
 
 [*****************************************************************************]
 - Key-value pairs

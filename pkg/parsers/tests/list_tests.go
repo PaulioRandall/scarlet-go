@@ -162,12 +162,12 @@ func L5_ListAccess(t *testing.T, f ParseFunc) {
 		Token{ASSIGN, ":=", 0, 0},
 		Token{ID, "z", 0, 0},
 		Token{GUARD_OPEN, "[", 0, 0},
-		Token{PREPEND, "<<", 0, 0},
+		Token{LIST_START, "<<", 0, 0},
 		Token{GUARD_CLOSE, "]", 0, 0},
 		Token{DELIM, ",", 0, 0},
 		Token{ID, "z", 0, 0},
 		Token{GUARD_OPEN, "[", 0, 0},
-		Token{APPEND, ">>", 0, 0},
+		Token{LIST_END, ">>", 0, 0},
 		Token{GUARD_CLOSE, "]", 0, 0},
 		Token{TERMINATOR, "", 0, 0},
 		Token{EOF, "", 0, 0},
@@ -180,12 +180,12 @@ func L5_ListAccess(t *testing.T, f ParseFunc) {
 
 	firstItem := st.ListAccess{
 		ID:    st.Identifier(Token{ID, "z", 0, 0}),
-		Index: st.ListItemRef(Token{PREPEND, "<<", 0, 0}),
+		Index: st.ListItemRef(Token{LIST_START, "<<", 0, 0}),
 	}
 
 	lastItem := st.ListAccess{
 		ID:    st.Identifier(Token{ID, "z", 0, 0}),
-		Index: st.ListItemRef(Token{APPEND, ">>", 0, 0}),
+		Index: st.ListItemRef(Token{LIST_END, ">>", 0, 0}),
 	}
 
 	a := st.Assignment{

@@ -205,11 +205,11 @@ func T40_Loop(t *testing.T, f ScanFunc) {
 }
 
 func T41_Append(t *testing.T, f ScanFunc) {
-	checkOne(t, Token{APPEND, ">>", 0, 0}, f(">>"))
-	checkFirstNot(t, Token{APPEND, ">>>", 0, 0}, f(">>>"))
+	checkOne(t, Token{LIST_END, ">>", 0, 0}, f(">>"))
+	checkFirstNot(t, Token{LIST_END, ">>>", 0, 0}, f(">>>"))
 }
 
 func T42_Prepend(t *testing.T, f ScanFunc) {
-	checkOne(t, Token{PREPEND, "<<", 0, 0}, f("<<"))
-	checkFirstNot(t, Token{PREPEND, "<<<", 0, 0}, f("<<<"))
+	checkOne(t, Token{LIST_START, "<<", 0, 0}, f("<<"))
+	checkFirstNot(t, Token{LIST_START, "<<<", 0, 0}, f("<<<"))
 }

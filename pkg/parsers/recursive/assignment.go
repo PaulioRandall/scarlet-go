@@ -66,7 +66,7 @@ func parseAssignTarget(p *pipe) st.AssignTarget {
 	if p.accept(token.GUARD_OPEN) {
 
 		switch {
-		case p.matchAny(token.PREPEND, token.APPEND):
+		case p.matchAny(token.LIST_START, token.LIST_END):
 			at.Index = st.ListItemRef(p.next())
 		case p.match(token.NUMBER):
 			at.Index = parseExpression(p)

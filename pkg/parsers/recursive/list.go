@@ -42,7 +42,7 @@ func parseListItemExpr(p *pipe) st.Expression {
 
 	var expr st.Expression
 
-	if p.matchAny(token.PREPEND, token.APPEND) {
+	if p.matchAny(token.LIST_START, token.LIST_END) {
 		expr = st.ListItemRef(p.next())
 	} else {
 		expr = parseExpression(p)

@@ -58,24 +58,11 @@ func resolveListRef(listSize int64, ref token.Token, inclusiveRef bool) int64 {
 	}
 
 	switch ref.Type {
-	case token.PREPEND:
+	case token.LIST_START:
 		return int64(min)
 
-	case token.APPEND:
+	case token.LIST_END:
 		return int64(max)
-	}
-
-	panic(err("getListIndex", ref, "Unknown list reference type"))
-}
-
-func resolveListSetterRef(listSize int64, ref token.Token) int64 {
-
-	switch ref.Type {
-	case token.PREPEND:
-		return int64(0)
-
-	case token.APPEND:
-		return int64(listSize - 1)
 	}
 
 	panic(err("getListIndex", ref, "Unknown list reference type"))

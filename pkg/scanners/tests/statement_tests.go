@@ -238,7 +238,7 @@ func S11_ModifyList(t *testing.T, f ScanFunc) {
 		Token{DELIM, ",", 0, 4},
 		Token{ID, "x", 0, 5},
 		Token{GUARD_OPEN, "[", 0, 6},
-		Token{APPEND, ">>", 0, 7},
+		Token{LIST_END, ">>", 0, 7},
 		Token{GUARD_CLOSE, "]", 0, 9},
 		Token{ASSIGN, ":=", 0, 10},
 		Token{NUMBER, "1", 0, 12},

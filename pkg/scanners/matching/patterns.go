@@ -70,10 +70,10 @@ func patterns() []pattern {
 		pattern{token.ASSIGN, func(s *symbols) int {
 			return matchStr(s, ":=")
 		}},
-		pattern{token.APPEND, func(s *symbols) int {
+		pattern{token.LIST_END, func(s *symbols) int {
 			return matchStr(s, ">>")
 		}},
-		pattern{token.PREPEND, func(s *symbols) int {
+		pattern{token.LIST_START, func(s *symbols) int {
 			return matchStr(s, "<<")
 		}},
 		pattern{token.LESS_THAN_OR_EQUAL, func(s *symbols) int {

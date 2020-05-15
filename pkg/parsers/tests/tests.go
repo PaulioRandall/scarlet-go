@@ -26,27 +26,6 @@ func Run(t *testing.T, pf ParseFunc, tf TestFunc) {
 	tf(t, pf)
 }
 
-/*
-func checkMany(t *testing.T, exps, acts []Token) {
-
-	checkEOF(t, acts)
-
-	expSize := len(exps)
-	actSize := len(acts) - 1
-
-	for i := 0; i < expSize || i < actSize; i++ {
-
-		require.True(t, i < actSize,
-			"Expected ("+tkStr(exps, i)+") but no actual tokens remain")
-
-		require.True(t, i < expSize,
-			"Didn't expect any more tokens but got ("+tkStr(acts, i)+")")
-
-		checkToken(t, exps[i], acts[i])
-	}
-}
-*/
-
 func expectOneStat(t *testing.T, exp st.Statement, acts []st.Statement) {
 	expectSize(t, 1, acts)
 	expectStat(t, exp, acts[0])
