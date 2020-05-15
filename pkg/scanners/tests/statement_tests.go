@@ -225,3 +225,26 @@ func S10_Loop(t *testing.T, f ScanFunc) {
 
 	checkMany(t, exps, f(in))
 }
+
+func S11_ModifyList(t *testing.T, f ScanFunc) {
+
+	in := "x[3],x[>>]:=1,99"
+
+	exps := []Token{
+		Token{ID, "x", 0, 0},
+		Token{GUARD_OPEN, "[", 0, 1},
+		Token{NUMBER, "3", 0, 2},
+		Token{GUARD_CLOSE, "]", 0, 3},
+		Token{DELIM, ",", 0, 4},
+		Token{ID, "x", 0, 5},
+		Token{GUARD_OPEN, "[", 0, 6},
+		Token{APPEND, ">>", 0, 7},
+		Token{GUARD_CLOSE, "]", 0, 9},
+		Token{ASSIGN, ":=", 0, 10},
+		Token{NUMBER, "1", 0, 12},
+		Token{DELIM, ",", 0, 13},
+		Token{NUMBER, "99", 0, 14},
+	}
+
+	checkMany(t, exps, f(in))
+}

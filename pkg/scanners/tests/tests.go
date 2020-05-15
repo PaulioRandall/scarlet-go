@@ -50,8 +50,8 @@ func checkOne(t *testing.T, exp Token, acts []Token) {
 	checkEOF(t, acts)
 }
 
-func checkOneNot(t *testing.T, notExp Token, acts []Token) {
-	checkSize(t, 2, acts)
+func checkFirstNot(t *testing.T, notExp Token, acts []Token) {
+	checkMinSize(t, 2, acts)
 	require.NotEqual(t, notExp, acts[0],
 		"Expected any token except ("+notExp.String()+") but got it")
 	checkEOF(t, acts)
@@ -60,6 +60,12 @@ func checkOneNot(t *testing.T, notExp Token, acts []Token) {
 func checkToken(t *testing.T, exp, act Token) {
 	require.Equal(t, exp, act,
 		"Expected ("+exp.String()+") but got ("+act.String()+")")
+}
+
+func checkMinSize(t *testing.T, min int, acts []Token) {
+	require.True(t, min <= len(acts),
+		"Expected minimum "+strconv.Itoa(min)+
+			" tokens (inc EOF) but got "+strconv.Itoa(len(acts)))
 }
 
 func checkSize(t *testing.T, exp int, acts []Token) {
