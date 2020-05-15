@@ -6,8 +6,13 @@ f := F(n, ^r) LOOP i [i < n] {
 
 r := f(170)
 
-EOF
+a := LIST {`a`, `b`, `c`, `d`, `e`, `f`}
+a[2] := _
+a[4] := _
+a[0] := _
+a[1] := `z`
 
+EOF
 
 
 [*****************************************************************************]
@@ -97,7 +102,6 @@ increment := E(n) n + 1
 - List access
 
 - Access methods
-list[0] := _ // Removes the item from the list
 x := list[>>] // Take last item
 x := list[<<] // Take first item
 list[>>] := 4 // Append to end

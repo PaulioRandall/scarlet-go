@@ -29,8 +29,19 @@ func assignVar(ctx *alphaContext, id token.Token, fixed bool, v result) {
 
 func assignListItem(ctx *alphaContext, id token.Token, index st.Expression, v result) {
 
-	n := evalNumber(ctx, index)
-	i := int64(n)
+	list := getListLiteral(ctx, id)
+	items := []result(list)
+
+	i := int64(evalNumber(ctx, index))
+	checkIndexInRange(items, i, index)
+
+	items = updateListItems(ctx, items, i, v)
+	list = listLiteral(items)
+
+	ctx.Set(id, list)
+}
+
+func getListLiteral(ctx *alphaContext, id token.Token) listLiteral {
 
 	listVal := ctx.GetNonFixed(id)
 	if listVal == nil {
@@ -42,7 +53,11 @@ func assignListItem(ctx *alphaContext, id token.Token, index st.Expression, v re
 		panic(err("assignListItem", id, "Variable is not a list"))
 	}
 
-	items := []result(list)
+	return list
+}
+
+func checkIndexInRange(items []result, i int64, index st.Expression) {
+
 	size := int64(len(items))
 
 	if i < 0 || i >= size {
@@ -50,8 +65,25 @@ func assignListItem(ctx *alphaContext, id token.Token, index st.Expression, v re
 			"Index out of range, accessing %s[%d] from %s[0:%d]",
 			index.Token().Value, i, index.Token().Value, size))
 	}
+}
 
-	items[i] = v
+func updateListItems(ctx *alphaContext, items []result, i int64, v result) []result {
+
+	switch _, ok := v.(voidLiteral); {
+	case !ok:
+		items[i] = v
+
+	case i == 0:
+		items = items[1:]
+
+	case i > int64(len(items)):
+		items = items[0 : len(items)-1]
+
+	default:
+		items = append(items[:i], items[i+1:]...)
+	}
+
+	return items
 }
 
 func checkAssignTargets(ats []st.AssignTarget, vals []result, operator token.Token) {
