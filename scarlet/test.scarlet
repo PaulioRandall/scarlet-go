@@ -1,11 +1,4 @@
 
-f := F(n, ^r) LOOP i [i < n] {
-	[i == 0] r := 1
-	[i > 0] r := r * (i + 1)
-}
-
-r := f(170)
-
 x := LIST {`a`, `b`, `c`, `d`, `e`, `f`}
 x[2] := _
 x[>>] := `g`
@@ -64,6 +57,27 @@ Make error messages and error highlighting noticably stand out in console
 
 - Example
 EXIT SCRIPT
+
+
+[*****************************************************************************]
+- Exit loop early
+
+- Example
+EXIT LOOP
+
+
+[*****************************************************************************]
+- Exit guard early
+
+- Example
+EXIT GUARD
+
+
+[*****************************************************************************]
+- Exit function early
+
+- Example
+EXIT F
 
 
 [*****************************************************************************]

@@ -21,16 +21,16 @@ func (at AssignTarget) String(i int) string {
 		append("[AssignTarget]")
 
 	s.newline().
-		indent(i).
+		indent(i + 1).
 		append("ID: ").
 		append(at.ID.String())
 
 	if at.Index != nil {
 		s.newline().
-			indent(i).
+			indent(i + 1).
 			append("Index: ").
 			newline().
-			append(at.Index.String(i + 1))
+			append(at.Index.String(i + 2))
 	}
 
 	return s.String()
