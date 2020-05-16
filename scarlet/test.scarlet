@@ -55,12 +55,8 @@ Better definition and use of interfaces will make for more segregated code, whic
 
 
 [*****************************************************************************]
-- err package and err implementations need to be revamped
-
-- Tasks
-1. err should not depend on token, nor should token depend on err. Use redundant interfaces to resolve this dependency issue
-2. make error messages and error highlighting noticably stand out
-3. Remove cause, nothings using it
+- nicer error messages
+Make error messages and error highlighting noticably stand out in console
 
 
 [*****************************************************************************]

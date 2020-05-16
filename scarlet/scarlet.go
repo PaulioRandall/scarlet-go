@@ -28,7 +28,7 @@ func main() { // Run it with `./godo run`
 	})
 
 	if e != nil {
-		err.PrintErr(e, file)
+		err.Print(e, file)
 	}
 }
 

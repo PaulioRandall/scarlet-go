@@ -3,8 +3,14 @@ package matching
 import (
 	"testing"
 
+	e "github.com/PaulioRandall/scarlet-go/pkg/err"
+
 	"github.com/PaulioRandall/scarlet-go/pkg/scanners/tests"
 )
+
+func TestScanErr(t *testing.T) {
+	var _ e.Err = scanErr{}
+}
 
 func Test_T1_Newlines(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T1_Newlines)
