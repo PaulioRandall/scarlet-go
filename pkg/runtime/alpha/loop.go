@@ -6,7 +6,7 @@ import (
 
 func exeLoop(ctx *alphaContext, l st.Loop) {
 
-	loopCtx := ctx.Spawn()
+	loopCtx := ctx.Spawn(false)
 
 	for i := 0; ; i++ {
 

@@ -21,7 +21,7 @@ func exeGuard(ctx *alphaContext, g st.Guard) bool {
 	}
 
 	if pass {
-		guardCtx := ctx.Spawn()
+		guardCtx := ctx.Spawn(false)
 		exeBlock(guardCtx, g.Block)
 	}
 

@@ -10,6 +10,7 @@ import (
 
 func Run(ss []st.Statement) alphaContext {
 	ctx := alphaContext{
+		true,
 		make(map[string]result),
 		make(map[string]result),
 		nil,

@@ -6,6 +6,7 @@ import (
 
 // alphaContext implements pkg/runtime/Context.
 type alphaContext struct {
+	pure   bool
 	fixed  map[string]result
 	local  map[string]result
 	parent *alphaContext
@@ -34,6 +35,7 @@ func (ctx alphaContext) String() (s string) {
 	return
 }
 
+// @REMOVE
 func (ctx *alphaContext) GetNonFixed(id token.Token) result {
 
 	if _, ok := ctx.fixed[id.Value]; ok {
@@ -60,6 +62,7 @@ func (ctx *alphaContext) Get(id string) result {
 	return nil
 }
 
+// @REMOVE
 func (ctx *alphaContext) GetLocal(id string) result {
 
 	if v, ok := ctx.local[id]; ok {
@@ -85,6 +88,10 @@ func (ctx *alphaContext) getVar(id string) result {
 	for c := ctx; c != nil; c = c.parent {
 		if v, ok := c.local[id]; ok {
 			return v
+		}
+
+		if c.pure {
+			return nil
 		}
 	}
 
@@ -133,7 +140,9 @@ func (ctx *alphaContext) set(id token.Token, v result) bool {
 		return true
 	}
 
-	return ctx.parent != nil && ctx.parent.set(id, v)
+	return !ctx.pure &&
+		ctx.parent != nil &&
+		ctx.parent.set(id, v)
 }
 
 func (ctx *alphaContext) setOrDelLocal(id token.Token, v result) {
@@ -144,8 +153,9 @@ func (ctx *alphaContext) setOrDelLocal(id token.Token, v result) {
 	}
 }
 
-func (ctx *alphaContext) Spawn() *alphaContext {
+func (ctx *alphaContext) Spawn(pure bool) *alphaContext {
 	return &alphaContext{
+		pure:   pure,
 		fixed:  map[string]result{},
 		local:  map[string]result{},
 		parent: ctx,

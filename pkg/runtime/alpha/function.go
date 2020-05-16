@@ -49,7 +49,7 @@ func checkFuncCallArgs(exp []token.Token, act []st.Expression, callTk token.Toke
 
 func evalFuncCallArgs(ctx *alphaContext, ids []token.Token, params []st.Expression) *alphaContext {
 
-	funcCtx := ctx.Spawn()
+	funcCtx := ctx.Spawn(true)
 
 	for i, p := range params {
 
