@@ -64,9 +64,9 @@ func deleteListItem(ctx *alphaContext, items []result, i int64, v result) []resu
 
 func getListLiteral(ctx *alphaContext, id token.Token) listLiteral {
 
-	listVal := ctx.GetNonFixed(id)
+	listVal := ctx.GetLocal(id.Value)
 	if listVal == nil {
-		panic(err("assignListItem", id, "List variable does not exist"))
+		panic(err("assignListItem", id, "List variable is fixed or does not exist"))
 	}
 
 	list, ok := listVal.(listLiteral)

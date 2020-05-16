@@ -35,20 +35,6 @@ func (ctx alphaContext) String() (s string) {
 	return
 }
 
-// @REMOVE
-func (ctx *alphaContext) GetNonFixed(id token.Token) result {
-
-	if _, ok := ctx.fixed[id.Value]; ok {
-		panic(err("GetNonFixed", id, "Cannot change a fixed variable"))
-	}
-
-	if v, ok := ctx.local[id.Value]; ok {
-		return v
-	}
-
-	return nil
-}
-
 func (ctx *alphaContext) Get(id string) result {
 
 	if v := ctx.getFixed(id); v != nil {
@@ -62,7 +48,6 @@ func (ctx *alphaContext) Get(id string) result {
 	return nil
 }
 
-// @REMOVE
 func (ctx *alphaContext) GetLocal(id string) result {
 
 	if v, ok := ctx.local[id]; ok {
