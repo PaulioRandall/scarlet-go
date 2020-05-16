@@ -3,6 +3,8 @@ package alpha
 import (
 	"strconv"
 
+	"github.com/shopspring/decimal"
+
 	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -35,18 +37,18 @@ func (b boolLiteral) String() string {
 	return "(BOOL) " + strconv.FormatBool(bool(b))
 }
 
-type numberLiteral float64
+type numberLiteral decimal.Decimal
 
 func (n numberLiteral) get() interface{} {
-	return float64(n)
+	return decimal.Decimal(n)
 }
 
 func (n numberLiteral) ToInt() int64 {
-	return int64(float64(n))
+	return decimal.Decimal(n).IntPart()
 }
 
 func (n numberLiteral) String() string {
-	return "(NUMBER) " + strconv.FormatFloat(float64(n), 'f', -1, 64)
+	return "(NUMBER) " + decimal.Decimal(n).String()
 }
 
 type stringLiteral string
@@ -159,11 +161,11 @@ func valueOf(tk token.Token) result {
 }
 
 func parseFloat(tk token.Token) numberLiteral {
-	f, e := strconv.ParseFloat(tk.Value, 64)
+	d, e := decimal.NewFromString(tk.Value)
 
 	if e != nil {
 		panic(err("parseFloat", tk, "Could not parse number"))
 	}
 
-	return numberLiteral(f)
+	return numberLiteral(d)
 }

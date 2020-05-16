@@ -71,6 +71,7 @@ func (ctx *alphaContext) getFixed(id string) result {
 func (ctx *alphaContext) getVar(id string) result {
 
 	for c := ctx; c != nil; c = c.parent {
+
 		if v, ok := c.local[id]; ok {
 			return v
 		}

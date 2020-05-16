@@ -1,10 +1,13 @@
 
-f := F(x, ^x) [x > 10] {
-	x := 10
-	y := 1
+f := F(n, ^r) {
+	r := 1
+
+	LOOP i [i < n] {
+		r := r * (i+1)
+	}
 }
 
-x := f(4)
+n := f(5)
 
 EOF
 
@@ -31,6 +34,11 @@ LOOP i, v, m <- f() {}
 3. Scanner statement: LOOP i, v, m <- f() {}
 4. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
 5. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID PAREN_OPEN PAREN_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
+
+
+[*****************************************************************************]
+- Allow voids as assignment targets
+Void assignment targets ignore the result of an expression, useful for indicating that a result is not needed
 
 
 [*****************************************************************************]
@@ -80,11 +88,6 @@ EXIT F
 
 
 [*****************************************************************************]
-- Pure functions
-Functions should be pure. When spawning a context from another, it should be possible to specify the new one as pure. The context implementation will prevent the access to a parents local variable. 
-
-
-[*****************************************************************************]
 - Enhance loops
 
 - Allow
@@ -106,11 +109,6 @@ Prints the args (variable length) to console, and appends a linefeed
 - Examples
 @P(`x: `, 1 + 2, "; ")
 @PL(list)
-
-
-[*****************************************************************************]
-- Change numbers to Float
-Change the type of number from float64 to Float, Go's std big float
 
 
 [*****************************************************************************]
