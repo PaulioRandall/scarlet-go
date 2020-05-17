@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"os"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	"github.com/PaulioRandall/scarlet-go/pkg/statement"
@@ -28,7 +29,7 @@ func main() { // Run it with `./godo run`
 	})
 
 	if e != nil {
-		err.Print(e, file)
+		err.Print(os.Stdout, e, file)
 	}
 }
 

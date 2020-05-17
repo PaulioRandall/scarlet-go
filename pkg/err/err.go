@@ -3,6 +3,7 @@ package err
 import (
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"strings"
 )
@@ -61,8 +62,7 @@ func Try(f func()) (err Err) {
 	return
 }
 
-// TODO: Write to io.writier
-func Print(e Err, file string) {
+func Print(w io.Writer, e Err, scriptFile string) {
 
 	const (
 		LINES_BEFORE = 5
@@ -70,7 +70,7 @@ func Print(e Err, file string) {
 	)
 
 	var (
-		script = loadScript(file)
+		script = loadScript(scriptFile)
 		// `¯\_(ツ)_/¯`
 		msg    = e.Error()
 		line   = e.Line()
@@ -79,36 +79,36 @@ func Print(e Err, file string) {
 	)
 
 	if line < 0 || col < 0 {
-		fPrintln("[ERROR] %s", msg)
+		fPrintln(w, "[ERROR] %s", msg)
 
 	} else {
 		// +1 converts from index to count
-		fPrintLines(script, line-LINES_BEFORE, line)
-		fPrintln("---")
-		fPrintLines(script, line, line+1)
-		fPrintln("--- [%d:%d->%d] %s", line+1, col, col+length, msg)
-		fPrintLines(script, line+1, line+1+LINES_AFTER)
+		fPrintLines(w, script, line-LINES_BEFORE, line)
+		fPrintln(w, "---")
+		fPrintLines(w, script, line, line+1)
+		fPrintln(w, "--- [%d:%d->%d] %s", line+1, col, col+length, msg)
+		fPrintLines(w, script, line+1, line+1+LINES_AFTER)
 	}
 }
 
-func loadScript(file string) []string {
+func loadScript(f string) []string {
 
-	bytes, e := ioutil.ReadFile(file)
+	bs, e := ioutil.ReadFile(f)
 	if e != nil {
 		panic(e)
 	}
 
-	code := string(bytes)
-	strings.ReplaceAll(code, "\r", "")
-	return strings.Split(code, "\n")
+	s := string(bs)
+	strings.ReplaceAll(s, "\r", "")
+	return strings.Split(s, "\n")
 }
 
-func fPrintln(s string, args ...interface{}) {
-	fmt.Printf(s, args...)
-	fmt.Println()
+func fPrintln(w io.Writer, s string, args ...interface{}) {
+	fmt.Fprintf(w, s, args...)
+	fmt.Fprintln(w)
 }
 
-func fPrintLines(script []string, start, end int) {
+func fPrintLines(w io.Writer, script []string, start, end int) {
 
 	size := len(script)
 
@@ -121,6 +121,6 @@ func fPrintLines(script []string, start, end int) {
 	}
 
 	for i := start; i < end; i++ {
-		fPrintln("%d: %s", i+1, script[i])
+		fPrintln(w, "%d: %s", i+1, script[i])
 	}
 }
