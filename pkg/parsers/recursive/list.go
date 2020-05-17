@@ -49,7 +49,7 @@ func parseListItemExpr(p *pipe) st.Expression {
 	}
 
 	if expr == nil {
-		panic(err("parseListItemExpr", p.past(),
+		panic(err("parseListItemExpr", p.next(), 0,
 			`Expected an expression or list positional reference`))
 	}
 

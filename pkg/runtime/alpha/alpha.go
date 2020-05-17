@@ -32,6 +32,7 @@ func err(f string, tk token.Token, msg string, args ...interface{}) error {
 		msg:  "[runtime." + f + "] " + fmt.Sprintf(msg, args...),
 		line: tk.Line,
 		col:  tk.Col,
+		len:  len(tk.Value),
 	}
 }
 

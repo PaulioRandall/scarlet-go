@@ -31,7 +31,7 @@ func scanNext(s *symbols) token.Token {
 	tk := scanToken(s)
 
 	if tk == (token.Token{}) {
-		panic(err(s, 0, "Could not identify next token"))
+		panic(err(s, 0, "Unknown token"))
 	}
 
 	if tk.Type == token.EOF {

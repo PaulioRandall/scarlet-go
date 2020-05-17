@@ -1,13 +1,5 @@
 
-f := F(n, ^r) {
-	r := 1
-
-	LOOP i [i < n] {
-		r := r * (i+1)
-	}
-}
-
-n := f(5)
+x := 1 + 2
 
 EOF
 
@@ -45,8 +37,8 @@ Void assignment targets ignore the result of an expression, useful for indicatin
 - Loop step size and direction
 
 - Example
-LOOP i [i < n] +1 // Increment by one each loop
-LOOP i [i < n] -3 // Decrement by three each loop
+LOOP i [i < n] i := i + 1
+LOOP i [i < n] i := i - 3
 
 
 [*****************************************************************************]
@@ -92,7 +84,8 @@ EXIT F
 
 - Allow
 1. LOOP i := 0 [i < 5]
-2. F(n, ^r) LOOP n [n < 5]
+2. LOOP i, x := 0, 1 [i < 5]
+3. F(n, ^r) LOOP n [n < 5]
 
 
 [*****************************************************************************]

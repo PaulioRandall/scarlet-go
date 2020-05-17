@@ -70,12 +70,11 @@ func Print(w io.Writer, e Err, scriptFile string) {
 	)
 
 	var (
-		script = loadScript(scriptFile)
-		// `¯\_(ツ)_/¯`
-		msg    = e.Error()
-		line   = e.Line()
-		col    = e.Col()
-		length = e.Len()
+		script  = loadScript(scriptFile)
+		linePre = digitCount(len(script))
+		msg     = e.Error()
+		line    = e.Line()
+		col     = e.Col()
 	)
 
 	if line < 0 || col < 0 {
@@ -83,12 +82,19 @@ func Print(w io.Writer, e Err, scriptFile string) {
 
 	} else {
 		// +1 converts from index to count
-		fPrintLines(w, script, line-LINES_BEFORE, line)
-		fPrintln(w, "---")
-		fPrintLines(w, script, line, line+1)
-		fPrintln(w, "--- [%d:%d->%d] %s", line+1, col, col+length, msg)
-		fPrintLines(w, script, line+1, line+1+LINES_AFTER)
+		fPrintLines(w, script, linePre, line-LINES_BEFORE, line)
+		fPrintLines(w, script, linePre, line, line+1)
+		printErrPtr(w, e, linePre)
+		fPrintLines(w, script, linePre, line+1, line+1+LINES_AFTER)
 	}
+}
+
+func digitCount(i int) (n int) {
+	for i != 0 {
+		i /= 10
+		n++
+	}
+	return
 }
 
 func loadScript(f string) []string {
@@ -108,7 +114,7 @@ func fPrintln(w io.Writer, s string, args ...interface{}) {
 	fmt.Fprintln(w)
 }
 
-func fPrintLines(w io.Writer, script []string, start, end int) {
+func fPrintLines(w io.Writer, script []string, linePre, start, end int) {
 
 	size := len(script)
 
@@ -121,6 +127,49 @@ func fPrintLines(w io.Writer, script []string, start, end int) {
 	}
 
 	for i := start; i < end; i++ {
-		fPrintln(w, "%d: %s", i+1, script[i])
+		s := craftLine(linePre, i+1, script[i])
+		fPrintln(w, s)
 	}
+}
+
+func craftLine(linePre, lineNum int, txt string) string {
+
+	if lineNum < 1 {
+		n := preLen(linePre)
+		pre := strings.Repeat(" ", n)
+		return fmt.Sprintf("%s%s", pre, txt)
+	}
+
+	preSpace := linePre - digitCount(lineNum)
+	pre := strings.Repeat(" ", preSpace)
+	return fmt.Sprintf("%s%d: %s", pre, lineNum, txt)
+}
+
+func preLen(linePre int) int {
+	return linePre + 2
+}
+
+func printErrPtr(w io.Writer, e Err, linePre int) {
+
+	var (
+		msg  = e.Error()
+		col  = e.Col()
+		size = e.Len()
+	)
+
+	if size == 0 {
+		size = 1
+	}
+
+	// `¯\_(ツ)_/¯`
+
+	pre := strings.Repeat(" ", col)
+
+	s := pre + strings.Repeat(`^`, size)
+	s = fmt.Sprintf("%s [%d:%d]", s, col, col+size)
+	s = craftLine(linePre, 0, s)
+	fPrintln(w, s)
+
+	s = craftLine(linePre, 0, msg)
+	fPrintln(w, s)
 }

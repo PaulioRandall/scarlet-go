@@ -32,11 +32,11 @@ func parseGuard(p *pipe) st.Guard {
 	}
 
 	if g.Condition == nil {
-		panic(err("parseGuard", p.peek(), `Expected expression`))
+		panic(err("parseGuard", p.past(), 1, `Expected expression`))
 	}
 
 	if !isBoolOperation(g.Condition) {
-		panic(err("parseGuard", g.Condition.Token(),
+		panic(err("parseGuard", g.Condition.Token(), 0,
 			`Expected operation with bool result`,
 		))
 	}

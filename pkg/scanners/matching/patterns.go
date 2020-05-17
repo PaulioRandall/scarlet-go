@@ -229,9 +229,7 @@ func patterns() []pattern {
 
 			if fractionalLen == 0 {
 				// One or many fractional digits must follow a delimiter.
-				panic(err(s, n+DELIM_LEN,
-					"Invalid syntax, expected digit after decimal point",
-				))
+				panic(err(s, n, "Invalid syntax, expected digit after decimal point"))
 			}
 
 			return n + DELIM_LEN + fractionalLen
@@ -271,13 +269,13 @@ func matchInt(s *symbols, start int) int {
 // unterminated.
 func checkForMissingTermination(s *symbols, i int) {
 	if s.isNewline(i) {
-		panic(err(s, 0,
+		panic(err(s, i,
 			"Newline encountered before a string or template was terminated",
 		))
 	}
 
 	if i+1 == s.len() {
-		panic(err(s, 0,
+		panic(err(s, i,
 			"EOF encountered before a string or template was terminated",
 		))
 	}

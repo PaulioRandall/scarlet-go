@@ -20,16 +20,17 @@ type parseErr struct {
 	len  int
 }
 
-func err(f string, tk token.Token, msg string, args ...interface{}) error {
+func err(f string, tk token.Token, offset int, msg string, args ...interface{}) error {
 	return &parseErr{
 		msg:  "[parser." + f + "] " + fmt.Sprintf(msg, args...),
 		line: tk.Line,
-		col:  tk.Col,
+		col:  tk.Col + offset,
+		len:  len(tk.Value),
 	}
 }
 
 func unexpected(f string, tk token.Token, expected token.TokenType) error {
-	return err(f, tk, "Expected %v, got %s", expected, tk.String())
+	return err(f, tk, 0, "Expected %v, got %s", expected, tk.String())
 }
 
 func (pe parseErr) Error() string {

@@ -19,7 +19,7 @@ func parseExpressions(p *pipe) []st.Expression {
 			exp = parseExpression(p)
 
 			if exp == nil {
-				panic(unexpected("parseExpressions", p.past(), token.DELIM))
+				panic(err("parseExpressions", p.past(), 1, `Expected expression`))
 			}
 
 		} else {
