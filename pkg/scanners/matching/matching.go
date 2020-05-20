@@ -6,7 +6,12 @@ import (
 
 var patternCache []pattern = patterns()
 
-func ScanAll(src string) []token.Token {
+func ScanAll(s string) []token.Token {
+	tks := ReadAll(s)
+	return SanitiseAll(tks)
+}
+
+func ReadAll(src string) []token.Token {
 
 	var tk token.Token
 	var tks []token.Token
@@ -14,59 +19,31 @@ func ScanAll(src string) []token.Token {
 	s := &symbols{[]rune(src), 0, 0}
 
 	for tk.Type != token.EOF {
-		tk = scanNext(s)
+		tk = readNext(s)
 		tks = append(tks, tk)
 	}
 
 	return tks
 }
 
-func scanNext(s *symbols) token.Token {
+// SanitiseAll removes redundant tokens, such as comment and whitespace, as well
+// as applying formatting to values, e.g trimming off the quotes from string
+// literals and templates.
+func SanitiseAll(in []token.Token) (out []token.Token) {
 
-	if s.empty() {
-		// TokenStream.Read requires an EOF token be returned upon an empty stream.
-		return newToken(s, token.EOF)
-	}
+	itr := token.NewIterator(in)
+	var prev token.Token
 
-	tk := scanToken(s)
+	for prev.Type != token.EOF && !itr.Empty() {
+		p := sanitiseNext(itr, prev)
 
-	if tk == (token.Token{}) {
-		panic(err(s, 0, "Unknown token"))
-	}
-
-	if tk.Type == token.EOF {
-		s.drain()
-	}
-
-	return tk
-}
-
-func scanToken(s *symbols) (_ token.Token) {
-
-	for _, p := range patternCache {
-
-		n := p.matcher(s)
-
-		if n > 0 {
-			return tokenize(s, n, p.tokenType)
+		if p != (token.Token{}) {
+			out = append(out, p)
+			prev = p
 		}
 	}
 
-	return
-}
-
-func tokenize(s *symbols, numOfTerminals int, t token.TokenType) token.Token {
-	tk := newToken(s, t)
-	tk.Value = s.readNonTerminal(numOfTerminals)
-	return tk
-}
-
-func newToken(s *symbols, t token.TokenType) token.Token {
-	return token.Token{
-		Type: t,
-		Line: s.line,
-		Col:  s.col,
-	}
+	return out
 }
 
 type scanErr struct {

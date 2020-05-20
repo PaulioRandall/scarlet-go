@@ -4,35 +4,28 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-// SanitiseAll removes redundant tokens, such as comment and whitespace, as well
-// as applying formatting to values, e.g trimming off the quotes from string
-// literals and templates.
-func SanitiseAll(in []token.Token) (out []token.Token) {
+func sanitiseNext(itr *token.TokenIterator, prev token.Token) token.Token {
 
-	itr := token.NewIterator(in)
-	var prev token.Token
+	var tk token.Token
 
-	for prev.Type != token.EOF && !itr.Empty() {
-		p := sanitise(itr, prev)
-
-		if p != (token.Token{}) {
-			out = append(out, p)
-			prev = p
-		}
-	}
-
-	return out
-}
-
-func sanitise(itr *token.TokenIterator, prev token.Token) token.Token {
-
-	for !isParsableToken(prev, itr.Next()) {
+	for tk == (token.Token{}) {
 		if itr.Empty() {
 			return token.Token{}
 		}
+
+		tk = sanitise(prev, itr.Next())
 	}
 
-	return formatToken(itr.Past())
+	return tk
+}
+
+func sanitise(prev, next token.Token) token.Token {
+
+	if isParsableToken(prev, next) {
+		return formatToken(next)
+	}
+
+	return token.Token{}
 }
 
 func isParsableToken(prev, next token.Token) bool {

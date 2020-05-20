@@ -16,8 +16,7 @@ func ScanAll(s string, m Method) []token.Token {
 
 	switch m {
 	case DEFAULT, PATTERN_MATCHING:
-		tks := matching.ScanAll(s)
-		return matching.SanitiseAll(tks)
+		return matching.ScanAll(s)
 	}
 
 	panic(string(`Unknown scanning method '` + m + `'`))
