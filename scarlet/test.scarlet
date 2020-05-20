@@ -5,6 +5,44 @@ EOF
 
 
 [*****************************************************************************]
+- Refactor naming based on https://stackoverflow.com/questions/14954721/what-is-the-difference-between-a-token-and-a-lexeme/14958865
+
+- Steps
+Rename Lexeme to Morpheme
+Create Lexeme interface as a Morpheme and Value
+Create Token interface as a Kind (token type), Lexeme, and ScriptMark
+
+
+[*****************************************************************************]
+- Token is actually 3 interfaces
+
+type Token interface {
+	Kind()
+	Lexeme
+	ScriptMarker
+}
+E.g. {NUMBER, NUMBER, 2}, {COMPARISON, LESS_THAN, `<`}, {CHARSEQUENCE, TEMPLATE, `"abc"`}
+
+type ScriptMark interface {
+	Line() int
+	Col() int
+}
+
+type Lexeme interface {
+	Morph() Morpheme
+	Value() string
+}
+E.g. {NUMBER,`2`}, {LESS_THAN, `<`}, {TEMPLATE, `"abc"`}
+
+type Morpheme int
+E.g. NUMBER, LESS_THAN, TEMPLATE 
+
+
+
+
+
+
+[*****************************************************************************]
 - Add list-based looping
 
 - Formats

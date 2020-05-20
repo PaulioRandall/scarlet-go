@@ -101,6 +101,30 @@ var values map[Lexeme]string = map[Lexeme]string{
 	LIST_END:           `LIST_END`,
 }
 
-func String(i Lexeme) string {
-	return values[i]
+func LexString(l Lexeme) string {
+	return values[l]
+}
+
+func LexPrecedence(l Lexeme) int {
+	switch l {
+	case MULTIPLY, DIVIDE, REMAINDER:
+		return 6 // Multiplicative
+
+	case ADD, SUBTRACT:
+		return 5 // Additive
+
+	case LESS_THAN, LESS_THAN_OR_EQUAL, MORE_THAN, MORE_THAN_OR_EQUAL:
+		return 4 // Relational
+
+	case EQUAL, NOT_EQUAL:
+		return 3 // Equalitive
+
+	case AND:
+		return 2
+
+	case OR:
+		return 1
+	}
+
+	return 0
 }
