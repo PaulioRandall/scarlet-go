@@ -10,7 +10,6 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/pkg/parsers"
 	"github.com/PaulioRandall/scarlet-go/pkg/runtime"
-	"github.com/PaulioRandall/scarlet-go/pkg/sanitiser"
 	"github.com/PaulioRandall/scarlet-go/pkg/scanners"
 )
 
@@ -36,15 +35,11 @@ func main() { // Run it with `./godo run`
 func run(s string) {
 
 	println("# Scanned:")
-	scannedTokens := scanners.ScanAll(s, scanners.DEFAULT)
-	token.PrettyPrint(scannedTokens)
-
-	println("# Sanitised:")
-	sanitisedTokens := sanitiser.SanitiseAll(scannedTokens)
-	token.PrettyPrint(sanitisedTokens)
+	tokens := scanners.ScanAll(s, scanners.DEFAULT)
+	token.PrettyPrint(tokens)
 
 	println("# Parsed:")
-	statements := parsers.ParseAll(sanitisedTokens, parsers.DEFAULT)
+	statements := parsers.ParseAll(tokens, parsers.DEFAULT)
 	statement.Print(statements)
 
 	println("# Executing...")

@@ -1,4 +1,4 @@
-package sanitiser
+package matching
 
 import (
 	"strconv"

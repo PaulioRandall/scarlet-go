@@ -47,11 +47,6 @@ Better definition and use of interfaces will make for more segregated code, whic
 
 
 [*****************************************************************************]
-- nicer error messages
-Make error messages and error highlighting noticably stand out in console
-
-
-[*****************************************************************************]
 - Exit script early
 
 - Example
@@ -106,6 +101,7 @@ Prints the args (variable length) to console, and appends a linefeed
 
 [*****************************************************************************]
 - Can Keywords be case-insensitive?
+- Maybe they should be lower case, except for F?
 
 
 [*****************************************************************************]
@@ -121,6 +117,8 @@ Expression functions have a single expression as their body. The result of the e
 
 - Examples
 increment := E(n) n + 1 
+
+expr := E(a, b) [a > b] @P(`A > B`)
 
 
 [*****************************************************************************]

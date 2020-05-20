@@ -1,4 +1,4 @@
-package sanitiser
+package matching
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
