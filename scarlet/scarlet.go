@@ -8,9 +8,9 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/statement"
 	"github.com/PaulioRandall/scarlet-go/pkg/token"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/parsers"
-	"github.com/PaulioRandall/scarlet-go/pkg/runtime"
-	"github.com/PaulioRandall/scarlet-go/pkg/scanners"
+	parser "github.com/PaulioRandall/scarlet-go/pkg/parsers/recursive"
+	runtime "github.com/PaulioRandall/scarlet-go/pkg/runtime/alpha"
+	scanner "github.com/PaulioRandall/scarlet-go/pkg/scanners/matching"
 )
 
 func main() { // Run it with `./godo run`
@@ -35,15 +35,15 @@ func main() { // Run it with `./godo run`
 func run(s string) {
 
 	println("# Scanned:")
-	tokens := scanners.ScanAll(s, scanners.DEFAULT)
-	token.PrettyPrint(tokens)
+	tks := scanner.ScanAll(s)
+	token.PrettyPrint(tks)
 
 	println("# Parsed:")
-	statements := parsers.ParseAll(tokens, parsers.DEFAULT)
-	statement.Print(statements)
+	stats := parser.ParseAll(tks)
+	statement.Print(stats)
 
 	println("# Executing...")
-	ctx := runtime.Run(statements, runtime.DEFAULT)
+	ctx := runtime.Run(stats)
 	println("...done!\n")
 
 	println(ctx.String())
