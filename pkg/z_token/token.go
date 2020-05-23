@@ -3,8 +3,6 @@ package z_token
 import (
 	"fmt"
 	"strconv"
-
-	. "github.com/PaulioRandall/scarlet-go/pkg/morpheme"
 )
 
 type Lexeme interface {
@@ -18,6 +16,7 @@ type TextPos interface {
 }
 
 type Token interface {
+	Kind() Kind
 	Lexeme
 	TextPos
 }
@@ -30,12 +29,13 @@ func ToString(tk Token) string {
 
 	var s interface{}
 	v := tk.Value()
+	m := tk.Morpheme()
 
-	switch tk.Morpheme() {
-	case TEMPLATE, TERMINATOR, NEWLINE, WHITESPACE:
+	switch m {
+	case M_TEMPLATE, M_TERMINATOR, M_NEWLINE, M_WHITESPACE:
 		s = strconv.QuoteToGraphic(v)
 
-	case STRING:
+	case M_STRING:
 		s = "`" + v + "`"
 
 	default:
@@ -46,7 +46,7 @@ func ToString(tk Token) string {
 	return fmt.Sprintf(`%d:%d %s %v`,
 		tk.Line()+1,
 		tk.Col(),
-		tk.Morpheme().String(),
+		m.String(),
 		s,
 	)
 }
