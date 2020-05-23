@@ -6,34 +6,6 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/z_token"
 )
 
-type tok struct {
-	k Kind
-	m Morpheme
-	v string
-	l int
-	c int
-}
-
-func (tk tok) Kind() Kind {
-	return tk.k
-}
-
-func (tk tok) Morpheme() Morpheme {
-	return tk.m
-}
-
-func (tk tok) Value() string {
-	return tk.v
-}
-
-func (tk tok) Line() int {
-	return tk.l
-}
-
-func (tk tok) Col() int {
-	return tk.c
-}
-
 func T1_Newlines(t *testing.T, f ScanFunc) {
 	checkOne(t, tok{K_NEWLINE, M_NEWLINE, "\n", 0, 0}, f("\n"))
 	checkOne(t, tok{K_NEWLINE, M_NEWLINE, "\r\n", 0, 0}, f("\r\n"))
@@ -138,7 +110,7 @@ func T21_GuardClose(t *testing.T, f ScanFunc) {
 }
 
 func T22_Delim(t *testing.T, f ScanFunc) {
-	checkOne(t, tok{K_DELIMITER, M_DELIM, ",", 0, 0}, f(","))
+	checkOne(t, tok{K_DELIMITER, M_DELIMITER, ",", 0, 0}, f(","))
 }
 
 func T23_Void(t *testing.T, f ScanFunc) {

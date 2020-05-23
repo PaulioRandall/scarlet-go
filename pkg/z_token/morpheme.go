@@ -22,11 +22,11 @@ const (
 	M_MATCH              // K_KEYWORD
 	M_LOOP               // K_KEYWORD
 	M_SPELL              // K_KEYWORD
+	M_OUTPUT             // K_KEYWORD
 	M_IDENTIFIER         // K_IDENTIFIER
 	M_VOID               // K_IDENTIFIER
-	M_DELIM              // K_DELIMITER
+	M_DELIMITER          // K_DELIMITER
 	M_ASSIGN             // K_DELIMITER
-	M_OUTPUT             // K_DELIMITER
 	M_BLOCK_OPEN         // K_DELIMITER
 	M_BLOCK_CLOSE        // K_DELIMITER
 	M_PAREN_OPEN         // K_DELIMITER
@@ -68,11 +68,11 @@ var morphemes map[Morpheme]string = map[Morpheme]string{
 	M_MATCH:              `MATCH`,
 	M_LOOP:               `LOOP`,
 	M_SPELL:              `SPELL`,
+	M_OUTPUT:             `OUTPUT`,
 	M_IDENTIFIER:         `ID`,
 	M_VOID:               `VOID`,
-	M_DELIM:              `DELIM`,
+	M_DELIMITER:          `DELIM`,
 	M_ASSIGN:             `ASSIGN`,
-	M_OUTPUT:             `OUTPUT`,
 	M_BLOCK_OPEN:         `BLOCK_OPEN`,
 	M_BLOCK_CLOSE:        `BLOCK_CLOSE`,
 	M_PAREN_OPEN:         `PAREN_OPEN`,

@@ -9,6 +9,34 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type tok struct {
+	k Kind
+	m Morpheme
+	v string
+	l int
+	c int
+}
+
+func (tk tok) Kind() Kind {
+	return tk.k
+}
+
+func (tk tok) Morpheme() Morpheme {
+	return tk.m
+}
+
+func (tk tok) Value() string {
+	return tk.v
+}
+
+func (tk tok) Line() int {
+	return tk.l
+}
+
+func (tk tok) Col() int {
+	return tk.c
+}
+
 type ScanFunc func(in string) []Token
 
 type TestFunc func(t *testing.T, sf ScanFunc)
