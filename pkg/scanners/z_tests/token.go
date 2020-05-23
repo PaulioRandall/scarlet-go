@@ -28,15 +28,15 @@ func T4_Match(t *testing.T, f ScanFunc) {
 }
 
 func T5_False(t *testing.T, f ScanFunc) {
-	checkOne(t, tok{K_KEYWORD, M_BOOL, "FALSE", 0, 0}, f("FALSE"))
-	checkFirstNot(t, tok{K_KEYWORD, M_BOOL, "FALSE", 0, 0}, f("FALSEE"))
-	checkFirstNot(t, tok{K_KEYWORD, M_BOOL, "FALSEE", 0, 0}, f("FALSEE"))
+	checkOne(t, tok{K_LITERAL, M_BOOL, "FALSE", 0, 0}, f("FALSE"))
+	checkFirstNot(t, tok{K_LITERAL, M_BOOL, "FALSE", 0, 0}, f("FALSEE"))
+	checkFirstNot(t, tok{K_LITERAL, M_BOOL, "FALSEE", 0, 0}, f("FALSEE"))
 }
 
 func T6_True(t *testing.T, f ScanFunc) {
-	checkOne(t, tok{K_KEYWORD, M_BOOL, "TRUE", 0, 0}, f("TRUE"))
-	checkFirstNot(t, tok{K_KEYWORD, M_BOOL, "TRUE", 0, 0}, f("TRUEE"))
-	checkFirstNot(t, tok{K_KEYWORD, M_BOOL, "TRUEE", 0, 0}, f("TRUEE"))
+	checkOne(t, tok{K_LITERAL, M_BOOL, "TRUE", 0, 0}, f("TRUE"))
+	checkFirstNot(t, tok{K_LITERAL, M_BOOL, "TRUE", 0, 0}, f("TRUEE"))
+	checkFirstNot(t, tok{K_LITERAL, M_BOOL, "TRUEE", 0, 0}, f("TRUEE"))
 }
 
 func T7_List(t *testing.T, f ScanFunc) {
@@ -74,7 +74,7 @@ func T12_Assign(t *testing.T, f ScanFunc) {
 }
 
 func T13_Output(t *testing.T, f ScanFunc) {
-	checkOne(t, tok{K_DELIMITER, M_OUTPUT, "^", 0, 0}, f("^"))
+	checkOne(t, tok{K_KEYWORD, M_OUTPUT, "^", 0, 0}, f("^"))
 }
 
 func T14_LessThanOrEqual(t *testing.T, f ScanFunc) {

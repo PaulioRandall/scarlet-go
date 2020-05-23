@@ -23,12 +23,17 @@ type Token interface {
 
 func ToString(tk Token) string {
 
+	if tk == nil {
+		return `NIL-TOKEN`
+	}
+
 	if v, ok := tk.(fmt.Stringer); ok {
 		return v.String()
 	}
 
 	var s interface{}
 	v := tk.Value()
+	k := tk.Kind()
 	m := tk.Morpheme()
 
 	switch m {
@@ -43,9 +48,10 @@ func ToString(tk Token) string {
 	}
 
 	// +1 for line index to number
-	return fmt.Sprintf(`%d:%d %s %v`,
+	return fmt.Sprintf(`%d:%d %s:%s %v`,
 		tk.Line()+1,
 		tk.Col(),
+		k.String(),
 		m.String(),
 		s,
 	)

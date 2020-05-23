@@ -1,7 +1,5 @@
 package z_matching
 
-var cache []pattern = patterns()
-
 type scanErr struct {
 	msg  string
 	line int

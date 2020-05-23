@@ -37,10 +37,10 @@ func patterns() []pattern {
 		pattern{K_KEYWORD, M_MATCH, func(s *symbols) int {
 			return matchWord(s, "MATCH")
 		}},
-		pattern{K_KEYWORD, M_BOOL, func(s *symbols) int {
+		pattern{K_LITERAL, M_BOOL, func(s *symbols) int {
 			return matchWord(s, "FALSE")
 		}},
-		pattern{K_KEYWORD, M_BOOL, func(s *symbols) int {
+		pattern{K_LITERAL, M_BOOL, func(s *symbols) int {
 			return matchWord(s, "TRUE")
 		}},
 		pattern{K_KEYWORD, M_LIST, func(s *symbols) int {
@@ -52,7 +52,7 @@ func patterns() []pattern {
 		pattern{K_KEYWORD, M_FIX, func(s *symbols) int {
 			return matchWord(s, "FIX")
 		}},
-		pattern{K_KEYWORD, M_EOF, func(s *symbols) int {
+		pattern{K_EOF, M_EOF, func(s *symbols) int {
 			return matchWord(s, "EOF")
 		}},
 		pattern{K_KEYWORD, M_FUNC, func(s *symbols) int {
