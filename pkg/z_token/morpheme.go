@@ -22,7 +22,7 @@ const (
 	M_MATCH              // K_KEYWORD
 	M_LOOP               // K_KEYWORD
 	M_SPELL              // K_KEYWORD
-	M_ID                 // K_IDENTIFIER
+	M_IDENTIFIER         // K_IDENTIFIER
 	M_VOID               // K_IDENTIFIER
 	M_DELIM              // K_DELIMITER
 	M_ASSIGN             // K_DELIMITER
@@ -68,7 +68,7 @@ var morphemes map[Morpheme]string = map[Morpheme]string{
 	M_MATCH:              `MATCH`,
 	M_LOOP:               `LOOP`,
 	M_SPELL:              `SPELL`,
-	M_ID:                 `ID`,
+	M_IDENTIFIER:         `ID`,
 	M_VOID:               `VOID`,
 	M_DELIM:              `DELIM`,
 	M_ASSIGN:             `ASSIGN`,
