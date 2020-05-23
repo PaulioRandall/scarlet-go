@@ -1,12 +1,12 @@
-package lexemes
+package morpheme
 
-type Lexeme int
+type Morpheme int
 
 // TODO: Some of the const token types don't have meaningful or accurate names,
 //			 consider improving matters.
 
 const (
-	UNDEFINED = iota
+	UNDEFINED Morpheme = iota
 	// ------------------
 	ANY
 	ANOTHER
@@ -55,7 +55,7 @@ const (
 	LIST_END
 )
 
-var values map[Lexeme]string = map[Lexeme]string{
+var values map[Morpheme]string = map[Morpheme]string{
 	UNDEFINED:          ``,
 	ANOTHER:            `ANOTHER`,
 	EOF:                `EOF`,
@@ -101,12 +101,12 @@ var values map[Lexeme]string = map[Lexeme]string{
 	LIST_END:           `LIST_END`,
 }
 
-func LexString(l Lexeme) string {
-	return values[l]
+func (m Morpheme) String() string {
+	return values[m]
 }
 
-func LexPrecedence(l Lexeme) int {
-	switch l {
+func (m Morpheme) Precedence() int {
+	switch m {
 	case MULTIPLY, DIVIDE, REMAINDER:
 		return 6 // Multiplicative
 
