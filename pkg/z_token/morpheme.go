@@ -11,8 +11,7 @@ const (
 	M_ANY
 	M_ANOTHER
 	// ------------------
-	M_EOF
-	// ------------------
+	M_EOF                // K_EOF
 	M_COMMENT            // K_REDUNDANT
 	M_WHITESPACE         // K_REDUNDANT
 	M_NEWLINE            // K_NEWLINE
