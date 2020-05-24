@@ -69,20 +69,6 @@ func (s *str) appendGuards(indent int, guards []Guard) *str {
 	return s
 }
 
-/*
-func (s *str) appendAssignTargets(indent int, ats []AssignTarget) *str {
-
-	for i, at := range ats {
-		if i != 0 {
-			s.newline()
-		}
-
-		s.append(at.String(indent))
-	}
-
-	return s
-}
-*/
 func (s *str) appendExps(indent int, exps []Expression) *str {
 
 	for i, exp := range exps {
