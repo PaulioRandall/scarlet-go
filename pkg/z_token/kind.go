@@ -8,8 +8,6 @@ const (
 	K_ANY
 	K_ANOTHER
 	// ------------------
-	K_EOF
-	// ------------------
 	K_REDUNDANT
 	K_NEWLINE
 	K_KEYWORD
@@ -25,7 +23,6 @@ const (
 var kinds map[Kind]string = map[Kind]string{
 	K_UNDEFINED:  ``,
 	K_ANOTHER:    `ANOTHER`,
-	K_EOF:        `EOF`,
 	K_REDUNDANT:  `REDUNDANT`,
 	K_NEWLINE:    `NEWLINE`,
 	K_KEYWORD:    `KEYWORD`,

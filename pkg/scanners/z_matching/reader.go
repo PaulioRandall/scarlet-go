@@ -1,35 +1,23 @@
 package z_matching
 
-import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/z_token"
-)
-
 var cache []pattern = patterns()
 
-func ReadAll(src string) []tok {
+func ReadAll(s string) []tok {
 
-	var tk tok
 	var tks []tok
+	sym := &symbols{[]rune(s), 0, 0}
 
-	s := &symbols{[]rune(src), 0, 0}
-
-	for tk.Kind() != K_EOF {
-		tk = readNext(s)
+	for tk, ok := readNext(sym); ok; tk, ok = readNext(sym) {
 		tks = append(tks, tk)
 	}
 
 	return tks
 }
 
-func readNext(s *symbols) tok {
+func readNext(s *symbols) (tok, bool) {
 
 	if s.empty() {
-		return tok{
-			k: K_EOF,
-			m: M_EOF,
-			l: s.line,
-			c: s.col,
-		}
+		return tok{}, false
 	}
 
 	tk := readToken(s)
@@ -38,14 +26,10 @@ func readNext(s *symbols) tok {
 		panic(err(s, 0, "Unknown token"))
 	}
 
-	if tk.k == K_EOF {
-		s.drain()
-	}
-
-	return tk
+	return tk, true
 }
 
-func readToken(s *symbols) (_ tok) {
+func readToken(s *symbols) tok {
 
 	for _, p := range cache {
 
@@ -56,7 +40,7 @@ func readToken(s *symbols) (_ tok) {
 		}
 	}
 
-	return
+	return tok{}
 }
 
 func tokenize(s *symbols, terminalCount int, p pattern) tok {

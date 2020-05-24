@@ -44,10 +44,6 @@ func Test_T8_Fix(t *testing.T) {
 	tests.Run(t, readAllToks, tests.T8_Fix)
 }
 
-func Test_T9_Eof(t *testing.T) {
-	tests.Run(t, readAllToks, tests.T9_Eof)
-}
-
 func Test_T10_F(t *testing.T) {
 	tests.Run(t, readAllToks, tests.T10_F)
 }

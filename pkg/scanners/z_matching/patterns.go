@@ -52,9 +52,6 @@ func patterns() []pattern {
 		pattern{K_KEYWORD, M_FIX, func(s *symbols) int {
 			return matchWord(s, "FIX")
 		}},
-		pattern{K_EOF, M_EOF, func(s *symbols) int {
-			return matchWord(s, "EOF")
-		}},
 		pattern{K_KEYWORD, M_FUNC, func(s *symbols) int {
 			return matchWord(s, "F")
 		}},

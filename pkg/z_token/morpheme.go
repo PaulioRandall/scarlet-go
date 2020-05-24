@@ -11,7 +11,6 @@ const (
 	M_ANY
 	M_ANOTHER
 	// ------------------
-	M_EOF                // K_EOF
 	M_COMMENT            // K_REDUNDANT
 	M_WHITESPACE         // K_REDUNDANT
 	M_NEWLINE            // K_NEWLINE
@@ -57,7 +56,6 @@ const (
 var morphemes map[Morpheme]string = map[Morpheme]string{
 	M_UNDEFINED:          ``,
 	M_ANOTHER:            `ANOTHER`,
-	M_EOF:                `EOF`,
 	M_COMMENT:            `COMMENT`,
 	M_WHITESPACE:         `WHITESPACE`,
 	M_NEWLINE:            `NEWLINE`,
