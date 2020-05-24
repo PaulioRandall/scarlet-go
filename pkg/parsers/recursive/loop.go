@@ -1,21 +1,20 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
-
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func isLoop(p *pipe) bool {
-	return p.match(token.LOOP)
+	return p.match(LOOP)
 }
 
-func parseLoop(p *pipe) st.Loop {
+func parseLoop(p *pipe) Loop {
 	// pattern := LOOP ID guard
 
-	return st.Loop{
-		Open:     p.expect(`parseLoop`, token.LOOP),
-		IndexVar: p.expect(`parseLoop`, token.ID),
+	return Loop{
+		Open:     p.expect(`parseLoop`, LOOP),
+		IndexVar: p.expect(`parseLoop`, IDENTIFIER),
 		Guard:    parseGuard(p),
 	}
 }

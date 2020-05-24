@@ -1,19 +1,18 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
-
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func isGuard(p *pipe) bool {
-	return p.match(token.GUARD_OPEN)
+	return p.match(GUARD_OPEN)
 }
 
-func parseGuards(p *pipe) []st.Guard {
+func parseGuards(p *pipe) []Guard {
 	// pattern := {guard}
 
-	var gs []st.Guard
+	var gs []Guard
 
 	for isGuard(p) {
 		g := parseGuard(p)
@@ -23,11 +22,11 @@ func parseGuards(p *pipe) []st.Guard {
 	return gs
 }
 
-func parseGuard(p *pipe) st.Guard {
+func parseGuard(p *pipe) Guard {
 	// pattern := GUARD_OPEN expression GUARD_CLOSE (statement | block)
 
-	g := st.Guard{
-		Open:      p.expect(`parseGuard`, token.GUARD_OPEN),
+	g := Guard{
+		Open:      p.expect(`parseGuard`, GUARD_OPEN),
 		Condition: parseExpression(p),
 	}
 
@@ -41,7 +40,7 @@ func parseGuard(p *pipe) st.Guard {
 		))
 	}
 
-	g.Close = p.expect(`parseGuard`, token.GUARD_CLOSE)
+	g.Close = p.expect(`parseGuard`, GUARD_CLOSE)
 
 	if isBlock(p) {
 		g.Block = parseBlock(p)
@@ -52,32 +51,32 @@ func parseGuard(p *pipe) st.Guard {
 	return g
 }
 
-func isBoolOperation(ex st.Expression) bool {
+func isBoolOperation(ex Expression) bool {
 
 	switch v := ex.(type) {
-	case st.Identifier:
+	case Identifier:
 		return true
 
-	case st.Value:
-		return v.Token().Type == token.BOOL
+	case Value:
+		return v.Token().Morpheme() == BOOL
 
-	case st.Operation:
-		return isBoolOperator(v.Operator.Type)
+	case Operation:
+		return isBoolOperator(v.Operator.Morpheme())
 	}
 
 	return false
 }
 
-func isBoolOperator(typ token.TokenType) bool {
-	switch typ {
-	case token.LESS_THAN,
-		token.LESS_THAN_OR_EQUAL,
-		token.MORE_THAN,
-		token.MORE_THAN_OR_EQUAL,
-		token.EQUAL,
-		token.NOT_EQUAL,
-		token.AND,
-		token.OR:
+func isBoolOperator(m Morpheme) bool {
+	switch m {
+	case LESS_THAN,
+		LESS_THAN_OR_EQUAL,
+		MORE_THAN,
+		MORE_THAN_OR_EQUAL,
+		EQUAL,
+		NOT_EQUAL,
+		AND,
+		OR:
 
 		return true
 	}

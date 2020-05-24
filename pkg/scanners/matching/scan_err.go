@@ -1,4 +1,4 @@
-package z_matching
+package matching
 
 type scanErr struct {
 	msg  string

@@ -1,21 +1,20 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
-
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func parseExpressions(p *pipe) []st.Expression {
+func parseExpressions(p *pipe) []Expression {
 	// pattern := [expression {DELIM expression}] [TERMINATOR]
 
-	var exps []st.Expression
+	var exps []Expression
 	exp := parseExpression(p)
 
 	for exp != nil {
 		exps = append(exps, exp)
 
-		if p.accept(token.DELIM) {
+		if p.accept(DELIMITER) {
 			exp = parseExpression(p)
 
 			if exp == nil {
@@ -27,14 +26,14 @@ func parseExpressions(p *pipe) []st.Expression {
 		}
 	}
 
-	p.accept(token.TERMINATOR) // In some cases
+	p.accept(TERMINATOR) // In some cases
 	return exps
 }
 
-func parseExpression(p *pipe) st.Expression {
+func parseExpression(p *pipe) Expression {
 	// pattern := func_call | list_access | literal | group | list
 
-	var left st.Expression
+	var left Expression
 
 	switch {
 	case isFuncCall(p):

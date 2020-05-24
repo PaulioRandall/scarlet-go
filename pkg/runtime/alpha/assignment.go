@@ -1,11 +1,11 @@
 package alpha
 
 import (
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func exeAssignment(ctx *alphaContext, a st.Assignment) {
+func exeAssignment(ctx *alphaContext, a Assignment) {
 
 	vs := evalExpressions(ctx, a.Exprs)
 	checkAssignTargets(a.Targets, vs, a.Assign)
@@ -19,7 +19,7 @@ func exeAssignment(ctx *alphaContext, a st.Assignment) {
 	}
 }
 
-func assignVar(ctx *alphaContext, id token.Token, fixed bool, v result) {
+func assignVar(ctx *alphaContext, id Token, fixed bool, v result) {
 	if fixed {
 		ctx.SetFixed(id, v)
 	} else {
@@ -27,7 +27,7 @@ func assignVar(ctx *alphaContext, id token.Token, fixed bool, v result) {
 	}
 }
 
-func assignListItem(ctx *alphaContext, id token.Token, index st.Expression, v result) {
+func assignListItem(ctx *alphaContext, id Token, index Expression, v result) {
 
 	list := getListLiteral(ctx, id)
 	items := []result(list)
@@ -62,9 +62,9 @@ func deleteListItem(ctx *alphaContext, items []result, i int64, v result) []resu
 	return items
 }
 
-func getListLiteral(ctx *alphaContext, id token.Token) listLiteral {
+func getListLiteral(ctx *alphaContext, id Token) listLiteral {
 
-	listVal := ctx.GetLocal(id.Value)
+	listVal := ctx.GetLocal(id.Value())
 	if listVal == nil {
 		panic(err("assignListItem", id, "List variable is fixed or does not exist"))
 	}
@@ -93,7 +93,7 @@ func updateListItems(ctx *alphaContext, items []result, i int64, v result) []res
 	return items
 }
 
-func checkAssignTargets(ats []st.AssignTarget, vals []result, operator token.Token) {
+func checkAssignTargets(ats []AssignTarget, vals []result, operator Token) {
 
 	a, b := len(ats), len(vals)
 

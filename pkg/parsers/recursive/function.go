@@ -1,19 +1,19 @@
 package recursive
 
 import (
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func isFuncDef(p *pipe) bool {
-	return p.match(token.FUNC)
+	return p.match(FUNC)
 }
 
-func parseFuncDef(p *pipe) st.Expression {
+func parseFuncDef(p *pipe) Expression {
 	// pattern := FUNC params (statement | block)
 
-	f := st.FuncDef{
-		Key: p.expect(`parseFuncDef`, token.FUNC),
+	f := FuncDef{
+		Key: p.expect(`parseFuncDef`, FUNC),
 	}
 
 	f.Inputs, f.Outputs = parseFuncParams(p)
@@ -34,34 +34,34 @@ func parseFuncDef(p *pipe) st.Expression {
 	return f
 }
 
-func parseFuncParams(p *pipe) (in, out []token.Token) {
+func parseFuncParams(p *pipe) (in, out []Token) {
 	// pattern := PAREN_OPEN [ids] PAREN_CLOSE
 
-	p.expect(`parseFuncParams`, token.PAREN_OPEN)
+	p.expect(`parseFuncParams`, PAREN_OPEN)
 
-	if p.match(token.ID) || p.match(token.OUTPUT) {
+	if p.match(IDENTIFIER) || p.match(OUTPUT) {
 		in, out = parseFuncParamIds(p)
 	}
 
-	p.expect(`parseFuncParams`, token.PAREN_CLOSE)
+	p.expect(`parseFuncParams`, PAREN_CLOSE)
 
 	return in, out
 }
 
-func parseFuncParamIds(p *pipe) (in []token.Token, out []token.Token) {
+func parseFuncParamIds(p *pipe) (in []Token, out []Token) {
 	// pattern := [^] ID {DELIM [^] ID}
 
 	for {
-		if p.accept(token.OUTPUT) {
-			tk := p.expect(`parseFuncParamIds`, token.ID)
+		if p.accept(OUTPUT) {
+			tk := p.expect(`parseFuncParamIds`, IDENTIFIER)
 			out = append(out, tk)
 
 		} else {
-			tk := p.expect(`parseFuncParamIds`, token.ID)
+			tk := p.expect(`parseFuncParamIds`, IDENTIFIER)
 			in = append(in, tk)
 		}
 
-		if !p.accept(token.DELIM) {
+		if !p.accept(DELIMITER) {
 			break
 		}
 	}
@@ -70,22 +70,22 @@ func parseFuncParamIds(p *pipe) (in []token.Token, out []token.Token) {
 }
 
 func isFuncCall(p *pipe) (is bool) {
-	return p.matchSequence(token.ID, token.PAREN_OPEN)
+	return p.matchSequence(IDENTIFIER, PAREN_OPEN)
 }
 
-func parseFuncCall(p *pipe) st.Expression {
+func parseFuncCall(p *pipe) Expression {
 	// pattern := ID PAREN_OPEN {expression} PAREN_CLOSE
 
-	id := p.expect(`parseFuncCall`, token.ID)
-	left := st.Identifier(id)
+	id := p.expect(`parseFuncCall`, IDENTIFIER)
+	left := Identifier{id}
 
-	p.expect(`parseFuncCall`, token.PAREN_OPEN)
+	p.expect(`parseFuncCall`, PAREN_OPEN)
 
-	f := st.FuncCall{
+	f := FuncCall{
 		ID:     left,
 		Inputs: parseExpressions(p),
 	}
 
-	p.expect(`parseFuncCall`, token.PAREN_CLOSE)
+	p.expect(`parseFuncCall`, PAREN_CLOSE)
 	return f
 }

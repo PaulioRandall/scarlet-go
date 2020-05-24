@@ -3,7 +3,7 @@ package matching
 import (
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // matcher implementations will return the number of terminals in a token, but
@@ -11,53 +11,50 @@ import (
 type matcher func(*symbols) int
 
 type pattern struct {
-	tokenType token.TokenType
-	matcher   matcher
+	morpheme Morpheme
+	matcher  matcher
 }
 
 func patterns() []pattern {
 	return []pattern{
-		pattern{token.NEWLINE, func(s *symbols) int {
+		pattern{NEWLINE, func(s *symbols) int {
 			return s.countNewlineSymbols(0)
 		}},
-		pattern{token.WHITESPACE, func(s *symbols) int {
+		pattern{WHITESPACE, func(s *symbols) int {
 			// Returns the number of consecutive whitespace terminals.
 			// Newlines are not counted as whitespace.
 			return s.countSymbolsWhile(0, func(i int, ru rune) bool {
 				return !s.isNewline(i) && unicode.IsSpace(ru)
 			})
 		}},
-		pattern{token.COMMENT, func(s *symbols) int {
+		pattern{COMMENT, func(s *symbols) int {
 			if s.isMatch(0, "//") {
 				return s.indexOfNextNewline(0)
 			}
 			return 0
 		}},
-		pattern{token.MATCH, func(s *symbols) int {
+		pattern{MATCH, func(s *symbols) int {
 			return matchWord(s, "MATCH")
 		}},
-		pattern{token.BOOL, func(s *symbols) int {
+		pattern{BOOL, func(s *symbols) int {
 			return matchWord(s, "FALSE")
 		}},
-		pattern{token.BOOL, func(s *symbols) int {
+		pattern{BOOL, func(s *symbols) int {
 			return matchWord(s, "TRUE")
 		}},
-		pattern{token.LIST, func(s *symbols) int {
+		pattern{LIST, func(s *symbols) int {
 			return matchWord(s, "LIST")
 		}},
-		pattern{token.LOOP, func(s *symbols) int {
+		pattern{LOOP, func(s *symbols) int {
 			return matchWord(s, "LOOP")
 		}},
-		pattern{token.FIX, func(s *symbols) int {
+		pattern{FIX, func(s *symbols) int {
 			return matchWord(s, "FIX")
 		}},
-		pattern{token.EOF, func(s *symbols) int {
-			return matchWord(s, "EOF")
-		}},
-		pattern{token.FUNC, func(s *symbols) int {
+		pattern{FUNC, func(s *symbols) int {
 			return matchWord(s, "F")
 		}},
-		pattern{token.ID, func(s *symbols) int {
+		pattern{IDENTIFIER, func(s *symbols) int {
 			return s.countSymbolsWhile(0, func(i int, ru rune) bool {
 
 				if unicode.IsLetter(ru) {
@@ -67,88 +64,88 @@ func patterns() []pattern {
 				return i != 0 && ru == '_'
 			})
 		}},
-		pattern{token.ASSIGN, func(s *symbols) int {
-			return matchStr(s, ":=")
+		pattern{ASSIGN, func(s *symbols) int {
+			return matchStr(s, ":")
 		}},
-		pattern{token.LIST_END, func(s *symbols) int {
+		pattern{LIST_END, func(s *symbols) int {
 			return matchStr(s, ">>")
 		}},
-		pattern{token.LIST_START, func(s *symbols) int {
+		pattern{LIST_START, func(s *symbols) int {
 			return matchStr(s, "<<")
 		}},
-		pattern{token.LESS_THAN_OR_EQUAL, func(s *symbols) int {
+		pattern{LESS_THAN_OR_EQUAL, func(s *symbols) int {
 			return matchStr(s, "<=")
 		}},
-		pattern{token.MORE_THAN_OR_EQUAL, func(s *symbols) int {
+		pattern{MORE_THAN_OR_EQUAL, func(s *symbols) int {
 			return matchStr(s, ">=")
 		}},
-		pattern{token.BLOCK_OPEN, func(s *symbols) int {
+		pattern{BLOCK_OPEN, func(s *symbols) int {
 			return matchStr(s, "{")
 		}},
-		pattern{token.BLOCK_CLOSE, func(s *symbols) int {
+		pattern{BLOCK_CLOSE, func(s *symbols) int {
 			return matchStr(s, "}")
 		}},
-		pattern{token.PAREN_OPEN, func(s *symbols) int {
+		pattern{PAREN_OPEN, func(s *symbols) int {
 			return matchStr(s, "(")
 		}},
-		pattern{token.PAREN_CLOSE, func(s *symbols) int {
+		pattern{PAREN_CLOSE, func(s *symbols) int {
 			return matchStr(s, ")")
 		}},
-		pattern{token.GUARD_OPEN, func(s *symbols) int {
+		pattern{GUARD_OPEN, func(s *symbols) int {
 			return matchStr(s, "[")
 		}},
-		pattern{token.GUARD_CLOSE, func(s *symbols) int {
+		pattern{GUARD_CLOSE, func(s *symbols) int {
 			return matchStr(s, "]")
 		}},
-		pattern{token.OUTPUT, func(s *symbols) int {
+		pattern{OUTPUT, func(s *symbols) int {
 			return matchStr(s, "^")
 		}},
-		pattern{token.DELIM, func(s *symbols) int {
+		pattern{DELIMITER, func(s *symbols) int {
 			return matchStr(s, ",")
 		}},
-		pattern{token.VOID, func(s *symbols) int {
+		pattern{VOID, func(s *symbols) int {
 			return matchStr(s, "_")
 		}},
-		pattern{token.TERMINATOR, func(s *symbols) int {
+		pattern{TERMINATOR, func(s *symbols) int {
 			return matchStr(s, ";")
 		}},
-		pattern{token.SPELL, func(s *symbols) int {
+		pattern{SPELL, func(s *symbols) int {
 			return matchStr(s, "@")
 		}},
-		pattern{token.ADD, func(s *symbols) int {
+		pattern{ADD, func(s *symbols) int {
 			return matchStr(s, "+")
 		}},
-		pattern{token.SUBTRACT, func(s *symbols) int {
+		pattern{SUBTRACT, func(s *symbols) int {
 			return matchStr(s, "-")
 		}},
-		pattern{token.MULTIPLY, func(s *symbols) int {
+		pattern{MULTIPLY, func(s *symbols) int {
 			return matchStr(s, "*")
 		}},
-		pattern{token.DIVIDE, func(s *symbols) int {
+		pattern{DIVIDE, func(s *symbols) int {
 			return matchStr(s, "/")
 		}},
-		pattern{token.REMAINDER, func(s *symbols) int {
+		pattern{REMAINDER, func(s *symbols) int {
 			return matchStr(s, "%")
 		}},
-		pattern{token.AND, func(s *symbols) int {
+		pattern{AND, func(s *symbols) int {
 			return matchStr(s, "&")
 		}},
-		pattern{token.OR, func(s *symbols) int {
+		pattern{OR, func(s *symbols) int {
 			return matchStr(s, "|")
 		}},
-		pattern{token.EQUAL, func(s *symbols) int {
+		pattern{EQUAL, func(s *symbols) int {
 			return matchStr(s, "==")
 		}},
-		pattern{token.NOT_EQUAL, func(s *symbols) int {
+		pattern{NOT_EQUAL, func(s *symbols) int {
 			return matchStr(s, "!=")
 		}},
-		pattern{token.LESS_THAN, func(s *symbols) int {
+		pattern{LESS_THAN, func(s *symbols) int {
 			return matchStr(s, "<")
 		}},
-		pattern{token.MORE_THAN, func(s *symbols) int {
+		pattern{MORE_THAN, func(s *symbols) int {
 			return matchStr(s, ">")
 		}},
-		pattern{token.STRING, func(s *symbols) int {
+		pattern{STRING, func(s *symbols) int {
 
 			const (
 				PREFIX     = "`"
@@ -173,7 +170,7 @@ func patterns() []pattern {
 
 			return PREFIX_LEN + n + SUFFIX_LEN
 		}},
-		pattern{token.TEMPLATE, func(s *symbols) int {
+		pattern{TEMPLATE, func(s *symbols) int {
 			// As the name suggests, templates can be populated with the value of
 			// identifiers, but the scanner is not concerned with parsing these. It
 			// does need to watch out for escaped terminals that also represent the
@@ -212,11 +209,11 @@ func patterns() []pattern {
 
 			return n + SUFFIX_LEN
 		}},
-		pattern{token.NUMBER, func(s *symbols) int {
+		pattern{NUMBER, func(s *symbols) int {
 
 			const (
-				DELIM     = "."
-				DELIM_LEN = 1
+				DELIM   = "."
+				DELILEN = 1
 			)
 
 			n := matchInt(s, 0)
@@ -225,14 +222,14 @@ func patterns() []pattern {
 				return n
 			}
 
-			fractionalLen := matchInt(s, n+DELIM_LEN)
+			fractionalLen := matchInt(s, n+DELILEN)
 
 			if fractionalLen == 0 {
 				// One or many fractional digits must follow a delimiter.
 				panic(err(s, n, "Invalid syntax, expected digit after decimal point"))
 			}
 
-			return n + DELIM_LEN + fractionalLen
+			return n + DELILEN + fractionalLen
 		}},
 	}
 }

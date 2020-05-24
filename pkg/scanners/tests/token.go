@@ -1,9 +1,9 @@
-package z_tests
+package tests
 
 import (
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/z_token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func T1_Newlines(t *testing.T, f ScanFunc) {

@@ -1,53 +1,72 @@
 package matching
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func readNext(s *symbols) token.Token {
+var cache []pattern = patterns()
+
+func ScanAll(s string) []Token {
+
+	in := ReadAll(s)
+	out := make([]Token, len(in))
+
+	for i := range in {
+		out[i] = in[i]
+	}
+
+	return out
+}
+
+func ReadAll(s string) []tok {
+
+	var tks []tok
+	sym := &symbols{[]rune(s), 0, 0}
+
+	for tk, ok := readNext(sym); ok; tk, ok = readNext(sym) {
+		tks = append(tks, tk)
+	}
+
+	return tks
+}
+
+func readNext(s *symbols) (tok, bool) {
 
 	if s.empty() {
-		// TokenStream.Read requires an EOF token be returned upon an empty stream.
-		return newToken(s, token.EOF)
+		return tok{}, false
 	}
 
 	tk := readToken(s)
 
-	if tk == (token.Token{}) {
+	if tk == (tok{}) {
 		panic(err(s, 0, "Unknown token"))
 	}
 
-	if tk.Type == token.EOF {
-		s.drain()
-	}
-
-	return tk
+	return tk, true
 }
 
-func readToken(s *symbols) (_ token.Token) {
+func readToken(s *symbols) tok {
 
-	for _, p := range patternCache {
+	for _, p := range cache {
 
 		n := p.matcher(s)
 
 		if n > 0 {
-			return tokenize(s, n, p.tokenType)
+			return tokenize(s, n, p)
 		}
 	}
 
-	return
+	return tok{}
 }
 
-func tokenize(s *symbols, numOfTerminals int, t token.TokenType) token.Token {
-	tk := newToken(s, t)
-	tk.Value = s.readNonTerminal(numOfTerminals)
-	return tk
-}
+func tokenize(s *symbols, terminalCount int, p pattern) tok {
 
-func newToken(s *symbols, t token.TokenType) token.Token {
-	return token.Token{
-		Type: t,
-		Line: s.line,
-		Col:  s.col,
+	tk := tok{
+		m: p.morpheme,
+		l: s.line,
+		c: s.col,
 	}
+
+	tk.v = s.readNonTerminal(terminalCount)
+	return tk
 }

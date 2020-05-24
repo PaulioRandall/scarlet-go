@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type str string
@@ -15,12 +15,16 @@ func (s *str) String() string {
 
 func (s *str) print() {
 	fmt.Println(string(*s))
-	fmt.Println(token.EOF)
 	fmt.Println()
 }
 
 func (s *str) append(txt string) *str {
 	*s = str(*s + str(txt))
+	return s
+}
+
+func (s *str) appendTk(tk Token) *str {
+	*s = str(*s + str(ToString(tk)))
 	return s
 }
 
@@ -65,19 +69,6 @@ func (s *str) appendGuards(indent int, guards []Guard) *str {
 	return s
 }
 
-func (s *str) appendAssignTargets(indent int, ats []AssignTarget) *str {
-
-	for i, at := range ats {
-		if i != 0 {
-			s.newline()
-		}
-
-		s.append(at.String(indent))
-	}
-
-	return s
-}
-
 func (s *str) appendExps(indent int, exps []Expression) *str {
 
 	for i, exp := range exps {
@@ -98,13 +89,13 @@ func (s *str) appendIds(indent int, ids []Identifier) *str {
 			s.newline()
 		}
 
-		s.append(id.String(indent))
+		s.appendTk(id.Token())
 	}
 
 	return s
 }
 
-func (s *str) appendTks(indent int, tks []token.Token) *str {
+func (s *str) appendTks(indent int, tks []Token) *str {
 
 	for i, tk := range tks {
 		if i != 0 {
@@ -112,7 +103,7 @@ func (s *str) appendTks(indent int, tks []token.Token) *str {
 		}
 
 		s.indent(indent).
-			append(tk.String())
+			appendTk(tk)
 	}
 
 	return s

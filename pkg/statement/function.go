@@ -1,17 +1,17 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type FuncDef struct {
-	Key     token.Token
-	Inputs  []token.Token
-	Outputs []token.Token
+	Key     Token
+	Inputs  []Token
+	Outputs []Token
 	Body    Block
 }
 
-func (f FuncDef) Token() token.Token {
+func (f FuncDef) Token() Token {
 	return f.Key
 }
 
@@ -21,7 +21,7 @@ func (f FuncDef) String(i int) string {
 
 	s.indent(i).
 		append("[FuncDef] ").
-		append(f.Key.String())
+		appendTk(f.Key)
 
 	s.newline().
 		indent(i + 1).
@@ -52,7 +52,7 @@ type FuncCall struct {
 	Inputs []Expression
 }
 
-func (f FuncCall) Token() token.Token {
+func (f FuncCall) Token() Token {
 	return f.ID.Token()
 }
 

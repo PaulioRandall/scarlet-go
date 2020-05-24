@@ -5,65 +5,53 @@ import (
 	"strconv"
 )
 
-type Token struct {
-	Type  TokenType // Meaning
-	Value string    // Representation
-	Line  int
-	Col   int
+type Token interface {
+	Morpheme() Morpheme
+	Value() string
+	Line() int
+	Col() int
 }
 
-// Precedence returns the priorty of the token within an expression.
-func (tk Token) Precedence() int {
-	switch tk.Type {
-	case MULTIPLY, DIVIDE, REMAINDER:
-		return 6 // Multiplicative
+func ToString(tk Token) string {
 
-	case ADD, SUBTRACT:
-		return 5 // Additive
-
-	case LESS_THAN, LESS_THAN_OR_EQUAL, MORE_THAN, MORE_THAN_OR_EQUAL:
-		return 4 // Relational
-
-	case EQUAL, NOT_EQUAL:
-		return 3 // Equalitive
-
-	case AND:
-		return 2
-
-	case OR:
-		return 1
+	if tk == nil {
+		return `NIL-TOKEN`
 	}
 
-	return 0
-}
+	if v, ok := tk.(fmt.Stringer); ok {
+		return v.String()
+	}
 
-func (tk Token) String() string {
+	var s interface{}
+	v := tk.Value()
+	m := tk.Morpheme()
 
-	var v interface{}
-
-	switch tk.Type {
+	switch m {
 	case TEMPLATE, TERMINATOR, NEWLINE, WHITESPACE:
-		v = strconv.QuoteToGraphic(tk.Value)
+		s = strconv.QuoteToGraphic(v)
 
 	case STRING:
-		v = "`" + tk.Value + "`"
+		s = "`" + v + "`"
 
 	default:
-		v = tk.Value
+		s = v
 	}
 
 	// +1 for line index to number
-	return fmt.Sprintf(`%d:%d %s %v`, tk.Line+1, tk.Col, tk.Type, v)
+	return fmt.Sprintf(`%d:%d %s %v`,
+		tk.Line()+1,
+		tk.Col(),
+		m.String(),
+		s,
+	)
 }
 
 func PrettyPrint(tks []Token) {
+
 	for _, tk := range tks {
-		switch k := tk.Type; k {
-		case EOF:
-			fmt.Println(k)
-			fmt.Println()
-		default:
-			fmt.Print(k + " ")
-		}
+		s := tk.Morpheme().String()
+		fmt.Print(s + " ")
 	}
+
+	fmt.Println()
 }

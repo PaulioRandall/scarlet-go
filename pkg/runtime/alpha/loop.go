@@ -3,10 +3,10 @@ package alpha
 import (
 	"github.com/shopspring/decimal"
 
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func exeLoop(ctx *alphaContext, l st.Loop) {
+func exeLoop(ctx *alphaContext, l Loop) {
 
 	loopCtx := ctx.Spawn(false)
 

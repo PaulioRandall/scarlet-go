@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
@@ -14,50 +14,49 @@ func LP1_Assignment(t *testing.T, f ParseFunc) {
 	// }
 
 	given := []Token{
-		Token{LOOP, "LOOP", 0, 0},
-		Token{ID, "i", 0, 0},
-		Token{GUARD_OPEN, "[", 0, 0},
-		Token{ID, "i", 0, 0},
-		Token{LESS_THAN, "<", 0, 0},
-		Token{NUMBER, "5", 0, 0},
-		Token{GUARD_CLOSE, "]", 0, 0},
-		Token{BLOCK_OPEN, "{", 0, 0},
-		Token{ID, "x", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{ID, "i", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{BLOCK_CLOSE, "}", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(LOOP, "LOOP"),
+		tok(IDENTIFIER, "i"),
+		tok(GUARD_OPEN, "["),
+		tok(IDENTIFIER, "i"),
+		tok(LESS_THAN, "<"),
+		tok(NUMBER, "5"),
+		tok(GUARD_CLOSE, "]"),
+		tok(BLOCK_OPEN, "{"),
+		tok(IDENTIFIER, "x"),
+		tok(ASSIGN, ":="),
+		tok(IDENTIFIER, "i"),
+		tok(TERMINATOR, ""),
+		tok(BLOCK_CLOSE, "}"),
 	}
 
-	loop := st.Loop{
-		Open:     Token{LOOP, "LOOP", 0, 0},
-		IndexVar: Token{ID, "i", 0, 0},
+	loop := Loop{
+		Open:     tok(LOOP, "LOOP"),
+		IndexVar: tok(IDENTIFIER, "i"),
 	}
 
-	condition := st.Operation{
-		st.Identifier(Token{ID, "i", 0, 0}),
-		Token{LESS_THAN, "<", 0, 0},
-		st.Value(Token{NUMBER, "5", 0, 0}),
+	condition := Operation{
+		Identifier{tok(IDENTIFIER, "i")},
+		tok(LESS_THAN, "<"),
+		Value{tok(NUMBER, "5")},
 	}
 
-	guard := st.Guard{
-		Open:      Token{GUARD_OPEN, "[", 0, 0},
+	guard := Guard{
+		Open:      tok(GUARD_OPEN, "["),
 		Condition: condition,
-		Close:     Token{GUARD_CLOSE, "]", 0, 0},
+		Close:     tok(GUARD_CLOSE, "]"),
 	}
 
-	stat := st.Assignment{
+	stat := Assignment{
 		false,
-		[]st.AssignTarget{st.AssignTarget{Token{ID, "x", 0, 0}, nil}},
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{st.Identifier(Token{ID, "i", 0, 0})},
+		[]AssignTarget{AssignTarget{tok(IDENTIFIER, "x"), nil}},
+		tok(ASSIGN, ":="),
+		[]Expression{Identifier{tok(IDENTIFIER, "i")}},
 	}
 
-	guard.Block = st.Block{
-		Token{BLOCK_OPEN, "{", 0, 0},
-		[]st.Statement{stat},
-		Token{BLOCK_CLOSE, "}", 0, 0},
+	guard.Block = Block{
+		tok(BLOCK_OPEN, "{"),
+		[]Statement{stat},
+		tok(BLOCK_CLOSE, "}"),
 	}
 
 	loop.Guard = guard

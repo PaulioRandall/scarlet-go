@@ -1,17 +1,16 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
-
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func parseStatements(p *pipe) []st.Statement {
+func parseStatements(p *pipe) []Statement {
 	// pattern := {statement}
 
-	var stats []st.Statement
+	var stats []Statement
 
-	for !p.itr.Empty() && !p.accept(token.EOF) && !p.match(token.BLOCK_CLOSE) {
+	for !p.itr.Empty() && !p.match(BLOCK_CLOSE) {
 		stat := parseStatement(p)
 		stats = append(stats, stat)
 	}
@@ -19,7 +18,7 @@ func parseStatements(p *pipe) []st.Statement {
 	return stats
 }
 
-func parseStatement(p *pipe) st.Statement {
+func parseStatement(p *pipe) Statement {
 	// pattern := assignment | guard | match | loop | expression TERMINATOR
 
 	switch {
@@ -39,9 +38,9 @@ func parseStatement(p *pipe) st.Statement {
 	exp := parseExpression(p)
 
 	if exp != nil {
-		p.expect(`parseStatement`, token.TERMINATOR)
+		p.expect(`parseStatement`, TERMINATOR)
 		return exp
 	}
 
-	panic(unexpected("parseStatement", p.peek(), token.ANY))
+	panic(unexpected("parseStatement", p.peek(), ANY.String()))
 }

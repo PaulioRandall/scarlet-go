@@ -9,6 +9,29 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type tok struct {
+	m Morpheme
+	v string
+	l int
+	c int
+}
+
+func (tk tok) Morpheme() Morpheme {
+	return tk.m
+}
+
+func (tk tok) Value() string {
+	return tk.v
+}
+
+func (tk tok) Line() int {
+	return tk.l
+}
+
+func (tk tok) Col() int {
+	return tk.c
+}
+
 type ScanFunc func(in string) []Token
 
 type TestFunc func(t *testing.T, sf ScanFunc)
@@ -27,10 +50,8 @@ func Run(t *testing.T, sf ScanFunc, tf TestFunc) {
 
 func checkMany(t *testing.T, exps, acts []Token) {
 
-	checkEOF(t, acts)
-
 	expSize := len(exps)
-	actSize := len(acts) - 1
+	actSize := len(acts)
 
 	for i := 0; i < expSize || i < actSize; i++ {
 
@@ -45,27 +66,14 @@ func checkMany(t *testing.T, exps, acts []Token) {
 }
 
 func checkOne(t *testing.T, exp Token, acts []Token) {
-	checkSize(t, 2, acts)
+	checkSize(t, 1, acts)
 	checkToken(t, exp, acts[0])
-	checkEOF(t, acts)
 }
 
 func checkFirstNot(t *testing.T, notExp Token, acts []Token) {
-	checkMinSize(t, 2, acts)
+	checkMinSize(t, 1, acts)
 	require.NotEqual(t, notExp, acts[0],
-		"Expected any token except ("+notExp.String()+") but got it")
-	checkEOF(t, acts)
-}
-
-func checkToken(t *testing.T, exp, act Token) {
-	require.Equal(t, exp, act,
-		"Expected ("+exp.String()+") but got ("+act.String()+")")
-}
-
-func checkMinSize(t *testing.T, min int, acts []Token) {
-	require.True(t, min <= len(acts),
-		"Expected minimum "+strconv.Itoa(min)+
-			" tokens (inc EOF) but got "+strconv.Itoa(len(acts)))
+		"Expected any token except ("+ToString(notExp)+") but got it")
 }
 
 func checkSize(t *testing.T, exp int, acts []Token) {
@@ -74,19 +82,30 @@ func checkSize(t *testing.T, exp int, acts []Token) {
 			" tokens (inc EOF) but got "+strconv.Itoa(len(acts)))
 }
 
-func checkEOF(t *testing.T, acts []Token) {
-	i := len(acts) - 1
-	require.Equal(t, EOF, acts[i].Type,
-		"Expected EOF but got ("+tkStr(acts, i)+")")
+func checkMinSize(t *testing.T, min int, acts []Token) {
+	require.True(t, min <= len(acts),
+		"Expected minimum "+strconv.Itoa(min)+
+			" tokens (inc EOF) but got "+strconv.Itoa(len(acts)))
 }
 
 func checkPanic(t *testing.T, f func()) {
 	require.Panics(t, f, "Expected a panic")
 }
 
+func checkToken(t *testing.T, exp, act Token) {
+	require.NotNil(t, act, "Expected token ("+ToString(exp)+") got nil")
+
+	m := "Expected (" + ToString(exp) + ") but got (" + ToString(act) + ")"
+
+	require.Equal(t, exp.Morpheme(), act.Morpheme(), m)
+	require.Equal(t, exp.Value(), act.Value(), m)
+	require.Equal(t, exp.Line(), act.Line(), m)
+	require.Equal(t, exp.Col(), act.Col(), m)
+}
+
 func tkStr(tks []Token, i int) (_ string) {
 	if i < len(tks) {
-		return tks[i].String()
+		return ToString(tks[i])
 	}
 	return
 }

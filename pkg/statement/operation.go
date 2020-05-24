@@ -1,16 +1,16 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type Operation struct {
 	Left     Expression
-	Operator token.Token
+	Operator Token
 	Right    Expression
 }
 
-func (op Operation) Token() token.Token {
+func (op Operation) Token() Token {
 	return op.Operator
 }
 
@@ -20,7 +20,7 @@ func (op Operation) String(i int) string {
 
 	s.indent(i).
 		append("[Operation] ").
-		append(op.Operator.String())
+		appendTk(op.Operator)
 
 	s.newline().
 		indent(i + 1).

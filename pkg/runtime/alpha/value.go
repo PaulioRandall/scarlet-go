@@ -5,8 +5,8 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // result represents a value within the executing program, either the value of
@@ -105,10 +105,10 @@ func (t tuple) String() string {
 	return s + ")"
 }
 
-type functionLiteral st.FuncDef
+type functionLiteral FuncDef
 
 func (f functionLiteral) get() interface{} {
-	return st.FuncDef(f)
+	return FuncDef(f)
 }
 
 func (f functionLiteral) String() string {
@@ -121,7 +121,7 @@ func (f functionLiteral) String() string {
 				s += ", "
 			}
 
-			s += item.Value
+			s += item.Value()
 		}
 	}
 
@@ -131,37 +131,37 @@ func (f functionLiteral) String() string {
 				s += ", "
 			}
 
-			s += "^" + item.Value
+			s += "^" + item.Value()
 		}
 	}
 
 	return s + ")"
 }
 
-func valueOf(tk token.Token) result {
+func valueOf(tk Token) result {
 
-	switch tk.Type {
-	case token.VOID:
+	switch tk.Morpheme() {
+	case VOID:
 		return voidLiteral{}
 
-	case token.BOOL:
-		return boolLiteral(tk.Value == `TRUE`)
+	case BOOL:
+		return boolLiteral(tk.Value() == `TRUE`)
 
-	case token.NUMBER:
+	case NUMBER:
 		return parseFloat(tk)
 
-	case token.STRING:
-		return stringLiteral(tk.Value)
+	case STRING:
+		return stringLiteral(tk.Value())
 
-	case token.TEMPLATE:
-		return templateLiteral(tk.Value)
+	case TEMPLATE:
+		return templateLiteral(tk.Value())
 	}
 
-	panic(err("valueOf", tk, "Invalid value type (%s)", tk.String()))
+	panic(err("valueOf", tk, "Invalid morpheme %s", tk.Morpheme().String()))
 }
 
-func parseFloat(tk token.Token) numberLiteral {
-	d, e := decimal.NewFromString(tk.Value)
+func parseFloat(tk Token) numberLiteral {
+	d, e := decimal.NewFromString(tk.Value())
 
 	if e != nil {
 		panic(err("parseFloat", tk, "Could not parse number"))

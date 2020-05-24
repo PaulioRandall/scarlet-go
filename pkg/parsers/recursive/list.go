@@ -1,49 +1,48 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
-
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func isList(p *pipe) bool {
-	return p.match(token.LIST)
+	return p.match(LIST)
 }
 
-func parseList(p *pipe) st.Expression {
+func parseList(p *pipe) Expression {
 	// pattern := LIST LIST_OPEN {expression} LIST_CLOSE
 
-	return st.List{
-		Key:   p.expect(`parseList`, token.LIST),
-		Open:  p.expect(`parseList`, token.BLOCK_OPEN),
+	return List{
+		Key:   p.expect(`parseList`, LIST),
+		Open:  p.expect(`parseList`, BLOCK_OPEN),
 		Exprs: parseExpressions(p),
-		Close: p.expect(`parseList`, token.BLOCK_CLOSE),
+		Close: p.expect(`parseList`, BLOCK_CLOSE),
 	}
 }
 
 func isListAccess(p *pipe) bool {
-	return p.matchSequence(token.ID, token.GUARD_OPEN)
+	return p.matchSequence(IDENTIFIER, GUARD_OPEN)
 }
 
-func parseListAccess(p *pipe) st.ListAccess {
+func parseListAccess(p *pipe) ListAccess {
 	// pattern := ID GUARD_OPEN expression GUARD_CLOSE
 
-	tk := p.expect(`parseListAccess`, token.ID)
-	id := st.Identifier(tk)
+	tk := p.expect(`parseListAccess`, IDENTIFIER)
+	id := Identifier{tk}
 
-	p.expect(`parseListAccess`, token.GUARD_OPEN)
+	p.expect(`parseListAccess`, GUARD_OPEN)
 	indexExp := parseListItemExpr(p)
-	p.expect(`parseListAccess`, token.GUARD_CLOSE)
+	p.expect(`parseListAccess`, GUARD_CLOSE)
 
-	return st.ListAccess{id, indexExp}
+	return ListAccess{id, indexExp}
 }
 
-func parseListItemExpr(p *pipe) st.Expression {
+func parseListItemExpr(p *pipe) Expression {
 
-	var expr st.Expression
+	var expr Expression
 
-	if p.matchAny(token.LIST_START, token.LIST_END) {
-		expr = st.ListItemRef(p.next())
+	if p.matchAny(LIST_START, LIST_END) {
+		expr = ListItemRef{p.next()}
 	} else {
 		expr = parseExpression(p)
 	}

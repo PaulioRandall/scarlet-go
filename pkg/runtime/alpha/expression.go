@@ -1,12 +1,12 @@
 package alpha
 
 import (
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func evalIdentifier(ctx *alphaContext, id st.Identifier) result {
+func evalIdentifier(ctx *alphaContext, id Identifier) result {
 
-	v := ctx.Get(id.Value)
+	v := ctx.Get(id.Token().Value())
 
 	if v == nil {
 		panic(err("evalIdentifier", id.Token(), "Undefined identifier"))
@@ -15,7 +15,7 @@ func evalIdentifier(ctx *alphaContext, id st.Identifier) result {
 	return v
 }
 
-func evalExpressions(ctx *alphaContext, exprs []st.Expression) []result {
+func evalExpressions(ctx *alphaContext, exprs []Expression) []result {
 
 	var vs []result
 
@@ -35,27 +35,27 @@ func evalExpressions(ctx *alphaContext, exprs []st.Expression) []result {
 	return vs
 }
 
-func evalExpression(ctx *alphaContext, expr st.Expression) result {
+func evalExpression(ctx *alphaContext, expr Expression) result {
 	switch v := expr.(type) {
-	case st.Identifier:
+	case Identifier:
 		return evalIdentifier(ctx, v)
 
-	case st.Value:
+	case Value:
 		return valueOf(v.Token())
 
-	case st.Operation:
+	case Operation:
 		return evalOperation(ctx, v)
 
-	case st.List:
+	case List:
 		return evalList(ctx, v)
 
-	case st.ListAccess:
+	case ListAccess:
 		return evalListAccess(ctx, v)
 
-	case st.FuncDef:
+	case FuncDef:
 		return evalFuncDef(ctx, v)
 
-	case st.FuncCall:
+	case FuncCall:
 		return evalFuncCall(ctx, v)
 	}
 

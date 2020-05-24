@@ -1,17 +1,17 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type Match struct {
-	Key   token.Token
-	Open  token.Token
+	Key   Token
+	Open  Token
 	Cases []Guard
-	Close token.Token
+	Close Token
 }
 
-func (m Match) Token() token.Token {
+func (m Match) Token() Token {
 	return m.Key
 }
 
@@ -21,12 +21,12 @@ func (m Match) String(i int) string {
 
 	s.indent(i).
 		append("[Match] ").
-		append(m.Key.String())
+		appendTk(m.Key)
 
 	s.newline().
 		indent(i + 1).
 		append("Open: ").
-		append(m.Open.String())
+		appendTk(m.Open)
 
 	s.newline().
 		indent(i + 1).
@@ -38,7 +38,7 @@ func (m Match) String(i int) string {
 	s.newline().
 		indent(i + 1).
 		append("Close: ").
-		append(m.Close.String())
+		appendTk(m.Close)
 
 	return s.String()
 }

@@ -1,7 +1,7 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func Print(stats []Statement) {
@@ -15,7 +15,6 @@ func Print(stats []Statement) {
 }
 
 type Statement interface {
-	Token() token.Token
-
+	Token() Token
 	String(indent int) string
 }

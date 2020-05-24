@@ -1,17 +1,17 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type List struct {
-	Key   token.Token
-	Open  token.Token
+	Key   Token
+	Open  Token
 	Exprs []Expression
-	Close token.Token
+	Close Token
 }
 
-func (l List) Token() token.Token {
+func (l List) Token() Token {
 	return l.Key
 }
 
@@ -21,12 +21,12 @@ func (l List) String(i int) string {
 
 	s.indent(i).
 		append("[List] ").
-		append(l.Key.String())
+		appendTk(l.Key)
 
 	s.newline().
 		indent(i + 1).
 		append("Open: ").
-		append(l.Open.String())
+		appendTk(l.Open)
 
 	s.newline().
 		indent(i + 1).
@@ -38,7 +38,7 @@ func (l List) String(i int) string {
 	s.newline().
 		indent(i + 1).
 		append("Close: ").
-		append(l.Close.String())
+		appendTk(l.Close)
 
 	return s.String()
 }
@@ -48,7 +48,7 @@ type ListAccess struct {
 	Index Expression
 }
 
-func (la ListAccess) Token() token.Token {
+func (la ListAccess) Token() Token {
 	return la.ID.Token()
 }
 
@@ -58,7 +58,7 @@ func (la ListAccess) String(i int) string {
 
 	s.indent(i).
 		append("[ListAccess] ").
-		append(la.ID.Token().String())
+		appendTk(la.ID.Token())
 
 	s.newline().
 		indent(i + 1).
@@ -70,10 +70,12 @@ func (la ListAccess) String(i int) string {
 	return s.String()
 }
 
-type ListItemRef token.Token
+type ListItemRef struct {
+	Tk Token
+}
 
-func (r ListItemRef) Token() token.Token {
-	return token.Token(r)
+func (r ListItemRef) Token() Token {
+	return r.Tk
 }
 
 func (r ListItemRef) String(i int) string {
@@ -82,6 +84,6 @@ func (r ListItemRef) String(i int) string {
 
 	return s.indent(i).
 		append("[ListItemRef] ").
-		append(r.Token().String()).
+		appendTk(r.Tk).
 		String()
 }

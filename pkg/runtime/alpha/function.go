@@ -1,15 +1,15 @@
 package alpha
 
 import (
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func evalFuncDef(ctx *alphaContext, f st.FuncDef) result {
+func evalFuncDef(ctx *alphaContext, f FuncDef) result {
 	return functionLiteral(f)
 }
 
-func evalFuncCall(ctx *alphaContext, call st.FuncCall) result {
+func evalFuncCall(ctx *alphaContext, call FuncCall) result {
 
 	def := findFunction(ctx, call.ID)
 
@@ -24,7 +24,7 @@ func evalFuncCall(ctx *alphaContext, call st.FuncCall) result {
 	return tuple(results)
 }
 
-func findFunction(ctx *alphaContext, idExp st.Expression) functionLiteral {
+func findFunction(ctx *alphaContext, idExp Expression) functionLiteral {
 
 	v := evalExpression(ctx, idExp)
 	f, ok := v.(functionLiteral)
@@ -36,7 +36,7 @@ func findFunction(ctx *alphaContext, idExp st.Expression) functionLiteral {
 	return f
 }
 
-func checkFuncCallArgs(exp []token.Token, act []st.Expression, callTk token.Token) {
+func checkFuncCallArgs(exp []Token, act []Expression, callTk Token) {
 
 	a, b := len(exp), len(act)
 
@@ -47,7 +47,7 @@ func checkFuncCallArgs(exp []token.Token, act []st.Expression, callTk token.Toke
 	}
 }
 
-func evalFuncCallArgs(ctx *alphaContext, ids []token.Token, params []st.Expression) *alphaContext {
+func evalFuncCallArgs(ctx *alphaContext, ids []Token, params []Expression) *alphaContext {
 
 	funcCtx := ctx.Spawn(true)
 
@@ -62,21 +62,21 @@ func evalFuncCallArgs(ctx *alphaContext, ids []token.Token, params []st.Expressi
 	return funcCtx
 }
 
-func initFuncReturnArgs(ctx *alphaContext, outParams []token.Token) {
+func initFuncReturnArgs(ctx *alphaContext, outParams []Token) {
 	for _, p := range outParams {
-		if v := ctx.GetLocal(p.Value); v == nil {
+		if v := ctx.GetLocal(p.Value()); v == nil {
 			ctx.SetLocal(p, voidLiteral{})
 		}
 	}
 }
 
-func collectFuncCallResults(ctx *alphaContext, ids []token.Token) []result {
+func collectFuncCallResults(ctx *alphaContext, ids []Token) []result {
 
 	r := make([]result, len(ids))
 
 	for i, id := range ids {
 
-		v := ctx.GetLocal(id.Value)
+		v := ctx.GetLocal(id.Value())
 
 		if v != nil {
 			r[i] = v
@@ -88,7 +88,7 @@ func collectFuncCallResults(ctx *alphaContext, ids []token.Token) []result {
 	return r
 }
 
-func expectOneValue(v result, tk token.Token) result {
+func expectOneValue(v result, tk Token) result {
 
 	t, ok := v.(tuple)
 	if !ok {

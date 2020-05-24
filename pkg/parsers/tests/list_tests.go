@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
@@ -12,29 +12,28 @@ func L1_ListDef(t *testing.T, f ParseFunc) {
 	// LIST {1,2,3}
 
 	given := []Token{
-		Token{LIST, "LIST", 0, 0},
-		Token{BLOCK_OPEN, "{", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{NUMBER, "3", 0, 0},
-		Token{BLOCK_CLOSE, "}", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(LIST, "LIST"),
+		tok(BLOCK_OPEN, "{"),
+		tok(NUMBER, "1"),
+		tok(DELIMITER, ","),
+		tok(NUMBER, "2"),
+		tok(DELIMITER, ","),
+		tok(NUMBER, "3"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
 	}
 
-	exprs := []st.Expression{
-		st.Value(Token{NUMBER, "1", 0, 0}),
-		st.Value(Token{NUMBER, "2", 0, 0}),
-		st.Value(Token{NUMBER, "3", 0, 0}),
+	exprs := []Expression{
+		Value{tok(NUMBER, "1")},
+		Value{tok(NUMBER, "2")},
+		Value{tok(NUMBER, "3")},
 	}
 
-	list := st.List{
-		Key:   Token{LIST, "LIST", 0, 0},
-		Open:  Token{BLOCK_OPEN, "{", 0, 0},
+	list := List{
+		Key:   tok(LIST, "LIST"),
+		Open:  tok(BLOCK_OPEN, "{"),
 		Exprs: exprs,
-		Close: Token{BLOCK_CLOSE, "}", 0, 0},
+		Close: tok(BLOCK_CLOSE, "}"),
 	}
 
 	expectOneStat(t, list, f(given))
@@ -45,35 +44,34 @@ func L2_ListDef(t *testing.T, f ParseFunc) {
 	// LIST {1+2,f()}
 
 	given := []Token{
-		Token{LIST, "LIST", 0, 0},
-		Token{BLOCK_OPEN, "{", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{ID, "f", 0, 0},
-		Token{PAREN_OPEN, "(", 0, 0},
-		Token{PAREN_CLOSE, ")", 0, 0},
-		Token{BLOCK_CLOSE, "}", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(LIST, "LIST"),
+		tok(BLOCK_OPEN, "{"),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "f"),
+		tok(PAREN_OPEN, "("),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
 	}
 
-	add := st.Operation{
-		Left:     st.Value(Token{NUMBER, "1", 0, 0}),
-		Operator: Token{ADD, "+", 0, 0},
-		Right:    st.Value(Token{NUMBER, "2", 0, 0}),
+	add := Operation{
+		Left:     Value{tok(NUMBER, "1")},
+		Operator: tok(ADD, "+"),
+		Right:    Value{tok(NUMBER, "2")},
 	}
 
-	funcCall := st.FuncCall{
-		ID: st.Identifier(Token{ID, "f", 0, 0}),
+	funcCall := FuncCall{
+		ID: Identifier{tok(IDENTIFIER, "f")},
 	}
 
-	list := st.List{
-		Key:   Token{LIST, "LIST", 0, 0},
-		Open:  Token{BLOCK_OPEN, "{", 0, 0},
-		Exprs: []st.Expression{add, funcCall},
-		Close: Token{BLOCK_CLOSE, "}", 0, 0},
+	list := List{
+		Key:   tok(LIST, "LIST"),
+		Open:  tok(BLOCK_OPEN, "{"),
+		Exprs: []Expression{add, funcCall},
+		Close: tok(BLOCK_CLOSE, "}"),
 	}
 
 	expectOneStat(t, list, f(given))
@@ -84,28 +82,27 @@ func L3_ListAccess(t *testing.T, f ParseFunc) {
 	// x := y[1]
 
 	given := []Token{
-		Token{ID, "x", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{ID, "y", 0, 0},
-		Token{GUARD_OPEN, "[", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{GUARD_CLOSE, "]", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "x"),
+		tok(ASSIGN, ":="),
+		tok(IDENTIFIER, "y"),
+		tok(GUARD_OPEN, "["),
+		tok(NUMBER, "1"),
+		tok(GUARD_CLOSE, "]"),
+		tok(TERMINATOR, ""),
 	}
 
-	target := st.AssignTarget{Token{ID, "x", 0, 0}, nil}
+	target := AssignTarget{tok(IDENTIFIER, "x"), nil}
 
-	listItem := st.ListAccess{
-		ID:    st.Identifier(Token{ID, "y", 0, 0}),
-		Index: st.Value(Token{NUMBER, "1", 0, 0}),
+	listItem := ListAccess{
+		ID:    Identifier{tok(IDENTIFIER, "y")},
+		Index: Value{tok(NUMBER, "1")},
 	}
 
-	a := st.Assignment{
+	a := Assignment{
 		false,
-		[]st.AssignTarget{target},
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{listItem},
+		[]AssignTarget{target},
+		tok(ASSIGN, ":="),
+		[]Expression{listItem},
 	}
 
 	expectOneStat(t, a, f(given))
@@ -116,36 +113,35 @@ func L4_ListAccess(t *testing.T, f ParseFunc) {
 	// x := y[1+2]
 
 	given := []Token{
-		Token{ID, "x", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{ID, "y", 0, 0},
-		Token{GUARD_OPEN, "[", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{GUARD_CLOSE, "]", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "x"),
+		tok(ASSIGN, ":="),
+		tok(IDENTIFIER, "y"),
+		tok(GUARD_OPEN, "["),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(GUARD_CLOSE, "]"),
+		tok(TERMINATOR, ""),
 	}
 
-	target := st.AssignTarget{Token{ID, "x", 0, 0}, nil}
+	target := AssignTarget{tok(IDENTIFIER, "x"), nil}
 
-	add := st.Operation{
-		Left:     st.Value(Token{NUMBER, "1", 0, 0}),
-		Operator: Token{ADD, "+", 0, 0},
-		Right:    st.Value(Token{NUMBER, "2", 0, 0}),
+	add := Operation{
+		Left:     Value{tok(NUMBER, "1")},
+		Operator: tok(ADD, "+"),
+		Right:    Value{tok(NUMBER, "2")},
 	}
 
-	listItem := st.ListAccess{
-		ID:    st.Identifier(Token{ID, "y", 0, 0}),
+	listItem := ListAccess{
+		ID:    Identifier{tok(IDENTIFIER, "y")},
 		Index: add,
 	}
 
-	a := st.Assignment{
+	a := Assignment{
 		false,
-		[]st.AssignTarget{target},
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{listItem},
+		[]AssignTarget{target},
+		tok(ASSIGN, ":="),
+		[]Expression{listItem},
 	}
 
 	expectOneStat(t, a, f(given))
@@ -156,43 +152,42 @@ func L5_ListAccess(t *testing.T, f ParseFunc) {
 	// x, y := z[<<], z[>>]
 
 	given := []Token{
-		Token{ID, "x", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{ID, "y", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{ID, "z", 0, 0},
-		Token{GUARD_OPEN, "[", 0, 0},
-		Token{LIST_START, "<<", 0, 0},
-		Token{GUARD_CLOSE, "]", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{ID, "z", 0, 0},
-		Token{GUARD_OPEN, "[", 0, 0},
-		Token{LIST_END, ">>", 0, 0},
-		Token{GUARD_CLOSE, "]", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "x"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "y"),
+		tok(ASSIGN, ":="),
+		tok(IDENTIFIER, "z"),
+		tok(GUARD_OPEN, "["),
+		tok(LIST_START, "<<"),
+		tok(GUARD_CLOSE, "]"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "z"),
+		tok(GUARD_OPEN, "["),
+		tok(LIST_END, ">>"),
+		tok(GUARD_CLOSE, "]"),
+		tok(TERMINATOR, ""),
 	}
 
-	targets := []st.AssignTarget{
-		st.AssignTarget{Token{ID, "x", 0, 0}, nil},
-		st.AssignTarget{Token{ID, "y", 0, 0}, nil},
+	targets := []AssignTarget{
+		AssignTarget{tok(IDENTIFIER, "x"), nil},
+		AssignTarget{tok(IDENTIFIER, "y"), nil},
 	}
 
-	firstItem := st.ListAccess{
-		ID:    st.Identifier(Token{ID, "z", 0, 0}),
-		Index: st.ListItemRef(Token{LIST_START, "<<", 0, 0}),
+	firstItem := ListAccess{
+		ID:    Identifier{tok(IDENTIFIER, "z")},
+		Index: ListItemRef{tok(LIST_START, "<<")},
 	}
 
-	lastItem := st.ListAccess{
-		ID:    st.Identifier(Token{ID, "z", 0, 0}),
-		Index: st.ListItemRef(Token{LIST_END, ">>", 0, 0}),
+	lastItem := ListAccess{
+		ID:    Identifier{tok(IDENTIFIER, "z")},
+		Index: ListItemRef{tok(LIST_END, ">>")},
 	}
 
-	a := st.Assignment{
+	a := Assignment{
 		false,
 		targets,
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{firstItem, lastItem},
+		tok(ASSIGN, ":="),
+		[]Expression{firstItem, lastItem},
 	}
 
 	expectOneStat(t, a, f(given))

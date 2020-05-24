@@ -1,24 +1,24 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // pipe encapsulates a TokenIterator providing general iterator functionality
 // useful when parsing.
 type pipe struct {
-	itr *token.TokenIterator
+	itr *TokenIterator
 }
 
-func (p *pipe) next() token.Token {
+func (p *pipe) next() Token {
 	return p.itr.Next()
 }
 
-func (p *pipe) peek() token.Token {
+func (p *pipe) peek() Token {
 	return p.itr.Peek()
 }
 
-func (p *pipe) past() token.Token {
+func (p *pipe) past() Token {
 	return p.itr.Past() // Previous token, no iteration
 }
 
@@ -26,13 +26,13 @@ func (p *pipe) back() {
 	p.itr.Back()
 }
 
-func (p *pipe) match(typ token.TokenType) bool {
-	t := p.itr.Peek().Type
-	return t == token.ANY || t == typ
+func (p *pipe) match(m Morpheme) bool {
+	o := p.itr.Peek().Morpheme()
+	return o == ANY || o == m
 }
 
-func (p *pipe) matchAny(types ...token.TokenType) bool {
-	for _, t := range types {
+func (p *pipe) matchAny(ms ...Morpheme) bool {
+	for _, t := range ms {
 		if p.match(t) {
 			return true
 		}
@@ -41,7 +41,7 @@ func (p *pipe) matchAny(types ...token.TokenType) bool {
 	return false
 }
 
-func (p *pipe) matchSequence(types ...token.TokenType) bool {
+func (p *pipe) matchSequence(ms ...Morpheme) bool {
 
 	count := 0
 
@@ -51,9 +51,9 @@ func (p *pipe) matchSequence(types ...token.TokenType) bool {
 		}
 	}()
 
-	for _, t := range types {
+	for _, m := range ms {
 
-		if t == token.ANY || p.match(t) {
+		if m == ANY || p.match(m) {
 			p.itr.Next()
 			count++
 			continue
@@ -65,13 +65,13 @@ func (p *pipe) matchSequence(types ...token.TokenType) bool {
 	return true
 }
 
-func (p *pipe) accept(lex token.TokenType) bool {
+func (p *pipe) accept(m Morpheme) bool {
 
-	if lex == token.UNDEFINED {
+	if m == UNDEFINED {
 		return false
 	}
 
-	if lex == token.ANY || p.match(lex) {
+	if m == ANY || p.match(m) {
 		p.itr.Skip()
 		return true
 	}
@@ -79,9 +79,9 @@ func (p *pipe) accept(lex token.TokenType) bool {
 	return false
 }
 
-func (p *pipe) expect(tag string, lex token.TokenType) token.Token {
-	if !p.accept(lex) {
-		panic(unexpected(tag, p.itr.Peek(), lex))
+func (p *pipe) expect(tag string, m Morpheme) Token {
+	if !p.accept(m) {
+		panic(unexpected(tag, p.itr.Peek(), m.String()))
 	}
 
 	return p.itr.Past()

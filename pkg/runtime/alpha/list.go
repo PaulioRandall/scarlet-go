@@ -1,15 +1,15 @@
 package alpha
 
 import (
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func evalList(ctx *alphaContext, list st.List) result {
+func evalList(ctx *alphaContext, list List) result {
 	return listLiteral(evalExpressions(ctx, list.Exprs))
 }
 
-func evalListAccess(ctx *alphaContext, la st.ListAccess) result {
+func evalListAccess(ctx *alphaContext, la ListAccess) result {
 
 	list := getList(ctx, la.ID)
 	items := []result(list)
@@ -21,7 +21,7 @@ func evalListAccess(ctx *alphaContext, la st.ListAccess) result {
 	return items[i]
 }
 
-func getList(ctx *alphaContext, id st.Identifier) listLiteral {
+func getList(ctx *alphaContext, id Identifier) listLiteral {
 
 	v := evalIdentifier(ctx, id)
 
@@ -32,9 +32,9 @@ func getList(ctx *alphaContext, id st.Identifier) listLiteral {
 	panic(err("EvalListAccess", id.Token(), "Can't get item of a non-list"))
 }
 
-func evalIndexExpr(ctx *alphaContext, listSize int64, expr st.Expression, inclusiveRef bool) int64 {
+func evalIndexExpr(ctx *alphaContext, listSize int64, expr Expression, inclusiveRef bool) int64 {
 
-	if ref, ok := expr.(st.ListItemRef); ok {
+	if ref, ok := expr.(ListItemRef); ok {
 		return resolveListRef(listSize, ref.Token(), inclusiveRef)
 	}
 
@@ -47,7 +47,7 @@ func evalIndexExpr(ctx *alphaContext, listSize int64, expr st.Expression, inclus
 	panic(err("EvalListAccess", expr.Token(), "Expected number as result"))
 }
 
-func resolveListRef(listSize int64, ref token.Token, inclusiveRef bool) int64 {
+func resolveListRef(listSize int64, ref Token, inclusiveRef bool) int64 {
 
 	var min, max int64
 
@@ -57,18 +57,18 @@ func resolveListRef(listSize int64, ref token.Token, inclusiveRef bool) int64 {
 		min, max = -1, listSize
 	}
 
-	switch ref.Type {
-	case token.LIST_START:
+	switch ref.Morpheme() {
+	case LIST_START:
 		return int64(min)
 
-	case token.LIST_END:
+	case LIST_END:
 		return int64(max)
 	}
 
 	panic(err("getListIndex", ref, "Unknown list reference type"))
 }
 
-func checkListIndexRange(i, size int64, id, index token.Token) {
+func checkListIndexRange(i, size int64, id, index Token) {
 
 	if i < 0 {
 		panic(err("EvalListAccess", id, "Index out of range, %d < 0", i))

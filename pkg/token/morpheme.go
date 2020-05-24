@@ -1,4 +1,4 @@
-package z_token
+package token
 
 type Morpheme int
 

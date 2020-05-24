@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
@@ -12,22 +12,21 @@ func A1_Assignment(t *testing.T, f ParseFunc) {
 	// x := 1
 
 	given := []Token{
-		Token{ID, "x", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "x"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
 	}
 
-	targets := []st.AssignTarget{
-		st.AssignTarget{Token{ID, "x", 0, 0}, nil},
+	targets := []AssignTarget{
+		AssignTarget{tok(IDENTIFIER, "x"), nil},
 	}
 
-	exp := st.Assignment{
+	exp := Assignment{
 		false,
 		targets,
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
+		tok(ASSIGN, ":="),
+		[]Expression{Value{tok(NUMBER, "1")}},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -38,29 +37,28 @@ func A2_MultiAssignment(t *testing.T, f ParseFunc) {
 	// x, y := 1, 2
 
 	given := []Token{
-		Token{ID, "x", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{ID, "y", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{TERMINATOR, "\n", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "x"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "y"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(DELIMITER, ","),
+		tok(NUMBER, "2"),
+		tok(TERMINATOR, "\n"),
 	}
 
-	targets := []st.AssignTarget{
-		st.AssignTarget{Token{ID, "x", 0, 0}, nil},
-		st.AssignTarget{Token{ID, "y", 0, 0}, nil},
+	targets := []AssignTarget{
+		AssignTarget{tok(IDENTIFIER, "x"), nil},
+		AssignTarget{tok(IDENTIFIER, "y"), nil},
 	}
 
-	exp := st.Assignment{
+	exp := Assignment{
 		false,
 		targets,
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{
-			st.Value(Token{NUMBER, "1", 0, 0}),
-			st.Value(Token{NUMBER, "2", 0, 0}),
+		tok(ASSIGN, ":="),
+		[]Expression{
+			Value{tok(NUMBER, "1")},
+			Value{tok(NUMBER, "2")},
 		},
 	}
 
@@ -72,23 +70,22 @@ func A3_Assignment(t *testing.T, f ParseFunc) {
 	// FIX x := 1
 
 	given := []Token{
-		Token{FIX, "FIX", 0, 0},
-		Token{ID, "x", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(FIX, "FIX"),
+		tok(IDENTIFIER, "x"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
 	}
 
-	targets := []st.AssignTarget{
-		st.AssignTarget{Token{ID, "x", 0, 0}, nil},
+	targets := []AssignTarget{
+		AssignTarget{tok(IDENTIFIER, "x"), nil},
 	}
 
-	exp := st.Assignment{
+	exp := Assignment{
 		true,
 		targets,
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
+		tok(ASSIGN, ":="),
+		[]Expression{Value{tok(NUMBER, "1")}},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -99,29 +96,28 @@ func A4_MultiAssignment(t *testing.T, f ParseFunc) {
 	// x, y := f()
 
 	given := []Token{
-		Token{ID, "x", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{ID, "y", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{ID, "f", 0, 0},
-		Token{PAREN_OPEN, "(", 0, 0},
-		Token{PAREN_CLOSE, ")", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "x"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "y"),
+		tok(ASSIGN, ":="),
+		tok(IDENTIFIER, "f"),
+		tok(PAREN_OPEN, "("),
+		tok(PAREN_CLOSE, ")"),
+		tok(TERMINATOR, ""),
 	}
 
-	targets := []st.AssignTarget{
-		st.AssignTarget{Token{ID, "x", 0, 0}, nil},
-		st.AssignTarget{Token{ID, "y", 0, 0}, nil},
+	targets := []AssignTarget{
+		AssignTarget{tok(IDENTIFIER, "x"), nil},
+		AssignTarget{tok(IDENTIFIER, "y"), nil},
 	}
 
-	exp := st.Assignment{
+	exp := Assignment{
 		false,
 		targets,
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{
-			st.FuncCall{
-				st.Identifier(Token{ID, "f", 0, 0}),
+		tok(ASSIGN, ":="),
+		[]Expression{
+			FuncCall{
+				Identifier{tok(IDENTIFIER, "f")},
 				nil,
 			},
 		},
@@ -135,12 +131,11 @@ func A5_Panics(t *testing.T, f ParseFunc) {
 	// x, := 1
 
 	given := []Token{
-		Token{ID, "x", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "x"),
+		tok(DELIMITER, ","),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
 	}
 
 	expectPanic(t, func() { f(given) })
@@ -151,13 +146,12 @@ func A6_Panics(t *testing.T, f ParseFunc) {
 	// x, 1 := 1
 
 	given := []Token{
-		Token{ID, "x", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "x"),
+		tok(DELIMITER, ","),
+		tok(NUMBER, "1"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
 	}
 
 	expectPanic(t, func() { f(given) })
@@ -168,13 +162,12 @@ func A7_Panics(t *testing.T, f ParseFunc) {
 	// x, F := 1
 
 	given := []Token{
-		Token{ID, "x", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{FUNC, "F", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "x"),
+		tok(DELIMITER, ","),
+		tok(FUNC, "F"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
 	}
 
 	expectPanic(t, func() { f(given) })
@@ -185,26 +178,25 @@ func A8_ListItem(t *testing.T, f ParseFunc) {
 	// a[0] := 1
 
 	given := []Token{
-		Token{ID, "a", 0, 0},
-		Token{GUARD_OPEN, "[", 0, 0},
-		Token{NUMBER, "0", 0, 0},
-		Token{GUARD_CLOSE, "]", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "a"),
+		tok(GUARD_OPEN, "["),
+		tok(NUMBER, "0"),
+		tok(GUARD_CLOSE, "]"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
 	}
 
-	target := st.AssignTarget{
-		Token{ID, "a", 0, 0},
-		st.Value(Token{NUMBER, "0", 0, 0}),
+	target := AssignTarget{
+		tok(IDENTIFIER, "a"),
+		Value{tok(NUMBER, "0")},
 	}
 
-	exp := st.Assignment{
+	exp := Assignment{
 		false,
-		[]st.AssignTarget{target},
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
+		[]AssignTarget{target},
+		tok(ASSIGN, ":="),
+		[]Expression{Value{tok(NUMBER, "1")}},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -215,26 +207,25 @@ func A9_ListItem(t *testing.T, f ParseFunc) {
 	// a[b] := 1
 
 	given := []Token{
-		Token{ID, "a", 0, 0},
-		Token{GUARD_OPEN, "[", 0, 0},
-		Token{ID, "b", 0, 0},
-		Token{GUARD_CLOSE, "]", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "a"),
+		tok(GUARD_OPEN, "["),
+		tok(IDENTIFIER, "b"),
+		tok(GUARD_CLOSE, "]"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
 	}
 
-	target := st.AssignTarget{
-		Token{ID, "a", 0, 0},
-		st.Identifier(Token{ID, "b", 0, 0}),
+	target := AssignTarget{
+		tok(IDENTIFIER, "a"),
+		Identifier{tok(IDENTIFIER, "b")},
 	}
 
-	exp := st.Assignment{
+	exp := Assignment{
 		false,
-		[]st.AssignTarget{target},
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
+		[]AssignTarget{target},
+		tok(ASSIGN, ":="),
+		[]Expression{Value{tok(NUMBER, "1")}},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -245,34 +236,33 @@ func A10_ListItem(t *testing.T, f ParseFunc) {
 	// a[1+2] := 1
 
 	given := []Token{
-		Token{ID, "a", 0, 0},
-		Token{GUARD_OPEN, "[", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{GUARD_CLOSE, "]", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "a"),
+		tok(GUARD_OPEN, "["),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(GUARD_CLOSE, "]"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
 	}
 
-	index := st.Operation{
-		st.Value(Token{NUMBER, "1", 0, 0}),
-		Token{ADD, "+", 0, 0},
-		st.Value(Token{NUMBER, "2", 0, 0}),
+	index := Operation{
+		Value{tok(NUMBER, "1")},
+		tok(ADD, "+"),
+		Value{tok(NUMBER, "2")},
 	}
 
-	target := st.AssignTarget{
-		Token{ID, "a", 0, 0},
+	target := AssignTarget{
+		tok(IDENTIFIER, "a"),
 		index,
 	}
 
-	exp := st.Assignment{
+	exp := Assignment{
 		false,
-		[]st.AssignTarget{target},
-		Token{ASSIGN, ":=", 0, 0},
-		[]st.Expression{st.Value(Token{NUMBER, "1", 0, 0})},
+		[]AssignTarget{target},
+		tok(ASSIGN, ":="),
+		[]Expression{Value{tok(NUMBER, "1")}},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -283,42 +273,41 @@ func A11_ListItems(t *testing.T, f ParseFunc) {
 	// a[<<], a[>>] := 1, 2
 
 	given := []Token{
-		Token{ID, "a", 0, 0},
-		Token{GUARD_OPEN, "[", 0, 0},
-		Token{LIST_START, "<<", 0, 0},
-		Token{GUARD_CLOSE, "]", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{ID, "a", 0, 0},
-		Token{GUARD_OPEN, "[", 0, 0},
-		Token{LIST_END, ">>", 0, 0},
-		Token{GUARD_CLOSE, "]", 0, 0},
-		Token{ASSIGN, ":=", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(IDENTIFIER, "a"),
+		tok(GUARD_OPEN, "["),
+		tok(LIST_START, "<<"),
+		tok(GUARD_CLOSE, "]"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "a"),
+		tok(GUARD_OPEN, "["),
+		tok(LIST_END, ">>"),
+		tok(GUARD_CLOSE, "]"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(DELIMITER, ","),
+		tok(NUMBER, "2"),
+		tok(TERMINATOR, ""),
 	}
 
-	firstTarget := st.AssignTarget{
-		ID:    Token{ID, "a", 0, 0},
-		Index: st.ListItemRef(Token{LIST_START, "<<", 0, 0}),
+	firstTarget := AssignTarget{
+		ID:    tok(IDENTIFIER, "a"),
+		Index: ListItemRef{tok(LIST_START, "<<")},
 	}
 
-	secondTarget := st.AssignTarget{
-		ID:    Token{ID, "a", 0, 0},
-		Index: st.ListItemRef(Token{LIST_END, ">>", 0, 0}),
+	secondTarget := AssignTarget{
+		ID:    tok(IDENTIFIER, "a"),
+		Index: ListItemRef{tok(LIST_END, ">>")},
 	}
 
-	values := []st.Expression{
-		st.Value(Token{NUMBER, "1", 0, 0}),
-		st.Value(Token{NUMBER, "2", 0, 0}),
+	values := []Expression{
+		Value{tok(NUMBER, "1")},
+		Value{tok(NUMBER, "2")},
 	}
 
-	a := st.Assignment{
+	a := Assignment{
 		false,
-		[]st.AssignTarget{firstTarget, secondTarget},
-		Token{ASSIGN, ":=", 0, 0},
+		[]AssignTarget{firstTarget, secondTarget},
+		tok(ASSIGN, ":="),
 		values,
 	}
 

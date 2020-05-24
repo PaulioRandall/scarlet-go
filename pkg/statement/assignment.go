@@ -1,15 +1,15 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type AssignTarget struct {
-	ID    token.Token
+	ID    Token
 	Index Expression
 }
 
-func (at AssignTarget) Token() token.Token {
+func (at AssignTarget) Token() Token {
 	return at.ID
 }
 
@@ -17,13 +17,14 @@ func (at AssignTarget) String(i int) string {
 
 	var s str
 
-	s.indent(i).
+	s.newline().
+		indent(i).
 		append("[AssignTarget]")
 
 	s.newline().
 		indent(i + 1).
 		append("ID: ").
-		append(at.ID.String())
+		appendTk(at.ID)
 
 	if at.Index != nil {
 		s.newline().
@@ -39,11 +40,11 @@ func (at AssignTarget) String(i int) string {
 type Assignment struct {
 	Fixed   bool
 	Targets []AssignTarget
-	Assign  token.Token
+	Assign  Token
 	Exprs   []Expression
 }
 
-func (a Assignment) Token() token.Token {
+func (a Assignment) Token() Token {
 	return a.Assign
 }
 
@@ -53,14 +54,13 @@ func (a Assignment) String(i int) string {
 
 	s.indent(i).
 		append("[Assignment] ").
-		append(a.Assign.String())
+		appendTk(a.Assign)
 
 	s.newline().
 		indent(i + 1).
 		append("Targets:")
 
-	s.newline().
-		appendAssignTargets(i+2, a.Targets)
+	appendAssignTargets(&s, i+2, a.Targets)
 
 	s.newline().
 		indent(i + 1).
@@ -70,4 +70,13 @@ func (a Assignment) String(i int) string {
 		appendExps(i+2, a.Exprs)
 
 	return s.String()
+}
+
+func appendAssignTargets(s *str, indent int, ats []AssignTarget) *str {
+
+	for _, at := range ats {
+		s.append(at.String(indent))
+	}
+
+	return s
 }

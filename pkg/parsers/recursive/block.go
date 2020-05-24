@@ -1,28 +1,28 @@
 package recursive
 
 import (
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 func isBlock(p *pipe) bool {
-	return p.match(token.BLOCK_OPEN)
+	return p.match(BLOCK_OPEN)
 }
 
-func parseBlock(p *pipe) st.Block {
+func parseBlock(p *pipe) Block {
 	// pattern := BLOCK_OPEN {statement} BLOCK_CLOSE
 
-	return st.Block{
-		Open:  p.expect(`parseBlock`, token.BLOCK_OPEN),
+	return Block{
+		Open:  p.expect(`parseBlock`, BLOCK_OPEN),
 		Stats: parseStatements(p),
-		Close: p.expect(`parseBlock`, token.BLOCK_CLOSE),
+		Close: p.expect(`parseBlock`, BLOCK_CLOSE),
 	}
 }
 
-func parseStatBlock(p *pipe) st.Block {
-	return st.Block{
+func parseStatBlock(p *pipe) Block {
+	return Block{
 		Open:  p.peek(),
-		Stats: []st.Statement{parseStatement(p)},
+		Stats: []Statement{parseStatement(p)},
 		Close: p.past(),
 	}
 }

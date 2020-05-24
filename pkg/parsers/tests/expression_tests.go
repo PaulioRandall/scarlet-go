@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
@@ -12,17 +12,16 @@ func E1_Add(t *testing.T, f ParseFunc) {
 	// 1 + 2
 
 	given := []Token{
-		Token{NUMBER, "1", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(TERMINATOR, ""),
 	}
 
-	exp := st.Operation{
-		st.Value(Token{NUMBER, "1", 0, 0}),
-		Token{ADD, "+", 0, 0},
-		st.Value(Token{NUMBER, "2", 0, 0}),
+	exp := Operation{
+		Value{tok(NUMBER, "1")},
+		tok(ADD, "+"),
+		Value{tok(NUMBER, "2")},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -33,17 +32,16 @@ func E2_Subtract(t *testing.T, f ParseFunc) {
 	// 2 - 1
 
 	given := []Token{
-		Token{NUMBER, "2", 0, 0},
-		Token{SUBTRACT, "-", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "2"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
 	}
 
-	exp := st.Operation{
-		st.Value(Token{NUMBER, "2", 0, 0}),
-		Token{SUBTRACT, "-", 0, 0},
-		st.Value(Token{NUMBER, "1", 0, 0}),
+	exp := Operation{
+		Value{tok(NUMBER, "2")},
+		tok(SUBTRACT, "-"),
+		Value{tok(NUMBER, "1")},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -54,17 +52,16 @@ func E3_Multiply(t *testing.T, f ParseFunc) {
 	// 6 * 7
 
 	given := []Token{
-		Token{NUMBER, "6", 0, 0},
-		Token{MULTIPLY, "*", 0, 0},
-		Token{NUMBER, "7", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "6"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "7"),
+		tok(TERMINATOR, ""),
 	}
 
-	exp := st.Operation{
-		st.Value(Token{NUMBER, "6", 0, 0}),
-		Token{MULTIPLY, "*", 0, 0},
-		st.Value(Token{NUMBER, "7", 0, 0}),
+	exp := Operation{
+		Value{tok(NUMBER, "6")},
+		tok(MULTIPLY, "*"),
+		Value{tok(NUMBER, "7")},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -75,17 +72,16 @@ func E4_Divide(t *testing.T, f ParseFunc) {
 	// 12 / 3
 
 	given := []Token{
-		Token{NUMBER, "12", 0, 0},
-		Token{DIVIDE, "/", 0, 0},
-		Token{NUMBER, "3", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "12"),
+		tok(DIVIDE, "/"),
+		tok(NUMBER, "3"),
+		tok(TERMINATOR, ""),
 	}
 
-	exp := st.Operation{
-		st.Value(Token{NUMBER, "12", 0, 0}),
-		Token{DIVIDE, "/", 0, 0},
-		st.Value(Token{NUMBER, "3", 0, 0}),
+	exp := Operation{
+		Value{tok(NUMBER, "12")},
+		tok(DIVIDE, "/"),
+		Value{tok(NUMBER, "3")},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -96,25 +92,24 @@ func E5_AdditiveOrdering(t *testing.T, f ParseFunc) {
 	// 1 + 2 - 3
 
 	given := []Token{
-		Token{NUMBER, "1", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{SUBTRACT, "-", 0, 0},
-		Token{NUMBER, "3", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "3"),
+		tok(TERMINATOR, ""),
 	}
 
-	exp := st.Operation{
-		st.Value(Token{NUMBER, "1", 0, 0}),
-		Token{ADD, "+", 0, 0},
-		st.Value(Token{NUMBER, "2", 0, 0}),
+	exp := Operation{
+		Value{tok(NUMBER, "1")},
+		tok(ADD, "+"),
+		Value{tok(NUMBER, "2")},
 	}
 
-	exp = st.Operation{
+	exp = Operation{
 		exp,
-		Token{SUBTRACT, "-", 0, 0},
-		st.Value(Token{NUMBER, "3", 0, 0}),
+		tok(SUBTRACT, "-"),
+		Value{tok(NUMBER, "3")},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -125,25 +120,24 @@ func E6_AdditiveOrdering(t *testing.T, f ParseFunc) {
 	// 1 - 2 + 3
 
 	given := []Token{
-		Token{NUMBER, "1", 0, 0},
-		Token{SUBTRACT, "-", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "3", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "1"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "2"),
+		tok(ADD, "+"),
+		tok(NUMBER, "3"),
+		tok(TERMINATOR, ""),
 	}
 
-	exp := st.Operation{
-		st.Value(Token{NUMBER, "1", 0, 0}),
-		Token{SUBTRACT, "-", 0, 0},
-		st.Value(Token{NUMBER, "2", 0, 0}),
+	exp := Operation{
+		Value{tok(NUMBER, "1")},
+		tok(SUBTRACT, "-"),
+		Value{tok(NUMBER, "2")},
 	}
 
-	exp = st.Operation{
+	exp = Operation{
 		exp,
-		Token{ADD, "+", 0, 0},
-		st.Value(Token{NUMBER, "3", 0, 0}),
+		tok(ADD, "+"),
+		Value{tok(NUMBER, "3")},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -154,33 +148,32 @@ func E7_MultiplicativeOrdering(t *testing.T, f ParseFunc) {
 	// 1 * 2 % 3 4
 
 	given := []Token{
-		Token{NUMBER, "1", 0, 0},
-		Token{MULTIPLY, "*", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{REMAINDER, "%", 0, 0},
-		Token{NUMBER, "3", 0, 0},
-		Token{DIVIDE, "/", 0, 0},
-		Token{NUMBER, "4", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "1"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "2"),
+		tok(REMAINDER, "%"),
+		tok(NUMBER, "3"),
+		tok(DIVIDE, "/"),
+		tok(NUMBER, "4"),
+		tok(TERMINATOR, ""),
 	}
 
-	exp := st.Operation{
-		st.Value(Token{NUMBER, "1", 0, 0}),
-		Token{MULTIPLY, "*", 0, 0},
-		st.Value(Token{NUMBER, "2", 0, 0}),
+	exp := Operation{
+		Value{tok(NUMBER, "1")},
+		tok(MULTIPLY, "*"),
+		Value{tok(NUMBER, "2")},
 	}
 
-	exp = st.Operation{
+	exp = Operation{
 		exp,
-		Token{REMAINDER, "%", 0, 0},
-		st.Value(Token{NUMBER, "3", 0, 0}),
+		tok(REMAINDER, "%"),
+		Value{tok(NUMBER, "3")},
 	}
 
-	exp = st.Operation{
+	exp = Operation{
 		exp,
-		Token{DIVIDE, "/", 0, 0},
-		st.Value(Token{NUMBER, "4", 0, 0}),
+		tok(DIVIDE, "/"),
+		Value{tok(NUMBER, "4")},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -191,33 +184,32 @@ func E8_MultiplicativeOrdering(t *testing.T, f ParseFunc) {
 	// 1 % 2 / 3 * 4
 
 	given := []Token{
-		Token{NUMBER, "1", 0, 0},
-		Token{REMAINDER, "%", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{DIVIDE, "/", 0, 0},
-		Token{NUMBER, "3", 0, 0},
-		Token{MULTIPLY, "*", 0, 0},
-		Token{NUMBER, "4", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "1"),
+		tok(REMAINDER, "%"),
+		tok(NUMBER, "2"),
+		tok(DIVIDE, "/"),
+		tok(NUMBER, "3"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "4"),
+		tok(TERMINATOR, ""),
 	}
 
-	exp := st.Operation{
-		st.Value(Token{NUMBER, "1", 0, 0}),
-		Token{REMAINDER, "%", 0, 0},
-		st.Value(Token{NUMBER, "2", 0, 0}),
+	exp := Operation{
+		Value{tok(NUMBER, "1")},
+		tok(REMAINDER, "%"),
+		Value{tok(NUMBER, "2")},
 	}
 
-	exp = st.Operation{
+	exp = Operation{
 		exp,
-		Token{DIVIDE, "/", 0, 0},
-		st.Value(Token{NUMBER, "3", 0, 0}),
+		tok(DIVIDE, "/"),
+		Value{tok(NUMBER, "3")},
 	}
 
-	exp = st.Operation{
+	exp = Operation{
 		exp,
-		Token{MULTIPLY, "*", 0, 0},
-		st.Value(Token{NUMBER, "4", 0, 0}),
+		tok(MULTIPLY, "*"),
+		Value{tok(NUMBER, "4")},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -228,25 +220,24 @@ func E9_OperationOrdering(t *testing.T, f ParseFunc) {
 	// 1 * 2 + 3
 
 	given := []Token{
-		Token{NUMBER, "1", 0, 0},
-		Token{MULTIPLY, "*", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "3", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "1"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "2"),
+		tok(ADD, "+"),
+		tok(NUMBER, "3"),
+		tok(TERMINATOR, ""),
 	}
 
-	exp := st.Operation{
-		st.Value(Token{NUMBER, "1", 0, 0}),
-		Token{MULTIPLY, "*", 0, 0},
-		st.Value(Token{NUMBER, "2", 0, 0}),
+	exp := Operation{
+		Value{tok(NUMBER, "1")},
+		tok(MULTIPLY, "*"),
+		Value{tok(NUMBER, "2")},
 	}
 
-	exp = st.Operation{
+	exp = Operation{
 		exp,
-		Token{ADD, "+", 0, 0},
-		st.Value(Token{NUMBER, "3", 0, 0}),
+		tok(ADD, "+"),
+		Value{tok(NUMBER, "3")},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -257,26 +248,25 @@ func E10_OperationOrdering(t *testing.T, f ParseFunc) {
 	// 1 + 2 * 3
 
 	given := []Token{
-		Token{NUMBER, "1", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{MULTIPLY, "*", 0, 0},
-		Token{NUMBER, "3", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "3"),
+		tok(TERMINATOR, ""),
 	}
 
 	// 1 + (2 * 3)
 
-	exp := st.Operation{
-		Left:     st.Value(Token{NUMBER, "1", 0, 0}),
-		Operator: Token{ADD, "+", 0, 0},
+	exp := Operation{
+		Left:     Value{tok(NUMBER, "1")},
+		Operator: tok(ADD, "+"),
 	}
 
-	exp.Right = st.Operation{
-		st.Value(Token{NUMBER, "2", 0, 0}),
-		Token{MULTIPLY, "*", 0, 0},
-		st.Value(Token{NUMBER, "3", 0, 0}),
+	exp.Right = Operation{
+		Value{tok(NUMBER, "2")},
+		tok(MULTIPLY, "*"),
+		Value{tok(NUMBER, "3")},
 	}
 
 	expectOneStat(t, exp, f(given))
@@ -287,51 +277,50 @@ func E11_OperationOrdering(t *testing.T, f ParseFunc) {
 	// 1 + 2 * 3 - 4 % 5 / 6
 
 	given := []Token{
-		Token{NUMBER, "1", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "2", 0, 0},
-		Token{MULTIPLY, "*", 0, 0},
-		Token{NUMBER, "3", 0, 0},
-		Token{SUBTRACT, "-", 0, 0},
-		Token{NUMBER, "4", 0, 0},
-		Token{REMAINDER, "%", 0, 0},
-		Token{NUMBER, "5", 0, 0},
-		Token{DIVIDE, "/", 0, 0},
-		Token{NUMBER, "6", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "3"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "4"),
+		tok(REMAINDER, "%"),
+		tok(NUMBER, "5"),
+		tok(DIVIDE, "/"),
+		tok(NUMBER, "6"),
+		tok(TERMINATOR, ""),
 	}
 
 	// 1 + (2 * 3) - ((4 % 5) / 6)
 
-	add := st.Operation{
-		Left:     st.Value(Token{NUMBER, "1", 0, 0}),
-		Operator: Token{ADD, "+", 0, 0},
+	add := Operation{
+		Left:     Value{tok(NUMBER, "1")},
+		Operator: tok(ADD, "+"),
 	}
 
-	mul := st.Operation{
-		st.Value(Token{NUMBER, "2", 0, 0}),
-		Token{MULTIPLY, "*", 0, 0},
-		st.Value(Token{NUMBER, "3", 0, 0}),
+	mul := Operation{
+		Value{tok(NUMBER, "2")},
+		tok(MULTIPLY, "*"),
+		Value{tok(NUMBER, "3")},
 	}
 
 	add.Right = mul
 
-	sub := st.Operation{
+	sub := Operation{
 		Left:     add,
-		Operator: Token{SUBTRACT, "-", 0, 0},
+		Operator: tok(SUBTRACT, "-"),
 	}
 
-	rem := st.Operation{
-		st.Value(Token{NUMBER, "4", 0, 0}),
-		Token{REMAINDER, "%", 0, 0},
-		st.Value(Token{NUMBER, "5", 0, 0}),
+	rem := Operation{
+		Value{tok(NUMBER, "4")},
+		tok(REMAINDER, "%"),
+		Value{tok(NUMBER, "5")},
 	}
 
-	div := st.Operation{
+	div := Operation{
 		rem,
-		Token{DIVIDE, "/", 0, 0},
-		st.Value(Token{NUMBER, "6", 0, 0}),
+		tok(DIVIDE, "/"),
+		Value{tok(NUMBER, "6")},
 	}
 
 	sub.Right = div
@@ -344,28 +333,27 @@ func E12_FuncCall(t *testing.T, f ParseFunc) {
 	// 1 + f(a,b)
 
 	given := []Token{
-		Token{NUMBER, "1", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{ID, "f", 0, 0},
-		Token{PAREN_OPEN, "(", 0, 0},
-		Token{ID, "a", 0, 0},
-		Token{DELIM, ",", 0, 0},
-		Token{ID, "b", 0, 0},
-		Token{PAREN_CLOSE, ")", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(IDENTIFIER, "f"),
+		tok(PAREN_OPEN, "("),
+		tok(IDENTIFIER, "a"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "b"),
+		tok(PAREN_CLOSE, ")"),
+		tok(TERMINATOR, ""),
 	}
 
-	exp := st.Operation{
-		Left:     st.Value(Token{NUMBER, "1", 0, 0}),
-		Operator: Token{ADD, "+", 0, 0},
+	exp := Operation{
+		Left:     Value{tok(NUMBER, "1")},
+		Operator: tok(ADD, "+"),
 	}
 
-	exp.Right = st.FuncCall{
-		st.Identifier(Token{ID, "f", 0, 0}),
-		[]st.Expression{
-			st.Identifier(Token{ID, "a", 0, 0}),
-			st.Identifier(Token{ID, "b", 0, 0}),
+	exp.Right = FuncCall{
+		Identifier{tok(IDENTIFIER, "f")},
+		[]Expression{
+			Identifier{tok(IDENTIFIER, "a")},
+			Identifier{tok(IDENTIFIER, "b")},
 		},
 	}
 
@@ -377,11 +365,10 @@ func E13_Panics(t *testing.T, f ParseFunc) {
 	// 1 + +
 
 	given := []Token{
-		Token{NUMBER, "1", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(ADD, "+"),
+		tok(TERMINATOR, ""),
 	}
 
 	expectPanic(t, func() { f(given) })
@@ -392,12 +379,11 @@ func E14_Panics(t *testing.T, f ParseFunc) {
 	// + 1 + 1
 
 	given := []Token{
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{ADD, "+", 0, 0},
-		Token{NUMBER, "1", 0, 0},
-		Token{TERMINATOR, "", 0, 0},
-		Token{EOF, "", 0, 0},
+		tok(ADD, "+"),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
 	}
 
 	expectPanic(t, func() { f(given) })

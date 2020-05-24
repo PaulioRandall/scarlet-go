@@ -3,64 +3,64 @@ package alpha
 import (
 	"github.com/shopspring/decimal"
 
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func evalOperation(ctx *alphaContext, op st.Operation) result {
+func evalOperation(ctx *alphaContext, op Operation) result {
 
 	tk := op.Operator
 
-	switch tk.Type {
-	case token.ADD:
+	switch tk.Morpheme() {
+	case ADD:
 		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return numberLiteral(left.Add(right))
 
-	case token.SUBTRACT:
+	case SUBTRACT:
 		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return numberLiteral(left.Sub(right))
 
-	case token.MULTIPLY:
+	case MULTIPLY:
 		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return numberLiteral(left.Mul(right))
 
-	case token.DIVIDE:
+	case DIVIDE:
 		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return numberLiteral(left.Div(right))
 
-	case token.REMAINDER:
+	case REMAINDER:
 		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return numberLiteral(left.Mod(right))
 
-	case token.LESS_THAN:
+	case LESS_THAN:
 		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return boolLiteral(left.LessThan(right))
 
-	case token.MORE_THAN:
+	case MORE_THAN:
 		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return boolLiteral(left.GreaterThan(right))
 
-	case token.LESS_THAN_OR_EQUAL:
+	case LESS_THAN_OR_EQUAL:
 		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return boolLiteral(left.LessThanOrEqual(right))
 
-	case token.MORE_THAN_OR_EQUAL:
+	case MORE_THAN_OR_EQUAL:
 		left, right := evalNumbers(ctx, op.Left, op.Right)
 		return boolLiteral(left.GreaterThanOrEqual(right))
 
-	case token.AND:
+	case AND:
 		left, right := evalBools(ctx, op.Left, op.Right)
 		return boolLiteral(left && right)
 
-	case token.OR:
+	case OR:
 		left, right := evalBools(ctx, op.Left, op.Right)
 		return boolLiteral(left || right)
 
-	case token.EQUAL:
+	case EQUAL:
 		left, right := evalValues(ctx, op.Left, op.Right)
 		return boolLiteral(equal(left, right))
 
-	case token.NOT_EQUAL:
+	case NOT_EQUAL:
 		left, right := evalValues(ctx, op.Left, op.Right)
 		return boolLiteral(!equal(left, right))
 	}
@@ -68,7 +68,7 @@ func evalOperation(ctx *alphaContext, op st.Operation) result {
 	panic(err("evalOperation", tk, "Unknown operation type"))
 }
 
-func evalValues(ctx *alphaContext, left, right st.Expression) (result, result) {
+func evalValues(ctx *alphaContext, left, right Expression) (result, result) {
 	l := evalExpression(ctx, left)
 	r := evalExpression(ctx, right)
 
@@ -101,13 +101,13 @@ func equal(left, right result) bool {
 }
 
 func evalNumbers(ctx *alphaContext,
-	left, right st.Expression,
+	left, right Expression,
 ) (decimal.Decimal, decimal.Decimal) {
 
 	return evalNumber(ctx, left), evalNumber(ctx, right)
 }
 
-func evalNumber(ctx *alphaContext, ex st.Expression) decimal.Decimal {
+func evalNumber(ctx *alphaContext, ex Expression) decimal.Decimal {
 
 	v := evalExpression(ctx, ex)
 	v = expectOneValue(v, ex.Token())
@@ -119,11 +119,11 @@ func evalNumber(ctx *alphaContext, ex st.Expression) decimal.Decimal {
 	panic(err("evalNumber", ex.Token(), "Expected Number as result"))
 }
 
-func evalBools(ctx *alphaContext, left, right st.Expression) (bool, bool) {
+func evalBools(ctx *alphaContext, left, right Expression) (bool, bool) {
 	return evalBool(ctx, left), evalBool(ctx, right)
 }
 
-func evalBool(ctx *alphaContext, ex st.Expression) bool {
+func evalBool(ctx *alphaContext, ex Expression) bool {
 	if v, ok := evalExpression(ctx, ex).(boolLiteral); ok {
 		return bool(v)
 	}

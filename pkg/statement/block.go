@@ -1,16 +1,16 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type Block struct {
-	Open  token.Token
+	Open  Token
 	Stats []Statement
-	Close token.Token
+	Close Token
 }
 
-func (b Block) Token() token.Token {
+func (b Block) Token() Token {
 	return b.Open
 }
 
@@ -24,7 +24,7 @@ func (b Block) String(i int) string {
 	s.newline().
 		indent(i + 1).
 		append("Open: ").
-		append(b.Open.String())
+		appendTk(b.Open)
 
 	s.newline().
 		indent(i + 1).
@@ -36,7 +36,7 @@ func (b Block) String(i int) string {
 	s.newline().
 		indent(i + 1).
 		append("Close: ").
-		append(b.Close.String())
+		appendTk(b.Close)
 
 	return s.String()
 }

@@ -1,16 +1,16 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type Loop struct {
-	Open     token.Token
-	IndexVar token.Token
+	Open     Token
+	IndexVar Token
 	Guard    Guard
 }
 
-func (l Loop) Token() token.Token {
+func (l Loop) Token() Token {
 	return l.Open
 }
 
@@ -20,12 +20,12 @@ func (l Loop) String(i int) string {
 
 	s.indent(i).
 		append("[Loop] ").
-		append(l.Open.String())
+		appendTk(l.Open)
 
 	s.newline().
 		indent(i + 1).
 		append("Index: ").
-		append(l.IndexVar.String())
+		appendTk(l.IndexVar)
 
 	s.newline().
 		indent(i + 1).

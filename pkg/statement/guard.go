@@ -1,17 +1,17 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type Guard struct {
-	Open      token.Token
+	Open      Token
 	Condition Expression
-	Close     token.Token
+	Close     Token
 	Block     Block
 }
 
-func (g Guard) Token() token.Token {
+func (g Guard) Token() Token {
 	return g.Open
 }
 
@@ -25,7 +25,7 @@ func (g Guard) String(i int) string {
 	s.newline().
 		indent(i + 1).
 		append("Open: ").
-		append(g.Open.String())
+		appendTk(g.Open)
 
 	s.newline().
 		indent(i + 1).
@@ -37,7 +37,7 @@ func (g Guard) String(i int) string {
 	s.newline().
 		indent(i + 1).
 		append("Close: ").
-		append(g.Close.String())
+		appendTk(g.Close)
 
 	s.newline().
 		indent(i + 1).

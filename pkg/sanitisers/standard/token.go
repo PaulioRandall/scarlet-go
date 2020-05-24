@@ -1,7 +1,7 @@
 package standard
 
 import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/z_token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type tok struct {

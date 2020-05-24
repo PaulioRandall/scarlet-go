@@ -1,10 +1,10 @@
 package alpha
 
 import (
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func exeMatch(ctx *alphaContext, m st.Match) {
+func exeMatch(ctx *alphaContext, m Match) {
 	for _, g := range m.Cases {
 		if exeGuard(ctx, g) {
 			break
@@ -12,7 +12,7 @@ func exeMatch(ctx *alphaContext, m st.Match) {
 	}
 }
 
-func exeGuard(ctx *alphaContext, g st.Guard) bool {
+func exeGuard(ctx *alphaContext, g Guard) bool {
 
 	pass, ok := evalExpression(ctx, g.Condition).(boolLiteral)
 

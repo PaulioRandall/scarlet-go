@@ -1,34 +1,34 @@
 package alpha
 
 import (
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func exeBlock(ctx *alphaContext, b st.Block) {
+func exeBlock(ctx *alphaContext, b Block) {
 	exeStatements(ctx, b.Stats)
 }
 
-func exeStatements(ctx *alphaContext, ss []st.Statement) {
+func exeStatements(ctx *alphaContext, ss []Statement) {
 	for _, s := range ss {
 		exeStatement(ctx, s)
 	}
 }
 
-func exeStatement(ctx *alphaContext, s st.Statement) {
+func exeStatement(ctx *alphaContext, s Statement) {
 	switch v := s.(type) {
-	case st.Assignment:
+	case Assignment:
 		exeAssignment(ctx, v)
 
-	case st.Match:
+	case Match:
 		exeMatch(ctx, v)
 
-	case st.Guard:
+	case Guard:
 		exeGuard(ctx, v)
 
-	case st.Loop:
+	case Loop:
 		exeLoop(ctx, v)
 
-	case st.Expression:
+	case Expression:
 		_ = evalExpression(ctx, v)
 
 	default:

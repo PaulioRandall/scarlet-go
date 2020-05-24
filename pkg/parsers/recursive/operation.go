@@ -1,36 +1,36 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
-
-	st "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression {
+func parseOperation(p *pipe, left Expression, leftPriority int) Expression {
 	// pattern := {operator operand}
 	// operand := literal | expression
 
 	// Warning: this is where parsing gets a little complicated!!
 
 	op := p.peek()
+	m := op.Morpheme()
 
-	if leftPriority >= op.Precedence() {
+	if leftPriority >= m.Precedence() {
 		// Any token that is not an operator has a precedence of zero, so the left
 		// hand expression will always be returned in such a case.
 		return left
 	}
 
 	// Because operator not taken yet.
-	p.expect(`parseOperation`, op.Type)
+	p.expect(`parseOperation`, m)
 
 	// Parse the terminal or expression on the right.
 	right := parseSubOperation(p)
 
 	// Recursively parse the expression on the right until an operator with
 	// precedence less or equal to this one is encountered.
-	right = parseOperation(p, right, op.Precedence())
+	right = parseOperation(p, right, m.Precedence())
 
-	left = st.Operation{left, op, right}
+	left = Operation{left, op, right}
 
 	// Parse the remaining operations in this expression.
 	left = parseOperation(p, left, leftPriority)
@@ -38,7 +38,7 @@ func parseOperation(p *pipe, left st.Expression, leftPriority int) st.Expression
 	return left
 }
 
-func parseSubOperation(p *pipe) st.Expression {
+func parseSubOperation(p *pipe) Expression {
 	// pattern := func_call | literal | group
 
 	switch {
@@ -57,39 +57,39 @@ func parseSubOperation(p *pipe) st.Expression {
 
 func isLiteral(p *pipe) bool {
 	return p.matchAny(
-		token.ID, // Yes I know, need to sort it out
-		token.VOID,
-		token.BOOL,
-		token.NUMBER,
-		token.STRING,
-		token.TEMPLATE,
+		IDENTIFIER, // Yes I know, need to sort it out
+		VOID,
+		BOOL,
+		NUMBER,
+		STRING,
+		TEMPLATE,
 	)
 }
 
-func parseLiteral(p *pipe) st.Expression {
+func parseLiteral(p *pipe) Expression {
 	tk := p.next()
 
-	if tk.Type == token.ID {
-		return st.Identifier(tk)
+	if tk.Morpheme() == IDENTIFIER {
+		return Identifier{tk}
 	} else {
-		return st.Value(tk)
+		return Value{tk}
 	}
 }
 
 func isGroup(p *pipe) bool {
-	return p.match(token.PAREN_OPEN)
+	return p.match(PAREN_OPEN)
 }
 
-func parseGroup(p *pipe) st.Expression {
+func parseGroup(p *pipe) Expression {
 	// pattern := PAREN_OPEN expression PAREN_CLOSE
 
-	p.expect(`group`, token.PAREN_OPEN)
+	p.expect(`group`, PAREN_OPEN)
 
 	g := parseExpression(p)
 	if g == nil {
-		panic(unexpected("group", p.past(), token.ANOTHER))
+		panic(unexpected("group", p.past(), ANOTHER.String()))
 	}
 
-	p.expect(`group`, token.PAREN_CLOSE)
+	p.expect(`group`, PAREN_CLOSE)
 	return g
 }

@@ -1,9 +1,9 @@
-package z_alpha
+package alpha
 
 import (
 	"fmt"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/z_token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type runtimeErr struct {

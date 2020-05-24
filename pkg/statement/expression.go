@@ -1,35 +1,20 @@
 package statement
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 type Expression interface {
-	Token() token.Token
-
+	Token() Token
 	String(indent int) string
 }
 
-type Identifier token.Token
-
-func (id Identifier) Token() token.Token {
-	return token.Token(id)
+type Value struct {
+	Tk Token
 }
 
-func (id Identifier) String(i int) string {
-
-	var s str
-
-	return s.indent(i).
-		append("[Identifier] ").
-		append(id.Token().String()).
-		String()
-}
-
-type Value token.Token
-
-func (v Value) Token() token.Token {
-	return token.Token(v)
+func (v Value) Token() Token {
+	return Token(v.Tk)
 }
 
 func (v Value) String(i int) string {
@@ -38,6 +23,24 @@ func (v Value) String(i int) string {
 
 	return s.indent(i).
 		append("[Value] ").
-		append(v.Token().String()).
+		appendTk(v.Tk).
+		String()
+}
+
+type Identifier struct {
+	Tk Token
+}
+
+func (id Identifier) Token() Token {
+	return Token(id.Tk)
+}
+
+func (id Identifier) String(i int) string {
+
+	var s str
+
+	return s.indent(i).
+		append("[Identifier] ").
+		appendTk(id.Tk).
 		String()
 }

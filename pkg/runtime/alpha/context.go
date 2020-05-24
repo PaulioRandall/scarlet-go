@@ -1,7 +1,7 @@
 package alpha
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
 // alphaContext implements pkg/runtime/Context.
@@ -84,9 +84,9 @@ func (ctx *alphaContext) getVar(id string) result {
 	return nil
 }
 
-func (ctx *alphaContext) SetFixed(id token.Token, v result) {
+func (ctx *alphaContext) SetFixed(id Token, v result) {
 
-	name := id.Value
+	name := id.Value()
 
 	if _, ok := ctx.fixed[name]; ok {
 		panic(err("SetFixed", id, "Cannot change a fixed variable"))
@@ -96,26 +96,26 @@ func (ctx *alphaContext) SetFixed(id token.Token, v result) {
 	ctx.fixed[name] = v
 }
 
-func (ctx *alphaContext) SetLocal(id token.Token, v result) {
+func (ctx *alphaContext) SetLocal(id Token, v result) {
 
 	for c := ctx; c != nil; c = c.parent {
-		if _, ok := c.fixed[id.Value]; ok {
+		if _, ok := c.fixed[id.Value()]; ok {
 			panic(err("SetLocal", id, "Cannot change a fixed variable"))
 		}
 	}
 
-	ctx.local[id.Value] = v
+	ctx.local[id.Value()] = v
 }
 
-func (ctx *alphaContext) Set(id token.Token, v result) {
+func (ctx *alphaContext) Set(id Token, v result) {
 	if !ctx.set(id, v) {
-		ctx.local[id.Value] = v
+		ctx.local[id.Value()] = v
 	}
 }
 
-func (ctx *alphaContext) set(id token.Token, v result) bool {
+func (ctx *alphaContext) set(id Token, v result) bool {
 
-	varName := id.Value
+	varName := id.Value()
 
 	if _, ok := ctx.fixed[varName]; ok {
 		panic(err("Set", id, "Cannot change a fixed variable"))
@@ -131,11 +131,11 @@ func (ctx *alphaContext) set(id token.Token, v result) bool {
 		ctx.parent.set(id, v)
 }
 
-func (ctx *alphaContext) setOrDelLocal(id token.Token, v result) {
+func (ctx *alphaContext) setOrDelLocal(id Token, v result) {
 	if _, ok := v.(voidLiteral); ok {
-		delete(ctx.local, id.Value)
+		delete(ctx.local, id.Value())
 	} else {
-		ctx.local[id.Value] = v
+		ctx.local[id.Value()] = v
 	}
 }
 

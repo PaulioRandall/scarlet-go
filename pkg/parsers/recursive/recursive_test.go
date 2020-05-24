@@ -5,7 +5,7 @@ import (
 
 	e "github.com/PaulioRandall/scarlet-go/pkg/err"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/parsers/tests"
+	tests "github.com/PaulioRandall/scarlet-go/pkg/parsers/tests"
 )
 
 func TestParseErr(t *testing.T) {
