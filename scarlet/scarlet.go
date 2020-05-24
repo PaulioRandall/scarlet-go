@@ -5,12 +5,13 @@ import (
 	"os"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
-	"github.com/PaulioRandall/scarlet-go/pkg/statement"
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
+	statement "github.com/PaulioRandall/scarlet-go/pkg/z_statement"
+	token "github.com/PaulioRandall/scarlet-go/pkg/z_token"
 
-	parser "github.com/PaulioRandall/scarlet-go/pkg/parsers/recursive"
-	runtime "github.com/PaulioRandall/scarlet-go/pkg/runtime/alpha"
-	scanner "github.com/PaulioRandall/scarlet-go/pkg/scanners/matching"
+	parser "github.com/PaulioRandall/scarlet-go/pkg/parsers/z_recursive"
+	runtime "github.com/PaulioRandall/scarlet-go/pkg/runtime/z_alpha"
+	sanitiser "github.com/PaulioRandall/scarlet-go/pkg/sanitisers/standard"
+	scanner "github.com/PaulioRandall/scarlet-go/pkg/scanners/z_matching"
 )
 
 func main() { // Run it with `./godo run`
@@ -34,11 +35,15 @@ func main() { // Run it with `./godo run`
 
 func run(s string) {
 
-	println("# Scanned:")
+	println("# Scanning:")
 	tks := scanner.ScanAll(s)
 	token.PrettyPrint(tks)
 
-	println("# Parsed:")
+	println("# Sanitising:")
+	tks = sanitiser.SanitiseAll(tks)
+	token.PrettyPrint(tks)
+
+	println("# Parsing:")
 	stats := parser.ParseAll(tks)
 	statement.Print(stats)
 

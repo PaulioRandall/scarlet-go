@@ -6,7 +6,7 @@ import (
 
 var cache []pattern = patterns()
 
-func ReadAllTokens(s string) []Token {
+func ScanAll(s string) []Token {
 
 	in := ReadAll(s)
 	out := make([]Token, len(in))

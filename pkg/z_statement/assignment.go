@@ -17,7 +17,8 @@ func (at AssignTarget) String(i int) string {
 
 	var s str
 
-	s.indent(i).
+	s.newline().
+		indent(i).
 		append("[AssignTarget]")
 
 	s.newline().
