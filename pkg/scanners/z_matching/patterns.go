@@ -17,44 +17,44 @@ type pattern struct {
 
 func patterns() []pattern {
 	return []pattern{
-		pattern{M_NEWLINE, func(s *symbols) int {
+		pattern{NEWLINE, func(s *symbols) int {
 			return s.countNewlineSymbols(0)
 		}},
-		pattern{M_WHITESPACE, func(s *symbols) int {
+		pattern{WHITESPACE, func(s *symbols) int {
 			// Returns the number of consecutive whitespace terminals.
 			// Newlines are not counted as whitespace.
 			return s.countSymbolsWhile(0, func(i int, ru rune) bool {
 				return !s.isNewline(i) && unicode.IsSpace(ru)
 			})
 		}},
-		pattern{M_COMMENT, func(s *symbols) int {
+		pattern{COMMENT, func(s *symbols) int {
 			if s.isMatch(0, "//") {
 				return s.indexOfNextNewline(0)
 			}
 			return 0
 		}},
-		pattern{M_MATCH, func(s *symbols) int {
+		pattern{MATCH, func(s *symbols) int {
 			return matchWord(s, "MATCH")
 		}},
-		pattern{M_BOOL, func(s *symbols) int {
+		pattern{BOOL, func(s *symbols) int {
 			return matchWord(s, "FALSE")
 		}},
-		pattern{M_BOOL, func(s *symbols) int {
+		pattern{BOOL, func(s *symbols) int {
 			return matchWord(s, "TRUE")
 		}},
-		pattern{M_LIST, func(s *symbols) int {
+		pattern{LIST, func(s *symbols) int {
 			return matchWord(s, "LIST")
 		}},
-		pattern{M_LOOP, func(s *symbols) int {
+		pattern{LOOP, func(s *symbols) int {
 			return matchWord(s, "LOOP")
 		}},
-		pattern{M_FIX, func(s *symbols) int {
+		pattern{FIX, func(s *symbols) int {
 			return matchWord(s, "FIX")
 		}},
-		pattern{M_FUNC, func(s *symbols) int {
+		pattern{FUNC, func(s *symbols) int {
 			return matchWord(s, "F")
 		}},
-		pattern{M_IDENTIFIER, func(s *symbols) int {
+		pattern{IDENTIFIER, func(s *symbols) int {
 			return s.countSymbolsWhile(0, func(i int, ru rune) bool {
 
 				if unicode.IsLetter(ru) {
@@ -64,88 +64,88 @@ func patterns() []pattern {
 				return i != 0 && ru == '_'
 			})
 		}},
-		pattern{M_ASSIGN, func(s *symbols) int {
+		pattern{ASSIGN, func(s *symbols) int {
 			return matchStr(s, ":=")
 		}},
-		pattern{M_LIST_END, func(s *symbols) int {
+		pattern{LIST_END, func(s *symbols) int {
 			return matchStr(s, ">>")
 		}},
-		pattern{M_LIST_START, func(s *symbols) int {
+		pattern{LIST_START, func(s *symbols) int {
 			return matchStr(s, "<<")
 		}},
-		pattern{M_LESS_THAN_OR_EQUAL, func(s *symbols) int {
+		pattern{LESS_THAN_OR_EQUAL, func(s *symbols) int {
 			return matchStr(s, "<=")
 		}},
-		pattern{M_MORE_THAN_OR_EQUAL, func(s *symbols) int {
+		pattern{MORE_THAN_OR_EQUAL, func(s *symbols) int {
 			return matchStr(s, ">=")
 		}},
-		pattern{M_BLOCK_OPEN, func(s *symbols) int {
+		pattern{BLOCK_OPEN, func(s *symbols) int {
 			return matchStr(s, "{")
 		}},
-		pattern{M_BLOCK_CLOSE, func(s *symbols) int {
+		pattern{BLOCK_CLOSE, func(s *symbols) int {
 			return matchStr(s, "}")
 		}},
-		pattern{M_PAREN_OPEN, func(s *symbols) int {
+		pattern{PAREN_OPEN, func(s *symbols) int {
 			return matchStr(s, "(")
 		}},
-		pattern{M_PAREN_CLOSE, func(s *symbols) int {
+		pattern{PAREN_CLOSE, func(s *symbols) int {
 			return matchStr(s, ")")
 		}},
-		pattern{M_GUARD_OPEN, func(s *symbols) int {
+		pattern{GUARD_OPEN, func(s *symbols) int {
 			return matchStr(s, "[")
 		}},
-		pattern{M_GUARD_CLOSE, func(s *symbols) int {
+		pattern{GUARD_CLOSE, func(s *symbols) int {
 			return matchStr(s, "]")
 		}},
-		pattern{M_OUTPUT, func(s *symbols) int {
+		pattern{OUTPUT, func(s *symbols) int {
 			return matchStr(s, "^")
 		}},
-		pattern{M_DELIMITER, func(s *symbols) int {
+		pattern{DELIMITER, func(s *symbols) int {
 			return matchStr(s, ",")
 		}},
-		pattern{M_VOID, func(s *symbols) int {
+		pattern{VOID, func(s *symbols) int {
 			return matchStr(s, "_")
 		}},
-		pattern{M_TERMINATOR, func(s *symbols) int {
+		pattern{TERMINATOR, func(s *symbols) int {
 			return matchStr(s, ";")
 		}},
-		pattern{M_SPELL, func(s *symbols) int {
+		pattern{SPELL, func(s *symbols) int {
 			return matchStr(s, "@")
 		}},
-		pattern{M_ADD, func(s *symbols) int {
+		pattern{ADD, func(s *symbols) int {
 			return matchStr(s, "+")
 		}},
-		pattern{M_SUBTRACT, func(s *symbols) int {
+		pattern{SUBTRACT, func(s *symbols) int {
 			return matchStr(s, "-")
 		}},
-		pattern{M_MULTIPLY, func(s *symbols) int {
+		pattern{MULTIPLY, func(s *symbols) int {
 			return matchStr(s, "*")
 		}},
-		pattern{M_DIVIDE, func(s *symbols) int {
+		pattern{DIVIDE, func(s *symbols) int {
 			return matchStr(s, "/")
 		}},
-		pattern{M_REMAINDER, func(s *symbols) int {
+		pattern{REMAINDER, func(s *symbols) int {
 			return matchStr(s, "%")
 		}},
-		pattern{M_AND, func(s *symbols) int {
+		pattern{AND, func(s *symbols) int {
 			return matchStr(s, "&")
 		}},
-		pattern{M_OR, func(s *symbols) int {
+		pattern{OR, func(s *symbols) int {
 			return matchStr(s, "|")
 		}},
-		pattern{M_EQUAL, func(s *symbols) int {
+		pattern{EQUAL, func(s *symbols) int {
 			return matchStr(s, "==")
 		}},
-		pattern{M_NOT_EQUAL, func(s *symbols) int {
+		pattern{NOT_EQUAL, func(s *symbols) int {
 			return matchStr(s, "!=")
 		}},
-		pattern{M_LESS_THAN, func(s *symbols) int {
+		pattern{LESS_THAN, func(s *symbols) int {
 			return matchStr(s, "<")
 		}},
-		pattern{M_MORE_THAN, func(s *symbols) int {
+		pattern{MORE_THAN, func(s *symbols) int {
 			return matchStr(s, ">")
 		}},
-		pattern{M_STRING, func(s *symbols) int {
+		pattern{STRING, func(s *symbols) int {
 
 			const (
 				PREFIX     = "`"
@@ -170,7 +170,7 @@ func patterns() []pattern {
 
 			return PREFIX_LEN + n + SUFFIX_LEN
 		}},
-		pattern{M_TEMPLATE, func(s *symbols) int {
+		pattern{TEMPLATE, func(s *symbols) int {
 			// As the name suggests, templates can be populated with the value of
 			// identifiers, but the scanner is not concerned with parsing these. It
 			// does need to watch out for escaped terminals that also represent the
@@ -209,11 +209,11 @@ func patterns() []pattern {
 
 			return n + SUFFIX_LEN
 		}},
-		pattern{M_NUMBER, func(s *symbols) int {
+		pattern{NUMBER, func(s *symbols) int {
 
 			const (
-				DELIM     = "."
-				DELIM_LEN = 1
+				DELIM   = "."
+				DELILEN = 1
 			)
 
 			n := matchInt(s, 0)
@@ -222,14 +222,14 @@ func patterns() []pattern {
 				return n
 			}
 
-			fractionalLen := matchInt(s, n+DELIM_LEN)
+			fractionalLen := matchInt(s, n+DELILEN)
 
 			if fractionalLen == 0 {
 				// One or many fractional digits must follow a delimiter.
 				panic(err(s, n, "Invalid syntax, expected digit after decimal point"))
 			}
 
-			return n + DELIM_LEN + fractionalLen
+			return n + DELILEN + fractionalLen
 		}},
 	}
 }

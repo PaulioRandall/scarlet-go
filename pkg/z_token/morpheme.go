@@ -6,96 +6,96 @@ type Morpheme int
 //			 consider improving matters.
 
 const (
-	M_UNDEFINED Morpheme = iota
+	UNDEFINED Morpheme = iota
 	// ------------------
-	M_ANY
-	M_ANOTHER
+	ANY
+	ANOTHER
 	// ------------------
-	M_COMMENT            // K_REDUNDANT
-	M_WHITESPACE         // K_REDUNDANT
-	M_NEWLINE            // K_NEWLINE
-	M_FUNC               // K_KEYWORD
-	M_FIX                // K_KEYWORD
-	M_LIST               // K_KEYWORD
-	M_MATCH              // K_KEYWORD
-	M_LOOP               // K_KEYWORD
-	M_SPELL              // K_KEYWORD
-	M_OUTPUT             // K_KEYWORD
-	M_IDENTIFIER         // K_IDENTIFIER
-	M_VOID               // K_IDENTIFIER
-	M_DELIMITER          // K_DELIMITER
-	M_ASSIGN             // K_DELIMITER
-	M_BLOCK_OPEN         // K_DELIMITER
-	M_BLOCK_CLOSE        // K_DELIMITER
-	M_PAREN_OPEN         // K_DELIMITER
-	M_PAREN_CLOSE        // K_DELIMITER
-	M_GUARD_OPEN         // K_DELIMITER
-	M_GUARD_CLOSE        // K_DELIMITER
-	M_TERMINATOR         // K_DELIMITER
-	M_STRING             // K_LITERAL
-	M_TEMPLATE           // K_LITERAL
-	M_NUMBER             // K_LITERAL
-	M_BOOL               // K_LITERAL
-	M_ADD                // K_ARITHMETIC
-	M_SUBTRACT           // K_ARITHMETIC
-	M_MULTIPLY           // K_ARITHMETIC
-	M_DIVIDE             // K_ARITHMETIC
-	M_REMAINDER          // K_ARITHMETIC
-	M_AND                // K_LOGIC
-	M_OR                 // K_LOGIC
-	M_EQUAL              // K_COMPARISON
-	M_NOT_EQUAL          // K_COMPARISON
-	M_LESS_THAN          // K_COMPARISON
-	M_LESS_THAN_OR_EQUAL // K_COMPARISON
-	M_MORE_THAN          // K_COMPARISON
-	M_MORE_THAN_OR_EQUAL // K_COMPARISON
-	M_LIST_START         // K_REFERENCE
-	M_LIST_END           // K_REFERENCE
+	COMMENT            // K_REDUNDANT
+	WHITESPACE         // K_REDUNDANT
+	NEWLINE            // K_NEWLINE
+	FUNC               // K_KEYWORD
+	FIX                // K_KEYWORD
+	LIST               // K_KEYWORD
+	MATCH              // K_KEYWORD
+	LOOP               // K_KEYWORD
+	SPELL              // K_KEYWORD
+	OUTPUT             // K_KEYWORD
+	IDENTIFIER         // K_IDENTIFIER
+	VOID               // K_IDENTIFIER
+	DELIMITER          // K_DELIMITER
+	ASSIGN             // K_DELIMITER
+	BLOCK_OPEN         // K_DELIMITER
+	BLOCK_CLOSE        // K_DELIMITER
+	PAREN_OPEN         // K_DELIMITER
+	PAREN_CLOSE        // K_DELIMITER
+	GUARD_OPEN         // K_DELIMITER
+	GUARD_CLOSE        // K_DELIMITER
+	TERMINATOR         // K_DELIMITER
+	STRING             // K_LITERAL
+	TEMPLATE           // K_LITERAL
+	NUMBER             // K_LITERAL
+	BOOL               // K_LITERAL
+	ADD                // K_ARITHMETIC
+	SUBTRACT           // K_ARITHMETIC
+	MULTIPLY           // K_ARITHMETIC
+	DIVIDE             // K_ARITHMETIC
+	REMAINDER          // K_ARITHMETIC
+	AND                // K_LOGIC
+	OR                 // K_LOGIC
+	EQUAL              // K_COMPARISON
+	NOT_EQUAL          // K_COMPARISON
+	LESS_THAN          // K_COMPARISON
+	LESS_THAN_OR_EQUAL // K_COMPARISON
+	MORE_THAN          // K_COMPARISON
+	MORE_THAN_OR_EQUAL // K_COMPARISON
+	LIST_START         // K_REFERENCE
+	LIST_END           // K_REFERENCE
 )
 
 var morphemes map[Morpheme]string = map[Morpheme]string{
-	M_UNDEFINED:          ``,
-	M_ANOTHER:            `ANOTHER`,
-	M_COMMENT:            `COMMENT`,
-	M_WHITESPACE:         `WHITESPACE`,
-	M_NEWLINE:            `NEWLINE`,
-	M_FUNC:               `FUNC`,
-	M_FIX:                `FIX`,
-	M_LIST:               `LIST`,
-	M_MATCH:              `MATCH`,
-	M_LOOP:               `LOOP`,
-	M_SPELL:              `SPELL`,
-	M_OUTPUT:             `OUTPUT`,
-	M_IDENTIFIER:         `ID`,
-	M_VOID:               `VOID`,
-	M_DELIMITER:          `DELIM`,
-	M_ASSIGN:             `ASSIGN`,
-	M_BLOCK_OPEN:         `BLOCK_OPEN`,
-	M_BLOCK_CLOSE:        `BLOCK_CLOSE`,
-	M_PAREN_OPEN:         `PAREN_OPEN`,
-	M_PAREN_CLOSE:        `PAREN_CLOSE`,
-	M_GUARD_OPEN:         `GUARD_OPEN`,
-	M_GUARD_CLOSE:        `GUARD_CLOSE`,
-	M_TERMINATOR:         `TERMINATOR`,
-	M_STRING:             `STRING`,
-	M_TEMPLATE:           `TEMPLATE`,
-	M_NUMBER:             `NUMBER`,
-	M_BOOL:               `BOOL`,
-	M_ADD:                `ADD`,
-	M_SUBTRACT:           `SUBTRACT`,
-	M_MULTIPLY:           `MULTIPLY`,
-	M_DIVIDE:             `DIVIDE`,
-	M_REMAINDER:          `REMAINDER`,
-	M_AND:                `AND`,
-	M_OR:                 `OR`,
-	M_EQUAL:              `EQUAL`,
-	M_NOT_EQUAL:          `NOT_EQUAL`,
-	M_LESS_THAN:          `LESS_THAN`,
-	M_LESS_THAN_OR_EQUAL: `LESS_THAN_OR_EQUAL`,
-	M_MORE_THAN:          `MORE_THAN`,
-	M_MORE_THAN_OR_EQUAL: `MORE_THAN_OR_EQUAL`,
-	M_LIST_START:         `LIST_START`,
-	M_LIST_END:           `LIST_END`,
+	UNDEFINED:          ``,
+	ANOTHER:            `ANOTHER`,
+	COMMENT:            `COMMENT`,
+	WHITESPACE:         `WHITESPACE`,
+	NEWLINE:            `NEWLINE`,
+	FUNC:               `FUNC`,
+	FIX:                `FIX`,
+	LIST:               `LIST`,
+	MATCH:              `MATCH`,
+	LOOP:               `LOOP`,
+	SPELL:              `SPELL`,
+	OUTPUT:             `OUTPUT`,
+	IDENTIFIER:         `ID`,
+	VOID:               `VOID`,
+	DELIMITER:          `DELIM`,
+	ASSIGN:             `ASSIGN`,
+	BLOCK_OPEN:         `BLOCK_OPEN`,
+	BLOCK_CLOSE:        `BLOCK_CLOSE`,
+	PAREN_OPEN:         `PAREN_OPEN`,
+	PAREN_CLOSE:        `PAREN_CLOSE`,
+	GUARD_OPEN:         `GUARD_OPEN`,
+	GUARD_CLOSE:        `GUARD_CLOSE`,
+	TERMINATOR:         `TERMINATOR`,
+	STRING:             `STRING`,
+	TEMPLATE:           `TEMPLATE`,
+	NUMBER:             `NUMBER`,
+	BOOL:               `BOOL`,
+	ADD:                `ADD`,
+	SUBTRACT:           `SUBTRACT`,
+	MULTIPLY:           `MULTIPLY`,
+	DIVIDE:             `DIVIDE`,
+	REMAINDER:          `REMAINDER`,
+	AND:                `AND`,
+	OR:                 `OR`,
+	EQUAL:              `EQUAL`,
+	NOT_EQUAL:          `NOT_EQUAL`,
+	LESS_THAN:          `LESS_THAN`,
+	LESS_THAN_OR_EQUAL: `LESS_THAN_OR_EQUAL`,
+	MORE_THAN:          `MORE_THAN`,
+	MORE_THAN_OR_EQUAL: `MORE_THAN_OR_EQUAL`,
+	LIST_START:         `LIST_START`,
+	LIST_END:           `LIST_END`,
 }
 
 func (m Morpheme) String() string {
@@ -104,22 +104,22 @@ func (m Morpheme) String() string {
 
 func (m Morpheme) Precedence() int {
 	switch m {
-	case M_MULTIPLY, M_DIVIDE, M_REMAINDER:
+	case MULTIPLY, DIVIDE, REMAINDER:
 		return 6 // Multiplicative
 
-	case M_ADD, M_SUBTRACT:
+	case ADD, SUBTRACT:
 		return 5 // Additive
 
-	case M_LESS_THAN, M_LESS_THAN_OR_EQUAL, M_MORE_THAN, M_MORE_THAN_OR_EQUAL:
+	case LESS_THAN, LESS_THAN_OR_EQUAL, MORE_THAN, MORE_THAN_OR_EQUAL:
 		return 4 // Relational
 
-	case M_EQUAL, M_NOT_EQUAL:
+	case EQUAL, NOT_EQUAL:
 		return 3 // Equalitive
 
-	case M_AND:
+	case AND:
 		return 2
 
-	case M_OR:
+	case OR:
 		return 1
 	}
 
@@ -127,5 +127,5 @@ func (m Morpheme) Precedence() int {
 }
 
 func (m Morpheme) Redundant() bool {
-	return m == M_UNDEFINED || m == M_WHITESPACE || m == M_COMMENT
+	return m == UNDEFINED || m == WHITESPACE || m == COMMENT
 }

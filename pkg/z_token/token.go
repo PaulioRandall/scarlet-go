@@ -27,10 +27,10 @@ func ToString(tk Token) string {
 	m := tk.Morpheme()
 
 	switch m {
-	case M_TEMPLATE, M_TERMINATOR, M_NEWLINE, M_WHITESPACE:
+	case TEMPLATE, TERMINATOR, NEWLINE, WHITESPACE:
 		s = strconv.QuoteToGraphic(v)
 
-	case M_STRING:
+	case STRING:
 		s = "`" + v + "`"
 
 	default:
