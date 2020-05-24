@@ -1,207 +1,138 @@
 
+# Add list-based looping
+### Formats
+- `LOOP ID DELIM ID DELIM ID updates expression<list> full-block`
 
-[*****************************************************************************]
-- Refactor naming based on https://stackoverflow.com/questions/14954721/what-is-the-difference-between-a-token-and-a-lexeme/14958865
+### Examples
+- `LOOP index, value, hasMore <- list {}`
+- `LOOP i, v, m <- f() {}`
 
-- Steps
-Rename Lexeme to Morpheme
-Create Lexeme interface as a Morpheme and Value
-Create Token interface as a Kind (token type), Lexeme, and ScriptMark
-
-
-[*****************************************************************************]
-- Token is actually 3 interfaces
-
-type Token interface {
-	Kind()
-	Lexeme
-	ScriptMarker
-}
-E.g. {NUMBER, NUMBER, 2}, {COMPARISON, LESS_THAN, `<`}, {CHARSEQUENCE, TEMPLATE, `"abc"`}
-
-type ScriptMark interface {
-	Line() int
-	Col() int
-}
-
-type Lexeme interface {
-	Morph() Morpheme
-	Value() string
-}
-E.g. {NUMBER,`2`}, {LESS_THAN, `<`}, {TEMPLATE, `"abc"`}
-
-type Morpheme int
-E.g. NUMBER, LESS_THAN, TEMPLATE 
-
-
-[*****************************************************************************]
-- Add list-based looping
-
-- Formats
-`LOOP` ID DELIM ID DELIM ID updates expression<list> full-block
-
-- Examples
-LOOP index, value, hasMore <- list {}
-LOOP i, v, m <- f() {}
-
-- Steps
+### Steps
 1. Add `<-` (UPDATES) symbol to scanner
 2. Add Iterator struct to statement pkg
 3. Add pattern to parser
 4. Add execution of Iterator to runtime
 
-- Tests
+### Tests
 1. Scanner token: UPDATES `<-`
-2. Scanner statement: LOOP i, v, m <- list {}
-3. Scanner statement: LOOP i, v, m <- f() {}
-4. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
-5. Parser statement: LOOP ID DELIM ID DELIM ID UPDATES ID PAREN_OPEN PAREN_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE
+2. Scanner statement: `LOOP i, v, m <- list {}`
+3. Scanner statement: `LOOP i, v, m <- f() {}`
+4. Parser statement: `LOOP ID DELIM ID DELIM ID UPDATES ID BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE`
+5. Parser statement: `LOOP ID DELIM ID DELIM ID UPDATES ID PAREN_OPEN PAREN_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE`
 
 
-[*****************************************************************************]
-- Allow voids as assignment targets
+# Allow voids as assignment targets
 Void assignment targets ignore the result of an expression, useful for indicating that a result is not needed
 
 
-[*****************************************************************************]
-- Loop step size and direction
-
-- Example
-LOOP i [i < n] i := i + 1
-LOOP i [i < n] i := i - 3
+# Loop step size and direction
+### Example
+- `LOOP i [i < n] i := i + 1`
+- `LOOP i [i < n] i := i - 3`
 
 
-[*****************************************************************************]
-- How can dependencies be reduced?
+# How can dependencies be reduced?
 Better definition and use of interfaces will make for more segregated code, which will be easier to maintain.
 
 
-[*****************************************************************************]
-- Exit script early
+# Exit script early
+### Examples
+- `EXIT SCRIPT`
 
-- Example
-EXIT SCRIPT
-
-
-[*****************************************************************************]
-- Exit loop early
-
-- Example
-EXIT LOOP
+# Exit loop early
+### Examples
+- `EXIT LOOP`
 
 
-[*****************************************************************************]
-- Exit guard early
-
-- Example
-EXIT GUARD
+# Exit guard early
+### Examples
+- `EXIT GUARD`
 
 
-[*****************************************************************************]
-- Exit function early
-
-- Example
-EXIT F
+# Exit function early
+### Examples
+- `EXIT F`
 
 
-[*****************************************************************************]
-- Enhance loops
-
-- Allow
+# Enhance loops
+### Allow
 1. LOOP i := 0 [i < 5]
 2. LOOP i, x := 0, 1 [i < 5]
 3. F(n, ^r) LOOP n [n < 5]
 
 
-[*****************************************************************************]
-- Add inbuilt functions
-
-- Print function
+# Add inbuilt functions
+### Print function
+```
 Prints the args (variable length) to console
 @P(...)
+```
 
-- Print line function
+### Print line function
+```
 Prints the args (variable length) to console, and appends a linefeed
 @PL(...)
+```
 
-- Examples
-@P(`x: `, 1 + 2, "; ")
-@PL(list)
-
-
-[*****************************************************************************]
-- Can Keywords be case-insensitive?
-- Maybe they should be lower case, except for F?
+### Examples
+- `@P("x: ", 1 + 2, "; ")`
+- `@PL(list)`
 
 
-[*****************************************************************************]
-- Template strings
-
-- Example
-s := "alpha = {list[0]}, beta = {list[1]}"
+# Can Keywords be case-insensitive?
+Maybe they should be lower case, except for F?
 
 
-[*****************************************************************************]
-- Expression functions
+# Template strings
+### Example
+- `s := "alpha = {list[0]}, beta = {list[1]}"`
+
+
+# Expression functions
 Expression functions have a single expression as their body. The result of the expression is returned.
 
-- Examples
-increment := E(n) n + 1 
-
-expr := E(a, b) [a > b] @P(`A > B`)
-
-
-[*****************************************************************************]
-- Key-value pairs
-
-- Example
-p := "key": "value"
-k, v := p[K], p[V]
+### Examples
+- `increment := E(n) n + 1` 
+- `expr := E(a, b) [a > b] @P("A > B")`
 
 
-[*****************************************************************************]
-- Simple directory navigation spells
-
-- Spells
-@cd(`./scarlet-go`)
-@pushd(`./scarlet-go`)
-@popd()
+# Key-value pairs
+### Examples
+- `p := "key": "value"`
+- `k, v := p[K], p[V]`
 
 
-[*****************************************************************************]
-- Quick shell commands
-
-- Example 
-$ `go build -o` filename `scarlet.go`
-
-
-[*****************************************************************************]
-- Better token type naming
+# Simple directory navigation spells
+### Spells
+- `@cd("./scarlet-go")`
+- `@pushd("./scarlet-go")`
+- `@popd()`
 
 
-[*****************************************************************************]
-- Everything that can fail with ASSIGN parsing
+# Quick shell commands
+### Examples 
+- `$ "go build -o" filename "scarlet.go"`
 
 
-[*****************************************************************************]
-- Everything that can fail with FUNC parsing
+# Better token type naming
 
 
-[*****************************************************************************]
-- Everything that can fail with GUARD parsing
+# Everything that can fail with ASSIGN parsing
 
 
-[*****************************************************************************]
-- Everything that can fail with MAtCH parsing
+# Everything that can fail with FUNC parsing
 
 
-[*****************************************************************************]
-- Everything that can fail with LOOP parsing
+# Everything that can fail with GUARD parsing
 
 
-[*****************************************************************************]
-- Everything that can fail with EXPRESSION parsing
+# Everything that can fail with MAtCH parsing
 
 
-[*****************************************************************************]
-- Everything that can fail with LIST parsing
+# Everything that can fail with LOOP parsing
+
+
+# Everything that can fail with EXPRESSION parsing
+
+
+# Everything that can fail with LIST parsing
