@@ -25,11 +25,11 @@ func parseAssignment(p *pipe) Assignment {
 	a.Targets = parseAssignTargets(p)
 	a.Assign = p.expect(`parseAssignment`, ASSIGN)
 
-	//	if isFuncDef(p) {
-	//	a.Exprs = []Expression{parseFuncDef(p)}
-	//} else {
-	a.Exprs = parseExpressions(p)
-	//	}
+	if isFuncDef(p) {
+		a.Exprs = []Expression{parseFuncDef(p)}
+	} else {
+		a.Exprs = parseExpressions(p)
+	}
 
 	if a.Exprs == nil {
 		panic(unexpected("parseAssignment", p.peek(), ANY.String()))

@@ -25,14 +25,14 @@ func parseStatement(p *pipe) Statement {
 	case isAssignment(p):
 		return parseAssignment(p)
 
-		//	case isGuard(p):
-		//		return parseGuard(p)
+	case isGuard(p):
+		return parseGuard(p)
 
-		//	case isMatch(p):
-		//	return parseMatch(p)
+	case isMatch(p):
+		return parseMatch(p)
 
-		//	case isLoop(p):
-		//	return parseLoop(p)
+	case isLoop(p):
+		return parseLoop(p)
 	}
 
 	exp := parseExpression(p)

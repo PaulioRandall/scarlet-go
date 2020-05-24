@@ -36,11 +36,11 @@ func parseExpression(p *pipe) Expression {
 	var left Expression
 
 	switch {
-	//case isFuncCall(p):
-	//	return parseFuncCall(p)
+	case isFuncCall(p):
+		return parseFuncCall(p)
 
-	//case isListAccess(p):
-	//	return parseListAccess(p)
+	case isListAccess(p):
+		return parseListAccess(p)
 
 	case isLiteral(p):
 		left = parseLiteral(p)
@@ -50,8 +50,8 @@ func parseExpression(p *pipe) Expression {
 		left = parseGroup(p)
 		return parseOperation(p, left, 0)
 
-		//case isList(p):
-		//		return parseList(p)
+	case isList(p):
+		return parseList(p)
 	}
 
 	return nil

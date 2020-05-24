@@ -42,8 +42,8 @@ func parseSubOperation(p *pipe) Expression {
 	// pattern := func_call | literal | group
 
 	switch {
-	//	case isFuncCall(p):
-	//		return parseFuncCall(p)
+	case isFuncCall(p):
+		return parseFuncCall(p)
 
 	case isLiteral(p):
 		return parseLiteral(p)
