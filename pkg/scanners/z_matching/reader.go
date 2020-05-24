@@ -1,6 +1,22 @@
 package z_matching
 
+import (
+	. "github.com/PaulioRandall/scarlet-go/pkg/z_token"
+)
+
 var cache []pattern = patterns()
+
+func ReadAllTokens(s string) []Token {
+
+	in := ReadAll(s)
+	out := make([]Token, len(in))
+
+	for i := range in {
+		out[i] = in[i]
+	}
+
+	return out
+}
 
 func ReadAll(s string) []tok {
 

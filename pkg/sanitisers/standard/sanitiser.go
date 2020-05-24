@@ -1,4 +1,4 @@
-package z_matching
+package standard
 
 import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/z_token"
