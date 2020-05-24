@@ -50,8 +50,6 @@ func Run(t *testing.T, sf ScanFunc, tf TestFunc) {
 
 func checkMany(t *testing.T, exps, acts []Token) {
 
-	//checkEOF(t, acts)
-
 	expSize := len(exps)
 	actSize := len(acts)
 
@@ -70,14 +68,12 @@ func checkMany(t *testing.T, exps, acts []Token) {
 func checkOne(t *testing.T, exp Token, acts []Token) {
 	checkSize(t, 1, acts)
 	checkToken(t, exp, acts[0])
-	//checkEOF(t, acts)
 }
 
 func checkFirstNot(t *testing.T, notExp Token, acts []Token) {
 	checkMinSize(t, 1, acts)
 	require.NotEqual(t, notExp, acts[0],
 		"Expected any token except ("+ToString(notExp)+") but got it")
-	//checkEOF(t, acts)
 }
 
 func checkSize(t *testing.T, exp int, acts []Token) {

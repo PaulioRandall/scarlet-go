@@ -1,4 +1,10 @@
 
+# Change assignment symbol to ':'
+### Examples
+- `x: 1 + 2`
+- `v, e: @ParseNum("1.1")`
+
+
 # Add list-based looping
 ### Formats
 - `LOOP ID DELIM ID DELIM ID updates expression<list> full-block`

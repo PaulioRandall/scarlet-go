@@ -8,14 +8,14 @@ import (
 
 func S1_Assignment(t *testing.T, f ScanFunc) {
 
-	in := "x := 1"
+	in := "x : 1"
 
 	exps := []Token{
 		tok{IDENTIFIER, "x", 0, 0},
 		tok{WHITESPACE, " ", 0, 1},
-		tok{ASSIGN, ":=", 0, 2},
-		tok{WHITESPACE, " ", 0, 4},
-		tok{NUMBER, "1", 0, 5},
+		tok{ASSIGN, ":", 0, 2},
+		tok{WHITESPACE, " ", 0, 3},
+		tok{NUMBER, "1", 0, 4},
 	}
 
 	checkMany(t, exps, f(in))
@@ -23,16 +23,16 @@ func S1_Assignment(t *testing.T, f ScanFunc) {
 
 func S2_MultiAssignment(t *testing.T, f ScanFunc) {
 
-	in := "x,y:=1,TRUE"
+	in := "x,y:1,TRUE"
 
 	exps := []Token{
 		tok{IDENTIFIER, "x", 0, 0},
 		tok{DELIMITER, ",", 0, 1},
 		tok{IDENTIFIER, "y", 0, 2},
-		tok{ASSIGN, ":=", 0, 3},
-		tok{NUMBER, "1", 0, 5},
-		tok{DELIMITER, ",", 0, 6},
-		tok{BOOL, "TRUE", 0, 7},
+		tok{ASSIGN, ":", 0, 3},
+		tok{NUMBER, "1", 0, 4},
+		tok{DELIMITER, ",", 0, 5},
+		tok{BOOL, "TRUE", 0, 6},
 	}
 
 	checkMany(t, exps, f(in))
@@ -40,7 +40,7 @@ func S2_MultiAssignment(t *testing.T, f ScanFunc) {
 
 func S3_GuardBlock(t *testing.T, f ScanFunc) {
 
-	in := "[1<2] x:=TRUE"
+	in := "[1<2] x:TRUE"
 
 	exps := []Token{
 		tok{GUARD_OPEN, "[", 0, 0},
@@ -50,8 +50,8 @@ func S3_GuardBlock(t *testing.T, f ScanFunc) {
 		tok{GUARD_CLOSE, "]", 0, 4},
 		tok{WHITESPACE, " ", 0, 5},
 		tok{IDENTIFIER, "x", 0, 6},
-		tok{ASSIGN, ":=", 0, 7},
-		tok{BOOL, "TRUE", 0, 9},
+		tok{ASSIGN, ":", 0, 7},
+		tok{BOOL, "TRUE", 0, 8},
 	}
 
 	checkMany(t, exps, f(in))
@@ -60,8 +60,8 @@ func S3_GuardBlock(t *testing.T, f ScanFunc) {
 func S4_MatchBlock(t *testing.T, f ScanFunc) {
 
 	in := "MATCH {\n" +
-		"\t[FALSE] x:=FALSE\n" +
-		"\t[TRUE] x:=TRUE\n" +
+		"\t[FALSE] x:FALSE\n" +
+		"\t[TRUE] x:TRUE\n" +
 		"}"
 
 	exps := []Token{
@@ -75,18 +75,18 @@ func S4_MatchBlock(t *testing.T, f ScanFunc) {
 		tok{GUARD_CLOSE, "]", 1, 7},
 		tok{WHITESPACE, " ", 1, 8},
 		tok{IDENTIFIER, "x", 1, 9},
-		tok{ASSIGN, ":=", 1, 10},
-		tok{BOOL, "FALSE", 1, 12},
-		tok{NEWLINE, "\n", 1, 17},
+		tok{ASSIGN, ":", 1, 10},
+		tok{BOOL, "FALSE", 1, 11},
+		tok{NEWLINE, "\n", 1, 16},
 		tok{WHITESPACE, "\t", 2, 0}, // Line start
 		tok{GUARD_OPEN, "[", 2, 1},
 		tok{BOOL, "TRUE", 2, 2},
 		tok{GUARD_CLOSE, "]", 2, 6},
 		tok{WHITESPACE, " ", 2, 7},
 		tok{IDENTIFIER, "x", 2, 8},
-		tok{ASSIGN, ":=", 2, 9},
-		tok{BOOL, "TRUE", 2, 11},
-		tok{NEWLINE, "\n", 2, 15},
+		tok{ASSIGN, ":", 2, 9},
+		tok{BOOL, "TRUE", 2, 10},
+		tok{NEWLINE, "\n", 2, 14},
 		tok{BLOCK_CLOSE, "}", 3, 0}, // Line start
 	}
 
@@ -155,8 +155,8 @@ func S7_Expression(t *testing.T, f ScanFunc) {
 func S8_Block(t *testing.T, f ScanFunc) {
 
 	in := "{\n" +
-		"\tx:=1\n" +
-		"\ty:=2\n" +
+		"\tx:1\n" +
+		"\ty:2\n" +
 		"}"
 
 	exps := []Token{
@@ -164,14 +164,14 @@ func S8_Block(t *testing.T, f ScanFunc) {
 		tok{NEWLINE, "\n", 0, 1},
 		tok{WHITESPACE, "\t", 1, 0}, // Line Start
 		tok{IDENTIFIER, "x", 1, 1},
-		tok{ASSIGN, ":=", 1, 2},
-		tok{NUMBER, "1", 1, 4},
-		tok{NEWLINE, "\n", 1, 5},
+		tok{ASSIGN, ":", 1, 2},
+		tok{NUMBER, "1", 1, 3},
+		tok{NEWLINE, "\n", 1, 4},
 		tok{WHITESPACE, "\t", 2, 0}, // Line Start
 		tok{IDENTIFIER, "y", 2, 1},
-		tok{ASSIGN, ":=", 2, 2},
-		tok{NUMBER, "2", 2, 4},
-		tok{NEWLINE, "\n", 2, 5},
+		tok{ASSIGN, ":", 2, 2},
+		tok{NUMBER, "2", 2, 3},
+		tok{NEWLINE, "\n", 2, 4},
 		tok{BLOCK_CLOSE, "}", 3, 0}, // Line Start
 	}
 
@@ -228,7 +228,7 @@ func S10_Loop(t *testing.T, f ScanFunc) {
 
 func S11_ModifyList(t *testing.T, f ScanFunc) {
 
-	in := "x[3],x[>>]:=1,99"
+	in := "x[3],x[>>]:1,99"
 
 	exps := []Token{
 		tok{IDENTIFIER, "x", 0, 0},
@@ -240,10 +240,10 @@ func S11_ModifyList(t *testing.T, f ScanFunc) {
 		tok{GUARD_OPEN, "[", 0, 6},
 		tok{LIST_END, ">>", 0, 7},
 		tok{GUARD_CLOSE, "]", 0, 9},
-		tok{ASSIGN, ":=", 0, 10},
-		tok{NUMBER, "1", 0, 12},
-		tok{DELIMITER, ",", 0, 13},
-		tok{NUMBER, "99", 0, 14},
+		tok{ASSIGN, ":", 0, 10},
+		tok{NUMBER, "1", 0, 11},
+		tok{DELIMITER, ",", 0, 12},
+		tok{NUMBER, "99", 0, 13},
 	}
 
 	checkMany(t, exps, f(in))

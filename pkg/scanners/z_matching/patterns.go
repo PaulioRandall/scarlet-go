@@ -65,7 +65,7 @@ func patterns() []pattern {
 			})
 		}},
 		pattern{ASSIGN, func(s *symbols) int {
-			return matchStr(s, ":=")
+			return matchStr(s, ":")
 		}},
 		pattern{LIST_END, func(s *symbols) int {
 			return matchStr(s, ">>")

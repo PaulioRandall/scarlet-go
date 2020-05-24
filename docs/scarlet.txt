@@ -1,42 +1,41 @@
 
-divideAndFmt := F(a, b, ^r, ^e) {
+FIX divideAndFmt: F(a, b, ^r, ^e) {
 	WATCH e {
-		[b = 0] e := `Can't divide by zero`
-		r, e := @FmtReal(a / b, `.##`)
+		[b == 0] e: `Can't divide by zero`
+		r, e: @FmtReal(a / b, `.##`)
 
 		EXIT FUNC
 	}
 }
 
-calc := F(argParser, ^e) {
+parseArgs: F(args, ^a, ^b, ^e) {
 	WATCH e {
-		a, b := argParser(@Args())
-		r, e := divideAndFmt(a, b)
+		[@Len(args) < 3] e: `Need at least two number arguments`
+
+		a, e: @ToReal(args(1))
+		b, e: @ToReal(args(2))
+	}
+}
+
+calc: F(argParser, ^e) {
+	WATCH e {
+		a, b, e: argParser(@Args())
+		r, e: divideAndFmt(a, b)
 		@Println("{a} / {b} = {r}")
 	}
 }
 
-parseArgs := F(args, ^a, ^b, ^e) {
-	WATCH e {
-		[@Len(args) < 3] e := `Need at least two number arguments`
-
-		a, e := @ToReal(args(1))
-		b, e := @ToReal(args(2))
-	}
-}
-
-printValues := F(_, v, _) @Println(v)
+printValues: F(_, v, _) @Println(v)
 @Foreach(@Args(), printValues)
-e := calc(parseArgs)
+e: calc(parseArgs)
 @PanicIf(e)
 
-list := LIST { 
+list: LIST { 
 	`abc`,
 	3,
 }
 
 EXIT SCRIPT
-EOF
 
 // Future stuff
 

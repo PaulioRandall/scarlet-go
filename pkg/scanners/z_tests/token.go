@@ -70,7 +70,7 @@ func T11_Identifiers(t *testing.T, f ScanFunc) {
 }
 
 func T12_Assign(t *testing.T, f ScanFunc) {
-	checkOne(t, tok{ASSIGN, ":=", 0, 0}, f(":="))
+	checkOne(t, tok{ASSIGN, ":", 0, 0}, f(":"))
 }
 
 func T13_Output(t *testing.T, f ScanFunc) {
