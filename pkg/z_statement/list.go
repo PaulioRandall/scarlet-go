@@ -49,7 +49,7 @@ type ListAccess struct {
 }
 
 func (la ListAccess) Token() Token {
-	return la.ID.tk
+	return la.ID.Token()
 }
 
 func (la ListAccess) String(i int) string {
@@ -71,11 +71,11 @@ func (la ListAccess) String(i int) string {
 }
 
 type ListItemRef struct {
-	tk Token
+	Tk Token
 }
 
 func (r ListItemRef) Token() Token {
-	return r.tk
+	return r.Tk
 }
 
 func (r ListItemRef) String(i int) string {
@@ -84,6 +84,6 @@ func (r ListItemRef) String(i int) string {
 
 	return s.indent(i).
 		append("[ListItemRef] ").
-		appendTk(r.tk).
+		appendTk(r.Tk).
 		String()
 }

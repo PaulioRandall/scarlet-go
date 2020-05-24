@@ -10,11 +10,11 @@ type Expression interface {
 }
 
 type Value struct {
-	tk Token
+	Tk Token
 }
 
 func (v Value) Token() Token {
-	return Token(v.tk)
+	return Token(v.Tk)
 }
 
 func (v Value) String(i int) string {
@@ -23,16 +23,16 @@ func (v Value) String(i int) string {
 
 	return s.indent(i).
 		append("[Value] ").
-		appendTk(v.tk).
+		appendTk(v.Tk).
 		String()
 }
 
 type Identifier struct {
-	tk Token
+	Tk Token
 }
 
 func (id Identifier) Token() Token {
-	return Token(id.tk)
+	return Token(id.Tk)
 }
 
 func (id Identifier) String(i int) string {
@@ -41,6 +41,6 @@ func (id Identifier) String(i int) string {
 
 	return s.indent(i).
 		append("[Identifier] ").
-		appendTk(id.tk).
+		appendTk(id.Tk).
 		String()
 }
