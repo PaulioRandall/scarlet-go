@@ -62,7 +62,6 @@ func readToken(s *symbols) tok {
 func tokenize(s *symbols, terminalCount int, p pattern) tok {
 
 	tk := tok{
-		k: p.kind,
 		m: p.morpheme,
 		l: s.line,
 		c: s.col,

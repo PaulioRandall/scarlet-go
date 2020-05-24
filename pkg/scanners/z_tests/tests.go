@@ -10,15 +10,10 @@ import (
 )
 
 type tok struct {
-	k Kind
 	m Morpheme
 	v string
 	l int
 	c int
-}
-
-func (tk tok) Kind() Kind {
-	return tk.k
 }
 
 func (tk tok) Morpheme() Morpheme {
@@ -106,7 +101,6 @@ func checkToken(t *testing.T, exp, act Token) {
 
 	m := "Expected (" + ToString(exp) + ") but got (" + ToString(act) + ")"
 
-	require.Equal(t, exp.Kind(), act.Kind(), m)
 	require.Equal(t, exp.Morpheme(), act.Morpheme(), m)
 	require.Equal(t, exp.Value(), act.Value(), m)
 	require.Equal(t, exp.Line(), act.Line(), m)

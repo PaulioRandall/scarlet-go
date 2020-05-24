@@ -5,15 +5,10 @@ import (
 )
 
 type tok struct {
-	k Kind
 	m Morpheme
 	v string
 	l int
 	c int
-}
-
-func (tk tok) Kind() Kind {
-	return tk.k
 }
 
 func (tk tok) Morpheme() Morpheme {

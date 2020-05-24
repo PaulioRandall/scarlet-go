@@ -11,51 +11,50 @@ import (
 type matcher func(*symbols) int
 
 type pattern struct {
-	kind     Kind
 	morpheme Morpheme
 	matcher  matcher
 }
 
 func patterns() []pattern {
 	return []pattern{
-		pattern{K_NEWLINE, M_NEWLINE, func(s *symbols) int {
+		pattern{M_NEWLINE, func(s *symbols) int {
 			return s.countNewlineSymbols(0)
 		}},
-		pattern{K_REDUNDANT, M_WHITESPACE, func(s *symbols) int {
+		pattern{M_WHITESPACE, func(s *symbols) int {
 			// Returns the number of consecutive whitespace terminals.
 			// Newlines are not counted as whitespace.
 			return s.countSymbolsWhile(0, func(i int, ru rune) bool {
 				return !s.isNewline(i) && unicode.IsSpace(ru)
 			})
 		}},
-		pattern{K_REDUNDANT, M_COMMENT, func(s *symbols) int {
+		pattern{M_COMMENT, func(s *symbols) int {
 			if s.isMatch(0, "//") {
 				return s.indexOfNextNewline(0)
 			}
 			return 0
 		}},
-		pattern{K_KEYWORD, M_MATCH, func(s *symbols) int {
+		pattern{M_MATCH, func(s *symbols) int {
 			return matchWord(s, "MATCH")
 		}},
-		pattern{K_LITERAL, M_BOOL, func(s *symbols) int {
+		pattern{M_BOOL, func(s *symbols) int {
 			return matchWord(s, "FALSE")
 		}},
-		pattern{K_LITERAL, M_BOOL, func(s *symbols) int {
+		pattern{M_BOOL, func(s *symbols) int {
 			return matchWord(s, "TRUE")
 		}},
-		pattern{K_KEYWORD, M_LIST, func(s *symbols) int {
+		pattern{M_LIST, func(s *symbols) int {
 			return matchWord(s, "LIST")
 		}},
-		pattern{K_KEYWORD, M_LOOP, func(s *symbols) int {
+		pattern{M_LOOP, func(s *symbols) int {
 			return matchWord(s, "LOOP")
 		}},
-		pattern{K_KEYWORD, M_FIX, func(s *symbols) int {
+		pattern{M_FIX, func(s *symbols) int {
 			return matchWord(s, "FIX")
 		}},
-		pattern{K_KEYWORD, M_FUNC, func(s *symbols) int {
+		pattern{M_FUNC, func(s *symbols) int {
 			return matchWord(s, "F")
 		}},
-		pattern{K_IDENTIFIER, M_IDENTIFIER, func(s *symbols) int {
+		pattern{M_IDENTIFIER, func(s *symbols) int {
 			return s.countSymbolsWhile(0, func(i int, ru rune) bool {
 
 				if unicode.IsLetter(ru) {
@@ -65,88 +64,88 @@ func patterns() []pattern {
 				return i != 0 && ru == '_'
 			})
 		}},
-		pattern{K_DELIMITER, M_ASSIGN, func(s *symbols) int {
+		pattern{M_ASSIGN, func(s *symbols) int {
 			return matchStr(s, ":=")
 		}},
-		pattern{K_REFERENCE, M_LIST_END, func(s *symbols) int {
+		pattern{M_LIST_END, func(s *symbols) int {
 			return matchStr(s, ">>")
 		}},
-		pattern{K_REFERENCE, M_LIST_START, func(s *symbols) int {
+		pattern{M_LIST_START, func(s *symbols) int {
 			return matchStr(s, "<<")
 		}},
-		pattern{K_COMPARISON, M_LESS_THAN_OR_EQUAL, func(s *symbols) int {
+		pattern{M_LESS_THAN_OR_EQUAL, func(s *symbols) int {
 			return matchStr(s, "<=")
 		}},
-		pattern{K_COMPARISON, M_MORE_THAN_OR_EQUAL, func(s *symbols) int {
+		pattern{M_MORE_THAN_OR_EQUAL, func(s *symbols) int {
 			return matchStr(s, ">=")
 		}},
-		pattern{K_DELIMITER, M_BLOCK_OPEN, func(s *symbols) int {
+		pattern{M_BLOCK_OPEN, func(s *symbols) int {
 			return matchStr(s, "{")
 		}},
-		pattern{K_DELIMITER, M_BLOCK_CLOSE, func(s *symbols) int {
+		pattern{M_BLOCK_CLOSE, func(s *symbols) int {
 			return matchStr(s, "}")
 		}},
-		pattern{K_DELIMITER, M_PAREN_OPEN, func(s *symbols) int {
+		pattern{M_PAREN_OPEN, func(s *symbols) int {
 			return matchStr(s, "(")
 		}},
-		pattern{K_DELIMITER, M_PAREN_CLOSE, func(s *symbols) int {
+		pattern{M_PAREN_CLOSE, func(s *symbols) int {
 			return matchStr(s, ")")
 		}},
-		pattern{K_DELIMITER, M_GUARD_OPEN, func(s *symbols) int {
+		pattern{M_GUARD_OPEN, func(s *symbols) int {
 			return matchStr(s, "[")
 		}},
-		pattern{K_DELIMITER, M_GUARD_CLOSE, func(s *symbols) int {
+		pattern{M_GUARD_CLOSE, func(s *symbols) int {
 			return matchStr(s, "]")
 		}},
-		pattern{K_KEYWORD, M_OUTPUT, func(s *symbols) int {
+		pattern{M_OUTPUT, func(s *symbols) int {
 			return matchStr(s, "^")
 		}},
-		pattern{K_DELIMITER, M_DELIMITER, func(s *symbols) int {
+		pattern{M_DELIMITER, func(s *symbols) int {
 			return matchStr(s, ",")
 		}},
-		pattern{K_IDENTIFIER, M_VOID, func(s *symbols) int {
+		pattern{M_VOID, func(s *symbols) int {
 			return matchStr(s, "_")
 		}},
-		pattern{K_DELIMITER, M_TERMINATOR, func(s *symbols) int {
+		pattern{M_TERMINATOR, func(s *symbols) int {
 			return matchStr(s, ";")
 		}},
-		pattern{K_KEYWORD, M_SPELL, func(s *symbols) int {
+		pattern{M_SPELL, func(s *symbols) int {
 			return matchStr(s, "@")
 		}},
-		pattern{K_ARITHMETIC, M_ADD, func(s *symbols) int {
+		pattern{M_ADD, func(s *symbols) int {
 			return matchStr(s, "+")
 		}},
-		pattern{K_ARITHMETIC, M_SUBTRACT, func(s *symbols) int {
+		pattern{M_SUBTRACT, func(s *symbols) int {
 			return matchStr(s, "-")
 		}},
-		pattern{K_ARITHMETIC, M_MULTIPLY, func(s *symbols) int {
+		pattern{M_MULTIPLY, func(s *symbols) int {
 			return matchStr(s, "*")
 		}},
-		pattern{K_ARITHMETIC, M_DIVIDE, func(s *symbols) int {
+		pattern{M_DIVIDE, func(s *symbols) int {
 			return matchStr(s, "/")
 		}},
-		pattern{K_ARITHMETIC, M_REMAINDER, func(s *symbols) int {
+		pattern{M_REMAINDER, func(s *symbols) int {
 			return matchStr(s, "%")
 		}},
-		pattern{K_LOGIC, M_AND, func(s *symbols) int {
+		pattern{M_AND, func(s *symbols) int {
 			return matchStr(s, "&")
 		}},
-		pattern{K_LOGIC, M_OR, func(s *symbols) int {
+		pattern{M_OR, func(s *symbols) int {
 			return matchStr(s, "|")
 		}},
-		pattern{K_COMPARISON, M_EQUAL, func(s *symbols) int {
+		pattern{M_EQUAL, func(s *symbols) int {
 			return matchStr(s, "==")
 		}},
-		pattern{K_COMPARISON, M_NOT_EQUAL, func(s *symbols) int {
+		pattern{M_NOT_EQUAL, func(s *symbols) int {
 			return matchStr(s, "!=")
 		}},
-		pattern{K_COMPARISON, M_LESS_THAN, func(s *symbols) int {
+		pattern{M_LESS_THAN, func(s *symbols) int {
 			return matchStr(s, "<")
 		}},
-		pattern{K_COMPARISON, M_MORE_THAN, func(s *symbols) int {
+		pattern{M_MORE_THAN, func(s *symbols) int {
 			return matchStr(s, ">")
 		}},
-		pattern{K_LITERAL, M_STRING, func(s *symbols) int {
+		pattern{M_STRING, func(s *symbols) int {
 
 			const (
 				PREFIX     = "`"
@@ -171,7 +170,7 @@ func patterns() []pattern {
 
 			return PREFIX_LEN + n + SUFFIX_LEN
 		}},
-		pattern{K_LITERAL, M_TEMPLATE, func(s *symbols) int {
+		pattern{M_TEMPLATE, func(s *symbols) int {
 			// As the name suggests, templates can be populated with the value of
 			// identifiers, but the scanner is not concerned with parsing these. It
 			// does need to watch out for escaped terminals that also represent the
@@ -210,7 +209,7 @@ func patterns() []pattern {
 
 			return n + SUFFIX_LEN
 		}},
-		pattern{K_LITERAL, M_NUMBER, func(s *symbols) int {
+		pattern{M_NUMBER, func(s *symbols) int {
 
 			const (
 				DELIM     = "."

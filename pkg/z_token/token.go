@@ -5,20 +5,11 @@ import (
 	"strconv"
 )
 
-type Lexeme interface {
+type Token interface {
 	Morpheme() Morpheme
 	Value() string
-}
-
-type TextPos interface {
 	Line() int
 	Col() int
-}
-
-type Token interface {
-	Kind() Kind
-	Lexeme
-	TextPos
 }
 
 func ToString(tk Token) string {
@@ -33,7 +24,6 @@ func ToString(tk Token) string {
 
 	var s interface{}
 	v := tk.Value()
-	k := tk.Kind()
 	m := tk.Morpheme()
 
 	switch m {
@@ -48,10 +38,9 @@ func ToString(tk Token) string {
 	}
 
 	// +1 for line index to number
-	return fmt.Sprintf(`%d:%d %s:%s %v`,
+	return fmt.Sprintf(`%d:%d %s %v`,
 		tk.Line()+1,
 		tk.Col(),
-		k.String(),
 		m.String(),
 		s,
 	)

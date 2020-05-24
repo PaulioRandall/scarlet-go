@@ -71,7 +71,6 @@ func formatToken(tk Token) Token {
 		// Non-redundant newline tokens are expression and statement terminators
 		// in disguise.
 		return tok{
-			k: K_DELIMITER,
 			m: M_TERMINATOR,
 			v: tk.Value(),
 			l: tk.Line(),
@@ -84,7 +83,6 @@ func formatToken(tk Token) Token {
 		v := tk.Value()
 
 		return tok{
-			k: tk.Kind(),
 			m: tk.Morpheme(),
 			v: v[1 : len(v)-1],
 			l: tk.Line(),
