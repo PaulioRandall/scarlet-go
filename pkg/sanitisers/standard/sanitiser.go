@@ -36,8 +36,7 @@ func sanitise(prev, next Token) Token {
 
 func isParsableToken(prev, next Token) bool {
 
-	if next.Kind() == K_UNDEFINED ||
-		next.Kind() == K_REDUNDANT {
+	if next.Morpheme().Redundant() {
 		return false
 	}
 

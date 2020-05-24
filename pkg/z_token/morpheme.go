@@ -125,3 +125,7 @@ func (m Morpheme) Precedence() int {
 
 	return 0
 }
+
+func (m Morpheme) Redundant() bool {
+	return m == M_UNDEFINED || m == M_WHITESPACE || m == M_COMMENT
+}
