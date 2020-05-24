@@ -56,7 +56,6 @@ func (s *str) appendStats(indent int, stats []Statement) *str {
 	return s
 }
 
-/*
 func (s *str) appendGuards(indent int, guards []Guard) *str {
 
 	for i, g := range guards {
@@ -70,6 +69,7 @@ func (s *str) appendGuards(indent int, guards []Guard) *str {
 	return s
 }
 
+/*
 func (s *str) appendAssignTargets(indent int, ats []AssignTarget) *str {
 
 	for i, at := range ats {
