@@ -1,5 +1,26 @@
 package z_matching
 
+import (
+	. "github.com/PaulioRandall/scarlet-go/pkg/z_token"
+)
+
+func ScanAll(s string) []Token {
+	tks := readAllToks(s)
+	return SanitiseAll(tks)
+}
+
+func readAllToks(s string) []Token {
+
+	in := ReadAll(s)
+	out := make([]Token, len(in))
+
+	for i := range in {
+		out[i] = in[i]
+	}
+
+	return out
+}
+
 type scanErr struct {
 	msg  string
 	line int

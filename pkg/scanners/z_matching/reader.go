@@ -6,10 +6,10 @@ import (
 
 var cache []pattern = patterns()
 
-func ReadAll(src string) []Token {
+func ReadAll(src string) []tok {
 
 	var tk tok
-	var tks []Token
+	var tks []tok
 
 	s := &symbols{[]rune(src), 0, 0}
 
