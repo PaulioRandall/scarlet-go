@@ -5,17 +5,17 @@ func NewIterator(tks []Token) *TokenIterator {
 }
 
 type TokenIterator struct {
-	tks   []Token
-	size  int
-	index int
+	tks  []Token
+	size int
+	pos  int
 }
 
 func (itr *TokenIterator) Index() int {
-	return itr.index - 1
+	return itr.pos - 1
 }
 
 func (itr *TokenIterator) Empty() bool {
-	return itr.index >= itr.size
+	return itr.pos >= itr.size
 }
 
 func (itr *TokenIterator) Peek() Token {
@@ -24,7 +24,7 @@ func (itr *TokenIterator) Peek() Token {
 		return nil
 	}
 
-	return itr.tks[itr.index]
+	return itr.tks[itr.pos]
 }
 
 func (itr *TokenIterator) Next() Token {
@@ -34,26 +34,26 @@ func (itr *TokenIterator) Next() Token {
 	}
 
 	tk := itr.Peek()
-	itr.index++
+	itr.pos++
 	return tk
 }
 
 func (itr *TokenIterator) Skip() {
 	if !itr.Empty() {
-		itr.index++
+		itr.pos++
 	}
 }
 
 func (itr *TokenIterator) Past() Token {
-	if itr.index > 0 {
-		return itr.tks[itr.index-1]
+	if itr.pos > 0 {
+		return itr.tks[itr.pos-1]
 	}
 
 	return nil
 }
 
 func (itr *TokenIterator) Back() {
-	if itr.index != 0 {
-		itr.index--
+	if itr.pos != 0 {
+		itr.pos--
 	}
 }
