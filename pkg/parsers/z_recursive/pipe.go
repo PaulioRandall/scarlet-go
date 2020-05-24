@@ -79,12 +79,10 @@ func (p *pipe) accept(m Morpheme) bool {
 	return false
 }
 
-/*
 func (p *pipe) expect(tag string, m Morpheme) Token {
 	if !p.accept(m) {
-		panic(unexpected(tag, p.itr.Peek(), m))
+		panic(unexpected(tag, p.itr.Peek(), m.String()))
 	}
 
 	return p.itr.Past()
 }
-*/
