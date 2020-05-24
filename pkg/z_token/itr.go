@@ -10,7 +10,6 @@ type TokenIterator struct {
 	index int
 }
 
-/*
 func (itr *TokenIterator) Index() int {
 	return itr.index - 1
 }
@@ -58,4 +57,3 @@ func (itr *TokenIterator) Back() {
 		itr.index--
 	}
 }
-*/
