@@ -35,21 +35,22 @@ func main() { // Run it with `./godo run`
 
 func run(s string) {
 
-	println("# Scanning:")
+	println("# Scanning...")
 	tks := scanner.ScanAll(s)
 	token.PrettyPrint(tks)
 
-	println("# Sanitising:")
+	println()
+	println("# Sanitising...")
 	tks = sanitiser.SanitiseAll(tks)
 	token.PrettyPrint(tks)
 
-	println("# Parsing:")
+	println()
+	println("# Parsing...")
 	stats := parser.ParseAll(tks)
 	statement.Print(stats)
 
+	println()
 	println("# Executing...")
 	ctx := runtime.Run(stats)
-	println("...done!\n")
-
 	println(ctx.String())
 }

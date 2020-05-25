@@ -3,6 +3,7 @@ package matching
 import (
 	"unicode"
 
+	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
@@ -226,7 +227,10 @@ func patterns() []pattern {
 
 			if fractionalLen == 0 {
 				// One or many fractional digits must follow a delimiter.
-				panic(err(s, n, "Invalid syntax, expected digit after decimal point"))
+				errr.Panic(
+					"Invalid syntax, expected digit after decimal point",
+					errr.Pos(s.line, s.col+n),
+				)
 			}
 
 			return n + DELILEN + fractionalLen
