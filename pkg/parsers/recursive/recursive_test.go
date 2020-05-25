@@ -106,10 +106,6 @@ func Test_E14_Panics(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E14_Panics)
 }
 
-func Test_F1_FuncDef(t *testing.T) {
-	tests.Run(t, ParseAll, tests.F1_FuncDef)
-}
-
 func Test_F2_FuncDef(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F2_FuncDef)
 }

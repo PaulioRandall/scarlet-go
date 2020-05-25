@@ -1,7 +1,19 @@
 
+# MAYBE: Init output variables
+### Examples
+```
+F(list, ^sum: 0) {
+	LOOP i, v, m <- list {
+		sum: sum + v
+	}
+}
+```
+
+
 # ERROR: Terminator check required
 - This passes during parsing but shouldn't 
 - `x: 1 2`
+
 
 # Allow voids as assignment targets
 Void assignment targets ignore the result of an expression, useful for indicating that a result is not needed

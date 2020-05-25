@@ -4,4 +4,11 @@ sum: F(list, ^sum) LOOP i, v, m <- list {
 	sum: sum + v
 }
 
-r: sum(LIST {2, 3, 4})
+product: F(list, ^r) LOOP i, v, m <- list {
+	[i==0] r: v
+	[i!=0] r: r * v
+}
+
+in: LIST {3, 3, 3}
+sum: sum(in)
+product: product(in) 

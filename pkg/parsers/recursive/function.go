@@ -1,6 +1,7 @@
 package recursive
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -20,18 +21,16 @@ func parseFuncDef(p *pipe) Expression {
 
 	if isBlock(p) {
 		f.Body = parseBlock(p)
-	} else {
-
-		/*
-			if len(f.Output) != 1 {
-				panic(err("parseFuncDef", p.peek(),
-				"Inline function bodies must have a single output parameter"))
-			}
-		*/
-		f.Body = parseStatBlock(p)
+		return f
 	}
 
-	return f
+	if isGuard(p) || isMatch(p) || isLoop(p) {
+		f.Body = parseStatBlock(p)
+		return f
+	}
+
+	err.Panic(`Not a block or statement`, err.At(p.peek()))
+	return nil
 }
 
 func parseFuncParams(p *pipe) (in, out []Token) {

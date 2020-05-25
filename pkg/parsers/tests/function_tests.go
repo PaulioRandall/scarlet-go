@@ -7,78 +7,15 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func F1_FuncDef(t *testing.T, f ParseFunc) {
-
-	// f := F(a, b, ^c) c := a
-
-	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "b"),
-		tok(DELIMITER, ","),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "c"),
-		tok(PAREN_CLOSE, ")"),
-		tok(IDENTIFIER, "c"),
-		tok(ASSIGN, ":="),
-		tok(IDENTIFIER, "a"),
-		tok(TERMINATOR, "\n"),
-	}
-
-	targets := []AssignTarget{
-		AssignTarget{tok(IDENTIFIER, "f"), nil},
-	}
-
-	funcBody := Block{ // c := a
-		tok(IDENTIFIER, "c"),
-		[]Statement{
-			Assignment{
-				false,
-				[]AssignTarget{AssignTarget{tok(IDENTIFIER, "c"), nil}},
-				tok(ASSIGN, ":="),
-				[]Expression{Identifier{tok(IDENTIFIER, "a")}},
-			},
-		},
-		tok(TERMINATOR, "\n"),
-	}
-
-	funcExpr := []Expression{ // F(a, b, ^c) c := a
-		FuncDef{
-			tok(FUNC, "F"),
-			[]Token{ // a, b
-				tok(IDENTIFIER, "a"),
-				tok(IDENTIFIER, "b"),
-			},
-			[]Token{ // ^c
-				tok(IDENTIFIER, "c"),
-			},
-			funcBody, // c := a
-		},
-	}
-
-	exp := Assignment{
-		false,
-		targets,
-		tok(ASSIGN, ":="),
-		funcExpr,
-	}
-
-	expectOneStat(t, exp, f(given))
-}
-
 func F2_FuncDef(t *testing.T, f ParseFunc) {
 
-	// f := F(a, b, ^c) {
-	//	c := a
+	// f: F(a, b, ^c) {
+	//	c: a
 	// }
 
 	given := []Token{
 		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
+		tok(ASSIGN, ":"),
 		tok(FUNC, "F"),
 		tok(PAREN_OPEN, "("),
 		tok(IDENTIFIER, "a"),
@@ -90,7 +27,7 @@ func F2_FuncDef(t *testing.T, f ParseFunc) {
 		tok(PAREN_CLOSE, ")"),
 		tok(BLOCK_OPEN, "{"),
 		tok(IDENTIFIER, "c"),
-		tok(ASSIGN, ":="),
+		tok(ASSIGN, ":"),
 		tok(IDENTIFIER, "a"),
 		tok(TERMINATOR, "\n"),
 		tok(BLOCK_CLOSE, "}"),
@@ -106,7 +43,7 @@ func F2_FuncDef(t *testing.T, f ParseFunc) {
 			Assignment{
 				false,
 				[]AssignTarget{AssignTarget{tok(IDENTIFIER, "c"), nil}},
-				tok(ASSIGN, ":="),
+				tok(ASSIGN, ":"),
 				[]Expression{Identifier{tok(IDENTIFIER, "a")}},
 			},
 		},
@@ -130,7 +67,7 @@ func F2_FuncDef(t *testing.T, f ParseFunc) {
 	exp := Assignment{
 		false,
 		targets,
-		tok(ASSIGN, ":="),
+		tok(ASSIGN, ":"),
 		funcExpr,
 	}
 
