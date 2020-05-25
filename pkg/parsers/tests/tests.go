@@ -11,28 +11,7 @@ import (
 )
 
 func tok(m Morpheme, v string) Token {
-	return token{m, v}
-}
-
-type token struct {
-	m Morpheme
-	v string
-}
-
-func (tk token) Morpheme() Morpheme {
-	return tk.m
-}
-
-func (tk token) Value() string {
-	return tk.v
-}
-
-func (tk token) Line() int {
-	return 0
-}
-
-func (tk token) Col() int {
-	return 0
+	return NewToken(m, v, 0, 0)
 }
 
 type ParseFunc func(in []Token) []Statement
