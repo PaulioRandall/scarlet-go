@@ -70,24 +70,12 @@ func formatToken(tk Token) Token {
 	case NEWLINE:
 		// Non-redundant newline tokens are expression and statement terminators
 		// in disguise.
-		return tok{
-			m: TERMINATOR,
-			v: tk.Value(),
-			l: tk.Line(),
-			c: tk.Col(),
-		}
+		return NewToken(TERMINATOR, tk.Value(), tk.Line(), tk.Col())
 
 	case STRING, TEMPLATE:
-		// Avoid issues later by removing the quote marks.
-
 		v := tk.Value()
-
-		return tok{
-			m: tk.Morpheme(),
-			v: v[1 : len(v)-1],
-			l: tk.Line(),
-			c: tk.Col(),
-		}
+		v = v[1 : len(v)-1] // Remove quotes
+		return NewToken(tk.Morpheme(), v, tk.Line(), tk.Col())
 	}
 
 	return tk
