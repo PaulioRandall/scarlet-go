@@ -1,6 +1,9 @@
 package alpha
 
 import (
+	"fmt"
+
+	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -66,12 +69,18 @@ func getListLiteral(ctx *alphaContext, id Token) listLiteral {
 
 	listVal := ctx.GetLocal(id.Value())
 	if listVal == nil {
-		panic(err("assignListItem", id, "List variable is fixed or does not exist"))
+		errr.Panic(
+			"List variable is fixed or does not exist",
+			errr.At(id),
+		)
 	}
 
 	list, ok := listVal.(listLiteral)
 	if !ok {
-		panic(err("assignListItem", id, "Variable is not a list"))
+		errr.Panic(
+			"Variable is not a list",
+			errr.At(id),
+		)
 	}
 
 	return list
@@ -98,16 +107,16 @@ func checkAssignTargets(ats []AssignTarget, vals []result, operator Token) {
 	a, b := len(ats), len(vals)
 
 	if a > b {
-		panic(err("ExeStatement", operator,
-			"Missing expression results to populate variables... have %d, want %d",
-			a, b,
-		))
+		errr.Panic(
+			fmt.Sprintf("Too many identifiers on left side... have %d, want %d", a, b),
+			errr.At(operator),
+		)
 	}
 
 	if a < b {
-		panic(err("ExeStatement", operator,
-			"Too many expression results to populate variables... have %d, want %d",
-			a, b,
-		))
+		errr.Panic(
+			fmt.Sprintf("Too many expressions on right side... have %d, want %d", a, b),
+			errr.At(operator),
+		)
 	}
 }
