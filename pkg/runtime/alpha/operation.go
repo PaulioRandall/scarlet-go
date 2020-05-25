@@ -3,7 +3,7 @@ package alpha
 import (
 	"github.com/shopspring/decimal"
 
-	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -66,7 +66,7 @@ func evalOperation(ctx *alphaContext, op Operation) result {
 		return boolLiteral(!equal(left, right))
 	}
 
-	errr.Panic("Unknown operation", errr.At(tk))
+	err.Panic("Unknown operation", err.At(tk))
 	return nil
 }
 
@@ -92,7 +92,7 @@ func evalNumber(ctx *alphaContext, ex Expression) decimal.Decimal {
 	n, ok := v.(numberLiteral)
 
 	if !ok {
-		errr.Panic("Not a numeric expression", errr.At(ex.Token()))
+		err.Panic("Not a numeric expression", err.At(ex.Token()))
 	}
 
 	return decimal.Decimal(n)
@@ -103,7 +103,7 @@ func evalBool(ctx *alphaContext, ex Expression) bool {
 	v, ok := evalExpression(ctx, ex).(boolLiteral)
 
 	if !ok {
-		errr.Panic("Not a boolean expression", errr.At(ex.Token()))
+		err.Panic("Not a boolean expression", err.At(ex.Token()))
 	}
 
 	return bool(v)

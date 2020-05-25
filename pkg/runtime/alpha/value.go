@@ -6,7 +6,7 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -159,9 +159,9 @@ func valueOf(tk Token) result {
 		return templateLiteral(tk.Value())
 	}
 
-	errr.Panic(
+	err.Panic(
 		fmt.Sprintf("SANITY CHECK! Invalid morpheme %s", tk.Morpheme().String()),
-		errr.At(tk),
+		err.At(tk),
 	)
 	return nil
 }
@@ -170,7 +170,7 @@ func parseFloat(tk Token) numberLiteral {
 	d, e := decimal.NewFromString(tk.Value())
 
 	if e != nil {
-		errr.Panic("Unparsable number", errr.At(tk))
+		err.Panic("Unparsable number", err.At(tk))
 	}
 
 	return numberLiteral(d)

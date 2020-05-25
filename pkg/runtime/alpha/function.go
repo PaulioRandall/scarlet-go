@@ -3,7 +3,7 @@ package alpha
 import (
 	"fmt"
 
-	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -33,7 +33,7 @@ func findFunction(ctx *alphaContext, idExp Expression) functionLiteral {
 	f, ok := v.(functionLiteral)
 
 	if !ok {
-		errr.Panic("Not a function", errr.At(idExp.Token()))
+		err.Panic("Not a function", err.At(idExp.Token()))
 	}
 
 	return f
@@ -45,7 +45,7 @@ func checkFuncCallArgs(exp []Token, act []Expression, callTk Token) {
 
 	if a != b {
 		m := fmt.Sprintf("Expected %d parameters, given %d", a, b)
-		errr.Panic(m, errr.At(callTk))
+		err.Panic(m, err.At(callTk))
 	}
 }
 
@@ -100,7 +100,7 @@ func expectOneValue(v result, tk Token) result {
 	a := []result(t)
 
 	if t == nil || len(a) != 1 {
-		errr.Panic("Need one result", errr.At(tk))
+		err.Panic("Need one result", err.At(tk))
 	}
 
 	return a[0]

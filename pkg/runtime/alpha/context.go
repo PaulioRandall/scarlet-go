@@ -1,7 +1,7 @@
 package alpha
 
 import (
-	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
@@ -90,7 +90,7 @@ func (ctx *alphaContext) SetFixed(id Token, v result) {
 	name := id.Value()
 
 	if _, ok := ctx.fixed[name]; ok {
-		errr.Panic("Cannot change a fixed variable", errr.At(id))
+		err.Panic("Cannot change a fixed variable", err.At(id))
 	}
 
 	delete(ctx.local, name)
@@ -101,7 +101,7 @@ func (ctx *alphaContext) SetLocal(id Token, v result) {
 
 	for c := ctx; c != nil; c = c.parent {
 		if _, ok := c.fixed[id.Value()]; ok {
-			errr.Panic("Cannot change a fixed variable", errr.At(id))
+			err.Panic("Cannot change a fixed variable", err.At(id))
 		}
 	}
 
@@ -119,7 +119,7 @@ func (ctx *alphaContext) set(id Token, v result) bool {
 	varName := id.Value()
 
 	if _, ok := ctx.fixed[varName]; ok {
-		errr.Panic("Cannot change a fixed variable", errr.At(id))
+		err.Panic("Cannot change a fixed variable", err.At(id))
 	}
 
 	if _, ok := ctx.local[varName]; ok {
