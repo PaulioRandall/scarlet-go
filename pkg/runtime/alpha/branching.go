@@ -1,6 +1,7 @@
 package alpha
 
 import (
+	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
@@ -17,7 +18,10 @@ func exeGuard(ctx *alphaContext, g Guard) bool {
 	pass, ok := evalExpression(ctx, g.Condition).(boolLiteral)
 
 	if !ok {
-		panic(err("ExeGuard", g.Open, "Unexpected non-boolean result"))
+		errr.Panic(
+			"Expected boolean value",
+			errr.At(g.Open),
+		)
 	}
 
 	if pass {
