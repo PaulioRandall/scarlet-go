@@ -12,6 +12,33 @@ type Token interface {
 	Col() int
 }
 
+type tok struct {
+	m Morpheme
+	v string
+	l int
+	c int
+}
+
+func (tk tok) Morpheme() Morpheme {
+	return tk.m
+}
+
+func (tk tok) Value() string {
+	return tk.v
+}
+
+func (tk tok) Line() int {
+	return tk.l
+}
+
+func (tk tok) Col() int {
+	return tk.c
+}
+
+func NewToken(m Morpheme, v string, line, col int) Token {
+	return tok{m, v, line, col}
+}
+
 func ToString(tk Token) string {
 
 	if tk == nil {

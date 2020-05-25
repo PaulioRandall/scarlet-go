@@ -9,47 +9,32 @@ var cache []pattern = patterns()
 
 func ScanAll(s string) []Token {
 
-	in := ReadAll(s)
-	out := make([]Token, len(in))
-
-	for i := range in {
-		out[i] = in[i]
-	}
-
-	return out
-}
-
-func ReadAll(s string) []tok {
-
-	var tks []tok
+	var tks []Token
 	sym := &symbols{[]rune(s), 0, 0}
 
-	for tk, ok := readNext(sym); ok; tk, ok = readNext(sym) {
+	for tk := readNext(sym); tk != nil; tk = readNext(sym) {
 		tks = append(tks, tk)
 	}
 
 	return tks
 }
 
-func readNext(s *symbols) (tok, bool) {
+func readNext(s *symbols) Token {
 
 	if s.empty() {
-		return tok{}, false
+		return nil
 	}
 
 	tk := readToken(s)
 
-	if tk == (tok{}) {
-		err.Panic(
-			"Unknown token",
-			err.Pos(s.line, s.col),
-		)
+	if tk == nil {
+		err.Panic("Unknown token", err.Pos(s.line, s.col))
 	}
 
-	return tk, true
+	return tk
 }
 
-func readToken(s *symbols) tok {
+func readToken(s *symbols) Token {
 
 	for _, p := range cache {
 
@@ -60,17 +45,15 @@ func readToken(s *symbols) tok {
 		}
 	}
 
-	return tok{}
+	return nil
 }
 
-func tokenize(s *symbols, terminalCount int, p pattern) tok {
+func tokenize(s *symbols, terminalCount int, p pattern) Token {
 
-	tk := tok{
-		m: p.morpheme,
-		l: s.line,
-		c: s.col,
-	}
+	m := p.morpheme
+	l := s.line
+	c := s.col
+	v := s.readNonTerminal(terminalCount)
 
-	tk.v = s.readNonTerminal(terminalCount)
-	return tk
+	return NewToken(m, v, l, c)
 }
