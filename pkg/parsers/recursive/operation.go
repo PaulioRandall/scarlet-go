@@ -1,6 +1,7 @@
 package recursive
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -52,7 +53,12 @@ func parseSubOperation(p *pipe) Expression {
 		return parseGroup(p)
 	}
 
-	panic(unexpected("parseRightSide", p.peek(), `function_call | literal | group`))
+	err.Panic(
+		errMsg("parseRightSide", `function call, literal, or group`, p.peek()),
+		err.At(p.peek()),
+	)
+
+	return nil
 }
 
 func isLiteral(p *pipe) bool {
@@ -87,7 +93,10 @@ func parseGroup(p *pipe) Expression {
 
 	g := parseExpression(p)
 	if g == nil {
-		panic(unexpected("group", p.past(), ANOTHER.String()))
+		err.Panic(
+			errMsg("group", ANOTHER.String(), p.past()),
+			err.At(p.past()),
+		)
 	}
 
 	p.expect(`group`, PAREN_CLOSE)

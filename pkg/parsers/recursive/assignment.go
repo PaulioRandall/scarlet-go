@@ -1,6 +1,7 @@
 package recursive
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -32,7 +33,10 @@ func parseAssignment(p *pipe) Assignment {
 	}
 
 	if a.Exprs == nil {
-		panic(unexpected("parseAssignment", p.peek(), ANY.String()))
+		err.Panic(
+			errMsg("parseAssignment", `expression`, p.peek()),
+			err.At(p.peek()),
+		)
 	}
 
 	return a
@@ -68,12 +72,18 @@ func parseAssignTarget(p *pipe) AssignTarget {
 		switch {
 		case p.matchAny(LIST_START, LIST_END):
 			at.Index = ListItemRef{p.next()}
+
 		case p.match(NUMBER):
 			at.Index = parseExpression(p)
+
 		case p.match(IDENTIFIER):
 			at.Index = parseExpression(p)
+
 		default:
-			panic(unexpected("parseAssignTarget", p.peek(), `NUMBER | ID`))
+			err.Panic(
+				errMsg("parseAssignTarget", `NUMBER or ID`, p.peek()),
+				err.At(p.peek()),
+			)
 		}
 
 		p.expect(`parseAssignTarget`, GUARD_CLOSE)

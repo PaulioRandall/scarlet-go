@@ -1,6 +1,7 @@
 package recursive
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -31,13 +32,17 @@ func parseGuard(p *pipe) Guard {
 	}
 
 	if g.Condition == nil {
-		panic(err("parseGuard", p.past(), 1, `Expected expression`))
+		err.Panic(
+			errMsg("parseGuard", `conditional expression`, p.past()),
+			err.After(p.past()),
+		)
 	}
 
 	if !isBoolOperation(g.Condition) {
-		panic(err("parseGuard", g.Condition.Token(), 0,
-			`Expected operation with bool result`,
-		))
+		err.Panic(
+			errMsg("parseGuard", `conditional expression`, g.Condition.Token()),
+			err.At(g.Condition.Token()),
+		)
 	}
 
 	g.Close = p.expect(`parseGuard`, GUARD_CLOSE)

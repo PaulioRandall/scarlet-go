@@ -1,4 +1,9 @@
 
+# ERROR: Terminator check required
+- This passes during parsing but shouldn't 
+- `x: 1 2`
+
+
 # Add list-based looping
 ### Formats
 - `LOOP ID DELIM ID DELIM ID updates expression<list> full-block`

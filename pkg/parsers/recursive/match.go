@@ -1,6 +1,7 @@
 package recursive
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -19,7 +20,10 @@ func parseMatch(p *pipe) Match {
 	}
 
 	if m.Cases == nil {
-		panic(unexpected("parseMatch", p.peek(), GUARD_OPEN.String()))
+		err.Panic(
+			errMsg("parseMatch", GUARD_OPEN.String(), p.peek()),
+			err.At(p.peek()),
+		)
 	}
 
 	m.Close = p.expect(`parseMatch`, BLOCK_CLOSE)

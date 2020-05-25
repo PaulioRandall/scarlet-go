@@ -1,6 +1,7 @@
 package recursive
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
@@ -81,7 +82,10 @@ func (p *pipe) accept(m Morpheme) bool {
 
 func (p *pipe) expect(tag string, m Morpheme) Token {
 	if !p.accept(m) {
-		panic(unexpected(tag, p.itr.Peek(), m.String()))
+		err.Panic(
+			errMsg(tag, m.String(), p.peek()),
+			err.At(p.peek()),
+		)
 	}
 
 	return p.itr.Past()

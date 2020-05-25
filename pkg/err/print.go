@@ -106,10 +106,14 @@ func printErrPtr(w io.Writer, e Err, linePre int) {
 
 	s := strings.Repeat(" ", col)
 
-	if size < 1 {
+	switch {
+	case size < 1:
 		s = fmt.Sprintf("%s^... [%d]", s, col)
 
-	} else {
+	case size == 1:
+		s = fmt.Sprintf("%s^ [%d]", s, col)
+
+	case size > 1:
 		s += strings.Repeat(`^`, size)
 		s = fmt.Sprintf("%s [%d..%d]", s, col, col+size)
 	}

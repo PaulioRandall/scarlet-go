@@ -1,6 +1,7 @@
 package recursive
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -48,8 +49,10 @@ func parseListItemExpr(p *pipe) Expression {
 	}
 
 	if expr == nil {
-		panic(err("parseListItemExpr", p.next(), 0,
-			`Expected an expression or list positional reference`))
+		err.Panic(
+			errMsg("parseListItemExpr", `expression or position reference`, p.next()),
+			err.At(p.next()),
+		)
 	}
 
 	return expr

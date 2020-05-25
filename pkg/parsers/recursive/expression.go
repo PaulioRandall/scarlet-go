@@ -1,6 +1,7 @@
 package recursive
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -18,7 +19,10 @@ func parseExpressions(p *pipe) []Expression {
 			exp = parseExpression(p)
 
 			if exp == nil {
-				panic(err("parseExpressions", p.past(), 1, `Expected expression`))
+				err.Panic(
+					errMsg("parseExpressions", `expression`, p.past()),
+					err.After(p.past()),
+				)
 			}
 
 		} else {

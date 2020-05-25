@@ -3,14 +3,8 @@ package recursive
 import (
 	"testing"
 
-	e "github.com/PaulioRandall/scarlet-go/pkg/err"
-
 	tests "github.com/PaulioRandall/scarlet-go/pkg/parsers/tests"
 )
-
-func TestParseErr(t *testing.T) {
-	var _ e.Err = parseErr{}
-}
 
 func Test_A1_Assignment(t *testing.T) {
 	tests.Run(t, ParseAll, tests.A1_Assignment)
