@@ -3,29 +3,6 @@
 - This passes during parsing but shouldn't 
 - `x: 1 2`
 
-
-# Add list-based looping
-### Formats
-- `LOOP ID DELIM ID DELIM ID updates expression<list> full-block`
-
-### Examples
-- `LOOP index, value, hasMore <- list {}`
-- `LOOP i, v, m <- f() {}`
-
-### Steps
-1. Add `<-` (UPDATES) symbol to scanner
-2. Add Iterator struct to statement pkg
-3. Add pattern to parser
-4. Add execution of Iterator to runtime
-
-### Tests
-1. Scanner token: UPDATES `<-`
-2. Scanner statement: `LOOP i, v, m <- list {}`
-3. Scanner statement: `LOOP i, v, m <- f() {}`
-4. Parser statement: `LOOP ID DELIM ID DELIM ID UPDATES ID BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE`
-5. Parser statement: `LOOP ID DELIM ID DELIM ID UPDATES ID PAREN_OPEN PAREN_CLOSE BLOCK_OPEN ID ASSIGN NUMBER BLOCK_CLOSE`
-
-
 # Allow voids as assignment targets
 Void assignment targets ignore the result of an expression, useful for indicating that a result is not needed
 

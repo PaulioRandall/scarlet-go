@@ -29,6 +29,9 @@ func exeStatement(ctx *alphaContext, s Statement) {
 	case Loop:
 		exeLoop(ctx, v)
 
+	case ForEach:
+		exeForEach(ctx, v)
+
 	case Expression:
 		_ = evalExpression(ctx, v)
 

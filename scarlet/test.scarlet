@@ -1,2 +1,11 @@
 
-x: 1 + 2
+in: LIST {1, 5, 2}
+sum: 0
+last: 0
+size: 0
+
+LOOP i, v, m <- in {
+	sum: sum + v
+	[m == FALSE] last: v
+	size: i+1
+}
