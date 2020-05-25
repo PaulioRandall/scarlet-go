@@ -68,6 +68,9 @@ func patterns() []pattern {
 		pattern{ASSIGN, func(s *symbols) int {
 			return matchStr(s, ":")
 		}},
+		pattern{UPDATES, func(s *symbols) int {
+			return matchStr(s, "<-")
+		}},
 		pattern{LIST_END, func(s *symbols) int {
 			return matchStr(s, ">>")
 		}},

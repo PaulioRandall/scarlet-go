@@ -11,46 +11,47 @@ const (
 	ANY
 	ANOTHER
 	// ------------------
-	COMMENT            // K_REDUNDANT
-	WHITESPACE         // K_REDUNDANT
-	NEWLINE            // K_NEWLINE
-	FUNC               // K_KEYWORD
-	FIX                // K_KEYWORD
-	LIST               // K_KEYWORD
-	MATCH              // K_KEYWORD
-	LOOP               // K_KEYWORD
-	SPELL              // K_KEYWORD
-	OUTPUT             // K_KEYWORD
-	IDENTIFIER         // K_IDENTIFIER
-	VOID               // K_IDENTIFIER
-	DELIMITER          // K_DELIMITER
-	ASSIGN             // K_DELIMITER
-	BLOCK_OPEN         // K_DELIMITER
-	BLOCK_CLOSE        // K_DELIMITER
-	PAREN_OPEN         // K_DELIMITER
-	PAREN_CLOSE        // K_DELIMITER
-	GUARD_OPEN         // K_DELIMITER
-	GUARD_CLOSE        // K_DELIMITER
-	TERMINATOR         // K_DELIMITER
-	STRING             // K_LITERAL
-	TEMPLATE           // K_LITERAL
-	NUMBER             // K_LITERAL
-	BOOL               // K_LITERAL
-	ADD                // K_ARITHMETIC
-	SUBTRACT           // K_ARITHMETIC
-	MULTIPLY           // K_ARITHMETIC
-	DIVIDE             // K_ARITHMETIC
-	REMAINDER          // K_ARITHMETIC
-	AND                // K_LOGIC
-	OR                 // K_LOGIC
-	EQUAL              // K_COMPARISON
-	NOT_EQUAL          // K_COMPARISON
-	LESS_THAN          // K_COMPARISON
-	LESS_THAN_OR_EQUAL // K_COMPARISON
-	MORE_THAN          // K_COMPARISON
-	MORE_THAN_OR_EQUAL // K_COMPARISON
-	LIST_START         // K_REFERENCE
-	LIST_END           // K_REFERENCE
+	COMMENT
+	WHITESPACE
+	NEWLINE
+	FUNC
+	FIX
+	LIST
+	MATCH
+	LOOP
+	SPELL
+	OUTPUT
+	IDENTIFIER
+	VOID
+	DELIMITER
+	ASSIGN
+	UPDATES
+	BLOCK_OPEN
+	BLOCK_CLOSE
+	PAREN_OPEN
+	PAREN_CLOSE
+	GUARD_OPEN
+	GUARD_CLOSE
+	TERMINATOR
+	STRING
+	TEMPLATE
+	NUMBER
+	BOOL
+	ADD
+	SUBTRACT
+	MULTIPLY
+	DIVIDE
+	REMAINDER
+	AND
+	OR
+	EQUAL
+	NOT_EQUAL
+	LESS_THAN
+	LESS_THAN_OR_EQUAL
+	MORE_THAN
+	MORE_THAN_OR_EQUAL
+	LIST_START
+	LIST_END
 )
 
 var morphemes map[Morpheme]string = map[Morpheme]string{
@@ -70,6 +71,7 @@ var morphemes map[Morpheme]string = map[Morpheme]string{
 	VOID:               `VOID`,
 	DELIMITER:          `DELIM`,
 	ASSIGN:             `ASSIGN`,
+	UPDATES:            `UPDATES`,
 	BLOCK_OPEN:         `BLOCK_OPEN`,
 	BLOCK_CLOSE:        `BLOCK_CLOSE`,
 	PAREN_OPEN:         `PAREN_OPEN`,

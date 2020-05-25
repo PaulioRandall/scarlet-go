@@ -170,6 +170,10 @@ func Test_T42_Prepend(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T42_Prepend)
 }
 
+func Test_T43_Updates(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T43_Updates)
+}
+
 func Test_S1_Assignment(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S1_Assignment)
 }
@@ -212,4 +216,8 @@ func Test_S10_Loop(t *testing.T) {
 
 func Test_S11_ModifyList(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S11_ModifyList)
+}
+
+func Test_S12_ForEach(t *testing.T) {
+	tests.Run(t, ScanAll, tests.S12_ForEach)
 }

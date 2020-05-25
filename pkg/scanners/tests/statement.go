@@ -248,3 +248,22 @@ func S11_ModifyList(t *testing.T, f ScanFunc) {
 
 	checkMany(t, exps, f(in))
 }
+
+func S12_ForEach(t *testing.T, f ScanFunc) {
+
+	in := "LOOP i,v,m<-list"
+
+	exps := []Token{
+		NewToken(LOOP, "LOOP", 0, 0),
+		NewToken(WHITESPACE, " ", 0, 4),
+		NewToken(IDENTIFIER, "i", 0, 5),
+		NewToken(DELIMITER, ",", 0, 6),
+		NewToken(IDENTIFIER, "v", 0, 7),
+		NewToken(DELIMITER, ",", 0, 8),
+		NewToken(IDENTIFIER, "m", 0, 9),
+		NewToken(UPDATES, "<-", 0, 10),
+		NewToken(IDENTIFIER, "list", 0, 12),
+	}
+
+	checkMany(t, exps, f(in))
+}

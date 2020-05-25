@@ -213,3 +213,7 @@ func T42_Prepend(t *testing.T, f ScanFunc) {
 	checkOne(t, tok(LIST_START, "<<"), f("<<"))
 	checkFirstNot(t, tok(LIST_START, "<<<"), f("<<<"))
 }
+
+func T43_Updates(t *testing.T, f ScanFunc) {
+	checkOne(t, tok(UPDATES, "<-"), f("<-"))
+}
