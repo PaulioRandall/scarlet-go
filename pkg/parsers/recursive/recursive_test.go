@@ -170,6 +170,6 @@ func Test_L5_ListAccess(t *testing.T) {
 	tests.Run(t, ParseAll, tests.L5_ListAccess)
 }
 
-func Test_LP1_Assignment(t *testing.T) {
-	tests.Run(t, ParseAll, tests.LP1_Assignment)
+func Test_LP1_Conditional(t *testing.T) {
+	tests.Run(t, ParseAll, tests.LP1_Conditional)
 }

@@ -7,7 +7,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func LP1_Assignment(t *testing.T, f ParseFunc) {
+func LP1_Conditional(t *testing.T, f ParseFunc) {
 
 	// LOOP i [i < 5] {
 	//	 x := i
@@ -62,4 +62,51 @@ func LP1_Assignment(t *testing.T, f ParseFunc) {
 	loop.Guard = guard
 
 	expectOneStat(t, loop, f(given))
+}
+
+func LP2_ForEach(t *testing.T, f ParseFunc) {
+
+	// LOOP i, v, m <- list {
+	//	 x := i
+	// }
+
+	given := []Token{
+		tok(LOOP, "LOOP"),
+		tok(IDENTIFIER, "i"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "v"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "m"),
+		tok(UPDATES, "<-"),
+		tok(IDENTIFIER, "list"),
+		tok(BLOCK_OPEN, "{"),
+		tok(IDENTIFIER, "x"),
+		tok(ASSIGN, ":"),
+		tok(IDENTIFIER, "i"),
+		tok(TERMINATOR, ""),
+		tok(BLOCK_CLOSE, "}"),
+	}
+
+	forEach := ForEach{
+		Open:    tok(LOOP, "LOOP"),
+		IndexId: tok(IDENTIFIER, "i"),
+		ValueId: tok(IDENTIFIER, "i"),
+		MoreId:  tok(IDENTIFIER, "i"),
+		List:    Identifier{tok(IDENTIFIER, "i")},
+	}
+
+	stat := Assignment{
+		false,
+		[]AssignTarget{AssignTarget{tok(IDENTIFIER, "x"), nil}},
+		tok(ASSIGN, ":"),
+		[]Expression{Identifier{tok(IDENTIFIER, "i")}},
+	}
+
+	forEach.Block = Block{
+		tok(BLOCK_OPEN, "{"),
+		[]Statement{stat},
+		tok(BLOCK_CLOSE, "}"),
+	}
+
+	expectOneStat(t, forEach, f(given))
 }
