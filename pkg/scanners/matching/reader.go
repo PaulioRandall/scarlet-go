@@ -1,6 +1,7 @@
 package matching
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
@@ -39,7 +40,10 @@ func readNext(s *symbols) (tok, bool) {
 	tk := readToken(s)
 
 	if tk == (tok{}) {
-		panic(err(s, 0, "Unknown token"))
+		err.Panic(
+			"Unknown token",
+			err.Pos(s.line, s.col),
+		)
 	}
 
 	return tk, true

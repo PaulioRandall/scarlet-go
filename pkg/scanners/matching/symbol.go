@@ -1,5 +1,9 @@
 package matching
 
+import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
+)
+
 // symbols provides access to an ordered stream of terminal symbols (runes)
 // representing a script. The stream also monitors the current cursor position
 // in the form of line and column indexes.
@@ -63,8 +67,10 @@ func (s *symbols) peekNonTerminal(runeCount int) string {
 func (s *symbols) readNonTerminal(runeCount int) string {
 
 	if runeCount > s.len() {
-		panic("PROGRAMMING ERROR! Bad argument, " +
-			"requested slice amount is bigger than the number of remaining runes")
+		err.Panic(
+			"SANITY CHECK! not enough runes to slice",
+			err.Pos(s.line, s.col),
+		)
 	}
 
 	for i := 0; i < runeCount; i++ {

@@ -102,16 +102,18 @@ func printErrPtr(w io.Writer, e Err, linePre int) {
 		size = e.Len()
 	)
 
-	if size == 0 {
-		size = 1
-	}
-
 	// `¯\_(ツ)_/¯`
 
-	pre := strings.Repeat(" ", col)
+	s := strings.Repeat(" ", col)
 
-	s := pre + strings.Repeat(`^`, size)
-	s = fmt.Sprintf("%s [%d..%d]", s, col, col+size)
+	if size < 1 {
+		s = fmt.Sprintf("%s^... [%d]", s, col)
+
+	} else {
+		s += strings.Repeat(`^`, size)
+		s = fmt.Sprintf("%s [%d..%d]", s, col, col+size)
+	}
+
 	s = craftLine(linePre, 0, s)
 	fPrintln(w, s)
 
