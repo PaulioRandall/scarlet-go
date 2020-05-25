@@ -90,9 +90,9 @@ func LP2_ForEach(t *testing.T, f ParseFunc) {
 	forEach := ForEach{
 		Open:    tok(LOOP, "LOOP"),
 		IndexId: tok(IDENTIFIER, "i"),
-		ValueId: tok(IDENTIFIER, "i"),
-		MoreId:  tok(IDENTIFIER, "i"),
-		List:    Identifier{tok(IDENTIFIER, "i")},
+		ValueId: tok(IDENTIFIER, "v"),
+		MoreId:  tok(IDENTIFIER, "m"),
+		List:    Identifier{tok(IDENTIFIER, "list")},
 	}
 
 	stat := Assignment{

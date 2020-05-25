@@ -173,3 +173,7 @@ func Test_L5_ListAccess(t *testing.T) {
 func Test_LP1_Conditional(t *testing.T) {
 	tests.Run(t, ParseAll, tests.LP1_Conditional)
 }
+
+func Test_LP2_ForEach(t *testing.T) {
+	tests.Run(t, ParseAll, tests.LP2_ForEach)
+}
