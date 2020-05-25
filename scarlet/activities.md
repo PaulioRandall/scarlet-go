@@ -30,12 +30,6 @@
 Void assignment targets ignore the result of an expression, useful for indicating that a result is not needed
 
 
-# Loop step size and direction
-### Example
-- `LOOP i [i < n] i := i + 1`
-- `LOOP i [i < n] i := i - 3`
-
-
 # How can dependencies be reduced?
 Better definition and use of interfaces will make for more segregated code, which will be easier to maintain.
 
@@ -63,7 +57,6 @@ Better definition and use of interfaces will make for more segregated code, whic
 ### Allow
 1. LOOP i := 0 [i < 5]
 2. LOOP i, x := 0, 1 [i < 5]
-3. F(n, ^r) LOOP n [n < 5]
 
 
 # Add inbuilt functions
