@@ -27,13 +27,13 @@ func evalListAccess(ctx *alphaContext, la ListAccess) result {
 func getList(ctx *alphaContext, id Identifier) listLiteral {
 
 	v := evalIdentifier(ctx, id)
+	list, ok := v.(listLiteral)
 
-	if list, ok := v.(listLiteral); ok {
-		return list
+	if !ok {
+		errr.Panic("Not a list", errr.At(id.Token()))
 	}
 
-	errr.Panic("Not a list", errr.At(id.Token()))
-	return nil
+	return list
 }
 
 func evalIndexExpr(ctx *alphaContext, listSize int64, expr Expression, inclusiveRef bool) int64 {
@@ -43,13 +43,13 @@ func evalIndexExpr(ctx *alphaContext, listSize int64, expr Expression, inclusive
 	}
 
 	n := evalExpression(ctx, expr)
+	i, ok := n.(numberLiteral)
 
-	if i, ok := n.(numberLiteral); ok {
-		return i.ToInt()
+	if !ok {
+		errr.Panic("Need a number", errr.At(expr.Token()))
 	}
 
-	errr.Panic("Need a number", errr.At(expr.Token()))
-	return 0
+	return i.ToInt()
 }
 
 func resolveListRef(listSize int64, ref Token, inclusiveRef bool) int64 {

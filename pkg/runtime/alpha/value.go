@@ -1,10 +1,12 @@
 package alpha
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/shopspring/decimal"
 
+	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -157,14 +159,18 @@ func valueOf(tk Token) result {
 		return templateLiteral(tk.Value())
 	}
 
-	panic(err("valueOf", tk, "Invalid morpheme %s", tk.Morpheme().String()))
+	errr.Panic(
+		fmt.Sprintf("SANITY CHECK! Invalid morpheme %s", tk.Morpheme().String()),
+		errr.At(tk),
+	)
+	return nil
 }
 
 func parseFloat(tk Token) numberLiteral {
 	d, e := decimal.NewFromString(tk.Value())
 
 	if e != nil {
-		panic(err("parseFloat", tk, "Could not parse number"))
+		errr.Panic("Unparsable number", errr.At(tk))
 	}
 
 	return numberLiteral(d)

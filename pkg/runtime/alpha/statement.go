@@ -1,6 +1,7 @@
 package alpha
 
 import (
+	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
@@ -32,6 +33,6 @@ func exeStatement(ctx *alphaContext, s Statement) {
 		_ = evalExpression(ctx, v)
 
 	default:
-		panic(err("exeStatement", s.Token(), "Unknown statement type"))
+		errr.Panic("Unknown statement", errr.At(s.Token()))
 	}
 }
