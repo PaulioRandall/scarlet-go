@@ -3,6 +3,7 @@ package alpha
 import (
 	"github.com/shopspring/decimal"
 
+	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -13,76 +14,60 @@ func evalOperation(ctx *alphaContext, op Operation) result {
 
 	switch tk.Morpheme() {
 	case ADD:
-		left, right := evalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return numberLiteral(left.Add(right))
 
 	case SUBTRACT:
-		left, right := evalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return numberLiteral(left.Sub(right))
 
 	case MULTIPLY:
-		left, right := evalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return numberLiteral(left.Mul(right))
 
 	case DIVIDE:
-		left, right := evalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return numberLiteral(left.Div(right))
 
 	case REMAINDER:
-		left, right := evalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return numberLiteral(left.Mod(right))
 
 	case LESS_THAN:
-		left, right := evalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return boolLiteral(left.LessThan(right))
 
 	case MORE_THAN:
-		left, right := evalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return boolLiteral(left.GreaterThan(right))
 
 	case LESS_THAN_OR_EQUAL:
-		left, right := evalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return boolLiteral(left.LessThanOrEqual(right))
 
 	case MORE_THAN_OR_EQUAL:
-		left, right := evalNumbers(ctx, op.Left, op.Right)
+		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return boolLiteral(left.GreaterThanOrEqual(right))
 
 	case AND:
-		left, right := evalBools(ctx, op.Left, op.Right)
+		left, right := evalBool(ctx, op.Left), evalBool(ctx, op.Right)
 		return boolLiteral(left && right)
 
 	case OR:
-		left, right := evalBools(ctx, op.Left, op.Right)
+		left, right := evalBool(ctx, op.Left), evalBool(ctx, op.Right)
 		return boolLiteral(left || right)
 
 	case EQUAL:
-		left, right := evalValues(ctx, op.Left, op.Right)
+		left, right := evalExpression(ctx, op.Left), evalExpression(ctx, op.Right)
 		return boolLiteral(equal(left, right))
 
 	case NOT_EQUAL:
-		left, right := evalValues(ctx, op.Left, op.Right)
+		left, right := evalExpression(ctx, op.Left), evalExpression(ctx, op.Right)
 		return boolLiteral(!equal(left, right))
 	}
 
-	panic(err("evalOperation", tk, "Unknown operation type"))
-}
-
-func evalValues(ctx *alphaContext, left, right Expression) (result, result) {
-	l := evalExpression(ctx, left)
-	r := evalExpression(ctx, right)
-
-	if _, ok := l.(voidLiteral); ok {
-		panic(err("evalValues", left.Token(),
-			"Left side evaluated to voidLiteral, but it's not allowed here"))
-	}
-
-	if _, ok := r.(voidLiteral); ok {
-		panic(err("evalValues", right.Token(),
-			"Right side evaluated to voidLiteral, but it's not allowed here"))
-	}
-
-	return l, r
+	errr.Panic("Unknown operation", errr.At(tk))
+	return nil
 }
 
 func equal(left, right result) bool {
@@ -100,33 +85,26 @@ func equal(left, right result) bool {
 	return decimal.Decimal(l).Equal(decimal.Decimal(r))
 }
 
-func evalNumbers(ctx *alphaContext,
-	left, right Expression,
-) (decimal.Decimal, decimal.Decimal) {
-
-	return evalNumber(ctx, left), evalNumber(ctx, right)
-}
-
 func evalNumber(ctx *alphaContext, ex Expression) decimal.Decimal {
 
 	v := evalExpression(ctx, ex)
 	v = expectOneValue(v, ex.Token())
+	n, ok := v.(numberLiteral)
 
-	if v, ok := v.(numberLiteral); ok {
-		return decimal.Decimal(v)
+	if !ok {
+		errr.Panic("Not a numeric expression", errr.At(ex.Token()))
 	}
 
-	panic(err("evalNumber", ex.Token(), "Expected Number as result"))
-}
-
-func evalBools(ctx *alphaContext, left, right Expression) (bool, bool) {
-	return evalBool(ctx, left), evalBool(ctx, right)
+	return decimal.Decimal(n)
 }
 
 func evalBool(ctx *alphaContext, ex Expression) bool {
-	if v, ok := evalExpression(ctx, ex).(boolLiteral); ok {
-		return bool(v)
+
+	v, ok := evalExpression(ctx, ex).(boolLiteral)
+
+	if !ok {
+		errr.Panic("Not a boolean expression", errr.At(ex.Token()))
 	}
 
-	panic(err("EvalBool", ex.Token(), "Expected Bool as result"))
+	return bool(v)
 }
