@@ -18,10 +18,7 @@ func exeGuard(ctx *alphaContext, g Guard) bool {
 	pass, ok := evalExpression(ctx, g.Condition).(boolLiteral)
 
 	if !ok {
-		errr.Panic(
-			"Expected boolean value",
-			errr.At(g.Open),
-		)
+		errr.Panic("Expected boolean value", errr.At(g.Open))
 	}
 
 	if pass {

@@ -1,6 +1,7 @@
 package alpha
 
 import (
+	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
@@ -9,7 +10,7 @@ func evalIdentifier(ctx *alphaContext, id Identifier) result {
 	v := ctx.Get(id.Token().Value())
 
 	if v == nil {
-		panic(err("evalIdentifier", id.Token(), "Undefined identifier"))
+		errr.Panic("Undefined identifier", errr.At(id.Token()))
 	}
 
 	return v
@@ -20,14 +21,16 @@ func evalExpressions(ctx *alphaContext, exprs []Expression) []result {
 	var vs []result
 
 	for _, expr := range exprs {
+
 		v := evalExpression(ctx, expr)
+		t, ok := v.(tuple)
 
-		if t, ok := v.(tuple); ok {
-			for _, v := range []result(t) {
-				vs = append(vs, v)
-			}
+		if !ok {
+			vs = append(vs, v)
+			continue
+		}
 
-		} else {
+		for _, v := range []result(t) {
 			vs = append(vs, v)
 		}
 	}
@@ -59,5 +62,6 @@ func evalExpression(ctx *alphaContext, expr Expression) result {
 		return evalFuncCall(ctx, v)
 	}
 
-	panic(err("EvalExpression", expr.Token(), "Unknown expression type"))
+	errr.Panic("Unknown expression type", errr.At(expr.Token()))
+	return nil
 }

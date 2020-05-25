@@ -69,18 +69,12 @@ func getListLiteral(ctx *alphaContext, id Token) listLiteral {
 
 	listVal := ctx.GetLocal(id.Value())
 	if listVal == nil {
-		errr.Panic(
-			"List variable is fixed or does not exist",
-			errr.At(id),
-		)
+		errr.Panic("List variable is fixed or does not exist", errr.At(id))
 	}
 
 	list, ok := listVal.(listLiteral)
 	if !ok {
-		errr.Panic(
-			"Variable is not a list",
-			errr.At(id),
-		)
+		errr.Panic("Variable is not a list", errr.At(id))
 	}
 
 	return list

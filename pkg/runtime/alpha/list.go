@@ -1,6 +1,9 @@
 package alpha
 
 import (
+	"fmt"
+
+	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -29,7 +32,8 @@ func getList(ctx *alphaContext, id Identifier) listLiteral {
 		return list
 	}
 
-	panic(err("EvalListAccess", id.Token(), "Can't get item of a non-list"))
+	errr.Panic("Not a list", errr.At(id.Token()))
+	return nil
 }
 
 func evalIndexExpr(ctx *alphaContext, listSize int64, expr Expression, inclusiveRef bool) int64 {
@@ -44,7 +48,8 @@ func evalIndexExpr(ctx *alphaContext, listSize int64, expr Expression, inclusive
 		return i.ToInt()
 	}
 
-	panic(err("EvalListAccess", expr.Token(), "Expected number as result"))
+	errr.Panic("Need a number", errr.At(expr.Token()))
+	return 0
 }
 
 func resolveListRef(listSize int64, ref Token, inclusiveRef bool) int64 {
@@ -65,16 +70,19 @@ func resolveListRef(listSize int64, ref Token, inclusiveRef bool) int64 {
 		return int64(max)
 	}
 
-	panic(err("getListIndex", ref, "Unknown list reference type"))
+	errr.Panic("Unknown list reference type", errr.At(ref))
+	return 0
 }
 
 func checkListIndexRange(i, size int64, id, index Token) {
 
 	if i < 0 {
-		panic(err("EvalListAccess", id, "Index out of range, %d < 0", i))
+		m := fmt.Sprintf("Index out of range, (index) %d < 0 (min)", i)
+		errr.Panic(m, errr.At(id))
 	}
 
 	if i >= size {
-		panic(err("EvalListAccess", index, "Index out of range, len(list) < %d", i))
+		m := fmt.Sprintf("Index out of range, (index) %d >= %d (size)", i, size)
+		errr.Panic(m, errr.At(index))
 	}
 }

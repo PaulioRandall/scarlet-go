@@ -1,6 +1,9 @@
 package alpha
 
 import (
+	"fmt"
+
+	errr "github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -30,7 +33,7 @@ func findFunction(ctx *alphaContext, idExp Expression) functionLiteral {
 	f, ok := v.(functionLiteral)
 
 	if !ok {
-		panic(err("EvalFuncCall", idExp.Token(), "Expected function as result"))
+		errr.Panic("Not a function", errr.At(idExp.Token()))
 	}
 
 	return f
@@ -41,9 +44,8 @@ func checkFuncCallArgs(exp []Token, act []Expression, callTk Token) {
 	a, b := len(exp), len(act)
 
 	if a != b {
-		panic(err("checkParamCount", callTk,
-			"Expected %d parameters, got %d", a, b,
-		))
+		m := fmt.Sprintf("Expected %d parameters, given %d", a, b)
+		errr.Panic(m, errr.At(callTk))
 	}
 }
 
@@ -98,7 +100,7 @@ func expectOneValue(v result, tk Token) result {
 	a := []result(t)
 
 	if t == nil || len(a) != 1 {
-		panic(err("expectOneValue", tk, "Expected exactly one result"))
+		errr.Panic("Need one result", errr.At(tk))
 	}
 
 	return a[0]
