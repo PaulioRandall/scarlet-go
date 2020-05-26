@@ -1,14 +1,4 @@
 
-sum: F(list, ^sum) LOOP i, v, m <- list {
-	[i==0] sum: 0
-	sum: sum + v
-}
+x: 1 + 2
 
-product: F(list, ^r) LOOP i, v, m <- list {
-	[i==0] r: v
-	[i!=0] r: r * v
-}
-
-in: LIST {3, 3, 3}
-sum: sum(in)
-product: product(in) 
+//half: E(a) a / 2 

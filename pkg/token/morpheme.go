@@ -15,6 +15,7 @@ const (
 	WHITESPACE
 	NEWLINE
 	FUNC
+	EXPR_FUNC
 	FIX
 	LIST
 	MATCH
@@ -61,6 +62,7 @@ var morphemes map[Morpheme]string = map[Morpheme]string{
 	WHITESPACE:         `WHITESPACE`,
 	NEWLINE:            `NEWLINE`,
 	FUNC:               `FUNC`,
+	EXPR_FUNC:          `EXPR_FUNC`,
 	FIX:                `FIX`,
 	LIST:               `LIST`,
 	MATCH:              `MATCH`,

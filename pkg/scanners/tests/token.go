@@ -217,3 +217,9 @@ func T42_Prepend(t *testing.T, f ScanFunc) {
 func T43_Updates(t *testing.T, f ScanFunc) {
 	checkOne(t, tok(UPDATES, "<-"), f("<-"))
 }
+
+func T44_ExprFunc(t *testing.T, f ScanFunc) {
+	checkOne(t, tok(EXPR_FUNC, "E"), f("E"))
+	checkFirstNot(t, tok(EXPR_FUNC, "E"), f("EE"))
+	checkFirstNot(t, tok(EXPR_FUNC, "EE"), f("EE"))
+}

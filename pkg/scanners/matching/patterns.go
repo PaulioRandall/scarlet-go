@@ -55,6 +55,9 @@ func patterns() []pattern {
 		pattern{FUNC, func(s *symbols) int {
 			return matchWord(s, "F")
 		}},
+		pattern{EXPR_FUNC, func(s *symbols) int {
+			return matchWord(s, "E")
+		}},
 		pattern{IDENTIFIER, func(s *symbols) int {
 			return s.countSymbolsWhile(0, func(i int, ru rune) bool {
 

@@ -174,6 +174,10 @@ func Test_T43_Updates(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T43_Updates)
 }
 
+func Test_T44_ExprFunc(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T44_ExprFunc)
+}
+
 func Test_S1_Assignment(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S1_Assignment)
 }
