@@ -146,6 +146,10 @@ func Test_F11_FuncDef(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F11_FuncDef)
 }
 
+func Test_EF1_ExprFuncDef(t *testing.T) {
+	tests.Run(t, ParseAll, tests.EF1_ExprFuncDef)
+}
+
 func Test_L1_ListDef(t *testing.T) {
 	tests.Run(t, ParseAll, tests.L1_ListDef)
 }

@@ -33,6 +33,31 @@ func parseFuncDef(p *pipe) Expression {
 	return nil
 }
 
+func isExprFuncDef(p *pipe) bool {
+	return p.match(EXPR_FUNC)
+}
+
+func parseExprFuncDef(p *pipe) Expression {
+	// pattern := EXPR_FUNC params expression
+
+	f := ExprFuncDef{
+		Key: p.expect(`parseExprFuncDef`, EXPR_FUNC),
+	}
+
+	var outputs []Token = nil
+	f.Inputs, outputs = parseFuncParams(p)
+
+	if outputs != nil {
+		err.Panic(
+			`Output variables not allowed in expression functions`,
+			err.At(p.peek()),
+		)
+	}
+
+	f.Expr = parseExpression(p)
+	return f
+}
+
 func parseFuncParams(p *pipe) (in, out []Token) {
 	// pattern := PAREN_OPEN [ids] PAREN_CLOSE
 

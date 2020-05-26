@@ -7,7 +7,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func EF1_FuncDef(t *testing.T, f ParseFunc) {
+func EF1_ExprFuncDef(t *testing.T, f ParseFunc) {
 
 	// f: E(a, b) a + b
 
@@ -23,7 +23,6 @@ func EF1_FuncDef(t *testing.T, f ParseFunc) {
 		tok(IDENTIFIER, "a"),
 		tok(ADD, "+"),
 		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
 	}
 
 	targets := []AssignTarget{
@@ -39,9 +38,9 @@ func EF1_FuncDef(t *testing.T, f ParseFunc) {
 	}
 
 	exprFunc.Expr = Operation{
-		Value{tok(IDENTIFIER, "a")},
+		Identifier{tok(IDENTIFIER, "a")},
 		tok(ADD, "+"),
-		Value{tok(IDENTIFIER, "b")},
+		Identifier{tok(IDENTIFIER, "b")},
 	}
 
 	exp := Assignment{

@@ -28,6 +28,10 @@ func (p *pipe) back() {
 }
 
 func (p *pipe) match(m Morpheme) bool {
+	if p.itr.Peek() == nil {
+		return false
+	}
+
 	o := p.itr.Peek().Morpheme()
 	return o == ANY || o == m
 }

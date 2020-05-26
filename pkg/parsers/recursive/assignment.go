@@ -20,16 +20,10 @@ func parseAssignment(p *pipe) Assignment {
 	// pattern := [FIX] assign_target {assign_target} ASSIGN expression {expression}
 
 	a := Assignment{
-		Fixed: p.accept(FIX),
-	}
-
-	a.Targets = parseAssignTargets(p)
-	a.Assign = p.expect(`parseAssignment`, ASSIGN)
-
-	if isFuncDef(p) {
-		a.Exprs = []Expression{parseFuncDef(p)}
-	} else {
-		a.Exprs = parseExpressions(p)
+		Fixed:   p.accept(FIX),
+		Targets: parseAssignTargets(p),
+		Assign:  p.expect(`parseAssignment`, ASSIGN),
+		Exprs:   parseAssignExprs(p),
 	}
 
 	if a.Exprs == nil {
@@ -40,6 +34,17 @@ func parseAssignment(p *pipe) Assignment {
 	}
 
 	return a
+}
+
+func parseAssignExprs(p *pipe) []Expression {
+	switch {
+	case isFuncDef(p):
+		return []Expression{parseFuncDef(p)}
+	case isExprFuncDef(p):
+		return []Expression{parseExprFuncDef(p)}
+	}
+
+	return parseExpressions(p)
 }
 
 func parseAssignTargets(p *pipe) []AssignTarget {

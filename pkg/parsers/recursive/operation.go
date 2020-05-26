@@ -12,6 +12,10 @@ func parseOperation(p *pipe, left Expression, leftPriority int) Expression {
 
 	// Warning: this is where parsing gets a little complicated!!
 
+	if p.peek() == nil {
+		return left
+	}
+
 	op := p.peek()
 	m := op.Morpheme()
 
@@ -35,7 +39,6 @@ func parseOperation(p *pipe, left Expression, leftPriority int) Expression {
 
 	// Parse the remaining operations in this expression.
 	left = parseOperation(p, left, leftPriority)
-
 	return left
 }
 
