@@ -70,6 +70,11 @@ func evalOperation(ctx *alphaContext, op Operation) result {
 	return nil
 }
 
+func evalNegation(ctx *alphaContext, n Negation) result {
+	num := evalNumber(ctx, n.Expr)
+	return numberLiteral(num.Neg())
+}
+
 func equal(left, right result) bool {
 
 	l, ok := left.(numberLiteral)

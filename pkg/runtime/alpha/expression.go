@@ -49,6 +49,9 @@ func evalExpression(ctx *alphaContext, expr Expression) result {
 	case Operation:
 		return evalOperation(ctx, v)
 
+	case Negation:
+		return evalNegation(ctx, v)
+
 	case List:
 		return evalList(ctx, v)
 

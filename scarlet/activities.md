@@ -4,8 +4,6 @@
 - `-TRUE`
 - `a == -b`
 - `-(a == b)`
-- `2 + -1`
-- `-(a + b)`
 
 
 # MAYBE: Allow output params to be initialised
