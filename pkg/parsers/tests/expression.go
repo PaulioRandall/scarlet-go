@@ -438,3 +438,31 @@ func E16_Negation(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, op, f(given))
 }
+
+func E17_Negation(t *testing.T, f ParseFunc) {
+
+	// -(a == b)
+
+	given := []Token{
+		tok(SUBTRACT, "-"),
+		tok(PAREN_OPEN, "-"),
+		tok(IDENTIFIER, "a"),
+		tok(EQUAL, "=="),
+		tok(IDENTIFIER, "b"),
+		tok(PAREN_CLOSE, "-"),
+		tok(TERMINATOR, ""),
+	}
+
+	op := Operation{
+		Left:     Identifier{tok(IDENTIFIER, "a")},
+		Operator: tok(EQUAL, "=="),
+		Right:    Identifier{tok(IDENTIFIER, "b")},
+	}
+
+	neg := Negation{
+		Tk:   tok(SUBTRACT, "-"),
+		Expr: op,
+	}
+
+	expectOneStat(t, neg, f(given))
+}

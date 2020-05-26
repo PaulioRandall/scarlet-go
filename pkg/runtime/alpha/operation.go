@@ -71,8 +71,20 @@ func evalOperation(ctx *alphaContext, op Operation) result {
 }
 
 func evalNegation(ctx *alphaContext, n Negation) result {
-	num := evalNumber(ctx, n.Expr)
-	return numberLiteral(num.Neg())
+
+	v := evalExpression(ctx, n.Expr)
+
+	if num, ok := v.(numberLiteral); ok {
+		d := decimal.Decimal(num)
+		return numberLiteral(d.Neg())
+	}
+
+	if b, ok := v.(boolLiteral); ok {
+		return boolLiteral(!bool(b))
+	}
+
+	err.Panic("Not a numeric or boolean expression", err.At(n.Token()))
+	return nil
 }
 
 func equal(left, right result) bool {

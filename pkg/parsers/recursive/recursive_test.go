@@ -114,6 +114,10 @@ func Test_E16_Negation(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E16_Negation)
 }
 
+func Test_E17_Negation(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E17_Negation)
+}
+
 func Test_F2_FuncDef(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F2_FuncDef)
 }
