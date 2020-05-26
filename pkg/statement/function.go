@@ -47,6 +47,41 @@ func (f FuncDef) String(i int) string {
 	return s.String()
 }
 
+type ExprFuncDef struct {
+	Key    Token
+	Inputs []Token
+	Expr   Expression
+}
+
+func (e ExprFuncDef) Token() Token {
+	return e.Key
+}
+
+func (e ExprFuncDef) String(i int) string {
+
+	var s str
+
+	s.indent(i).
+		append("[ExprFuncDef] ").
+		appendTk(e.Key)
+
+	s.newline().
+		indent(i + 1).
+		append("Inputs:")
+
+	s.newline().
+		appendTks(i+2, e.Inputs)
+
+	s.newline().
+		indent(i + 1).
+		append("Expr:")
+
+	s.newline().
+		append(e.Expr.String(i + 2))
+
+	return s.String()
+}
+
 type FuncCall struct {
 	ID     Expression
 	Inputs []Expression
