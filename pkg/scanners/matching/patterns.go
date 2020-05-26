@@ -68,6 +68,12 @@ func patterns() []pattern {
 				return i != 0 && ru == '_'
 			})
 		}},
+		pattern{INCREMENT, func(s *symbols) int {
+			return matchStr(s, "++")
+		}},
+		pattern{DECREMENT, func(s *symbols) int {
+			return matchStr(s, "--")
+		}},
 		pattern{ASSIGN, func(s *symbols) int {
 			return matchStr(s, ":")
 		}},
