@@ -7,20 +7,20 @@ import (
 )
 
 func isAssignment(p *pipe) bool {
-	// match := FIX
+	// match := DEF
 	// match := ID (DELIM | ASSIGN | GUARD_OPEN)
 
-	return p.match(FIX) ||
+	return p.match(DEF) ||
 		p.matchSequence(IDENTIFIER, DELIMITER) ||
 		p.matchSequence(IDENTIFIER, ASSIGN) ||
 		p.matchSequence(IDENTIFIER, GUARD_OPEN)
 }
 
 func parseAssignment(p *pipe) Assignment {
-	// pattern := [FIX] assign_target {assign_target} ASSIGN expression {expression}
+	// pattern := [DEF] assign_target {assign_target} ASSIGN expression {expression}
 
 	a := Assignment{
-		Fixed:   p.accept(FIX),
+		Fixed:   p.accept(DEF),
 		Targets: parseAssignTargets(p),
 		Assign:  p.expect(`parseAssignment`, ASSIGN),
 		Exprs:   parseAssignExprs(p),

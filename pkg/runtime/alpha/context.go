@@ -26,7 +26,7 @@ func (ctx alphaContext) String() (s string) {
 	}
 
 	for id, v := range ctx.fixed {
-		s += TAB + "FIX " + id + " " + v.String() + NEWLINE
+		s += TAB + "DEF " + id + " " + v.String() + NEWLINE
 	}
 
 	for id, v := range ctx.local {

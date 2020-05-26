@@ -114,7 +114,7 @@ func Test_I1_Func(t *testing.T) {
 }
 
 func Test_I2_Fix(t *testing.T) {
-	checkIgnores(t, tok(FIX, ""))
+	checkIgnores(t, tok(DEF, ""))
 }
 
 func Test_I3_ID(t *testing.T) {

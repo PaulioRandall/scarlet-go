@@ -49,8 +49,8 @@ func patterns() []pattern {
 		pattern{LOOP, func(s *symbols) int {
 			return matchWord(s, "LOOP")
 		}},
-		pattern{FIX, func(s *symbols) int {
-			return matchWord(s, "FIX")
+		pattern{DEF, func(s *symbols) int {
+			return matchWord(s, "DEF")
 		}},
 		pattern{FUNC, func(s *symbols) int {
 			return matchWord(s, "F")

@@ -67,10 +67,10 @@ func A2_MultiAssignment(t *testing.T, f ParseFunc) {
 
 func A3_Assignment(t *testing.T, f ParseFunc) {
 
-	// FIX x := 1
+	// DEF x := 1
 
 	given := []Token{
-		tok(FIX, "FIX"),
+		tok(DEF, "DEF"),
 		tok(IDENTIFIER, "x"),
 		tok(ASSIGN, ":="),
 		tok(NUMBER, "1"),

@@ -1,17 +1,7 @@
 
-# MAYBE: Negate or invert result of next expression with '-'
-### Examples
-- `-TRUE`
-- `a == -b`
-- `-(a == b)`
-
-
 # MAYBE: Allow output params to be initialised
 ### Examples
 - `F(a, ^b: 0)`
-
-
-# MAYBE: FIX should be renamed CONST or DEF
 
 
 # MAYBE: ++ and --

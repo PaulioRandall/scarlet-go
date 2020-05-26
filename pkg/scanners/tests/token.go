@@ -45,10 +45,10 @@ func T7_List(t *testing.T, f ScanFunc) {
 	checkFirstNot(t, tok(LIST, "LISTT"), f("LISTT"))
 }
 
-func T8_Fix(t *testing.T, f ScanFunc) {
-	checkOne(t, tok(FIX, "FIX"), f("FIX"))
-	checkFirstNot(t, tok(FIX, "FIX"), f("FIXX"))
-	checkFirstNot(t, tok(FIX, "FIXX"), f("FIXX"))
+func T8_Def(t *testing.T, f ScanFunc) {
+	checkOne(t, tok(DEF, "DEF"), f("DEF"))
+	checkFirstNot(t, tok(DEF, "DEF"), f("DEFX"))
+	checkFirstNot(t, tok(DEF, "DEFX"), f("DEFX"))
 }
 
 func T9_Eof(t *testing.T, f ScanFunc) {

@@ -16,7 +16,7 @@ const (
 	NEWLINE
 	FUNC
 	EXPR_FUNC
-	FIX
+	DEF
 	LIST
 	MATCH
 	LOOP
@@ -61,9 +61,9 @@ var morphemes map[Morpheme]string = map[Morpheme]string{
 	COMMENT:            `COMMENT`,
 	WHITESPACE:         `WHITESPACE`,
 	NEWLINE:            `NEWLINE`,
-	FUNC:               `FUNC`,
+	FUNC:               `FUNCTION`,
 	EXPR_FUNC:          `EXPR_FUNC`,
-	FIX:                `FIX`,
+	DEF:                `DEFINE`,
 	LIST:               `LIST`,
 	MATCH:              `MATCH`,
 	LOOP:               `LOOP`,

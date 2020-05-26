@@ -50,7 +50,7 @@ func (n numberLiteral) ToInt() int64 {
 }
 
 func (n numberLiteral) String() string {
-	return "(NUMBER) " + decimal.Decimal(n).String()
+	return "(NUM) " + decimal.Decimal(n).String()
 }
 
 type stringLiteral string
@@ -60,7 +60,7 @@ func (s stringLiteral) get() interface{} {
 }
 
 func (s stringLiteral) String() string {
-	return "(STRING) " + string(s)
+	return "(STR) " + string(s)
 }
 
 type templateLiteral string
@@ -70,7 +70,7 @@ func (t templateLiteral) get() interface{} {
 }
 
 func (t templateLiteral) String() string {
-	return "(TEMPLATE) " + string(t)
+	return "(TMPL) " + string(t)
 }
 
 type listLiteral []result
@@ -115,7 +115,7 @@ func (f funcLiteral) get() interface{} {
 
 func (f funcLiteral) String() string {
 
-	s := "(FUNCTION) F("
+	s := "(FUNC) F("
 
 	if f.Inputs != nil {
 		for i, item := range f.Inputs {
@@ -148,7 +148,7 @@ func (e exprFuncLiteral) get() interface{} {
 
 func (e exprFuncLiteral) String() string {
 
-	s := "(EXPR_FUNC) E("
+	s := "(E_FUNC) E("
 
 	if e.Inputs != nil {
 		for i, item := range e.Inputs {

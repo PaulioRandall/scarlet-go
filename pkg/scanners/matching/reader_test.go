@@ -34,8 +34,8 @@ func Test_T7_List(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T7_List)
 }
 
-func Test_T8_Fix(t *testing.T) {
-	tests.Run(t, ScanAll, tests.T8_Fix)
+func Test_T8_Def(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T8_Def)
 }
 
 func Test_T10_F(t *testing.T) {
