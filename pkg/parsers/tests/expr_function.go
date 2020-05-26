@@ -23,6 +23,7 @@ func EF1_ExprFuncDef(t *testing.T, f ParseFunc) {
 		tok(IDENTIFIER, "a"),
 		tok(ADD, "+"),
 		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, "\n"),
 	}
 
 	targets := []AssignTarget{

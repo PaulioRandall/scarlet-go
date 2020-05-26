@@ -9,12 +9,29 @@ import (
 )
 
 func evalFuncDef(ctx *alphaContext, f FuncDef) result {
-	return functionLiteral(f)
+	return funcLiteral(f)
+}
+
+func evalExprFuncDef(ctx *alphaContext, e ExprFuncDef) result {
+	return exprFuncLiteral(e)
 }
 
 func evalFuncCall(ctx *alphaContext, call FuncCall) result {
 
-	def := findFunction(ctx, call.ID)
+	def := evalExpression(ctx, call.ID)
+
+	switch v := def.(type) {
+	case funcLiteral:
+		return evalStdFuncCall(ctx, call, v)
+	case exprFuncLiteral:
+		return evalExprFuncCall(ctx, call, v)
+	}
+
+	err.Panic("Not a function or expression function", err.At(call.Token()))
+	return nil
+}
+
+func evalStdFuncCall(ctx *alphaContext, call FuncCall, def funcLiteral) result {
 
 	checkFuncCallArgs(def.Inputs, call.Inputs, call.ID.Token())
 
@@ -27,16 +44,10 @@ func evalFuncCall(ctx *alphaContext, call FuncCall) result {
 	return tuple(results)
 }
 
-func findFunction(ctx *alphaContext, idExp Expression) functionLiteral {
-
-	v := evalExpression(ctx, idExp)
-	f, ok := v.(functionLiteral)
-
-	if !ok {
-		err.Panic("Not a function", err.At(idExp.Token()))
-	}
-
-	return f
+func evalExprFuncCall(ctx *alphaContext, call FuncCall, def exprFuncLiteral) result {
+	checkFuncCallArgs(def.Inputs, call.Inputs, call.ID.Token())
+	funcCtx := evalFuncCallArgs(ctx, def.Inputs, call.Inputs)
+	return evalExpression(funcCtx, def.Expr)
 }
 
 func checkFuncCallArgs(exp []Token, act []Expression, callTk Token) {

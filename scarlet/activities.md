@@ -1,16 +1,13 @@
 
-# MAYBE: Init output variables
+# MAYBE: ++ and --
+- But they are statements, not expressions. This avoids their use within the middle of expressions and function calls
+
 ### Examples
-```
-F(list, ^sum: 0) {
-	LOOP i, v, m <- list {
-		sum: sum + v
-	}
-}
-```
+- `i++`
+- `i--`
 
 
-# ERROR: Terminator check required
+# ERROR: Terminator checks required
 - This passes during parsing but shouldn't 
 - `x: 1 2`
 
@@ -74,14 +71,6 @@ Maybe they should be lower case, except for F?
 # Template strings
 ### Example
 - `s := "alpha = {list[0]}, beta = {list[1]}"`
-
-
-# Expression functions
-Expression functions have a single expression as their body. The result of the expression is returned.
-
-### Examples
-- `increment := E(n) n + 1` 
-- `expr := E(a, b) [a > b] @P("A > B")`
 
 
 # Key-value pairs

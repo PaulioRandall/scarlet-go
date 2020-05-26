@@ -58,6 +58,9 @@ func evalExpression(ctx *alphaContext, expr Expression) result {
 	case FuncDef:
 		return evalFuncDef(ctx, v)
 
+	case ExprFuncDef:
+		return evalExprFuncDef(ctx, v)
+
 	case FuncCall:
 		return evalFuncCall(ctx, v)
 	}

@@ -1,7 +1,6 @@
 package recursive
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -29,23 +28,8 @@ func parseGuard(p *pipe) Guard {
 	g := Guard{
 		Open:      p.expect(`parseGuard`, GUARD_OPEN),
 		Condition: parseExpression(p),
+		Close:     p.expect(`parseGuard`, GUARD_CLOSE),
 	}
-
-	if g.Condition == nil {
-		err.Panic(
-			errMsg("parseGuard", `conditional expression`, p.past()),
-			err.After(p.past()),
-		)
-	}
-
-	if !isBoolOperation(g.Condition) {
-		err.Panic(
-			errMsg("parseGuard", `conditional expression`, g.Condition.Token()),
-			err.At(g.Condition.Token()),
-		)
-	}
-
-	g.Close = p.expect(`parseGuard`, GUARD_CLOSE)
 
 	if isBlock(p) {
 		g.Block = parseBlock(p)

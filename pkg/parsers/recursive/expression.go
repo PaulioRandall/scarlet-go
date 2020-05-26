@@ -41,7 +41,8 @@ func parseExpression(p *pipe) Expression {
 
 	switch {
 	case isFuncCall(p):
-		return parseFuncCall(p)
+		left = parseFuncCall(p)
+		return parseOperation(p, left, 0)
 
 	case isListAccess(p):
 		return parseListAccess(p)

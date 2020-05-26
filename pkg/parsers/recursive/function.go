@@ -55,6 +55,7 @@ func parseExprFuncDef(p *pipe) Expression {
 	}
 
 	f.Expr = parseExpression(p)
+	p.expect(`parseExprFuncDef`, TERMINATOR)
 	return f
 }
 

@@ -107,13 +107,13 @@ func (t tuple) String() string {
 	return s + ")"
 }
 
-type functionLiteral FuncDef
+type funcLiteral FuncDef
 
-func (f functionLiteral) get() interface{} {
+func (f funcLiteral) get() interface{} {
 	return FuncDef(f)
 }
 
-func (f functionLiteral) String() string {
+func (f funcLiteral) String() string {
 
 	s := "(FUNCTION) F("
 
@@ -134,6 +134,29 @@ func (f functionLiteral) String() string {
 			}
 
 			s += "^" + item.Value()
+		}
+	}
+
+	return s + ")"
+}
+
+type exprFuncLiteral ExprFuncDef
+
+func (e exprFuncLiteral) get() interface{} {
+	return ExprFuncDef(e)
+}
+
+func (e exprFuncLiteral) String() string {
+
+	s := "(EXPR_FUNC) E("
+
+	if e.Inputs != nil {
+		for i, item := range e.Inputs {
+			if i != 0 {
+				s += ", "
+			}
+
+			s += item.Value()
 		}
 	}
 

@@ -1,4 +1,18 @@
 
-x: 1 + 2
 
-//half: E(a) a / 2 
+FIX isEven: E(a) (a % 2) == 0
+FIX isOdd: E(a) isEven(a) == FALSE
+
+f: F(numbers, ^odds, ^evens) {
+	odds, evens: 0, 0
+
+	LOOP i, v, m <- numbers {
+		MATCH {
+			[isOdd(v)] odds: odds + 1
+			[TRUE] evens: evens + 1
+		}
+	}
+}
+
+list: LIST {2,2,6,1,9,12}
+odds, evens: f(list)
