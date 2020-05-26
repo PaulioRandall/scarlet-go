@@ -38,3 +38,30 @@ func (op Operation) String(i int) string {
 
 	return s.String()
 }
+
+type Increment struct {
+	ID        Token
+	Direction Token
+}
+
+func (inc Increment) Token() Token {
+	return inc.ID
+}
+
+func (inc Increment) String(i int) string {
+
+	var s str
+
+	s.indent(i).
+		append("[Increment] ").
+		appendTk(inc.ID)
+
+	s.newline().
+		indent(i + 1).
+		append("Direction:")
+
+	s.newline().
+		appendTk(inc.Direction)
+
+	return s.String()
+}
