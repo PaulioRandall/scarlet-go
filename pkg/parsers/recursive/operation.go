@@ -46,6 +46,9 @@ func parseSubOperation(p *pipe) Expression {
 	// pattern := func_call | literal | group
 
 	switch {
+	case isNegation(p):
+		return parseNegation(p)
+
 	case isFuncCall(p):
 		return parseFuncCall(p)
 

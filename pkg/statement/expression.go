@@ -44,3 +44,30 @@ func (id Identifier) String(i int) string {
 		appendTk(id.Tk).
 		String()
 }
+
+type Negation struct {
+	Tk   Token
+	Expr Expression
+}
+
+func (n Negation) Token() Token {
+	return Token(n.Tk)
+}
+
+func (n Negation) String(i int) string {
+
+	var s str
+
+	s.indent(i).
+		append("[Negation] ").
+		appendTk(n.Tk)
+
+	s.newline().
+		indent(i + 1).
+		append("Expr:")
+
+	s.newline().
+		append(n.Expr.String(i + 2))
+
+	return s.String()
+}

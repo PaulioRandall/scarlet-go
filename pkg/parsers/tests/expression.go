@@ -388,3 +388,53 @@ func E14_Panics(t *testing.T, f ParseFunc) {
 
 	expectPanic(t, func() { f(given) })
 }
+
+func E15_Negation(t *testing.T, f ParseFunc) {
+
+	// -1
+
+	given := []Token{
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := Negation{
+		Tk:   tok(SUBTRACT, "-"),
+		Expr: Value{tok(NUMBER, "1")},
+	}
+
+	expectOneStat(t, exp, f(given))
+}
+
+func E16_Negation(t *testing.T, f ParseFunc) {
+
+	// -1 - -2
+
+	given := []Token{
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "1"),
+		tok(SUBTRACT, "-"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "2"),
+		tok(TERMINATOR, ""),
+	}
+
+	left := Negation{
+		Tk:   tok(SUBTRACT, "-"),
+		Expr: Value{tok(NUMBER, "1")},
+	}
+
+	right := Negation{
+		Tk:   tok(SUBTRACT, "-"),
+		Expr: Value{tok(NUMBER, "2")},
+	}
+
+	op := Operation{
+		Left:     left,
+		Operator: tok(SUBTRACT, "-"),
+		Right:    right,
+	}
+
+	expectOneStat(t, op, f(given))
+}

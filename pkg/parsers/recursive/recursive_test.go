@@ -106,6 +106,14 @@ func Test_E14_Panics(t *testing.T) {
 	tests.Run(t, ParseAll, tests.E14_Panics)
 }
 
+func Test_E15_Negation(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E15_Negation)
+}
+
+func Test_E16_Negation(t *testing.T) {
+	tests.Run(t, ParseAll, tests.E16_Negation)
+}
+
 func Test_F2_FuncDef(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F2_FuncDef)
 }
