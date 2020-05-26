@@ -1,4 +1,21 @@
 
+# MAYBE: Negate or invert result of next expression with '-'
+### Examples
+- `-TRUE`
+- `a == -b`
+- `-(a == b)`
+- `2 + -1`
+- `-(a + b)`
+
+
+# MAYBE: Allow output params to be initialised
+### Examples
+- `F(a, ^b: 0)`
+
+
+# MAYBE: FIX should be renamed CONST or DEF
+
+
 # MAYBE: ++ and --
 - But they are statements, not expressions. This avoids their use within the middle of expressions and function calls
 
@@ -43,7 +60,6 @@ Better definition and use of interfaces will make for more segregated code, whic
 # Enhance loops
 ### Allow
 1. LOOP i := 0 [i < 5]
-2. LOOP i, x := 0, 1 [i < 5]
 
 
 # Add inbuilt functions
