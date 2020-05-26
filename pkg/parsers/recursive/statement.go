@@ -62,8 +62,12 @@ func isIncOrDec(p *pipe) bool {
 func parseIncOrDec(p *pipe) Statement {
 	// pattern := ID (INCREMENT | DECREMENT)
 
+	id := Identifier{
+		Tk: p.expect(`parseIncOrDec`, IDENTIFIER),
+	}
+
 	inc := Increment{
-		ID: p.expect(`parseIncOrDec`, IDENTIFIER),
+		ID: id,
 	}
 
 	if !p.matchAny(INCREMENT, DECREMENT) {

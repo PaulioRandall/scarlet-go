@@ -3,6 +3,9 @@ package alpha
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+
+	"github.com/shopspring/decimal"
 )
 
 func exeBlock(ctx *alphaContext, b Block) {
@@ -17,6 +20,9 @@ func exeStatements(ctx *alphaContext, ss []Statement) {
 
 func exeStatement(ctx *alphaContext, s Statement) {
 	switch v := s.(type) {
+	case Increment:
+		exeIncrement(ctx, v)
+
 	case Assignment:
 		exeAssignment(ctx, v)
 
@@ -38,4 +44,19 @@ func exeStatement(ctx *alphaContext, s Statement) {
 	default:
 		err.Panic("Unknown statement", err.At(s.Token()))
 	}
+}
+
+func exeIncrement(ctx *alphaContext, inc Increment) {
+
+	n := evalNumber(ctx, inc.ID)
+	one := decimal.NewFromInt(1)
+
+	if inc.Direction.Morpheme() == INCREMENT {
+		n = n.Add(one)
+	} else {
+		n = n.Sub(one)
+	}
+
+	num := numberLiteral(n)
+	ctx.Set(inc.ID.Token(), num)
 }

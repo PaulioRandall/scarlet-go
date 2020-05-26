@@ -40,12 +40,12 @@ func (op Operation) String(i int) string {
 }
 
 type Increment struct {
-	ID        Token
+	ID        Identifier
 	Direction Token
 }
 
 func (inc Increment) Token() Token {
-	return inc.ID
+	return inc.ID.Token()
 }
 
 func (inc Increment) String(i int) string {
@@ -54,7 +54,7 @@ func (inc Increment) String(i int) string {
 
 	s.indent(i).
 		append("[Increment] ").
-		appendTk(inc.ID)
+		append(inc.ID.String(0))
 
 	s.newline().
 		indent(i + 1).

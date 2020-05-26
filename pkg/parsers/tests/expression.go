@@ -478,7 +478,7 @@ func E18_Increment(t *testing.T, f ParseFunc) {
 	}
 
 	inc := Increment{
-		ID:        tok(IDENTIFIER, "i"),
+		ID:        Identifier{tok(IDENTIFIER, "i")},
 		Direction: tok(INCREMENT, "++"),
 	}
 
@@ -496,7 +496,7 @@ func E19_Decrement(t *testing.T, f ParseFunc) {
 	}
 
 	dec := Increment{
-		ID:        tok(IDENTIFIER, "i"),
+		ID:        Identifier{tok(IDENTIFIER, "i")},
 		Direction: tok(DECREMENT, "--"),
 	}
 
