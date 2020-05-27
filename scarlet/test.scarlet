@@ -1,4 +1,8 @@
 
-i: 0
-i++
-i++
+DEF factorial: F(n, ^r: 1) LOOP i [i < n] {
+	[i>0] r: r * (i + 1)
+}
+
+f: F(^a: factorial(5)) {}
+
+x: f()

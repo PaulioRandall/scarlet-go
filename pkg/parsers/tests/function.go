@@ -57,8 +57,11 @@ func F2_FuncDef(t *testing.T, f ParseFunc) {
 				tok(IDENTIFIER, "a"),
 				tok(IDENTIFIER, "b"),
 			},
-			[]Token{ // ^c
-				tok(IDENTIFIER, "c"),
+			[]OutputParam{ // ^c
+				OutputParam{
+					Identifier{tok(IDENTIFIER, "c")},
+					nil,
+				},
 			},
 			funcBody, // { c := a }
 		},
@@ -282,4 +285,68 @@ func F11_FuncDef(t *testing.T, f ParseFunc) {
 	}
 
 	expectOneStat(t, exp, f(given))
+}
+
+func F12_AssignOutput(t *testing.T, f ParseFunc) {
+
+	// f: F(^a: 5, ^b: 1 + 2) {}
+
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":"),
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(OUTPUT, "^"),
+		tok(IDENTIFIER, "a"),
+		tok(ASSIGN, ":"),
+		tok(NUMBER, "5"),
+		tok(DELIMITER, ","),
+		tok(OUTPUT, "^"),
+		tok(IDENTIFIER, "b"),
+		tok(ASSIGN, ":"),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+	}
+
+	targets := []AssignTarget{
+		AssignTarget{tok(IDENTIFIER, "f"), nil},
+	}
+
+	funcDef := FuncDef{
+		Key: tok(FUNC, "F"),
+	}
+
+	funcDef.Outputs = []OutputParam{
+		OutputParam{
+			Identifier{tok(IDENTIFIER, "a")},
+			Value{tok(NUMBER, "5")},
+		},
+		OutputParam{
+			Identifier{tok(IDENTIFIER, "b")},
+			Operation{
+				Left:     Value{tok(NUMBER, "1")},
+				Operator: tok(ADD, "+"),
+				Right:    Value{tok(NUMBER, "2")},
+			},
+		},
+	}
+
+	funcDef.Body = Block{
+		tok(BLOCK_OPEN, "{"),
+		nil,
+		tok(BLOCK_CLOSE, "}"),
+	}
+
+	a := Assignment{
+		Fixed:   false,
+		Targets: targets,
+		Assign:  tok(ASSIGN, ":"),
+		Exprs:   []Expression{funcDef},
+	}
+
+	expectOneStat(t, a, f(given))
 }

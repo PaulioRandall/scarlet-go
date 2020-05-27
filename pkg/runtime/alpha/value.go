@@ -133,7 +133,7 @@ func (f funcLiteral) String() string {
 				s += ", "
 			}
 
-			s += "^" + item.Value()
+			s += "^" + item.Token().Value()
 		}
 	}
 

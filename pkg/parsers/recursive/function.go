@@ -1,6 +1,8 @@
 package recursive
 
 import (
+	"fmt"
+
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
@@ -44,7 +46,7 @@ func parseExprFuncDef(p *pipe) Expression {
 		Key: p.expect(`parseExprFuncDef`, EXPR_FUNC),
 	}
 
-	var outputs []Token = nil
+	var outputs []OutputParam
 	f.Inputs, outputs = parseFuncParams(p)
 
 	if outputs != nil {
@@ -59,7 +61,7 @@ func parseExprFuncDef(p *pipe) Expression {
 	return f
 }
 
-func parseFuncParams(p *pipe) (in, out []Token) {
+func parseFuncParams(p *pipe) (in []Token, out []OutputParam) {
 	// pattern := PAREN_OPEN [ids] PAREN_CLOSE
 
 	p.expect(`parseFuncParams`, PAREN_OPEN)
@@ -73,12 +75,13 @@ func parseFuncParams(p *pipe) (in, out []Token) {
 	return in, out
 }
 
-func parseFuncParamIds(p *pipe) (in []Token, out []Token) {
-	// pattern := [^] ID {DELIM [^] ID}
+func parseFuncParamIds(p *pipe) (in []Token, out []OutputParam) {
+	// pattern := param {DELIM param}
+	// param := (ID | (OUTPUT ID ASSIGN expression))
 
 	for {
 		if p.accept(OUTPUT) {
-			tk := p.expect(`parseFuncParamIds`, IDENTIFIER)
+			tk := parseOutputParam(p)
 			out = append(out, tk)
 
 		} else {
@@ -92,6 +95,29 @@ func parseFuncParamIds(p *pipe) (in []Token, out []Token) {
 	}
 
 	return
+}
+
+func parseOutputParam(p *pipe) OutputParam {
+	// pattern := ID [ASSIGN expression]
+
+	o := OutputParam{
+		ID: Identifier{
+			Tk: p.expect(`parseFuncParamIds`, IDENTIFIER),
+		},
+	}
+
+	if p.accept(ASSIGN) {
+		o.Expr = parseExpression(p)
+
+		if o.Expr == nil {
+			err.Panic(
+				fmt.Sprintf(`Missing expression after %s`, p.past()),
+				err.At(p.past()),
+			)
+		}
+	}
+
+	return o
 }
 
 func isFuncCall(p *pipe) (is bool) {

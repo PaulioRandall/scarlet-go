@@ -4,10 +4,39 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
+type OutputParam struct {
+	ID   Identifier
+	Expr Expression
+}
+
+func (p OutputParam) Token() Token {
+	return p.ID.Token()
+}
+
+func (p OutputParam) String(i int) string {
+
+	var s str
+
+	s.indent(i).
+		append("[OutputParam] ").
+		appendTk(p.ID.Token())
+
+	if p.Expr != nil {
+		s.newline().
+			indent(i + 1).
+			append("Expr:")
+
+		s.newline().
+			append(p.Expr.String(i + 2))
+	}
+
+	return s.String()
+}
+
 type FuncDef struct {
 	Key     Token
 	Inputs  []Token
-	Outputs []Token
+	Outputs []OutputParam
 	Body    Block
 }
 
@@ -30,12 +59,12 @@ func (f FuncDef) String(i int) string {
 	s.newline().
 		appendTks(i+2, f.Inputs)
 
-	s.newline().
-		indent(i + 1).
-		append("Outputs:")
-
-	s.newline().
-		appendTks(i+2, f.Outputs)
+	if f.Outputs != nil {
+		s.newline().
+			indent(i+1).
+			append("Outputs:").
+			appendOutputs(i+2, f.Outputs)
+	}
 
 	s.newline().
 		indent(i + 1).
@@ -45,6 +74,16 @@ func (f FuncDef) String(i int) string {
 		append(f.Body.String(i + 2))
 
 	return s.String()
+}
+
+func (s *str) appendOutputs(i int, outs []OutputParam) *str {
+
+	for i, o := range outs {
+		s.newline().
+			append(o.String(i))
+	}
+
+	return s
 }
 
 type ExprFuncDef struct {

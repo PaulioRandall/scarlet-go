@@ -61,6 +61,7 @@ func (inc Increment) String(i int) string {
 		append("Direction:")
 
 	s.newline().
+		indent(i + 2).
 		appendTk(inc.Direction)
 
 	return s.String()

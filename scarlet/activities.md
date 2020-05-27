@@ -4,14 +4,6 @@
 - `F(a, ^b: 0)`
 
 
-# MAYBE: ++ and --
-- But they are statements, not expressions. This avoids their use within the middle of expressions and function calls
-
-### Examples
-- `i++`
-- `i--`
-
-
 # ERROR: Terminator checks required
 - This passes during parsing but shouldn't 
 - `x: 1 2`
@@ -48,6 +40,7 @@ Better definition and use of interfaces will make for more segregated code, whic
 # Enhance loops
 ### Allow
 1. LOOP i := 0 [i < 5]
+2. Use big decimal for looping 
 
 
 # Add inbuilt functions
@@ -69,7 +62,7 @@ Prints the args (variable length) to console, and appends a linefeed
 
 
 # Can Keywords be case-insensitive?
-Maybe they should be lower case, except for F?
+Maybe they should be lower case, except for `F` and `E`?
 
 
 # Template strings

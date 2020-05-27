@@ -166,6 +166,10 @@ func Test_F11_FuncDef(t *testing.T) {
 	tests.Run(t, ParseAll, tests.F11_FuncDef)
 }
 
+func Test_F12_AssignOutput(t *testing.T) {
+	tests.Run(t, ParseAll, tests.F12_AssignOutput)
+}
+
 func Test_EF1_ExprFuncDef(t *testing.T) {
 	tests.Run(t, ParseAll, tests.EF1_ExprFuncDef)
 }

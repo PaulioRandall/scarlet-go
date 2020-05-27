@@ -75,20 +75,29 @@ func evalFuncCallArgs(ctx *alphaContext, ids []Token, params []Expression) *alph
 	return funcCtx
 }
 
-func initFuncReturnArgs(ctx *alphaContext, outParams []Token) {
+func initFuncReturnArgs(ctx *alphaContext, outParams []OutputParam) {
 	for _, p := range outParams {
-		if v := ctx.GetLocal(p.Value()); v == nil {
-			ctx.SetLocal(p, voidLiteral{})
+
+		id := p.ID.Token()
+
+		if p.Expr != nil {
+			v := evalExpression(ctx, p.Expr)
+			v = expectOneValue(v, p.Expr.Token())
+			ctx.SetLocal(id, v)
+
+		} else if v := ctx.GetLocal(id.Value()); v == nil {
+			ctx.SetLocal(id, voidLiteral{})
 		}
 	}
 }
 
-func collectFuncCallResults(ctx *alphaContext, ids []Token) []result {
+func collectFuncCallResults(ctx *alphaContext, params []OutputParam) []result {
 
-	r := make([]result, len(ids))
+	r := make([]result, len(params))
 
-	for i, id := range ids {
+	for i, p := range params {
 
+		id := p.ID.Token()
 		v := ctx.GetLocal(id.Value())
 
 		if v != nil {
