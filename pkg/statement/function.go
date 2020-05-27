@@ -80,7 +80,7 @@ func (f FuncDef) String(i int) string {
 
 func (s *str) appendOutputs(i int, outs []OutputParam) *str {
 
-	for i, o := range outs {
+	for _, o := range outs {
 		s.newline().
 			append(o.String(i))
 	}

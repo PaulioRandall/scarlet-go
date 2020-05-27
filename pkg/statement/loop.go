@@ -28,6 +28,7 @@ func (l Loop) String(i int) string {
 		append("Index:")
 
 	s.newline().
+		indent(i + 2).
 		appendTk(l.IndexId)
 
 	s.newline().

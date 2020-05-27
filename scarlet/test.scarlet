@@ -1,10 +1,17 @@
 
-DEF factorial: F(n, ^r: 1) {
-	LOOP i: 1 [i <= n] {
-		r: r * i
-	}
-}
+//DEF factorial: F(n, ^r: 1) {
+//	LOOP i: 1 [i <= n] {
+//		r: r * i
+//	}
+//}
 
-x: factorial(100)
+//x: factorial(100)
 
 //@abc()
+
+
+list: LIST {}
+LOOP i: 0 [i<10] {
+	i: 9 - i
+	list[>>]: i
+}
