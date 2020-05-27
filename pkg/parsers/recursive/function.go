@@ -26,7 +26,7 @@ func parseFuncDef(p *pipe) Expression {
 		return f
 	}
 
-	if isGuard(p) || isMatch(p) || isLoop(p) {
+	if isGuard(p) || isMatch(p) {
 		f.Body = parseStatBlock(p)
 		return f
 	}

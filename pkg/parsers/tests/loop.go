@@ -9,13 +9,15 @@ import (
 
 func LP1_Conditional(t *testing.T, f ParseFunc) {
 
-	// LOOP i [i < 5] {
+	// LOOP i: 0 [i < 5] {
 	//	 x := i
 	// }
 
 	given := []Token{
 		tok(LOOP, "LOOP"),
 		tok(IDENTIFIER, "i"),
+		tok(ASSIGN, ":"),
+		tok(NUMBER, "0"),
 		tok(GUARD_OPEN, "["),
 		tok(IDENTIFIER, "i"),
 		tok(LESS_THAN, "<"),
@@ -23,15 +25,16 @@ func LP1_Conditional(t *testing.T, f ParseFunc) {
 		tok(GUARD_CLOSE, "]"),
 		tok(BLOCK_OPEN, "{"),
 		tok(IDENTIFIER, "x"),
-		tok(ASSIGN, ":="),
+		tok(ASSIGN, ":"),
 		tok(IDENTIFIER, "i"),
 		tok(TERMINATOR, ""),
 		tok(BLOCK_CLOSE, "}"),
 	}
 
 	loop := Loop{
-		Open:     tok(LOOP, "LOOP"),
-		IndexVar: tok(IDENTIFIER, "i"),
+		Open:      tok(LOOP, "LOOP"),
+		IndexId:   tok(IDENTIFIER, "i"),
+		InitIndex: Value{tok(NUMBER, "0")},
 	}
 
 	condition := Operation{
@@ -49,7 +52,7 @@ func LP1_Conditional(t *testing.T, f ParseFunc) {
 	stat := Assignment{
 		false,
 		[]AssignTarget{AssignTarget{tok(IDENTIFIER, "x"), nil}},
-		tok(ASSIGN, ":="),
+		tok(ASSIGN, ":"),
 		[]Expression{Identifier{tok(IDENTIFIER, "i")}},
 	}
 

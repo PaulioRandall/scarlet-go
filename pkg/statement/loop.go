@@ -5,9 +5,10 @@ import (
 )
 
 type Loop struct {
-	Open     Token
-	IndexVar Token
-	Guard    Guard
+	Open      Token
+	IndexId   Token
+	InitIndex Expression
+	Guard     Guard
 }
 
 func (l Loop) Token() Token {
@@ -24,8 +25,17 @@ func (l Loop) String(i int) string {
 
 	s.newline().
 		indent(i + 1).
-		append("Index: ").
-		appendTk(l.IndexVar)
+		append("Index:")
+
+	s.newline().
+		appendTk(l.IndexId)
+
+	s.newline().
+		indent(i + 1).
+		append("IndexInit:")
+
+	s.newline().
+		append(l.InitIndex.String(i + 2))
 
 	s.newline().
 		indent(i + 1).

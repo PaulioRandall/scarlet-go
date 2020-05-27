@@ -1,6 +1,7 @@
 package recursive
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
@@ -16,11 +17,22 @@ func parseLoop(p *pipe) Statement {
 	key := p.expect(`parseLoop`, LOOP)
 	indexId := p.expect(`parseLoop`, IDENTIFIER)
 
-	if isGuard(p) {
+	if p.accept(ASSIGN) {
+
+		initIndex := parseExpression(p)
+
+		if initIndex == nil {
+			err.Panic(
+				errMsg("parseLoop", `expression`, p.peek()),
+				err.At(p.peek()),
+			)
+		}
+
 		return Loop{
-			Open:     key,
-			IndexVar: indexId,
-			Guard:    parseGuard(p),
+			Open:      key,
+			IndexId:   indexId,
+			InitIndex: initIndex,
+			Guard:     parseGuard(p),
 		}
 	}
 

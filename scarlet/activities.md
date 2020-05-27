@@ -37,12 +37,6 @@ Better definition and use of interfaces will make for more segregated code, whic
 - `EXIT F`
 
 
-# Enhance loops
-### Allow
-1. LOOP i: 0 [i < 5]
-2. Use big decimal for looping 
-
-
 # Add inbuilt functions
 ### Print function
 ```

@@ -10,16 +10,18 @@ import (
 func exeLoop(ctx *alphaContext, l Loop) {
 
 	loopCtx := ctx.Spawn(false)
+	one := decimal.NewFromInt(1)
+	index := evalNumber(ctx, l.InitIndex)
 
-	for i := 0; ; i++ {
-
-		d := decimal.NewFromInt(int64(i))
-		n := numberLiteral(d)
-		loopCtx.SetLocal(l.IndexVar, n)
+	for {
+		n := numberLiteral(index)
+		loopCtx.SetLocal(l.IndexId, n)
 
 		if !exeGuard(loopCtx, l.Guard) {
 			break
 		}
+
+		index = index.Add(one)
 	}
 }
 
