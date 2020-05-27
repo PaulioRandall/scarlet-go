@@ -52,12 +52,14 @@ func (f FuncDef) String(i int) string {
 		append("[FuncDef] ").
 		appendTk(f.Key)
 
-	s.newline().
-		indent(i + 1).
-		append("Inputs:")
+	if f.Inputs != nil {
+		s.newline().
+			indent(i + 1).
+			append("Inputs:")
 
-	s.newline().
-		appendTks(i+2, f.Inputs)
+		s.newline().
+			appendTks(i+2, f.Inputs)
+	}
 
 	if f.Outputs != nil {
 		s.newline().
@@ -104,12 +106,13 @@ func (e ExprFuncDef) String(i int) string {
 		append("[ExprFuncDef] ").
 		appendTk(e.Key)
 
-	s.newline().
-		indent(i + 1).
-		append("Inputs:")
-
-	s.newline().
-		appendTks(i+2, e.Inputs)
+	if e.Inputs != nil {
+		s.newline().
+			indent(i+1).
+			append("Inputs:").
+			newline().
+			appendTks(i+2, e.Inputs)
+	}
 
 	s.newline().
 		indent(i + 1).
@@ -143,13 +146,13 @@ func (f FuncCall) String(i int) string {
 
 	s.newline().
 		append(f.ID.String(i + 2))
-
-	s.newline().
-		indent(i + 1).
-		append("Inputs:")
-
-	s.newline().
-		appendExps(i+2, f.Inputs)
+	if f.Inputs != nil {
+		s.newline().
+			indent(i+1).
+			append("Inputs:").
+			newline().
+			appendExps(i+2, f.Inputs)
+	}
 
 	return s.String()
 }

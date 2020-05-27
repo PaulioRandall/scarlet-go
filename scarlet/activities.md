@@ -1,7 +1,7 @@
 
-# MAYBE: Allow output params to be initialised
+# Allow functions that return a function to be called
 ### Examples
-- `F(a, ^b: 0)`
+- `x: f()()`
 
 
 # ERROR: Terminator checks required
@@ -39,7 +39,7 @@ Better definition and use of interfaces will make for more segregated code, whic
 
 # Enhance loops
 ### Allow
-1. LOOP i := 0 [i < 5]
+1. LOOP i: 0 [i < 5]
 2. Use big decimal for looping 
 
 

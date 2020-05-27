@@ -95,17 +95,17 @@ func isGroup(p *pipe) bool {
 func parseGroup(p *pipe) Expression {
 	// pattern := PAREN_OPEN expression PAREN_CLOSE
 
-	p.expect(`group`, PAREN_OPEN)
+	p.expect(`parseGroup`, PAREN_OPEN)
 
 	g := parseExpression(p)
 	if g == nil {
 		err.Panic(
-			errMsg("group", ANOTHER.String(), p.past()),
+			errMsg("parseGroup", ANOTHER.String(), p.past()),
 			err.At(p.past()),
 		)
 	}
 
-	p.expect(`group`, PAREN_CLOSE)
+	p.expect(`parseGroup`, PAREN_CLOSE)
 	return g
 }
 
