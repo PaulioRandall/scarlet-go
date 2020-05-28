@@ -22,6 +22,8 @@ func Print(w io.Writer, e Err, scriptFile string) {
 		col     = e.Col()
 	)
 
+	fPrintln(w, "+++Error, redo from start+++")
+
 	if line < 0 || col < 0 {
 		fPrintln(w, "[ERROR] %s", msg)
 

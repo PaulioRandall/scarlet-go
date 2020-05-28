@@ -156,3 +156,36 @@ func (f FuncCall) String(i int) string {
 
 	return s.String()
 }
+
+type SpellCall struct {
+	ID     Expression
+	Inputs []Expression
+}
+
+func (sp SpellCall) Token() Token {
+	return sp.ID.Token()
+}
+
+func (sp SpellCall) String(i int) string {
+
+	var s str
+
+	s.indent(i).
+		append("[SpellCall]")
+
+	s.newline().
+		indent(i + 1).
+		append("ID:")
+
+	s.newline().
+		append(sp.ID.String(i + 2))
+	if sp.Inputs != nil {
+		s.newline().
+			indent(i+1).
+			append("Inputs:").
+			newline().
+			appendExps(i+2, sp.Inputs)
+	}
+
+	return s.String()
+}
