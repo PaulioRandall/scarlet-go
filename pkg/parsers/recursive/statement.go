@@ -23,9 +23,6 @@ func parseStatement(p *pipe) Statement {
 	// pattern := assignment | guard | match | loop | expression TERMINATOR
 
 	switch {
-	case isIncOrDec(p):
-		return parseIncOrDec(p)
-
 	case isAssignment(p):
 		return parseAssignment(p)
 
@@ -52,30 +49,4 @@ func parseStatement(p *pipe) Statement {
 	)
 
 	return nil
-}
-
-func isIncOrDec(p *pipe) bool {
-	return p.matchSequence(IDENTIFIER, INCREMENT) ||
-		p.matchSequence(IDENTIFIER, DECREMENT)
-}
-
-func parseIncOrDec(p *pipe) Statement {
-	// pattern := ID (INCREMENT | DECREMENT)
-
-	id := Identifier{
-		Tk: p.expect(`parseIncOrDec`, IDENTIFIER),
-	}
-
-	inc := Increment{
-		ID: id,
-	}
-
-	if !p.matchAny(INCREMENT, DECREMENT) {
-		err.Panic("SANITY CHECK! Expected INCREMENT or DECREMENT", err.At(p.peek()))
-	}
-
-	inc.Direction = p.next()
-
-	p.expect(`parseIncOrDec`, TERMINATOR)
-	return inc
 }

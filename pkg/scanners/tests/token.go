@@ -223,15 +223,3 @@ func T44_ExprFunc(t *testing.T, f ScanFunc) {
 	checkFirstNot(t, tok(EXPR_FUNC, "E"), f("EE"))
 	checkFirstNot(t, tok(EXPR_FUNC, "EE"), f("EE"))
 }
-
-func T45_Increment(t *testing.T, f ScanFunc) {
-	checkOne(t, tok(INCREMENT, "++"), f("++"))
-	checkOne(t, tok(INCREMENT, "++"), f("+++"))
-	checkFirstNot(t, tok(INCREMENT, "+"), f("++"))
-}
-
-func T46_Decrement(t *testing.T, f ScanFunc) {
-	checkOne(t, tok(DECREMENT, "--"), f("--"))
-	checkOne(t, tok(DECREMENT, "--"), f("--"))
-	checkFirstNot(t, tok(DECREMENT, "-"), f("--"))
-}

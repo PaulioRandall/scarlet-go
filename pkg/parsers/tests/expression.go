@@ -466,39 +466,3 @@ func E17_Negation(t *testing.T, f ParseFunc) {
 
 	expectOneStat(t, neg, f(given))
 }
-
-func E18_Increment(t *testing.T, f ParseFunc) {
-
-	// i++
-
-	given := []Token{
-		tok(IDENTIFIER, "i"),
-		tok(INCREMENT, "++"),
-		tok(TERMINATOR, ""),
-	}
-
-	inc := Increment{
-		ID:        Identifier{tok(IDENTIFIER, "i")},
-		Direction: tok(INCREMENT, "++"),
-	}
-
-	expectOneStat(t, inc, f(given))
-}
-
-func E19_Decrement(t *testing.T, f ParseFunc) {
-
-	// i--
-
-	given := []Token{
-		tok(IDENTIFIER, "i"),
-		tok(DECREMENT, "--"),
-		tok(TERMINATOR, ""),
-	}
-
-	dec := Increment{
-		ID:        Identifier{tok(IDENTIFIER, "i")},
-		Direction: tok(DECREMENT, "--"),
-	}
-
-	expectOneStat(t, dec, f(given))
-}

@@ -27,8 +27,6 @@ const (
 	DELIMITER
 	ASSIGN
 	UPDATES
-	INCREMENT
-	DECREMENT
 	BLOCK_OPEN
 	BLOCK_CLOSE
 	PAREN_OPEN
@@ -76,8 +74,6 @@ var morphemes map[Morpheme]string = map[Morpheme]string{
 	DELIMITER:          `DELIM`,
 	ASSIGN:             `ASSIGN`,
 	UPDATES:            `UPDATES`,
-	INCREMENT:          `INCREMENT`,
-	DECREMENT:          `DECREMENT`,
 	BLOCK_OPEN:         `BLOCK_OPEN`,
 	BLOCK_CLOSE:        `BLOCK_CLOSE`,
 	PAREN_OPEN:         `PAREN_OPEN`,
