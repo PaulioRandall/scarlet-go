@@ -1,16 +1,8 @@
 
-f: F(a, b, ^c, ^e) MATCH {
-	[b == 0] e: `Can't divide by zero`
-	[TRUE] c: a/b
-}
+a, b: 2, `:(`
 
-a, b: 12, 3
-r, e: f(a, b)
+x, e: @inc(a)
+[e != ``] @println("Error: ", e)
 
-MATCH {
-	[e != _] @pl(e)
-	[TRUE] @pl(a, " / ", b, " = ", r)
-} 
-
-@inc(b)
-@dec(a)
+y, e: @inc(b)
+[e != ``] @println("Error: ", e)

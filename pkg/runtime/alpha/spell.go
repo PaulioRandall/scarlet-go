@@ -37,9 +37,9 @@ func evalSpellCall(ctx *alphaContext, call SpellCall) result {
 func findSpell(id Token) spell {
 
 	switch strings.ToLower(id.Value()) {
-	case `p`:
+	case `print`:
 		return spellPrint
-	case `pl`:
+	case `println`:
 		return spellPrintln
 	case `inc`:
 		return spellIncrement
@@ -51,26 +51,14 @@ func findSpell(id Token) spell {
 	return nil
 }
 
-func checkArgsLen(call SpellCall, args []arg, expSize int) {
-	if len(args) != expSize {
-		err.Panic("Wrong number of arguments", err.At(call.Token()))
-	}
-}
-
-func checkIsIdentifier(a arg) {
-	if a.tk.Morpheme() != IDENTIFIER {
-		err.Panic("Not an identifier", err.At(a.tk))
-	}
-}
-
-func argToNumber(a arg) decimal.Decimal {
+func argToNumber(a arg) (decimal.Decimal, string) {
 	n, ok := a.r.(numberLiteral)
 
 	if !ok {
-		err.Panic("Not a number", err.At(a.tk))
+		return decimal.Decimal{}, "Not a number"
 	}
 
-	return decimal.Decimal(n)
+	return decimal.Decimal(n), ""
 }
 
 func spellPrint(ctx *alphaContext, call SpellCall, args []arg) result {
@@ -94,30 +82,64 @@ func spellPrintln(ctx *alphaContext, call SpellCall, args []arg) result {
 
 func spellIncrement(ctx *alphaContext, call SpellCall, args []arg) result {
 
-	checkArgsLen(call, args, 1)
-	a := args[0]
-	checkIsIdentifier(a)
+	newErr := func(msg string) result {
+		return newTuple(
+			voidLiteral{},
+			stringLiteral(msg),
+		)
+	}
 
-	d := argToNumber(a)
+	if len(args) != 1 {
+		return newErr("Wrong number of arguments")
+	}
+
+	a := args[0]
+
+	if a.tk.Morpheme() != IDENTIFIER {
+		return newErr("Not an identifier")
+	}
+
+	d, e := argToNumber(a)
+	if e != "" {
+		return newErr(e)
+	}
+
 	one := decimal.NewFromInt(1)
 	d = d.Add(one)
 	n := numberLiteral(d)
 
 	ctx.Set(a.tk, n)
-	return n
+	return newTuple(n, stringLiteral(""))
 }
 
 func spellDecrement(ctx *alphaContext, call SpellCall, args []arg) result {
 
-	checkArgsLen(call, args, 1)
-	a := args[0]
-	checkIsIdentifier(a)
+	newErr := func(msg string) result {
+		return newTuple(
+			voidLiteral{},
+			stringLiteral(msg),
+		)
+	}
 
-	d := argToNumber(a)
+	if len(args) != 1 {
+		return newErr("Wrong number of arguments")
+	}
+
+	a := args[0]
+
+	if a.tk.Morpheme() != IDENTIFIER {
+		return newErr("Not an identifier")
+	}
+
+	d, e := argToNumber(a)
+	if e != "" {
+		return newErr(e)
+	}
+
 	one := decimal.NewFromInt(1)
 	d = d.Sub(one)
 	n := numberLiteral(d)
 
 	ctx.Set(a.tk, n)
-	return n
+	return newTuple(n, stringLiteral(""))
 }

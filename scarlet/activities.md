@@ -1,4 +1,8 @@
 
+# MAYBE: Allow void test as boolean expression
+- `[e?] @pl("Error: blah blah blah")`
+
+
 # MAYBE: Parameterless functions as function arguments could be written
 - `{ @pl("Scarlet") }`
 
@@ -28,28 +32,24 @@
 
 # Write spells for list appending & prepending
 ### Examples
-- `@append(list, x)`
-- `@prepend(x, list)`
+- `e: @append(list, x)`
+- `e: @prepend(x, list)`
 
 
 # Write spell for slicing lists
-- `new_list: @slice(list, 2, 4)`
+- `new_list, e: @slice(list, 2, 4)`
 
 
-# Write spell for getting length of list
-- `x: @len(list)`
+# Write spell for getting length of list or string
+- `x, e: @len(list)`
 
 
 # Write spell for dividing safely
-- `x, e: @divide(a, b)`
-
-
-# Write spell for panic
-- `@panic(msg)`
+- `x, e: @div(a, b)`
 
 
 # Write spell to parse number
-- `n: @parseNum(numStr)`
+- `n, e: @parseNum(numStr)`
 
 
 # Write spell to process file data

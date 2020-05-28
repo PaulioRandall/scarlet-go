@@ -92,6 +92,10 @@ func (l listLiteral) String() string {
 
 type tuple []result
 
+func newTuple(rs ...result) tuple {
+	return tuple(rs)
+}
+
 func (t tuple) get() interface{} {
 	return []result(t)
 }

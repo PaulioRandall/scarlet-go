@@ -89,17 +89,14 @@ func evalNegation(ctx *alphaContext, n Negation) result {
 
 func equal(left, right result) bool {
 
-	l, ok := left.(numberLiteral)
-	if !ok {
-		return left == right
+	nl, lok := left.(numberLiteral)
+	nr, rok := right.(numberLiteral)
+
+	if lok && rok {
+		return decimal.Decimal(nl).Equal(decimal.Decimal(nr))
 	}
 
-	r, ok := right.(numberLiteral)
-	if !ok {
-		return left == right
-	}
-
-	return decimal.Decimal(l).Equal(decimal.Decimal(r))
+	return left == right
 }
 
 func evalNumber(ctx *alphaContext, ex Expression) decimal.Decimal {
