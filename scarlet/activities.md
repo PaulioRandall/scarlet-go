@@ -26,11 +26,6 @@
 ```
 
 
-# MAYBE: Increment and decrement could be written as spells?
-- `@Inc(a)`
-- `@Dec(a)`
-
-
 # Write spells for list appending & prepending
 ### Examples
 - `@append(list, x)`

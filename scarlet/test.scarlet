@@ -12,3 +12,5 @@ MATCH {
 	[TRUE] @pl(a, " / ", b, " = ", r)
 } 
 
+@inc(b)
+@dec(a)
