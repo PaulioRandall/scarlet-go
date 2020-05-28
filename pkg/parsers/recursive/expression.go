@@ -46,6 +46,10 @@ func parseExpression(p *pipe) Expression {
 		left = parseNegation(p)
 		return parseOperation(p, left, 0)
 
+	case isSpellCall(p):
+		left = parseSpellCall(p)
+		return parseOperation(p, left, 0)
+
 	case isFuncCall(p):
 		left = parseFuncCall(p)
 		return parseOperation(p, left, 0)

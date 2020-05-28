@@ -140,3 +140,22 @@ func parseFuncCall(p *pipe) Expression {
 	p.expect(`parseFuncCall`, PAREN_CLOSE)
 	return f
 }
+
+func isSpellCall(p *pipe) bool {
+	return p.match(SPELL)
+}
+
+func parseSpellCall(p *pipe) Expression {
+
+	p.expect(`parseSpell`, SPELL)
+	id := p.expect(`parseSpell`, IDENTIFIER)
+
+	p.expect(`parseSpell`, PAREN_OPEN)
+	inputs := parseExpressions(p)
+	p.expect(`parseSpell`, PAREN_CLOSE)
+
+	return SpellCall{
+		ID:     Identifier{id},
+		Inputs: inputs,
+	}
+}

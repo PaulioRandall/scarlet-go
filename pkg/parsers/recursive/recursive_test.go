@@ -201,3 +201,19 @@ func Test_LP1_Conditional(t *testing.T) {
 func Test_LP2_ForEach(t *testing.T) {
 	tests.Run(t, ParseAll, tests.LP2_ForEach)
 }
+
+func Test_SP1(t *testing.T) {
+	tests.Run(t, ParseAll, tests.SP1)
+}
+
+func Test_SP2(t *testing.T) {
+	tests.Run(t, ParseAll, tests.SP2)
+}
+
+func Test_SP3(t *testing.T) {
+	tests.Run(t, ParseAll, tests.SP3)
+}
+
+func Test_SP4(t *testing.T) {
+	tests.Run(t, ParseAll, tests.SP4)
+}

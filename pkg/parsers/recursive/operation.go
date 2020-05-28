@@ -49,6 +49,9 @@ func parseSubOperation(p *pipe) Expression {
 	case isNegation(p):
 		return parseNegation(p)
 
+	case isSpellCall(p):
+		return parseSpellCall(p)
+
 	case isFuncCall(p):
 		return parseFuncCall(p)
 
