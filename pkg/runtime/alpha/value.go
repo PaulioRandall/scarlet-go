@@ -26,7 +26,7 @@ func (_ voidLiteral) get() interface{} {
 }
 
 func (_ voidLiteral) String() string {
-	return "(VOID) _"
+	return ""
 }
 
 type boolLiteral bool
@@ -36,7 +36,7 @@ func (b boolLiteral) get() interface{} {
 }
 
 func (b boolLiteral) String() string {
-	return "(BOOL) " + strconv.FormatBool(bool(b))
+	return strconv.FormatBool(bool(b))
 }
 
 type numberLiteral decimal.Decimal
@@ -50,7 +50,7 @@ func (n numberLiteral) ToInt() int64 {
 }
 
 func (n numberLiteral) String() string {
-	return "(NUM) " + decimal.Decimal(n).String()
+	return decimal.Decimal(n).String()
 }
 
 type stringLiteral string
@@ -60,7 +60,7 @@ func (s stringLiteral) get() interface{} {
 }
 
 func (s stringLiteral) String() string {
-	return "(STR) " + string(s)
+	return string(s)
 }
 
 type templateLiteral string
@@ -70,7 +70,7 @@ func (t templateLiteral) get() interface{} {
 }
 
 func (t templateLiteral) String() string {
-	return "(TMPL) " + string(t)
+	return string(t)
 }
 
 type listLiteral []result
@@ -80,7 +80,7 @@ func (l listLiteral) get() interface{} {
 }
 
 func (l listLiteral) String() string {
-	s := "(LIST) " + "{"
+	s := "{"
 	for i, item := range []result(l) {
 		if i != 0 {
 			s += ","
@@ -97,7 +97,7 @@ func (t tuple) get() interface{} {
 }
 
 func (t tuple) String() string {
-	s := "(TUPLE) " + "("
+	s := "("
 	for i, item := range []result(t) {
 		if i != 0 {
 			s += ","
@@ -115,7 +115,7 @@ func (f funcLiteral) get() interface{} {
 
 func (f funcLiteral) String() string {
 
-	s := "(FUNC) F("
+	s := "F("
 
 	if f.Inputs != nil {
 		for i, item := range f.Inputs {
@@ -148,7 +148,7 @@ func (e exprFuncLiteral) get() interface{} {
 
 func (e exprFuncLiteral) String() string {
 
-	s := "(E_FUNC) E("
+	s := "E("
 
 	if e.Inputs != nil {
 		for i, item := range e.Inputs {

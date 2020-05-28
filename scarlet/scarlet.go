@@ -52,5 +52,7 @@ func run(s string) {
 	println()
 	println("# Executing...")
 	ctx := runtime.Run(stats)
+
+	println()
 	println(ctx.String())
 }

@@ -158,12 +158,12 @@ func (f FuncCall) String(i int) string {
 }
 
 type SpellCall struct {
-	ID     Expression
+	ID     Token
 	Inputs []Expression
 }
 
 func (sp SpellCall) Token() Token {
-	return sp.ID.Token()
+	return sp.ID
 }
 
 func (sp SpellCall) String(i int) string {
@@ -171,14 +171,9 @@ func (sp SpellCall) String(i int) string {
 	var s str
 
 	s.indent(i).
-		append("[SpellCall]")
+		append("[SpellCall] ").
+		appendTk(sp.ID)
 
-	s.newline().
-		indent(i + 1).
-		append("ID:")
-
-	s.newline().
-		append(sp.ID.String(i + 2))
 	if sp.Inputs != nil {
 		s.newline().
 			indent(i+1).

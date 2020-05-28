@@ -20,7 +20,7 @@ func SP1(t *testing.T, f ParseFunc) {
 	}
 
 	sp := SpellCall{
-		Identifier{tok(IDENTIFIER, "f")},
+		tok(IDENTIFIER, "f"),
 		nil,
 	}
 
@@ -43,7 +43,7 @@ func SP2(t *testing.T, f ParseFunc) {
 	}
 
 	exp := SpellCall{
-		Identifier{tok(IDENTIFIER, "f")},
+		tok(IDENTIFIER, "f"),
 		[]Expression{
 			Identifier{tok(IDENTIFIER, "a")},
 			Identifier{tok(IDENTIFIER, "b")},
@@ -83,7 +83,7 @@ func SP3(t *testing.T, f ParseFunc) {
 	}
 
 	sp := SpellCall{
-		ID:     Identifier{tok(IDENTIFIER, "f")},
+		ID:     tok(IDENTIFIER, "f"),
 		Inputs: []Expression{sub},
 	}
 
@@ -107,12 +107,12 @@ func SP4(t *testing.T, f ParseFunc) {
 	}
 
 	inner := SpellCall{
-		ID:     Identifier{tok(IDENTIFIER, "abc")},
+		ID:     tok(IDENTIFIER, "abc"),
 		Inputs: nil,
 	}
 
 	outer := SpellCall{
-		ID:     Identifier{tok(IDENTIFIER, "f")},
+		ID:     tok(IDENTIFIER, "f"),
 		Inputs: []Expression{inner},
 	}
 

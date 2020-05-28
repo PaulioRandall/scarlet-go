@@ -1,4 +1,70 @@
 
+# MAYBE: Parameterless functions as function arguments could be written
+- `{ @pl("Scarlet") }`
+
+
+# MAYBE: Parameterless expression functions could be written
+- `E{a+1}`
+
+
+# MAYBE: Loops could be rewritten as spells?
+- Loops could then be removed from the language
+
+
+### Examples
+
+```
+@For({i: 1}, E{i<=5}, {
+	@pl(i)
+})
+```
+
+```
+@While(E{i<=5}, {
+	@pl(i)
+})
+```
+
+
+# MAYBE: Increment and decrement could be written as spells?
+- `@Inc(a)`
+- `@Dec(a)`
+
+
+# Write spells for list appending & prepending
+### Examples
+- `@append(list, x)`
+- `@prepend(x, list)`
+
+
+# Write spell for slicing lists
+- `new_list: @slice(list, 2, 4)`
+
+
+# Write spell for getting length of list
+- `x: @len(list)`
+
+
+# Write spell for dividing safely
+- `x, e: @divide(a, b)`
+
+
+# Write spell for panic
+- `@panic(msg)`
+
+
+# Write spell to parse number
+- `n: @parseNum(numStr)`
+
+
+# Write spell to process file data
+- `e: @file(filePath, f)`
+
+
+# Write spell to read all data from a file 
+- `s, e: @readFile(filePath)`
+
+
 # Allow functions that return a function to be called
 ### Examples
 - `x: f()()`
@@ -35,24 +101,6 @@ Better definition and use of interfaces will make for more segregated code, whic
 # Exit function early
 ### Examples
 - `EXIT F`
-
-
-# Add inbuilt functions
-### Print function
-```
-Prints the args (variable length) to console
-@P(...)
-```
-
-### Print line function
-```
-Prints the args (variable length) to console, and appends a linefeed
-@PL(...)
-```
-
-### Examples
-- `@P("x: ", 1 + 2, "; ")`
-- `@PL(list)`
 
 
 # Can Keywords be case-insensitive?

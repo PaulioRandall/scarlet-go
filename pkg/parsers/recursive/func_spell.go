@@ -155,7 +155,7 @@ func parseSpellCall(p *pipe) Expression {
 	p.expect(`parseSpell`, PAREN_CLOSE)
 
 	return SpellCall{
-		ID:     Identifier{id},
+		ID:     id,
 		Inputs: inputs,
 	}
 }

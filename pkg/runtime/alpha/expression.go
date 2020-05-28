@@ -66,6 +66,9 @@ func evalExpression(ctx *alphaContext, expr Expression) result {
 
 	case FuncCall:
 		return evalFuncCall(ctx, v)
+
+	case SpellCall:
+		return evalSpellCall(ctx, v)
 	}
 
 	err.Panic("Unknown expression type", err.At(expr.Token()))

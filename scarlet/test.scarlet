@@ -1,10 +1,14 @@
 
-DEF factorial: F(n, ^r: 1) {
-	LOOP i: 1 [i <= n] {
-		r: r * i
-	}
+f: F(a, b, ^c, ^e) MATCH {
+	[b == 0] e: `Can't divide by zero`
+	[TRUE] c: a/b
 }
 
-x: factorial(100)
+a, b: 12, 3
+r, e: f(a, b)
 
-//@abc()
+MATCH {
+	[e != _] @pl(e)
+	[TRUE] @pl(a, " / ", b, " = ", r)
+} 
+
