@@ -71,9 +71,6 @@ func patterns() []pattern {
 		pattern{ASSIGN, func(s *symbols) int {
 			return matchStr(s, ":")
 		}},
-		pattern{EXISTS, func(s *symbols) int {
-			return matchStr(s, "?")
-		}},
 		pattern{UPDATES, func(s *symbols) int {
 			return matchStr(s, "<-")
 		}},

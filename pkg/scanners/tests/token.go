@@ -223,7 +223,3 @@ func T44_ExprFunc(t *testing.T, f ScanFunc) {
 	checkFirstNot(t, tok(EXPR_FUNC, "E"), f("EE"))
 	checkFirstNot(t, tok(EXPR_FUNC, "EE"), f("EE"))
 }
-
-func T45_Exists(t *testing.T, f ScanFunc) {
-	checkOne(t, tok(EXISTS, "?"), f("?"))
-}
