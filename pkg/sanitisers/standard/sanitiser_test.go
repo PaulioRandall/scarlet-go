@@ -102,13 +102,6 @@ func Test_F2_String(t *testing.T) {
 	)
 }
 
-func Test_F3_Template(t *testing.T) {
-	checkFormats(t,
-		tok(TEMPLATE, `template`),
-		tok(TEMPLATE, `"template"`),
-	)
-}
-
 func Test_I1_Func(t *testing.T) {
 	checkIgnores(t, tok(FUNC, ""))
 }

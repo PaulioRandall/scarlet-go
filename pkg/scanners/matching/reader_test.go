@@ -150,10 +150,6 @@ func Test_T37_String(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T37_String)
 }
 
-func Test_T38_Template(t *testing.T) {
-	tests.Run(t, ScanAll, tests.T38_Template)
-}
-
 func Test_T39_Number(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T39_Number)
 }

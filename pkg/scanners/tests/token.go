@@ -170,24 +170,10 @@ func T36_MoreThan(t *testing.T, f ScanFunc) {
 }
 
 func T37_String(t *testing.T, f ScanFunc) {
-	checkOne(t, tok(STRING, "``"), f("``"))
-	checkOne(t, tok(STRING, "`abc`"), f("`abc`"))
-	checkPanic(t, func() { f("`") })
-	checkPanic(t, func() { f("`abc") })
-}
-
-func T38_Template(t *testing.T, f ScanFunc) {
-	checkOne(t, tok(TEMPLATE, `""`), f(`""`))
-	checkOne(t, tok(TEMPLATE, `"abc"`), f(`"abc"`))
-	checkOne(t, tok(TEMPLATE, `"\""`), f(`"\""`))
-	checkOne(t, tok(TEMPLATE, `"\\"`), f(`"\\"`))
-	checkOne(t, tok(TEMPLATE, `"\\\\\\"`), f(`"\\\\\\"`))
-	checkOne(t, tok(TEMPLATE, `"abc\"abc"`), f(`"abc\"abc"`))
+	checkOne(t, tok(STRING, `""`), f(`""`))
+	checkOne(t, tok(STRING, `"abc"`), f(`"abc"`))
 	checkPanic(t, func() { f(`"`) })
 	checkPanic(t, func() { f(`"abc`) })
-	checkPanic(t, func() { f(`"\"`) })
-	checkPanic(t, func() { f(`"\\`) })
-	checkPanic(t, func() { f(`"\\\\\"`) })
 }
 
 func T39_Number(t *testing.T, f ScanFunc) {

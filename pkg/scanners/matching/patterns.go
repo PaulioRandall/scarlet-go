@@ -155,35 +155,6 @@ func patterns() []pattern {
 		pattern{STRING, func(s *symbols) int {
 
 			const (
-				PREFIX     = "`"
-				SUFFIX     = "`"
-				PREFIX_LEN = 1
-				SUFFIX_LEN = 1
-			)
-
-			if !s.isMatch(0, PREFIX) {
-				return 0
-			}
-
-			n := s.countSymbolsWhile(0, func(i int, ru rune) bool {
-
-				if s.isMatch(i+PREFIX_LEN, SUFFIX) {
-					return false
-				}
-
-				checkForMissingTermination(s, i)
-				return true
-			})
-
-			return PREFIX_LEN + n + SUFFIX_LEN
-		}},
-		pattern{TEMPLATE, func(s *symbols) int {
-			// As the name suggests, templates can be populated with the value of
-			// identifiers, but the scanner is not concerned with parsing these. It
-			// does need to watch out for escaped terminals that also represent the
-			// string closer (suffix).
-
-			const (
 				PREFIX     = `"`
 				SUFFIX     = `"`
 				ESCAPE     = `\`

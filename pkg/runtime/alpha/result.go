@@ -63,16 +63,6 @@ func (s stringLiteral) String() string {
 	return string(s)
 }
 
-type templateLiteral string
-
-func (t templateLiteral) get() interface{} {
-	return string(t)
-}
-
-func (t templateLiteral) String() string {
-	return string(t)
-}
-
 type listLiteral []result
 
 func (l listLiteral) get() interface{} {
@@ -181,9 +171,6 @@ func valueOf(tk Token) result {
 
 	case STRING:
 		return stringLiteral(tk.Value())
-
-	case TEMPLATE:
-		return templateLiteral(tk.Value())
 	}
 
 	err.Panic(

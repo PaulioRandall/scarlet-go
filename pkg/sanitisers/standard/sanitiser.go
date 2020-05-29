@@ -72,7 +72,7 @@ func formatToken(tk Token) Token {
 		// in disguise.
 		return NewToken(TERMINATOR, tk.Value(), tk.Line(), tk.Col())
 
-	case STRING, TEMPLATE:
+	case STRING:
 		v := tk.Value()
 		v = v[1 : len(v)-1] // Remove quotes
 		return NewToken(tk.Morpheme(), v, tk.Line(), tk.Col())

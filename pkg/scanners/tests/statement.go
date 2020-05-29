@@ -181,7 +181,7 @@ func S8_Block(t *testing.T, f ScanFunc) {
 func S9_List(t *testing.T, f ScanFunc) {
 
 	in := "LIST {\n" +
-		"\t`There's a snake in my boot`,\n" +
+		"\t" + `"There's a snake in my boot",` + "\n" +
 		"\t" + `"{x} + {y} = {x + y}"` + ",\n" +
 		"}"
 
@@ -191,11 +191,11 @@ func S9_List(t *testing.T, f ScanFunc) {
 		NewToken(BLOCK_OPEN, "{", 0, 5),
 		NewToken(NEWLINE, "\n", 0, 6),
 		NewToken(WHITESPACE, "\t", 1, 0), // Line Start
-		NewToken(STRING, "`There's a snake in my boot`", 1, 1),
+		NewToken(STRING, `"There's a snake in my boot"`, 1, 1),
 		NewToken(DELIMITER, ",", 1, 29),
 		NewToken(NEWLINE, "\n", 1, 30),
 		NewToken(WHITESPACE, "\t", 2, 0), // Line Start
-		NewToken(TEMPLATE, `"{x} + {y} = {x + y}"`, 2, 1),
+		NewToken(STRING, `"{x} + {y} = {x + y}"`, 2, 1),
 		NewToken(DELIMITER, ",", 2, 22),
 		NewToken(NEWLINE, "\n", 2, 23),
 		NewToken(BLOCK_CLOSE, "}", 3, 0), // Line Start

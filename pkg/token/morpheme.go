@@ -35,7 +35,6 @@ const (
 	GUARD_CLOSE
 	TERMINATOR
 	STRING
-	TEMPLATE
 	NUMBER
 	BOOL
 	ADD
@@ -82,7 +81,6 @@ var morphemes map[Morpheme]string = map[Morpheme]string{
 	GUARD_CLOSE:        `GUARD_CLOSE`,
 	TERMINATOR:         `TERMINATOR`,
 	STRING:             `STRING`,
-	TEMPLATE:           `TEMPLATE`,
 	NUMBER:             `NUMBER`,
 	BOOL:               `BOOL`,
 	ADD:                `ADD`,

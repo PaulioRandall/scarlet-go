@@ -77,7 +77,6 @@ func isLiteral(p *pipe) bool {
 		BOOL,
 		NUMBER,
 		STRING,
-		TEMPLATE,
 	)
 }
 
