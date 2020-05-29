@@ -14,9 +14,11 @@ func exeAssignment(ctx *alphaContext, a Assignment) {
 	checkAssignTargets(a.Targets, vs, a.Assign)
 
 	for i, at := range a.Targets {
-		if at.Index == nil {
+		switch {
+		case at.ID.Morpheme() == VOID:
+		case at.Index == nil:
 			assignVar(ctx, at.ID, a.Fixed, vs[i])
-		} else {
+		default:
 			assignListItem(ctx, at.ID, at.Index, vs[i])
 		}
 	}

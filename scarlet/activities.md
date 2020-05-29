@@ -9,8 +9,6 @@
 
 # MAYBE: Loops could be rewritten as spells?
 - Loops could then be removed from the language
-
-
 ### Examples
 
 ```
@@ -64,10 +62,6 @@
 # ERROR: Terminator checks required
 - This passes during parsing but shouldn't 
 - `x: 1 2`
-
-
-# Allow voids as assignment targets
-Void assignment targets ignore the result of an expression, useful for indicating that a result is not needed
 
 
 # How can dependencies be reduced?

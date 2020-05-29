@@ -94,3 +94,23 @@ func (p *pipe) expect(tag string, m Morpheme) Token {
 
 	return p.itr.Past()
 }
+
+func (p *pipe) expectOneOf(tag string, ms ...Morpheme) Token {
+	for _, m := range ms {
+		if p.accept(m) {
+			return p.itr.Past()
+		}
+	}
+
+	s := ""
+	for i, m := range ms {
+		if i != 0 {
+			s += " "
+		}
+
+		s += m.String()
+	}
+
+	err.Panic(errMsg(tag, s, p.peek()), err.At(p.peek()))
+	return nil
+}
