@@ -110,7 +110,7 @@ func (ctx *alphaContext) SetLocal(id Token, v result) {
 
 func (ctx *alphaContext) Set(id Token, v result) {
 	if !ctx.set(id, v) {
-		ctx.local[id.Value()] = v
+		ctx.setOrDelLocal(id, v)
 	}
 }
 

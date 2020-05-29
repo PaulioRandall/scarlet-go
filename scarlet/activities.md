@@ -3,14 +3,10 @@
 - `{ @pl("Scarlet") }`
 
 
-# MAYBE: Parameterless expression functions could be written
-- `E{a+1}`
-
-
 # MAYBE: Loops could be rewritten as spells?
 - Loops could then be removed from the language
-### Examples
 
+### Examples
 ```
 @For({i: 1}, E{i<=5}, {
 	@pl(i)

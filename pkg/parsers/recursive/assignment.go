@@ -8,15 +8,14 @@ import (
 
 func isAssignment(p *pipe) bool {
 	// match := DEF
-	// match := (ID | VOID) (DELIM | ASSIGN | GUARD_OPEN)
+	// match := VOID | (ID (DELIM | ASSIGN | GUARD_OPEN))
 
 	return p.match(DEF) ||
 		p.matchSequence(IDENTIFIER, DELIMITER) ||
 		p.matchSequence(IDENTIFIER, ASSIGN) ||
 		p.matchSequence(IDENTIFIER, GUARD_OPEN) ||
 		p.matchSequence(VOID, DELIMITER) ||
-		p.matchSequence(VOID, ASSIGN) ||
-		p.matchSequence(VOID, GUARD_OPEN)
+		p.matchSequence(VOID, ASSIGN)
 }
 
 func parseAssignment(p *pipe) Assignment {
