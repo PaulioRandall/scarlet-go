@@ -178,6 +178,10 @@ func Test_T44_ExprFunc(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T44_ExprFunc)
 }
 
+func Test_T45_Exists(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T45_Exists)
+}
+
 func Test_S1_Assignment(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S1_Assignment)
 }

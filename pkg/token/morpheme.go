@@ -26,6 +26,7 @@ const (
 	VOID
 	DELIMITER
 	ASSIGN
+	EXISTS
 	UPDATES
 	BLOCK_OPEN
 	BLOCK_CLOSE
@@ -69,6 +70,7 @@ var morphemes map[Morpheme]string = map[Morpheme]string{
 	LOOP:               `LOOP`,
 	SPELL:              `SPELL`,
 	OUTPUT:             `OUTPUT`,
+	EXISTS:             `EXISTS`,
 	IDENTIFIER:         `ID`,
 	VOID:               `VOID`,
 	DELIMITER:          `DELIM`,
