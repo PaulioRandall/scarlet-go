@@ -1,19 +1,24 @@
 
-FIX divideAndFmt: F(a, b, ^r, ^e) {
+divideAndFmt: F(a, b, ^r, ^e) {
 	WATCH e {
-		[b == 0] e: `Can't divide by zero`
-		r, e: @FmtReal(a / b, `.##`)
+		@If(b == 0, {
+			e: !Can't divide by zero"
+		})
 
-		EXIT FUNC
+		r, e: @FmtNum(a / b, ".##"")
 	}
 }
 
+@Fix(divideAndFmt)
+
 parseArgs: F(args, ^a, ^b, ^e) {
 	WATCH e {
-		[@Len(args) < 3] e: `Need at least two number arguments`
+		@If(@Len(args) < 3, {
+			e: "Need at least two number arguments"
+		})
 
-		a, e: @ToReal(args(1))
-		b, e: @ToReal(args(2))
+		a, e: @ParseNum(args(1))
+		b, e: @ParseNum(args(2))
 	}
 }
 
@@ -24,29 +29,27 @@ calc: F(argParser, ^e) {
 		@Println("{a} / {b} = {r}")
 	}
 }
+ 
+@Foreach(@Args(), {
+	@Println(v)
+})
 
-printValues: F(_, v, _) @Println(v)
-@Foreach(@Args(), printValues)
 e: calc(parseArgs)
-@PanicIf(e)
+@Check(e)
 
-list: LIST { 
+list: @List(
 	`abc`,
 	3,
-}
+)
+
+map: @Map(
+	a, 1,
+	b, 2,
+)
 
 EXIT SCRIPT
 
 // Future stuff
-
-// Looping
-LOOP i [exit] +1 {
-	DONE
-}
-
-LOOP i, item, more <- list
-	// Logic applied to each item
-END
 
 // Quick command line calls
 $"ls -la"              // Execute a terminal process
