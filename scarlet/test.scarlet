@@ -1,8 +1,8 @@
 
 a, b: 2, `:(`
 
-x, e: @inc(a)
+e: @inc(a)
 [e != _] @println("Error: ", e)
 
-y, e: @inc(b)
+e: @dec(b)
 [e != _] @println("Error: ", e)

@@ -82,64 +82,48 @@ func spellPrintln(ctx *alphaContext, call SpellCall, args []arg) result {
 
 func spellIncrement(ctx *alphaContext, call SpellCall, args []arg) result {
 
-	newErr := func(msg string) result {
-		return newTuple(
-			voidLiteral{},
-			stringLiteral(msg),
-		)
-	}
-
 	if len(args) != 1 {
-		return newErr("Wrong number of arguments")
+		return stringLiteral("Wrong number of arguments")
 	}
 
 	a := args[0]
 
 	if a.tk.Morpheme() != IDENTIFIER {
-		return newErr("Not an identifier")
+		return stringLiteral("Not an identifier")
 	}
 
 	d, e := argToNumber(a)
 	if e != "" {
-		return newErr(e)
+		return stringLiteral(e)
 	}
 
 	one := decimal.NewFromInt(1)
 	d = d.Add(one)
-	n := numberLiteral(d)
+	ctx.Set(a.tk, numberLiteral(d))
 
-	ctx.Set(a.tk, n)
-	return newTuple(n, voidLiteral{})
+	return voidLiteral{}
 }
 
 func spellDecrement(ctx *alphaContext, call SpellCall, args []arg) result {
 
-	newErr := func(msg string) result {
-		return newTuple(
-			voidLiteral{},
-			stringLiteral(msg),
-		)
-	}
-
 	if len(args) != 1 {
-		return newErr("Wrong number of arguments")
+		return stringLiteral("Wrong number of arguments")
 	}
 
 	a := args[0]
 
 	if a.tk.Morpheme() != IDENTIFIER {
-		return newErr("Not an identifier")
+		return stringLiteral("Not an identifier")
 	}
 
 	d, e := argToNumber(a)
 	if e != "" {
-		return newErr(e)
+		return stringLiteral(e)
 	}
 
 	one := decimal.NewFromInt(1)
 	d = d.Sub(one)
-	n := numberLiteral(d)
+	ctx.Set(a.tk, numberLiteral(d))
 
-	ctx.Set(a.tk, n)
-	return newTuple(n, voidLiteral{})
+	return voidLiteral{}
 }
