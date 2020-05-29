@@ -1,8 +1,4 @@
 
-# MAYBE: Allow void test as boolean expression
-- `[e?] @pl("Error: blah blah blah")`
-
-
 # MAYBE: Parameterless functions as function arguments could be written
 - `{ @pl("Scarlet") }`
 

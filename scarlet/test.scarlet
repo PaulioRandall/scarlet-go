@@ -2,7 +2,7 @@
 a, b: 2, `:(`
 
 x, e: @inc(a)
-[e != ``] @println("Error: ", e)
+[e != _] @println("Error: ", e)
 
 y, e: @inc(b)
-[e != ``] @println("Error: ", e)
+[e != _] @println("Error: ", e)

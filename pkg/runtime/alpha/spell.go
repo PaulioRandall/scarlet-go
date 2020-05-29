@@ -109,7 +109,7 @@ func spellIncrement(ctx *alphaContext, call SpellCall, args []arg) result {
 	n := numberLiteral(d)
 
 	ctx.Set(a.tk, n)
-	return newTuple(n, stringLiteral(""))
+	return newTuple(n, voidLiteral{})
 }
 
 func spellDecrement(ctx *alphaContext, call SpellCall, args []arg) result {
@@ -141,5 +141,5 @@ func spellDecrement(ctx *alphaContext, call SpellCall, args []arg) result {
 	n := numberLiteral(d)
 
 	ctx.Set(a.tk, n)
-	return newTuple(n, stringLiteral(""))
+	return newTuple(n, voidLiteral{})
 }

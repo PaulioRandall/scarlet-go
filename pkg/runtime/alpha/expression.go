@@ -16,6 +16,17 @@ func evalIdentifier(ctx *alphaContext, id Identifier) result {
 	return v
 }
 
+func evalVoidableIdentifier(ctx *alphaContext, id Identifier) result {
+
+	v := ctx.Get(id.Token().Value())
+
+	if v == nil {
+		return voidLiteral{}
+	}
+
+	return v
+}
+
 func evalExpressions(ctx *alphaContext, exprs []Expression) []result {
 
 	var vs []result
@@ -41,7 +52,7 @@ func evalExpressions(ctx *alphaContext, exprs []Expression) []result {
 func evalExpression(ctx *alphaContext, expr Expression) result {
 	switch v := expr.(type) {
 	case Identifier:
-		return evalIdentifier(ctx, v)
+		return evalVoidableIdentifier(ctx, v)
 
 	case Value:
 		return valueOf(v.Token())
