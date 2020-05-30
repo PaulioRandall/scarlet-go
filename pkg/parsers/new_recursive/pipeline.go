@@ -58,21 +58,14 @@ func (p *pipeline) expect(exp Morpheme) (Token, error) {
 		return p._prev(), nil
 	}
 
-	tk := p._peek()
-
-	if tk == nil {
-		s := fmt.Sprintf("Expected %s, got UNDEFINED", exp.String())
-		return nil, err.New(s, err.After(p._prev()))
+	if p.hasMore() {
+		return nil, p._unexpected(p._peek(), exp.String())
 	}
 
-	s := fmt.Sprintf(
-		"Expected %s, got %s",
-		exp.String(), tk.Morpheme().String(),
-	)
-	return nil, err.New(s, err.At(tk))
+	return nil, p._outOfTokens(p._prev(), exp.String())
 }
 
-func (p *pipeline) expectAny(exp ...Morpheme) (Token, error) {
+func (p *pipeline) expectAnyOf(exp ...Morpheme) (Token, error) {
 
 	for _, m := range exp {
 		if p.accept(m) {
@@ -80,19 +73,11 @@ func (p *pipeline) expectAny(exp ...Morpheme) (Token, error) {
 		}
 	}
 
-	expected := JoinMorphemes(exp...)
-	tk := p._peek()
-
-	if tk == nil {
-		s := fmt.Sprintf("Expected one of %s; got UNDEFINED", expected)
-		return nil, err.New(s, err.After(p._prev()))
+	if p.hasMore() {
+		return nil, p._unexpected(p._peek(), JoinMorphemes(exp...))
 	}
 
-	s := fmt.Sprintf(
-		"Expected one of %s; got %s",
-		expected, tk.Morpheme().String(),
-	)
-	return nil, err.New(s, err.At(tk))
+	return nil, p._outOfTokens(p._prev(), JoinMorphemes(exp...))
 }
 
 func (p *pipeline) _peek() Token {
@@ -122,6 +107,16 @@ func (p *pipeline) _prev() Token {
 	}
 
 	return nil
+}
+
+func (p *pipeline) _outOfTokens(prev Token, exp string) error {
+	s := fmt.Sprintf("Expected %s; got UNDEFINED", exp)
+	return err.New(s, err.After(prev))
+}
+
+func (p *pipeline) _unexpected(next Token, exp string) error {
+	s := fmt.Sprintf("Expected %s; got %s", exp, next.Morpheme().String())
+	return err.New(s, err.At(next))
 }
 
 //****************************************************************************

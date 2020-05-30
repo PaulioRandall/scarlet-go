@@ -96,7 +96,7 @@ func assignmentTokens(p *parser, left Token) ([]Token, error) {
 
 	for p.accept(DELIMITER) {
 
-		tk, e := p.expectAny(IDENTIFIER, VOID)
+		tk, e := p.expectAnyOf(IDENTIFIER, VOID)
 		if e != nil {
 			return nil, e
 		}

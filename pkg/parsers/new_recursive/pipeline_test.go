@@ -111,3 +111,41 @@ func Test_P3(t *testing.T) {
 
 	checkErr(t, p, NUMBER)
 }
+
+func Test_P4(t *testing.T) {
+
+	// p.expectAnyOf()
+
+	tok := func(m Morpheme) Token {
+		return NewToken(m, "", 0, 0)
+	}
+
+	checkOk := func(t *testing.T, p *pipeline, exp Token, ms ...Morpheme) {
+		act, e := p.expectAnyOf(ms...)
+		require.Nil(t, nil, e)
+		require.Equal(t, exp, act)
+	}
+
+	checkErr := func(t *testing.T, p *pipeline, ms ...Morpheme) {
+		act, e := p.expectAnyOf(ms...)
+		require.NotNil(t, e)
+		require.Nil(t, nil, act)
+	}
+
+	p := newPipeline([]Token{
+		tok(NUMBER),
+		tok(ADD),
+		tok(NUMBER),
+	})
+
+	checkErr(t, p, ADD)
+	checkOk(t, p, tok(NUMBER), ADD, NUMBER)
+
+	checkErr(t, p, NUMBER)
+	checkOk(t, p, tok(ADD), ADD, NUMBER)
+
+	checkErr(t, p, ADD)
+	checkOk(t, p, tok(NUMBER), ADD, NUMBER)
+
+	checkErr(t, p, ADD, NUMBER)
+}
