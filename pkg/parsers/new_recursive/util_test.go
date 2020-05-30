@@ -16,6 +16,11 @@ func tok(m Morpheme, v string) Token {
 	return NewToken(m, v, 0, 0)
 }
 
+func expectError(t *testing.T, acts []Statement, e error) {
+	require.NotNil(t, e, "Expected error")
+	require.Nil(t, acts, "Only expected an error, but result was not nil")
+}
+
 func expectOneStat(t *testing.T, exp Statement, acts []Statement, e error) {
 	checkNoErr(t, e)
 	expectSize(t, 1, acts)
@@ -47,12 +52,6 @@ func expectStat(t *testing.T, exp, act Statement) {
 func expectSize(t *testing.T, exp int, acts []Statement) {
 	require.Equal(t, exp, len(acts),
 		"Expected %d statements, got %d", exp, len(acts))
-}
-
-func expectError(t *testing.T, acts []Statement, e error) {
-	if e == nil {
-		require.NotNil(t, e, "Expected error")
-	}
 }
 
 func checkNoErr(t *testing.T, e error) {

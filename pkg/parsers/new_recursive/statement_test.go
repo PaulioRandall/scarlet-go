@@ -9,7 +9,7 @@ import (
 
 var testFunc func(Factory, []Token) ([]Statement, error) = ParseStatements
 
-func Test_E1(t *testing.T) {
+func Test_S1(t *testing.T) {
 
 	// a
 
@@ -24,7 +24,7 @@ func Test_E1(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_E2(t *testing.T) {
+func Test_S2(t *testing.T) {
 
 	// _
 
@@ -39,9 +39,9 @@ func Test_E2(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_E3(t *testing.T) {
+func Test_S3(t *testing.T) {
 
-	// 1
+	// TRUE
 
 	given := []Token{
 		tok(BOOL, "TRUE"),
@@ -54,7 +54,7 @@ func Test_E3(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_E4(t *testing.T) {
+func Test_S4(t *testing.T) {
 
 	// 1
 
@@ -69,7 +69,7 @@ func Test_E4(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_E5(t *testing.T) {
+func Test_S5(t *testing.T) {
 
 	// "abc"
 
@@ -84,9 +84,10 @@ func Test_E5(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_EF1(t *testing.T) {
+func Test_F1(t *testing.T) {
 
 	// :
+	// Because an assignment token is never at the start of a statement
 
 	given := []Token{
 		tok(ASSIGN, ":"),

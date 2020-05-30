@@ -6,25 +6,25 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func parseExpressions(p *parser) ([]Expression, error) {
+func expressions(p *parser) ([]Expression, error) {
 	// pattern := [expression {DELIM expression}]
 
-	exp, e := parseExpression(p)
+	exp, e := expression(p)
 	if e != nil {
 		return nil, e
 	}
 
 	if exp != nil {
-		return parseDelimExpressions(p, exp)
+		return delimExpressions(p, exp)
 	}
 
 	return nil, nil
 }
 
-func parseDelimExpressions(p *parser, first Expression) ([]Expression, error) {
+func delimExpressions(p *parser, left Expression) ([]Expression, error) {
 	// pattern := expression {DELIMITER expression}
 
-	exps := []Expression{first}
+	exps := []Expression{left}
 
 	for p.accept(DELIMITER) {
 
@@ -39,7 +39,7 @@ func parseDelimExpressions(p *parser, first Expression) ([]Expression, error) {
 	return exps, nil
 }
 
-func parseExpression(p *parser) (expr Expression, e error) {
+func expression(p *parser) (expr Expression, e error) {
 	// pattern := identifier | literal
 
 	switch {
@@ -56,7 +56,7 @@ func parseExpression(p *parser) (expr Expression, e error) {
 func expectExpression(p *parser) (Expression, error) {
 	// pattern := identifier | literal
 
-	exp, e := parseExpression(p)
+	exp, e := expression(p)
 	if e != nil {
 		return nil, e
 	}

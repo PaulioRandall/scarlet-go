@@ -1,5 +1,9 @@
 package token
 
+import (
+	"strings"
+)
+
 type Morpheme int
 
 // TODO: Some of the const token types don't have meaningful or accurate names,
@@ -130,4 +134,19 @@ func (m Morpheme) Precedence() int {
 
 func (m Morpheme) Redundant() bool {
 	return m == UNDEFINED || m == WHITESPACE || m == COMMENT
+}
+
+func JoinMorphemes(ms ...Morpheme) string {
+
+	sb := strings.Builder{}
+
+	for i, m := range ms {
+		if i > 0 {
+			sb.WriteString(", ")
+		}
+
+		sb.WriteString(m.String())
+	}
+
+	return sb.String()
 }

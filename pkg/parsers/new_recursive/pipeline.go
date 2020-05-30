@@ -69,7 +69,29 @@ func (p *pipeline) expect(exp Morpheme) (Token, error) {
 		"Expected %s, got %s",
 		exp.String(), tk.Morpheme().String(),
 	)
+	return nil, err.New(s, err.At(tk))
+}
 
+func (p *pipeline) expectAny(exp ...Morpheme) (Token, error) {
+
+	for _, m := range exp {
+		if p.accept(m) {
+			return p._prev(), nil
+		}
+	}
+
+	expected := JoinMorphemes(exp...)
+	tk := p._peek()
+
+	if tk == nil {
+		s := fmt.Sprintf("Expected one of %s, got UNDEFINED", expected)
+		return nil, err.New(s, err.After(p._prev()))
+	}
+
+	s := fmt.Sprintf(
+		"Expected one of %s, got %s",
+		expected, tk.Morpheme().String(),
+	)
 	return nil, err.New(s, err.At(tk))
 }
 

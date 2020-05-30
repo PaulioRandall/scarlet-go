@@ -28,8 +28,8 @@ func (b *builder) addToken(indent int, tk Token) {
 	b.add(indent, ToString(tk))
 }
 
-func (b *builder) newline(indent int) {
-	b.add(indent, "\n")
+func (b *builder) newline() {
+	b.add(0, "\n")
 }
 
 func (b *builder) String() string {
