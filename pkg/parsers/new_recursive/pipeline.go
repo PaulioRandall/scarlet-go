@@ -7,21 +7,21 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-type pipe struct {
+type pipeline struct {
 	tks  []Token
 	size int
 	pos  int
 }
 
-func newPipe(tks []Token) *pipe {
-	return &pipe{tks, len(tks), 0}
+func newPipeline(tks []Token) *pipeline {
+	return &pipeline{tks, len(tks), 0}
 }
 
-func (p *pipe) hasMore() bool {
+func (p *pipeline) hasMore() bool {
 	return p.pos < p.size
 }
 
-func (p *pipe) match(m Morpheme) bool {
+func (p *pipeline) match(m Morpheme) bool {
 
 	tk := p._peek()
 
@@ -32,11 +32,11 @@ func (p *pipe) match(m Morpheme) bool {
 	return m == ANY || m == tk.Morpheme()
 }
 
-func (p *pipe) any() Token {
+func (p *pipeline) any() Token {
 	return p._next()
 }
 
-func (p *pipe) accept(m Morpheme) bool {
+func (p *pipeline) accept(m Morpheme) bool {
 
 	tk := p._peek()
 
@@ -52,7 +52,7 @@ func (p *pipe) accept(m Morpheme) bool {
 	return false
 }
 
-func (p *pipe) expect(exp Morpheme) (Token, error) {
+func (p *pipeline) expect(exp Morpheme) (Token, error) {
 
 	if p.accept(exp) {
 		return p._prev(), nil
@@ -73,7 +73,7 @@ func (p *pipe) expect(exp Morpheme) (Token, error) {
 	return nil, err.New(s, err.At(tk))
 }
 
-func (p *pipe) _peek() Token {
+func (p *pipeline) _peek() Token {
 
 	if p.pos >= p.size {
 		return nil
@@ -82,7 +82,7 @@ func (p *pipe) _peek() Token {
 	return p.tks[p.pos]
 }
 
-func (p *pipe) _next() Token {
+func (p *pipeline) _next() Token {
 
 	tk := p._peek()
 
@@ -93,7 +93,7 @@ func (p *pipe) _next() Token {
 	return tk
 }
 
-func (p *pipe) _prev() Token {
+func (p *pipeline) _prev() Token {
 
 	if p.pos > 0 {
 		return p.tks[p.pos-1]

@@ -6,52 +6,58 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func parseExpressions(p *pipe) ([]Expression, error) {
+func parseExpressions(p *parser) ([]Expression, error) {
 	// pattern := [expression {DELIM expression}]
 
-	exp := parseExpression(p)
-
-	if exp == nil {
-		return nil, nil
+	exp, e := parseExpression(p)
+	if e != nil {
+		return nil, e
 	}
 
-	return parseDelimitedExpressions(p, exp)
+	if exp != nil {
+		return parseDelimExpressions(p, exp)
+	}
+
+	return nil, nil
 }
 
-func parseDelimitedExpressions(p *pipe, first Expression) ([]Expression, error) {
+func parseDelimExpressions(p *parser, first Expression) ([]Expression, error) {
 
 	exps := []Expression{first}
 
 	for p.accept(DELIMITER) {
-		exp, e := expectExpression(p)
 
+		next, e := expectExpression(p)
 		if e != nil {
 			return nil, e
 		}
 
-		exps = append(exps, exp)
+		exps = append(exps, next)
 	}
 
 	return exps, nil
 }
 
-func parseExpression(p *pipe) Expression {
-
+func parseExpression(p *parser) (expr Expression, e error) {
 	// pattern := identifier | literal
 
 	switch {
 	case p.match(IDENTIFIER):
-		return parseIdentifier(p)
+		expr = p.NewIdentifier(p.any())
 
 	case isLiteral(p):
-		return parseLiteral(p)
+		expr = p.NewLiteral(p.any())
 	}
 
-	return nil
+	return
 }
 
-func expectExpression(p *pipe) (Expression, error) {
-	exp := parseExpression(p)
+func expectExpression(p *parser) (Expression, error) {
+
+	exp, e := parseExpression(p)
+	if e != nil {
+		return nil, e
+	}
 
 	if exp == nil {
 		return nil, err.New("Expected expression", err.At(p.any()))
@@ -60,25 +66,9 @@ func expectExpression(p *pipe) (Expression, error) {
 	return exp, nil
 }
 
-func parseIdentifier(p *pipe) Expression {
-	// pattern := IDENTIFIER
-
-	return Identifier{
-		TK: p.any(),
-	}
-}
-
-func isLiteral(p *pipe) bool {
+func isLiteral(p *parser) bool {
 	return p.match(VOID) ||
 		p.match(BOOL) ||
 		p.match(NUMBER) ||
 		p.match(STRING)
-}
-
-func parseLiteral(p *pipe) Expression {
-	// pattern := IDENTIFIER
-
-	return Literal{
-		TK: p.any(),
-	}
 }

@@ -5,8 +5,8 @@ import (
 )
 
 type Factory interface {
-	Identifier(tk Token) Expression
-	Literal(tk Token) Expression
+	NewIdentifier(tk Token) Identifier
+	NewLiteral(tk Token) Literal
 }
 
 func NewFactory() Factory {
@@ -15,10 +15,10 @@ func NewFactory() Factory {
 
 type fac struct{}
 
-func (f fac) Identifier(tk Token) Expression {
+func (f fac) NewIdentifier(tk Token) Identifier {
 	return Identifier{tk}
 }
 
-func (f fac) Literal(tk Token) Expression {
+func (f fac) NewLiteral(tk Token) Literal {
 	return Literal{tk}
 }

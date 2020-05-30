@@ -16,7 +16,7 @@ func Test_P1(t *testing.T) {
 		return NewToken(m, "", 0, 0)
 	}
 
-	p := newPipe([]Token{
+	p := newPipeline([]Token{
 		tok(NUMBER),
 		tok(ADD),
 		tok(NUMBER),
@@ -48,7 +48,7 @@ func Test_P2(t *testing.T) {
 		return NewToken(m, "", 0, 0)
 	}
 
-	p := newPipe([]Token{
+	p := newPipeline([]Token{
 		tok(NUMBER),
 		tok(ADD),
 		tok(NUMBER),
@@ -82,19 +82,19 @@ func Test_P3(t *testing.T) {
 		return NewToken(m, "", 0, 0)
 	}
 
-	checkOk := func(t *testing.T, p *pipe, exp Token, m Morpheme) {
+	checkOk := func(t *testing.T, p *pipeline, exp Token, m Morpheme) {
 		act, e := p.expect(m)
 		require.Nil(t, nil, e)
 		require.Equal(t, exp, act)
 	}
 
-	checkErr := func(t *testing.T, p *pipe, m Morpheme) {
+	checkErr := func(t *testing.T, p *pipeline, m Morpheme) {
 		act, e := p.expect(m)
 		require.NotNil(t, e)
 		require.Nil(t, nil, act)
 	}
 
-	p := newPipe([]Token{
+	p := newPipeline([]Token{
 		tok(NUMBER),
 		tok(ADD),
 		tok(NUMBER),
