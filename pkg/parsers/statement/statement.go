@@ -4,6 +4,10 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
+type Statement interface {
+	Expression
+}
+
 type Expression interface {
 	Begin() (line, col int)
 	End() (line, col int)
