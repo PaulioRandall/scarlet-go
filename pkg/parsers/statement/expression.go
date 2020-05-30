@@ -34,25 +34,25 @@ func (id Identifier) String() string {
 	return b.String()
 }
 
-type Value struct {
+type Literal struct {
 	TK Token
 }
 
-func (v Value) Begin() (int, int) {
-	return v.TK.Line(), v.TK.Col()
+func (l Literal) Begin() (int, int) {
+	return l.TK.Line(), l.TK.Col()
 }
 
-func (v Value) End() (int, int) {
-	tk := v.TK
+func (l Literal) End() (int, int) {
+	tk := l.TK
 	return tk.Line(), tk.Col() + len(tk.Value())
 }
 
-func (v Value) String(i int) string {
+func (l Literal) String() string {
 
 	b := builder{}
 
-	b.add(0, "[Value] ")
-	b.addToken(0, v.TK)
+	b.add(0, "[Literal] ")
+	b.addToken(0, l.TK)
 
 	return b.String()
 }
