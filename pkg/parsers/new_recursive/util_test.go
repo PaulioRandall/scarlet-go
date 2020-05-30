@@ -49,7 +49,7 @@ func expectSize(t *testing.T, exp int, acts []Statement) {
 		"Expected %d statements, got %d", exp, len(acts))
 }
 
-func expectError(t *testing.T, e error) {
+func expectError(t *testing.T, acts []Statement, e error) {
 	if e == nil {
 		require.NotNil(t, e, "Expected error")
 	}

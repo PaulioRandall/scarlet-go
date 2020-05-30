@@ -33,7 +33,7 @@ func (b *builder) newline(indent int) {
 }
 
 func (b *builder) String() string {
-	return b.String()
+	return b.Builder.String()
 }
 
 func (b *builder) print() {

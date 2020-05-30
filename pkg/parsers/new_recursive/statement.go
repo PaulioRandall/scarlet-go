@@ -40,11 +40,11 @@ func parseStatement(p *parser) (Statement, error) {
 
 func expectStatement(p *parser) (Statement, error) {
 
-	s, e := parseStatement(p)
+	st, e := parseStatement(p)
 
-	if e == nil && s == nil {
+	if e == nil && st == nil {
 		return nil, err.New("Expected statement", err.At(p.any()))
 	}
 
-	return s, e
+	return st, e
 }
