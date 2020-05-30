@@ -97,20 +97,20 @@ type AssignmentBlock struct {
 	Stats []Assignment
 }
 
-func (as AssignmentBlock) Begin() (int, int) {
-	return as.Stats[0].Begin()
+func (ab AssignmentBlock) Begin() (int, int) {
+	return ab.Stats[0].Begin()
 }
 
-func (as AssignmentBlock) End() (int, int) {
-	i := len(as.Stats) - 1
-	return as.Stats[i].End()
+func (ab AssignmentBlock) End() (int, int) {
+	i := len(ab.Stats) - 1
+	return ab.Stats[i].End()
 }
 
-func (as AssignmentBlock) String() string {
+func (ab AssignmentBlock) String() string {
 
 	b := builder{}
 
-	for _, a := range as.Stats {
+	for _, a := range ab.Stats {
 		b.add(0, a.String())
 	}
 

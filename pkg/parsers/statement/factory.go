@@ -26,7 +26,10 @@ func (f fac) NewLiteral(tk Token) Literal {
 }
 
 func (f fac) NewAssignment(tk Token, expr Expression) Assignment {
-	return Assignment{tk, expr}
+	return Assignment{
+		Target: tk,
+		Source: expr,
+	}
 }
 
 func (f fac) NewAssignmentBlock(as []Assignment) AssignmentBlock {

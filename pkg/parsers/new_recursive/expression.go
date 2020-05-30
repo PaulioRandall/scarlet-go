@@ -39,31 +39,31 @@ func delimExpressions(p *parser, left Expression) ([]Expression, error) {
 	return exps, nil
 }
 
-func expression(p *parser) (expr Expression, e error) {
+func expression(p *parser) (Expression, error) {
 	// pattern := identifier | literal
 
 	switch {
 	case p.match(IDENTIFIER), p.match(VOID):
-		expr = p.NewIdentifier(p.any())
+		return p.NewIdentifier(p.any()), nil
 
 	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
-		expr = p.NewLiteral(p.any())
+		return p.NewLiteral(p.any()), nil
 	}
 
-	return
+	return nil, nil
 }
 
 func expectExpression(p *parser) (Expression, error) {
 	// pattern := identifier | literal
 
-	exp, e := expression(p)
+	expr, e := expression(p)
 	if e != nil {
 		return nil, e
 	}
 
-	if exp == nil {
+	if expr == nil {
 		return nil, err.New("Expected expression", err.At(p.any()))
 	}
 
-	return exp, nil
+	return expr, nil
 }

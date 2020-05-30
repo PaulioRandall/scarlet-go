@@ -84,12 +84,12 @@ func (p *pipeline) expectAny(exp ...Morpheme) (Token, error) {
 	tk := p._peek()
 
 	if tk == nil {
-		s := fmt.Sprintf("Expected one of %s, got UNDEFINED", expected)
+		s := fmt.Sprintf("Expected one of %s; got UNDEFINED", expected)
 		return nil, err.New(s, err.After(p._prev()))
 	}
 
 	s := fmt.Sprintf(
-		"Expected one of %s, got %s",
+		"Expected one of %s; got %s",
 		expected, tk.Morpheme().String(),
 	)
 	return nil, err.New(s, err.At(tk))

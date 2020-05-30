@@ -46,7 +46,7 @@ func statement(p *parser) (Statement, error) {
 		return assignOrExpr(p, left)
 
 	case p.match(VOID):
-		return p.NewIdentifier(p.any()), nil
+		return assignment(p, p.any())
 
 	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
 		return p.NewLiteral(p.any()), nil
@@ -82,6 +82,11 @@ func assignment(p *parser, left Token) (Statement, error) {
 		return nil, e
 	}
 
+	_, e = p.expect(ASSIGN)
+	if e != nil {
+		return nil, e
+	}
+
 	return assignmentExprs(p, tks)
 }
 
@@ -89,7 +94,7 @@ func assignmentTokens(p *parser, left Token) ([]Token, error) {
 
 	tks := []Token{left}
 
-	for p.match(DELIMITER) {
+	for p.accept(DELIMITER) {
 
 		tk, e := p.expectAny(IDENTIFIER, VOID)
 		if e != nil {
@@ -109,7 +114,10 @@ func assignmentExprs(p *parser, tks []Token) (Statement, error) {
 	for i, tk := range tks {
 
 		if i > 0 {
-			p.expect(DELIMITER)
+			_, e := p.expect(DELIMITER)
+			if e != nil {
+				return nil, e
+			}
 		}
 
 		expr, e := expectExpression(p)
@@ -117,8 +125,7 @@ func assignmentExprs(p *parser, tks []Token) (Statement, error) {
 			return nil, e
 		}
 
-		a := p.NewAssignment(tk, expr)
-		as = append(as, a)
+		as[i] = p.NewAssignment(tk, expr)
 	}
 
 	return p.NewAssignmentBlock(as), nil
