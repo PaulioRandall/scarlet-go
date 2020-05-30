@@ -43,10 +43,10 @@ func parseExpression(p *parser) (expr Expression, e error) {
 	// pattern := identifier | literal
 
 	switch {
-	case p.match(IDENTIFIER):
+	case p.match(IDENTIFIER), p.match(VOID):
 		expr = p.NewIdentifier(p.any())
 
-	case isLiteral(p):
+	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
 		expr = p.NewLiteral(p.any())
 	}
 
@@ -66,13 +66,4 @@ func expectExpression(p *parser) (Expression, error) {
 	}
 
 	return exp, nil
-}
-
-func isLiteral(p *parser) bool {
-	// pattern := VOID | BOOL | NUMBER | STRING
-
-	return p.match(VOID) ||
-		p.match(BOOL) ||
-		p.match(NUMBER) ||
-		p.match(STRING)
 }
