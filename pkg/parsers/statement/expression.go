@@ -15,7 +15,8 @@ type Identifier struct {
 }
 
 func (id Identifier) Begin() (int, int) {
-	return id.TK.Line(), id.TK.Col()
+	tk := id.TK
+	return tk.Line(), tk.Col()
 }
 
 func (id Identifier) End() (int, int) {
@@ -27,8 +28,8 @@ func (id Identifier) String() string {
 
 	b := builder{}
 
-	b.add("[Identifier] ")
-	b.addToken(id.TK)
+	b.add(0, "[Identifier] ")
+	b.addToken(0, id.TK)
 
 	return b.String()
 }
@@ -50,8 +51,8 @@ func (v Value) String(i int) string {
 
 	b := builder{}
 
-	b.add("[Value] ")
-	b.addToken(v.TK)
+	b.add(0, "[Value] ")
+	b.addToken(0, v.TK)
 
 	return b.String()
 }
