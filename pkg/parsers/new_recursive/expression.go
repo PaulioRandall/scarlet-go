@@ -22,6 +22,7 @@ func parseExpressions(p *parser) ([]Expression, error) {
 }
 
 func parseDelimExpressions(p *parser, first Expression) ([]Expression, error) {
+	// pattern := expression {DELIMITER expression}
 
 	exps := []Expression{first}
 
@@ -53,6 +54,7 @@ func parseExpression(p *parser) (expr Expression, e error) {
 }
 
 func expectExpression(p *parser) (Expression, error) {
+	// pattern := identifier | literal
 
 	exp, e := parseExpression(p)
 	if e != nil {
@@ -67,6 +69,8 @@ func expectExpression(p *parser) (Expression, error) {
 }
 
 func isLiteral(p *parser) bool {
+	// pattern := VOID | BOOL | NUMBER | STRING
+
 	return p.match(VOID) ||
 		p.match(BOOL) ||
 		p.match(NUMBER) ||
