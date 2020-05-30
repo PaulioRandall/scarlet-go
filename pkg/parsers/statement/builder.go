@@ -8,17 +8,17 @@ import (
 )
 
 type builder struct {
-	sb strings.Builder
+	strings.Builder
 }
 
 func (b *builder) add(indent int, s string) {
 
 	for _, ru := range s {
-		b.sb.WriteRune(ru)
+		b.WriteRune(ru)
 
 		if ru == '\n' {
 			for i := 0; i < indent; i++ {
-				b.sb.WriteRune('\t')
+				b.WriteRune('\t')
 			}
 		}
 	}
