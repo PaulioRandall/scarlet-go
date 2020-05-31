@@ -12,6 +12,10 @@ func Test_Literal(t *testing.T) {
 	var _ Expression = Literal{}
 }
 
+func Test_List(t *testing.T) {
+	var _ Statement = List{}
+}
+
 func Test_Negation(t *testing.T) {
 	var _ Expression = Negation{}
 }

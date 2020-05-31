@@ -61,6 +61,34 @@ func (l Literal) String() string {
 	return b.String()
 }
 
+type List struct {
+	Open, Close Token
+	Items       []Expression
+}
+
+func (l List) Begin() (int, int) {
+	return l.Open.Line(), l.Open.Col()
+}
+
+func (l List) End() (int, int) {
+	tk := l.Close
+	return tk.Line(), tk.Col() + len(tk.Value())
+}
+
+func (l List) String() string {
+
+	b := builder{}
+
+	b.add(0, "[List] ")
+
+	for _, item := range l.Items {
+		b.newline()
+		b.add(1, item.String())
+	}
+
+	return b.String()
+}
+
 type Assignment struct {
 	Target Token
 	Source Expression
