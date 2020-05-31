@@ -152,6 +152,96 @@ func Test_S8(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S9(t *testing.T) {
+
+	// LIST {}
+
+	given := []Token{
+		tok(LIST, "LIST"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := List{
+		Open:  tok(BLOCK_OPEN, "{"),
+		Items: []Expression{},
+		Close: tok(BLOCK_CLOSE, "}"),
+	}
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S10(t *testing.T) {
+
+	// LIST {1,TRUE,"abc"}
+
+	given := []Token{
+		tok(LIST, "LIST"),
+		tok(BLOCK_OPEN, "{"),
+		tok(NUMBER, "1"),
+		tok(DELIMITER, ","),
+		tok(BOOL, "TRUE"),
+		tok(DELIMITER, ","),
+		tok(STRING, "abc"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := List{
+		Open: tok(BLOCK_OPEN, "{"),
+		Items: []Expression{
+			Literal{tok(NUMBER, "1")},
+			Literal{tok(BOOL, "TRUE")},
+			Literal{tok(STRING, "abc")},
+		},
+		Close: tok(BLOCK_CLOSE, "}"),
+	}
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S11(t *testing.T) {
+
+	// LIST {
+	// 	1,
+	// 	TRUE,
+	// 	"abc",
+	// }
+
+	given := []Token{
+		tok(LIST, "LIST"),
+		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, "\n"),
+		tok(NUMBER, "1"),
+		tok(DELIMITER, ","),
+		tok(TERMINATOR, "\n"),
+		tok(BOOL, "TRUE"),
+		tok(DELIMITER, ","),
+		tok(TERMINATOR, "\n"),
+		tok(STRING, "abc"),
+		tok(DELIMITER, ","),
+		tok(TERMINATOR, "\n"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := List{
+		Open: tok(BLOCK_OPEN, "{"),
+		Items: []Expression{
+			Literal{tok(NUMBER, "1")},
+			Literal{tok(BOOL, "TRUE")},
+			Literal{tok(STRING, "abc")},
+		},
+		Close: tok(BLOCK_CLOSE, "}"),
+	}
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// Assignment token is never at the start of a statement
@@ -259,6 +349,60 @@ func Test_F7(t *testing.T) {
 
 	given := []Token{
 		tok(SUBTRACT, "-"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(NewFactory(), given)
+	expectError(t, act, e)
+}
+
+func Test_F8(t *testing.T) {
+
+	// List items ends in delimiter without a terminator
+	// LIST {1,}
+
+	given := []Token{
+		tok(LIST, "LIST"),
+		tok(BLOCK_OPEN, "{"),
+		tok(NUMBER, "1"),
+		tok(DELIMITER, ","),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(NewFactory(), given)
+	expectError(t, act, e)
+}
+
+func Test_F9(t *testing.T) {
+
+	// List items start with a delimiter
+	// LIST {1,}
+
+	given := []Token{
+		tok(LIST, "LIST"),
+		tok(BLOCK_OPEN, "{"),
+		tok(DELIMITER, ","),
+		tok(NUMBER, "1"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(NewFactory(), given)
+	expectError(t, act, e)
+}
+
+func Test_F10(t *testing.T) {
+
+	// Last list item doesn't have a delimiter when a terminator follows
+	// LIST {1,}
+
+	given := []Token{
+		tok(LIST, "LIST"),
+		tok(BLOCK_OPEN, "{"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, "\n"),
+		tok(BLOCK_CLOSE, "}"),
 		tok(TERMINATOR, ""),
 	}
 

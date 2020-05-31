@@ -7,6 +7,7 @@ import (
 type Factory interface {
 	NewIdentifier(tk Token) Identifier
 	NewLiteral(tk Token) Literal
+	NewList(open Token, items []Expression, close Token) List
 	NewNegation(expr Expression) Negation
 	NewAssignment(tk Token, expr Expression) Assignment
 	NewAssignmentBlock(as []Assignment) AssignmentBlock
@@ -24,6 +25,14 @@ func (f fac) NewIdentifier(tk Token) Identifier {
 
 func (f fac) NewLiteral(tk Token) Literal {
 	return Literal{tk}
+}
+
+func (f fac) NewList(open Token, items []Expression, close Token) List {
+	return List{
+		Open:  open,
+		Items: items,
+		Close: close,
+	}
 }
 
 func (f fac) NewNegation(expr Expression) Negation {

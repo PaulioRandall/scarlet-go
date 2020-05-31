@@ -51,6 +51,9 @@ func expression(p *parser) (Expression, error) {
 
 	case p.accept(SUBTRACT):
 		return negation(p)
+
+	case p.accept(LIST):
+		return list(p)
 	}
 
 	return nil, nil
@@ -80,4 +83,58 @@ func negation(p *parser) (Expression, error) {
 	}
 
 	return p.NewNegation(expr), nil
+}
+
+func list(p *parser) (Expression, error) {
+	// pattern := BLOCK_OPEN [TERMINATOR] listItems [TERMINATOR] BLOCK_CLOSE
+
+	open, e := p.expect(BLOCK_OPEN)
+	if e != nil {
+		return nil, e
+	}
+
+	p.accept(TERMINATOR)
+	items, e := listItems(p)
+	if e != nil {
+		return nil, e
+	}
+
+	close, e := p.expect(BLOCK_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	return p.NewList(open, items, close), nil
+}
+
+func listItems(p *parser) ([]Expression, error) {
+	// pattern := [expression {DELIMITER [TERMINATOR] expression}]
+
+	items := []Expression{}
+
+	expr, e := expression(p)
+	if e != nil {
+		return nil, e
+	}
+
+	if expr == nil {
+		return items, nil
+	}
+
+	items = append(items, expr)
+
+	for p.accept(DELIMITER) {
+		if p.accept(TERMINATOR) && p.match(BLOCK_CLOSE) {
+			break
+		}
+
+		expr, e = expectExpression(p)
+		if e != nil {
+			return nil, e
+		}
+
+		items = append(items, expr)
+	}
+
+	return items, nil
 }
