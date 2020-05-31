@@ -38,23 +38,6 @@ func statements(p *parser) ([]Statement, error) {
 	return r, nil
 }
 
-func statement(p *parser) (Statement, error) {
-
-	switch {
-	case p.match(IDENTIFIER):
-		left := p.any()
-		return assignOrExpr(p, left)
-
-	case p.match(VOID):
-		return assignment(p, p.any())
-
-	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
-		return p.NewLiteral(p.any()), nil
-	}
-
-	return expression(p)
-}
-
 func expectStatement(p *parser) (Statement, error) {
 
 	st, e := statement(p)
@@ -64,6 +47,20 @@ func expectStatement(p *parser) (Statement, error) {
 	}
 
 	return st, e
+}
+
+func statement(p *parser) (Statement, error) {
+
+	switch {
+	case p.match(IDENTIFIER):
+		left := p.any()
+		return assignOrExpr(p, left)
+
+	case p.match(VOID):
+		return assignment(p, p.any())
+	}
+
+	return expression(p)
 }
 
 func assignOrExpr(p *parser, left Token) (Statement, error) {

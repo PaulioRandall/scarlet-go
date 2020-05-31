@@ -134,6 +134,24 @@ func Test_S7(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S8(t *testing.T) {
+
+	// -2
+
+	given := []Token{
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "2"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := Negation{
+		Literal{tok(NUMBER, "2")},
+	}
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// Assignment token is never at the start of a statement
@@ -227,6 +245,20 @@ func Test_F6(t *testing.T) {
 		tok(ASSIGN, ":"),
 		tok(NUMBER, "1"),
 		tok(NUMBER, "2"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(NewFactory(), given)
+	expectError(t, act, e)
+}
+
+func Test_F7(t *testing.T) {
+
+	// Negation without an expression
+	// -
+
+	given := []Token{
+		tok(SUBTRACT, "-"),
 		tok(TERMINATOR, ""),
 	}
 

@@ -48,6 +48,9 @@ func expression(p *parser) (Expression, error) {
 
 	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
 		return p.NewLiteral(p.any()), nil
+
+	case p.accept(SUBTRACT):
+		return negation(p)
 	}
 
 	return nil, nil
@@ -66,4 +69,15 @@ func expectExpression(p *parser) (Expression, error) {
 	}
 
 	return expr, nil
+}
+
+func negation(p *parser) (Expression, error) {
+	// pattern := MINUS expression
+
+	expr, e := expectExpression(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return p.NewNegation(expr), nil
 }
