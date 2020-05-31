@@ -7,6 +7,7 @@ import (
 type Factory interface {
 	NewIdentifier(tk Token) Identifier
 	NewLiteral(tk Token) Literal
+	NewNegation(expr Expression) Negation
 	NewAssignment(tk Token, expr Expression) Assignment
 	NewAssignmentBlock(as []Assignment) AssignmentBlock
 }
@@ -23,6 +24,10 @@ func (f fac) NewIdentifier(tk Token) Identifier {
 
 func (f fac) NewLiteral(tk Token) Literal {
 	return Literal{tk}
+}
+
+func (f fac) NewNegation(expr Expression) Negation {
+	return Negation{expr}
 }
 
 func (f fac) NewAssignment(tk Token, expr Expression) Assignment {

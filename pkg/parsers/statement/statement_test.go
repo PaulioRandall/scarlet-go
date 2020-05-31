@@ -12,10 +12,14 @@ func Test_Literal(t *testing.T) {
 	var _ Expression = Literal{}
 }
 
+func Test_Negation(t *testing.T) {
+	var _ Expression = Negation{}
+}
+
 func Test_Assignment(t *testing.T) {
-	var _ Expression = Assignment{}
+	var _ Statement = Assignment{}
 }
 
 func Test_AssignmentBlock(t *testing.T) {
-	var _ Expression = AssignmentBlock{}
+	var _ Statement = AssignmentBlock{}
 }

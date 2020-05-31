@@ -116,3 +116,27 @@ func (ab AssignmentBlock) String() string {
 
 	return b.String()
 }
+
+type Negation struct {
+	Expr Expression
+}
+
+func (n Negation) Begin() (int, int) {
+	return n.Expr.Begin()
+}
+
+func (n Negation) End() (int, int) {
+	return n.Expr.End()
+}
+
+func (n Negation) String() string {
+
+	b := builder{}
+
+	b.add(0, "[Negation] ")
+
+	b.newline()
+	b.add(1, n.Expr.String())
+
+	return b.String()
+}
