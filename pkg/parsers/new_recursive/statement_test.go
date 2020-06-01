@@ -343,6 +343,71 @@ func Test_S14(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S15(t *testing.T) {
+
+	// GIVEN only a comment
+	// THEN no statements are returned
+
+	// // abc
+	given := []Token{
+		tok(COMMENT, "// abc"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := []Statement{}
+
+	act, e := testFunc(testFactory, given)
+	expectStats(t, exp, act, e)
+}
+
+func Test_S16(t *testing.T) {
+
+	// GIVEN only whitespace
+	// THEN no statements are returned
+
+	given := []Token{
+		tok(WHITESPACE, "    "),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := []Statement{}
+
+	act, e := testFunc(testFactory, given)
+	expectStats(t, exp, act, e)
+}
+
+func Test_S17(t *testing.T) {
+
+	// GIVEN only one terminator
+	// THEN no statements are returned
+
+	given := []Token{
+		tok(TERMINATOR, ""),
+	}
+
+	exp := []Statement{}
+
+	act, e := testFunc(testFactory, given)
+	expectStats(t, exp, act, e)
+}
+
+func Test_S18(t *testing.T) {
+
+	// GIVEN only terminators
+	// THEN no statements are returned
+
+	given := []Token{
+		tok(TERMINATOR, ""),
+		tok(TERMINATOR, ""),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := []Statement{}
+
+	act, e := testFunc(testFactory, given)
+	expectStats(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token

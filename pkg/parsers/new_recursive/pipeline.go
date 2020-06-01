@@ -19,13 +19,13 @@ func newPipeline(tks []Token) *pipeline {
 }
 
 func (p *pipeline) hasMore() bool {
+	p._ignoreRedundant()
 	return p.pos < p.size
 }
 
 func (p *pipeline) match(m Morpheme) bool {
 
 	tk := p._peek()
-
 	if tk == nil {
 		return false
 	}
@@ -40,7 +40,6 @@ func (p *pipeline) any() Token {
 func (p *pipeline) accept(m Morpheme) bool {
 
 	tk := p._peek()
-
 	if tk == nil {
 		return false
 	}
@@ -83,8 +82,7 @@ func (p *pipeline) expectAnyOf(exp ...Morpheme) (Token, error) {
 
 func (p *pipeline) _peek() Token {
 
-	p._ignoreRedundancy()
-
+	p._ignoreRedundant()
 	if p.pos >= p.size {
 		return nil
 	}
@@ -104,14 +102,17 @@ func (p *pipeline) _next() Token {
 	return tk
 }
 
-func (p *pipeline) _ignoreRedundancy() {
+func (p *pipeline) _ignoreRedundant() {
 
 	for p.pos < p.size {
 
 		next := p.tks[p.pos].Morpheme()
 
 		switch {
-		case next == COMMENT || next == WHITESPACE:
+		case next == COMMENT:
+			p.pos++
+
+		case next == WHITESPACE:
 			p.pos++
 
 		case next != TERMINATOR:
