@@ -425,7 +425,7 @@ func Test_F1(t *testing.T) {
 func Test_F2(t *testing.T) {
 
 	// GIVEN an assignment
-	// WHEN not enough expressions are present to pair with identifiers
+	// WITHOUT enough expressions
 	// THEN parser returns error
 
 	// a:
@@ -442,7 +442,7 @@ func Test_F2(t *testing.T) {
 func Test_F3(t *testing.T) {
 
 	// GIVEN an assignment
-	// WHEN not enough identifiers are present to pair with expressions
+	// WITHOUT enough identifiers
 	// THEN parser returns error
 
 	// a: 1, 2
@@ -462,7 +462,7 @@ func Test_F3(t *testing.T) {
 func Test_F4(t *testing.T) {
 
 	// GIVEN an assignment
-	// WHEN the assignment token is missing
+	// WITH the assignment token missing
 	// THEN parser returns error
 
 	// a 1
@@ -479,7 +479,7 @@ func Test_F4(t *testing.T) {
 func Test_F5(t *testing.T) {
 
 	// GIVEN an assignment
-	// WHEN an identifier delimiter token is missing
+	// WITH an delimiter token missing from the assignment targets
 	// THEN parser returns error
 
 	// a b: 1, 2
@@ -500,7 +500,7 @@ func Test_F5(t *testing.T) {
 func Test_F6(t *testing.T) {
 
 	// GIVEN an assignment
-	// WHEN an expression delimiter token is missing
+	// WITH an delimiter token missing from the expressions
 	// THEN parser returns error
 
 	// a, b: 1 2
@@ -521,7 +521,7 @@ func Test_F6(t *testing.T) {
 func Test_F7(t *testing.T) {
 
 	// GIVEN a negation prefix
-	// WHEN an expression does follow
+	// WITHOUT a following expression
 	// THEN parser returns error
 
 	// -
@@ -537,7 +537,7 @@ func Test_F7(t *testing.T) {
 func Test_F9(t *testing.T) {
 
 	// GIVEN a list
-	// WHEN the first token is not an expression or block close
+	// WITHOUT an expression or block close following the block open
 	// THEN parser returns error
 
 	// LIST {1,}
@@ -557,7 +557,7 @@ func Test_F9(t *testing.T) {
 func Test_F10(t *testing.T) {
 
 	// GIVEN a list
-	// WHEN the last item doesn't have a delimiter but a terminator follows
+	// WITHOUT a delimiter after an expression but with a terminator
 	// THEN parser returns error
 
 	// LIST {1,}

@@ -26,7 +26,7 @@ func expressions(p *parser) ([]Expression, error) {
 			return nil, e
 		}
 
-		if expr == nil {
+		if expr == nil { // Only needed for the first expression
 			return r, nil
 		}
 
