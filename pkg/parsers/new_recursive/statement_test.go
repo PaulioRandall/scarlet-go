@@ -540,7 +540,7 @@ func Test_F9(t *testing.T) {
 	// WITHOUT an expression or block close following the block open
 	// THEN parser returns error
 
-	// LIST {1,}
+	// LIST {,1}
 	given := []Token{
 		tok(LIST, "LIST"),
 		tok(BLOCK_OPEN, "{"),
@@ -560,13 +560,50 @@ func Test_F10(t *testing.T) {
 	// WITHOUT a delimiter after an expression but with a terminator
 	// THEN parser returns error
 
-	// LIST {1,}
+	// LIST {1
+	// }
 	given := []Token{
 		tok(LIST, "LIST"),
 		tok(BLOCK_OPEN, "{"),
 		tok(NUMBER, "1"),
 		tok(TERMINATOR, "\n"),
 		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(NewFactory(), given)
+	expectError(t, act, e)
+}
+
+func Test_F11(t *testing.T) {
+
+	// GIVEN a list
+	// WITHOUT a block open
+	// THEN parser returns error
+
+	// LIST 1}
+	given := []Token{
+		tok(LIST, "LIST"),
+		tok(NUMBER, "1"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(NewFactory(), given)
+	expectError(t, act, e)
+}
+
+func Test_F12(t *testing.T) {
+
+	// GIVEN a list
+	// WITHOUT a block close
+	// THEN parser returns error
+
+	// LIST {1
+	given := []Token{
+		tok(LIST, "LIST"),
+		tok(BLOCK_OPEN, "{"),
+		tok(NUMBER, "1"),
 		tok(TERMINATOR, ""),
 	}
 
