@@ -11,10 +11,11 @@ type pipeline struct {
 	tks  []Token
 	size int
 	pos  int
+	prev Token
 }
 
 func newPipeline(tks []Token) *pipeline {
-	return &pipeline{tks, len(tks), 0}
+	return &pipeline{tks, len(tks), 0, nil}
 }
 
 func (p *pipeline) hasMore() bool {
@@ -55,21 +56,21 @@ func (p *pipeline) accept(m Morpheme) bool {
 func (p *pipeline) expect(exp Morpheme) (Token, error) {
 
 	if p.accept(exp) {
-		return p._prev(), nil
+		return p.prev, nil
 	}
 
 	if p.hasMore() {
 		return nil, p._unexpected(p._peek(), exp.String())
 	}
 
-	return nil, p._outOfTokens(p._prev(), exp.String())
+	return nil, p._outOfTokens(p.prev, exp.String())
 }
 
 func (p *pipeline) expectAnyOf(exp ...Morpheme) (Token, error) {
 
 	for _, m := range exp {
 		if p.accept(m) {
-			return p._prev(), nil
+			return p.prev, nil
 		}
 	}
 
@@ -77,7 +78,7 @@ func (p *pipeline) expectAnyOf(exp ...Morpheme) (Token, error) {
 		return nil, p._unexpected(p._peek(), JoinMorphemes(exp...))
 	}
 
-	return nil, p._outOfTokens(p._prev(), JoinMorphemes(exp...))
+	return nil, p._outOfTokens(p.prev, JoinMorphemes(exp...))
 }
 
 func (p *pipeline) _peek() Token {
@@ -97,16 +98,8 @@ func (p *pipeline) _next() Token {
 		p.pos++
 	}
 
+	p.prev = tk
 	return tk
-}
-
-func (p *pipeline) _prev() Token {
-
-	if p.pos > 0 {
-		return p.tks[p.pos-1]
-	}
-
-	return nil
 }
 
 func (p *pipeline) _outOfTokens(prev Token, exp string) error {

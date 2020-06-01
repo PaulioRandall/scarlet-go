@@ -10,7 +10,7 @@ import (
 
 func Test_P1(t *testing.T) {
 
-	// p._peek(), p._next(), p._prev()
+	// p._peek(), p._next()
 
 	tok := func(m Morpheme) Token {
 		return NewToken(m, "", 0, 0)
@@ -22,19 +22,14 @@ func Test_P1(t *testing.T) {
 		tok(NUMBER),
 	})
 
-	require.Equal(t, Token(nil), p._prev())
-
 	require.Equal(t, tok(NUMBER), p._peek())
 	require.Equal(t, tok(NUMBER), p._next())
-	require.Equal(t, tok(NUMBER), p._prev())
 
 	require.Equal(t, tok(ADD), p._peek())
 	require.Equal(t, tok(ADD), p._next())
-	require.Equal(t, tok(ADD), p._prev())
 
 	require.Equal(t, tok(NUMBER), p._peek())
 	require.Equal(t, tok(NUMBER), p._next())
-	require.Equal(t, tok(NUMBER), p._prev())
 
 	require.Equal(t, Token(nil), p._peek())
 	require.Equal(t, Token(nil), p._next())
