@@ -44,7 +44,7 @@ func expression(p *parser) (Expression, error) {
 
 	switch {
 	case p.match(IDENTIFIER), p.match(VOID):
-		return p.NewIdentifier(p.any()), nil
+		return identifier(p)
 
 	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
 		return p.NewLiteral(p.any()), nil
@@ -72,6 +72,12 @@ func expectExpression(p *parser) (Expression, error) {
 	}
 
 	return expr, nil
+}
+
+func identifier(p *parser) (Expression, error) {
+	id := p.NewIdentifier(p.any())
+	return id, nil
+	//return maybeListAccessor(p, id)
 }
 
 func negation(p *parser) (Expression, error) {
@@ -149,9 +155,22 @@ func acceptListItemDelim(p *parser) bool {
 	return false
 }
 
-func maybeListItemAccess(p *parser, list Expression) (Expression, error) {
-	return nil, nil
-	//	if p.match(GUARD_OPEN) {
+func maybeListAccessor(p *parser, maybeList Expression) (Expression, error) {
 
-	//	}
+	if p.accept(GUARD_OPEN) {
+
+		index, e := expectExpression(p)
+		if e != nil {
+			return nil, e
+		}
+
+		_, e = p.expect(GUARD_CLOSE)
+		if e != nil {
+			return nil, e
+		}
+
+		return p.NewListAccessor(maybeList, index), nil
+	}
+
+	return maybeList, nil
 }

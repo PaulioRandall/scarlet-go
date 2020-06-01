@@ -16,6 +16,10 @@ func Test_List(t *testing.T) {
 	var _ Statement = List{}
 }
 
+func Test_ListAccessor(t *testing.T) {
+	var _ Statement = ListAccessor{}
+}
+
 func Test_Negation(t *testing.T) {
 	var _ Expression = Negation{}
 }

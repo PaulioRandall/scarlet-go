@@ -320,6 +320,30 @@ func Test_S13(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+/*
+func Test_S14(t *testing.T) {
+
+	// GIVEN a list identifier with a number literal index
+	// THEN only the parsed list accessor is returned
+
+	// abc[1]
+	given := []Token{
+		tok(IDENTIFIER, "abc"),
+		tok(GUARD_OPEN, "["),
+		tok(NUMBER, "1"),
+		tok(GUARD_CLOSE, "]"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := ListAccessor{
+		List:  Identifier{tok(IDENTIFIER, "abc")},
+		Index: Literal{tok(NUMBER, "1")},
+	}
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+*/
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token

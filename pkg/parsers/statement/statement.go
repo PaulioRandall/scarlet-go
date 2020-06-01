@@ -38,31 +38,34 @@ func (id Identifier) String() string {
 	return b.String()
 }
 
-type ListItemIdentifer struct {
-	ID    Token
+type ListAccessor struct {
+	List  Expression
 	Index Expression
 }
 
-func (li ListItemIdentifer) Begin() (int, int) {
-	tk := li.ID
-	return tk.Line(), tk.Col()
+func (la ListAccessor) Begin() (int, int) {
+	return la.List.Begin()
 }
 
-func (li ListItemIdentifer) End() (int, int) {
-	return li.Index.End()
+func (la ListAccessor) End() (int, int) {
+	return la.Index.End()
 }
 
-func (li ListItemIdentifer) String() string {
+func (la ListAccessor) String() string {
 
 	b := builder{}
 
-	b.add(0, "[ListItemIdentifer] ")
-	b.addToken(0, li.ID)
+	b.add(0, "[ListAccessor] ")
+
+	b.newline()
+	b.add(1, "List: ")
+	b.newline()
+	b.add(2, la.List.String())
 
 	b.newline()
 	b.add(1, "Index: ")
 	b.newline()
-	b.add(2, li.Index.String())
+	b.add(2, la.Index.String())
 
 	return b.String()
 }
