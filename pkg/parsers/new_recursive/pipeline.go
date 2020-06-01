@@ -117,14 +117,14 @@ func (p *pipeline) _ignoreRedundancy() {
 		case next != TERMINATOR:
 			return
 
-			// next is TERMINATOR
+			// next must be a TERMINATOR
 		case p.prev == nil: // Ignore TERMINATORs at start of script
 			p.pos++
 
 		case p.prev.Morpheme() == TERMINATOR: // Ignore successive TERMINATORs
 			p.pos++
 
-		default:
+		default: // TERMINATOR
 			return
 		}
 	}

@@ -50,6 +50,7 @@ func expectStatement(p *parser) (Statement, error) {
 }
 
 func statement(p *parser) (Statement, error) {
+	// pattern := assignment | expression
 
 	var (
 		left Expression
@@ -83,6 +84,7 @@ func assignOrExpr(p *parser, left Expression) (Statement, error) {
 }
 
 func assignment(p *parser, left Expression) (Statement, error) {
+	// pattern := assignment_targets ASSIGN assignment_sources
 
 	tks, e := assignmentTargets(p, left)
 	if e != nil {
@@ -94,10 +96,11 @@ func assignment(p *parser, left Expression) (Statement, error) {
 		return nil, e
 	}
 
-	return assignmentExprs(p, tks)
+	return assignmentSources(p, tks)
 }
 
 func assignmentTargets(p *parser, left Expression) ([]Expression, error) {
+	// pattern := assignmentTarget {DELIMITER assignment_target}
 
 	ats := []Expression{left}
 
@@ -115,6 +118,8 @@ func assignmentTargets(p *parser, left Expression) ([]Expression, error) {
 }
 
 func assignmentTarget(p *parser) (Expression, error) {
+	// pattern := IDENTIFIER | list_accessor | VOID
+
 	switch {
 	case p.match(IDENTIFIER):
 		return identifier(p)
@@ -126,7 +131,8 @@ func assignmentTarget(p *parser) (Expression, error) {
 	return nil, err.New("Expected assignment target", err.At(p.any()))
 }
 
-func assignmentExprs(p *parser, ats []Expression) (Statement, error) {
+func assignmentSources(p *parser, ats []Expression) (Statement, error) {
+	// pattern := [expression {DELIMITER expression}]
 
 	as := make([]Assignment, len(ats))
 

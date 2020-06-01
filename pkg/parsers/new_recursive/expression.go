@@ -75,6 +75,7 @@ func expectExpression(p *parser) (Expression, error) {
 }
 
 func identifier(p *parser) (Expression, error) {
+	// pattern := IDENTIFIER [list_accessor]
 	id := p.NewIdentifier(p.any())
 	return maybeListAccessor(p, id)
 }
@@ -139,6 +140,7 @@ func listItems(p *parser) ([]Expression, error) {
 }
 
 func listItem(p *parser) (Expression, error) {
+	// pattern := [expression]
 	return expression(p)
 }
 
@@ -156,6 +158,7 @@ func acceptListItemDelim(p *parser) bool {
 }
 
 func maybeListAccessor(p *parser, maybeList Expression) (Expression, error) {
+	// pattern := expression [GUARD_OPEN expression GUARD_CLOSE]
 
 	if p.accept(GUARD_OPEN) {
 
