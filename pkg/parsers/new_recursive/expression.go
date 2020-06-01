@@ -148,3 +148,10 @@ func acceptListItemDelim(p *parser) bool {
 
 	return false
 }
+
+func maybeListItemAccess(p *parser, list Expression) (Expression, error) {
+	return nil, nil
+	//	if p.match(GUARD_OPEN) {
+
+	//	}
+}

@@ -38,6 +38,35 @@ func (id Identifier) String() string {
 	return b.String()
 }
 
+type ListItemIdentifer struct {
+	ID    Token
+	Index Expression
+}
+
+func (li ListItemIdentifer) Begin() (int, int) {
+	tk := li.ID
+	return tk.Line(), tk.Col()
+}
+
+func (li ListItemIdentifer) End() (int, int) {
+	return li.Index.End()
+}
+
+func (li ListItemIdentifer) String() string {
+
+	b := builder{}
+
+	b.add(0, "[ListItemIdentifer] ")
+	b.addToken(0, li.ID)
+
+	b.newline()
+	b.add(1, "Index: ")
+	b.newline()
+	b.add(2, li.Index.String())
+
+	return b.String()
+}
+
 type Literal struct {
 	TK Token
 }
