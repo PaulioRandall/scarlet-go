@@ -4,6 +4,10 @@ import (
 	"testing"
 )
 
+func Test_Void(t *testing.T) {
+	var _ Expression = Void{}
+}
+
 func Test_Identifier(t *testing.T) {
 	var _ Expression = Identifier{}
 }

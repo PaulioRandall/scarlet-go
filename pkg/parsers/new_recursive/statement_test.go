@@ -21,7 +21,7 @@ func Test_S1(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := Identifier{tok(IDENTIFIER, "a")}
+	exp := testFactory.NewIdentifier(tok(IDENTIFIER, "a"))
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -38,7 +38,7 @@ func Test_S3(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := Literal{tok(BOOL, "TRUE")}
+	exp := testFactory.NewLiteral(tok(BOOL, "TRUE"))
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -55,7 +55,7 @@ func Test_S4(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := Literal{tok(NUMBER, "1")}
+	exp := testFactory.NewLiteral(tok(NUMBER, "1"))
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -72,7 +72,7 @@ func Test_S5(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := Literal{tok(STRING, "abc")}
+	exp := testFactory.NewLiteral(tok(STRING, "abc"))
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -94,10 +94,10 @@ func Test_S6(t *testing.T) {
 
 	exp := AssignmentBlock{
 		[]Assignment{
-			Assignment{
-				Target: tok(IDENTIFIER, "a"),
-				Source: testFactory.NewLiteral(tok(NUMBER, "1")),
-			},
+			testFactory.NewAssignment(
+				testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+				testFactory.NewLiteral(tok(NUMBER, "1")),
+			),
 		},
 	}
 
@@ -128,22 +128,22 @@ func Test_S7(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := AssignmentBlock{
+	exp := testFactory.NewAssignmentBlock(
 		[]Assignment{
-			Assignment{
-				Target: tok(IDENTIFIER, "a"),
-				Source: testFactory.NewLiteral(tok(NUMBER, "1")),
-			},
-			Assignment{
-				Target: tok(IDENTIFIER, "b"),
-				Source: testFactory.NewLiteral(tok(BOOL, "TRUE")),
-			},
-			Assignment{
-				Target: tok(IDENTIFIER, "c"),
-				Source: testFactory.NewLiteral(tok(STRING, "abc")),
-			},
+			testFactory.NewAssignment(
+				testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+				testFactory.NewLiteral(tok(NUMBER, "1")),
+			),
+			testFactory.NewAssignment(
+				testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+				testFactory.NewLiteral(tok(BOOL, "TRUE")),
+			),
+			testFactory.NewAssignment(
+				testFactory.NewIdentifier(tok(IDENTIFIER, "c")),
+				testFactory.NewLiteral(tok(STRING, "abc")),
+			),
 		},
-	}
+	)
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -162,9 +162,9 @@ func Test_S8(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := Negation{
-		Literal{tok(NUMBER, "2")},
-	}
+	exp := testFactory.NewNegation(
+		testFactory.NewLiteral(tok(NUMBER, "2")),
+	)
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -183,11 +183,11 @@ func Test_S9(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := List{
-		Open:  tok(BLOCK_OPEN, "{"),
-		Items: []Expression{},
-		Close: tok(BLOCK_CLOSE, "}"),
-	}
+	exp := testFactory.NewList(
+		tok(BLOCK_OPEN, "{"),
+		[]Expression{},
+		tok(BLOCK_CLOSE, "}"),
+	)
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -208,11 +208,11 @@ func Test_S10(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := List{
-		Open:  tok(BLOCK_OPEN, "{"),
-		Items: []Expression{},
-		Close: tok(BLOCK_CLOSE, "}"),
-	}
+	exp := testFactory.NewList(
+		tok(BLOCK_OPEN, "{"),
+		[]Expression{},
+		tok(BLOCK_CLOSE, "}"),
+	)
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -237,15 +237,15 @@ func Test_S11(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := List{
-		Open: tok(BLOCK_OPEN, "{"),
-		Items: []Expression{
+	exp := testFactory.NewList(
+		tok(BLOCK_OPEN, "{"),
+		[]Expression{
 			Literal{tok(NUMBER, "1")},
 			Literal{tok(BOOL, "TRUE")},
 			Literal{tok(STRING, "abc")},
 		},
-		Close: tok(BLOCK_CLOSE, "}"),
-	}
+		tok(BLOCK_CLOSE, "}"),
+	)
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -278,15 +278,15 @@ func Test_S12(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := List{
-		Open: tok(BLOCK_OPEN, "{"),
-		Items: []Expression{
+	exp := testFactory.NewList(
+		tok(BLOCK_OPEN, "{"),
+		[]Expression{
 			Literal{tok(NUMBER, "1")},
 			Literal{tok(BOOL, "TRUE")},
 			Literal{tok(STRING, "abc")},
 		},
-		Close: tok(BLOCK_CLOSE, "}"),
-	}
+		tok(BLOCK_CLOSE, "}"),
+	)
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -308,19 +308,18 @@ func Test_S13(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := List{
-		Open: tok(BLOCK_OPEN, "{"),
-		Items: []Expression{
+	exp := testFactory.NewList(
+		tok(BLOCK_OPEN, "{"),
+		[]Expression{
 			Literal{tok(NUMBER, "1")},
 		},
-		Close: tok(BLOCK_CLOSE, "}"),
-	}
+		tok(BLOCK_CLOSE, "}"),
+	)
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
 }
 
-/*
 func Test_S14(t *testing.T) {
 
 	// GIVEN a list identifier with a number literal index
@@ -335,15 +334,15 @@ func Test_S14(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := ListAccessor{
-		List:  Identifier{tok(IDENTIFIER, "abc")},
-		Index: Literal{tok(NUMBER, "1")},
-	}
+	exp := testFactory.NewListAccessor(
+		Identifier{tok(IDENTIFIER, "abc")},
+		Literal{tok(NUMBER, "1")},
+	)
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
 }
-*/
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token

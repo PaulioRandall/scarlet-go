@@ -76,8 +76,7 @@ func expectExpression(p *parser) (Expression, error) {
 
 func identifier(p *parser) (Expression, error) {
 	id := p.NewIdentifier(p.any())
-	return id, nil
-	//return maybeListAccessor(p, id)
+	return maybeListAccessor(p, id)
 }
 
 func negation(p *parser) (Expression, error) {
@@ -110,7 +109,8 @@ func list(p *parser) (Expression, error) {
 		return nil, e
 	}
 
-	return p.NewList(open, items, close), nil
+	list := p.NewList(open, items, close)
+	return maybeListAccessor(p, list)
 }
 
 func listItems(p *parser) ([]Expression, error) {

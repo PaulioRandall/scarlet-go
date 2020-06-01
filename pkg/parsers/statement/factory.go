@@ -5,12 +5,13 @@ import (
 )
 
 type Factory interface {
+	NewVoid(tk Token) Void
 	NewIdentifier(tk Token) Identifier
 	NewLiteral(tk Token) Literal
 	NewList(open Token, items []Expression, close Token) List
 	NewListAccessor(list, index Expression) ListAccessor
 	NewNegation(expr Expression) Negation
-	NewAssignment(tk Token, expr Expression) Assignment
+	NewAssignment(target, source Expression) Assignment
 	NewAssignmentBlock(as []Assignment) AssignmentBlock
 }
 
@@ -19,6 +20,10 @@ func NewFactory() Factory {
 }
 
 type fac struct{}
+
+func (f fac) NewVoid(tk Token) Void {
+	return Void{tk}
+}
 
 func (f fac) NewIdentifier(tk Token) Identifier {
 	return Identifier{tk}
@@ -47,10 +52,10 @@ func (f fac) NewNegation(expr Expression) Negation {
 	return Negation{expr}
 }
 
-func (f fac) NewAssignment(tk Token, expr Expression) Assignment {
+func (f fac) NewAssignment(target, source Expression) Assignment {
 	return Assignment{
-		Target: tk,
-		Source: expr,
+		Target: target,
+		Source: source,
 	}
 }
 

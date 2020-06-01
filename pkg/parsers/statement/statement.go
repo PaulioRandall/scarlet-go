@@ -4,6 +4,14 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
+func startPos(tk Token) (line int, col int) {
+	return tk.Line(), tk.Col()
+}
+
+func endPos(tk Token) (line int, col int) {
+	return tk.Line(), tk.Col() + len(tk.Value())
+}
+
 type Statement interface {
 	Expression
 }
@@ -14,18 +22,38 @@ type Expression interface {
 	String() string
 }
 
+type Void struct {
+	TK Token
+}
+
+func (v Void) Begin() (int, int) {
+	return startPos(v.TK)
+}
+
+func (v Void) End() (int, int) {
+	return endPos(v.TK)
+}
+
+func (v Void) String() string {
+
+	b := builder{}
+
+	b.add(0, "[Void] ")
+	b.addToken(0, v.TK)
+
+	return b.String()
+}
+
 type Identifier struct {
 	TK Token
 }
 
 func (id Identifier) Begin() (int, int) {
-	tk := id.TK
-	return tk.Line(), tk.Col()
+	return startPos(id.TK)
 }
 
 func (id Identifier) End() (int, int) {
-	tk := id.TK
-	return tk.Line(), tk.Col() + len(tk.Value())
+	return endPos(id.TK)
 }
 
 func (id Identifier) String() string {
@@ -75,12 +103,11 @@ type Literal struct {
 }
 
 func (l Literal) Begin() (int, int) {
-	return l.TK.Line(), l.TK.Col()
+	return startPos(l.TK)
 }
 
 func (l Literal) End() (int, int) {
-	tk := l.TK
-	return tk.Line(), tk.Col() + len(tk.Value())
+	return endPos(l.TK)
 }
 
 func (l Literal) String() string {
@@ -99,12 +126,11 @@ type List struct {
 }
 
 func (l List) Begin() (int, int) {
-	return l.Open.Line(), l.Open.Col()
+	return startPos(l.Open)
 }
 
 func (l List) End() (int, int) {
-	tk := l.Close
-	return tk.Line(), tk.Col() + len(tk.Value())
+	return endPos(l.Close)
 }
 
 func (l List) String() string {
@@ -122,13 +148,12 @@ func (l List) String() string {
 }
 
 type Assignment struct {
-	Target Token
+	Target Expression
 	Source Expression
 }
 
 func (a Assignment) Begin() (int, int) {
-	tk := a.Target
-	return tk.Line(), tk.Col()
+	return a.Target.Begin()
 }
 
 func (a Assignment) End() (int, int) {
@@ -143,7 +168,8 @@ func (a Assignment) String() string {
 
 	b.newline()
 	b.add(1, "Target: ")
-	b.addToken(1, a.Target)
+	b.newline()
+	b.add(1, a.Target.String())
 
 	b.newline()
 	b.add(1, "Source: ")

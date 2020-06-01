@@ -51,30 +51,40 @@ func expectStatement(p *parser) (Statement, error) {
 
 func statement(p *parser) (Statement, error) {
 
+	var (
+		left Expression
+		e    error
+	)
+
 	switch {
 	case p.match(IDENTIFIER):
-		left := p.any()
+		left, e = identifier(p)
+		if e != nil {
+			return nil, e
+		}
+
 		return assignOrExpr(p, left)
 
 	case p.match(VOID):
-		return assignment(p, p.any())
+		left = p.NewVoid(p.any())
+		return assignment(p, left)
 	}
 
 	return expression(p)
 }
 
-func assignOrExpr(p *parser, left Token) (Statement, error) {
+func assignOrExpr(p *parser, left Expression) (Statement, error) {
 
 	if p.match(DELIMITER) || p.match(ASSIGN) {
 		return assignment(p, left)
 	}
 
-	return p.NewIdentifier(left), nil
+	return left, nil
 }
 
-func assignment(p *parser, left Token) (Statement, error) {
+func assignment(p *parser, left Expression) (Statement, error) {
 
-	tks, e := assignmentTokens(p, left)
+	tks, e := assignmentTargets(p, left)
 	if e != nil {
 		return nil, e
 	}
@@ -87,28 +97,40 @@ func assignment(p *parser, left Token) (Statement, error) {
 	return assignmentExprs(p, tks)
 }
 
-func assignmentTokens(p *parser, left Token) ([]Token, error) {
+func assignmentTargets(p *parser, left Expression) ([]Expression, error) {
 
-	tks := []Token{left}
+	ats := []Expression{left}
 
 	for p.accept(DELIMITER) {
 
-		tk, e := p.expectAnyOf(IDENTIFIER, VOID)
+		at, e := assignmentTarget(p)
 		if e != nil {
 			return nil, e
 		}
 
-		tks = append(tks, tk)
+		ats = append(ats, at)
 	}
 
-	return tks, nil
+	return ats, nil
 }
 
-func assignmentExprs(p *parser, tks []Token) (Statement, error) {
+func assignmentTarget(p *parser) (Expression, error) {
+	switch {
+	case p.match(IDENTIFIER):
+		return identifier(p)
 
-	as := make([]Assignment, len(tks))
+	case p.match(VOID):
+		return p.NewVoid(p.any()), nil
+	}
 
-	for i, tk := range tks {
+	return nil, err.New("Expected assignment target", err.At(p.any()))
+}
+
+func assignmentExprs(p *parser, ats []Expression) (Statement, error) {
+
+	as := make([]Assignment, len(ats))
+
+	for i, at := range ats {
 
 		if i > 0 {
 			_, e := p.expect(DELIMITER)
@@ -122,7 +144,7 @@ func assignmentExprs(p *parser, tks []Token) (Statement, error) {
 			return nil, e
 		}
 
-		as[i] = p.NewAssignment(tk, expr)
+		as[i] = p.NewAssignment(at, expr)
 	}
 
 	return p.NewAssignmentBlock(as), nil
