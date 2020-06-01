@@ -292,6 +292,34 @@ func Test_S12(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S13(t *testing.T) {
+
+	// GIVEN a non-empty list
+	// WITH a delimiter after the last item but without a following terminator
+	// THEN only the parsed list is returned
+
+	// LIST {1,}
+	given := []Token{
+		tok(LIST, "LIST"),
+		tok(BLOCK_OPEN, "{"),
+		tok(NUMBER, "1"),
+		tok(DELIMITER, ","),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := List{
+		Open: tok(BLOCK_OPEN, "{"),
+		Items: []Expression{
+			Literal{tok(NUMBER, "1")},
+		},
+		Close: tok(BLOCK_CLOSE, "}"),
+	}
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token
@@ -411,26 +439,6 @@ func Test_F7(t *testing.T) {
 	// -
 	given := []Token{
 		tok(SUBTRACT, "-"),
-		tok(TERMINATOR, ""),
-	}
-
-	act, e := testFunc(NewFactory(), given)
-	expectError(t, act, e)
-}
-
-func Test_F8(t *testing.T) {
-
-	// GIVEN a non-empty list
-	// WITH a delimiter following the last item but without a following terminator
-	// THEN parser returns error
-
-	// LIST {1,}
-	given := []Token{
-		tok(LIST, "LIST"),
-		tok(BLOCK_OPEN, "{"),
-		tok(NUMBER, "1"),
-		tok(DELIMITER, ","),
-		tok(BLOCK_CLOSE, "}"),
 		tok(TERMINATOR, ""),
 	}
 
