@@ -294,8 +294,7 @@ func Test_S12(t *testing.T) {
 
 func Test_F1(t *testing.T) {
 
-	// GIVEN an assignment
-	// WHEN a token not found at the start of a statement
+	// GIVEN an invalid statement or expression starting token
 	// THEN parser returns error
 
 	given := []Token{
@@ -421,8 +420,8 @@ func Test_F7(t *testing.T) {
 
 func Test_F8(t *testing.T) {
 
-	// GIVEN a list
-	// WHEN the last item ends in a delimiter without a following terminator
+	// GIVEN a non-empty list
+	// WITH a delimiter following the last item but without a following terminator
 	// THEN parser returns error
 
 	// LIST {1,}

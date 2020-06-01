@@ -109,10 +109,12 @@ func list(p *parser) (Expression, error) {
 
 func listItems(p *parser) ([]Expression, error) {
 	// pattern := [expression {DELIMITER [TERMINATOR] expression}]
+	return listItemDelimited(p, []Expression{}, true)
+}
 
-	items := []Expression{}
+func listItemDelimited(p *parser, items []Expression, first bool) ([]Expression, error) {
 
-	expr, e := expression(p)
+	expr, e := listItem(p, first)
 	if e != nil {
 		return nil, e
 	}
@@ -123,18 +125,21 @@ func listItems(p *parser) ([]Expression, error) {
 
 	items = append(items, expr)
 
-	for p.accept(DELIMITER) {
+	if p.accept(DELIMITER) {
 		if p.accept(TERMINATOR) && p.match(BLOCK_CLOSE) {
-			break
+			return items, nil
 		}
 
-		expr, e = expectExpression(p)
-		if e != nil {
-			return nil, e
-		}
-
-		items = append(items, expr)
+		return listItemDelimited(p, items, false)
 	}
 
 	return items, nil
+}
+
+func listItem(p *parser, first bool) (Expression, error) {
+	if first {
+		return expression(p)
+	}
+
+	return expectExpression(p)
 }
