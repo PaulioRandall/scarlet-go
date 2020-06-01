@@ -12,7 +12,8 @@ type Factory interface {
 	NewListAccessor(list, index Expression) ListAccessor
 	NewNegation(expr Expression) Negation
 	NewAssignment(target, source Expression) Assignment
-	NewAssignmentBlock(as []Assignment) AssignmentBlock
+	NewBlock(start Token, stats []Statement, end Token) Block
+	NewNonWrappedBlock(stats []Statement) Block
 }
 
 func NewFactory() Factory {
@@ -59,6 +60,16 @@ func (f fac) NewAssignment(target, source Expression) Assignment {
 	}
 }
 
-func (f fac) NewAssignmentBlock(as []Assignment) AssignmentBlock {
-	return AssignmentBlock{as}
+func (f fac) NewBlock(start Token, stats []Statement, end Token) Block {
+	return Block{
+		start: start,
+		Stats: stats,
+		end:   end,
+	}
+}
+
+func (f fac) NewNonWrappedBlock(stats []Statement) Block {
+	return Block{
+		Stats: stats,
+	}
 }

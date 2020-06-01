@@ -32,6 +32,6 @@ func Test_Assignment(t *testing.T) {
 	var _ Statement = Assignment{}
 }
 
-func Test_AssignmentBlock(t *testing.T) {
-	var _ Statement = AssignmentBlock{}
+func Test_Block(t *testing.T) {
+	var _ Statement = Block{}
 }

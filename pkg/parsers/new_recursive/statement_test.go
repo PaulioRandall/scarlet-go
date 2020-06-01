@@ -92,14 +92,14 @@ func Test_S6(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := AssignmentBlock{
-		[]Assignment{
+	exp := testFactory.NewNonWrappedBlock(
+		[]Statement{
 			testFactory.NewAssignment(
 				testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
 				testFactory.NewLiteral(tok(NUMBER, "1")),
 			),
 		},
-	}
+	)
 
 	act, e := testFunc(testFactory, given)
 	expectOneStat(t, exp, act, e)
@@ -128,8 +128,8 @@ func Test_S7(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewAssignmentBlock(
-		[]Assignment{
+	exp := testFactory.NewNonWrappedBlock(
+		[]Statement{
 			testFactory.NewAssignment(
 				testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
 				testFactory.NewLiteral(tok(NUMBER, "1")),

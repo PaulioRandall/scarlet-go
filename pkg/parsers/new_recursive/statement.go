@@ -86,7 +86,7 @@ func assignOrExpr(p *parser, left Expression) (Statement, error) {
 func assignment(p *parser, left Expression) (Statement, error) {
 	// pattern := assignment_targets ASSIGN assignment_sources
 
-	tks, e := assignmentTargets(p, left)
+	targets, e := assignmentTargets(p, left)
 	if e != nil {
 		return nil, e
 	}
@@ -96,7 +96,17 @@ func assignment(p *parser, left Expression) (Statement, error) {
 		return nil, e
 	}
 
-	return assignmentSources(p, tks)
+	sources, e := expressions(p)
+	if e != nil {
+		return nil, e
+	}
+
+	r, e := createAssignments(p, targets, sources)
+	if e != nil {
+		return nil, e
+	}
+
+	return p.NewNonWrappedBlock(r), nil
 }
 
 func assignmentTargets(p *parser, left Expression) ([]Expression, error) {
@@ -131,27 +141,24 @@ func assignmentTarget(p *parser) (Expression, error) {
 	return nil, err.New("Expected assignment target", err.At(p.any()))
 }
 
-func assignmentSources(p *parser, ats []Expression) (Statement, error) {
-	// pattern := [expression {DELIMITER expression}]
+func createAssignments(p *parser, targets, sources []Expression) ([]Statement, error) {
 
-	as := make([]Assignment, len(ats))
+	var r []Statement
 
-	for i, at := range ats {
+	for i := 0; i < len(targets) || i < len(sources); i++ {
 
-		if i > 0 {
-			_, e := p.expect(DELIMITER)
-			if e != nil {
-				return nil, e
-			}
+		if i >= len(targets) {
+			line, col := sources[i].Begin()
+			return nil, err.New("Too many expressions", err.Pos(line, col))
 		}
 
-		expr, e := expectExpression(p)
-		if e != nil {
-			return nil, e
+		if i >= len(sources) {
+			return nil, err.New("Expected expression", err.At(p.any()))
 		}
 
-		as[i] = p.NewAssignment(at, expr)
+		a := p.NewAssignment(targets[i], sources[i])
+		r = append(r, a)
 	}
 
-	return p.NewAssignmentBlock(as), nil
+	return r, nil
 }

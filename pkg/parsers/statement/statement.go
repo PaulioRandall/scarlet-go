@@ -179,24 +179,24 @@ func (a Assignment) String() string {
 	return b.String()
 }
 
-type AssignmentBlock struct {
-	Stats []Assignment
+type Block struct {
+	start, end Token
+	Stats      []Statement
 }
 
-func (ab AssignmentBlock) Begin() (int, int) {
-	return ab.Stats[0].Begin()
+func (bk Block) Begin() (int, int) {
+	return startPos(bk.start)
 }
 
-func (ab AssignmentBlock) End() (int, int) {
-	i := len(ab.Stats) - 1
-	return ab.Stats[i].End()
+func (bk Block) End() (int, int) {
+	return startPos(bk.end)
 }
 
-func (ab AssignmentBlock) String() string {
+func (bk Block) String() string {
 
 	b := builder{}
 
-	for _, a := range ab.Stats {
+	for _, a := range bk.Stats {
 		b.add(0, a.String())
 	}
 

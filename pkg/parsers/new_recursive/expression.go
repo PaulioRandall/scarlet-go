@@ -55,6 +55,9 @@ func expression(p *parser) (Expression, error) {
 
 	case p.accept(LIST):
 		return list(p)
+
+		//case p.accept(FUNC)
+
 	}
 
 	return nil, nil
@@ -177,4 +180,16 @@ func maybeListAccessor(p *parser, maybeList Expression) (Expression, error) {
 	}
 
 	return maybeList, nil
+}
+
+func function(p *parser) (Expression, error) {
+	// pattern := FUNC PAREN_OPEN funcParameters PAREN_CLOSE
+	// F(a, b, ^c, ^d)
+
+	_, e := p.expect(FUNC)
+	if e != nil {
+		return nil, e
+	}
+
+	return nil, nil
 }
