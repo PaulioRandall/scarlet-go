@@ -9,34 +9,35 @@ import (
 func expressions(p *parser) ([]Expression, error) {
 	// pattern := [expression {DELIM expression}]
 
-	exp, e := expression(p)
-	if e != nil {
-		return nil, e
-	}
+	r := []Expression{}
 
-	if exp != nil {
-		return delimExpressions(p, exp)
-	}
+	for first := true; p.hasMore(); first = false {
 
-	return nil, nil
-}
+		var expr Expression
+		var e error
 
-func delimExpressions(p *parser, left Expression) ([]Expression, error) {
-	// pattern := expression {DELIMITER expression}
+		if first {
+			expr, e = expression(p)
+		} else {
+			expr, e = expectExpression(p)
+		}
 
-	exps := []Expression{left}
-
-	for p.accept(DELIMITER) {
-
-		next, e := expectExpression(p)
 		if e != nil {
 			return nil, e
 		}
 
-		exps = append(exps, next)
+		if expr == nil {
+			return r, nil
+		}
+
+		r = append(r, expr)
+
+		if !p.accept(DELIMITER) {
+			return r, nil
+		}
 	}
 
-	return exps, nil
+	return nil, err.New("Expected expression", err.At(p.any()))
 }
 
 func expression(p *parser) (Expression, error) {
