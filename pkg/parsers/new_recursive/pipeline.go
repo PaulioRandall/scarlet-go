@@ -83,6 +83,8 @@ func (p *pipeline) expectAnyOf(exp ...Morpheme) (Token, error) {
 
 func (p *pipeline) _peek() Token {
 
+	p._ignoreRedundancy()
+
 	if p.pos >= p.size {
 		return nil
 	}
@@ -93,13 +95,39 @@ func (p *pipeline) _peek() Token {
 func (p *pipeline) _next() Token {
 
 	tk := p._peek()
-
-	if tk != nil {
-		p.pos++
+	if tk == nil {
+		return nil
 	}
 
+	p.pos++
 	p.prev = tk
 	return tk
+}
+
+func (p *pipeline) _ignoreRedundancy() {
+
+	for p.pos < p.size {
+
+		next := p.tks[p.pos].Morpheme()
+
+		switch {
+		case next == COMMENT || next == WHITESPACE:
+			p.pos++
+
+		case next != TERMINATOR:
+			return
+
+			// next is TERMINATOR
+		case p.prev == nil: // Ignore TERMINATORs at start of script
+			p.pos++
+
+		case p.prev.Morpheme() == TERMINATOR: // Ignore successive TERMINATORs
+			p.pos++
+
+		default:
+			return
+		}
+	}
 }
 
 func (p *pipeline) _outOfTokens(prev Token, exp string) error {

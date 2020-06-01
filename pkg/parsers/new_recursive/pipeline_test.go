@@ -10,20 +10,30 @@ import (
 
 func Test_P1(t *testing.T) {
 
-	// p._peek(), p._next()
+	// p._peek(), p._next(), p._ignoreRedundancy()
 
 	tok := func(m Morpheme) Token {
 		return NewToken(m, "", 0, 0)
 	}
 
 	p := newPipeline([]Token{
+		tok(TERMINATOR),
 		tok(NUMBER),
+		tok(TERMINATOR),
+		tok(TERMINATOR),
+		tok(TERMINATOR),
+		tok(WHITESPACE),
 		tok(ADD),
+		tok(COMMENT),
+		tok(WHITESPACE),
 		tok(NUMBER),
 	})
 
 	require.Equal(t, tok(NUMBER), p._peek())
 	require.Equal(t, tok(NUMBER), p._next())
+
+	require.Equal(t, tok(TERMINATOR), p._peek())
+	require.Equal(t, tok(TERMINATOR), p._next())
 
 	require.Equal(t, tok(ADD), p._peek())
 	require.Equal(t, tok(ADD), p._next())
