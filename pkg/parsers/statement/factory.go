@@ -14,6 +14,7 @@ type Factory interface {
 	NewAssignment(target, source Expression) Assignment
 	NewBlock(start Token, stats []Statement, end Token) Block
 	NewNonWrappedBlock(stats []Statement) Block
+	NewFunction(key Token, params Parameters, body Block) Function
 }
 
 func NewFactory() Factory {
@@ -22,19 +23,19 @@ func NewFactory() Factory {
 
 type fac struct{}
 
-func (f fac) NewVoid(tk Token) Void {
+func (fac) NewVoid(tk Token) Void {
 	return Void{tk}
 }
 
-func (f fac) NewIdentifier(tk Token) Identifier {
+func (fac) NewIdentifier(tk Token) Identifier {
 	return Identifier{tk}
 }
 
-func (f fac) NewLiteral(tk Token) Literal {
+func (fac) NewLiteral(tk Token) Literal {
 	return Literal{tk}
 }
 
-func (f fac) NewList(open Token, items []Expression, close Token) List {
+func (fac) NewList(open Token, items []Expression, close Token) List {
 	return List{
 		Open:  open,
 		Items: items,
@@ -42,25 +43,25 @@ func (f fac) NewList(open Token, items []Expression, close Token) List {
 	}
 }
 
-func (f fac) NewListAccessor(list, index Expression) ListAccessor {
+func (fac) NewListAccessor(list, index Expression) ListAccessor {
 	return ListAccessor{
 		List:  list,
 		Index: index,
 	}
 }
 
-func (f fac) NewNegation(expr Expression) Negation {
+func (fac) NewNegation(expr Expression) Negation {
 	return Negation{expr}
 }
 
-func (f fac) NewAssignment(target, source Expression) Assignment {
+func (fac) NewAssignment(target, source Expression) Assignment {
 	return Assignment{
 		Target: target,
 		Source: source,
 	}
 }
 
-func (f fac) NewBlock(start Token, stats []Statement, end Token) Block {
+func (fac) NewBlock(start Token, stats []Statement, end Token) Block {
 	return Block{
 		start: start,
 		Stats: stats,
@@ -68,8 +69,16 @@ func (f fac) NewBlock(start Token, stats []Statement, end Token) Block {
 	}
 }
 
-func (f fac) NewNonWrappedBlock(stats []Statement) Block {
+func (fac) NewNonWrappedBlock(stats []Statement) Block {
 	return Block{
 		Stats: stats,
+	}
+}
+
+func (fac) NewFunction(key Token, params Parameters, body Block) Function {
+	return Function{
+		key:    key,
+		Params: params,
+		Body:   body,
 	}
 }

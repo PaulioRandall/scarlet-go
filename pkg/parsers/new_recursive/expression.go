@@ -182,9 +182,10 @@ func maybeListAccessor(p *parser, maybeList Expression) (Expression, error) {
 	return maybeList, nil
 }
 
+/*
 func function(p *parser) (Expression, error) {
-	// pattern := FUNC PAREN_OPEN funcParameters PAREN_CLOSE
-	// F(a, b, ^c, ^d)
+	// pattern := FUNC function_parameters function_body
+	// F(a, b, ^c, ^d) {}
 
 	_, e := p.expect(FUNC)
 	if e != nil {
@@ -193,3 +194,20 @@ func function(p *parser) (Expression, error) {
 
 	return nil, nil
 }
+
+func functionParameters(p *parser) ([]Expression, error) {
+	// pattern := PAREN_OPEN [expression {DELIMITER expression}] PAREN_CLOSE
+
+	open, e := p.expect(PAREN_OPEN)
+if e != nil {
+	return nil, e
+}
+
+	close := p.expect(PAREN_CLOSE)
+	if e != nil {
+	return nil, e
+}
+
+return p.NewBlock(open, , close)
+}
+*/

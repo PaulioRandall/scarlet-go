@@ -226,3 +226,75 @@ func (n Negation) String() string {
 
 	return b.String()
 }
+
+type Parameters struct {
+	open, close Token
+	Inputs      []Token
+	Outputs     []Token
+}
+
+func (p Parameters) Begin() (int, int) {
+	return startPos(p.open)
+}
+
+func (p Parameters) End() (int, int) {
+	return endPos(p.close)
+}
+
+func (p Parameters) String() string {
+
+	b := builder{}
+
+	b.add(0, "[Parameters] ")
+
+	if len(p.Inputs) > 0 {
+		b.newline()
+		b.add(1, "Inputs: ")
+
+		for _, in := range p.Inputs {
+			b.newline()
+			b.addToken(2, in)
+		}
+	}
+
+	if len(p.Inputs) > 0 {
+		b.newline()
+		b.add(1, "Outputs: ")
+
+		for _, out := range p.Outputs {
+			b.newline()
+			b.addToken(2, out)
+		}
+	}
+
+	return b.String()
+}
+
+type Function struct {
+	key    Token
+	Params Parameters
+	Body   Block
+}
+
+func (f Function) Begin() (int, int) {
+	return startPos(f.key)
+}
+
+func (f Function) End() (int, int) {
+	return f.Body.End()
+}
+
+func (f Function) String() string {
+
+	b := builder{}
+
+	b.add(0, "[Function] ")
+
+	b.newline()
+	b.add(1, f.Params.String())
+
+	b.newline()
+	b.add(1, f.Body.String())
+
+	return b.String()
+}
