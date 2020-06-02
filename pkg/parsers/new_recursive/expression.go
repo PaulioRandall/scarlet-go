@@ -114,7 +114,7 @@ func list(p *parser) (Expression, error) {
 		return nil, e
 	}
 
-	list := p.NewList(open, items, close)
+	list := p.NewList(open, close, items)
 	return maybeListAccessor(p, list)
 }
 
@@ -274,7 +274,7 @@ func functionBody(p *parser) (Block, error) {
 		return NIL, e
 	}
 
-	return p.NewBlock(open, stats, close), nil
+	return p.NewBlock(open, close, stats), nil
 }
 
 func functionStatements(p *parser) ([]Statement, error) {

@@ -8,11 +8,11 @@ type Factory interface {
 	NewVoid(tk Token) Void
 	NewIdentifier(tk Token) Identifier
 	NewLiteral(tk Token) Literal
-	NewList(open Token, items []Expression, close Token) List
+	NewList(open, close Token, items []Expression) List
 	NewListAccessor(list, index Expression) ListAccessor
 	NewNegation(expr Expression) Negation
 	NewAssignment(target, source Expression) Assignment
-	NewBlock(start Token, stats []Statement, end Token) Block
+	NewBlock(start, end Token, stats []Statement) Block
 	NewNonWrappedBlock(stats []Statement) Block
 	NewParameters(open, close Token, inputs, outputs []Token) Parameters
 	NewFunction(key Token, params Parameters, body Block) Function
@@ -37,7 +37,7 @@ func (fac) NewLiteral(tk Token) Literal {
 	return Literal{tk}
 }
 
-func (fac) NewList(open Token, items []Expression, close Token) List {
+func (fac) NewList(open, close Token, items []Expression) List {
 	return List{
 		Open:  open,
 		Items: items,
@@ -63,7 +63,7 @@ func (fac) NewAssignment(target, source Expression) Assignment {
 	}
 }
 
-func (fac) NewBlock(start Token, stats []Statement, end Token) Block {
+func (fac) NewBlock(start, end Token, stats []Statement) Block {
 	return Block{
 		start: start,
 		Stats: stats,

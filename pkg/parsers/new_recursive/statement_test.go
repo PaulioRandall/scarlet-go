@@ -185,8 +185,8 @@ func Test_S9(t *testing.T) {
 
 	exp := testFactory.NewList(
 		tok(BLOCK_OPEN, "{"),
-		[]Expression{},
 		tok(BLOCK_CLOSE, "}"),
+		[]Expression{},
 	)
 
 	act, e := testFunc(testFactory, given)
@@ -210,8 +210,8 @@ func Test_S10(t *testing.T) {
 
 	exp := testFactory.NewList(
 		tok(BLOCK_OPEN, "{"),
-		[]Expression{},
 		tok(BLOCK_CLOSE, "}"),
+		[]Expression{},
 	)
 
 	act, e := testFunc(testFactory, given)
@@ -239,12 +239,12 @@ func Test_S11(t *testing.T) {
 
 	exp := testFactory.NewList(
 		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
 		[]Expression{
 			Literal{tok(NUMBER, "1")},
 			Literal{tok(BOOL, "TRUE")},
 			Literal{tok(STRING, "abc")},
 		},
-		tok(BLOCK_CLOSE, "}"),
 	)
 
 	act, e := testFunc(testFactory, given)
@@ -280,12 +280,12 @@ func Test_S12(t *testing.T) {
 
 	exp := testFactory.NewList(
 		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
 		[]Expression{
 			Literal{tok(NUMBER, "1")},
 			Literal{tok(BOOL, "TRUE")},
 			Literal{tok(STRING, "abc")},
 		},
-		tok(BLOCK_CLOSE, "}"),
 	)
 
 	act, e := testFunc(testFactory, given)
@@ -310,10 +310,10 @@ func Test_S13(t *testing.T) {
 
 	exp := testFactory.NewList(
 		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
 		[]Expression{
 			Literal{tok(NUMBER, "1")},
 		},
-		tok(BLOCK_CLOSE, "}"),
 	)
 
 	act, e := testFunc(testFactory, given)
@@ -435,8 +435,8 @@ func Test_S19(t *testing.T) {
 		),
 		testFactory.NewBlock(
 			tok(BLOCK_OPEN, "{"),
-			[]Statement{},
 			tok(BLOCK_CLOSE, "}"),
+			[]Statement{},
 		),
 	)
 
@@ -474,8 +474,8 @@ func Test_S20(t *testing.T) {
 		),
 		testFactory.NewBlock(
 			tok(BLOCK_OPEN, "{"),
-			[]Statement{},
 			tok(BLOCK_CLOSE, "}"),
+			[]Statement{},
 		),
 	)
 
@@ -514,8 +514,8 @@ func Test_S21(t *testing.T) {
 		),
 		testFactory.NewBlock(
 			tok(BLOCK_OPEN, "{"),
-			[]Statement{},
 			tok(BLOCK_CLOSE, "}"),
+			[]Statement{},
 		),
 	)
 
@@ -565,8 +565,8 @@ func Test_S22(t *testing.T) {
 		),
 		testFactory.NewBlock(
 			tok(BLOCK_OPEN, "{"),
-			[]Statement{},
 			tok(BLOCK_CLOSE, "}"),
+			[]Statement{},
 		),
 	)
 
@@ -596,6 +596,7 @@ func Test_S23(t *testing.T) {
 
 	body := testFactory.NewBlock(
 		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
 		[]Statement{
 			testFactory.NewNonWrappedBlock(
 				[]Statement{
@@ -606,7 +607,6 @@ func Test_S23(t *testing.T) {
 				},
 			),
 		},
-		tok(BLOCK_CLOSE, "}"),
 	)
 
 	exp := testFactory.NewFunction(
@@ -661,6 +661,7 @@ func Test_S24(t *testing.T) {
 
 	body := testFactory.NewBlock(
 		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
 		[]Statement{
 			testFactory.NewNonWrappedBlock(
 				[]Statement{
@@ -671,7 +672,6 @@ func Test_S24(t *testing.T) {
 				},
 			),
 		},
-		tok(BLOCK_CLOSE, "}"),
 	)
 
 	exp := testFactory.NewFunction(
