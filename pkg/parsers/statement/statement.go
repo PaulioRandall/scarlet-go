@@ -19,6 +19,10 @@ type Statement interface {
 }
 
 type Expression interface {
+	Snippet
+}
+
+type Snippet interface {
 	fmt.Stringer
 	Begin() (line, col int)
 	End() (line, col int)
@@ -301,9 +305,17 @@ func (f Function) String() string {
 	return b.String()
 }
 
+type Operation interface {
+	Precedence() int
+}
+
 type NumericOperation struct {
 	Operator    Token
 	Left, Right Expression
+}
+
+func (no NumericOperation) Precedence() int {
+	return no.Operator.Morpheme().Precedence()
 }
 
 func (no NumericOperation) Begin() (int, int) {

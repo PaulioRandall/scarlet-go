@@ -33,6 +33,10 @@ func (p *pipeline) match(m Morpheme) bool {
 	return m == ANY || m == tk.Morpheme()
 }
 
+func (p *pipeline) peek() Token {
+	return p._peek()
+}
+
 func (p *pipeline) any() Token {
 	return p._next()
 }

@@ -23,6 +23,14 @@ func NewFactory() Factory {
 	return fac{}
 }
 
+func Precedence(expr Expression) int {
+	if v, ok := expr.(Operation); ok {
+		return v.Precedence()
+	}
+
+	return 0
+}
+
 type fac struct{}
 
 func (fac) NewVoid(tk Token) Void {

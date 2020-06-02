@@ -54,7 +54,11 @@ func expression(p *parser) (Expression, error) {
 		return negation(p)
 
 	case p.accept(LIST):
-		return list(p)
+		left, e := list(p)
+		if e != nil {
+			return nil, e
+		}
+		return maybeListAccessor(p, left)
 
 	case p.match(FUNC):
 		return function(p)
@@ -114,8 +118,7 @@ func list(p *parser) (Expression, error) {
 		return nil, e
 	}
 
-	list := p.NewList(open, close, items)
-	return maybeListAccessor(p, list)
+	return p.NewList(open, close, items), nil
 }
 
 func listItems(p *parser) ([]Expression, error) {
@@ -161,22 +164,29 @@ func acceptDelimiter(p *parser, closingSignal Morpheme) bool {
 func maybeListAccessor(p *parser, maybeList Expression) (Expression, error) {
 	// pattern := expression [GUARD_OPEN expression GUARD_CLOSE]
 
-	if p.accept(GUARD_OPEN) {
-
-		index, e := expectExpression(p)
-		if e != nil {
-			return nil, e
-		}
-
-		_, e = p.expect(GUARD_CLOSE)
-		if e != nil {
-			return nil, e
-		}
-
-		return p.NewListAccessor(maybeList, index), nil
+	if p.match(GUARD_OPEN) {
+		return listAccessor(p, maybeList)
 	}
 
 	return maybeList, nil
+}
+
+func listAccessor(p *parser, left Expression) (Expression, error) {
+	// pattern := GUARD_OPEN expression GUARD_CLOSE
+
+	p.expect(GUARD_OPEN)
+
+	index, e := expectExpression(p)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(GUARD_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	return p.NewListAccessor(left, index), nil
 }
 
 func function(p *parser) (Expression, error) {
@@ -312,4 +322,55 @@ func functionStatement(p *parser) (st Statement, more bool, e error) {
 	}
 
 	return st, p.accept(TERMINATOR), nil
+}
+
+func operation(p *parser, left Expression) (Expression, error) {
+
+	if !p.hasMore() {
+		return left, nil
+	}
+
+	if Precedence(left) >= p.peek().Morpheme().Precedence() {
+		return left, nil
+	}
+
+	op, e := p.expectAnyOf(ADD, SUBTRACT, MULTIPLY, DIVIDE)
+	if e != nil {
+		return nil, e
+	}
+
+	right, e := operationRight(p)
+	if e != nil {
+		return nil, e
+	}
+
+	right, e = operation(p, right)
+	if e != nil {
+		return nil, e
+	}
+
+	left = p.NewNumericOperation(op, left, right)
+	return operation(p, left)
+}
+
+func operationRight(p *parser) (Expression, error) {
+	switch {
+	case p.match(IDENTIFIER):
+		return identifier(p)
+
+	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
+		return p.NewLiteral(p.any()), nil
+
+	case p.accept(SUBTRACT):
+		return negation(p)
+
+	case p.accept(LIST):
+		left, e := list(p)
+		if e != nil {
+			return nil, e
+		}
+		return listAccessor(p, left)
+	}
+
+	return nil, err.New("Expected expression", err.At(p.any()))
 }
