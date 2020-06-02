@@ -42,14 +42,6 @@
 - `LIST {a,b,c}`
 - `LIST {a,b,c,}`
 
-```
-LIST {
-	a,
-	b,
-	c,
-}
-```
-
 ## List Access
 
 #### Formats
@@ -74,3 +66,14 @@ LIST {
 - `data[2]`
 - `-1`
 - `-a`
+
+## Assignment
+
+#### Formats
+- assignment := target {"," target} ":" expression {"," expression}
+- \~target   := identifier | list_access
+
+#### Examples
+- `x: 1`
+- `y[2]: TRUE`
+- `x, y[2]: 1, TRUE`
