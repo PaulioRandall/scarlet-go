@@ -36,7 +36,6 @@
 #### Formats
 - list        := "LIST" "{" [parameters] "}"
 - \~parameters := expression {"," expression} [","]
-- list_access := identifier "[" num_expression "]"
 
 #### Examples
 - `LIST {}`
@@ -51,6 +50,12 @@ LIST {
 }
 ```
 
+## List Access
+
+#### Formats
+- list_access := identifier "[" num_expression "]"
+
+#### Examples
 - `data[2]`
 - `data[i]`
 
