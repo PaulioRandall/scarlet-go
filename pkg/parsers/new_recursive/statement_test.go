@@ -628,10 +628,15 @@ func Test_S24(t *testing.T) {
 
 	// GIVEN a function
 	// WITH input and output parameters over several lines
-	// AND no statements in the body
+	// AND a statement in the body with leading and trailing linefeeds
 	// THEN only the parsed function is returned
 
-	// F(a, ^b) {}
+	// F(
+	// a,
+	// ^b,
+	// ) {
+	// a: b
+	// }
 	given := []Token{
 		tok(FUNC, "F"),
 		tok(PAREN_OPEN, "("),
@@ -645,9 +650,29 @@ func Test_S24(t *testing.T) {
 		tok(TERMINATOR, "\n"),
 		tok(PAREN_CLOSE, ")"),
 		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, "\n"),
+		tok(IDENTIFIER, "a"),
+		tok(ASSIGN, ":"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, "\n"),
 		tok(BLOCK_CLOSE, "}"),
 		tok(TERMINATOR, ""),
 	}
+
+	body := testFactory.NewBlock(
+		tok(BLOCK_OPEN, "{"),
+		[]Statement{
+			testFactory.NewNonWrappedBlock(
+				[]Statement{
+					testFactory.NewAssignment(
+						testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+						testFactory.NewLiteral(tok(NUMBER, "1")),
+					),
+				},
+			),
+		},
+		tok(BLOCK_CLOSE, "}"),
+	)
 
 	exp := testFactory.NewFunction(
 		tok(FUNC, "F"),
@@ -661,11 +686,7 @@ func Test_S24(t *testing.T) {
 				tok(IDENTIFIER, "b"),
 			},
 		),
-		testFactory.NewBlock(
-			tok(BLOCK_OPEN, "{"),
-			[]Statement{},
-			tok(BLOCK_CLOSE, "}"),
-		),
+		body,
 	)
 
 	act, e := testFunc(testFactory, given)

@@ -265,8 +265,10 @@ func functionBody(p *parser) (Block, error) {
 		return NIL, e
 	}
 
+	p.accept(TERMINATOR)
 	stats, e := functionStatements(p)
 
+	p.accept(TERMINATOR)
 	close, e := p.expect(BLOCK_CLOSE)
 	if e != nil {
 		return NIL, e
@@ -277,33 +279,37 @@ func functionBody(p *parser) (Block, error) {
 
 func functionStatements(p *parser) ([]Statement, error) {
 
-	r := []Statement{}
+	var (
+		st Statement
+		e  error
+		r  = []Statement{}
+	)
 
-	st, e := statement(p)
-	if e != nil {
-		return nil, e
-	}
+	for loop := true; loop; {
 
-	if st == nil {
-		return r, nil
-	}
-
-	r = append(r, st)
-
-	for p.hasMore() && !p.match(BLOCK_CLOSE) {
-
-		st, e := expectStatement(p)
+		st, loop, e = functionStatement(p)
 		if e != nil {
 			return nil, e
 		}
 
-		r = append(r, st)
-
-		_, e = p.expect(TERMINATOR)
-		if e != nil {
-			return nil, e
+		if st != nil {
+			r = append(r, st)
 		}
 	}
 
 	return r, nil
+}
+
+func functionStatement(p *parser) (st Statement, more bool, e error) {
+
+	st, e = statement(p)
+	if e != nil {
+		return nil, false, e
+	}
+
+	if st == nil {
+		return nil, false, nil
+	}
+
+	return st, p.accept(TERMINATOR), nil
 }
