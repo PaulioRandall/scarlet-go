@@ -14,6 +14,7 @@ type Factory interface {
 	NewAssignment(target, source Expression) Assignment
 	NewBlock(start Token, stats []Statement, end Token) Block
 	NewNonWrappedBlock(stats []Statement) Block
+	NewParameters(open, close Token, inputs, outputs []Token) Parameters
 	NewFunction(key Token, params Parameters, body Block) Function
 }
 
@@ -72,6 +73,15 @@ func (fac) NewBlock(start Token, stats []Statement, end Token) Block {
 func (fac) NewNonWrappedBlock(stats []Statement) Block {
 	return Block{
 		Stats: stats,
+	}
+}
+
+func (fac) NewParameters(open, close Token, inputs, outputs []Token) Parameters {
+	return Parameters{
+		open:    open,
+		close:   close,
+		Inputs:  inputs,
+		Outputs: outputs,
 	}
 }
 

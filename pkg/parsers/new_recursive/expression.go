@@ -123,7 +123,8 @@ func listItems(p *parser) ([]Expression, error) {
 
 	items := []Expression{}
 
-	for {
+	for loop := true; loop; loop = acceptDelimiter(p, BLOCK_CLOSE) {
+
 		expr, e := listItem(p)
 		if e != nil {
 			return nil, e
@@ -134,10 +135,6 @@ func listItems(p *parser) ([]Expression, error) {
 		}
 
 		items = append(items, expr)
-
-		if !acceptListItemDelim(p) {
-			break
-		}
 	}
 
 	return items, nil
@@ -148,11 +145,11 @@ func listItem(p *parser) (Expression, error) {
 	return expression(p)
 }
 
-func acceptListItemDelim(p *parser) bool {
+func acceptDelimiter(p *parser, closingSignal Morpheme) bool {
 
 	if p.accept(DELIMITER) {
 		if p.accept(TERMINATOR) {
-			return !p.match(BLOCK_CLOSE)
+			return !p.match(closingSignal)
 		}
 
 		return true
@@ -182,32 +179,55 @@ func maybeListAccessor(p *parser, maybeList Expression) (Expression, error) {
 	return maybeList, nil
 }
 
-/*
 func function(p *parser) (Expression, error) {
 	// pattern := FUNC function_parameters function_body
-	// F(a, b, ^c, ^d) {}
 
 	_, e := p.expect(FUNC)
 	if e != nil {
 		return nil, e
 	}
 
+	// parse parameters
+
+	// parse body
 	return nil, nil
 }
 
-func functionParameters(p *parser) ([]Expression, error) {
+func functionParameters(p *parser) (Expression, error) {
 	// pattern := PAREN_OPEN [expression {DELIMITER expression}] PAREN_CLOSE
 
 	open, e := p.expect(PAREN_OPEN)
-if e != nil {
-	return nil, e
-}
-
-	close := p.expect(PAREN_CLOSE)
 	if e != nil {
-	return nil, e
+		return nil, e
+	}
+
+	inputs := []Token{}
+	outputs := []Token{}
+
+	for loop := true; loop; loop = acceptDelimiter(p, PAREN_CLOSE) {
+
+		id, isOutput, e := functionParam(p)
+		if e != nil {
+			return nil, e
+		}
+
+		if isOutput {
+			outputs = append(outputs, id)
+		} else {
+			inputs = append(inputs, id)
+		}
+	}
+
+	close, e := p.expect(PAREN_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	return p.NewParameters(open, close, inputs, outputs), nil
 }
 
-return p.NewBlock(open, , close)
+func functionParam(p *parser) (Token, bool, error) {
+	output := p.accept(OUTPUT)
+	id, e := p.expect(IDENTIFIER)
+	return id, output, e
 }
-*/
