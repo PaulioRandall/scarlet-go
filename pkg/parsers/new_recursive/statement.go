@@ -128,7 +128,7 @@ func assignmentTargets(p *parser, left Expression) ([]Expression, error) {
 }
 
 func assignmentTarget(p *parser) (Expression, error) {
-	// pattern := IDENTIFIER | list_accessor | VOID
+	// pattern := identifer | VOID
 
 	switch {
 	case p.match(IDENTIFIER):
