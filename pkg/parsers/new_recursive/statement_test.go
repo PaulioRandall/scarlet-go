@@ -408,6 +408,41 @@ func Test_S18(t *testing.T) {
 	expectStats(t, exp, act, e)
 }
 
+func Test_S19(t *testing.T) {
+
+	// GIVEN a function
+	// WITH no parameters
+	// AND no statements in the body
+	// THEN no statements are returned
+
+	given := []Token{
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{},
+			[]Token{},
+		),
+		testFactory.NewBlock(
+			tok(BLOCK_OPEN, "{"),
+			[]Statement{},
+			tok(BLOCK_CLOSE, "}"),
+		),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token

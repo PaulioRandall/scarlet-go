@@ -56,8 +56,8 @@ func expression(p *parser) (Expression, error) {
 	case p.accept(LIST):
 		return list(p)
 
-		//case p.accept(FUNC)
-
+	case p.match(FUNC):
+		return function(p)
 	}
 
 	return nil, nil
@@ -182,54 +182,127 @@ func maybeListAccessor(p *parser, maybeList Expression) (Expression, error) {
 func function(p *parser) (Expression, error) {
 	// pattern := FUNC function_parameters function_body
 
-	_, e := p.expect(FUNC)
+	key, e := p.expect(FUNC)
 	if e != nil {
 		return nil, e
 	}
 
-	// parse parameters
+	params, e := functionParameters(p)
+	if e != nil {
+		return nil, e
+	}
 
-	// parse body
-	return nil, nil
+	body, e := functionBody(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return p.NewFunction(key, params, body), nil
 }
 
-func functionParameters(p *parser) (Expression, error) {
+func functionParameters(p *parser) (Parameters, error) {
 	// pattern := PAREN_OPEN [expression {DELIMITER expression}] PAREN_CLOSE
+
+	NIL := Parameters{}
 
 	open, e := p.expect(PAREN_OPEN)
 	if e != nil {
-		return nil, e
+		return NIL, e
 	}
 
-	p.accept(TERMINATOR)
+	inputs, outputs, e := functionParams(p)
+	if e != nil {
+		return NIL, e
+	}
 
-	inputs := []Token{}
-	outputs := []Token{}
+	close, e := p.expect(PAREN_CLOSE)
+	if e != nil {
+		return NIL, e
+	}
+
+	return p.NewParameters(open, close, inputs, outputs), nil
+}
+
+func functionParams(p *parser) (in []Token, out []Token, _ error) {
+
+	in = []Token{}
+	out = []Token{}
+
+	if p.match(PAREN_CLOSE) {
+		return in, out, nil
+	}
 
 	for loop := true; loop; loop = acceptDelimiter(p, PAREN_CLOSE) {
 
 		id, isOutput, e := functionParam(p)
 		if e != nil {
-			return nil, e
+			return nil, nil, e
 		}
 
 		if isOutput {
-			outputs = append(outputs, id)
+			out = append(out, id)
 		} else {
-			inputs = append(inputs, id)
+			in = append(in, id)
 		}
 	}
 
-	close, e := p.expect(PAREN_CLOSE)
-	if e != nil {
-		return nil, e
-	}
-
-	return p.NewParameters(open, close, inputs, outputs), nil
+	return in, out, nil
 }
 
 func functionParam(p *parser) (Token, bool, error) {
 	output := p.accept(OUTPUT)
 	id, e := p.expect(IDENTIFIER)
 	return id, output, e
+}
+
+func functionBody(p *parser) (Block, error) {
+
+	NIL := Block{}
+
+	open, e := p.expect(BLOCK_OPEN)
+	if e != nil {
+		return NIL, e
+	}
+
+	stats, e := functionStatements(p)
+
+	close, e := p.expect(BLOCK_CLOSE)
+	if e != nil {
+		return NIL, e
+	}
+
+	return p.NewBlock(open, stats, close), nil
+}
+
+func functionStatements(p *parser) ([]Statement, error) {
+
+	r := []Statement{}
+
+	st, e := statement(p)
+	if e != nil {
+		return nil, e
+	}
+
+	if st == nil {
+		return r, nil
+	}
+
+	r = append(r, st)
+
+	for p.hasMore() && !p.match(BLOCK_CLOSE) {
+
+		st, e := expectStatement(p)
+		if e != nil {
+			return nil, e
+		}
+
+		r = append(r, st)
+
+		_, e = p.expect(TERMINATOR)
+		if e != nil {
+			return nil, e
+		}
+	}
+
+	return r, nil
 }
