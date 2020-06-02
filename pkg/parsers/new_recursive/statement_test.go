@@ -413,7 +413,7 @@ func Test_S19(t *testing.T) {
 	// GIVEN a function
 	// WITH no parameters
 	// AND no statements in the body
-	// THEN no statements are returned
+	// THEN only the parsed function is returned
 
 	// F() {}
 	given := []Token{
@@ -449,7 +449,7 @@ func Test_S20(t *testing.T) {
 	// GIVEN a function
 	// WITH one input parameter
 	// AND no statements in the body
-	// THEN no statements are returned
+	// THEN only the parsed function is returned
 
 	// F(a) {}
 	given := []Token{
@@ -488,7 +488,7 @@ func Test_S21(t *testing.T) {
 	// GIVEN a function
 	// WITH one output parameter
 	// AND no statements in the body
-	// THEN no statements are returned
+	// THEN only the parsed function is returned
 
 	// F(^a) {}
 	given := []Token{
@@ -528,7 +528,7 @@ func Test_S22(t *testing.T) {
 	// GIVEN a function
 	// WITH multiple parameters
 	// AND no statements in the body
-	// THEN no statements are returned
+	// THEN only the parsed function is returned
 
 	// F(a, b, ^c, ^d) {}
 	given := []Token{
@@ -566,6 +566,54 @@ func Test_S22(t *testing.T) {
 		testFactory.NewBlock(
 			tok(BLOCK_OPEN, "{"),
 			[]Statement{},
+			tok(BLOCK_CLOSE, "}"),
+		),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S23(t *testing.T) {
+
+	// GIVEN a function
+	// WITH no parameters
+	// AND a statement in the body
+	// THEN only the parsed function is returned
+
+	// F() {a: 1}
+	given := []Token{
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(IDENTIFIER, "a"),
+		tok(ASSIGN, ":"),
+		tok(NUMBER, "1"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{},
+			[]Token{},
+		),
+		testFactory.NewBlock(
+			tok(BLOCK_OPEN, "{"),
+			[]Statement{
+				testFactory.NewNonWrappedBlock(
+					[]Statement{
+						testFactory.NewAssignment(
+							testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+							testFactory.NewLiteral(tok(NUMBER, "1")),
+						),
+					},
+				),
+			},
 			tok(BLOCK_CLOSE, "}"),
 		),
 	)
