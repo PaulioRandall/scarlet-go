@@ -43,3 +43,7 @@ func Test_Parameters(t *testing.T) {
 func Test_Function(t *testing.T) {
 	var _ Expression = Function{}
 }
+
+func Test_NumericOperation(t *testing.T) {
+	var _ Expression = NumericOperation{}
+}

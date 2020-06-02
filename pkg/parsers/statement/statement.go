@@ -1,6 +1,8 @@
 package statement
 
 import (
+	"fmt"
+
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
@@ -17,9 +19,9 @@ type Statement interface {
 }
 
 type Expression interface {
+	fmt.Stringer
 	Begin() (line, col int)
 	End() (line, col int)
-	String() string
 }
 
 type Void struct {
@@ -295,6 +297,38 @@ func (f Function) String() string {
 
 	b.newline()
 	b.add(1, f.Body.String())
+
+	return b.String()
+}
+
+type NumericOperation struct {
+	Operator    Token
+	Left, Right Expression
+}
+
+func (no NumericOperation) Begin() (int, int) {
+	return no.Left.Begin()
+}
+
+func (no NumericOperation) End() (int, int) {
+	return no.Right.End()
+}
+
+func (no NumericOperation) String() string {
+
+	b := builder{}
+
+	b.add(0, "[NumericOperation]")
+
+	b.newline()
+	b.add(1, "Left: ")
+	b.newline()
+	b.add(2, no.Left.String())
+
+	b.newline()
+	b.add(1, "Right: ")
+	b.newline()
+	b.add(2, no.Right.String())
 
 	return b.String()
 }
