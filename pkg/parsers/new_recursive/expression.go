@@ -201,6 +201,8 @@ func functionParameters(p *parser) (Expression, error) {
 		return nil, e
 	}
 
+	p.accept(TERMINATOR)
+
 	inputs := []Token{}
 	outputs := []Token{}
 

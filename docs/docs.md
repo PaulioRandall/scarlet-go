@@ -1,4 +1,4 @@
-# Examples & Formats
+# Formats & Examples
 
 ## Identifiers
 
@@ -67,6 +67,26 @@
 - `-1`
 - `-a`
 
+## Function
+
+#### Formats
+- function := "F" "(" parameters ")" "{" {statement} "}"
+- \~parameters := [parameter {"," parameter} [","]]
+- \~parameter := ["^"] expression
+
+#### Examples
+- `F() {}`
+- `F(a, b) {}`
+- `F(a, ^b) {}`
+- `F(x, ^x) {}`
+- `F(a, b, ^c, ^d) {}`
+
+```
+F(a, ^b) {
+	b: a
+}
+```
+
 ## Assignment
 
 #### Formats
@@ -77,3 +97,8 @@
 - `x: 1`
 - `y[2]: TRUE`
 - `x, y[2]: 1, TRUE`
+
+## Statement
+
+#### Formats
+- statement := assignment | expression
