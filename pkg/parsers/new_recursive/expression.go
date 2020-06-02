@@ -232,6 +232,7 @@ func functionParams(p *parser) (in []Token, out []Token, _ error) {
 		return in, out, nil
 	}
 
+	p.accept(TERMINATOR)
 	for loop := true; loop; loop = acceptDelimiter(p, PAREN_CLOSE) {
 
 		id, isOutput, e := functionParam(p)

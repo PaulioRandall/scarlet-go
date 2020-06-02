@@ -594,6 +594,21 @@ func Test_S23(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
+	body := testFactory.NewBlock(
+		tok(BLOCK_OPEN, "{"),
+		[]Statement{
+			testFactory.NewNonWrappedBlock(
+				[]Statement{
+					testFactory.NewAssignment(
+						testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+						testFactory.NewLiteral(tok(NUMBER, "1")),
+					),
+				},
+			),
+		},
+		tok(BLOCK_CLOSE, "}"),
+	)
+
 	exp := testFactory.NewFunction(
 		tok(FUNC, "F"),
 		testFactory.NewParameters(
@@ -602,18 +617,53 @@ func Test_S23(t *testing.T) {
 			[]Token{},
 			[]Token{},
 		),
+		body,
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S24(t *testing.T) {
+
+	// GIVEN a function
+	// WITH input and output parameters over several lines
+	// AND no statements in the body
+	// THEN only the parsed function is returned
+
+	// F(a, ^b) {}
+	given := []Token{
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(TERMINATOR, "\n"),
+		tok(IDENTIFIER, "a"),
+		tok(DELIMITER, ","),
+		tok(TERMINATOR, "\n"),
+		tok(OUTPUT, "^"),
+		tok(IDENTIFIER, "b"),
+		tok(DELIMITER, ","),
+		tok(TERMINATOR, "\n"),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{
+				tok(IDENTIFIER, "a"),
+			},
+			[]Token{
+				tok(IDENTIFIER, "b"),
+			},
+		),
 		testFactory.NewBlock(
 			tok(BLOCK_OPEN, "{"),
-			[]Statement{
-				testFactory.NewNonWrappedBlock(
-					[]Statement{
-						testFactory.NewAssignment(
-							testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-							testFactory.NewLiteral(tok(NUMBER, "1")),
-						),
-					},
-				),
-			},
+			[]Statement{},
 			tok(BLOCK_CLOSE, "}"),
 		),
 	)
