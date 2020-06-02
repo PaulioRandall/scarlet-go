@@ -415,6 +415,7 @@ func Test_S19(t *testing.T) {
 	// AND no statements in the body
 	// THEN no statements are returned
 
+	// F() {}
 	given := []Token{
 		tok(FUNC, "F"),
 		tok(PAREN_OPEN, "("),
@@ -431,6 +432,136 @@ func Test_S19(t *testing.T) {
 			tok(PAREN_CLOSE, ")"),
 			[]Token{},
 			[]Token{},
+		),
+		testFactory.NewBlock(
+			tok(BLOCK_OPEN, "{"),
+			[]Statement{},
+			tok(BLOCK_CLOSE, "}"),
+		),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S20(t *testing.T) {
+
+	// GIVEN a function
+	// WITH one input parameter
+	// AND no statements in the body
+	// THEN no statements are returned
+
+	// F(a) {}
+	given := []Token{
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(IDENTIFIER, "a"),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{
+				tok(IDENTIFIER, "a"),
+			},
+			[]Token{},
+		),
+		testFactory.NewBlock(
+			tok(BLOCK_OPEN, "{"),
+			[]Statement{},
+			tok(BLOCK_CLOSE, "}"),
+		),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S21(t *testing.T) {
+
+	// GIVEN a function
+	// WITH one output parameter
+	// AND no statements in the body
+	// THEN no statements are returned
+
+	// F(^a) {}
+	given := []Token{
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(OUTPUT, "^"),
+		tok(IDENTIFIER, "a"),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{},
+			[]Token{
+				tok(IDENTIFIER, "a"),
+			},
+		),
+		testFactory.NewBlock(
+			tok(BLOCK_OPEN, "{"),
+			[]Statement{},
+			tok(BLOCK_CLOSE, "}"),
+		),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S22(t *testing.T) {
+
+	// GIVEN a function
+	// WITH multiple parameters
+	// AND no statements in the body
+	// THEN no statements are returned
+
+	// F(a, b, ^c, ^d) {}
+	given := []Token{
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(IDENTIFIER, "a"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "b"),
+		tok(DELIMITER, ","),
+		tok(OUTPUT, "^"),
+		tok(IDENTIFIER, "c"),
+		tok(DELIMITER, ","),
+		tok(OUTPUT, "^"),
+		tok(IDENTIFIER, "d"),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{
+				tok(IDENTIFIER, "a"),
+				tok(IDENTIFIER, "b"),
+			},
+			[]Token{
+				tok(IDENTIFIER, "c"),
+				tok(IDENTIFIER, "d"),
+			},
 		),
 		testFactory.NewBlock(
 			tok(BLOCK_OPEN, "{"),
