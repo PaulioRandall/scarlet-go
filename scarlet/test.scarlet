@@ -1,5 +1,18 @@
 
-a: 2
+DEF a, b, c: 1, TRUE, "Scarlet!"
 
-e: @dec(a)
-[e != _] @println("Error: ", e)
+list: LIST {
+	a, b, c
+}
+
+list[>>]: "After"
+list[<<]: "Before"
+
+
+LOOP i: 0 [i < 5] {
+	@Println(i+1, ": ", list[i])
+}
+
+//@ForEach(list, F(i, v, m) {
+//		@Println(i+1, ": ", list[i])
+//})

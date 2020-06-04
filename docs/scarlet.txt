@@ -30,7 +30,7 @@ calc: F(argParser, ^e) {
 	}
 }
  
-@Foreach(@Args(), {
+@Foreach(@Args(), F(_, v, _) {
 	@Println(v)
 })
 

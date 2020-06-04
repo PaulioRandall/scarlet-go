@@ -15,6 +15,10 @@ type Symbols struct {
 	offset int
 }
 
+func (s *Symbols) Pos() (int, int) {
+	return s.line, s.col
+}
+
 func (s *Symbols) Empty() bool {
 	return s.Remaining() <= 0
 }
@@ -103,9 +107,9 @@ func (s *Symbols) CountWhile(start int, f RuneMatcher) (int, error) {
 	return size, nil
 }
 
-func (s *Symbols) IsNewline(index int) bool {
+func (s *Symbols) IsNewline(index int) (bool, int) {
 	count, e := s.countNewlineTerminals(index)
-	return e == nil && count > 0
+	return e == nil && count > 0, count
 }
 
 func (s *Symbols) offsetIndex(index int, includeLen bool) (int, error) {
