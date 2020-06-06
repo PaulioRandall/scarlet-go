@@ -117,11 +117,15 @@ var patterns_ = []mat.Pattern{
 	pattern_{IDENTIFIER, func(s *mat.Symbols) (int, error) {
 		return s.CountWhile(0, func(i int, ru rune) (bool, error) {
 
-			if unicode.IsLetter(ru) {
+			if i == 0 {
+				return unicode.IsLetter(ru), nil
+			}
+
+			if unicode.IsLetter(ru) || ru == '_' {
 				return true, nil
 			}
 
-			return i != 0 && ru == '_', nil
+			return false, nil
 		})
 	}},
 	pattern_{ASSIGN, func(s *mat.Symbols) (int, error) {
@@ -315,7 +319,7 @@ func matchWord_(s *mat.Symbols, word string) (int, error) {
 	}
 
 	ru, e := s.At(size)
-	if e != nil || unicode.IsLetter(ru) {
+	if e != nil || unicode.IsLetter(ru) || ru == '_' {
 		return 0, e
 	}
 

@@ -40,6 +40,10 @@ func Test_T5_1(t *testing.T) {
 	okTest(t, T5_1)
 }
 
+func Test_T5_2(t *testing.T) {
+	okTest(t, T5_2)
+}
+
 func Test_T6_1(t *testing.T) {
 	okTest(t, T6_1)
 }
@@ -50,4 +54,44 @@ func Test_T7_1(t *testing.T) {
 
 func Test_T8_1(t *testing.T) {
 	okTest(t, T8_1)
+}
+
+func Test_T9_1(t *testing.T) {
+	okTest(t, T9_1)
+}
+
+func Test_T9_2(t *testing.T) {
+	okTest(t, T9_2)
+}
+
+func Test_T9_3(t *testing.T) {
+	okTest(t, T9_3)
+}
+
+func Test_T9_4(t *testing.T) {
+	okTest(t, T9_4)
+}
+
+func Test_T9_5(t *testing.T) {
+	okTest(t, T9_5)
+}
+
+func Test_T9_6(t *testing.T) {
+	okTest(t, T9_6)
+}
+
+func Test_T9_7(t *testing.T) {
+	okTest(t, T9_7)
+}
+
+func Test_T10_1(t *testing.T) {
+	okTest(t, T10_1)
+}
+
+func Test_T11_1(t *testing.T) {
+	okTest(t, T11_1)
+}
+
+func Test_T12_1(t *testing.T) {
+	okTest(t, T12_1)
 }
