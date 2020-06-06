@@ -1,18 +1,7 @@
 
-DEF a, b, c: 1, TRUE, "Scarlet!"
+DEF speedOfLight: 299792458
+DEF square: E(s) s * s
 
-list: LIST {
-	a, b, c
-}
+energy: E(mass) mass * square(speedOfLight)
 
-list[>>]: "After"
-list[<<]: "Before"
-
-
-LOOP i: 0 [i < 5] {
-	@Println(i+1, ": ", list[i])
-}
-
-//@ForEach(list, F(i, v, m) {
-//		@Println(i+1, ": ", list[i])
-//})
+e: energy(1)
