@@ -95,3 +95,75 @@ func Test_T11_1(t *testing.T) {
 func Test_T12_1(t *testing.T) {
 	okTest(t, T12_1)
 }
+
+func Test_T13_1(t *testing.T) {
+	okTest(t, T13_1)
+}
+
+func Test_T14_1(t *testing.T) {
+	okTest(t, T14_1)
+}
+
+func Test_T15_1(t *testing.T) {
+	okTest(t, T15_1)
+}
+
+func Test_T16_1(t *testing.T) {
+	okTest(t, T16_1)
+}
+
+func Test_T17_1(t *testing.T) {
+	okTest(t, T17_1)
+}
+
+func Test_T18_1(t *testing.T) {
+	okTest(t, T18_1)
+}
+
+func Test_T19_1(t *testing.T) {
+	okTest(t, T19_1)
+}
+
+func Test_T20_1(t *testing.T) {
+	okTest(t, T20_1)
+}
+
+func Test_T21_1(t *testing.T) {
+	okTest(t, T21_1)
+}
+
+func Test_T22_1(t *testing.T) {
+	okTest(t, T22_1)
+}
+
+func Test_T23_1(t *testing.T) {
+	okTest(t, T23_1)
+}
+
+func Test_T24_1(t *testing.T) {
+	okTest(t, T24_1)
+}
+
+func Test_T25_1(t *testing.T) {
+	okTest(t, T25_1)
+}
+
+func Test_T26_1(t *testing.T) {
+	okTest(t, T26_1)
+}
+
+func Test_T27_1(t *testing.T) {
+	okTest(t, T27_1)
+}
+
+func Test_T28_1(t *testing.T) {
+	okTest(t, T28_1)
+}
+
+func Test_T29_1(t *testing.T) {
+	okTest(t, T29_1)
+}
+
+func Test_T30_1(t *testing.T) {
+	okTest(t, T30_1)
+}
