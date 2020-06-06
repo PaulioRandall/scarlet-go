@@ -88,7 +88,7 @@ var patterns_ = []mat.Pattern{
 			return 0, e
 		}
 
-		return n, nil
+		return PREFIX_LEN + n, nil
 	}},
 	pattern_{MATCH, func(s *mat.Symbols) (int, error) {
 		return matchWord_(s, "MATCH")
@@ -265,12 +265,16 @@ var patterns_ = []mat.Pattern{
 			return 0, e
 		}
 
-		if n == 0 || s.Remaining()-n <= 0 {
+		if n == 0 || !s.Has(n+1) {
 			return n, nil
 		}
 
 		ru, e := s.At(n)
-		if e != nil || ru != DELIM {
+		if e != nil {
+			return 0, e
+		}
+
+		if ru != DELIM {
 			return n, nil
 		}
 

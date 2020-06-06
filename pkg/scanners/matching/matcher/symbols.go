@@ -102,11 +102,11 @@ func (s *Symbols) CountWhile(start int, f RuneMatcher) (int, error) {
 		}
 
 		if !match {
-			return i, nil
+			return i - start, nil
 		}
 	}
 
-	return size, nil
+	return size - start, nil
 }
 
 func (s *Symbols) IsNewline(index int) (bool, int) {

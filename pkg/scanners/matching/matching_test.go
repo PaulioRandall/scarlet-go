@@ -167,3 +167,63 @@ func Test_T29_1(t *testing.T) {
 func Test_T30_1(t *testing.T) {
 	okTest(t, T30_1)
 }
+
+func Test_T31_1(t *testing.T) {
+	okTest(t, T31_1)
+}
+
+func Test_T32_1(t *testing.T) {
+	okTest(t, T32_1)
+}
+
+func Test_T33_1(t *testing.T) {
+	okTest(t, T33_1)
+}
+
+func Test_T34_1(t *testing.T) {
+	okTest(t, T34_1)
+}
+
+func Test_T35_1(t *testing.T) {
+	okTest(t, T35_1)
+}
+
+func Test_T35_2(t *testing.T) {
+	okTest(t, T35_2)
+}
+
+func Test_T36_1(t *testing.T) {
+	okTest(t, T36_1)
+}
+
+func Test_T36_2(t *testing.T) {
+	okTest(t, T36_2)
+}
+
+func Test_T36_3(t *testing.T) {
+	okTest(t, T36_3)
+}
+
+func Test_T36_4(t *testing.T) {
+	okTest(t, T36_4)
+}
+
+func Test_T37_1(t *testing.T) {
+	okTest(t, T37_1)
+}
+
+func Test_T38_1(t *testing.T) {
+	okTest(t, T38_1)
+}
+
+func Test_T39_1(t *testing.T) {
+	okTest(t, T39_1)
+}
+
+func Test_T40_1(t *testing.T) {
+	okTest(t, T40_1)
+}
+
+func Test_T41_1(t *testing.T) {
+	okTest(t, T41_1)
+}
