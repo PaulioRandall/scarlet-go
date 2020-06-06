@@ -27,6 +27,10 @@ func (s *Symbols) Remaining() int {
 	return len(s.runes) - s.offset
 }
 
+func (s *Symbols) Has(n int) bool {
+	return (s.Remaining() - n) > -1
+}
+
 func (s *Symbols) At(i int) (rune, error) {
 
 	var e error
@@ -84,17 +88,15 @@ func (s *Symbols) CountWhile(start int, f RuneMatcher) (int, error) {
 
 	var e error
 
-	start, e = s.offsetIndex(start, false)
+	start, e = s.offsetIndex(start, true)
 	if e != nil {
 		return 0, e
 	}
 
-	runes := s.runes[start:]
-	size := len(runes)
+	size := s.Remaining()
+	for i := start; i < size; i++ {
 
-	for i := 0; i < size; i++ {
-
-		match, e := f(i, runes[i])
+		match, e := f(i, s.runes[i])
 		if e != nil {
 			return 0, e
 		}
@@ -108,24 +110,24 @@ func (s *Symbols) CountWhile(start int, f RuneMatcher) (int, error) {
 }
 
 func (s *Symbols) IsNewline(index int) (bool, int) {
-	count, e := s.countNewlineTerminals(index)
-	return e == nil && count > 0, count
+	count := s.countNewlineTerminals(index)
+	return count > 0, count
 }
 
 func (s *Symbols) offsetIndex(index int, includeLen bool) (int, error) {
 
 	i := index + s.offset
-	size := s.Remaining()
+	rem := s.Remaining()
 
 	if i < 0 {
 		goto ERROR
 	}
 
-	if i > size {
+	if i > rem {
 		goto ERROR
 	}
 
-	if !includeLen && i == size {
+	if !includeLen && i == rem {
 		goto ERROR
 	}
 
@@ -150,12 +152,7 @@ func (s *Symbols) read(runeCount int) (string, error) {
 
 	for i := 0; i < runeCount; i++ {
 
-		count, e := s.countNewlineTerminals(i)
-		if e != nil {
-			return ``, e
-		}
-
-		switch count {
+		switch s.countNewlineTerminals(i) {
 		case 2:
 			i++
 			fallthrough
@@ -173,25 +170,25 @@ func (s *Symbols) read(runeCount int) (string, error) {
 	return r, nil
 }
 
-func (s *Symbols) countNewlineTerminals(index int) (int, error) {
+func (s *Symbols) countNewlineTerminals(index int) int {
 
-	match, e := s.Match(index, "\n")
-	if e != nil {
-		return 0, e
+	if !s.Has(1) {
+		return 0
 	}
 
+	match, _ := s.Match(index, "\n")
 	if match {
-		return 1, nil
+		return 1
 	}
 
-	match, e = s.Match(index, "\r\n")
-	if e != nil {
-		return 0, e
+	if !s.Has(2) {
+		return 0
 	}
 
+	match, _ = s.Match(index, "\r\n")
 	if match {
-		return 2, nil
+		return 2
 	}
 
-	return 0, nil
+	return 0
 }

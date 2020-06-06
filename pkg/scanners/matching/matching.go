@@ -14,6 +14,8 @@ func ScanAll_(s string) ([]Token, error) {
 	tks := []Token{}
 	m := mat.New(s, patterns_)
 
+	println("*****")
+
 	for {
 
 		v, e := m.Next()
@@ -26,6 +28,7 @@ func ScanAll_(s string) ([]Token, error) {
 		}
 
 		tk, _ := v.(Token)
+		println(ToString(tk))
 		tks = append(tks, tk)
 	}
 
@@ -55,24 +58,37 @@ var patterns_ = []mat.Pattern{
 		// Newlines are not counted as whitespace.
 		return s.CountWhile(0, func(i int, ru rune) (bool, error) {
 
-			if ok, _ := s.IsNewline(i); ok {
+			if !unicode.IsSpace(ru) {
 				return false, nil
 			}
 
-			return unicode.IsSpace(ru), nil
+			if yes, _ := s.IsNewline(i); yes {
+				return false, nil
+			}
+
+			return true, nil
 		})
 	}},
 	pattern_{COMMENT, func(s *mat.Symbols) (int, error) {
 
-		matched, e := s.Match(0, "//")
+		PREFIX := "//"
+		PREFIX_LEN := 2
+
+		matched, e := s.Match(0, PREFIX)
 		if e != nil || !matched {
 			return 0, e
 		}
 
-		return s.CountWhile(0, func(i int, ru rune) (bool, error) {
+		n, e := s.CountWhile(PREFIX_LEN, func(i int, ru rune) (bool, error) {
 			ok, _ := s.IsNewline(i)
-			return ok, nil
+			return !ok, nil
 		})
+
+		if e != nil {
+			return 0, e
+		}
+
+		return n, nil
 	}},
 	pattern_{MATCH, func(s *mat.Symbols) (int, error) {
 		return matchWord_(s, "MATCH")
@@ -285,13 +301,16 @@ func matchStr_(s *mat.Symbols, str string) (int, error) {
 func matchWord_(s *mat.Symbols, word string) (int, error) {
 
 	size := len(word)
+	if !s.Has(size) {
+		return 0, nil
+	}
 
 	matched, e := s.Match(0, word)
 	if e != nil || !matched {
 		return 0, e
 	}
 
-	if s.Empty() {
+	if !s.Has(size + 1) {
 		return size, nil
 	}
 
