@@ -169,6 +169,7 @@ func (s *Symbols) read(runeCount int) (string, error) {
 		}
 	}
 
+	s.offset += len(r)
 	return r, nil
 }
 

@@ -8,18 +8,19 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func assertError(t *testing.T, toks []Token, e error) {
+func AssertError(t *testing.T, acts []Token, e error) {
 	require.NotNil(t, e, "Expected an error for this test")
-	require.Nil(t, toks, "Upon error, resultant token slice should be nil")
+	require.Nil(t, acts, "Upon error, resultant token slice should be nil")
 }
 
-func assertResults(t *testing.T, exp, toks []Token, e error) {
+func AssertResults(t *testing.T, exps, acts []Token, e error) {
 	require.Nil(t, e, "Did not expect an error for this test")
-	require.NotNil(t, toks, "SANITY CHECK! What tokens were expected?")
-	require.NotNil(t, toks, "Expected a non-nil token slice")
+	require.NotNil(t, exps, "SANITY CHECK! What tokens were expected?")
+	require.NotNil(t, acts, "Expected a non-nil token slice")
+	assertMany(t, exps, acts)
 }
 
-func checkMany(t *testing.T, exps, acts []Token) {
+func assertMany(t *testing.T, exps, acts []Token) {
 
 	expSize := len(exps)
 	actSize := len(acts)
@@ -27,19 +28,19 @@ func checkMany(t *testing.T, exps, acts []Token) {
 	for i := 0; i < expSize || i < actSize; i++ {
 
 		require.True(t, i < actSize,
-			"Expected ("+tkStr(exps, i)+"), but no actual tokens remain")
+			"Expected ("+tkStr(exps, i)+")\nBut no actual tokens remain")
 
 		require.True(t, i < expSize,
-			"Did not expect any more tokens, but got ("+tkStr(acts, i)+")")
+			"Did not expect any more tokens\nBut got ("+tkStr(acts, i)+")")
 
-		checkToken(t, exps[i], acts[i])
+		assertToken(t, exps[i], acts[i])
 	}
 }
 
-func checkToken(t *testing.T, exp, act Token) {
-	require.NotNil(t, act, "Expected token ("+ToString(exp)+"), but got nil")
+func assertToken(t *testing.T, exp, act Token) {
+	require.NotNil(t, act, "Expected token ("+ToString(exp)+")\nBut got nil")
 
-	m := "Expected (" + ToString(exp) + "), but got (" + ToString(act) + ")"
+	m := "Expected (" + ToString(exp) + ")\nActual   (" + ToString(act) + ")"
 
 	require.Equal(t, exp.Morpheme(), act.Morpheme(), m)
 	require.Equal(t, exp.Value(), act.Value(), m)
