@@ -33,6 +33,22 @@ func (p *pipeline) match(m Morpheme) bool {
 	return m == ANY || m == tk.Morpheme()
 }
 
+func (p *pipeline) matchSequence(ms ...Morpheme) bool {
+	for i, m := range ms {
+
+		tk := p._at(i)
+		if tk == nil {
+			return false
+		}
+
+		if m != ANY && m != tk.Morpheme() {
+			return false
+		}
+	}
+
+	return true
+}
+
 func (p *pipeline) peek() Token {
 	return p._peek()
 }
@@ -92,6 +108,16 @@ func (p *pipeline) _peek() Token {
 	}
 
 	return p.tks[p.pos]
+}
+
+func (p *pipeline) _at(i int) Token {
+
+	p._ignoreRedundant()
+	if p.pos+i >= p.size {
+		return nil
+	}
+
+	return p.tks[p.pos+i]
 }
 
 func (p *pipeline) _next() Token {

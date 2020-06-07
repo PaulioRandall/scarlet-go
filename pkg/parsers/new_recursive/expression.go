@@ -48,7 +48,7 @@ func expression(p *parser) (Expression, error) {
 		return identifier(p)
 
 	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
-		return p.NewLiteral(p.any()), nil
+		return literal(p)
 
 	case p.match(SUBTRACT):
 		return negation(p)
@@ -82,6 +82,11 @@ func identifier(p *parser) (Expression, error) {
 	// pattern := IDENTIFIER [list_accessor]
 	id := p.NewIdentifier(p.any())
 	return maybeListAccessor(p, id)
+}
+
+func literal(p *parser) (Expression, error) {
+	// pattern := BOOL | NUMBER | STRING
+	return p.NewLiteral(p.any()), nil
 }
 
 func negation(p *parser) (Expression, error) {
@@ -296,7 +301,80 @@ func functionStatement(p *parser) (st Statement, more bool, e error) {
 	return st, p.accept(TERMINATOR), nil
 }
 
-func operation(p *parser, left Expression) (Expression, error) {
+func operations(p *parser) ([]Expression, error) {
+	// pattern := [operation {DELIM operation}]
+
+	r := []Expression{}
+
+	for first := true; p.hasMore(); first = false {
+
+		var (
+			expr Expression
+			e    error
+		)
+
+		if first {
+			expr, e = operation(p)
+		} else {
+			expr, e = expectOperation(p)
+		}
+
+		if e != nil {
+			return nil, e
+		}
+
+		if expr == nil { // Only needed for the first expression
+			return r, nil
+		}
+
+		r = append(r, expr)
+
+		if !p.accept(DELIMITER) {
+			return r, nil
+		}
+	}
+
+	return nil, err.New("Expected expression", err.At(p.any()))
+}
+
+func operation(p *parser) (Expression, error) {
+
+	var (
+		left Expression
+		e    error
+	)
+
+	switch {
+	case p.match(IDENTIFIER), p.match(VOID):
+		left, e = identifier(p)
+
+	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
+		left, e = literal(p)
+
+	case p.match(SUBTRACT):
+		left, e = negation(p)
+
+	case p.match(PAREN_OPEN):
+		left, e = group(p)
+	}
+
+	if e != nil {
+		return nil, e
+	}
+
+	if left == nil {
+		return nil, nil
+	}
+
+	left, e = operationExpression(p, left)
+	if e != nil {
+		return nil, e
+	}
+
+	return operationExpression(p, left)
+}
+
+func operationExpression(p *parser, left Expression) (Expression, error) {
 
 	if !p.hasMore() {
 		return left, nil
@@ -311,34 +389,29 @@ func operation(p *parser, left Expression) (Expression, error) {
 		return nil, e
 	}
 
-	right, e := operationRight(p)
+	right, e := operation(p)
 	if e != nil {
 		return nil, e
 	}
 
-	right, e = operation(p, right)
-	if e != nil {
-		return nil, e
+	if right == nil {
+		return nil, err.New("Expected expression", err.At(p.any()))
 	}
 
-	left = p.NewOperation(op, left, right)
-	return operation(p, left)
+	return p.NewOperation(op, left, right), nil
 }
 
-func operationRight(p *parser) (Expression, error) {
-	switch {
-	case p.match(IDENTIFIER):
-		return identifier(p)
+func expectOperation(p *parser) (Expression, error) {
+	// pattern := operation
 
-	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
-		return p.NewLiteral(p.any()), nil
-
-	case p.match(SUBTRACT):
-		return negation(p)
-
-	case p.match(PAREN_OPEN):
-		return group(p)
+	expr, e := operation(p)
+	if e != nil {
+		return nil, e
 	}
 
-	return nil, err.New("Expected expression", err.At(p.any()))
+	if expr == nil {
+		return nil, err.New("Expected expression", err.At(p.any()))
+	}
+
+	return expr, nil
 }

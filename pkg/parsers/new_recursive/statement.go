@@ -52,41 +52,23 @@ func expectStatement(p *parser) (Statement, error) {
 func statement(p *parser) (Statement, error) {
 	// pattern := assignment | expression
 
-	var (
-		left Expression
-		e    error
-	)
-
 	switch {
-	case p.match(IDENTIFIER):
-		left, e = identifier(p)
-		if e != nil {
-			return nil, e
-		}
-
-		return assignOrExpr(p, left)
+	case p.matchSequence(IDENTIFIER, ASSIGN):
+		fallthrough
+	case p.matchSequence(IDENTIFIER, DELIMITER):
+		return assignment(p)
 
 	case p.match(VOID):
-		left = p.NewVoid(p.any())
-		return assignment(p, left)
+		return assignment(p)
 	}
 
-	return expression(p)
+	return operation(p)
 }
 
-func assignOrExpr(p *parser, left Expression) (Statement, error) {
-
-	if p.match(DELIMITER) || p.match(ASSIGN) {
-		return assignment(p, left)
-	}
-
-	return left, nil
-}
-
-func assignment(p *parser, left Expression) (Statement, error) {
+func assignment(p *parser) (Statement, error) {
 	// pattern := assignment_targets ASSIGN assignment_sources
 
-	targets, e := assignmentTargets(p, left)
+	targets, e := assignmentTargets(p)
 	if e != nil {
 		return nil, e
 	}
@@ -96,7 +78,7 @@ func assignment(p *parser, left Expression) (Statement, error) {
 		return nil, e
 	}
 
-	sources, e := expressions(p)
+	sources, e := assignmentSources(p)
 	if e != nil {
 		return nil, e
 	}
@@ -109,12 +91,26 @@ func assignment(p *parser, left Expression) (Statement, error) {
 	return p.NewNonWrappedBlock(r), nil
 }
 
-func assignmentTargets(p *parser, left Expression) ([]Expression, error) {
+func assignmentSources(p *parser) ([]Expression, error) {
+
+	if p.match(FUNC) {
+		src, e := function(p)
+		if e != nil {
+			return nil, e
+		}
+
+		return []Expression{src}, nil
+	}
+
+	return operations(p)
+}
+
+func assignmentTargets(p *parser) ([]Expression, error) {
 	// pattern := assignmentTarget {DELIMITER assignment_target}
 
-	ats := []Expression{left}
+	var ats []Expression
 
-	for p.accept(DELIMITER) {
+	for first := true; first || p.accept(DELIMITER); first = false {
 
 		at, e := assignmentTarget(p)
 		if e != nil {
