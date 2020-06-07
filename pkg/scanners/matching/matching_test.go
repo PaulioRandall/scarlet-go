@@ -231,3 +231,47 @@ func Test_T41_1(t *testing.T) {
 func Test_S1(t *testing.T) {
 	okTest(t, S1)
 }
+
+func Test_S2(t *testing.T) {
+	okTest(t, S2)
+}
+
+func Test_S3(t *testing.T) {
+	okTest(t, S3)
+}
+
+func Test_S4(t *testing.T) {
+	okTest(t, S4)
+}
+
+func Test_S5(t *testing.T) {
+	okTest(t, S5)
+}
+
+func Test_S6(t *testing.T) {
+	okTest(t, S6)
+}
+
+func Test_S7(t *testing.T) {
+	okTest(t, S7)
+}
+
+func Test_S8(t *testing.T) {
+	okTest(t, S8)
+}
+
+func Test_S9(t *testing.T) {
+	okTest(t, S9)
+}
+
+func Test_S10(t *testing.T) {
+	okTest(t, S10)
+}
+
+func Test_S11(t *testing.T) {
+	okTest(t, S11)
+}
+
+func Test_S12(t *testing.T) {
+	okTest(t, S12)
+}
