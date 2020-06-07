@@ -632,6 +632,98 @@ func Test_S25(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S26(t *testing.T) {
+
+	// GIVEN a simple subtraction
+	// THEN a single parsed operation is expected
+
+	// a + 1
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(SUBTRACT, "-"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S27(t *testing.T) {
+
+	// GIVEN a simple multiplication
+	// THEN a single parsed operation is expected
+
+	// a + 1
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(MULTIPLY, "*"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S28(t *testing.T) {
+
+	// GIVEN a simple division
+	// THEN a single parsed operation is expected
+
+	// a + 1
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(DIVIDE, "/"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(DIVIDE, "/"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S29(t *testing.T) {
+
+	// GIVEN a simple division
+	// THEN a single parsed operation is expected
+
+	// a + 1
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(REMAINDER, "%"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(REMAINDER, "%"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token
