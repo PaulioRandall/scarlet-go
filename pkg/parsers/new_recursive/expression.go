@@ -50,8 +50,11 @@ func expression(p *parser) (Expression, error) {
 	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
 		return p.NewLiteral(p.any()), nil
 
-	case p.accept(SUBTRACT):
+	case p.match(SUBTRACT):
 		return negation(p)
+
+	case p.match(PAREN_OPEN):
+		return group(p)
 
 	case p.match(FUNC):
 		return function(p)
@@ -84,12 +87,37 @@ func identifier(p *parser) (Expression, error) {
 func negation(p *parser) (Expression, error) {
 	// pattern := MINUS expression
 
+	_, e := p.expect(SUBTRACT)
+	if e != nil {
+		return nil, e
+	}
+
 	expr, e := expectExpression(p)
 	if e != nil {
 		return nil, e
 	}
 
 	return p.NewNegation(expr), nil
+}
+
+func group(p *parser) (Expression, error) {
+
+	_, e := p.expect(PAREN_OPEN)
+	if e != nil {
+		return nil, e
+	}
+
+	expr, e := expectExpression(p)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(PAREN_OPEN)
+	if e != nil {
+		return nil, e
+	}
+
+	return expr, e
 }
 
 func acceptDelimiter(p *parser, closingSignal Morpheme) bool {
@@ -305,8 +333,11 @@ func operationRight(p *parser) (Expression, error) {
 	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
 		return p.NewLiteral(p.any()), nil
 
-	case p.accept(SUBTRACT):
+	case p.match(SUBTRACT):
 		return negation(p)
+
+	case p.match(PAREN_OPEN):
+		return group(p)
 	}
 
 	return nil, err.New("Expected expression", err.At(p.any()))

@@ -87,7 +87,7 @@ func Test_S6(t *testing.T) {
 	// a: 1
 	given := []Token{
 		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":"),
+		tok(ASSIGN, ":="),
 		tok(NUMBER, "1"),
 		tok(TERMINATOR, ""),
 	}
@@ -119,7 +119,7 @@ func Test_S7(t *testing.T) {
 		tok(IDENTIFIER, "b"),
 		tok(DELIMITER, ","),
 		tok(IDENTIFIER, "c"),
-		tok(ASSIGN, ":"),
+		tok(ASSIGN, ":="),
 		tok(NUMBER, "1"),
 		tok(DELIMITER, ","),
 		tok(BOOL, "TRUE"),
@@ -438,7 +438,7 @@ func Test_S23(t *testing.T) {
 		tok(PAREN_CLOSE, ")"),
 		tok(BLOCK_OPEN, "{"),
 		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":"),
+		tok(ASSIGN, ":="),
 		tok(NUMBER, "1"),
 		tok(BLOCK_CLOSE, "}"),
 		tok(TERMINATOR, ""),
@@ -502,7 +502,7 @@ func Test_S24(t *testing.T) {
 		tok(BLOCK_OPEN, "{"),
 		tok(TERMINATOR, "\n"),
 		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":"),
+		tok(ASSIGN, ":="),
 		tok(NUMBER, "1"),
 		tok(TERMINATOR, "\n"),
 		tok(BLOCK_CLOSE, "}"),
@@ -543,13 +543,15 @@ func Test_S24(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token
 	// THEN parser returns error
 
 	given := []Token{
-		tok(ASSIGN, ":"),
+		tok(ASSIGN, ":="),
 		tok(TERMINATOR, ""),
 	}
 
@@ -566,7 +568,7 @@ func Test_F2(t *testing.T) {
 	// a:
 	given := []Token{
 		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":"),
+		tok(ASSIGN, ":="),
 		tok(TERMINATOR, ""),
 	}
 
@@ -583,7 +585,7 @@ func Test_F3(t *testing.T) {
 	// a: 1, 2
 	given := []Token{
 		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":"),
+		tok(ASSIGN, ":="),
 		tok(NUMBER, "1"),
 		tok(DELIMITER, ","),
 		tok(NUMBER, "2"),
@@ -621,7 +623,7 @@ func Test_F5(t *testing.T) {
 	given := []Token{
 		tok(IDENTIFIER, "a"),
 		tok(IDENTIFIER, "b"),
-		tok(ASSIGN, ":"),
+		tok(ASSIGN, ":="),
 		tok(NUMBER, "1"),
 		tok(DELIMITER, ","),
 		tok(NUMBER, "2"),
@@ -643,7 +645,7 @@ func Test_F6(t *testing.T) {
 		tok(IDENTIFIER, "a"),
 		tok(DELIMITER, ","),
 		tok(IDENTIFIER, "b"),
-		tok(ASSIGN, ":"),
+		tok(ASSIGN, ":="),
 		tok(NUMBER, "1"),
 		tok(NUMBER, "2"),
 		tok(TERMINATOR, ""),
