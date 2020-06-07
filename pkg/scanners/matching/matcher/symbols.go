@@ -31,45 +31,40 @@ func (s *Symbols) Has(n int) bool {
 	return (s.Remaining() - n) > -1
 }
 
-func (s *Symbols) At(i int) (rune, error) {
+func (s *Symbols) At(i int) rune {
 
-	var e error
-
-	i, e = s.offsetIndex(i, false)
-	if e != nil {
-		return rune(0), e
+	if i < 0 || i >= s.Remaining() {
+		return rune(0)
 	}
 
-	return s.runes[i], nil
+	return s.runes[i+s.offset]
 }
 
 func (s *Symbols) Slice(start, end int) (string, error) {
 
-	var e error
+	runes := s.getRemaining()
 
-	start, e = s.offsetIndex(start, false)
+	e := s.checkStartIndex(start)
 	if e != nil {
 		return ``, e
 	}
 
-	end, e = s.offsetIndex(end, true)
+	e = s.checkEndIndex(end)
 	if e != nil {
 		return ``, e
 	}
 
-	return string(s.runes[start:end]), nil
+	return string(runes[start:end]), nil
 }
 
 func (s *Symbols) Match(start int, str string) (bool, error) {
 
-	var e error
-
-	start, e = s.offsetIndex(start, false)
+	e := s.checkStartIndex(start)
 	if e != nil {
 		return false, e
 	}
 
-	haystack := s.runes[start:]
+	haystack := s.getRemaining()[start:]
 
 	if len(str) > len(haystack) {
 		return false, nil
@@ -86,17 +81,21 @@ func (s *Symbols) Match(start int, str string) (bool, error) {
 
 func (s *Symbols) CountWhile(start int, f RuneMatcher) (int, error) {
 
-	var e error
-
-	start, e = s.offsetIndex(start, true)
+	e := s.checkStartIndex(start)
 	if e != nil {
 		return 0, e
 	}
 
-	size := s.Remaining()
+	runes := s.getRemaining()
+	size := len(runes)
+
+	if start >= size {
+		return 0, nil
+	}
+
 	for i := start; i < size; i++ {
 
-		match, e := f(i, s.runes[i])
+		match, e := f(i, runes[i])
 		if e != nil {
 			return 0, e
 		}
@@ -112,37 +111,6 @@ func (s *Symbols) CountWhile(start int, f RuneMatcher) (int, error) {
 func (s *Symbols) IsNewline(index int) (bool, int) {
 	count := s.countNewlineTerminals(index)
 	return count > 0, count
-}
-
-func (s *Symbols) offsetIndex(index int, includeLen bool) (int, error) {
-
-	i := index + s.offset
-	rem := s.Remaining()
-
-	if index < 0 {
-		goto ERROR
-	}
-
-	if index > rem {
-		goto ERROR
-	}
-
-	if !includeLen && index == rem {
-		goto ERROR
-	}
-
-	return i, nil
-
-ERROR:
-	e := err.New(
-		fmt.Sprintf(
-			"Index out of range, given %d, but got [%d:%d]",
-			i, 0, s.Remaining(),
-		),
-		err.Pos(s.line, s.col),
-	)
-
-	return 0, e
 }
 
 func (s *Symbols) read(runeCount int) (string, error) {
@@ -193,4 +161,43 @@ func (s *Symbols) countNewlineTerminals(index int) int {
 	}
 
 	return 0
+}
+
+func (s *Symbols) getRemaining() []rune {
+	return s.runes[s.offset:]
+}
+
+func (s *Symbols) newError(msg string, args ...interface{}) error {
+	return err.New(
+		fmt.Sprintf(msg, args...),
+		err.Pos(s.line, s.col),
+	)
+}
+
+func (s *Symbols) checkStartIndex(start int) error {
+
+	if start < 0 {
+		return s.newError("Start should be 0 or more, not %d", start)
+	}
+
+	size := s.Remaining()
+	if start >= size {
+		return s.newError("Start should be %d or less, not %d", size, start)
+	}
+
+	return nil
+}
+
+func (s *Symbols) checkEndIndex(end int) error {
+
+	if end < 0 {
+		return s.newError("End should be 0 or more, not %d", end)
+	}
+
+	size := s.Remaining()
+	if end > size {
+		return s.newError("End should be %d or less, not %d", size, end)
+	}
+
+	return nil
 }

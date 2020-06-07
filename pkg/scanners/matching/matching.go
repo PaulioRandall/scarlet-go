@@ -14,8 +14,6 @@ func ScanAll_(s string) ([]Token, error) {
 	tks := []Token{}
 	m := mat.New(s, patterns_)
 
-	println("*****")
-
 	for {
 
 		v, e := m.Next()
@@ -28,7 +26,6 @@ func ScanAll_(s string) ([]Token, error) {
 		}
 
 		tk, _ := v.(Token)
-		println(ToString(tk))
 		tks = append(tks, tk)
 	}
 
@@ -221,9 +218,8 @@ var patterns_ = []mat.Pattern{
 			SUFFIX_LEN = 1
 		)
 
-		ru, e := s.At(0)
-		if e != nil || ru != PREFIX {
-			return 0, e
+		if s.At(0) != PREFIX {
+			return 0, nil
 		}
 
 		escaped := true // Init true to escape prefix
@@ -251,6 +247,10 @@ var patterns_ = []mat.Pattern{
 			return resume, e
 		})
 
+		if e != nil {
+			return 0, e
+		}
+
 		return n + SUFFIX_LEN, nil
 	}},
 	pattern_{NUMBER, func(s *mat.Symbols) (int, error) {
@@ -269,12 +269,7 @@ var patterns_ = []mat.Pattern{
 			return n, nil
 		}
 
-		ru, e := s.At(n)
-		if e != nil {
-			return 0, e
-		}
-
-		if ru != DELIM {
+		if s.At(n) != DELIM {
 			return n, nil
 		}
 
@@ -326,9 +321,9 @@ func matchWord_(s *mat.Symbols, word string) (int, error) {
 		return size, nil
 	}
 
-	ru, e := s.At(size)
-	if e != nil || unicode.IsLetter(ru) || ru == '_' {
-		return 0, e
+	ru := s.At(size)
+	if unicode.IsLetter(ru) || ru == '_' {
+		return 0, nil
 	}
 
 	return size, nil
