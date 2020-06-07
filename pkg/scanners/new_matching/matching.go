@@ -96,9 +96,6 @@ var patterns = []mat.Pattern{
 	pattern{BOOL, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "true")
 	}},
-	pattern{LIST, func(s *mat.Symbols) (int, error) {
-		return matchWord(s, "list")
-	}},
 	pattern{LOOP, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "loop")
 	}},
@@ -133,6 +130,9 @@ var patterns = []mat.Pattern{
 	}},
 	pattern{MORE_THAN_OR_EQUAL, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ">=")
+	}},
+	pattern{DO, func(s *mat.Symbols) (int, error) {
+		return matchStr(s, "->")
 	}},
 	pattern{BLOCK_OPEN, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "{")

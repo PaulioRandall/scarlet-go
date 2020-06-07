@@ -44,10 +44,6 @@ func Test_T5_2(t *testing.T) {
 	okTest(t, T5_2)
 }
 
-func Test_T6_1(t *testing.T) {
-	okTest(t, T6_1)
-}
-
 func Test_T7_1(t *testing.T) {
 	okTest(t, T7_1)
 }
@@ -246,10 +242,6 @@ func Test_S7(t *testing.T) {
 
 func Test_S8(t *testing.T) {
 	okTest(t, S8)
-}
-
-func Test_S9(t *testing.T) {
-	okTest(t, S9)
 }
 
 func Test_S10(t *testing.T) {

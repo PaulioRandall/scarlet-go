@@ -40,10 +40,6 @@ func T5_2() (in string, expects []Token) {
 	return solo(BOOL, "true")
 }
 
-func T6_1() (in string, expects []Token) {
-	return solo(LIST, "list")
-}
-
 func T7_1() (in string, expects []Token) {
 	return solo(DEF, "def")
 }

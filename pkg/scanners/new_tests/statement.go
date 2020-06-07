@@ -57,35 +57,51 @@ func S3() (string, []Token) {
 
 func S4() (string, []Token) {
 
-	in := "match {\n" +
-		"\t[false] x:=false\n" +
-		"\t[true] x:=true\n" +
+	in := "match abc {\n" +
+		"\t1 -> x:=true\n" +
+		"\t[false] -> x:=false\n" +
+		"\t[true] -> x:=true\n" +
 		"}"
 
 	exps := []Token{
 		NewToken(MATCH, "match", 0, 0), // Line start
 		NewToken(WHITESPACE, " ", 0, 5),
-		NewToken(BLOCK_OPEN, "{", 0, 6),
-		NewToken(NEWLINE, "\n", 0, 7), // Line start
+		NewToken(IDENTIFIER, "abc", 0, 6),
+		NewToken(WHITESPACE, " ", 0, 9),
+		NewToken(BLOCK_OPEN, "{", 0, 10),
+		NewToken(NEWLINE, "\n", 0, 11), // Line start
 		NewToken(WHITESPACE, "\t", 1, 0),
-		NewToken(GUARD_OPEN, "[", 1, 1),
-		NewToken(BOOL, "false", 1, 2),
-		NewToken(GUARD_CLOSE, "]", 1, 7),
-		NewToken(WHITESPACE, " ", 1, 8),
-		NewToken(IDENTIFIER, "x", 1, 9),
-		NewToken(ASSIGN, ":=", 1, 10),
-		NewToken(BOOL, "false", 1, 12),
-		NewToken(NEWLINE, "\n", 1, 17),
-		NewToken(WHITESPACE, "\t", 2, 0), // Line start
+		NewToken(NUMBER, "1", 1, 1),
+		NewToken(WHITESPACE, " ", 1, 2),
+		NewToken(DO, "->", 1, 3),
+		NewToken(WHITESPACE, " ", 1, 5),
+		NewToken(IDENTIFIER, "x", 1, 6),
+		NewToken(ASSIGN, ":=", 1, 7),
+		NewToken(BOOL, "true", 1, 9),
+		NewToken(NEWLINE, "\n", 1, 13), // Line start
+		NewToken(WHITESPACE, "\t", 2, 0),
 		NewToken(GUARD_OPEN, "[", 2, 1),
-		NewToken(BOOL, "true", 2, 2),
-		NewToken(GUARD_CLOSE, "]", 2, 6),
-		NewToken(WHITESPACE, " ", 2, 7),
-		NewToken(IDENTIFIER, "x", 2, 8),
-		NewToken(ASSIGN, ":=", 2, 9),
-		NewToken(BOOL, "true", 2, 11),
-		NewToken(NEWLINE, "\n", 2, 15),
-		NewToken(BLOCK_CLOSE, "}", 3, 0), // Line start
+		NewToken(BOOL, "false", 2, 2),
+		NewToken(GUARD_CLOSE, "]", 2, 7),
+		NewToken(WHITESPACE, " ", 2, 8),
+		NewToken(DO, "->", 2, 9),
+		NewToken(WHITESPACE, " ", 2, 11),
+		NewToken(IDENTIFIER, "x", 2, 12),
+		NewToken(ASSIGN, ":=", 2, 13),
+		NewToken(BOOL, "false", 2, 15),
+		NewToken(NEWLINE, "\n", 2, 20),
+		NewToken(WHITESPACE, "\t", 3, 0), // Line start
+		NewToken(GUARD_OPEN, "[", 3, 1),
+		NewToken(BOOL, "true", 3, 2),
+		NewToken(GUARD_CLOSE, "]", 3, 6),
+		NewToken(WHITESPACE, " ", 3, 7),
+		NewToken(DO, "->", 3, 8),
+		NewToken(WHITESPACE, " ", 3, 10),
+		NewToken(IDENTIFIER, "x", 3, 11),
+		NewToken(ASSIGN, ":=", 3, 12),
+		NewToken(BOOL, "true", 3, 14),
+		NewToken(NEWLINE, "\n", 3, 18),
+		NewToken(BLOCK_CLOSE, "}", 4, 0), // Line start
 	}
 
 	return in, exps
@@ -170,32 +186,6 @@ func S8() (string, []Token) {
 		NewToken(ASSIGN, ":=", 2, 2),
 		NewToken(NUMBER, "2", 2, 4),
 		NewToken(NEWLINE, "\n", 2, 5),
-		NewToken(BLOCK_CLOSE, "}", 3, 0), // Line Start
-	}
-
-	return in, exps
-}
-
-func S9() (string, []Token) {
-
-	in := "list {\n" +
-		"\t" + `"There's a snake in my boot",` + "\n" +
-		"\t" + `"{x} + {y} = {x + y}"` + ",\n" +
-		"}"
-
-	exps := []Token{
-		NewToken(LIST, "list", 0, 0),
-		NewToken(WHITESPACE, " ", 0, 4),
-		NewToken(BLOCK_OPEN, "{", 0, 5),
-		NewToken(NEWLINE, "\n", 0, 6),
-		NewToken(WHITESPACE, "\t", 1, 0), // Line Start
-		NewToken(STRING, `"There's a snake in my boot"`, 1, 1),
-		NewToken(DELIMITER, ",", 1, 29),
-		NewToken(NEWLINE, "\n", 1, 30),
-		NewToken(WHITESPACE, "\t", 2, 0), // Line Start
-		NewToken(STRING, `"{x} + {y} = {x + y}"`, 2, 1),
-		NewToken(DELIMITER, ",", 2, 22),
-		NewToken(NEWLINE, "\n", 2, 23),
 		NewToken(BLOCK_CLOSE, "}", 3, 0), // Line Start
 	}
 

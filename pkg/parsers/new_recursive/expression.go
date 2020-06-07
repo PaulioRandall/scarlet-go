@@ -53,13 +53,6 @@ func expression(p *parser) (Expression, error) {
 	case p.accept(SUBTRACT):
 		return negation(p)
 
-	case p.match(LIST):
-		left, e := list(p)
-		if e != nil {
-			return nil, e
-		}
-		return maybeListAccessor(p, left)
-
 	case p.match(FUNC):
 		return function(p)
 	}
@@ -97,60 +90,6 @@ func negation(p *parser) (Expression, error) {
 	}
 
 	return p.NewNegation(expr), nil
-}
-
-func list(p *parser) (Expression, error) {
-	// pattern := BLOCK_OPEN [TERMINATOR] listItems [TERMINATOR] BLOCK_CLOSE
-
-	_, e := p.expect(LIST)
-	if e != nil {
-		return nil, e
-	}
-
-	open, e := p.expect(BLOCK_OPEN)
-	if e != nil {
-		return nil, e
-	}
-
-	p.accept(TERMINATOR)
-	items, e := listItems(p)
-	if e != nil {
-		return nil, e
-	}
-
-	close, e := p.expect(BLOCK_CLOSE)
-	if e != nil {
-		return nil, e
-	}
-
-	return p.NewList(open, close, items), nil
-}
-
-func listItems(p *parser) ([]Expression, error) {
-	// pattern := [expression {DELIMITER [TERMINATOR] expression}]
-
-	items := []Expression{}
-
-	for loop := true; loop; loop = acceptDelimiter(p, BLOCK_CLOSE) {
-
-		expr, e := listItem(p)
-		if e != nil {
-			return nil, e
-		}
-
-		if expr == nil {
-			return items, nil
-		}
-
-		items = append(items, expr)
-	}
-
-	return items, nil
-}
-
-func listItem(p *parser) (Expression, error) {
-	// pattern := [expression]
-	return expression(p)
 }
 
 func acceptDelimiter(p *parser, closingSignal Morpheme) bool {
@@ -368,13 +307,6 @@ func operationRight(p *parser) (Expression, error) {
 
 	case p.accept(SUBTRACT):
 		return negation(p)
-
-	case p.match(LIST):
-		left, e := list(p)
-		if e != nil {
-			return nil, e
-		}
-		return listAccessor(p, left)
 	}
 
 	return nil, err.New("Expected expression", err.At(p.any()))

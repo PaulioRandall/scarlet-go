@@ -35,6 +35,14 @@ calc := F(argParser, ^e) {
 e := calc(parseArgs)
 @Check(e)
 
+match 1 + 2 {
+	0        -> a := `even`
+	1        -> a := `odd`
+	[x == 1] -> a := `x`
+	2        -> a := `even`
+	[true]   -> a := `meh`
+}
+
 list := @List(
 	`abc`,
 	3,
