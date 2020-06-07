@@ -637,7 +637,7 @@ func Test_S26(t *testing.T) {
 	// GIVEN a simple subtraction
 	// THEN a single parsed operation is expected
 
-	// a + 1
+	// a - 1
 	given := []Token{
 		tok(IDENTIFIER, "a"),
 		tok(SUBTRACT, "-"),
@@ -660,7 +660,7 @@ func Test_S27(t *testing.T) {
 	// GIVEN a simple multiplication
 	// THEN a single parsed operation is expected
 
-	// a + 1
+	// a * 1
 	given := []Token{
 		tok(IDENTIFIER, "a"),
 		tok(MULTIPLY, "*"),
@@ -683,7 +683,7 @@ func Test_S28(t *testing.T) {
 	// GIVEN a simple division
 	// THEN a single parsed operation is expected
 
-	// a + 1
+	// a / 1
 	given := []Token{
 		tok(IDENTIFIER, "a"),
 		tok(DIVIDE, "/"),
@@ -706,7 +706,7 @@ func Test_S29(t *testing.T) {
 	// GIVEN a simple division
 	// THEN a single parsed operation is expected
 
-	// a + 1
+	// a % 1
 	given := []Token{
 		tok(IDENTIFIER, "a"),
 		tok(REMAINDER, "%"),
@@ -718,6 +718,34 @@ func Test_S29(t *testing.T) {
 		tok(REMAINDER, "%"),
 		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
 		testFactory.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S30(t *testing.T) {
+
+	// GIVEN a simple addition
+	// WITH a negated right operand
+	// THEN a single parsed operation is expected
+	// WITH an parsed negation a the right operand
+
+	// a + -1
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(ADD, "+"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(ADD, "+"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewNegation(
+			testFactory.NewLiteral(tok(NUMBER, "1")),
+		),
 	)
 
 	act, e := testFunc(testFactory, given)
@@ -920,6 +948,41 @@ func Test_F12(t *testing.T) {
 		tok(LIST, "LIST"),
 		tok(BLOCK_OPEN, "{"),
 		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(NewFactory(), given)
+	expectError(t, act, e)
+}
+
+func Test_F13(t *testing.T) {
+
+	// GIVEN an operation
+	// WITHOUT a right operand
+	// THEN parser returns error
+
+	// x +
+	given := []Token{
+		tok(IDENTIFIER, "x"),
+		tok(ADD, "+"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(NewFactory(), given)
+	expectError(t, act, e)
+}
+
+func Test_F14(t *testing.T) {
+
+	// GIVEN an operation
+	// WITH two operators
+	// THEN parser returns error
+
+	// x + +
+	given := []Token{
+		tok(IDENTIFIER, "x"),
+		tok(ADD, "+"),
+		tok(ADD, "+"),
 		tok(TERMINATOR, ""),
 	}
 

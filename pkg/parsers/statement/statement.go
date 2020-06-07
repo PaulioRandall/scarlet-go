@@ -225,7 +225,7 @@ func (n Negation) String() string {
 
 	b := builder{}
 
-	b.add(0, "[Negation] ")
+	b.add(0, "[Negation]")
 
 	b.newline()
 	b.add(1, n.Expr.String())
@@ -326,7 +326,8 @@ func (o Operation) String() string {
 
 	b := builder{}
 
-	b.add(0, "[NumericOperation]")
+	b.add(0, "[Operation] ")
+	b.addToken(0, o.Operator)
 
 	b.newline()
 	b.add(1, "Left: ")
