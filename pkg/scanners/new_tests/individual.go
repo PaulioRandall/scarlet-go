@@ -1,4 +1,4 @@
-package new_tests
+package tests
 
 import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"

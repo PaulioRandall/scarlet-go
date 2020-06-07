@@ -53,7 +53,7 @@ func expression(p *parser) (Expression, error) {
 	case p.accept(SUBTRACT):
 		return negation(p)
 
-	case p.accept(LIST):
+	case p.match(LIST):
 		left, e := list(p)
 		if e != nil {
 			return nil, e
@@ -101,6 +101,11 @@ func negation(p *parser) (Expression, error) {
 
 func list(p *parser) (Expression, error) {
 	// pattern := BLOCK_OPEN [TERMINATOR] listItems [TERMINATOR] BLOCK_CLOSE
+
+	_, e := p.expect(LIST)
+	if e != nil {
+		return nil, e
+	}
 
 	open, e := p.expect(BLOCK_OPEN)
 	if e != nil {
@@ -364,7 +369,7 @@ func operationRight(p *parser) (Expression, error) {
 	case p.accept(SUBTRACT):
 		return negation(p)
 
-	case p.accept(LIST):
+	case p.match(LIST):
 		left, e := list(p)
 		if e != nil {
 			return nil, e

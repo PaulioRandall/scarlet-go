@@ -1,31 +1,29 @@
 
-divideAndFmt: F(a, b, ^r, ^e) {
+def divideAndFmt := F(a, b, ^r, ^e) {
 	WATCH e {
-		@If(b == 0, {
-			e: !Can't divide by zero"
-		})
+		[b == 0] {
+			e := !Can't divide by zero"
+		}
 
-		r, e: @FmtNum(a / b, ".##"")
+		r, e := @FmtNum(a / b, ".##"")
 	}
 }
 
-@Fix(divideAndFmt)
-
-parseArgs: F(args, ^a, ^b, ^e) {
+parseArgs := F(args, ^a, ^b, ^e) {
 	WATCH e {
-		@If(@Len(args) < 3, {
-			e: "Need at least two number arguments"
-		})
+		[@Len(args) < 3] {
+			e := "Need at least two number arguments"
+		}
 
-		a, e: @ParseNum(args(1))
-		b, e: @ParseNum(args(2))
+		a, e := @ParseNum(args(1))
+		b, e := @ParseNum(args(2))
 	}
 }
 
-calc: F(argParser, ^e) {
+calc := F(argParser, ^e) {
 	WATCH e {
-		a, b, e: argParser(@Args())
-		r, e: divideAndFmt(a, b)
+		a, b, e := argParser(@Args())
+		r, e := divideAndFmt(a, b)
 		@Println("{a} / {b} = {r}")
 	}
 }
@@ -34,15 +32,15 @@ calc: F(argParser, ^e) {
 	@Println(v)
 })
 
-e: calc(parseArgs)
+e := calc(parseArgs)
 @Check(e)
 
-list: @List(
+list := @List(
 	`abc`,
 	3,
 )
 
-map: @Map(
+map := @Map(
 	a, 1,
 	b, 2,
 )

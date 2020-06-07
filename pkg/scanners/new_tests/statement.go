@@ -1,4 +1,4 @@
-package new_tests
+package tests
 
 import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
@@ -204,21 +204,25 @@ func S9() (string, []Token) {
 
 func S10() (string, []Token) {
 
-	in := "loop i [i<5] {}"
+	in := "loop i := 0 [i<5] {}"
 
 	exps := []Token{
 		NewToken(LOOP, "loop", 0, 0),
 		NewToken(WHITESPACE, " ", 0, 4),
 		NewToken(IDENTIFIER, "i", 0, 5),
 		NewToken(WHITESPACE, " ", 0, 6),
-		NewToken(GUARD_OPEN, "[", 0, 7),
-		NewToken(IDENTIFIER, "i", 0, 8),
-		NewToken(LESS_THAN, "<", 0, 9),
-		NewToken(NUMBER, "5", 0, 10),
-		NewToken(GUARD_CLOSE, "]", 0, 11),
-		NewToken(WHITESPACE, " ", 0, 12),
-		NewToken(BLOCK_OPEN, "{", 0, 13),
-		NewToken(BLOCK_CLOSE, "}", 0, 14),
+		NewToken(ASSIGN, ":=", 0, 7),
+		NewToken(WHITESPACE, " ", 0, 9),
+		NewToken(NUMBER, "0", 0, 10),
+		NewToken(WHITESPACE, " ", 0, 11),
+		NewToken(GUARD_OPEN, "[", 0, 12),
+		NewToken(IDENTIFIER, "i", 0, 13),
+		NewToken(LESS_THAN, "<", 0, 14),
+		NewToken(NUMBER, "5", 0, 15),
+		NewToken(GUARD_CLOSE, "]", 0, 16),
+		NewToken(WHITESPACE, " ", 0, 17),
+		NewToken(BLOCK_OPEN, "{", 0, 18),
+		NewToken(BLOCK_CLOSE, "}", 0, 19),
 	}
 
 	return in, exps
