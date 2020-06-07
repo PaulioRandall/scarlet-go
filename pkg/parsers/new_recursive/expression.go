@@ -339,25 +339,7 @@ func operations(p *parser) ([]Expression, error) {
 
 func operation(p *parser) (Expression, error) {
 
-	var (
-		left Expression
-		e    error
-	)
-
-	switch {
-	case p.match(IDENTIFIER), p.match(VOID):
-		left, e = identifier(p)
-
-	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
-		left, e = literal(p)
-
-	case p.match(SUBTRACT):
-		left, e = negation(p)
-
-	case p.match(PAREN_OPEN):
-		left, e = group(p)
-	}
-
+	left, e := operand(p)
 	if e != nil {
 		return nil, e
 	}
@@ -366,21 +348,50 @@ func operation(p *parser) (Expression, error) {
 		return nil, nil
 	}
 
-	left, e = operationExpression(p, left)
+	return operationExpression(p, left, 0)
+}
+
+func operand(p *parser) (Expression, error) {
+
+	switch {
+	case p.match(IDENTIFIER), p.match(VOID):
+		return identifier(p)
+
+	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
+		return literal(p)
+
+	case p.match(SUBTRACT):
+		return negation(p)
+
+	case p.match(PAREN_OPEN):
+		return group(p)
+	}
+
+	return nil, nil
+}
+
+func expectOperand(p *parser) (Expression, error) {
+
+	o, e := operand(p)
 	if e != nil {
 		return nil, e
 	}
 
-	return operationExpression(p, left)
+	if o == nil {
+		return nil, err.New("Expected expression", err.At(p.any()))
+	}
+
+	return o, nil
 }
 
-func operationExpression(p *parser, left Expression) (Expression, error) {
+func operationExpression(p *parser, left Expression, leftPriority int) (Expression, error) {
 
 	if !p.hasMore() {
 		return left, nil
 	}
 
-	if Precedence(left) >= p.peek().Morpheme().Precedence() {
+	rightPriority := p.peek().Morpheme().Precedence()
+	if leftPriority >= rightPriority {
 		return left, nil
 	}
 
@@ -389,16 +400,24 @@ func operationExpression(p *parser, left Expression) (Expression, error) {
 		return nil, e
 	}
 
-	right, e := operation(p)
+	right, e := expectOperand(p)
 	if e != nil {
 		return nil, e
 	}
 
-	if right == nil {
-		return nil, err.New("Expected expression", err.At(p.any()))
+	right, e = operationExpression(p, right, rightPriority)
+	if e != nil {
+		return nil, e
 	}
 
-	return p.NewOperation(op, left, right), nil
+	left = p.NewOperation(op, left, right)
+
+	left, e = operationExpression(p, left, leftPriority)
+	if e != nil {
+		return nil, e
+	}
+
+	return left, nil
 }
 
 func expectOperation(p *parser) (Expression, error) {
