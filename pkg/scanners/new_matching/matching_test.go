@@ -12,7 +12,7 @@ type testFunc func() (string, []Token)
 
 func okTest(t *testing.T, f testFunc) {
 	in, exps := f()
-	act, e := ScanAll_(in)
+	act, e := ScanAll(in)
 	AssertResults(t, exps, act, e)
 }
 
@@ -212,18 +212,6 @@ func Test_T37_1(t *testing.T) {
 	okTest(t, T37_1)
 }
 
-func Test_T38_1(t *testing.T) {
-	okTest(t, T38_1)
-}
-
-func Test_T39_1(t *testing.T) {
-	okTest(t, T39_1)
-}
-
-func Test_T40_1(t *testing.T) {
-	okTest(t, T40_1)
-}
-
 func Test_T41_1(t *testing.T) {
 	okTest(t, T41_1)
 }
@@ -266,12 +254,4 @@ func Test_S9(t *testing.T) {
 
 func Test_S10(t *testing.T) {
 	okTest(t, S10)
-}
-
-func Test_S11(t *testing.T) {
-	okTest(t, S11)
-}
-
-func Test_S12(t *testing.T) {
-	okTest(t, S12)
 }

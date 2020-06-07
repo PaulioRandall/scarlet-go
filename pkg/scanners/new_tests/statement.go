@@ -6,14 +6,14 @@ import (
 
 func S1() (string, []Token) {
 
-	in := "x : 1"
+	in := "x := 1"
 
 	exps := []Token{
 		NewToken(IDENTIFIER, "x", 0, 0),
 		NewToken(WHITESPACE, " ", 0, 1),
-		NewToken(ASSIGN, ":", 0, 2),
-		NewToken(WHITESPACE, " ", 0, 3),
-		NewToken(NUMBER, "1", 0, 4),
+		NewToken(ASSIGN, ":=", 0, 2),
+		NewToken(WHITESPACE, " ", 0, 4),
+		NewToken(NUMBER, "1", 0, 5),
 	}
 
 	return in, exps
@@ -21,16 +21,16 @@ func S1() (string, []Token) {
 
 func S2() (string, []Token) {
 
-	in := "x,y:1,TRUE"
+	in := "x,y:=1,true"
 
 	exps := []Token{
 		NewToken(IDENTIFIER, "x", 0, 0),
 		NewToken(DELIMITER, ",", 0, 1),
 		NewToken(IDENTIFIER, "y", 0, 2),
-		NewToken(ASSIGN, ":", 0, 3),
-		NewToken(NUMBER, "1", 0, 4),
-		NewToken(DELIMITER, ",", 0, 5),
-		NewToken(BOOL, "TRUE", 0, 6),
+		NewToken(ASSIGN, ":=", 0, 3),
+		NewToken(NUMBER, "1", 0, 5),
+		NewToken(DELIMITER, ",", 0, 6),
+		NewToken(BOOL, "true", 0, 7),
 	}
 
 	return in, exps
@@ -38,7 +38,7 @@ func S2() (string, []Token) {
 
 func S3() (string, []Token) {
 
-	in := "[1<2] x:TRUE"
+	in := "[1<2] x:=true"
 
 	exps := []Token{
 		NewToken(GUARD_OPEN, "[", 0, 0),
@@ -48,8 +48,8 @@ func S3() (string, []Token) {
 		NewToken(GUARD_CLOSE, "]", 0, 4),
 		NewToken(WHITESPACE, " ", 0, 5),
 		NewToken(IDENTIFIER, "x", 0, 6),
-		NewToken(ASSIGN, ":", 0, 7),
-		NewToken(BOOL, "TRUE", 0, 8),
+		NewToken(ASSIGN, ":=", 0, 7),
+		NewToken(BOOL, "true", 0, 9),
 	}
 
 	return in, exps
@@ -57,34 +57,34 @@ func S3() (string, []Token) {
 
 func S4() (string, []Token) {
 
-	in := "MATCH {\n" +
-		"\t[FALSE] x:FALSE\n" +
-		"\t[TRUE] x:TRUE\n" +
+	in := "match {\n" +
+		"\t[false] x:=false\n" +
+		"\t[true] x:=true\n" +
 		"}"
 
 	exps := []Token{
-		NewToken(MATCH, "MATCH", 0, 0), // Line start
+		NewToken(MATCH, "match", 0, 0), // Line start
 		NewToken(WHITESPACE, " ", 0, 5),
 		NewToken(BLOCK_OPEN, "{", 0, 6),
 		NewToken(NEWLINE, "\n", 0, 7), // Line start
 		NewToken(WHITESPACE, "\t", 1, 0),
 		NewToken(GUARD_OPEN, "[", 1, 1),
-		NewToken(BOOL, "FALSE", 1, 2),
+		NewToken(BOOL, "false", 1, 2),
 		NewToken(GUARD_CLOSE, "]", 1, 7),
 		NewToken(WHITESPACE, " ", 1, 8),
 		NewToken(IDENTIFIER, "x", 1, 9),
-		NewToken(ASSIGN, ":", 1, 10),
-		NewToken(BOOL, "FALSE", 1, 11),
-		NewToken(NEWLINE, "\n", 1, 16),
+		NewToken(ASSIGN, ":=", 1, 10),
+		NewToken(BOOL, "false", 1, 12),
+		NewToken(NEWLINE, "\n", 1, 17),
 		NewToken(WHITESPACE, "\t", 2, 0), // Line start
 		NewToken(GUARD_OPEN, "[", 2, 1),
-		NewToken(BOOL, "TRUE", 2, 2),
+		NewToken(BOOL, "true", 2, 2),
 		NewToken(GUARD_CLOSE, "]", 2, 6),
 		NewToken(WHITESPACE, " ", 2, 7),
 		NewToken(IDENTIFIER, "x", 2, 8),
-		NewToken(ASSIGN, ":", 2, 9),
-		NewToken(BOOL, "TRUE", 2, 10),
-		NewToken(NEWLINE, "\n", 2, 14),
+		NewToken(ASSIGN, ":=", 2, 9),
+		NewToken(BOOL, "true", 2, 11),
+		NewToken(NEWLINE, "\n", 2, 15),
 		NewToken(BLOCK_CLOSE, "}", 3, 0), // Line start
 	}
 
@@ -153,8 +153,8 @@ func S7() (string, []Token) {
 func S8() (string, []Token) {
 
 	in := "{\n" +
-		"\tx:1\n" +
-		"\ty:2\n" +
+		"\tx:=1\n" +
+		"\ty:=2\n" +
 		"}"
 
 	exps := []Token{
@@ -162,14 +162,14 @@ func S8() (string, []Token) {
 		NewToken(NEWLINE, "\n", 0, 1),
 		NewToken(WHITESPACE, "\t", 1, 0), // Line Start
 		NewToken(IDENTIFIER, "x", 1, 1),
-		NewToken(ASSIGN, ":", 1, 2),
-		NewToken(NUMBER, "1", 1, 3),
-		NewToken(NEWLINE, "\n", 1, 4),
+		NewToken(ASSIGN, ":=", 1, 2),
+		NewToken(NUMBER, "1", 1, 4),
+		NewToken(NEWLINE, "\n", 1, 5),
 		NewToken(WHITESPACE, "\t", 2, 0), // Line Start
 		NewToken(IDENTIFIER, "y", 2, 1),
-		NewToken(ASSIGN, ":", 2, 2),
-		NewToken(NUMBER, "2", 2, 3),
-		NewToken(NEWLINE, "\n", 2, 4),
+		NewToken(ASSIGN, ":=", 2, 2),
+		NewToken(NUMBER, "2", 2, 4),
+		NewToken(NEWLINE, "\n", 2, 5),
 		NewToken(BLOCK_CLOSE, "}", 3, 0), // Line Start
 	}
 
@@ -178,13 +178,13 @@ func S8() (string, []Token) {
 
 func S9() (string, []Token) {
 
-	in := "LIST {\n" +
+	in := "list {\n" +
 		"\t" + `"There's a snake in my boot",` + "\n" +
 		"\t" + `"{x} + {y} = {x + y}"` + ",\n" +
 		"}"
 
 	exps := []Token{
-		NewToken(LIST, "LIST", 0, 0),
+		NewToken(LIST, "list", 0, 0),
 		NewToken(WHITESPACE, " ", 0, 4),
 		NewToken(BLOCK_OPEN, "{", 0, 5),
 		NewToken(NEWLINE, "\n", 0, 6),
@@ -204,10 +204,10 @@ func S9() (string, []Token) {
 
 func S10() (string, []Token) {
 
-	in := "LOOP i [i<5] {}"
+	in := "loop i [i<5] {}"
 
 	exps := []Token{
-		NewToken(LOOP, "LOOP", 0, 0),
+		NewToken(LOOP, "loop", 0, 0),
 		NewToken(WHITESPACE, " ", 0, 4),
 		NewToken(IDENTIFIER, "i", 0, 5),
 		NewToken(WHITESPACE, " ", 0, 6),
@@ -219,48 +219,6 @@ func S10() (string, []Token) {
 		NewToken(WHITESPACE, " ", 0, 12),
 		NewToken(BLOCK_OPEN, "{", 0, 13),
 		NewToken(BLOCK_CLOSE, "}", 0, 14),
-	}
-
-	return in, exps
-}
-
-func S11() (string, []Token) {
-
-	in := "x[3],x[>>]:1,99"
-
-	exps := []Token{
-		NewToken(IDENTIFIER, "x", 0, 0),
-		NewToken(GUARD_OPEN, "[", 0, 1),
-		NewToken(NUMBER, "3", 0, 2),
-		NewToken(GUARD_CLOSE, "]", 0, 3),
-		NewToken(DELIMITER, ",", 0, 4),
-		NewToken(IDENTIFIER, "x", 0, 5),
-		NewToken(GUARD_OPEN, "[", 0, 6),
-		NewToken(LIST_END, ">>", 0, 7),
-		NewToken(GUARD_CLOSE, "]", 0, 9),
-		NewToken(ASSIGN, ":", 0, 10),
-		NewToken(NUMBER, "1", 0, 11),
-		NewToken(DELIMITER, ",", 0, 12),
-		NewToken(NUMBER, "99", 0, 13),
-	}
-
-	return in, exps
-}
-
-func S12() (string, []Token) {
-
-	in := "LOOP i,v,m<-list"
-
-	exps := []Token{
-		NewToken(LOOP, "LOOP", 0, 0),
-		NewToken(WHITESPACE, " ", 0, 4),
-		NewToken(IDENTIFIER, "i", 0, 5),
-		NewToken(DELIMITER, ",", 0, 6),
-		NewToken(IDENTIFIER, "v", 0, 7),
-		NewToken(DELIMITER, ",", 0, 8),
-		NewToken(IDENTIFIER, "m", 0, 9),
-		NewToken(UPDATES, "<-", 0, 10),
-		NewToken(IDENTIFIER, "list", 0, 12),
 	}
 
 	return in, exps

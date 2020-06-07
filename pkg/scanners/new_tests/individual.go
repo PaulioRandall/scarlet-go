@@ -29,23 +29,23 @@ func T3_1() (in string, expects []Token) {
 }
 
 func T4_1() (in string, expects []Token) {
-	return solo(MATCH, "MATCH")
+	return solo(MATCH, "match")
 }
 
 func T5_1() (in string, expects []Token) {
-	return solo(BOOL, "FALSE")
+	return solo(BOOL, "false")
 }
 
 func T5_2() (in string, expects []Token) {
-	return solo(BOOL, "TRUE")
+	return solo(BOOL, "true")
 }
 
 func T6_1() (in string, expects []Token) {
-	return solo(LIST, "LIST")
+	return solo(LIST, "list")
 }
 
 func T7_1() (in string, expects []Token) {
-	return solo(DEF, "DEF")
+	return solo(DEF, "def")
 }
 
 func T8_1() (in string, expects []Token) {
@@ -69,19 +69,19 @@ func T9_4() (in string, expects []Token) {
 }
 
 func T9_5() (in string, expects []Token) {
-	return solo(IDENTIFIER, "DEF_")
+	return solo(IDENTIFIER, "def_")
 }
 
 func T9_6() (in string, expects []Token) {
-	return solo(IDENTIFIER, "DEFF")
+	return solo(IDENTIFIER, "deff")
 }
 
 func T9_7() (in string, expects []Token) {
-	return solo(IDENTIFIER, "DDEF")
+	return solo(IDENTIFIER, "ddef")
 }
 
 func T10_1() (in string, expects []Token) {
-	return solo(ASSIGN, ":")
+	return solo(ASSIGN, ":=")
 }
 
 func T11_1() (in string, expects []Token) {
@@ -205,19 +205,7 @@ func T36_4() (in string, expects []Token) {
 }
 
 func T37_1() (in string, expects []Token) {
-	return solo(LOOP, "LOOP")
-}
-
-func T38_1() (in string, expects []Token) {
-	return solo(LIST_END, ">>")
-}
-
-func T39_1() (in string, expects []Token) {
-	return solo(LIST_START, "<<")
-}
-
-func T40_1() (in string, expects []Token) {
-	return solo(UPDATES, "<-")
+	return solo(LOOP, "loop")
 }
 
 func T41_1() (in string, expects []Token) {
