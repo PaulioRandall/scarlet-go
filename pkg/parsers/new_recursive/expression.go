@@ -164,7 +164,7 @@ func functionParameters(p *parser) (Parameters, error) {
 		return NIL, e
 	}
 
-	inputs, outputs, e := functionParams(p)
+	inputs, outputs, e := parameterIdentifiers(p)
 	if e != nil {
 		return NIL, e
 	}
@@ -177,7 +177,7 @@ func functionParameters(p *parser) (Parameters, error) {
 	return p.NewParameters(open, close, inputs, outputs), nil
 }
 
-func functionParams(p *parser) (in []Token, out []Token, _ error) {
+func parameterIdentifiers(p *parser) (in []Token, out []Token, _ error) {
 
 	in = []Token{}
 	out = []Token{}
@@ -278,7 +278,7 @@ func operation(p *parser, left Expression) (Expression, error) {
 		return left, nil
 	}
 
-	op, e := p.expectAnyOf(ADD, SUBTRACT, MULTIPLY, DIVIDE)
+	op, e := p.expectAnyOf(OperatorTypes()...)
 	if e != nil {
 		return nil, e
 	}
@@ -293,7 +293,7 @@ func operation(p *parser, left Expression) (Expression, error) {
 		return nil, e
 	}
 
-	left = p.NewNumericOperation(op, left, right)
+	left = p.NewOperation(op, left, right)
 	return operation(p, left)
 }
 

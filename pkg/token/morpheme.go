@@ -134,6 +134,24 @@ func (m Morpheme) Precedence() int {
 	return 0
 }
 
+func OperatorTypes() []Morpheme {
+	return []Morpheme{
+		MULTIPLY,
+		DIVIDE,
+		REMAINDER,
+		ADD,
+		SUBTRACT,
+		LESS_THAN,
+		LESS_THAN_OR_EQUAL,
+		MORE_THAN,
+		MORE_THAN_OR_EQUAL,
+		EQUAL,
+		NOT_EQUAL,
+		AND,
+		OR,
+	}
+}
+
 func (m Morpheme) Redundant() bool {
 	return m == UNDEFINED || m == WHITESPACE || m == COMMENT
 }

@@ -44,6 +44,6 @@ func Test_Function(t *testing.T) {
 	var _ Expression = Function{}
 }
 
-func Test_NumericOperation(t *testing.T) {
-	var _ Expression = NumericOperation{}
+func Test_Operation(t *testing.T) {
+	var _ Expression = Operation{}
 }

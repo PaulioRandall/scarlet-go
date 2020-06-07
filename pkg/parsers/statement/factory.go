@@ -16,7 +16,7 @@ type Factory interface {
 	NewNonWrappedBlock(stats []Statement) Block
 	NewParameters(open, close Token, inputs, outputs []Token) Parameters
 	NewFunction(key Token, params Parameters, body Block) Function
-	NewNumericOperation(operator Token, left, right Expression) NumericOperation
+	NewOperation(operator Token, left, right Expression) Operation
 }
 
 func NewFactory() Factory {
@@ -102,8 +102,8 @@ func (fac) NewFunction(key Token, params Parameters, body Block) Function {
 	}
 }
 
-func (fac) NewNumericOperation(operator Token, left, right Expression) NumericOperation {
-	return NumericOperation{
+func (fac) NewOperation(operator Token, left, right Expression) Operation {
+	return Operation{
 		Left:     left,
 		Operator: operator,
 		Right:    right,

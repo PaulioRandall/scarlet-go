@@ -305,28 +305,24 @@ func (f Function) String() string {
 	return b.String()
 }
 
-type Operation interface {
-	Precedence() int
-}
-
-type NumericOperation struct {
+type Operation struct {
 	Operator    Token
 	Left, Right Expression
 }
 
-func (no NumericOperation) Precedence() int {
-	return no.Operator.Morpheme().Precedence()
+func (o Operation) Precedence() int {
+	return o.Operator.Morpheme().Precedence()
 }
 
-func (no NumericOperation) Begin() (int, int) {
-	return no.Left.Begin()
+func (o Operation) Begin() (int, int) {
+	return o.Left.Begin()
 }
 
-func (no NumericOperation) End() (int, int) {
-	return no.Right.End()
+func (o Operation) End() (int, int) {
+	return o.Right.End()
 }
 
-func (no NumericOperation) String() string {
+func (o Operation) String() string {
 
 	b := builder{}
 
@@ -335,12 +331,12 @@ func (no NumericOperation) String() string {
 	b.newline()
 	b.add(1, "Left: ")
 	b.newline()
-	b.add(2, no.Left.String())
+	b.add(2, o.Left.String())
 
 	b.newline()
 	b.add(1, "Right: ")
 	b.newline()
-	b.add(2, no.Right.String())
+	b.add(2, o.Right.String())
 
 	return b.String()
 }
