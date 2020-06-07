@@ -119,28 +119,30 @@ func (s *Symbols) offsetIndex(index int, includeLen bool) (int, error) {
 	i := index + s.offset
 	rem := s.Remaining()
 
-	if i < 0 {
+	if index < 0 {
 		goto ERROR
 	}
 
-	if i > rem {
+	if index > rem {
 		goto ERROR
 	}
 
-	if !includeLen && i == rem {
+	if !includeLen && index == rem {
 		goto ERROR
 	}
 
 	return i, nil
 
 ERROR:
-	return 0, err.New(
+	e := err.New(
 		fmt.Sprintf(
 			"Index out of range, given %d, but got [%d:%d]",
-			index, 0, s.Remaining(),
+			i, 0, s.Remaining(),
 		),
 		err.Pos(s.line, s.col),
 	)
+
+	return 0, e
 }
 
 func (s *Symbols) read(runeCount int) (string, error) {

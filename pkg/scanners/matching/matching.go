@@ -265,7 +265,7 @@ var patterns_ = []mat.Pattern{
 			return 0, e
 		}
 
-		if n == 0 || !s.Has(n+1) {
+		if n <= 0 || !s.Has(n+1) {
 			return n, nil
 		}
 
@@ -297,6 +297,10 @@ var patterns_ = []mat.Pattern{
 }
 
 func matchStr_(s *mat.Symbols, str string) (int, error) {
+
+	if !s.Has(len(str)) {
+		return 0, nil
+	}
 
 	matched, e := s.Match(0, str)
 	if e != nil || !matched {

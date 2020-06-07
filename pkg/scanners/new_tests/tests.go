@@ -14,10 +14,16 @@ func AssertError(t *testing.T, acts []Token, e error) {
 }
 
 func AssertResults(t *testing.T, exps, acts []Token, e error) {
-	require.Nil(t, e, "Did not expect an error for this test")
+	requireNoError(t, e)
 	require.NotNil(t, exps, "SANITY CHECK! What tokens were expected?")
 	require.NotNil(t, acts, "Expected a non-nil token slice")
 	assertMany(t, exps, acts)
+}
+
+func requireNoError(t *testing.T, e error) {
+	if e != nil {
+		require.FailNow(t, "%s", e)
+	}
 }
 
 func assertMany(t *testing.T, exps, acts []Token) {

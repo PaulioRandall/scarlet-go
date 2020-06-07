@@ -1,5 +1,9 @@
 package err
 
+import (
+	"github.com/pkg/errors"
+)
+
 type Err interface {
 	error
 	Line() int // index
@@ -43,12 +47,12 @@ func Panic(msg string, ops ...Option) {
 	panic(er)
 }
 
-func Epanic(e error, ops ...Option) {
-	er := Wrap(e, ops...)
-	panic(er)
+func New(msg string, ops ...Option) error {
+	e := error(newErr(msg, ops...))
+	return errors.WithStack(e)
 }
 
-func New(msg string, ops ...Option) Err {
+func newErr(msg string, ops ...Option) Err {
 
 	s := sErr{
 		msg:  msg,
@@ -60,7 +64,12 @@ func New(msg string, ops ...Option) Err {
 	return s
 }
 
-func Wrap(e error, ops ...Option) Err {
+func Wrap(e error, ops ...Option) error {
+	e = wrap(e, ops...)
+	return errors.WithStack(e)
+}
+
+func wrap(e error, ops ...Option) Err {
 
 	s := sErr{
 		msg:  e.Error(),
@@ -117,20 +126,31 @@ func Try(f func()) (err Err) {
 	func() {
 		defer func() {
 
-			switch v := recover().(type) {
-			case nil:
-				err = nil
-			case Err:
-				err = v
-			case string:
-				err = New(v)
-			case error:
-				err = Wrap(v)
-			default:
-				s := `¯\_(ツ)_/¯ Something panicked, but I don't understand the error`
-				err = New(s)
+			v := recover()
+			if v == nil {
+				return
 			}
 
+			e, ok := v.(error)
+			if !ok {
+				s := `¯\_(ツ)_/¯ Something panicked, but I don't understand the error`
+				err = newErr(s)
+				return
+			}
+
+			errors.As(e, err)
+			if err != nil {
+				return
+			}
+
+			var s string
+			errors.As(e, s)
+			if s != `` {
+				err = newErr(s)
+				return
+			}
+
+			err = wrap(e)
 		}()
 
 		f()
