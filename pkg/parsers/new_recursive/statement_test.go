@@ -858,6 +858,112 @@ func Test_S6_23(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S6_24(t *testing.T) {
+
+	// GIVEN a really complex operation
+	// WITH multiple sub-expressions with different precedence
+	// WITH some sub-expressions grouped for priority
+	// THEN a parsed operation expression is expected
+	// WITH individual operations nested in the correct order
+
+	// (a - 1 * ((b % 2) + (1 == 2 | c > 5)) & c % 2) != 0
+	given := []Token{
+		tok(PAREN_OPEN, "("),
+		tok(IDENTIFIER, "a"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "1"),
+		tok(MULTIPLY, "*"),
+		tok(PAREN_OPEN, "("),
+		tok(PAREN_OPEN, "("),
+		tok(IDENTIFIER, "b"),
+		tok(REMAINDER, "%"),
+		tok(NUMBER, "2"),
+		tok(PAREN_CLOSE, ")"),
+		tok(ADD, "+"),
+		tok(PAREN_OPEN, "("),
+		tok(NUMBER, "1"),
+		tok(EQUAL, "=="),
+		tok(NUMBER, "2"),
+		tok(OR, "|"),
+		tok(IDENTIFIER, "c"),
+		tok(MORE_THAN, ">"),
+		tok(NUMBER, "5"),
+		tok(PAREN_CLOSE, ")"),
+		tok(PAREN_CLOSE, ")"),
+		tok(AND, "&"),
+		tok(IDENTIFIER, "c"),
+		tok(REMAINDER, "%"),
+		tok(NUMBER, "2"),
+		tok(PAREN_CLOSE, ")"),
+		tok(NOT_EQUAL, "!="),
+		tok(NUMBER, "0"),
+		tok(TERMINATOR, ""),
+	}
+
+	first := testFac.NewOperation(
+		tok(REMAINDER, "%"),
+		testFac.NewIdentifier(tok(IDENTIFIER, "b")),
+		testFac.NewLiteral(tok(NUMBER, "2")),
+	)
+
+	second := testFac.NewOperation(
+		tok(EQUAL, "=="),
+		testFac.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewLiteral(tok(NUMBER, "2")),
+	)
+
+	third := testFac.NewOperation(
+		tok(MORE_THAN, ">"),
+		testFac.NewIdentifier(tok(IDENTIFIER, "c")),
+		testFac.NewLiteral(tok(NUMBER, "5")),
+	)
+
+	fourth := testFac.NewOperation(
+		tok(OR, "|"),
+		second,
+		third,
+	)
+
+	fifth := testFac.NewOperation(
+		tok(ADD, "+"),
+		first,
+		fourth,
+	)
+
+	sixth := testFac.NewOperation(
+		tok(MULTIPLY, "*"),
+		testFac.NewLiteral(tok(NUMBER, "1")),
+		fifth,
+	)
+
+	seventh := testFac.NewOperation(
+		tok(SUBTRACT, "-"),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+		sixth,
+	)
+
+	eigth := testFac.NewOperation(
+		tok(REMAINDER, "%"),
+		testFac.NewIdentifier(tok(IDENTIFIER, "c")),
+		testFac.NewLiteral(tok(NUMBER, "2")),
+	)
+
+	ninth := testFac.NewOperation(
+		tok(AND, "&"),
+		seventh,
+		eigth,
+	)
+
+	exp := testFac.NewOperation(
+		tok(NOT_EQUAL, "!="),
+		ninth,
+		testFac.NewLiteral(tok(NUMBER, "0")),
+	)
+
+	act, e := testFunc(testFac, given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_S7_1(t *testing.T) {
 
 	// GIVEN a function
