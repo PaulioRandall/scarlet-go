@@ -153,7 +153,7 @@ func listAccessor(p *parser, left Expression) (Expression, error) {
 
 	p.expect(GUARD_OPEN)
 
-	index, e := expectExpression(p)
+	index, e := expectOperation(p)
 	if e != nil {
 		return nil, e
 	}

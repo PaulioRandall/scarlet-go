@@ -964,6 +964,48 @@ func Test_S6_24(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S6_25(t *testing.T) {
+
+	// GIVEN an operation
+	// WITH some operations grouped as priority
+	// THEN a single parsed expression is expected
+	// WITH individual operations nested in the correct order
+
+	// a * (1 + b)
+	given := []Token{
+
+		tok(IDENTIFIER, "a"),
+		tok(ADD, "+"),
+		tok(IDENTIFIER, "abc"),
+		tok(GUARD_OPEN, "["),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(GUARD_CLOSE, "]"),
+		tok(TERMINATOR, ""),
+	}
+
+	first := testFac.NewOperation(
+		tok(ADD, "+"),
+		testFac.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewLiteral(tok(NUMBER, "2")),
+	)
+
+	second := testFac.NewListAccessor(
+		Identifier{tok(IDENTIFIER, "abc")},
+		first,
+	)
+
+	exp := testFac.NewOperation(
+		tok(ADD, "+"),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+		second,
+	)
+
+	act, e := testFunc(testFac, given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_S7_1(t *testing.T) {
 
 	// GIVEN a function
