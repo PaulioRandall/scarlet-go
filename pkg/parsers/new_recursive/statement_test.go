@@ -8,7 +8,7 @@ import (
 )
 
 var testFunc func(Factory, []Token) ([]Statement, error) = ParseStatements
-var testFactory Factory = NewFactory()
+var testFac Factory = NewFactory()
 
 func Test_S1_1(t *testing.T) {
 
@@ -21,9 +21,9 @@ func Test_S1_1(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewIdentifier(tok(IDENTIFIER, "a"))
+	exp := testFac.NewIdentifier(tok(IDENTIFIER, "a"))
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -38,9 +38,9 @@ func Test_S1_2(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewLiteral(tok(BOOL, "TRUE"))
+	exp := testFac.NewLiteral(tok(BOOL, "TRUE"))
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -55,9 +55,9 @@ func Test_S1_3(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewLiteral(tok(NUMBER, "1"))
+	exp := testFac.NewLiteral(tok(NUMBER, "1"))
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -72,9 +72,9 @@ func Test_S1_4(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewLiteral(tok(STRING, "abc"))
+	exp := testFac.NewLiteral(tok(STRING, "abc"))
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -92,16 +92,16 @@ func Test_S2_1(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewNonWrappedBlock(
+	exp := testFac.NewNonWrappedBlock(
 		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-				testFactory.NewLiteral(tok(NUMBER, "1")),
+			testFac.NewAssignment(
+				testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+				testFac.NewLiteral(tok(NUMBER, "1")),
 			),
 		},
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -128,24 +128,24 @@ func Test_S2_2(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewNonWrappedBlock(
+	exp := testFac.NewNonWrappedBlock(
 		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-				testFactory.NewLiteral(tok(NUMBER, "1")),
+			testFac.NewAssignment(
+				testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+				testFac.NewLiteral(tok(NUMBER, "1")),
 			),
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
-				testFactory.NewLiteral(tok(BOOL, "TRUE")),
+			testFac.NewAssignment(
+				testFac.NewIdentifier(tok(IDENTIFIER, "b")),
+				testFac.NewLiteral(tok(BOOL, "TRUE")),
 			),
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "c")),
-				testFactory.NewLiteral(tok(STRING, "abc")),
+			testFac.NewAssignment(
+				testFac.NewIdentifier(tok(IDENTIFIER, "c")),
+				testFac.NewLiteral(tok(STRING, "abc")),
 			),
 		},
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -162,11 +162,11 @@ func Test_S3_1(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewNegation(
-		testFactory.NewLiteral(tok(NUMBER, "2")),
+	exp := testFac.NewNegation(
+		testFac.NewLiteral(tok(NUMBER, "2")),
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -184,12 +184,12 @@ func Test_S4_1(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewListAccessor(
+	exp := testFac.NewListAccessor(
 		Identifier{tok(IDENTIFIER, "abc")},
 		Literal{tok(NUMBER, "1")},
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -206,7 +206,7 @@ func Test_S5_1(t *testing.T) {
 
 	exp := []Statement{}
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectStats(t, exp, act, e)
 }
 
@@ -222,7 +222,7 @@ func Test_S5_2(t *testing.T) {
 
 	exp := []Statement{}
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectStats(t, exp, act, e)
 }
 
@@ -237,7 +237,7 @@ func Test_S5_3(t *testing.T) {
 
 	exp := []Statement{}
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectStats(t, exp, act, e)
 }
 
@@ -254,7 +254,7 @@ func Test_S5_4(t *testing.T) {
 
 	exp := []Statement{}
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectStats(t, exp, act, e)
 }
 
@@ -263,9 +263,9 @@ func quickOperationTest(t *testing.T, left, operator, right Token) {
 	express := func(tk Token) Expression {
 		switch tk.Morpheme() {
 		case IDENTIFIER:
-			return testFactory.NewIdentifier(tk)
+			return testFac.NewIdentifier(tk)
 		case BOOL, NUMBER:
-			return testFactory.NewLiteral(tk)
+			return testFac.NewLiteral(tk)
 		default:
 			panic("SANITY CHECK! Unknown token type: " + tk.Morpheme().String())
 		}
@@ -278,13 +278,13 @@ func quickOperationTest(t *testing.T, left, operator, right Token) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewOperation(
+	exp := testFac.NewOperation(
 		operator,
 		express(left),
 		express(right),
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -473,15 +473,15 @@ func Test_S6_14(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := testFactory.NewOperation(
+	exp := testFac.NewOperation(
 		tok(ADD, "+"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewNegation(
-			testFactory.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFac.NewNegation(
+			testFac.NewLiteral(tok(NUMBER, "1")),
 		),
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -502,19 +502,19 @@ func Test_S6_15(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	left := testFactory.NewOperation(
+	left := testFac.NewOperation(
 		tok(ADD, "+"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFac.NewLiteral(tok(NUMBER, "1")),
 	)
 
-	exp := testFactory.NewOperation(
+	exp := testFac.NewOperation(
 		tok(SUBTRACT, "-"),
 		left,
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -535,19 +535,19 @@ func Test_S6_16(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	left := testFactory.NewOperation(
+	left := testFac.NewOperation(
 		tok(MULTIPLY, "*"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFac.NewLiteral(tok(NUMBER, "1")),
 	)
 
-	exp := testFactory.NewOperation(
+	exp := testFac.NewOperation(
 		tok(DIVIDE, "/"),
 		left,
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -568,19 +568,19 @@ func Test_S6_17(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	left := testFactory.NewOperation(
+	left := testFac.NewOperation(
 		tok(MULTIPLY, "*"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFac.NewLiteral(tok(NUMBER, "1")),
 	)
 
-	exp := testFactory.NewOperation(
+	exp := testFac.NewOperation(
 		tok(ADD, "+"),
 		left,
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -601,19 +601,19 @@ func Test_S6_18(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	left := testFactory.NewOperation(
+	left := testFac.NewOperation(
 		tok(MULTIPLY, "*"),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+		testFac.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
 
-	exp := testFactory.NewOperation(
+	exp := testFac.NewOperation(
 		tok(ADD, "+"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
 		left,
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -638,31 +638,31 @@ func Test_S6_19(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	first := testFactory.NewOperation(
+	first := testFac.NewOperation(
 		tok(MULTIPLY, "*"),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+		testFac.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
 
-	second := testFactory.NewOperation(
+	second := testFac.NewOperation(
 		tok(REMAINDER, "%"),
 		first,
-		testFactory.NewLiteral(tok(NUMBER, "2")),
+		testFac.NewLiteral(tok(NUMBER, "2")),
 	)
 
-	third := testFactory.NewOperation(
+	third := testFac.NewOperation(
 		tok(SUBTRACT, "-"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
 		second,
 	)
 
-	exp := testFactory.NewOperation(
+	exp := testFac.NewOperation(
 		tok(ADD, "+"),
 		third,
-		testFactory.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewLiteral(tok(NUMBER, "1")),
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -699,68 +699,120 @@ func Test_S6_20(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	first := testFactory.NewOperation(
+	first := testFac.NewOperation(
 		tok(MULTIPLY, "*"),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+		testFac.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
 
-	second := testFactory.NewOperation(
+	second := testFac.NewOperation(
 		tok(REMAINDER, "%"),
 		first,
-		testFactory.NewLiteral(tok(NUMBER, "2")),
+		testFac.NewLiteral(tok(NUMBER, "2")),
 	)
 
-	third := testFactory.NewOperation(
+	third := testFac.NewOperation(
 		tok(SUBTRACT, "-"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
 		second,
 	)
 
-	fourth := testFactory.NewOperation(
+	fourth := testFac.NewOperation(
 		tok(ADD, "+"),
 		third,
-		testFactory.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewLiteral(tok(NUMBER, "1")),
 	)
 
-	fifth := testFactory.NewOperation(
+	fifth := testFac.NewOperation(
 		tok(EQUAL, "=="),
 		fourth,
-		testFactory.NewLiteral(tok(NUMBER, "2")),
+		testFac.NewLiteral(tok(NUMBER, "2")),
 	)
 
-	sixth := testFactory.NewOperation(
+	sixth := testFac.NewOperation(
 		tok(MORE_THAN, ">"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "c")),
-		testFactory.NewLiteral(tok(NUMBER, "5")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "c")),
+		testFac.NewLiteral(tok(NUMBER, "5")),
 	)
 
-	seventh := testFactory.NewOperation(
+	seventh := testFac.NewOperation(
 		tok(REMAINDER, "%"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "c")),
-		testFactory.NewLiteral(tok(NUMBER, "2")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "c")),
+		testFac.NewLiteral(tok(NUMBER, "2")),
 	)
 
-	eigth := testFactory.NewOperation(
+	eigth := testFac.NewOperation(
 		tok(NOT_EQUAL, "!="),
 		seventh,
-		testFactory.NewLiteral(tok(NUMBER, "0")),
+		testFac.NewLiteral(tok(NUMBER, "0")),
 	)
 
-	ninth := testFactory.NewOperation(
+	ninth := testFac.NewOperation(
 		tok(AND, "&"),
 		sixth,
 		eigth,
 	)
 
-	exp := testFactory.NewOperation(
+	exp := testFac.NewOperation(
 		tok(OR, "|"),
 		fifth,
 		ninth,
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
+}
+
+func quickParenTest(t *testing.T, exp Statement, tks ...Token) {
+
+	var given []Token
+	given = append(given, tok(PAREN_OPEN, "("))
+	given = append(given, tks...)
+	given = append(given, tok(PAREN_CLOSE, ")"))
+	given = append(given, tok(TERMINATOR, ""))
+
+	act, e := testFunc(testFac, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S6_21(t *testing.T) {
+
+	// GIVEN a prioritised operation group
+	// WITH a single identifier or literal
+	// THEN a single parsed expression is expected
+
+	// (a)
+	quickParenTest(t,
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+		tok(IDENTIFIER, "a"),
+	)
+
+	// (true)
+	quickParenTest(t,
+		testFac.NewLiteral(tok(BOOL, "true")),
+		tok(BOOL, "true"),
+	)
+
+	// (1)
+	quickParenTest(t,
+		testFac.NewLiteral(tok(NUMBER, "1")),
+		tok(NUMBER, "1"),
+	)
+
+	// ("abc")
+	quickParenTest(t,
+		testFac.NewLiteral(tok(STRING, "abc")),
+		tok(STRING, "abc"),
+	)
+
+	// (-1)
+	quickParenTest(t,
+		testFac.NewNegation(
+			testFac.NewLiteral(tok(NUMBER, "1")),
+		),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "1"),
+	)
 }
 
 func Test_S7_1(t *testing.T) {
@@ -782,31 +834,31 @@ func Test_S7_1(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	f := testFactory.NewFunction(
+	f := testFac.NewFunction(
 		tok(FUNC, "F"),
-		testFactory.NewParameters(
+		testFac.NewParameters(
 			tok(PAREN_OPEN, "("),
 			tok(PAREN_CLOSE, ")"),
 			[]Token{},
 			[]Token{},
 		),
-		testFactory.NewBlock(
+		testFac.NewBlock(
 			tok(BLOCK_OPEN, "{"),
 			tok(BLOCK_CLOSE, "}"),
 			[]Statement{},
 		),
 	)
 
-	exp := testFactory.NewNonWrappedBlock(
+	exp := testFac.NewNonWrappedBlock(
 		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+			testFac.NewAssignment(
+				testFac.NewIdentifier(tok(IDENTIFIER, "f")),
 				f,
 			),
 		},
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -830,9 +882,9 @@ func Test_S7_2(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	f := testFactory.NewFunction(
+	f := testFac.NewFunction(
 		tok(FUNC, "F"),
-		testFactory.NewParameters(
+		testFac.NewParameters(
 			tok(PAREN_OPEN, "("),
 			tok(PAREN_CLOSE, ")"),
 			[]Token{
@@ -840,23 +892,23 @@ func Test_S7_2(t *testing.T) {
 			},
 			[]Token{},
 		),
-		testFactory.NewBlock(
+		testFac.NewBlock(
 			tok(BLOCK_OPEN, "{"),
 			tok(BLOCK_CLOSE, "}"),
 			[]Statement{},
 		),
 	)
 
-	exp := testFactory.NewNonWrappedBlock(
+	exp := testFac.NewNonWrappedBlock(
 		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+			testFac.NewAssignment(
+				testFac.NewIdentifier(tok(IDENTIFIER, "f")),
 				f,
 			),
 		},
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -881,9 +933,9 @@ func Test_S7_3(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	f := testFactory.NewFunction(
+	f := testFac.NewFunction(
 		tok(FUNC, "F"),
-		testFactory.NewParameters(
+		testFac.NewParameters(
 			tok(PAREN_OPEN, "("),
 			tok(PAREN_CLOSE, ")"),
 			[]Token{},
@@ -891,23 +943,23 @@ func Test_S7_3(t *testing.T) {
 				tok(IDENTIFIER, "a"),
 			},
 		),
-		testFactory.NewBlock(
+		testFac.NewBlock(
 			tok(BLOCK_OPEN, "{"),
 			tok(BLOCK_CLOSE, "}"),
 			[]Statement{},
 		),
 	)
 
-	exp := testFactory.NewNonWrappedBlock(
+	exp := testFac.NewNonWrappedBlock(
 		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+			testFac.NewAssignment(
+				testFac.NewIdentifier(tok(IDENTIFIER, "f")),
 				f,
 			),
 		},
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -939,9 +991,9 @@ func Test_S7_4(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	f := testFactory.NewFunction(
+	f := testFac.NewFunction(
 		tok(FUNC, "F"),
-		testFactory.NewParameters(
+		testFac.NewParameters(
 			tok(PAREN_OPEN, "("),
 			tok(PAREN_CLOSE, ")"),
 			[]Token{
@@ -953,23 +1005,23 @@ func Test_S7_4(t *testing.T) {
 				tok(IDENTIFIER, "d"),
 			},
 		),
-		testFactory.NewBlock(
+		testFac.NewBlock(
 			tok(BLOCK_OPEN, "{"),
 			tok(BLOCK_CLOSE, "}"),
 			[]Statement{},
 		),
 	)
 
-	exp := testFactory.NewNonWrappedBlock(
+	exp := testFac.NewNonWrappedBlock(
 		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+			testFac.NewAssignment(
+				testFac.NewIdentifier(tok(IDENTIFIER, "f")),
 				f,
 			),
 		},
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -995,24 +1047,24 @@ func Test_S7_5(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	body := testFactory.NewBlock(
+	body := testFac.NewBlock(
 		tok(BLOCK_OPEN, "{"),
 		tok(BLOCK_CLOSE, "}"),
 		[]Statement{
-			testFactory.NewNonWrappedBlock(
+			testFac.NewNonWrappedBlock(
 				[]Statement{
-					testFactory.NewAssignment(
-						testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-						testFactory.NewLiteral(tok(NUMBER, "1")),
+					testFac.NewAssignment(
+						testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+						testFac.NewLiteral(tok(NUMBER, "1")),
 					),
 				},
 			),
 		},
 	)
 
-	f := testFactory.NewFunction(
+	f := testFac.NewFunction(
 		tok(FUNC, "F"),
-		testFactory.NewParameters(
+		testFac.NewParameters(
 			tok(PAREN_OPEN, "("),
 			tok(PAREN_CLOSE, ")"),
 			[]Token{},
@@ -1021,16 +1073,16 @@ func Test_S7_5(t *testing.T) {
 		body,
 	)
 
-	exp := testFactory.NewNonWrappedBlock(
+	exp := testFac.NewNonWrappedBlock(
 		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+			testFac.NewAssignment(
+				testFac.NewIdentifier(tok(IDENTIFIER, "f")),
 				f,
 			),
 		},
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -1071,24 +1123,24 @@ func Test_S7_6(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	body := testFactory.NewBlock(
+	body := testFac.NewBlock(
 		tok(BLOCK_OPEN, "{"),
 		tok(BLOCK_CLOSE, "}"),
 		[]Statement{
-			testFactory.NewNonWrappedBlock(
+			testFac.NewNonWrappedBlock(
 				[]Statement{
-					testFactory.NewAssignment(
-						testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-						testFactory.NewLiteral(tok(NUMBER, "1")),
+					testFac.NewAssignment(
+						testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+						testFac.NewLiteral(tok(NUMBER, "1")),
 					),
 				},
 			),
 		},
 	)
 
-	f := testFactory.NewFunction(
+	f := testFac.NewFunction(
 		tok(FUNC, "F"),
-		testFactory.NewParameters(
+		testFac.NewParameters(
 			tok(PAREN_OPEN, "("),
 			tok(PAREN_CLOSE, ")"),
 			[]Token{
@@ -1101,16 +1153,16 @@ func Test_S7_6(t *testing.T) {
 		body,
 	)
 
-	exp := testFactory.NewNonWrappedBlock(
+	exp := testFac.NewNonWrappedBlock(
 		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+			testFac.NewAssignment(
+				testFac.NewIdentifier(tok(IDENTIFIER, "f")),
 				f,
 			),
 		},
 	)
 
-	act, e := testFunc(testFactory, given)
+	act, e := testFunc(testFac, given)
 	expectOneStat(t, exp, act, e)
 }
 
@@ -1124,7 +1176,7 @@ func Test_F1(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1141,7 +1193,7 @@ func Test_F2(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1161,7 +1213,7 @@ func Test_F3(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1178,7 +1230,7 @@ func Test_F4(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1199,7 +1251,7 @@ func Test_F5(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1220,7 +1272,7 @@ func Test_F6(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1236,7 +1288,7 @@ func Test_F7(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1256,7 +1308,7 @@ func Test_F9(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1277,7 +1329,7 @@ func Test_F10(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1295,7 +1347,7 @@ func Test_F11(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1313,7 +1365,7 @@ func Test_F12(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1330,7 +1382,7 @@ func Test_F13(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }
 
@@ -1348,6 +1400,6 @@ func Test_F14(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	act, e := testFunc(NewFactory(), given)
+	act, e := testFunc(testFac, given)
 	expectError(t, act, e)
 }

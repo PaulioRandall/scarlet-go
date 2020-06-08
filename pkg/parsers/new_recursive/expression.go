@@ -117,7 +117,7 @@ func group(p *parser) (Expression, error) {
 		return nil, e
 	}
 
-	_, e = p.expect(PAREN_OPEN)
+	_, e = p.expect(PAREN_CLOSE)
 	if e != nil {
 		return nil, e
 	}
