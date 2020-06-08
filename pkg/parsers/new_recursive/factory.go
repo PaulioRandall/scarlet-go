@@ -21,8 +21,8 @@ func newIdentifier(tk Token) Expression {
 	return identifierExpr{tk}
 }
 
-func newLiteral(tk Token) Literal {
-	return Literal{tk}
+func newLiteral(tk Token) Expression {
+	return literalExpr{tk}
 }
 
 func newList(open, close Token, items []Expression) List {

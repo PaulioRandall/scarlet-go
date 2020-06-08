@@ -52,3 +52,17 @@ func IdentifierString(id Identifier) string {
 
 	return b.String()
 }
+
+type Literal interface {
+	Tk() Token
+}
+
+func LiteralString(l Literal) string {
+
+	b := builder{}
+
+	b.add(0, "[Literal] ")
+	b.addToken(0, l.Tk())
+
+	return b.String()
+}

@@ -98,6 +98,30 @@ func (id identifierExpr) String() string {
 	return IdentifierString(id)
 }
 
+type literalExpr struct {
+	tk Token
+}
+
+func (literalExpr) Kind() Kind {
+	return ST_LITERAL
+}
+
+func (l literalExpr) Tk() Token {
+	return l.tk
+}
+
+func (l literalExpr) Begin() (int, int) {
+	return startPos(l.tk)
+}
+
+func (l literalExpr) End() (int, int) {
+	return endPos(l.tk)
+}
+
+func (l literalExpr) String() string {
+	return LiteralString(l)
+}
+
 type ListAccessor struct {
 	List  Expression
 	Index Expression
@@ -126,28 +150,6 @@ func (la ListAccessor) String() string {
 	b.add(1, "Index: ")
 	b.newline()
 	b.add(2, la.Index.String())
-
-	return b.String()
-}
-
-type Literal struct {
-	TK Token
-}
-
-func (l Literal) Begin() (int, int) {
-	return startPos(l.TK)
-}
-
-func (l Literal) End() (int, int) {
-	return endPos(l.TK)
-}
-
-func (l Literal) String() string {
-
-	b := builder{}
-
-	b.add(0, "[Literal] ")
-	b.addToken(0, l.TK)
 
 	return b.String()
 }

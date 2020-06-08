@@ -15,7 +15,7 @@ func Test_Identifier(t *testing.T) {
 }
 
 func Test_Literal(t *testing.T) {
-	var _ Expression = Literal{}
+	var _ Expression = literalExpr{}
 }
 
 func Test_List(t *testing.T) {

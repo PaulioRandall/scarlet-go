@@ -157,7 +157,7 @@ func Test_S4_1(t *testing.T) {
 
 	exp := newListAccessor(
 		newIdentifier(tok(IDENTIFIER, "abc")),
-		Literal{tok(NUMBER, "1")},
+		newLiteral(tok(NUMBER, "1")),
 	)
 
 	act, e := testFunc(given)
