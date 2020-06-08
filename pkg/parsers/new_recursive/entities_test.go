@@ -1,11 +1,13 @@
-package statement
+package recursive
 
 import (
 	"testing"
+
+	. "github.com/PaulioRandall/scarlet-go/pkg/parsers/statement"
 )
 
 func Test_Void(t *testing.T) {
-	var _ Expression = Void{}
+	var _ Expression = void{}
 }
 
 func Test_Identifier(t *testing.T) {

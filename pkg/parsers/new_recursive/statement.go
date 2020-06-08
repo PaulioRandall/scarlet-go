@@ -6,17 +6,12 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-type parser struct {
-	*pipeline
-	Factory
-}
-
-func ParseStatements(fac Factory, tks []Token) ([]Statement, error) {
-	p := &parser{newPipeline(tks), fac}
+func ParseStatements(tks []Token) ([]Statement, error) {
+	p := newPipeline(tks)
 	return statements(p)
 }
 
-func statements(p *parser) ([]Statement, error) {
+func statements(p *pipeline) ([]Statement, error) {
 
 	r := []Statement{}
 
@@ -38,7 +33,7 @@ func statements(p *parser) ([]Statement, error) {
 	return r, nil
 }
 
-func expectStatement(p *parser) (Statement, error) {
+func expectStatement(p *pipeline) (Statement, error) {
 
 	st, e := statement(p)
 
@@ -49,7 +44,7 @@ func expectStatement(p *parser) (Statement, error) {
 	return st, e
 }
 
-func statement(p *parser) (Statement, error) {
+func statement(p *pipeline) (Statement, error) {
 	// pattern := assignment | expression
 
 	switch {
@@ -65,7 +60,7 @@ func statement(p *parser) (Statement, error) {
 	return operation(p)
 }
 
-func assignment(p *parser) (Statement, error) {
+func assignment(p *pipeline) (Statement, error) {
 	// pattern := assignment_targets ASSIGN assignment_sources
 
 	targets, e := assignmentTargets(p)
@@ -88,10 +83,10 @@ func assignment(p *parser) (Statement, error) {
 		return nil, e
 	}
 
-	return p.NewNonWrappedBlock(r), nil
+	return newNonWrappedBlock(r), nil
 }
 
-func assignmentSources(p *parser) ([]Expression, error) {
+func assignmentSources(p *pipeline) ([]Expression, error) {
 
 	if p.match(FUNC) {
 		src, e := function(p)
@@ -105,7 +100,7 @@ func assignmentSources(p *parser) ([]Expression, error) {
 	return operations(p)
 }
 
-func assignmentTargets(p *parser) ([]Expression, error) {
+func assignmentTargets(p *pipeline) ([]Expression, error) {
 	// pattern := assignmentTarget {DELIMITER assignment_target}
 
 	var ats []Expression
@@ -123,7 +118,7 @@ func assignmentTargets(p *parser) ([]Expression, error) {
 	return ats, nil
 }
 
-func assignmentTarget(p *parser) (Expression, error) {
+func assignmentTarget(p *pipeline) (Expression, error) {
 	// pattern := identifer | VOID
 
 	switch {
@@ -131,13 +126,13 @@ func assignmentTarget(p *parser) (Expression, error) {
 		return identifier(p)
 
 	case p.match(VOID):
-		return p.NewVoid(p.any()), nil
+		return newVoid(p.any()), nil
 	}
 
 	return nil, err.New("Expected assignment target", err.At(p.any()))
 }
 
-func createAssignments(p *parser, targets, sources []Expression) ([]Statement, error) {
+func createAssignments(p *pipeline, targets, sources []Expression) ([]Statement, error) {
 
 	var r []Statement
 
@@ -152,7 +147,7 @@ func createAssignments(p *parser, targets, sources []Expression) ([]Statement, e
 			return nil, err.New("Expected expression", err.At(p.any()))
 		}
 
-		a := p.NewAssignment(targets[i], sources[i])
+		a := newAssignment(targets[i], sources[i])
 		r = append(r, a)
 	}
 

@@ -6,7 +6,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func expressions(p *parser) ([]Expression, error) {
+func expressions(p *pipeline) ([]Expression, error) {
 	// pattern := [expression {DELIM expression}]
 
 	r := []Expression{}
@@ -40,7 +40,7 @@ func expressions(p *parser) ([]Expression, error) {
 	return nil, err.New("Expected expression", err.At(p.any()))
 }
 
-func expression(p *parser) (Expression, error) {
+func expression(p *pipeline) (Expression, error) {
 	// pattern := identifier | literal
 
 	switch {
@@ -63,7 +63,7 @@ func expression(p *parser) (Expression, error) {
 	return nil, nil
 }
 
-func expectExpression(p *parser) (Expression, error) {
+func expectExpression(p *pipeline) (Expression, error) {
 	// pattern := identifier | literal
 
 	expr, e := expression(p)
@@ -78,18 +78,18 @@ func expectExpression(p *parser) (Expression, error) {
 	return expr, nil
 }
 
-func identifier(p *parser) (Expression, error) {
+func identifier(p *pipeline) (Expression, error) {
 	// pattern := IDENTIFIER [list_accessor]
-	id := p.NewIdentifier(p.any())
+	id := newIdentifier(p.any())
 	return maybeListAccessor(p, id)
 }
 
-func literal(p *parser) (Expression, error) {
+func literal(p *pipeline) (Expression, error) {
 	// pattern := BOOL | NUMBER | STRING
-	return p.NewLiteral(p.any()), nil
+	return newLiteral(p.any()), nil
 }
 
-func negation(p *parser) (Expression, error) {
+func negation(p *pipeline) (Expression, error) {
 	// pattern := MINUS expression
 
 	_, e := p.expect(SUBTRACT)
@@ -102,10 +102,10 @@ func negation(p *parser) (Expression, error) {
 		return nil, e
 	}
 
-	return p.NewNegation(expr), nil
+	return newNegation(expr), nil
 }
 
-func group(p *parser) (Expression, error) {
+func group(p *pipeline) (Expression, error) {
 
 	_, e := p.expect(PAREN_OPEN)
 	if e != nil {
@@ -125,7 +125,7 @@ func group(p *parser) (Expression, error) {
 	return expr, e
 }
 
-func acceptDelimiter(p *parser, closingSignal Morpheme) bool {
+func acceptDelimiter(p *pipeline, closingSignal Morpheme) bool {
 
 	if p.accept(DELIMITER) {
 		if p.accept(TERMINATOR) {
@@ -138,7 +138,7 @@ func acceptDelimiter(p *parser, closingSignal Morpheme) bool {
 	return false
 }
 
-func maybeListAccessor(p *parser, maybeList Expression) (Expression, error) {
+func maybeListAccessor(p *pipeline, maybeList Expression) (Expression, error) {
 	// pattern := expression [GUARD_OPEN expression GUARD_CLOSE]
 
 	if p.match(GUARD_OPEN) {
@@ -148,7 +148,7 @@ func maybeListAccessor(p *parser, maybeList Expression) (Expression, error) {
 	return maybeList, nil
 }
 
-func listAccessor(p *parser, left Expression) (Expression, error) {
+func listAccessor(p *pipeline, left Expression) (Expression, error) {
 	// pattern := GUARD_OPEN expression GUARD_CLOSE
 
 	p.expect(GUARD_OPEN)
@@ -163,10 +163,10 @@ func listAccessor(p *parser, left Expression) (Expression, error) {
 		return nil, e
 	}
 
-	return p.NewListAccessor(left, index), nil
+	return newListAccessor(left, index), nil
 }
 
-func function(p *parser) (Expression, error) {
+func function(p *pipeline) (Expression, error) {
 	// pattern := FUNC function_parameters function_body
 
 	key, e := p.expect(FUNC)
@@ -184,10 +184,10 @@ func function(p *parser) (Expression, error) {
 		return nil, e
 	}
 
-	return p.NewFunction(key, params, body), nil
+	return newFunction(key, params, body), nil
 }
 
-func functionParameters(p *parser) (Parameters, error) {
+func functionParameters(p *pipeline) (Parameters, error) {
 	// pattern := PAREN_OPEN [expression {DELIMITER expression}] PAREN_CLOSE
 
 	NIL := Parameters{}
@@ -207,10 +207,10 @@ func functionParameters(p *parser) (Parameters, error) {
 		return NIL, e
 	}
 
-	return p.NewParameters(open, close, inputs, outputs), nil
+	return newParameters(open, close, inputs, outputs), nil
 }
 
-func parameterIdentifiers(p *parser) (in []Token, out []Token, _ error) {
+func parameterIdentifiers(p *pipeline) (in []Token, out []Token, _ error) {
 
 	in = []Token{}
 	out = []Token{}
@@ -237,13 +237,13 @@ func parameterIdentifiers(p *parser) (in []Token, out []Token, _ error) {
 	return in, out, nil
 }
 
-func functionParam(p *parser) (Token, bool, error) {
+func functionParam(p *pipeline) (Token, bool, error) {
 	output := p.accept(OUTPUT)
 	id, e := p.expect(IDENTIFIER)
 	return id, output, e
 }
 
-func functionBody(p *parser) (Block, error) {
+func functionBody(p *pipeline) (Block, error) {
 
 	NIL := Block{}
 
@@ -261,10 +261,10 @@ func functionBody(p *parser) (Block, error) {
 		return NIL, e
 	}
 
-	return p.NewBlock(open, close, stats), nil
+	return newBlock(open, close, stats), nil
 }
 
-func functionStatements(p *parser) ([]Statement, error) {
+func functionStatements(p *pipeline) ([]Statement, error) {
 
 	var (
 		st Statement
@@ -287,7 +287,7 @@ func functionStatements(p *parser) ([]Statement, error) {
 	return r, nil
 }
 
-func functionStatement(p *parser) (st Statement, more bool, e error) {
+func functionStatement(p *pipeline) (st Statement, more bool, e error) {
 
 	st, e = statement(p)
 	if e != nil {
@@ -301,7 +301,7 @@ func functionStatement(p *parser) (st Statement, more bool, e error) {
 	return st, p.accept(TERMINATOR), nil
 }
 
-func operations(p *parser) ([]Expression, error) {
+func operations(p *pipeline) ([]Expression, error) {
 	// pattern := [operation {DELIM operation}]
 
 	r := []Expression{}
@@ -337,7 +337,7 @@ func operations(p *parser) ([]Expression, error) {
 	return nil, err.New("Expected expression", err.At(p.any()))
 }
 
-func operation(p *parser) (Expression, error) {
+func operation(p *pipeline) (Expression, error) {
 
 	left, e := operand(p)
 	if e != nil {
@@ -351,7 +351,7 @@ func operation(p *parser) (Expression, error) {
 	return operationExpression(p, left, 0)
 }
 
-func operand(p *parser) (Expression, error) {
+func operand(p *pipeline) (Expression, error) {
 
 	switch {
 	case p.match(IDENTIFIER), p.match(VOID):
@@ -370,7 +370,7 @@ func operand(p *parser) (Expression, error) {
 	return nil, nil
 }
 
-func expectOperand(p *parser) (Expression, error) {
+func expectOperand(p *pipeline) (Expression, error) {
 
 	o, e := operand(p)
 	if e != nil {
@@ -384,7 +384,7 @@ func expectOperand(p *parser) (Expression, error) {
 	return o, nil
 }
 
-func operationExpression(p *parser, left Expression, leftPriority int) (Expression, error) {
+func operationExpression(p *pipeline, left Expression, leftPriority int) (Expression, error) {
 
 	if !p.hasMore() {
 		return left, nil
@@ -410,7 +410,7 @@ func operationExpression(p *parser, left Expression, leftPriority int) (Expressi
 		return nil, e
 	}
 
-	left = p.NewOperation(op, left, right)
+	left = newOperation(op, left, right)
 
 	left, e = operationExpression(p, left, leftPriority)
 	if e != nil {
@@ -420,7 +420,7 @@ func operationExpression(p *parser, left Expression, leftPriority int) (Expressi
 	return left, nil
 }
 
-func expectOperation(p *parser) (Expression, error) {
+func expectOperation(p *pipeline) (Expression, error) {
 	// pattern := operation
 
 	expr, e := operation(p)
