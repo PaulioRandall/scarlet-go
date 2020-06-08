@@ -756,7 +756,8 @@ func Test_S31(t *testing.T) {
 
 	// GIVEN a complex operation
 	// WITH a additions and subtractions
-	// THEN a single parsed operation is expected
+	// THEN a parsed operation expression is expected
+	// WITH individual operations in the correct order
 
 	// a + 1 - b
 	given := []Token{
@@ -778,6 +779,105 @@ func Test_S31(t *testing.T) {
 		tok(SUBTRACT, "-"),
 		left,
 		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S32(t *testing.T) {
+
+	// GIVEN a complex operation
+	// WITH a multiplication and division
+	// THEN a parsed operation expression is expected
+	// WITH individual operations in the correct order
+
+	// a * 1 / b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "1"),
+		tok(DIVIDE, "/"),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	left := testFactory.NewOperation(
+		tok(MULTIPLY, "*"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	exp := testFactory.NewOperation(
+		tok(DIVIDE, "/"),
+		left,
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S33(t *testing.T) {
+
+	// GIVEN a complex operation
+	// WHEN a multiplicative preceeds an addative
+	// THEN a parsed operation expression is expected
+	// WITH individual operations in the correct order
+
+	// a * 1 + b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	left := testFactory.NewOperation(
+		tok(MULTIPLY, "*"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	exp := testFactory.NewOperation(
+		tok(ADD, "+"),
+		left,
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S34(t *testing.T) {
+
+	// GIVEN a complex operation
+	// WHEN an additive preceeds a multiplicative
+	// THEN a parsed operation expression is expected
+	// WITH individual operations in the correct order
+
+	// a * 1 + b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(ADD, "+"),
+		tok(NUMBER, "1"),
+		tok(MULTIPLY, "*"),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	left := testFactory.NewOperation(
+		tok(MULTIPLY, "*"),
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	exp := testFactory.NewOperation(
+		tok(ADD, "+"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		left,
 	)
 
 	act, e := testFunc(testFactory, given)
