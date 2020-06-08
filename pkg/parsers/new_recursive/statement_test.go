@@ -701,7 +701,7 @@ func Test_S28(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S29(t *testing.T) {
+func Test_S29_1(t *testing.T) {
 
 	// GIVEN a simple division
 	// THEN a single parsed operation is expected
@@ -718,6 +718,190 @@ func Test_S29(t *testing.T) {
 		tok(REMAINDER, "%"),
 		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
 		testFactory.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S29_2(t *testing.T) {
+
+	// GIVEN a simple logical AND operation
+	// THEN a single parsed operation is expected
+
+	// a & b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(AND, "&"),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(AND, "&"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S29_3(t *testing.T) {
+
+	// GIVEN a simple logical OR operation
+	// THEN a single parsed operation is expected
+
+	// a | b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(OR, "|"),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(OR, "|"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S29_4(t *testing.T) {
+
+	// GIVEN a simple logical == operation
+	// THEN a single parsed operation is expected
+
+	// a == b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(EQUAL, "=="),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(EQUAL, "=="),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S29_5(t *testing.T) {
+
+	// GIVEN a simple logical != operation
+	// THEN a single parsed operation is expected
+
+	// a != b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(NOT_EQUAL, "!="),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(NOT_EQUAL, "!="),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S29_6(t *testing.T) {
+
+	// GIVEN a simple logical < operation
+	// THEN a single parsed operation is expected
+
+	// a < b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(LESS_THAN, "<"),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(LESS_THAN, "<"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S29_7(t *testing.T) {
+
+	// GIVEN a simple logical > operation
+	// THEN a single parsed operation is expected
+
+	// a > b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(MORE_THAN, ">"),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(MORE_THAN, ">"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S29_8(t *testing.T) {
+
+	// GIVEN a simple logical <= operation
+	// THEN a single parsed operation is expected
+
+	// a <= b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(LESS_THAN_OR_EQUAL, "<="),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(LESS_THAN_OR_EQUAL, "<="),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S29_9(t *testing.T) {
+
+	// GIVEN a simple logical >= operation
+	// THEN a single parsed operation is expected
+
+	// a >= b
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(MORE_THAN_OR_EQUAL, ">="),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		tok(MORE_THAN_OR_EQUAL, ">="),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
 
 	act, e := testFunc(testFactory, given)
