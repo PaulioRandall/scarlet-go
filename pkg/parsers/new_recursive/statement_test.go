@@ -10,72 +10,44 @@ import (
 var testFunc func(Factory, []Token) ([]Statement, error) = ParseStatements
 var testFac Factory = NewFactory()
 
+func quickSoloTokenTest(t *testing.T, exp Statement, tk Token) {
+
+	var given []Token
+	given = append(given, tk)
+	given = append(given, tok(TERMINATOR, ""))
+
+	act, e := testFunc(testFac, given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_S1_1(t *testing.T) {
 
 	// GIVEN an identifier only
 	// THEN only an identifier expression is returned
 
 	// a
-	given := []Token{
+	quickSoloTokenTest(t,
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
 		tok(IDENTIFIER, "a"),
-		tok(TERMINATOR, ""),
-	}
+	)
 
-	exp := testFac.NewIdentifier(tok(IDENTIFIER, "a"))
-
-	act, e := testFunc(testFac, given)
-	expectOneStat(t, exp, act, e)
-}
-
-func Test_S1_2(t *testing.T) {
-
-	// GIVEN a bool literal only
-	// THEN only a bool literal expression is returned
-
-	// TRUE
-	given := []Token{
-		tok(BOOL, "TRUE"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFac.NewLiteral(tok(BOOL, "TRUE"))
-
-	act, e := testFunc(testFac, given)
-	expectOneStat(t, exp, act, e)
-}
-
-func Test_S1_3(t *testing.T) {
-
-	// GIVEN a number literal only
-	// THEN only a number literal expression is returned
+	// true
+	quickSoloTokenTest(t,
+		testFac.NewLiteral(tok(BOOL, "true")),
+		tok(BOOL, "true"),
+	)
 
 	// 1
-	given := []Token{
+	quickSoloTokenTest(t,
+		testFac.NewLiteral(tok(NUMBER, "1")),
 		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
-	}
+	)
 
-	exp := testFac.NewLiteral(tok(NUMBER, "1"))
-
-	act, e := testFunc(testFac, given)
-	expectOneStat(t, exp, act, e)
-}
-
-func Test_S1_4(t *testing.T) {
-
-	// GIVEN a string literal
-	// THEN only a string literal expression is returned
-
-	// "abc"
-	given := []Token{
+	// abc
+	quickSoloTokenTest(t,
+		testFac.NewLiteral(tok(STRING, "abc")),
 		tok(STRING, "abc"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFac.NewLiteral(tok(STRING, "abc"))
-
-	act, e := testFunc(testFac, given)
-	expectOneStat(t, exp, act, e)
+	)
 }
 
 func Test_S2_1(t *testing.T) {
