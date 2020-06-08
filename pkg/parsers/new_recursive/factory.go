@@ -14,11 +14,11 @@ func Precedence(expr Expression) int {
 }
 
 func newVoid(tk Token) Expression {
-	return void{tk}
+	return voidExpr{tk}
 }
 
-func newIdentifier(tk Token) Identifier {
-	return Identifier{tk}
+func newIdentifier(tk Token) Expression {
+	return identifierExpr{tk}
 }
 
 func newLiteral(tk Token) Literal {

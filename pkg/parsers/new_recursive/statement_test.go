@@ -156,7 +156,7 @@ func Test_S4_1(t *testing.T) {
 	}
 
 	exp := newListAccessor(
-		Identifier{tok(IDENTIFIER, "abc")},
+		newIdentifier(tok(IDENTIFIER, "abc")),
 		Literal{tok(NUMBER, "1")},
 	)
 
@@ -189,7 +189,7 @@ func Test_S4_2(t *testing.T) {
 	)
 
 	exp := newListAccessor(
-		Identifier{tok(IDENTIFIER, "abc")},
+		newIdentifier(tok(IDENTIFIER, "abc")),
 		first,
 	)
 

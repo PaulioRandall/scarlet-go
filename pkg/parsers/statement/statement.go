@@ -33,3 +33,17 @@ func VoidString(v Void) string {
 
 	return b.String()
 }
+
+type Identifier interface {
+	Tk() Token
+}
+
+func IdentifierString(id Identifier) string {
+
+	b := builder{}
+
+	b.add(0, "[Identifier] ")
+	b.addToken(0, id.Tk())
+
+	return b.String()
+}

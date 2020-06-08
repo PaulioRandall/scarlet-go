@@ -7,11 +7,11 @@ import (
 )
 
 func Test_Void(t *testing.T) {
-	var _ Expression = void{}
+	var _ Expression = voidExpr{}
 }
 
 func Test_Identifier(t *testing.T) {
-	var _ Expression = Identifier{}
+	var _ Expression = identifierExpr{}
 }
 
 func Test_Literal(t *testing.T) {

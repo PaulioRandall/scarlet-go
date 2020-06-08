@@ -50,46 +50,44 @@ func endPos(tk Token) (line int, col int) {
 	return tk.Line(), tk.Col() + len(tk.Value())
 }
 
-type void struct {
+type voidExpr struct {
 	tk Token
 }
 
-func (v void) Tk() Token {
+func (v voidExpr) Tk() Token {
 	return v.tk
 }
 
-func (v void) Begin() (int, int) {
+func (v voidExpr) Begin() (int, int) {
 	return startPos(v.tk)
 }
 
-func (v void) End() (int, int) {
+func (v voidExpr) End() (int, int) {
 	return endPos(v.tk)
 }
 
-func (v void) String() string {
+func (v voidExpr) String() string {
 	return VoidString(v)
 }
 
-type Identifier struct {
-	TK Token
+type identifierExpr struct {
+	tk Token
 }
 
-func (id Identifier) Begin() (int, int) {
-	return startPos(id.TK)
+func (id identifierExpr) Tk() Token {
+	return id.tk
 }
 
-func (id Identifier) End() (int, int) {
-	return endPos(id.TK)
+func (id identifierExpr) Begin() (int, int) {
+	return startPos(id.tk)
 }
 
-func (id Identifier) String() string {
+func (id identifierExpr) End() (int, int) {
+	return endPos(id.tk)
+}
 
-	b := builder{}
-
-	b.add(0, "[Identifier] ")
-	b.addToken(0, id.TK)
-
-	return b.String()
+func (id identifierExpr) String() string {
+	return IdentifierString(id)
 }
 
 type ListAccessor struct {
