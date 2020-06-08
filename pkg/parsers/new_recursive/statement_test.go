@@ -757,7 +757,7 @@ func Test_S31(t *testing.T) {
 	// GIVEN a complex operation
 	// WITH a additions and subtractions
 	// THEN a parsed operation expression is expected
-	// WITH individual operations in the correct order
+	// WITH individual operations nested in the correct order
 
 	// a + 1 - b
 	given := []Token{
@@ -790,7 +790,7 @@ func Test_S32(t *testing.T) {
 	// GIVEN a complex operation
 	// WITH a multiplication and division
 	// THEN a parsed operation expression is expected
-	// WITH individual operations in the correct order
+	// WITH individual operations nested in the correct order
 
 	// a * 1 / b
 	given := []Token{
@@ -821,9 +821,9 @@ func Test_S32(t *testing.T) {
 func Test_S33(t *testing.T) {
 
 	// GIVEN a complex operation
-	// WHEN a multiplicative preceeds an addative
+	// WHERE a multiplicative preceeds an addative
 	// THEN a parsed operation expression is expected
-	// WITH individual operations in the correct order
+	// WITH individual operations nested in the correct order
 
 	// a * 1 + b
 	given := []Token{
@@ -854,9 +854,9 @@ func Test_S33(t *testing.T) {
 func Test_S34(t *testing.T) {
 
 	// GIVEN a complex operation
-	// WHEN an additive preceeds a multiplicative
+	// WHERE an additive preceeds a multiplicative
 	// THEN a parsed operation expression is expected
-	// WITH individual operations in the correct order
+	// WITH individual operations nested in the correct order
 
 	// a * 1 + b
 	given := []Token{
@@ -878,6 +878,152 @@ func Test_S34(t *testing.T) {
 		tok(ADD, "+"),
 		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
 		left,
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S35(t *testing.T) {
+
+	// GIVEN a complex operation
+	// WITH multiple sub-expressions with different precedence
+	// THEN a parsed operation expression is expected
+	// WITH individual operations nested in the correct order
+
+	// a - 1 * b % 2 + 1
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "1"),
+		tok(MULTIPLY, "*"),
+		tok(IDENTIFIER, "b"),
+		tok(REMAINDER, "%"),
+		tok(NUMBER, "2"),
+		tok(ADD, "+"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	first := testFactory.NewOperation(
+		tok(MULTIPLY, "*"),
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	second := testFactory.NewOperation(
+		tok(REMAINDER, "%"),
+		first,
+		testFactory.NewLiteral(tok(NUMBER, "2")),
+	)
+
+	third := testFactory.NewOperation(
+		tok(SUBTRACT, "-"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		second,
+	)
+
+	exp := testFactory.NewOperation(
+		tok(ADD, "+"),
+		third,
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S36(t *testing.T) {
+
+	// GIVEN a really complex operation
+	// WITH multiple sub-expressions with different precedence
+	// THEN a parsed operation expression is expected
+	// WITH individual operations nested in the correct order
+
+	// a - 1 * b % 2 + 1 == 2 | c > 5 & c % 2 != 0
+	given := []Token{
+		tok(IDENTIFIER, "a"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "1"),
+		tok(MULTIPLY, "*"),
+		tok(IDENTIFIER, "b"),
+		tok(REMAINDER, "%"),
+		tok(NUMBER, "2"),
+		tok(ADD, "+"),
+		tok(NUMBER, "1"),
+		tok(EQUAL, "=="),
+		tok(NUMBER, "2"),
+		tok(OR, "|"),
+		tok(IDENTIFIER, "c"),
+		tok(MORE_THAN, ">"),
+		tok(NUMBER, "5"),
+		tok(AND, "&"),
+		tok(IDENTIFIER, "c"),
+		tok(REMAINDER, "%"),
+		tok(NUMBER, "2"),
+		tok(NOT_EQUAL, "!="),
+		tok(NUMBER, "0"),
+		tok(TERMINATOR, ""),
+	}
+
+	first := testFactory.NewOperation(
+		tok(MULTIPLY, "*"),
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	second := testFactory.NewOperation(
+		tok(REMAINDER, "%"),
+		first,
+		testFactory.NewLiteral(tok(NUMBER, "2")),
+	)
+
+	third := testFactory.NewOperation(
+		tok(SUBTRACT, "-"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+		second,
+	)
+
+	fourth := testFactory.NewOperation(
+		tok(ADD, "+"),
+		third,
+		testFactory.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	fifth := testFactory.NewOperation(
+		tok(EQUAL, "=="),
+		fourth,
+		testFactory.NewLiteral(tok(NUMBER, "2")),
+	)
+
+	sixth := testFactory.NewOperation(
+		tok(MORE_THAN, ">"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "c")),
+		testFactory.NewLiteral(tok(NUMBER, "5")),
+	)
+
+	seventh := testFactory.NewOperation(
+		tok(REMAINDER, "%"),
+		testFactory.NewIdentifier(tok(IDENTIFIER, "c")),
+		testFactory.NewLiteral(tok(NUMBER, "2")),
+	)
+
+	eigth := testFactory.NewOperation(
+		tok(NOT_EQUAL, "!="),
+		seventh,
+		testFactory.NewLiteral(tok(NUMBER, "0")),
+	)
+
+	ninth := testFactory.NewOperation(
+		tok(AND, "&"),
+		sixth,
+		eigth,
+	)
+
+	exp := testFactory.NewOperation(
+		tok(OR, "|"),
+		fifth,
+		ninth,
 	)
 
 	act, e := testFunc(testFactory, given)
