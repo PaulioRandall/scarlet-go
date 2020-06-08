@@ -112,7 +112,7 @@ func group(p *parser) (Expression, error) {
 		return nil, e
 	}
 
-	expr, e := expectExpression(p)
+	expr, e := expectOperation(p)
 	if e != nil {
 		return nil, e
 	}

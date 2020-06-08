@@ -10,17 +10,17 @@ import (
 var testFunc func(Factory, []Token) ([]Statement, error) = ParseStatements
 var testFac Factory = NewFactory()
 
-func quickSoloTokenTest(t *testing.T, exp Statement, tk Token) {
-
-	var given []Token
-	given = append(given, tk)
-	given = append(given, tok(TERMINATOR, ""))
-
-	act, e := testFunc(testFac, given)
-	expectOneStat(t, exp, act, e)
-}
-
 func Test_S1_1(t *testing.T) {
+
+	quickSoloTokenTest := func(t *testing.T, exp Statement, tk Token) {
+
+		var given []Token
+		given = append(given, tk)
+		given = append(given, tok(TERMINATOR, ""))
+
+		act, e := testFunc(testFac, given)
+		expectOneStat(t, exp, act, e)
+	}
 
 	// GIVEN an identifier only
 	// THEN only an identifier expression is returned
@@ -563,7 +563,7 @@ func Test_S6_18(t *testing.T) {
 	// THEN a parsed operation expression is expected
 	// WITH individual operations nested in the correct order
 
-	// a * 1 + b
+	// a + 1 * b
 	given := []Token{
 		tok(IDENTIFIER, "a"),
 		tok(ADD, "+"),
@@ -735,19 +735,19 @@ func Test_S6_20(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func quickParenTest(t *testing.T, exp Statement, tks ...Token) {
-
-	var given []Token
-	given = append(given, tok(PAREN_OPEN, "("))
-	given = append(given, tks...)
-	given = append(given, tok(PAREN_CLOSE, ")"))
-	given = append(given, tok(TERMINATOR, ""))
-
-	act, e := testFunc(testFac, given)
-	expectOneStat(t, exp, act, e)
-}
-
 func Test_S6_21(t *testing.T) {
+
+	quickParenTest := func(t *testing.T, exp Statement, tks ...Token) {
+
+		var given []Token
+		given = append(given, tok(PAREN_OPEN, "("))
+		given = append(given, tks...)
+		given = append(given, tok(PAREN_CLOSE, ")"))
+		given = append(given, tok(TERMINATOR, ""))
+
+		act, e := testFunc(testFac, given)
+		expectOneStat(t, exp, act, e)
+	}
 
 	// GIVEN a prioritised operation group
 	// WITH a single identifier or literal
@@ -785,6 +785,77 @@ func Test_S6_21(t *testing.T) {
 		tok(SUBTRACT, "-"),
 		tok(NUMBER, "1"),
 	)
+}
+
+func Test_S6_22(t *testing.T) {
+
+	// GIVEN an operation
+	// WITH some operations grouped as priority
+	// THEN a single parsed expression is expected
+	// WITH individual operations nested in the correct order
+
+	// a * (1 + b)
+	given := []Token{
+
+		tok(IDENTIFIER, "a"),
+		tok(MULTIPLY, "*"),
+		tok(PAREN_OPEN, "("),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(IDENTIFIER, "b"),
+		tok(PAREN_CLOSE, ")"),
+		tok(TERMINATOR, ""),
+	}
+
+	first := testFac.NewOperation(
+		tok(ADD, "+"),
+		testFac.NewLiteral(tok(NUMBER, "1")),
+		testFac.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	exp := testFac.NewOperation(
+		tok(MULTIPLY, "*"),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+		first,
+	)
+
+	act, e := testFunc(testFac, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S6_23(t *testing.T) {
+
+	// GIVEN an operation
+	// WITH some operations grouped as priority
+	// THEN a single parsed expression is expected
+	// WITH individual operations nested in the correct order
+
+	// (a * 1) + b
+	given := []Token{
+		tok(PAREN_OPEN, "("),
+		tok(IDENTIFIER, "a"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "1"),
+		tok(PAREN_CLOSE, ")"),
+		tok(ADD, "+"),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+	}
+
+	first := testFac.NewOperation(
+		tok(MULTIPLY, "*"),
+		testFac.NewIdentifier(tok(IDENTIFIER, "a")),
+		testFac.NewLiteral(tok(NUMBER, "1")),
+	)
+
+	exp := testFac.NewOperation(
+		tok(ADD, "+"),
+		first,
+		testFac.NewIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	act, e := testFunc(testFac, given)
+	expectOneStat(t, exp, act, e)
 }
 
 func Test_S7_1(t *testing.T) {
