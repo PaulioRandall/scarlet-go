@@ -54,6 +54,10 @@ type voidExpr struct {
 	tk Token
 }
 
+func (voidExpr) Kind() Kind {
+	return ST_VOID
+}
+
 func (v voidExpr) Tk() Token {
 	return v.tk
 }
@@ -72,6 +76,10 @@ func (v voidExpr) String() string {
 
 type identifierExpr struct {
 	tk Token
+}
+
+func (identifierExpr) Kind() Kind {
+	return ST_VOID
 }
 
 func (id identifierExpr) Tk() Token {

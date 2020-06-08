@@ -10,6 +10,11 @@ type Statement interface {
 	Expression
 }
 
+type NewExpression interface {
+	Expression
+	Kind() Kind
+}
+
 type Expression interface {
 	Snippet
 }
