@@ -609,27 +609,47 @@ func Test_S24(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func quickOperationTest(t *testing.T, left, operator, right Token) {
+
+	express := func(tk Token) Expression {
+		switch tk.Morpheme() {
+		case IDENTIFIER:
+			return testFactory.NewIdentifier(tk)
+		case BOOL, NUMBER:
+			return testFactory.NewLiteral(tk)
+		default:
+			panic("SANITY CHECK! Unknown token type: " + tk.Morpheme().String())
+		}
+	}
+
+	given := []Token{
+		left,
+		operator,
+		right,
+		tok(TERMINATOR, ""),
+	}
+
+	exp := testFactory.NewOperation(
+		operator,
+		express(left),
+		express(right),
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_S25(t *testing.T) {
 
 	// GIVEN a simple addition
 	// THEN a single parsed operation is expected
 
 	// a + 1
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(ADD, "+"),
 		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(ADD, "+"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S26(t *testing.T) {
@@ -638,21 +658,11 @@ func Test_S26(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a - 1
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(SUBTRACT, "-"),
 		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(SUBTRACT, "-"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S27(t *testing.T) {
@@ -661,21 +671,11 @@ func Test_S27(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a * 1
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(MULTIPLY, "*"),
 		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(MULTIPLY, "*"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S28(t *testing.T) {
@@ -684,21 +684,11 @@ func Test_S28(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a / 1
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(DIVIDE, "/"),
 		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(DIVIDE, "/"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S29_1(t *testing.T) {
@@ -707,21 +697,11 @@ func Test_S29_1(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a % 1
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(REMAINDER, "%"),
 		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(REMAINDER, "%"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewLiteral(tok(NUMBER, "1")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S29_2(t *testing.T) {
@@ -730,21 +710,11 @@ func Test_S29_2(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a & b
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(AND, "&"),
 		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(AND, "&"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S29_3(t *testing.T) {
@@ -753,21 +723,11 @@ func Test_S29_3(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a | b
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(OR, "|"),
 		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(OR, "|"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S29_4(t *testing.T) {
@@ -776,21 +736,11 @@ func Test_S29_4(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a == b
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(EQUAL, "=="),
 		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(EQUAL, "=="),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S29_5(t *testing.T) {
@@ -799,21 +749,11 @@ func Test_S29_5(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a != b
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(NOT_EQUAL, "!="),
 		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(NOT_EQUAL, "!="),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S29_6(t *testing.T) {
@@ -822,21 +762,11 @@ func Test_S29_6(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a < b
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(LESS_THAN, "<"),
 		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(LESS_THAN, "<"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S29_7(t *testing.T) {
@@ -845,21 +775,11 @@ func Test_S29_7(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a > b
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(MORE_THAN, ">"),
 		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(MORE_THAN, ">"),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S29_8(t *testing.T) {
@@ -868,21 +788,11 @@ func Test_S29_8(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a <= b
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(LESS_THAN_OR_EQUAL, "<="),
 		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(LESS_THAN_OR_EQUAL, "<="),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S29_9(t *testing.T) {
@@ -891,21 +801,11 @@ func Test_S29_9(t *testing.T) {
 	// THEN a single parsed operation is expected
 
 	// a >= b
-	given := []Token{
+	quickOperationTest(t,
 		tok(IDENTIFIER, "a"),
 		tok(MORE_THAN_OR_EQUAL, ">="),
 		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
-	}
-
-	exp := testFactory.NewOperation(
-		tok(MORE_THAN_OR_EQUAL, ">="),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-		testFactory.NewIdentifier(tok(IDENTIFIER, "b")),
 	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func Test_S30(t *testing.T) {
