@@ -10,7 +10,7 @@ import (
 var testFunc func(Factory, []Token) ([]Statement, error) = ParseStatements
 var testFactory Factory = NewFactory()
 
-func Test_S1(t *testing.T) {
+func Test_S1_1(t *testing.T) {
 
 	// GIVEN an identifier only
 	// THEN only an identifier expression is returned
@@ -27,7 +27,7 @@ func Test_S1(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S3(t *testing.T) {
+func Test_S1_2(t *testing.T) {
 
 	// GIVEN a bool literal only
 	// THEN only a bool literal expression is returned
@@ -44,7 +44,7 @@ func Test_S3(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S4(t *testing.T) {
+func Test_S1_3(t *testing.T) {
 
 	// GIVEN a number literal only
 	// THEN only a number literal expression is returned
@@ -61,7 +61,7 @@ func Test_S4(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S5(t *testing.T) {
+func Test_S1_4(t *testing.T) {
 
 	// GIVEN a string literal
 	// THEN only a string literal expression is returned
@@ -78,7 +78,7 @@ func Test_S5(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S6(t *testing.T) {
+func Test_S2_1(t *testing.T) {
 
 	// GIVEN an assignment
 	// WITH only one identifier and one expression
@@ -105,7 +105,7 @@ func Test_S6(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S7(t *testing.T) {
+func Test_S2_2(t *testing.T) {
 
 	// GIVEN an assignment
 	// WITH multiple identifiers and expressions
@@ -149,7 +149,7 @@ func Test_S7(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S8(t *testing.T) {
+func Test_S3_1(t *testing.T) {
 
 	// GIVEN a negation
 	// WITH a following expression
@@ -170,7 +170,7 @@ func Test_S8(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S14(t *testing.T) {
+func Test_S4_1(t *testing.T) {
 
 	// GIVEN a list identifier with a number literal index
 	// THEN only the parsed list accessor is returned
@@ -193,7 +193,7 @@ func Test_S14(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S15(t *testing.T) {
+func Test_S5_1(t *testing.T) {
 
 	// GIVEN only a comment
 	// THEN no statements are returned
@@ -210,7 +210,7 @@ func Test_S15(t *testing.T) {
 	expectStats(t, exp, act, e)
 }
 
-func Test_S16(t *testing.T) {
+func Test_S5_2(t *testing.T) {
 
 	// GIVEN only whitespace
 	// THEN no statements are returned
@@ -226,7 +226,7 @@ func Test_S16(t *testing.T) {
 	expectStats(t, exp, act, e)
 }
 
-func Test_S17(t *testing.T) {
+func Test_S5_3(t *testing.T) {
 
 	// GIVEN only one terminator
 	// THEN no statements are returned
@@ -241,7 +241,7 @@ func Test_S17(t *testing.T) {
 	expectStats(t, exp, act, e)
 }
 
-func Test_S18(t *testing.T) {
+func Test_S5_4(t *testing.T) {
 
 	// GIVEN only terminators
 	// THEN no statements are returned
@@ -256,357 +256,6 @@ func Test_S18(t *testing.T) {
 
 	act, e := testFunc(testFactory, given)
 	expectStats(t, exp, act, e)
-}
-
-func Test_S19(t *testing.T) {
-
-	// GIVEN a function
-	// WITH no parameters
-	// AND no statements in the body
-	// THEN only the parsed function is returned
-
-	// f := F() {}
-	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
-	}
-
-	f := testFactory.NewFunction(
-		tok(FUNC, "F"),
-		testFactory.NewParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
-			[]Token{},
-			[]Token{},
-		),
-		testFactory.NewBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
-			[]Statement{},
-		),
-	)
-
-	exp := testFactory.NewNonWrappedBlock(
-		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
-				f,
-			),
-		},
-	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
-}
-
-func Test_S20(t *testing.T) {
-
-	// GIVEN a function
-	// WITH one input parameter
-	// AND no statements in the body
-	// THEN only the parsed function is returned
-
-	// f := F(a) {}
-	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
-	}
-
-	f := testFactory.NewFunction(
-		tok(FUNC, "F"),
-		testFactory.NewParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
-			[]Token{
-				tok(IDENTIFIER, "a"),
-			},
-			[]Token{},
-		),
-		testFactory.NewBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
-			[]Statement{},
-		),
-	)
-
-	exp := testFactory.NewNonWrappedBlock(
-		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
-				f,
-			),
-		},
-	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
-}
-
-func Test_S21(t *testing.T) {
-
-	// GIVEN a function
-	// WITH one output parameter
-	// AND no statements in the body
-	// THEN only the parsed function is returned
-
-	// f := F(^a) {}
-	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "a"),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
-	}
-
-	f := testFactory.NewFunction(
-		tok(FUNC, "F"),
-		testFactory.NewParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
-			[]Token{},
-			[]Token{
-				tok(IDENTIFIER, "a"),
-			},
-		),
-		testFactory.NewBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
-			[]Statement{},
-		),
-	)
-
-	exp := testFactory.NewNonWrappedBlock(
-		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
-				f,
-			),
-		},
-	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
-}
-
-func Test_S22(t *testing.T) {
-
-	// GIVEN a function
-	// WITH multiple parameters
-	// AND no statements in the body
-	// THEN only the parsed function is returned
-
-	// f := F(a, b, ^c, ^d) {}
-	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "b"),
-		tok(DELIMITER, ","),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "c"),
-		tok(DELIMITER, ","),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "d"),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
-	}
-
-	f := testFactory.NewFunction(
-		tok(FUNC, "F"),
-		testFactory.NewParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
-			[]Token{
-				tok(IDENTIFIER, "a"),
-				tok(IDENTIFIER, "b"),
-			},
-			[]Token{
-				tok(IDENTIFIER, "c"),
-				tok(IDENTIFIER, "d"),
-			},
-		),
-		testFactory.NewBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
-			[]Statement{},
-		),
-	)
-
-	exp := testFactory.NewNonWrappedBlock(
-		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
-				f,
-			),
-		},
-	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
-}
-
-func Test_S23(t *testing.T) {
-
-	// GIVEN a function
-	// WITH no parameters
-	// AND a statement in the body
-	// THEN only the parsed function is returned
-
-	// f := F() {a := 1}
-	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "1"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
-	}
-
-	body := testFactory.NewBlock(
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		[]Statement{
-			testFactory.NewNonWrappedBlock(
-				[]Statement{
-					testFactory.NewAssignment(
-						testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-						testFactory.NewLiteral(tok(NUMBER, "1")),
-					),
-				},
-			),
-		},
-	)
-
-	f := testFactory.NewFunction(
-		tok(FUNC, "F"),
-		testFactory.NewParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
-			[]Token{},
-			[]Token{},
-		),
-		body,
-	)
-
-	exp := testFactory.NewNonWrappedBlock(
-		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
-				f,
-			),
-		},
-	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
-}
-
-func Test_S24(t *testing.T) {
-
-	// GIVEN a function
-	// WITH input and output parameters over several lines
-	// AND a statement in the body with leading and trailing linefeeds
-	// THEN only the parsed function is returned
-
-	// f := F(
-	// a,
-	// ^b,
-	// ) {
-	// a: b
-	// }
-	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(TERMINATOR, "\n"),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(TERMINATOR, "\n"),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "b"),
-		tok(DELIMITER, ","),
-		tok(TERMINATOR, "\n"),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(TERMINATOR, "\n"),
-		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, "\n"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
-	}
-
-	body := testFactory.NewBlock(
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		[]Statement{
-			testFactory.NewNonWrappedBlock(
-				[]Statement{
-					testFactory.NewAssignment(
-						testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
-						testFactory.NewLiteral(tok(NUMBER, "1")),
-					),
-				},
-			),
-		},
-	)
-
-	f := testFactory.NewFunction(
-		tok(FUNC, "F"),
-		testFactory.NewParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
-			[]Token{
-				tok(IDENTIFIER, "a"),
-			},
-			[]Token{
-				tok(IDENTIFIER, "b"),
-			},
-		),
-		body,
-	)
-
-	exp := testFactory.NewNonWrappedBlock(
-		[]Statement{
-			testFactory.NewAssignment(
-				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
-				f,
-			),
-		},
-	)
-
-	act, e := testFunc(testFactory, given)
-	expectOneStat(t, exp, act, e)
 }
 
 func quickOperationTest(t *testing.T, left, operator, right Token) {
@@ -639,7 +288,7 @@ func quickOperationTest(t *testing.T, left, operator, right Token) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S25(t *testing.T) {
+func Test_S6_1(t *testing.T) {
 
 	// GIVEN a simple addition
 	// THEN a single parsed operation is expected
@@ -652,7 +301,7 @@ func Test_S25(t *testing.T) {
 	)
 }
 
-func Test_S26(t *testing.T) {
+func Test_S6_2(t *testing.T) {
 
 	// GIVEN a simple subtraction
 	// THEN a single parsed operation is expected
@@ -665,7 +314,7 @@ func Test_S26(t *testing.T) {
 	)
 }
 
-func Test_S27(t *testing.T) {
+func Test_S6_3(t *testing.T) {
 
 	// GIVEN a simple multiplication
 	// THEN a single parsed operation is expected
@@ -678,7 +327,7 @@ func Test_S27(t *testing.T) {
 	)
 }
 
-func Test_S28(t *testing.T) {
+func Test_S6_4(t *testing.T) {
 
 	// GIVEN a simple division
 	// THEN a single parsed operation is expected
@@ -691,7 +340,7 @@ func Test_S28(t *testing.T) {
 	)
 }
 
-func Test_S29_1(t *testing.T) {
+func Test_S6_5(t *testing.T) {
 
 	// GIVEN a simple division
 	// THEN a single parsed operation is expected
@@ -704,7 +353,7 @@ func Test_S29_1(t *testing.T) {
 	)
 }
 
-func Test_S29_2(t *testing.T) {
+func Test_S6_6(t *testing.T) {
 
 	// GIVEN a simple logical AND operation
 	// THEN a single parsed operation is expected
@@ -717,7 +366,7 @@ func Test_S29_2(t *testing.T) {
 	)
 }
 
-func Test_S29_3(t *testing.T) {
+func Test_S6_7(t *testing.T) {
 
 	// GIVEN a simple logical OR operation
 	// THEN a single parsed operation is expected
@@ -730,7 +379,7 @@ func Test_S29_3(t *testing.T) {
 	)
 }
 
-func Test_S29_4(t *testing.T) {
+func Test_S6_8(t *testing.T) {
 
 	// GIVEN a simple logical == operation
 	// THEN a single parsed operation is expected
@@ -743,7 +392,7 @@ func Test_S29_4(t *testing.T) {
 	)
 }
 
-func Test_S29_5(t *testing.T) {
+func Test_S6_9(t *testing.T) {
 
 	// GIVEN a simple logical != operation
 	// THEN a single parsed operation is expected
@@ -756,7 +405,7 @@ func Test_S29_5(t *testing.T) {
 	)
 }
 
-func Test_S29_6(t *testing.T) {
+func Test_S6_10(t *testing.T) {
 
 	// GIVEN a simple logical < operation
 	// THEN a single parsed operation is expected
@@ -769,7 +418,7 @@ func Test_S29_6(t *testing.T) {
 	)
 }
 
-func Test_S29_7(t *testing.T) {
+func Test_S6_11(t *testing.T) {
 
 	// GIVEN a simple logical > operation
 	// THEN a single parsed operation is expected
@@ -782,7 +431,7 @@ func Test_S29_7(t *testing.T) {
 	)
 }
 
-func Test_S29_8(t *testing.T) {
+func Test_S6_12(t *testing.T) {
 
 	// GIVEN a simple logical <= operation
 	// THEN a single parsed operation is expected
@@ -795,7 +444,7 @@ func Test_S29_8(t *testing.T) {
 	)
 }
 
-func Test_S29_9(t *testing.T) {
+func Test_S6_13(t *testing.T) {
 
 	// GIVEN a simple logical >= operation
 	// THEN a single parsed operation is expected
@@ -808,7 +457,7 @@ func Test_S29_9(t *testing.T) {
 	)
 }
 
-func Test_S30(t *testing.T) {
+func Test_S6_14(t *testing.T) {
 
 	// GIVEN a simple addition
 	// WITH a negated right operand
@@ -836,7 +485,7 @@ func Test_S30(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S31(t *testing.T) {
+func Test_S6_15(t *testing.T) {
 
 	// GIVEN a complex operation
 	// WITH a additions and subtractions
@@ -869,7 +518,7 @@ func Test_S31(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S32(t *testing.T) {
+func Test_S6_16(t *testing.T) {
 
 	// GIVEN a complex operation
 	// WITH a multiplication and division
@@ -902,7 +551,7 @@ func Test_S32(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S33(t *testing.T) {
+func Test_S6_17(t *testing.T) {
 
 	// GIVEN a complex operation
 	// WHERE a multiplicative preceeds an addative
@@ -935,7 +584,7 @@ func Test_S33(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S34(t *testing.T) {
+func Test_S6_18(t *testing.T) {
 
 	// GIVEN a complex operation
 	// WHERE an additive preceeds a multiplicative
@@ -968,7 +617,7 @@ func Test_S34(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S35(t *testing.T) {
+func Test_S6_19(t *testing.T) {
 
 	// GIVEN a complex operation
 	// WITH multiple sub-expressions with different precedence
@@ -1017,7 +666,7 @@ func Test_S35(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S36(t *testing.T) {
+func Test_S6_20(t *testing.T) {
 
 	// GIVEN a really complex operation
 	// WITH multiple sub-expressions with different precedence
@@ -1108,6 +757,357 @@ func Test_S36(t *testing.T) {
 		tok(OR, "|"),
 		fifth,
 		ninth,
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S7_1(t *testing.T) {
+
+	// GIVEN a function
+	// WITH no parameters
+	// AND no statements in the body
+	// THEN only the parsed function is returned
+
+	// f := F() {}
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	f := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{},
+			[]Token{},
+		),
+		testFactory.NewBlock(
+			tok(BLOCK_OPEN, "{"),
+			tok(BLOCK_CLOSE, "}"),
+			[]Statement{},
+		),
+	)
+
+	exp := testFactory.NewNonWrappedBlock(
+		[]Statement{
+			testFactory.NewAssignment(
+				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S7_2(t *testing.T) {
+
+	// GIVEN a function
+	// WITH one input parameter
+	// AND no statements in the body
+	// THEN only the parsed function is returned
+
+	// f := F(a) {}
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(IDENTIFIER, "a"),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	f := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{
+				tok(IDENTIFIER, "a"),
+			},
+			[]Token{},
+		),
+		testFactory.NewBlock(
+			tok(BLOCK_OPEN, "{"),
+			tok(BLOCK_CLOSE, "}"),
+			[]Statement{},
+		),
+	)
+
+	exp := testFactory.NewNonWrappedBlock(
+		[]Statement{
+			testFactory.NewAssignment(
+				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S7_3(t *testing.T) {
+
+	// GIVEN a function
+	// WITH one output parameter
+	// AND no statements in the body
+	// THEN only the parsed function is returned
+
+	// f := F(^a) {}
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(OUTPUT, "^"),
+		tok(IDENTIFIER, "a"),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	f := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{},
+			[]Token{
+				tok(IDENTIFIER, "a"),
+			},
+		),
+		testFactory.NewBlock(
+			tok(BLOCK_OPEN, "{"),
+			tok(BLOCK_CLOSE, "}"),
+			[]Statement{},
+		),
+	)
+
+	exp := testFactory.NewNonWrappedBlock(
+		[]Statement{
+			testFactory.NewAssignment(
+				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S7_4(t *testing.T) {
+
+	// GIVEN a function
+	// WITH multiple parameters
+	// AND no statements in the body
+	// THEN only the parsed function is returned
+
+	// f := F(a, b, ^c, ^d) {}
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(IDENTIFIER, "a"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "b"),
+		tok(DELIMITER, ","),
+		tok(OUTPUT, "^"),
+		tok(IDENTIFIER, "c"),
+		tok(DELIMITER, ","),
+		tok(OUTPUT, "^"),
+		tok(IDENTIFIER, "d"),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	f := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{
+				tok(IDENTIFIER, "a"),
+				tok(IDENTIFIER, "b"),
+			},
+			[]Token{
+				tok(IDENTIFIER, "c"),
+				tok(IDENTIFIER, "d"),
+			},
+		),
+		testFactory.NewBlock(
+			tok(BLOCK_OPEN, "{"),
+			tok(BLOCK_CLOSE, "}"),
+			[]Statement{},
+		),
+	)
+
+	exp := testFactory.NewNonWrappedBlock(
+		[]Statement{
+			testFactory.NewAssignment(
+				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S7_5(t *testing.T) {
+
+	// GIVEN a function
+	// WITH no parameters
+	// AND a statement in the body
+	// THEN only the parsed function is returned
+
+	// f := F() {a := 1}
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(IDENTIFIER, "a"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	body := testFactory.NewBlock(
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		[]Statement{
+			testFactory.NewNonWrappedBlock(
+				[]Statement{
+					testFactory.NewAssignment(
+						testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+						testFactory.NewLiteral(tok(NUMBER, "1")),
+					),
+				},
+			),
+		},
+	)
+
+	f := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{},
+			[]Token{},
+		),
+		body,
+	)
+
+	exp := testFactory.NewNonWrappedBlock(
+		[]Statement{
+			testFactory.NewAssignment(
+				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(testFactory, given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S7_6(t *testing.T) {
+
+	// GIVEN a function
+	// WITH input and output parameters over several lines
+	// AND a statement in the body with leading and trailing linefeeds
+	// THEN only the parsed function is returned
+
+	// f := F(
+	// a,
+	// ^b,
+	// ) {
+	// a: b
+	// }
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(FUNC, "F"),
+		tok(PAREN_OPEN, "("),
+		tok(TERMINATOR, "\n"),
+		tok(IDENTIFIER, "a"),
+		tok(DELIMITER, ","),
+		tok(TERMINATOR, "\n"),
+		tok(OUTPUT, "^"),
+		tok(IDENTIFIER, "b"),
+		tok(DELIMITER, ","),
+		tok(TERMINATOR, "\n"),
+		tok(PAREN_CLOSE, ")"),
+		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, "\n"),
+		tok(IDENTIFIER, "a"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, "\n"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	body := testFactory.NewBlock(
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		[]Statement{
+			testFactory.NewNonWrappedBlock(
+				[]Statement{
+					testFactory.NewAssignment(
+						testFactory.NewIdentifier(tok(IDENTIFIER, "a")),
+						testFactory.NewLiteral(tok(NUMBER, "1")),
+					),
+				},
+			),
+		},
+	)
+
+	f := testFactory.NewFunction(
+		tok(FUNC, "F"),
+		testFactory.NewParameters(
+			tok(PAREN_OPEN, "("),
+			tok(PAREN_CLOSE, ")"),
+			[]Token{
+				tok(IDENTIFIER, "a"),
+			},
+			[]Token{
+				tok(IDENTIFIER, "b"),
+			},
+		),
+		body,
+	)
+
+	exp := testFactory.NewNonWrappedBlock(
+		[]Statement{
+			testFactory.NewAssignment(
+				testFactory.NewIdentifier(tok(IDENTIFIER, "f")),
+				f,
+			),
+		},
 	)
 
 	act, e := testFunc(testFactory, given)
