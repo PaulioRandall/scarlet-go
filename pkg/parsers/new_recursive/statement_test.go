@@ -1521,6 +1521,140 @@ func Test_S8_4(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S9_1(t *testing.T) {
+
+	// GIVEN a watch block
+	// WITH one identifier
+	// WITH no statements
+	// THEN only the parsed watch statement is returned
+
+	// watch a {}
+	given := []Token{
+		tok(WATCH, "watch"),
+		tok(IDENTIFIER, "a"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	body := newBlock(
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		[]Expression{},
+	)
+
+	exp := newWatch(
+		tok(WATCH, "watch"),
+		[]Token{
+			tok(IDENTIFIER, "a"),
+		},
+		body,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S9_2(t *testing.T) {
+
+	// GIVEN a watch block
+	// WITH multiple identifiers
+	// WITH no statements
+	// THEN only the parsed watch statement is returned
+
+	// watch a, b, c {}
+	given := []Token{
+		tok(WATCH, "watch"),
+		tok(IDENTIFIER, "a"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "b"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "c"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	body := newBlock(
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		[]Expression{},
+	)
+
+	exp := newWatch(
+		tok(WATCH, "watch"),
+		[]Token{
+			tok(IDENTIFIER, "a"),
+			tok(IDENTIFIER, "b"),
+			tok(IDENTIFIER, "c"),
+		},
+		body,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S9_3(t *testing.T) {
+
+	// GIVEN a watch block
+	// WITH one identifier
+	// WITH several statements
+	// THEN only the parsed watch statement is returned
+
+	// watch a, b, c {}
+	given := []Token{
+		tok(WATCH, "watch"),
+		tok(IDENTIFIER, "a"),
+		tok(BLOCK_OPEN, "{"),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(TERMINATOR, ""),
+		tok(IDENTIFIER, "a"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "3"),
+		tok(TERMINATOR, ""),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	first := newOperation(
+		tok(ADD, "+"),
+		newLiteral(tok(NUMBER, "1")),
+		newLiteral(tok(NUMBER, "2")),
+	)
+
+	second := newAssignmentBlock(
+		[]Assignment{
+			newAssignment(
+				newIdentifier(tok(IDENTIFIER, "a")),
+				newLiteral(tok(NUMBER, "3")),
+			),
+		},
+	)
+
+	body := newBlock(
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		[]Expression{
+			first,
+			second,
+		},
+	)
+
+	exp := newWatch(
+		tok(WATCH, "watch"),
+		[]Token{
+			tok(IDENTIFIER, "a"),
+		},
+		body,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token

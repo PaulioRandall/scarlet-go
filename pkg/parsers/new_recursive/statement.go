@@ -53,6 +53,9 @@ func statement(p *pipeline) (Expression, error) {
 	case p.matchSequence(IDENTIFIER, DELIMITER):
 		return assignment(p)
 
+	case p.match(WATCH):
+		return watch(p)
+
 	case p.match(VOID):
 		return assignment(p)
 	}
