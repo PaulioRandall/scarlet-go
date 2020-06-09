@@ -439,7 +439,7 @@ func expressionFunction(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	inputs, e := expressionFunctionInputs(p)
+	inputs, e := expressionFunctionParameters(p)
 	if e != nil {
 		return nil, e
 	}
@@ -452,15 +452,35 @@ func expressionFunction(p *pipeline) (Expression, error) {
 	return newExpressionFunction(key, inputs, expr), nil
 }
 
-func expressionFunctionInputs(p *pipeline) ([]Token, error) {
-	// pattern := PAREN_OPEN [identifier {DELIMITER identifier} [DELIMITER]] PAREN_CLOSE
-
-	in := []Token{}
+func expressionFunctionParameters(p *pipeline) ([]Token, error) {
+	// pattern := PAREN_OPEN parameters PAREN_CLOSE
 
 	_, e := p.expect(PAREN_OPEN)
 	if e != nil {
-		return in, e
+		return nil, e
 	}
+
+	if p.accept(PAREN_CLOSE) {
+		return []Token{}, nil
+	}
+
+	in, e := expressionFunctionInputs(p)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(PAREN_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	return in, nil
+}
+
+func expressionFunctionInputs(p *pipeline) ([]Token, error) {
+	// pattern := [identifier {DELIMITER identifier} [DELIMITER]]
+
+	in := []Token{}
 
 	for loop := true; loop; loop = acceptDelimiter(p, PAREN_CLOSE) {
 
@@ -470,11 +490,6 @@ func expressionFunctionInputs(p *pipeline) ([]Token, error) {
 		}
 
 		in = append(in, id)
-	}
-
-	_, e = p.expect(PAREN_CLOSE)
-	if e != nil {
-		return in, e
 	}
 
 	return in, nil

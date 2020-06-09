@@ -1347,6 +1347,180 @@ func Test_S7_6(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S8_1(t *testing.T) {
+
+	// GIVEN an expression function
+	// WITH no parameters
+	// WITH a simple expression
+	// THEN only the parsed expression function is returned
+
+	// f := E() 1
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(EXPR_FUNC, "E"),
+		tok(PAREN_OPEN, "("),
+		tok(PAREN_CLOSE, ")"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	f := newExpressionFunction(
+		tok(EXPR_FUNC, "E"),
+		[]Token{},
+		newLiteral(tok(NUMBER, "1")),
+	)
+
+	exp := newAssignmentBlock(
+		[]Assignment{
+			newAssignment(
+				newIdentifier(tok(IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S8_2(t *testing.T) {
+
+	// GIVEN an expression function
+	// WITH one parameter
+	// WITH a simple expression
+	// THEN only the parsed expression function is returned
+
+	// f := E(a) 1
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(EXPR_FUNC, "E"),
+		tok(PAREN_OPEN, "("),
+		tok(IDENTIFIER, "a"),
+		tok(PAREN_CLOSE, ")"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	f := newExpressionFunction(
+		tok(EXPR_FUNC, "E"),
+		[]Token{
+			tok(IDENTIFIER, "a"),
+		},
+		newLiteral(tok(NUMBER, "1")),
+	)
+
+	exp := newAssignmentBlock(
+		[]Assignment{
+			newAssignment(
+				newIdentifier(tok(IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S8_3(t *testing.T) {
+
+	// GIVEN an expression function
+	// WITH multiple parameters
+	// WITH a simple expression
+	// THEN only the parsed expression function is returned
+
+	// f := E(a) 1
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(EXPR_FUNC, "E"),
+		tok(PAREN_OPEN, "("),
+		tok(IDENTIFIER, "a"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "b"),
+		tok(DELIMITER, ","),
+		tok(IDENTIFIER, "c"),
+		tok(PAREN_CLOSE, ")"),
+		tok(NUMBER, "1"),
+		tok(TERMINATOR, ""),
+	}
+
+	f := newExpressionFunction(
+		tok(EXPR_FUNC, "E"),
+		[]Token{
+			tok(IDENTIFIER, "a"),
+			tok(IDENTIFIER, "b"),
+			tok(IDENTIFIER, "c"),
+		},
+		newLiteral(tok(NUMBER, "1")),
+	)
+
+	exp := newAssignmentBlock(
+		[]Assignment{
+			newAssignment(
+				newIdentifier(tok(IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S8_4(t *testing.T) {
+
+	// GIVEN an expression function
+	// WITH no parameters
+	// WITH a complex expression
+	// THEN only the parsed expression function is returned
+
+	// f := E() 1
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(EXPR_FUNC, "E"),
+		tok(PAREN_OPEN, "("),
+		tok(PAREN_CLOSE, ")"),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "3"),
+		tok(TERMINATOR, ""),
+	}
+
+	expr := newOperation(
+		tok(ADD, "+"),
+		newLiteral(tok(NUMBER, "1")),
+		newOperation(
+			tok(MULTIPLY, "*"),
+			newLiteral(tok(NUMBER, "2")),
+			newLiteral(tok(NUMBER, "3")),
+		),
+	)
+
+	f := newExpressionFunction(
+		tok(EXPR_FUNC, "E"),
+		[]Token{},
+		expr,
+	)
+
+	exp := newAssignmentBlock(
+		[]Assignment{
+			newAssignment(
+				newIdentifier(tok(IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token
