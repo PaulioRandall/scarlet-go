@@ -138,6 +138,39 @@ func (n negationExpr) String() string {
 	return NegationString(n)
 }
 
+type operationExpr struct {
+	operator    Token
+	left, right Expression
+}
+
+func (operationExpr) Kind() Kind {
+	return ST_OPERATION
+}
+
+func (o operationExpr) Operator() Token {
+	return o.operator
+}
+
+func (o operationExpr) Left() Expression {
+	return o.left
+}
+
+func (o operationExpr) Right() Expression {
+	return o.right
+}
+
+func (o operationExpr) Begin() (int, int) {
+	return o.left.Begin()
+}
+
+func (o operationExpr) End() (int, int) {
+	return o.right.End()
+}
+
+func (o operationExpr) String() string {
+	return OperationString(o)
+}
+
 type assignmentStat struct {
 	target Expression
 	source Expression
@@ -225,6 +258,40 @@ func (bk blockExpr) String() string {
 	return BlockString(bk)
 }
 
+type expressionFunctionExpr struct {
+	key    Token
+	inputs []Token
+	expr   Expression
+}
+
+func (expressionFunctionExpr) Kind() Kind {
+	return ST_EXPRESSION_FUNCTION
+}
+
+func (e expressionFunctionExpr) Key() Token {
+	return e.key
+}
+
+func (e expressionFunctionExpr) Inputs() []Token {
+	return e.inputs
+}
+
+func (e expressionFunctionExpr) Expr() Expression {
+	return e.expr
+}
+
+func (e expressionFunctionExpr) Begin() (int, int) {
+	return startPos(e.key)
+}
+
+func (e expressionFunctionExpr) End() (int, int) {
+	return e.expr.End()
+}
+
+func (e expressionFunctionExpr) String() string {
+	return ExpressionFunctionString(e)
+}
+
 type parametersDef struct {
 	open, close Token
 	inputs      []Token
@@ -295,37 +362,4 @@ func (f functionExpr) End() (int, int) {
 
 func (f functionExpr) String() string {
 	return FunctionString(f)
-}
-
-type operationExpr struct {
-	operator    Token
-	left, right Expression
-}
-
-func (operationExpr) Kind() Kind {
-	return ST_OPERATION
-}
-
-func (o operationExpr) Operator() Token {
-	return o.operator
-}
-
-func (o operationExpr) Left() Expression {
-	return o.left
-}
-
-func (o operationExpr) Right() Expression {
-	return o.right
-}
-
-func (o operationExpr) Begin() (int, int) {
-	return o.left.Begin()
-}
-
-func (o operationExpr) End() (int, int) {
-	return o.right.End()
-}
-
-func (o operationExpr) String() string {
-	return OperationString(o)
 }

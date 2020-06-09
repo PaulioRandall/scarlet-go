@@ -90,6 +90,9 @@ var patterns = []mat.Pattern{
 	pattern{MATCH, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "match")
 	}},
+	pattern{WATCH, func(s *mat.Symbols) (int, error) {
+		return matchWord(s, "watch")
+	}},
 	pattern{BOOL, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "false")
 	}},

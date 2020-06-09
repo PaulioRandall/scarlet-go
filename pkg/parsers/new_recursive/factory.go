@@ -65,9 +65,11 @@ func newBlock(open, close Token, stats []Expression) Block {
 	}
 }
 
-func newNonWrappedBlock(stats []Expression) Block {
-	return blockExpr{
-		stats: stats,
+func newExpressionFunction(key Token, inputs []Token, expr Expression) ExpressionFunction {
+	return expressionFunctionExpr{
+		key:    key,
+		inputs: inputs,
+		expr:   expr,
 	}
 }
 

@@ -23,6 +23,7 @@ const (
 	DEF
 	LIST
 	MATCH
+	WATCH
 	LOOP
 	SPELL
 	OUTPUT
@@ -70,6 +71,7 @@ var morphemes map[Morpheme]string = map[Morpheme]string{
 	DEF:                `DEFINE`,
 	LIST:               `LIST`,
 	MATCH:              `MATCH`,
+	WATCH:              `WATCH`,
 	LOOP:               `LOOP`,
 	SPELL:              `SPELL`,
 	OUTPUT:             `OUTPUT`,

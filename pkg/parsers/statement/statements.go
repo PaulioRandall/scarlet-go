@@ -172,6 +172,35 @@ func AssignmentBlockString(bk AssignmentBlock) string {
 	return b.String()
 }
 
+type ExpressionFunction interface {
+	Key() Token
+	Inputs() []Token
+	Expr() Expression
+}
+
+func ExpressionFunctionString(e ExpressionFunction) string {
+
+	b := builder{}
+
+	b.add(0, "[ExpressionFunction] ")
+
+	if len(e.Inputs()) > 0 {
+
+		b.newline()
+		b.add(1, "Inputs: ")
+
+		for _, in := range e.Inputs() {
+			b.newline()
+			b.addToken(2, in)
+		}
+	}
+
+	b.newline()
+	b.add(1, e.Expr().String())
+
+	return b.String()
+}
+
 type Parameters interface {
 	Expression
 	Open() Token
