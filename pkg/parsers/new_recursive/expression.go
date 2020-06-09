@@ -444,7 +444,7 @@ func expressionFunction(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	expr, e := operation(p)
+	expr, e := expectOperation(p)
 	if e != nil {
 		return nil, e
 	}

@@ -1758,3 +1758,23 @@ func Test_F14(t *testing.T) {
 	act, e := testFunc(given)
 	expectError(t, act, e)
 }
+
+func Test_F15(t *testing.T) {
+
+	// GIVEN an expression function
+	// WITH no expression
+	// THEN parser returns error
+
+	// f: E()
+	given := []Token{
+		tok(IDENTIFIER, "f"),
+		tok(ASSIGN, ":="),
+		tok(EXPR_FUNC, "E"),
+		tok(PAREN_OPEN, "("),
+		tok(PAREN_CLOSE, ")"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(given)
+	expectError(t, act, e)
+}
