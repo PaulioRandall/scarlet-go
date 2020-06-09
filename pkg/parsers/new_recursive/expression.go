@@ -260,12 +260,12 @@ func functionBody(p *pipeline) (Block, error) {
 	return newBlock(open, close, stats), nil
 }
 
-func functionStatements(p *pipeline) ([]Statement, error) {
+func functionStatements(p *pipeline) ([]Expression, error) {
 
 	var (
-		st Statement
+		st Expression
 		e  error
-		r  = []Statement{}
+		r  = []Expression{}
 	)
 
 	for loop := true; loop; {
@@ -283,7 +283,7 @@ func functionStatements(p *pipeline) ([]Statement, error) {
 	return r, nil
 }
 
-func functionStatement(p *pipeline) (st Statement, more bool, e error) {
+func functionStatement(p *pipeline) (st Expression, more bool, e error) {
 
 	st, e = statement(p)
 	if e != nil {

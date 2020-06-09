@@ -6,10 +6,6 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-type Statement interface {
-	Expression
-}
-
 type Expression interface {
 	Snippet
 	Kind() Kind
@@ -241,7 +237,7 @@ type Block interface {
 	Expression
 	Open() Token
 	Close() Token
-	Stats() []Statement
+	Stats() []Expression
 }
 
 func BlockString(bk Block) string {

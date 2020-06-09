@@ -57,7 +57,7 @@ func newAssignmentBlock(assignments []Assignment) AssignmentBlock {
 	}
 }
 
-func newBlock(open, close Token, stats []Statement) Block {
+func newBlock(open, close Token, stats []Expression) Block {
 	return blockExpr{
 		open:  open,
 		close: close,
@@ -65,7 +65,7 @@ func newBlock(open, close Token, stats []Statement) Block {
 	}
 }
 
-func newNonWrappedBlock(stats []Statement) Block {
+func newNonWrappedBlock(stats []Expression) Block {
 	return blockExpr{
 		stats: stats,
 	}

@@ -194,7 +194,7 @@ func (a assignmentBlockStat) String() string {
 
 type blockExpr struct {
 	open, close Token
-	stats       []Statement
+	stats       []Expression
 }
 
 func (blockExpr) Kind() Kind {
@@ -209,7 +209,7 @@ func (bk blockExpr) Close() Token {
 	return bk.close
 }
 
-func (bk blockExpr) Stats() []Statement {
+func (bk blockExpr) Stats() []Expression {
 	return bk.stats
 }
 

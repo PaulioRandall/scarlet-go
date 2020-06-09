@@ -7,11 +7,11 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-var testFunc func([]Token) ([]Statement, error) = ParseStatements
+var testFunc func([]Token) ([]Expression, error) = ParseStatements
 
 func Test_S1_1(t *testing.T) {
 
-	quickSoloTokenTest := func(t *testing.T, exp Statement, tk Token) {
+	quickSoloTokenTest := func(t *testing.T, exp Expression, tk Token) {
 
 		var given []Token
 		given = append(given, tk)
@@ -208,7 +208,7 @@ func Test_S5_1(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := []Statement{}
+	exp := []Expression{}
 
 	act, e := testFunc(given)
 	expectStats(t, exp, act, e)
@@ -224,7 +224,7 @@ func Test_S5_2(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := []Statement{}
+	exp := []Expression{}
 
 	act, e := testFunc(given)
 	expectStats(t, exp, act, e)
@@ -239,7 +239,7 @@ func Test_S5_3(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := []Statement{}
+	exp := []Expression{}
 
 	act, e := testFunc(given)
 	expectStats(t, exp, act, e)
@@ -256,7 +256,7 @@ func Test_S5_4(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := []Statement{}
+	exp := []Expression{}
 
 	act, e := testFunc(given)
 	expectStats(t, exp, act, e)
@@ -769,7 +769,7 @@ func Test_S6_20(t *testing.T) {
 
 func Test_S6_21(t *testing.T) {
 
-	quickParenTest := func(t *testing.T, exp Statement, tks ...Token) {
+	quickParenTest := func(t *testing.T, exp Expression, tks ...Token) {
 
 		var given []Token
 		given = append(given, tok(PAREN_OPEN, "("))
@@ -1026,7 +1026,7 @@ func Test_S7_1(t *testing.T) {
 		newBlock(
 			tok(BLOCK_OPEN, "{"),
 			tok(BLOCK_CLOSE, "}"),
-			[]Statement{},
+			[]Expression{},
 		),
 	)
 
@@ -1076,7 +1076,7 @@ func Test_S7_2(t *testing.T) {
 		newBlock(
 			tok(BLOCK_OPEN, "{"),
 			tok(BLOCK_CLOSE, "}"),
-			[]Statement{},
+			[]Expression{},
 		),
 	)
 
@@ -1127,7 +1127,7 @@ func Test_S7_3(t *testing.T) {
 		newBlock(
 			tok(BLOCK_OPEN, "{"),
 			tok(BLOCK_CLOSE, "}"),
-			[]Statement{},
+			[]Expression{},
 		),
 	)
 
@@ -1189,7 +1189,7 @@ func Test_S7_4(t *testing.T) {
 		newBlock(
 			tok(BLOCK_OPEN, "{"),
 			tok(BLOCK_CLOSE, "}"),
-			[]Statement{},
+			[]Expression{},
 		),
 	)
 
@@ -1231,7 +1231,7 @@ func Test_S7_5(t *testing.T) {
 	body := newBlock(
 		tok(BLOCK_OPEN, "{"),
 		tok(BLOCK_CLOSE, "}"),
-		[]Statement{
+		[]Expression{
 			newAssignmentBlock(
 				[]Assignment{
 					newAssignment(
@@ -1307,7 +1307,7 @@ func Test_S7_6(t *testing.T) {
 	body := newBlock(
 		tok(BLOCK_OPEN, "{"),
 		tok(BLOCK_CLOSE, "}"),
-		[]Statement{
+		[]Expression{
 			newAssignmentBlock(
 				[]Assignment{
 					newAssignment(

@@ -9,25 +9,25 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type ParseFunc func(in []Token) []Statement
+type ParseFunc func(in []Token) []Expression
 type TestFunc func(t *testing.T, pf ParseFunc)
 
 func tok(m Morpheme, v string) Token {
 	return NewToken(m, v, 0, 0)
 }
 
-func expectError(t *testing.T, acts []Statement, e error) {
+func expectError(t *testing.T, acts []Expression, e error) {
 	require.NotNil(t, e, "Expected error")
 	require.Nil(t, acts, "Only expected an error, but result was not nil")
 }
 
-func expectOneStat(t *testing.T, exp Statement, acts []Statement, e error) {
+func expectOneStat(t *testing.T, exp Expression, acts []Expression, e error) {
 	checkNoErr(t, e)
 	expectSize(t, 1, acts)
 	expectStat(t, exp, acts[0])
 }
 
-func expectStats(t *testing.T, exps []Statement, acts []Statement, e error) {
+func expectStats(t *testing.T, exps []Expression, acts []Expression, e error) {
 	checkNoErr(t, e)
 
 	expLen, actLen := len(exps), len(acts)
@@ -44,12 +44,12 @@ func expectStats(t *testing.T, exps []Statement, acts []Statement, e error) {
 	}
 }
 
-func expectStat(t *testing.T, exp, act Statement) {
+func expectStat(t *testing.T, exp, act Expression) {
 	require.Equal(t, exp, act,
 		"Expect: %s\nActual: %s", exp.String(), act.String())
 }
 
-func expectSize(t *testing.T, exp int, acts []Statement) {
+func expectSize(t *testing.T, exp int, acts []Expression) {
 	require.Equal(t, exp, len(acts),
 		"Expected %d statements, got %d", exp, len(acts))
 }

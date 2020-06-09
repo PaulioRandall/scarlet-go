@@ -6,14 +6,14 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func ParseStatements(tks []Token) ([]Statement, error) {
+func ParseStatements(tks []Token) ([]Expression, error) {
 	p := newPipeline(tks)
 	return statements(p)
 }
 
-func statements(p *pipeline) ([]Statement, error) {
+func statements(p *pipeline) ([]Expression, error) {
 
-	r := []Statement{}
+	r := []Expression{}
 
 	for p.hasMore() {
 
@@ -33,7 +33,7 @@ func statements(p *pipeline) ([]Statement, error) {
 	return r, nil
 }
 
-func expectStatement(p *pipeline) (Statement, error) {
+func expectStatement(p *pipeline) (Expression, error) {
 
 	st, e := statement(p)
 
@@ -44,7 +44,7 @@ func expectStatement(p *pipeline) (Statement, error) {
 	return st, e
 }
 
-func statement(p *pipeline) (Statement, error) {
+func statement(p *pipeline) (Expression, error) {
 	// pattern := assignment | expression
 
 	switch {
@@ -60,7 +60,7 @@ func statement(p *pipeline) (Statement, error) {
 	return operation(p)
 }
 
-func assignment(p *pipeline) (Statement, error) {
+func assignment(p *pipeline) (Expression, error) {
 	// pattern := assignment_targets ASSIGN assignment_sources
 
 	targets, e := assignmentTargets(p)
