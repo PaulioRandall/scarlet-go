@@ -151,31 +151,37 @@ func (l listAccessorExpr) String() string {
 	return ListAccessorString(l)
 }
 
-type List struct {
-	Open, Close Token
-	Items       []Expression
+type listConstructorExpr struct {
+	open, close Token
+	items       []Expression
 }
 
-func (l List) Begin() (int, int) {
-	return startPos(l.Open)
+func (listConstructorExpr) Kind() Kind {
+	return ST_LIST_CONSTRUCTOR
 }
 
-func (l List) End() (int, int) {
-	return endPos(l.Close)
+func (l listConstructorExpr) Open() Token {
+	return l.open
 }
 
-func (l List) String() string {
+func (l listConstructorExpr) Close() Token {
+	return l.close
+}
 
-	b := builder{}
+func (l listConstructorExpr) Items() []Expression {
+	return l.items
+}
 
-	b.add(0, "[List] ")
+func (l listConstructorExpr) Begin() (int, int) {
+	return startPos(l.open)
+}
 
-	for _, item := range l.Items {
-		b.newline()
-		b.add(1, item.String())
-	}
+func (l listConstructorExpr) End() (int, int) {
+	return endPos(l.close)
+}
 
-	return b.String()
+func (l listConstructorExpr) String() string {
+	return ListConstructorString(l)
 }
 
 type Assignment struct {

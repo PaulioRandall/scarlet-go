@@ -32,11 +32,11 @@ func newListAccessor(id, index Expression) Expression {
 	}
 }
 
-func newList(open, close Token, items []Expression) List {
-	return List{
-		Open:  open,
-		Items: items,
-		Close: close,
+func newList(open, close Token, items []Expression) Expression {
+	return listConstructorExpr{
+		open:  open,
+		close: close,
+		items: items,
 	}
 }
 

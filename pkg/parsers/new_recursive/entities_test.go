@@ -18,12 +18,12 @@ func Test_Literal(t *testing.T) {
 	var _ Literal = literalExpr{}
 }
 
-func Test_List(t *testing.T) {
-	var _ Statement = List{}
-}
-
 func Test_ListAccessor(t *testing.T) {
 	var _ ListAccessor = listAccessorExpr{}
+}
+
+func Test_List(t *testing.T) {
+	var _ ListConstructor = listConstructorExpr{}
 }
 
 func Test_Negation(t *testing.T) {
