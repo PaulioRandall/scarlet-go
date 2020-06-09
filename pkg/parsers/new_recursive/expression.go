@@ -166,137 +166,6 @@ func listAccessor(p *pipeline, left Expression) (Expression, error) {
 	return newListAccessor(left, index), nil
 }
 
-func function(p *pipeline) (Expression, error) {
-	// pattern := FUNC function_parameters function_body
-
-	key, e := p.expect(FUNC)
-	if e != nil {
-		return nil, e
-	}
-
-	params, e := functionParameters(p)
-	if e != nil {
-		return nil, e
-	}
-
-	body, e := functionBody(p)
-	if e != nil {
-		return nil, e
-	}
-
-	return newFunction(key, params, body), nil
-}
-
-func functionParameters(p *pipeline) (Parameters, error) {
-	// pattern := PAREN_OPEN [expression {DELIMITER expression}] PAREN_CLOSE
-
-	open, e := p.expect(PAREN_OPEN)
-	if e != nil {
-		return nil, e
-	}
-
-	inputs, outputs, e := parameterIdentifiers(p)
-	if e != nil {
-		return nil, e
-	}
-
-	close, e := p.expect(PAREN_CLOSE)
-	if e != nil {
-		return nil, e
-	}
-
-	return newParameters(open, close, inputs, outputs), nil
-}
-
-func parameterIdentifiers(p *pipeline) (in []Token, out []Token, _ error) {
-
-	in = []Token{}
-	out = []Token{}
-
-	if p.match(PAREN_CLOSE) {
-		return in, out, nil
-	}
-
-	p.accept(TERMINATOR)
-	for loop := true; loop; loop = acceptDelimiter(p, PAREN_CLOSE) {
-
-		id, isOutput, e := functionParam(p)
-		if e != nil {
-			return nil, nil, e
-		}
-
-		if isOutput {
-			out = append(out, id)
-		} else {
-			in = append(in, id)
-		}
-	}
-
-	return in, out, nil
-}
-
-func functionParam(p *pipeline) (Token, bool, error) {
-	output := p.accept(OUTPUT)
-	id, e := p.expect(IDENTIFIER)
-	return id, output, e
-}
-
-func functionBody(p *pipeline) (Block, error) {
-
-	open, e := p.expect(BLOCK_OPEN)
-	if e != nil {
-		return nil, e
-	}
-
-	p.accept(TERMINATOR)
-	stats, e := functionStatements(p)
-
-	p.accept(TERMINATOR)
-	close, e := p.expect(BLOCK_CLOSE)
-	if e != nil {
-		return nil, e
-	}
-
-	return newBlock(open, close, stats), nil
-}
-
-func functionStatements(p *pipeline) ([]Expression, error) {
-
-	var (
-		st Expression
-		e  error
-		r  = []Expression{}
-	)
-
-	for loop := true; loop; {
-
-		st, loop, e = functionStatement(p)
-		if e != nil {
-			return nil, e
-		}
-
-		if st != nil {
-			r = append(r, st)
-		}
-	}
-
-	return r, nil
-}
-
-func functionStatement(p *pipeline) (st Expression, more bool, e error) {
-
-	st, e = statement(p)
-	if e != nil {
-		return nil, false, e
-	}
-
-	if st == nil {
-		return nil, false, nil
-	}
-
-	return st, p.accept(TERMINATOR), nil
-}
-
 func operations(p *pipeline) ([]Expression, error) {
 	// pattern := [operation {DELIM operation}]
 
@@ -429,4 +298,184 @@ func expectOperation(p *pipeline) (Expression, error) {
 	}
 
 	return expr, nil
+}
+
+func function(p *pipeline) (Expression, error) {
+	// pattern := FUNC function_parameters function_body
+
+	key, e := p.expect(FUNC)
+	if e != nil {
+		return nil, e
+	}
+
+	params, e := functionParameters(p)
+	if e != nil {
+		return nil, e
+	}
+
+	body, e := functionBody(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return newFunction(key, params, body), nil
+}
+
+func functionParameters(p *pipeline) (Parameters, error) {
+	// pattern := PAREN_OPEN [expression {DELIMITER expression}] PAREN_CLOSE
+
+	open, e := p.expect(PAREN_OPEN)
+	if e != nil {
+		return nil, e
+	}
+
+	inputs, outputs, e := parameterIdentifiers(p)
+	if e != nil {
+		return nil, e
+	}
+
+	close, e := p.expect(PAREN_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	return newParameters(open, close, inputs, outputs), nil
+}
+
+func parameterIdentifiers(p *pipeline) (in []Token, out []Token, _ error) {
+
+	in = []Token{}
+	out = []Token{}
+
+	if p.match(PAREN_CLOSE) {
+		return in, out, nil
+	}
+
+	p.accept(TERMINATOR)
+	for loop := true; loop; loop = acceptDelimiter(p, PAREN_CLOSE) {
+
+		id, isOutput, e := functionParam(p)
+		if e != nil {
+			return nil, nil, e
+		}
+
+		if isOutput {
+			out = append(out, id)
+		} else {
+			in = append(in, id)
+		}
+	}
+
+	return in, out, nil
+}
+
+func functionParam(p *pipeline) (Token, bool, error) {
+	output := p.accept(OUTPUT)
+	id, e := p.expect(IDENTIFIER)
+	return id, output, e
+}
+
+func functionBody(p *pipeline) (Block, error) {
+
+	open, e := p.expect(BLOCK_OPEN)
+	if e != nil {
+		return nil, e
+	}
+
+	p.accept(TERMINATOR)
+	stats, e := functionStatements(p)
+
+	p.accept(TERMINATOR)
+	close, e := p.expect(BLOCK_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	return newBlock(open, close, stats), nil
+}
+
+func functionStatements(p *pipeline) ([]Expression, error) {
+
+	var (
+		st Expression
+		e  error
+		r  = []Expression{}
+	)
+
+	for loop := true; loop; {
+
+		st, loop, e = functionStatement(p)
+		if e != nil {
+			return nil, e
+		}
+
+		if st != nil {
+			r = append(r, st)
+		}
+	}
+
+	return r, nil
+}
+
+func functionStatement(p *pipeline) (st Expression, more bool, e error) {
+
+	st, e = statement(p)
+	if e != nil {
+		return nil, false, e
+	}
+
+	if st == nil {
+		return nil, false, nil
+	}
+
+	return st, p.accept(TERMINATOR), nil
+}
+
+func expressionFunction(p *pipeline) (Expression, error) {
+	// pattern := EXPR_FUNC exprFuncInputs expression
+
+	key, e := p.expect(EXPR_FUNC)
+	if e != nil {
+		return nil, e
+	}
+
+	inputs, e := expressionFunctionInputs(p)
+	if e != nil {
+		return nil, e
+	}
+
+	expr, e := operation(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return newExpressionFunction(key, inputs, expr), nil
+}
+
+func expressionFunctionInputs(p *pipeline) ([]Token, error) {
+	// pattern := PAREN_OPEN [identifier {DELIMITER identifier} [DELIMITER]] PAREN_CLOSE
+
+	in := []Token{}
+
+	_, e := p.expect(PAREN_OPEN)
+	if e != nil {
+		return in, e
+	}
+
+	for loop := true; loop; loop = acceptDelimiter(p, PAREN_CLOSE) {
+
+		id, e := p.expect(IDENTIFIER)
+		if e != nil {
+			return nil, e
+		}
+
+		in = append(in, id)
+	}
+
+	_, e = p.expect(PAREN_CLOSE)
+	if e != nil {
+		return in, e
+	}
+
+	return in, nil
 }

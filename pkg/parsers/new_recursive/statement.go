@@ -89,7 +89,18 @@ func assignment(p *pipeline) (Expression, error) {
 func assignmentSources(p *pipeline) ([]Expression, error) {
 
 	if p.match(FUNC) {
+
 		src, e := function(p)
+		if e != nil {
+			return nil, e
+		}
+
+		return []Expression{src}, nil
+	}
+
+	if p.match(EXPR_FUNC) {
+
+		src, e := expressionFunction(p)
 		if e != nil {
 			return nil, e
 		}

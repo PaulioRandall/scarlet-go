@@ -6,6 +6,8 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/parsers/statement"
 )
 
+// TODO: Is this redundant?
+
 func Test_Void(t *testing.T) {
 	var _ Void = voidExpr{}
 }
@@ -48,4 +50,8 @@ func Test_Parameters(t *testing.T) {
 
 func Test_Function(t *testing.T) {
 	var _ Function = functionExpr{}
+}
+
+func Test_ExpressionFunction(t *testing.T) {
+	var _ ExpressionFunction = expressionFunctionExpr{}
 }

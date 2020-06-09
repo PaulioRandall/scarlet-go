@@ -173,6 +173,7 @@ func AssignmentBlockString(bk AssignmentBlock) string {
 }
 
 type ExpressionFunction interface {
+	Expression
 	Key() Token
 	Inputs() []Token
 	Expr() Expression
