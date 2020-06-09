@@ -4,11 +4,11 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func S1() (string, []Token) {
+func S1() (in string, expects []Token) {
 
-	in := "x := 1"
+	in = "x := 1"
 
-	exps := []Token{
+	expects = []Token{
 		NewToken(IDENTIFIER, "x", 0, 0),
 		NewToken(WHITESPACE, " ", 0, 1),
 		NewToken(ASSIGN, ":=", 0, 2),
@@ -16,14 +16,14 @@ func S1() (string, []Token) {
 		NewToken(NUMBER, "1", 0, 5),
 	}
 
-	return in, exps
+	return in, expects
 }
 
-func S2() (string, []Token) {
+func S2() (in string, expects []Token) {
 
-	in := "x,y:=1,true"
+	in = "x,y:=1,true"
 
-	exps := []Token{
+	expects = []Token{
 		NewToken(IDENTIFIER, "x", 0, 0),
 		NewToken(DELIMITER, ",", 0, 1),
 		NewToken(IDENTIFIER, "y", 0, 2),
@@ -33,14 +33,14 @@ func S2() (string, []Token) {
 		NewToken(BOOL, "true", 0, 7),
 	}
 
-	return in, exps
+	return in, expects
 }
 
-func S3() (string, []Token) {
+func S3() (in string, expects []Token) {
 
-	in := "[1<2] x:=true"
+	in = "[1<2] x:=true"
 
-	exps := []Token{
+	expects = []Token{
 		NewToken(GUARD_OPEN, "[", 0, 0),
 		NewToken(NUMBER, "1", 0, 1),
 		NewToken(LESS_THAN, "<", 0, 2),
@@ -52,18 +52,18 @@ func S3() (string, []Token) {
 		NewToken(BOOL, "true", 0, 9),
 	}
 
-	return in, exps
+	return in, expects
 }
 
-func S4() (string, []Token) {
+func S4() (in string, expects []Token) {
 
-	in := "match abc {\n" +
+	in = "match abc {\n" +
 		"\t1 -> x:=true\n" +
 		"\t[false] -> x:=false\n" +
 		"\t[true] -> x:=true\n" +
 		"}"
 
-	exps := []Token{
+	expects = []Token{
 		NewToken(MATCH, "match", 0, 0), // Line start
 		NewToken(WHITESPACE, " ", 0, 5),
 		NewToken(IDENTIFIER, "abc", 0, 6),
@@ -104,14 +104,14 @@ func S4() (string, []Token) {
 		NewToken(BLOCK_CLOSE, "}", 4, 0), // Line start
 	}
 
-	return in, exps
+	return in, expects
 }
 
-func S5() (string, []Token) {
+func S5() (in string, expects []Token) {
 
-	in := "F(a,b,^c,^d)"
+	in = "F(a,b,^c,^d)"
 
-	exps := []Token{
+	expects = []Token{
 		NewToken(FUNC, "F", 0, 0),
 		NewToken(PAREN_OPEN, "(", 0, 1),
 		NewToken(IDENTIFIER, "a", 0, 2),
@@ -126,14 +126,14 @@ func S5() (string, []Token) {
 		NewToken(PAREN_CLOSE, ")", 0, 11),
 	}
 
-	return in, exps
+	return in, expects
 }
 
-func S6() (string, []Token) {
+func S6() (in string, expects []Token) {
 
-	in := "xyz(a,b)"
+	in = "xyz(a,b)"
 
-	exps := []Token{
+	expects = []Token{
 		NewToken(IDENTIFIER, "xyz", 0, 0),
 		NewToken(PAREN_OPEN, "(", 0, 3),
 		NewToken(IDENTIFIER, "a", 0, 4),
@@ -142,14 +142,14 @@ func S6() (string, []Token) {
 		NewToken(PAREN_CLOSE, ")", 0, 7),
 	}
 
-	return in, exps
+	return in, expects
 }
 
-func S7() (string, []Token) {
+func S7() (in string, expects []Token) {
 
-	in := "1+2-3*4/5%6"
+	in = "1+2-3*4/5%6"
 
-	exps := []Token{
+	expects = []Token{
 		NewToken(NUMBER, "1", 0, 0),
 		NewToken(ADD, "+", 0, 1),
 		NewToken(NUMBER, "2", 0, 2),
@@ -163,17 +163,17 @@ func S7() (string, []Token) {
 		NewToken(NUMBER, "6", 0, 10),
 	}
 
-	return in, exps
+	return in, expects
 }
 
-func S8() (string, []Token) {
+func S8() (in string, expects []Token) {
 
-	in := "{\n" +
+	in = "{\n" +
 		"\tx:=1\n" +
 		"\ty:=2\n" +
 		"}"
 
-	exps := []Token{
+	expects = []Token{
 		NewToken(BLOCK_OPEN, "{", 0, 0), // Line Start
 		NewToken(NEWLINE, "\n", 0, 1),
 		NewToken(WHITESPACE, "\t", 1, 0), // Line Start
@@ -189,14 +189,14 @@ func S8() (string, []Token) {
 		NewToken(BLOCK_CLOSE, "}", 3, 0), // Line Start
 	}
 
-	return in, exps
+	return in, expects
 }
 
-func S10() (string, []Token) {
+func S10() (in string, expects []Token) {
 
-	in := "loop i := 0 [i<5] {}"
+	in = "loop i := 0 [i<5] {}"
 
-	exps := []Token{
+	expects = []Token{
 		NewToken(LOOP, "loop", 0, 0),
 		NewToken(WHITESPACE, " ", 0, 4),
 		NewToken(IDENTIFIER, "i", 0, 5),
@@ -215,5 +215,5 @@ func S10() (string, []Token) {
 		NewToken(BLOCK_CLOSE, "}", 0, 19),
 	}
 
-	return in, exps
+	return in, expects
 }
