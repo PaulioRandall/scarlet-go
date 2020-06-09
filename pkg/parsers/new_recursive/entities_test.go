@@ -7,15 +7,15 @@ import (
 )
 
 func Test_Void(t *testing.T) {
-	var _ Expression = voidExpr{}
+	var _ Void = voidExpr{}
 }
 
 func Test_Identifier(t *testing.T) {
-	var _ Expression = identifierExpr{}
+	var _ Identifier = identifierExpr{}
 }
 
 func Test_Literal(t *testing.T) {
-	var _ Expression = literalExpr{}
+	var _ Literal = literalExpr{}
 }
 
 func Test_List(t *testing.T) {
@@ -23,7 +23,7 @@ func Test_List(t *testing.T) {
 }
 
 func Test_ListAccessor(t *testing.T) {
-	var _ Statement = ListAccessor{}
+	var _ ListAccessor = listAccessorExpr{}
 }
 
 func Test_Negation(t *testing.T) {

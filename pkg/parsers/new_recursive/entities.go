@@ -122,36 +122,33 @@ func (l literalExpr) String() string {
 	return LiteralString(l)
 }
 
-type ListAccessor struct {
-	List  Expression
-	Index Expression
+type listAccessorExpr struct {
+	id    Expression
+	index Expression
 }
 
-func (la ListAccessor) Begin() (int, int) {
-	return la.List.Begin()
+func (listAccessorExpr) Kind() Kind {
+	return ST_LIST_ACCESSOR
 }
 
-func (la ListAccessor) End() (int, int) {
-	return la.Index.End()
+func (l listAccessorExpr) ID() Expression {
+	return l.id
 }
 
-func (la ListAccessor) String() string {
+func (l listAccessorExpr) Index() Expression {
+	return l.id
+}
 
-	b := builder{}
+func (l listAccessorExpr) Begin() (int, int) {
+	return l.id.Begin()
+}
 
-	b.add(0, "[ListAccessor] ")
+func (l listAccessorExpr) End() (int, int) {
+	return l.index.End()
+}
 
-	b.newline()
-	b.add(1, "List: ")
-	b.newline()
-	b.add(2, la.List.String())
-
-	b.newline()
-	b.add(1, "Index: ")
-	b.newline()
-	b.add(2, la.Index.String())
-
-	return b.String()
+func (l listAccessorExpr) String() string {
+	return ListAccessorString(l)
 }
 
 type List struct {

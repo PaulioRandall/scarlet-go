@@ -25,18 +25,18 @@ func newLiteral(tk Token) Expression {
 	return literalExpr{tk}
 }
 
+func newListAccessor(id, index Expression) Expression {
+	return listAccessorExpr{
+		id:    id,
+		index: index,
+	}
+}
+
 func newList(open, close Token, items []Expression) List {
 	return List{
 		Open:  open,
 		Items: items,
 		Close: close,
-	}
-}
-
-func newListAccessor(list, index Expression) ListAccessor {
-	return ListAccessor{
-		List:  list,
-		Index: index,
 	}
 }
 

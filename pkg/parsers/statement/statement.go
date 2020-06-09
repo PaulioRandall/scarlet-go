@@ -66,3 +66,27 @@ func LiteralString(l Literal) string {
 
 	return b.String()
 }
+
+type ListAccessor interface {
+	ID() Expression
+	Index() Expression
+}
+
+func ListAccessorString(l ListAccessor) string {
+
+	b := builder{}
+
+	b.add(0, "[ListAccessor] ")
+
+	b.newline()
+	b.add(1, "ID: ")
+	b.newline()
+	b.add(2, l.ID().String())
+
+	b.newline()
+	b.add(1, "Index: ")
+	b.newline()
+	b.add(2, l.Index().String())
+
+	return b.String()
+}
