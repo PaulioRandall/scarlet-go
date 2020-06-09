@@ -55,9 +55,6 @@ func expression(p *pipeline) (Expression, error) {
 
 	case p.match(PAREN_OPEN):
 		return group(p)
-
-	case p.match(FUNC):
-		return function(p)
 	}
 
 	return nil, nil

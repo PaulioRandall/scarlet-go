@@ -20,6 +20,7 @@ const (
 	ST_EXPRESSION_FUNCTION
 	ST_PARAMETERS
 	ST_FUNCTION
+	ST_WATCH
 )
 
 var kinds map[Kind]string = map[Kind]string{
@@ -36,6 +37,7 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_EXPRESSION_FUNCTION: `Expression-Function`,
 	ST_PARAMETERS:          `Parameters`,
 	ST_FUNCTION:            `Function`,
+	ST_WATCH:               `Watch`,
 }
 
 func (k Kind) String() string {

@@ -280,3 +280,29 @@ func BlockString(bk Block) string {
 
 	return b.String()
 }
+
+type Watch interface {
+	Expression
+	Key() Token
+	Identifiers() []Token
+	Body() Block
+}
+
+func WatchString(w Watch) string {
+
+	b := builder{}
+
+	b.add(0, "[Watch] ")
+
+	b.newline()
+	b.add(1, "Identifiers:")
+	for _, id := range w.Identifiers() {
+		b.newline()
+		b.addToken(2, id)
+	}
+
+	b.newline()
+	b.add(1, BlockString(w.Body()))
+
+	return b.String()
+}
