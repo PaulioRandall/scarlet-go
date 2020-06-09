@@ -234,118 +234,112 @@ func (a assignmentStat) End() (int, int) {
 }
 
 func (a assignmentStat) String() string {
-
-	b := builder{}
-
-	b.add(0, "[Assignment] ")
-
-	b.newline()
-	b.add(1, "Target: ")
-	b.newline()
-	b.add(1, a.target.String())
-
-	b.newline()
-	b.add(1, "Source: ")
-	b.newline()
-	b.add(2, a.source.String())
-
-	return b.String()
+	return AssignmentString(a)
 }
 
-type Block struct {
-	start, end Token
-	Stats      []Statement
-}
-
-func (bk Block) Begin() (int, int) {
-	return startPos(bk.start)
-}
-
-func (bk Block) End() (int, int) {
-	return startPos(bk.end)
-}
-
-func (bk Block) String() string {
-
-	b := builder{}
-
-	for _, a := range bk.Stats {
-		b.add(0, a.String())
-	}
-
-	return b.String()
-}
-
-type Parameters struct {
+type blockExpr struct {
 	open, close Token
-	Inputs      []Token
-	Outputs     []Token
+	stats       []Statement
 }
 
-func (p Parameters) Begin() (int, int) {
+func (blockExpr) Kind() Kind {
+	return ST_BLOCK
+}
+
+func (bk blockExpr) Open() Token {
+	return bk.open
+}
+
+func (bk blockExpr) Close() Token {
+	return bk.close
+}
+
+func (bk blockExpr) Stats() []Statement {
+	return bk.stats
+}
+
+func (bk blockExpr) Begin() (int, int) {
+	return startPos(bk.open)
+}
+
+func (bk blockExpr) End() (int, int) {
+	return startPos(bk.close)
+}
+
+func (bk blockExpr) String() string {
+	return BlockString(bk)
+}
+
+type parametersDef struct {
+	open, close Token
+	inputs      []Token
+	outputs     []Token
+}
+
+func (parametersDef) Kind() Kind {
+	return ST_PARAMETERS
+}
+
+func (p parametersDef) Open() Token {
+	return p.open
+}
+
+func (p parametersDef) Close() Token {
+	return p.close
+}
+
+func (p parametersDef) Inputs() []Token {
+	return p.inputs
+}
+
+func (p parametersDef) Outputs() []Token {
+	return p.outputs
+}
+
+func (p parametersDef) Begin() (int, int) {
 	return startPos(p.open)
 }
 
-func (p Parameters) End() (int, int) {
+func (p parametersDef) End() (int, int) {
 	return endPos(p.close)
 }
 
-func (p Parameters) String() string {
-
-	b := builder{}
-
-	b.add(0, "[Parameters] ")
-
-	if len(p.Inputs) > 0 {
-		b.newline()
-		b.add(1, "Inputs: ")
-
-		for _, in := range p.Inputs {
-			b.newline()
-			b.addToken(2, in)
-		}
-	}
-
-	if len(p.Inputs) > 0 {
-		b.newline()
-		b.add(1, "Outputs: ")
-
-		for _, out := range p.Outputs {
-			b.newline()
-			b.addToken(2, out)
-		}
-	}
-
-	return b.String()
+func (p parametersDef) String() string {
+	return ParametersString(p)
 }
 
-type Function struct {
+type functionExpr struct {
 	key    Token
-	Params Parameters
-	Body   Block
+	params Parameters
+	body   Block
 }
 
-func (f Function) Begin() (int, int) {
+func (functionExpr) Kind() Kind {
+	return ST_FUNCTION
+}
+
+func (f functionExpr) Key() Token {
+	return f.key
+}
+
+func (f functionExpr) Params() Parameters {
+	return f.params
+}
+
+func (f functionExpr) Body() Block {
+	return f.body
+}
+
+func (f functionExpr) Begin() (int, int) {
 	return startPos(f.key)
 }
 
-func (f Function) End() (int, int) {
-	return f.Body.End()
+func (f functionExpr) End() (int, int) {
+	return f.body.End()
 }
 
-func (f Function) String() string {
-
-	b := builder{}
-
-	b.add(0, "[Function] ")
-
-	b.newline()
-	b.add(1, f.Params.String())
-
-	b.newline()
-	b.add(1, f.Body.String())
-
-	return b.String()
+func (f functionExpr) String() string {
+	return FunctionString(f)
 }
 
 type Operation struct {

@@ -26,6 +26,7 @@ type Snippet interface {
 }
 
 type Void interface {
+	NewExpression
 	Tk() Token
 }
 
@@ -40,6 +41,7 @@ func VoidString(v Void) string {
 }
 
 type Identifier interface {
+	NewExpression
 	Tk() Token
 }
 
@@ -54,6 +56,7 @@ func IdentifierString(id Identifier) string {
 }
 
 type Literal interface {
+	NewExpression
 	Tk() Token
 }
 
@@ -68,6 +71,7 @@ func LiteralString(l Literal) string {
 }
 
 type ListAccessor interface {
+	NewExpression
 	ID() Expression
 	Index() Expression
 }
@@ -92,6 +96,7 @@ func ListAccessorString(l ListAccessor) string {
 }
 
 type ListConstructor interface {
+	NewExpression
 	Open() Token
 	Close() Token
 	Items() []Expression
@@ -112,6 +117,7 @@ func ListConstructorString(l ListConstructor) string {
 }
 
 type Negation interface {
+	NewExpression
 	Expr() Expression
 }
 
@@ -128,6 +134,7 @@ func NegationString(n Negation) string {
 }
 
 type Assignment interface {
+	NewExpression
 	Target() Expression
 	Source() Expression
 }
@@ -147,6 +154,85 @@ func AssignmentString(a Assignment) string {
 	b.add(1, "Source: ")
 	b.newline()
 	b.add(2, a.Source().String())
+
+	return b.String()
+}
+
+type Block interface {
+	NewExpression
+	Open() Token
+	Close() Token
+	Stats() []Statement
+}
+
+func BlockString(bk Block) string {
+
+	b := builder{}
+
+	for _, a := range bk.Stats() {
+		b.add(0, a.String())
+	}
+
+	return b.String()
+}
+
+type Parameters interface {
+	NewExpression
+	Open() Token
+	Close() Token
+	Inputs() []Token
+	Outputs() []Token
+}
+
+func ParametersString(p Parameters) string {
+
+	b := builder{}
+
+	b.add(0, "[Parameters] ")
+
+	if len(p.Inputs()) > 0 {
+
+		b.newline()
+		b.add(1, "Inputs: ")
+
+		for _, in := range p.Inputs() {
+			b.newline()
+			b.addToken(2, in)
+		}
+	}
+
+	if len(p.Outputs()) > 0 {
+
+		b.newline()
+		b.add(1, "Outputs: ")
+
+		for _, out := range p.Outputs() {
+			b.newline()
+			b.addToken(2, out)
+		}
+	}
+
+	return b.String()
+}
+
+type Function interface {
+	NewExpression
+	Key() Token
+	Params() Parameters
+	Body() Block
+}
+
+func FunctionString(f Function) string {
+
+	b := builder{}
+
+	b.add(0, "[Function] ")
+
+	b.newline()
+	b.add(1, ParametersString(f.Params()))
+
+	b.newline()
+	b.add(1, BlockString(f.Body()))
 
 	return b.String()
 }

@@ -35,15 +35,15 @@ func Test_Assignment(t *testing.T) {
 }
 
 func Test_Block(t *testing.T) {
-	var _ Statement = Block{}
+	var _ Block = blockExpr{}
 }
 
 func Test_Parameters(t *testing.T) {
-	var _ Expression = Parameters{}
+	var _ Parameters = parametersDef{}
 }
 
 func Test_Function(t *testing.T) {
-	var _ Expression = Function{}
+	var _ Function = functionExpr{}
 }
 
 func Test_Operation(t *testing.T) {

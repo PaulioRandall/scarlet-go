@@ -190,21 +190,19 @@ func function(p *pipeline) (Expression, error) {
 func functionParameters(p *pipeline) (Parameters, error) {
 	// pattern := PAREN_OPEN [expression {DELIMITER expression}] PAREN_CLOSE
 
-	NIL := Parameters{}
-
 	open, e := p.expect(PAREN_OPEN)
 	if e != nil {
-		return NIL, e
+		return nil, e
 	}
 
 	inputs, outputs, e := parameterIdentifiers(p)
 	if e != nil {
-		return NIL, e
+		return nil, e
 	}
 
 	close, e := p.expect(PAREN_CLOSE)
 	if e != nil {
-		return NIL, e
+		return nil, e
 	}
 
 	return newParameters(open, close, inputs, outputs), nil
@@ -245,11 +243,9 @@ func functionParam(p *pipeline) (Token, bool, error) {
 
 func functionBody(p *pipeline) (Block, error) {
 
-	NIL := Block{}
-
 	open, e := p.expect(BLOCK_OPEN)
 	if e != nil {
-		return NIL, e
+		return nil, e
 	}
 
 	p.accept(TERMINATOR)
@@ -258,7 +254,7 @@ func functionBody(p *pipeline) (Block, error) {
 	p.accept(TERMINATOR)
 	close, e := p.expect(BLOCK_CLOSE)
 	if e != nil {
-		return NIL, e
+		return nil, e
 	}
 
 	return newBlock(open, close, stats), nil

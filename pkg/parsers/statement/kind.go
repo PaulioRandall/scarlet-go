@@ -13,8 +13,11 @@ const (
 	ST_LITERAL
 	ST_LIST_ACCESSOR
 	ST_LIST_CONSTRUCTOR
-	ST_ASSIGNMENT
 	ST_NEGATION
+	ST_ASSIGNMENT
+	ST_BLOCK
+	ST_PARAMETERS
+	ST_FUNCTION
 )
 
 var kinds map[Kind]string = map[Kind]string{
@@ -24,8 +27,11 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_LITERAL:          `Literal`,
 	ST_LIST_ACCESSOR:    `List-Accessor`,
 	ST_LIST_CONSTRUCTOR: `List-Constructor`,
-	ST_ASSIGNMENT:       `Assignment`,
 	ST_NEGATION:         `Negation`,
+	ST_ASSIGNMENT:       `Assignment`,
+	ST_BLOCK:            `Block`,
+	ST_PARAMETERS:       `Parameters`,
+	ST_FUNCTION:         `Function`,
 }
 
 func (k Kind) String() string {

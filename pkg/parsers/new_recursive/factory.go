@@ -51,34 +51,34 @@ func newAssignment(target, source Expression) Statement {
 	}
 }
 
-func newBlock(start, end Token, stats []Statement) Block {
-	return Block{
-		start: start,
-		Stats: stats,
-		end:   end,
+func newBlock(open, close Token, stats []Statement) Block {
+	return blockExpr{
+		open:  open,
+		close: close,
+		stats: stats,
 	}
 }
 
 func newNonWrappedBlock(stats []Statement) Block {
-	return Block{
-		Stats: stats,
+	return blockExpr{
+		stats: stats,
 	}
 }
 
 func newParameters(open, close Token, inputs, outputs []Token) Parameters {
-	return Parameters{
+	return parametersDef{
 		open:    open,
 		close:   close,
-		Inputs:  inputs,
-		Outputs: outputs,
+		inputs:  inputs,
+		outputs: outputs,
 	}
 }
 
-func newFunction(key Token, params Parameters, body Block) Function {
-	return Function{
+func newFunction(key Token, params Parameters, body Block) Expression {
+	return functionExpr{
 		key:    key,
-		Params: params,
-		Body:   body,
+		params: params,
+		body:   body,
 	}
 }
 
