@@ -14,6 +14,7 @@ const (
 	ST_LIST_ACCESSOR
 	ST_LIST_CONSTRUCTOR
 	ST_NEGATION
+	ST_OPERATION
 	ST_ASSIGNMENT
 	ST_BLOCK
 	ST_PARAMETERS
@@ -28,6 +29,7 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_LIST_ACCESSOR:    `List-Accessor`,
 	ST_LIST_CONSTRUCTOR: `List-Constructor`,
 	ST_NEGATION:         `Negation`,
+	ST_OPERATION:        `Operation`,
 	ST_ASSIGNMENT:       `Assignment`,
 	ST_BLOCK:            `Block`,
 	ST_PARAMETERS:       `Parameters`,

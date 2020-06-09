@@ -1,46 +1,9 @@
 package recursive
 
 import (
-	"fmt"
-	"strings"
-
 	. "github.com/PaulioRandall/scarlet-go/pkg/parsers/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
-
-type builder struct {
-	strings.Builder
-}
-
-func (b *builder) add(indent int, s string) {
-
-	for _, ru := range s {
-		b.WriteRune(ru)
-
-		if ru == '\n' {
-			for i := 0; i < indent; i++ {
-				b.WriteRune('\t')
-			}
-		}
-	}
-}
-
-func (b *builder) addToken(indent int, tk Token) {
-	b.add(indent, ToString(tk))
-}
-
-func (b *builder) newline() {
-	b.add(0, "\n")
-}
-
-func (b *builder) String() string {
-	return b.Builder.String()
-}
-
-func (b *builder) print() {
-	fmt.Println(b.String())
-	fmt.Println()
-}
 
 func startPos(tk Token) (line int, col int) {
 	return tk.Line(), tk.Col()
@@ -342,39 +305,35 @@ func (f functionExpr) String() string {
 	return FunctionString(f)
 }
 
-type Operation struct {
-	Operator    Token
-	Left, Right Expression
+type operationExpr struct {
+	operator    Token
+	left, right Expression
 }
 
-func (o Operation) Precedence() int {
-	return o.Operator.Morpheme().Precedence()
+func (operationExpr) Kind() Kind {
+	return ST_OPERATION
 }
 
-func (o Operation) Begin() (int, int) {
-	return o.Left.Begin()
+func (o operationExpr) Operator() Token {
+	return o.operator
 }
 
-func (o Operation) End() (int, int) {
-	return o.Right.End()
+func (o operationExpr) Left() Expression {
+	return o.left
 }
 
-func (o Operation) String() string {
+func (o operationExpr) Right() Expression {
+	return o.right
+}
 
-	b := builder{}
+func (o operationExpr) Begin() (int, int) {
+	return o.left.Begin()
+}
 
-	b.add(0, "[Operation] ")
-	b.addToken(0, o.Operator)
+func (o operationExpr) End() (int, int) {
+	return o.right.End()
+}
 
-	b.newline()
-	b.add(1, "Left: ")
-	b.newline()
-	b.add(2, o.Left.String())
-
-	b.newline()
-	b.add(1, "Right: ")
-	b.newline()
-	b.add(2, o.Right.String())
-
-	return b.String()
+func (o operationExpr) String() string {
+	return OperationString(o)
 }

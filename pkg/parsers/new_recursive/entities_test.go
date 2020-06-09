@@ -30,6 +30,10 @@ func Test_Negation(t *testing.T) {
 	var _ Negation = negationExpr{}
 }
 
+func Test_Operation(t *testing.T) {
+	var _ Operation = operationExpr{}
+}
+
 func Test_Assignment(t *testing.T) {
 	var _ Assignment = assignmentStat{}
 }
@@ -44,8 +48,4 @@ func Test_Parameters(t *testing.T) {
 
 func Test_Function(t *testing.T) {
 	var _ Function = functionExpr{}
-}
-
-func Test_Operation(t *testing.T) {
-	var _ Expression = Operation{}
 }

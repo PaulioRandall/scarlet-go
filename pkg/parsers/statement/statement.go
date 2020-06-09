@@ -10,13 +10,9 @@ type Statement interface {
 	Expression
 }
 
-type NewExpression interface {
-	Expression
-	Kind() Kind
-}
-
 type Expression interface {
 	Snippet
+	Kind() Kind
 }
 
 type Snippet interface {
@@ -26,7 +22,7 @@ type Snippet interface {
 }
 
 type Void interface {
-	NewExpression
+	Expression
 	Tk() Token
 }
 
@@ -41,7 +37,7 @@ func VoidString(v Void) string {
 }
 
 type Identifier interface {
-	NewExpression
+	Expression
 	Tk() Token
 }
 
@@ -56,7 +52,7 @@ func IdentifierString(id Identifier) string {
 }
 
 type Literal interface {
-	NewExpression
+	Expression
 	Tk() Token
 }
 
@@ -71,7 +67,7 @@ func LiteralString(l Literal) string {
 }
 
 type ListAccessor interface {
-	NewExpression
+	Expression
 	ID() Expression
 	Index() Expression
 }
@@ -96,7 +92,7 @@ func ListAccessorString(l ListAccessor) string {
 }
 
 type ListConstructor interface {
-	NewExpression
+	Expression
 	Open() Token
 	Close() Token
 	Items() []Expression
@@ -117,7 +113,7 @@ func ListConstructorString(l ListConstructor) string {
 }
 
 type Negation interface {
-	NewExpression
+	Expression
 	Expr() Expression
 }
 
@@ -134,7 +130,7 @@ func NegationString(n Negation) string {
 }
 
 type Assignment interface {
-	NewExpression
+	Expression
 	Target() Expression
 	Source() Expression
 }
@@ -159,7 +155,7 @@ func AssignmentString(a Assignment) string {
 }
 
 type Block interface {
-	NewExpression
+	Expression
 	Open() Token
 	Close() Token
 	Stats() []Statement
@@ -177,7 +173,7 @@ func BlockString(bk Block) string {
 }
 
 type Parameters interface {
-	NewExpression
+	Expression
 	Open() Token
 	Close() Token
 	Inputs() []Token
@@ -216,7 +212,7 @@ func ParametersString(p Parameters) string {
 }
 
 type Function interface {
-	NewExpression
+	Expression
 	Key() Token
 	Params() Parameters
 	Body() Block
@@ -233,6 +229,33 @@ func FunctionString(f Function) string {
 
 	b.newline()
 	b.add(1, BlockString(f.Body()))
+
+	return b.String()
+}
+
+type Operation interface {
+	Expression
+	Operator() Token
+	Left() Expression
+	Right() Expression
+}
+
+func OperationString(o Operation) string {
+
+	b := builder{}
+
+	b.add(0, "[Operation] ")
+	b.addToken(0, o.Operator())
+
+	b.newline()
+	b.add(1, "Left: ")
+	b.newline()
+	b.add(2, o.Left().String())
+
+	b.newline()
+	b.add(1, "Right: ")
+	b.newline()
+	b.add(2, o.Right().String())
 
 	return b.String()
 }

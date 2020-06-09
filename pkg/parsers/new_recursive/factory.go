@@ -7,7 +7,7 @@ import (
 
 func Precedence(expr Expression) int {
 	if v, ok := expr.(Operation); ok {
-		return v.Precedence()
+		return v.Operator().Morpheme().Precedence()
 	}
 
 	return 0
@@ -42,6 +42,14 @@ func newList(open, close Token, items []Expression) Expression {
 
 func newNegation(expr Expression) Expression {
 	return negationExpr{expr}
+}
+
+func newOperation(operator Token, left, right Expression) Operation {
+	return operationExpr{
+		operator: operator,
+		left:     left,
+		right:    right,
+	}
 }
 
 func newAssignment(target, source Expression) Statement {
@@ -79,13 +87,5 @@ func newFunction(key Token, params Parameters, body Block) Expression {
 		key:    key,
 		params: params,
 		body:   body,
-	}
-}
-
-func newOperation(operator Token, left, right Expression) Operation {
-	return Operation{
-		Left:     left,
-		Operator: operator,
-		Right:    right,
 	}
 }
