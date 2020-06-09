@@ -184,6 +184,30 @@ func (l listConstructorExpr) String() string {
 	return ListConstructorString(l)
 }
 
+type negationExpr struct {
+	expr Expression
+}
+
+func (negationExpr) Kind() Kind {
+	return ST_NEGATION
+}
+
+func (n negationExpr) Expr() Expression {
+	return n.expr
+}
+
+func (n negationExpr) Begin() (int, int) {
+	return n.expr.Begin()
+}
+
+func (n negationExpr) End() (int, int) {
+	return n.expr.End()
+}
+
+func (n negationExpr) String() string {
+	return NegationString(n)
+}
+
 type assignmentStat struct {
 	target Expression
 	source Expression
@@ -248,30 +272,6 @@ func (bk Block) String() string {
 	for _, a := range bk.Stats {
 		b.add(0, a.String())
 	}
-
-	return b.String()
-}
-
-type Negation struct {
-	Expr Expression
-}
-
-func (n Negation) Begin() (int, int) {
-	return n.Expr.Begin()
-}
-
-func (n Negation) End() (int, int) {
-	return n.Expr.End()
-}
-
-func (n Negation) String() string {
-
-	b := builder{}
-
-	b.add(0, "[Negation]")
-
-	b.newline()
-	b.add(1, n.Expr.String())
 
 	return b.String()
 }

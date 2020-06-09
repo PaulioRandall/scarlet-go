@@ -111,6 +111,22 @@ func ListConstructorString(l ListConstructor) string {
 	return b.String()
 }
 
+type Negation interface {
+	Expr() Expression
+}
+
+func NegationString(n Negation) string {
+
+	b := builder{}
+
+	b.add(0, "[Negation]")
+
+	b.newline()
+	b.add(1, n.Expr().String())
+
+	return b.String()
+}
+
 type Assignment interface {
 	Target() Expression
 	Source() Expression

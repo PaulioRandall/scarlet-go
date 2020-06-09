@@ -27,7 +27,7 @@ func Test_List(t *testing.T) {
 }
 
 func Test_Negation(t *testing.T) {
-	var _ Expression = Negation{}
+	var _ Negation = negationExpr{}
 }
 
 func Test_Assignment(t *testing.T) {

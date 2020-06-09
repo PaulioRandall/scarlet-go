@@ -40,8 +40,8 @@ func newList(open, close Token, items []Expression) Expression {
 	}
 }
 
-func newNegation(expr Expression) Negation {
-	return Negation{expr}
+func newNegation(expr Expression) Expression {
+	return negationExpr{expr}
 }
 
 func newAssignment(target, source Expression) Statement {
