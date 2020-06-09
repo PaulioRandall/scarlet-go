@@ -363,3 +363,37 @@ func (f functionExpr) End() (int, int) {
 func (f functionExpr) String() string {
 	return FunctionString(f)
 }
+
+type watchStat struct {
+	key  Token
+	ids  []Token
+	body Block
+}
+
+func (watchStat) Kind() Kind {
+	return ST_WATCH
+}
+
+func (w watchStat) Key() Token {
+	return w.key
+}
+
+func (w watchStat) Identifiers() []Token {
+	return w.ids
+}
+
+func (w watchStat) Body() Block {
+	return w.body
+}
+
+func (w watchStat) Begin() (int, int) {
+	return startPos(w.key)
+}
+
+func (w watchStat) End() (int, int) {
+	return w.body.End()
+}
+
+func (w watchStat) String() string {
+	return WatchString(w)
+}

@@ -89,3 +89,11 @@ func newFunction(key Token, params Parameters, body Block) Function {
 		body:   body,
 	}
 }
+
+func newWatch(key Token, ids []Token, body Block) Watch {
+	return watchStat{
+		key:  key,
+		ids:  ids,
+		body: body,
+	}
+}

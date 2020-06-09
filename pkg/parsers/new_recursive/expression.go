@@ -297,6 +297,62 @@ func expectOperation(p *pipeline) (Expression, error) {
 	return expr, nil
 }
 
+func block(p *pipeline) (Block, error) {
+
+	open, e := p.expect(BLOCK_OPEN)
+	if e != nil {
+		return nil, e
+	}
+
+	p.accept(TERMINATOR)
+	stats, e := blockStatements(p)
+
+	p.accept(TERMINATOR)
+	close, e := p.expect(BLOCK_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	return newBlock(open, close, stats), nil
+}
+
+func blockStatements(p *pipeline) ([]Expression, error) {
+
+	var (
+		st Expression
+		e  error
+		r  = []Expression{}
+	)
+
+	for loop := true; loop && p.hasMore(); {
+
+		st, loop, e = blockStatement(p)
+		if e != nil {
+			return nil, e
+		}
+
+		if st != nil {
+			r = append(r, st)
+		}
+	}
+
+	return r, nil
+}
+
+func blockStatement(p *pipeline) (st Expression, more bool, e error) {
+
+	st, e = statement(p)
+	if e != nil {
+		return nil, false, e
+	}
+
+	if st == nil {
+		return nil, false, nil
+	}
+
+	return st, p.accept(TERMINATOR), nil
+}
+
 func function(p *pipeline) (Expression, error) {
 	// pattern := FUNC function_parameters function_body
 
@@ -310,7 +366,7 @@ func function(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	body, e := functionBody(p)
+	body, e := block(p)
 	if e != nil {
 		return nil, e
 	}
@@ -370,62 +426,6 @@ func functionParam(p *pipeline) (Token, bool, error) {
 	output := p.accept(OUTPUT)
 	id, e := p.expect(IDENTIFIER)
 	return id, output, e
-}
-
-func functionBody(p *pipeline) (Block, error) {
-
-	open, e := p.expect(BLOCK_OPEN)
-	if e != nil {
-		return nil, e
-	}
-
-	p.accept(TERMINATOR)
-	stats, e := functionStatements(p)
-
-	p.accept(TERMINATOR)
-	close, e := p.expect(BLOCK_CLOSE)
-	if e != nil {
-		return nil, e
-	}
-
-	return newBlock(open, close, stats), nil
-}
-
-func functionStatements(p *pipeline) ([]Expression, error) {
-
-	var (
-		st Expression
-		e  error
-		r  = []Expression{}
-	)
-
-	for loop := true; loop; {
-
-		st, loop, e = functionStatement(p)
-		if e != nil {
-			return nil, e
-		}
-
-		if st != nil {
-			r = append(r, st)
-		}
-	}
-
-	return r, nil
-}
-
-func functionStatement(p *pipeline) (st Expression, more bool, e error) {
-
-	st, e = statement(p)
-	if e != nil {
-		return nil, false, e
-	}
-
-	if st == nil {
-		return nil, false, nil
-	}
-
-	return st, p.accept(TERMINATOR), nil
 }
 
 func expressionFunction(p *pipeline) (Expression, error) {
@@ -490,4 +490,43 @@ func expressionFunctionInputs(p *pipeline) ([]Token, error) {
 	}
 
 	return in, nil
+}
+
+func watch(p *pipeline) (Expression, error) {
+	// pattern := WATCH BLOCK_OPEN {statements} BLOCK_CLOSE
+
+	key, e := p.expect(WATCH)
+	if e != nil {
+		return nil, e
+	}
+
+	ids, e := watchIdentifiers(p)
+	if e != nil {
+		return nil, e
+	}
+
+	body, e := block(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return newWatch(key, ids, body), nil
+}
+
+func watchIdentifiers(p *pipeline) ([]Token, error) {
+	// pattern := IDENTIFIER {DELIM IDENTIFIER}
+
+	ids := []Token{}
+
+	for first := true; first || p.accept(DELIMITER); first = false {
+
+		id, e := p.expect(IDENTIFIER)
+		if e != nil {
+			return nil, e
+		}
+
+		ids = append(ids, id)
+	}
+
+	return ids, nil
 }
