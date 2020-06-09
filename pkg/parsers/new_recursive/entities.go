@@ -167,6 +167,31 @@ func (a assignmentStat) String() string {
 	return AssignmentString(a)
 }
 
+type assignmentBlockStat struct {
+	assignments []Assignment
+}
+
+func (assignmentBlockStat) Kind() Kind {
+	return ST_ASSIGNMENT_BLOCK
+}
+
+func (a assignmentBlockStat) Assignments() []Assignment {
+	return a.assignments
+}
+
+func (a assignmentBlockStat) Begin() (int, int) {
+	return a.assignments[0].Begin()
+}
+
+func (a assignmentBlockStat) End() (int, int) {
+	i := len(a.assignments) - 1
+	return a.assignments[i].End()
+}
+
+func (a assignmentBlockStat) String() string {
+	return AssignmentBlockString(a)
+}
+
 type blockExpr struct {
 	open, close Token
 	stats       []Statement

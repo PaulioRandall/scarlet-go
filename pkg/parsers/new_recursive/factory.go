@@ -44,10 +44,16 @@ func newOperation(operator Token, left, right Expression) Operation {
 	}
 }
 
-func newAssignment(target, source Expression) Statement {
+func newAssignment(target, source Expression) Assignment {
 	return assignmentStat{
 		target: target,
 		source: source,
+	}
+}
+
+func newAssignmentBlock(assignments []Assignment) AssignmentBlock {
+	return assignmentBlockStat{
+		assignments: assignments,
 	}
 }
 

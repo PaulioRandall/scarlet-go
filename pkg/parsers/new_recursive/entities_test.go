@@ -34,6 +34,10 @@ func Test_Assignment(t *testing.T) {
 	var _ Assignment = assignmentStat{}
 }
 
+func Test_AssignmentBlock(t *testing.T) {
+	var _ AssignmentBlock = assignmentBlockStat{}
+}
+
 func Test_Block(t *testing.T) {
 	var _ Block = blockExpr{}
 }

@@ -63,8 +63,8 @@ func Test_S2_1(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := newNonWrappedBlock(
-		[]Statement{
+	exp := newAssignmentBlock(
+		[]Assignment{
 			newAssignment(
 				newIdentifier(tok(IDENTIFIER, "a")),
 				newLiteral(tok(NUMBER, "1")),
@@ -99,8 +99,8 @@ func Test_S2_2(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := newNonWrappedBlock(
-		[]Statement{
+	exp := newAssignmentBlock(
+		[]Assignment{
 			newAssignment(
 				newIdentifier(tok(IDENTIFIER, "a")),
 				newLiteral(tok(NUMBER, "1")),
@@ -1030,8 +1030,8 @@ func Test_S7_1(t *testing.T) {
 		),
 	)
 
-	exp := newNonWrappedBlock(
-		[]Statement{
+	exp := newAssignmentBlock(
+		[]Assignment{
 			newAssignment(
 				newIdentifier(tok(IDENTIFIER, "f")),
 				f,
@@ -1080,8 +1080,8 @@ func Test_S7_2(t *testing.T) {
 		),
 	)
 
-	exp := newNonWrappedBlock(
-		[]Statement{
+	exp := newAssignmentBlock(
+		[]Assignment{
 			newAssignment(
 				newIdentifier(tok(IDENTIFIER, "f")),
 				f,
@@ -1131,8 +1131,8 @@ func Test_S7_3(t *testing.T) {
 		),
 	)
 
-	exp := newNonWrappedBlock(
-		[]Statement{
+	exp := newAssignmentBlock(
+		[]Assignment{
 			newAssignment(
 				newIdentifier(tok(IDENTIFIER, "f")),
 				f,
@@ -1193,8 +1193,8 @@ func Test_S7_4(t *testing.T) {
 		),
 	)
 
-	exp := newNonWrappedBlock(
-		[]Statement{
+	exp := newAssignmentBlock(
+		[]Assignment{
 			newAssignment(
 				newIdentifier(tok(IDENTIFIER, "f")),
 				f,
@@ -1232,8 +1232,8 @@ func Test_S7_5(t *testing.T) {
 		tok(BLOCK_OPEN, "{"),
 		tok(BLOCK_CLOSE, "}"),
 		[]Statement{
-			newNonWrappedBlock(
-				[]Statement{
+			newAssignmentBlock(
+				[]Assignment{
 					newAssignment(
 						newIdentifier(tok(IDENTIFIER, "a")),
 						newLiteral(tok(NUMBER, "1")),
@@ -1254,8 +1254,8 @@ func Test_S7_5(t *testing.T) {
 		body,
 	)
 
-	exp := newNonWrappedBlock(
-		[]Statement{
+	exp := newAssignmentBlock(
+		[]Assignment{
 			newAssignment(
 				newIdentifier(tok(IDENTIFIER, "f")),
 				f,
@@ -1308,8 +1308,8 @@ func Test_S7_6(t *testing.T) {
 		tok(BLOCK_OPEN, "{"),
 		tok(BLOCK_CLOSE, "}"),
 		[]Statement{
-			newNonWrappedBlock(
-				[]Statement{
+			newAssignmentBlock(
+				[]Assignment{
 					newAssignment(
 						newIdentifier(tok(IDENTIFIER, "a")),
 						newLiteral(tok(NUMBER, "1")),
@@ -1334,8 +1334,8 @@ func Test_S7_6(t *testing.T) {
 		body,
 	)
 
-	exp := newNonWrappedBlock(
-		[]Statement{
+	exp := newAssignmentBlock(
+		[]Assignment{
 			newAssignment(
 				newIdentifier(tok(IDENTIFIER, "f")),
 				f,

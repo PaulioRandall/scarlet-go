@@ -83,7 +83,7 @@ func assignment(p *pipeline) (Statement, error) {
 		return nil, e
 	}
 
-	return newNonWrappedBlock(r), nil
+	return newAssignmentBlock(r), nil
 }
 
 func assignmentSources(p *pipeline) ([]Expression, error) {
@@ -132,9 +132,9 @@ func assignmentTarget(p *pipeline) (Expression, error) {
 	return nil, err.New("Expected assignment target", err.At(p.any()))
 }
 
-func createAssignments(p *pipeline, targets, sources []Expression) ([]Statement, error) {
+func createAssignments(p *pipeline, targets, sources []Expression) ([]Assignment, error) {
 
-	var r []Statement
+	var r []Assignment
 
 	for i := 0; i < len(targets) || i < len(sources); i++ {
 

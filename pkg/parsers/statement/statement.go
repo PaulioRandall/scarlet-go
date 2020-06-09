@@ -108,6 +108,33 @@ func NegationString(n Negation) string {
 	return b.String()
 }
 
+type Operation interface {
+	Expression
+	Operator() Token
+	Left() Expression
+	Right() Expression
+}
+
+func OperationString(o Operation) string {
+
+	b := builder{}
+
+	b.add(0, "[Operation] ")
+	b.addToken(0, o.Operator())
+
+	b.newline()
+	b.add(1, "Left: ")
+	b.newline()
+	b.add(2, o.Left().String())
+
+	b.newline()
+	b.add(1, "Right: ")
+	b.newline()
+	b.add(2, o.Right().String())
+
+	return b.String()
+}
+
 type Assignment interface {
 	Expression
 	Target() Expression
@@ -133,18 +160,16 @@ func AssignmentString(a Assignment) string {
 	return b.String()
 }
 
-type Block interface {
+type AssignmentBlock interface {
 	Expression
-	Open() Token
-	Close() Token
-	Stats() []Statement
+	Assignments() []Assignment
 }
 
-func BlockString(bk Block) string {
+func AssignmentBlockString(bk AssignmentBlock) string {
 
 	b := builder{}
 
-	for _, a := range bk.Stats() {
+	for _, a := range bk.Assignments() {
 		b.add(0, a.String())
 	}
 
@@ -212,29 +237,20 @@ func FunctionString(f Function) string {
 	return b.String()
 }
 
-type Operation interface {
+type Block interface {
 	Expression
-	Operator() Token
-	Left() Expression
-	Right() Expression
+	Open() Token
+	Close() Token
+	Stats() []Statement
 }
 
-func OperationString(o Operation) string {
+func BlockString(bk Block) string {
 
 	b := builder{}
 
-	b.add(0, "[Operation] ")
-	b.addToken(0, o.Operator())
-
-	b.newline()
-	b.add(1, "Left: ")
-	b.newline()
-	b.add(2, o.Left().String())
-
-	b.newline()
-	b.add(1, "Right: ")
-	b.newline()
-	b.add(2, o.Right().String())
+	for _, a := range bk.Stats() {
+		b.add(0, a.String())
+	}
 
 	return b.String()
 }
