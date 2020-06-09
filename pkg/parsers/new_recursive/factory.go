@@ -44,10 +44,10 @@ func newNegation(expr Expression) Negation {
 	return Negation{expr}
 }
 
-func newAssignment(target, source Expression) Assignment {
-	return Assignment{
-		Target: target,
-		Source: source,
+func newAssignment(target, source Expression) Statement {
+	return assignmentStat{
+		target: target,
+		source: source,
 	}
 }
 

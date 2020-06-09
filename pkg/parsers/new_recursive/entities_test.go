@@ -31,7 +31,7 @@ func Test_Negation(t *testing.T) {
 }
 
 func Test_Assignment(t *testing.T) {
-	var _ Statement = Assignment{}
+	var _ Assignment = assignmentStat{}
 }
 
 func Test_Block(t *testing.T) {

@@ -184,20 +184,32 @@ func (l listConstructorExpr) String() string {
 	return ListConstructorString(l)
 }
 
-type Assignment struct {
-	Target Expression
-	Source Expression
+type assignmentStat struct {
+	target Expression
+	source Expression
 }
 
-func (a Assignment) Begin() (int, int) {
-	return a.Target.Begin()
+func (assignmentStat) Kind() Kind {
+	return ST_ASSIGNMENT
 }
 
-func (a Assignment) End() (int, int) {
-	return a.Source.End()
+func (a assignmentStat) Target() Expression {
+	return a.target
 }
 
-func (a Assignment) String() string {
+func (a assignmentStat) Source() Expression {
+	return a.source
+}
+
+func (a assignmentStat) Begin() (int, int) {
+	return a.target.Begin()
+}
+
+func (a assignmentStat) End() (int, int) {
+	return a.source.End()
+}
+
+func (a assignmentStat) String() string {
 
 	b := builder{}
 
@@ -206,12 +218,12 @@ func (a Assignment) String() string {
 	b.newline()
 	b.add(1, "Target: ")
 	b.newline()
-	b.add(1, a.Target.String())
+	b.add(1, a.target.String())
 
 	b.newline()
 	b.add(1, "Source: ")
 	b.newline()
-	b.add(2, a.Source.String())
+	b.add(2, a.source.String())
 
 	return b.String()
 }

@@ -110,3 +110,27 @@ func ListConstructorString(l ListConstructor) string {
 
 	return b.String()
 }
+
+type Assignment interface {
+	Target() Expression
+	Source() Expression
+}
+
+func AssignmentString(a Assignment) string {
+
+	b := builder{}
+
+	b.add(0, "[Assignment] ")
+
+	b.newline()
+	b.add(1, "Target: ")
+	b.newline()
+	b.add(1, a.Target().String())
+
+	b.newline()
+	b.add(1, "Source: ")
+	b.newline()
+	b.add(2, a.Source().String())
+
+	return b.String()
+}
