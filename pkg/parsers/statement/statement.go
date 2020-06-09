@@ -91,27 +91,6 @@ func ListAccessorString(l ListAccessor) string {
 	return b.String()
 }
 
-type ListConstructor interface {
-	Expression
-	Open() Token
-	Close() Token
-	Items() []Expression
-}
-
-func ListConstructorString(l ListConstructor) string {
-
-	b := builder{}
-
-	b.add(0, "[List] ")
-
-	for _, item := range l.Items() {
-		b.newline()
-		b.add(1, item.String())
-	}
-
-	return b.String()
-}
-
 type Negation interface {
 	Expression
 	Expr() Expression

@@ -22,10 +22,6 @@ func Test_ListAccessor(t *testing.T) {
 	var _ ListAccessor = listAccessorExpr{}
 }
 
-func Test_List(t *testing.T) {
-	var _ ListConstructor = listConstructorExpr{}
-}
-
 func Test_Negation(t *testing.T) {
 	var _ Negation = negationExpr{}
 }

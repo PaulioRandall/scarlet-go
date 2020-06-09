@@ -13,34 +13,26 @@ func Precedence(expr Expression) int {
 	return 0
 }
 
-func newVoid(tk Token) Expression {
+func newVoid(tk Token) Void {
 	return voidExpr{tk}
 }
 
-func newIdentifier(tk Token) Expression {
+func newIdentifier(tk Token) Identifier {
 	return identifierExpr{tk}
 }
 
-func newLiteral(tk Token) Expression {
+func newLiteral(tk Token) Literal {
 	return literalExpr{tk}
 }
 
-func newListAccessor(id, index Expression) Expression {
+func newListAccessor(id, index Expression) ListAccessor {
 	return listAccessorExpr{
 		id:    id,
 		index: index,
 	}
 }
 
-func newList(open, close Token, items []Expression) Expression {
-	return listConstructorExpr{
-		open:  open,
-		close: close,
-		items: items,
-	}
-}
-
-func newNegation(expr Expression) Expression {
+func newNegation(expr Expression) Negation {
 	return negationExpr{expr}
 }
 
@@ -82,7 +74,7 @@ func newParameters(open, close Token, inputs, outputs []Token) Parameters {
 	}
 }
 
-func newFunction(key Token, params Parameters, body Block) Expression {
+func newFunction(key Token, params Parameters, body Block) Function {
 	return functionExpr{
 		key:    key,
 		params: params,

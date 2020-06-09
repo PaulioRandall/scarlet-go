@@ -114,39 +114,6 @@ func (l listAccessorExpr) String() string {
 	return ListAccessorString(l)
 }
 
-type listConstructorExpr struct {
-	open, close Token
-	items       []Expression
-}
-
-func (listConstructorExpr) Kind() Kind {
-	return ST_LIST_CONSTRUCTOR
-}
-
-func (l listConstructorExpr) Open() Token {
-	return l.open
-}
-
-func (l listConstructorExpr) Close() Token {
-	return l.close
-}
-
-func (l listConstructorExpr) Items() []Expression {
-	return l.items
-}
-
-func (l listConstructorExpr) Begin() (int, int) {
-	return startPos(l.open)
-}
-
-func (l listConstructorExpr) End() (int, int) {
-	return endPos(l.close)
-}
-
-func (l listConstructorExpr) String() string {
-	return ListConstructorString(l)
-}
-
 type negationExpr struct {
 	expr Expression
 }
