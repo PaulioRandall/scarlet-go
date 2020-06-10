@@ -152,6 +152,15 @@ func (p *pipeline) _ignoreRedundant() {
 		case p.prev == nil: // Ignore TERMINATORs at start of script
 			p.pos++
 
+		case p.prev.Type() == TK_DELIMITER: // Allow "NEWLINE" after delimiter
+			p.pos++
+
+		case p.prev.Type() == TK_BLOCK_OPEN: // Allow "NEWLINE" after block start
+			p.pos++
+
+		case p.prev.Type() == TK_PAREN_OPEN: // Allow "NEWLINE" after paren start
+			p.pos++
+
 		case p.prev.Type() == TK_TERMINATOR: // Ignore successive TERMINATORs
 			p.pos++
 

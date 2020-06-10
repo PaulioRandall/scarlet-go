@@ -5,8 +5,6 @@ import (
 	"os"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
-	"github.com/PaulioRandall/scarlet-go/pkg/statement"
-	"github.com/PaulioRandall/scarlet-go/pkg/token"
 
 	parser "github.com/PaulioRandall/scarlet-go/pkg/parsers/recursive"
 	runtime "github.com/PaulioRandall/scarlet-go/pkg/runtime/alpha"
@@ -37,19 +35,13 @@ func run(s string) {
 
 	println("# Scanning...")
 	tks := scanner.ScanAll(s)
-	token.PrettyPrint(tks)
 
-	println()
 	println("# Sanitising...")
 	tks = sanitiser.SanitiseAll(tks)
-	token.PrettyPrint(tks)
 
-	println()
 	println("# Parsing...")
 	stats := parser.ParseAll(tks)
-	statement.Print(stats)
 
-	println()
 	println("# Executing...")
 	ctx := runtime.Run(stats)
 

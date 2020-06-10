@@ -6,38 +6,20 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func expressions(p *pipeline) ([]Expression, error) {
-	// pattern := [expression {DELIM expression}]
+func delimitered(p *pipeline, closer TokenType, f func() error) error {
+	for p.hasMore() && !p.match(closer) {
 
-	r := []Expression{}
-
-	for first := true; p.hasMore(); first = false {
-
-		var expr Expression
-		var e error
-
-		if first {
-			expr, e = expression(p)
-		} else {
-			expr, e = expectExpression(p)
-		}
-
+		e := f()
 		if e != nil {
-			return nil, e
+			return e
 		}
-
-		if expr == nil { // Only needed for the first expression
-			return r, nil
-		}
-
-		r = append(r, expr)
 
 		if !p.accept(TK_DELIMITER) {
-			return r, nil
+			return nil
 		}
 	}
 
-	return nil, err.New("Expected expression", err.At(p.any()))
+	return nil
 }
 
 func expression(p *pipeline) (Expression, error) {
@@ -122,19 +104,6 @@ func group(p *pipeline) (Expression, error) {
 	return expr, e
 }
 
-func acceptDelimiter(p *pipeline, closingSignal TokenType) bool {
-
-	if p.accept(TK_DELIMITER) {
-		if p.accept(TK_TERMINATOR) {
-			return !p.match(closingSignal)
-		}
-
-		return true
-	}
-
-	return false
-}
-
 func maybeListAccessor(p *pipeline, maybeList Expression) (Expression, error) {
 	// pattern := expression [GUARD_OPEN expression GUARD_CLOSE]
 
@@ -166,37 +135,38 @@ func listAccessor(p *pipeline, left Expression) (Expression, error) {
 func operations(p *pipeline) ([]Expression, error) {
 	// pattern := [operation {DELIM operation}]
 
-	r := []Expression{}
+	ops := []Expression{}
 
-	for first := true; p.hasMore(); first = false {
-
-		var (
-			expr Expression
-			e    error
-		)
-
-		if first {
-			expr, e = operation(p)
-		} else {
-			expr, e = expectOperation(p)
-		}
-
-		if e != nil {
-			return nil, e
-		}
-
-		if expr == nil { // Only needed for the first expression
-			return r, nil
-		}
-
-		r = append(r, expr)
-
-		if !p.accept(TK_DELIMITER) {
-			return r, nil
-		}
+	expr, e := operation(p)
+	if e != nil {
+		return nil, e
 	}
 
-	return nil, err.New("Expected expression", err.At(p.any()))
+	if expr == nil {
+		return ops, nil
+	}
+
+	ops = append(ops, expr)
+	if !p.accept(TK_DELIMITER) {
+		return ops, nil
+	}
+
+	e = delimitered(p, TK_TERMINATOR, func() error {
+
+		expr, e := expectOperation(p)
+		if e != nil {
+			return e
+		}
+
+		ops = append(ops, expr)
+		return nil
+	})
+
+	if e != nil {
+		return nil, e
+	}
+
+	return ops, nil
 }
 
 func operation(p *pipeline) (Expression, error) {
@@ -304,10 +274,8 @@ func block(p *pipeline) (Block, error) {
 		return nil, e
 	}
 
-	p.accept(TK_TERMINATOR)
 	stats, e := blockStatements(p)
 
-	p.accept(TK_TERMINATOR)
 	close, e := p.expect(TK_BLOCK_CLOSE)
 	if e != nil {
 		return nil, e
@@ -404,12 +372,11 @@ func parameterIdentifiers(p *pipeline) (in []Token, out []Token, _ error) {
 		return in, out, nil
 	}
 
-	p.accept(TK_TERMINATOR)
-	for loop := true; loop; loop = acceptDelimiter(p, TK_PAREN_CLOSE) {
+	e := delimitered(p, TK_PAREN_CLOSE, func() error {
 
 		id, isOutput, e := functionParam(p)
 		if e != nil {
-			return nil, nil, e
+			return e
 		}
 
 		if isOutput {
@@ -417,6 +384,12 @@ func parameterIdentifiers(p *pipeline) (in []Token, out []Token, _ error) {
 		} else {
 			in = append(in, id)
 		}
+
+		return nil
+	})
+
+	if e != nil {
+		return nil, nil, e
 	}
 
 	return in, out, nil
@@ -479,14 +452,19 @@ func expressionFunctionInputs(p *pipeline) ([]Token, error) {
 
 	in := []Token{}
 
-	for loop := true; loop; loop = acceptDelimiter(p, TK_PAREN_CLOSE) {
+	e := delimitered(p, TK_PAREN_CLOSE, func() error {
 
 		id, e := p.expect(TK_IDENTIFIER)
 		if e != nil {
-			return nil, e
+			return e
 		}
 
 		in = append(in, id)
+		return nil
+	})
+
+	if e != nil {
+		return nil, e
 	}
 
 	return in, nil
@@ -603,11 +581,6 @@ func when(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	_, e = p.expect(TK_TERMINATOR)
-	if e != nil {
-		return nil, e
-	}
-
 	cases, e := whenCases(p)
 	if e != nil {
 		return nil, e
@@ -656,7 +629,6 @@ func whenCases(p *pipeline) ([]WhenCase, error) {
 
 func whenGuardCase(p *pipeline) (WhenCase, error) {
 	// pattern := guardCondition THEN guardBody
-
 	open, condition, e := guardCondition(p)
 	if e != nil {
 		return nil, e

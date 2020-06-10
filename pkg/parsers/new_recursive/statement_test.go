@@ -1831,7 +1831,7 @@ func Test_S11_2(t *testing.T) {
 		tok(TK_EQUAL, "=="),
 		tok(TK_NUMBER, "2"),
 		tok(TK_BLOCK_OPEN, "{"),
-		tok(TK_TERMINATOR, ""),
+		tok(TK_TERMINATOR, "\n"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		tok(TK_TERMINATOR, ""),
 	}
