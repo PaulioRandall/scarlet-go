@@ -1880,7 +1880,7 @@ func Test_S11_3(t *testing.T) {
 
 	firstCase := newLiteral(tok(NUMBER, "1"))
 
-	firstBlock := newUnDelimiteredBlockExpr(
+	firstBlock := newUnDelimiteredBlock(
 		[]Expression{
 			newOperation(
 				tok(MULTIPLY, "*"),
@@ -1932,7 +1932,7 @@ func Test_S11_4(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	firstBlock := newUnDelimiteredBlockExpr(
+	firstBlock := newUnDelimiteredBlock(
 		[]Expression{
 			newOperation(
 				tok(MULTIPLY, "*"),
@@ -1958,6 +1958,116 @@ func Test_S11_4(t *testing.T) {
 		newLiteral(tok(NUMBER, "1")),
 		[]MatchCase{
 			firstCase,
+		},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S11_5(t *testing.T) {
+
+	// GIVEN a match block
+	// WITH a simple condition
+	// WITH a severakl match and guard cases
+	// THEN then the correct match statement is returned
+
+	// match 3 {
+	//   1        -> a
+	//   [a == b] -> b
+	//	 2        -> c
+	//   [true]   -> {
+	//                 d
+	//               }
+	// }
+	given := []Token{
+		tok(MATCH, "match"),
+		tok(NUMBER, "3"),
+		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, "\n"),
+		tok(NUMBER, "1"),
+		tok(DO, "->"),
+		tok(IDENTIFIER, "a"),
+		tok(TERMINATOR, "\n"),
+		tok(GUARD_OPEN, "["),
+		tok(IDENTIFIER, "a"),
+		tok(EQUAL, "=="),
+		tok(IDENTIFIER, "b"),
+		tok(GUARD_CLOSE, "]"),
+		tok(DO, "->"),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, "\n"),
+		tok(NUMBER, "2"),
+		tok(DO, "->"),
+		tok(IDENTIFIER, "c"),
+		tok(TERMINATOR, "\n"),
+		tok(GUARD_OPEN, "["),
+		tok(BOOL, "true"),
+		tok(GUARD_CLOSE, "]"),
+		tok(DO, "->"),
+		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, "\n"),
+		tok(IDENTIFIER, "d"),
+		tok(TERMINATOR, "\n"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, "\n"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	firstCase := newMatchCase(
+		newLiteral(tok(NUMBER, "1")),
+		newUnDelimiteredBlock(
+			[]Expression{
+				newIdentifier(tok(IDENTIFIER, "a")),
+			},
+		),
+	)
+
+	secondCase := newGuard(
+		tok(GUARD_OPEN, "["),
+		newOperation(
+			tok(EQUAL, "=="),
+			newIdentifier(tok(IDENTIFIER, "a")),
+			newIdentifier(tok(IDENTIFIER, "b")),
+		),
+		newUnDelimiteredBlock(
+			[]Expression{
+				newIdentifier(tok(IDENTIFIER, "b")),
+			},
+		),
+	)
+
+	thirdCase := newMatchCase(
+		newLiteral(tok(NUMBER, "2")),
+		newUnDelimiteredBlock(
+			[]Expression{
+				newIdentifier(tok(IDENTIFIER, "c")),
+			},
+		),
+	)
+
+	fourthCase := newGuard(
+		tok(GUARD_OPEN, "["),
+		newLiteral(tok(BOOL, "true")),
+		newBlock(
+			tok(BLOCK_OPEN, "{"),
+			tok(BLOCK_CLOSE, "}"),
+			[]Expression{
+				newIdentifier(tok(IDENTIFIER, "d")),
+			},
+		),
+	)
+
+	exp := newMatch(
+		tok(MATCH, "match"),
+		tok(BLOCK_CLOSE, "}"),
+		newLiteral(tok(NUMBER, "3")),
+		[]MatchCase{
+			firstCase,
+			secondCase,
+			thirdCase,
+			fourthCase,
 		},
 	)
 

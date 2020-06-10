@@ -578,7 +578,7 @@ func guardBody(p *pipeline) (Block, error) {
 	}
 
 	stats := []Expression{stat}
-	return newUnDelimiteredBlockExpr(stats), nil
+	return newUnDelimiteredBlock(stats), nil
 }
 
 func match(p *pipeline) (Expression, error) {

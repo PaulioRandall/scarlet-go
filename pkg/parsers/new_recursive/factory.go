@@ -57,7 +57,7 @@ func newBlock(open, close Token, stats []Expression) Block {
 	}
 }
 
-func newUnDelimiteredBlockExpr(stats []Expression) Block {
+func newUnDelimiteredBlock(stats []Expression) Block {
 	return unDelimiteredBlockExpr{
 		stats: stats,
 	}
