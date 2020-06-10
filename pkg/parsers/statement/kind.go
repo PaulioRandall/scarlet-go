@@ -22,6 +22,7 @@ const (
 	ST_FUNCTION
 	ST_WATCH
 	ST_GUARD
+	ST_MATCH
 )
 
 var kinds map[Kind]string = map[Kind]string{
@@ -40,6 +41,7 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_FUNCTION:            `Function`,
 	ST_WATCH:               `Watch`,
 	ST_GUARD:               `Guard`,
+	ST_MATCH:               `Match`,
 }
 
 func (k Kind) String() string {

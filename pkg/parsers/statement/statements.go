@@ -327,3 +327,47 @@ func GuardString(g Guard) string {
 
 	return b.String()
 }
+
+type MatchCase interface {
+	Expression
+	Condition() Expression
+	Body() Block
+}
+
+func MatchCaseString(mc MatchCase) string {
+
+	b := builder{}
+
+	b.add(0, "[MatchCase] ")
+
+	b.newline()
+	b.add(1, mc.Condition().String())
+
+	b.newline()
+	b.add(1, BlockString(mc.Body()))
+
+	return b.String()
+}
+
+type Match interface {
+	Expression
+	Input() Expression
+	Cases() []MatchCase
+}
+
+func MatchString(m Match) string {
+
+	b := builder{}
+
+	b.add(0, "[Match]")
+
+	b.newline()
+	b.add(1, m.Input().String())
+
+	for _, mc := range m.Cases() {
+		b.newline()
+		b.add(2, MatchCaseString(mc))
+	}
+
+	return b.String()
+}
