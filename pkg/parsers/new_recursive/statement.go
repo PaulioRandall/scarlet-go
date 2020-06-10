@@ -62,6 +62,9 @@ func statement(p *pipeline) (Expression, error) {
 	case p.match(MATCH):
 		return match(p)
 
+	case p.match(LOOP):
+		return loop(p)
+
 	case p.match(VOID):
 		return assignment(p)
 	}

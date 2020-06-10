@@ -2075,6 +2075,54 @@ func Test_S11_5(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S12_1(t *testing.T) {
+
+	// GIVEN a loop
+	// WITH a simple initialiser
+	// WITH a simple guard
+	// WITH no body statements
+	// THEN then the correct loop statement is returned
+
+	// loop i := 0 [true] {
+	// }
+	given := []Token{
+		tok(LOOP, "loop"),
+		tok(IDENTIFIER, "i"),
+		tok(ASSIGN, ":="),
+		tok(NUMBER, "0"),
+		tok(GUARD_OPEN, "["),
+		tok(BOOL, "true"),
+		tok(GUARD_CLOSE, "]"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	init := newAssignment(
+		newIdentifier(tok(IDENTIFIER, "i")),
+		newLiteral(tok(NUMBER, "0")),
+	)
+
+	guard := newGuard(
+		tok(GUARD_OPEN, "["),
+		newLiteral(tok(BOOL, "true")),
+		newBlock(
+			tok(BLOCK_OPEN, "{"),
+			tok(BLOCK_CLOSE, "}"),
+			[]Expression{},
+		),
+	)
+
+	exp := newLoop(
+		tok(LOOP, "loop"),
+		init,
+		guard,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token

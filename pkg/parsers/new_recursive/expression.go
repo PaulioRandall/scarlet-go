@@ -697,7 +697,7 @@ func matchCase(p *pipeline) (MatchCase, error) {
 }
 
 func loop(p *pipeline) (Expression, error) {
-	// pattern := LOOP loopInitialiser TERMINATOR guard
+	// pattern := LOOP loopInitialiser guard
 
 	key, e := p.expect(LOOP)
 	if e != nil {
@@ -705,11 +705,6 @@ func loop(p *pipeline) (Expression, error) {
 	}
 
 	init, e := loopInitialiser(p)
-	if e != nil {
-		return nil, e
-	}
-
-	_, e = p.expect(TERMINATOR)
 	if e != nil {
 		return nil, e
 	}
