@@ -332,10 +332,14 @@ func MatchCaseString(mc MatchCase) string {
 	b.add(0, "[MatchCase] ")
 
 	b.newline()
-	b.add(1, mc.Condition().String())
+	b.add(1, "Condition:")
+	b.newline()
+	b.add(2, mc.Condition().String())
 
 	b.newline()
-	b.add(1, BlockString(mc.Body()))
+	b.add(1, "Body:")
+	b.newline()
+	b.add(2, BlockString(mc.Body()))
 
 	return b.String()
 }

@@ -1860,17 +1860,15 @@ func Test_S11_3(t *testing.T) {
 	// WITH one case
 	// THEN then the correct match statement is returned
 
-	// match true {
-	//   1 == 2 -> 3 * 4
+	// match 1 {
+	//   1 -> 3 * 4
 	// }
 	given := []Token{
 		tok(MATCH, "match"),
-		tok(BOOL, "true"),
+		tok(NUMBER, "1"),
 		tok(BLOCK_OPEN, "{"),
 		tok(TERMINATOR, "\n"),
 		tok(NUMBER, "1"),
-		tok(EQUAL, "=="),
-		tok(NUMBER, "2"),
 		tok(DO, "->"),
 		tok(NUMBER, "3"),
 		tok(MULTIPLY, "*"),
@@ -1880,11 +1878,7 @@ func Test_S11_3(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	firstCase := newOperation(
-		tok(EQUAL, "=="),
-		newLiteral(tok(NUMBER, "1")),
-		newLiteral(tok(NUMBER, "2")),
-	)
+	firstCase := newLiteral(tok(NUMBER, "1"))
 
 	firstBlock := newUnDelimiteredBlockExpr(
 		[]Expression{
@@ -1899,9 +1893,71 @@ func Test_S11_3(t *testing.T) {
 	exp := newMatch(
 		tok(MATCH, "match"),
 		tok(BLOCK_CLOSE, "}"),
-		newLiteral(tok(BOOL, "true")),
+		newLiteral(tok(NUMBER, "1")),
 		[]MatchCase{
 			newMatchCase(firstCase, firstBlock),
+		},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S11_4(t *testing.T) {
+
+	// GIVEN a match block
+	// WITH a simple condition
+	// WITH a guard case
+	// THEN then the correct match statement is returned
+
+	// match 1 {
+	//   [1 == 2] -> 3 * 4
+	// }
+	given := []Token{
+		tok(MATCH, "match"),
+		tok(NUMBER, "1"),
+		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, "\n"),
+		tok(GUARD_OPEN, "["),
+		tok(NUMBER, "1"),
+		tok(EQUAL, "=="),
+		tok(NUMBER, "2"),
+		tok(GUARD_CLOSE, "]"),
+		tok(DO, "->"),
+		tok(NUMBER, "3"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "4"),
+		tok(TERMINATOR, "\n"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	firstBlock := newUnDelimiteredBlockExpr(
+		[]Expression{
+			newOperation(
+				tok(MULTIPLY, "*"),
+				newLiteral(tok(NUMBER, "3")),
+				newLiteral(tok(NUMBER, "4")),
+			),
+		},
+	)
+
+	firstCase := newGuard(
+		tok(GUARD_OPEN, "["),
+		newOperation(
+			tok(EQUAL, "=="),
+			newLiteral(tok(NUMBER, "1")),
+			newLiteral(tok(NUMBER, "2")),
+		),
+		firstBlock,
+	)
+
+	exp := newMatch(
+		tok(MATCH, "match"),
+		tok(BLOCK_CLOSE, "}"),
+		newLiteral(tok(NUMBER, "1")),
+		[]MatchCase{
+			firstCase,
 		},
 	)
 

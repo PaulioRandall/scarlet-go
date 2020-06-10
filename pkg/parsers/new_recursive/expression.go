@@ -532,32 +532,53 @@ func watchIdentifiers(p *pipeline) ([]Token, error) {
 }
 
 func guard(p *pipeline) (Expression, error) {
-	return guardExplicit(p)
-}
 
-func guardExplicit(p *pipeline) (Guard, error) {
-
-	open, e := p.expect(GUARD_OPEN)
+	open, condition, e := guardCondition(p)
 	if e != nil {
 		return nil, e
 	}
 
-	condition, e := expectOperation(p)
-	if e != nil {
-		return nil, e
-	}
-
-	_, e = p.expect(GUARD_CLOSE)
-	if e != nil {
-		return nil, e
-	}
-
-	body, e := block(p)
+	body, e := guardBody(p)
 	if e != nil {
 		return nil, e
 	}
 
 	return newGuard(open, condition, body), nil
+}
+
+func guardCondition(p *pipeline) (Token, Expression, error) {
+
+	open, e := p.expect(GUARD_OPEN)
+	if e != nil {
+		return nil, nil, e
+	}
+
+	condition, e := expectOperation(p)
+	if e != nil {
+		return nil, nil, e
+	}
+
+	_, e = p.expect(GUARD_CLOSE)
+	if e != nil {
+		return nil, nil, e
+	}
+
+	return open, condition, nil
+}
+
+func guardBody(p *pipeline) (Block, error) {
+
+	if p.match(BLOCK_OPEN) {
+		return block(p)
+	}
+
+	stat, e := expectStatement(p)
+	if e != nil {
+		return nil, e
+	}
+
+	stats := []Expression{stat}
+	return newUnDelimiteredBlockExpr(stats), nil
 }
 
 func match(p *pipeline) (Expression, error) {
@@ -597,11 +618,21 @@ func match(p *pipeline) (Expression, error) {
 
 func matchCases(p *pipeline) ([]MatchCase, error) {
 
+	var (
+		mc MatchCase
+		e  error
+	)
+
 	cases := []MatchCase{}
 
 	for !p.match(BLOCK_CLOSE) && p.hasMore() {
 
-		mc, e := matchCase(p)
+		if p.match(GUARD_OPEN) {
+			mc, e = matchGuardCase(p)
+		} else {
+			mc, e = matchCase(p)
+		}
+
 		if e != nil {
 			return nil, e
 		}
@@ -617,11 +648,27 @@ func matchCases(p *pipeline) ([]MatchCase, error) {
 	return cases, nil
 }
 
-func matchCase(p *pipeline) (MatchCase, error) {
+func matchGuardCase(p *pipeline) (MatchCase, error) {
 
-	if p.match(GUARD_OPEN) {
-		return guardExplicit(p)
+	open, condition, e := guardCondition(p)
+	if e != nil {
+		return nil, e
 	}
+
+	_, e = p.expect(DO)
+	if e != nil {
+		return nil, e
+	}
+
+	body, e := guardBody(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return newGuard(open, condition, body), nil
+}
+
+func matchCase(p *pipeline) (MatchCase, error) {
 
 	condition, e := expectOperation(p)
 	if e != nil {
@@ -633,25 +680,10 @@ func matchCase(p *pipeline) (MatchCase, error) {
 		return nil, e
 	}
 
-	body, e := matchCaseBlock(p)
+	body, e := guardBody(p)
 	if e != nil {
 		return nil, e
 	}
 
 	return newMatchCase(condition, body), nil
-}
-
-func matchCaseBlock(p *pipeline) (Block, error) {
-
-	if p.match(BLOCK_OPEN) {
-		return block(p)
-	}
-
-	stat, e := expectStatement(p)
-	if e != nil {
-		return nil, e
-	}
-
-	stats := []Expression{stat}
-	return newUnDelimiteredBlockExpr(stats), nil
 }
