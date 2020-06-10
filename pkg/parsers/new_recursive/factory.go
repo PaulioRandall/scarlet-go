@@ -104,10 +104,10 @@ func newGuard(open Token, condition Expression, body Block) Guard {
 	}
 }
 
-func newMatchCase(condition Expression, body Block) MatchCase {
+func newMatchCase(object Expression, body Block) MatchCase {
 	return matchCaseStat{
-		condition: condition,
-		body:      body,
+		object: object,
+		body:   body,
 	}
 }
 

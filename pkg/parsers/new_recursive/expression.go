@@ -532,6 +532,10 @@ func watchIdentifiers(p *pipeline) ([]Token, error) {
 }
 
 func guard(p *pipeline) (Expression, error) {
+	return guardExplicit(p)
+}
+
+func guardExplicit(p *pipeline) (Guard, error) {
 
 	open, condition, e := guardCondition(p)
 	if e != nil {
@@ -582,6 +586,7 @@ func guardBody(p *pipeline) (Block, error) {
 }
 
 func match(p *pipeline) (Expression, error) {
+	// pattern := MATCH subject BLOCK_OPEN matchCases BLOCK_CLOSE
 
 	key, e := p.expect(MATCH)
 	if e != nil {
@@ -617,6 +622,7 @@ func match(p *pipeline) (Expression, error) {
 }
 
 func matchCases(p *pipeline) ([]MatchCase, error) {
+	// pattern := {matchGuardCase | matchCase}
 
 	var (
 		mc MatchCase
@@ -649,6 +655,7 @@ func matchCases(p *pipeline) ([]MatchCase, error) {
 }
 
 func matchGuardCase(p *pipeline) (MatchCase, error) {
+	// pattern := guardCondition DO guardBody
 
 	open, condition, e := guardCondition(p)
 	if e != nil {
@@ -669,8 +676,9 @@ func matchGuardCase(p *pipeline) (MatchCase, error) {
 }
 
 func matchCase(p *pipeline) (MatchCase, error) {
+	// pattern := object DO guardBody
 
-	condition, e := expectOperation(p)
+	object, e := expectOperation(p)
 	if e != nil {
 		return nil, e
 	}
@@ -685,5 +693,54 @@ func matchCase(p *pipeline) (MatchCase, error) {
 		return nil, e
 	}
 
-	return newMatchCase(condition, body), nil
+	return newMatchCase(object, body), nil
+}
+
+func loop(p *pipeline) (Expression, error) {
+	// pattern := LOOP loopInitialiser TERMINATOR guard
+
+	key, e := p.expect(LOOP)
+	if e != nil {
+		return nil, e
+	}
+
+	init, e := loopInitialiser(p)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(TERMINATOR)
+	if e != nil {
+		return nil, e
+	}
+
+	g, e := guardExplicit(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return newLoop(key, init, g), nil
+}
+
+func loopInitialiser(p *pipeline) (Assignment, error) {
+	// pattern := IDENTIFIER ASSIGN SOURCE
+
+	id, e := p.expect(IDENTIFIER)
+	if e != nil {
+		return nil, e
+	}
+
+	target := newIdentifier(id)
+
+	_, e = p.expect(ASSIGN)
+	if e != nil {
+		return nil, e
+	}
+
+	source, e := expectOperation(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return newAssignment(target, source), nil
 }

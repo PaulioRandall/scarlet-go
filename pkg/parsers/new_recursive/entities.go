@@ -426,8 +426,8 @@ func (g guardStat) String() string {
 }
 
 type matchCaseStat struct {
-	condition Expression
-	body      Block
+	object Expression
+	body   Block
 }
 
 func (matchCaseStat) Kind() Kind {
@@ -435,7 +435,7 @@ func (matchCaseStat) Kind() Kind {
 }
 
 func (mc matchCaseStat) Condition() Expression {
-	return mc.condition
+	return mc.object
 }
 
 func (mc matchCaseStat) Body() Block {
@@ -443,7 +443,7 @@ func (mc matchCaseStat) Body() Block {
 }
 
 func (mc matchCaseStat) Begin() (int, int) {
-	return mc.condition.Begin()
+	return mc.object.Begin()
 }
 
 func (mc matchCaseStat) End() (int, int) {
