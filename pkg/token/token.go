@@ -6,21 +6,21 @@ import (
 )
 
 type Token interface {
-	Morpheme() Morpheme
+	Type() TokenType
 	Value() string
 	Line() int
 	Col() int
 }
 
 type tok struct {
-	m Morpheme
-	v string
-	l int
-	c int
+	ty TokenType
+	v  string
+	l  int
+	c  int
 }
 
-func (tk tok) Morpheme() Morpheme {
-	return tk.m
+func (tk tok) Type() TokenType {
+	return tk.ty
 }
 
 func (tk tok) Value() string {
@@ -35,8 +35,8 @@ func (tk tok) Col() int {
 	return tk.c
 }
 
-func NewToken(m Morpheme, v string, line, col int) Token {
-	return tok{m, v, line, col}
+func NewToken(ty TokenType, v string, line, col int) Token {
+	return tok{ty, v, line, col}
 }
 
 func ToString(tk Token) string {
@@ -51,10 +51,10 @@ func ToString(tk Token) string {
 
 	var s interface{}
 	v := tk.Value()
-	m := tk.Morpheme()
+	ty := tk.Type()
 
-	switch m {
-	case STRING, TERMINATOR, NEWLINE, WHITESPACE:
+	switch ty {
+	case TK_STRING, TK_TERMINATOR, TK_NEWLINE, TK_WHITESPACE:
 		s = strconv.QuoteToGraphic(v)
 
 	default:
@@ -65,7 +65,7 @@ func ToString(tk Token) string {
 	return fmt.Sprintf(`%d:%d %s %v`,
 		tk.Line()+1,
 		tk.Col(),
-		m.String(),
+		ty.String(),
 		s,
 	)
 }
@@ -73,7 +73,7 @@ func ToString(tk Token) string {
 func PrettyPrint(tks []Token) {
 
 	for _, tk := range tks {
-		s := tk.Morpheme().String()
+		s := tk.Type().String()
 		fmt.Print(s + " ")
 	}
 

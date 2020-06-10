@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func tok(m Morpheme, v string) Token {
-	return NewToken(m, v, 0, 0)
+func tok(ty TokenType, v string) Token {
+	return NewToken(ty, v, 0, 0)
 }
 
 type ParseFunc func(in []Token) []Statement

@@ -32,7 +32,7 @@ func expressions(p *pipeline) ([]Expression, error) {
 
 		r = append(r, expr)
 
-		if !p.accept(DELIMITER) {
+		if !p.accept(TK_DELIMITER) {
 			return r, nil
 		}
 	}
@@ -44,16 +44,16 @@ func expression(p *pipeline) (Expression, error) {
 	// pattern := identifier | literal
 
 	switch {
-	case p.match(IDENTIFIER), p.match(VOID):
+	case p.match(TK_IDENTIFIER), p.match(TK_VOID):
 		return identifier(p)
 
-	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
+	case p.match(TK_BOOL), p.match(TK_NUMBER), p.match(TK_STRING):
 		return literal(p)
 
-	case p.match(SUBTRACT):
+	case p.match(TK_MINUS):
 		return negation(p)
 
-	case p.match(PAREN_OPEN):
+	case p.match(TK_PAREN_OPEN):
 		return group(p)
 	}
 
@@ -89,7 +89,7 @@ func literal(p *pipeline) (Expression, error) {
 func negation(p *pipeline) (Expression, error) {
 	// pattern := MINUS expression
 
-	_, e := p.expect(SUBTRACT)
+	_, e := p.expect(TK_MINUS)
 	if e != nil {
 		return nil, e
 	}
@@ -104,7 +104,7 @@ func negation(p *pipeline) (Expression, error) {
 
 func group(p *pipeline) (Expression, error) {
 
-	_, e := p.expect(PAREN_OPEN)
+	_, e := p.expect(TK_PAREN_OPEN)
 	if e != nil {
 		return nil, e
 	}
@@ -114,7 +114,7 @@ func group(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	_, e = p.expect(PAREN_CLOSE)
+	_, e = p.expect(TK_PAREN_CLOSE)
 	if e != nil {
 		return nil, e
 	}
@@ -122,10 +122,10 @@ func group(p *pipeline) (Expression, error) {
 	return expr, e
 }
 
-func acceptDelimiter(p *pipeline, closingSignal Morpheme) bool {
+func acceptDelimiter(p *pipeline, closingSignal TokenType) bool {
 
-	if p.accept(DELIMITER) {
-		if p.accept(TERMINATOR) {
+	if p.accept(TK_DELIMITER) {
+		if p.accept(TK_TERMINATOR) {
 			return !p.match(closingSignal)
 		}
 
@@ -138,7 +138,7 @@ func acceptDelimiter(p *pipeline, closingSignal Morpheme) bool {
 func maybeListAccessor(p *pipeline, maybeList Expression) (Expression, error) {
 	// pattern := expression [GUARD_OPEN expression GUARD_CLOSE]
 
-	if p.match(GUARD_OPEN) {
+	if p.match(TK_GUARD_OPEN) {
 		return listAccessor(p, maybeList)
 	}
 
@@ -148,14 +148,14 @@ func maybeListAccessor(p *pipeline, maybeList Expression) (Expression, error) {
 func listAccessor(p *pipeline, left Expression) (Expression, error) {
 	// pattern := GUARD_OPEN expression GUARD_CLOSE
 
-	p.expect(GUARD_OPEN)
+	p.expect(TK_GUARD_OPEN)
 
 	index, e := expectOperation(p)
 	if e != nil {
 		return nil, e
 	}
 
-	_, e = p.expect(GUARD_CLOSE)
+	_, e = p.expect(TK_GUARD_CLOSE)
 	if e != nil {
 		return nil, e
 	}
@@ -191,7 +191,7 @@ func operations(p *pipeline) ([]Expression, error) {
 
 		r = append(r, expr)
 
-		if !p.accept(DELIMITER) {
+		if !p.accept(TK_DELIMITER) {
 			return r, nil
 		}
 	}
@@ -216,16 +216,16 @@ func operation(p *pipeline) (Expression, error) {
 func operand(p *pipeline) (Expression, error) {
 
 	switch {
-	case p.match(IDENTIFIER), p.match(VOID):
+	case p.match(TK_IDENTIFIER), p.match(TK_VOID):
 		return identifier(p)
 
-	case p.match(BOOL), p.match(NUMBER), p.match(STRING):
+	case p.match(TK_BOOL), p.match(TK_NUMBER), p.match(TK_STRING):
 		return literal(p)
 
-	case p.match(SUBTRACT):
+	case p.match(TK_MINUS):
 		return negation(p)
 
-	case p.match(PAREN_OPEN):
+	case p.match(TK_PAREN_OPEN):
 		return group(p)
 	}
 
@@ -252,7 +252,7 @@ func operationExpression(p *pipeline, left Expression, leftPriority int) (Expres
 		return left, nil
 	}
 
-	rightPriority := p.peek().Morpheme().Precedence()
+	rightPriority := p.peek().Type().Precedence()
 	if leftPriority >= rightPriority {
 		return left, nil
 	}
@@ -299,16 +299,16 @@ func expectOperation(p *pipeline) (Expression, error) {
 
 func block(p *pipeline) (Block, error) {
 
-	open, e := p.expect(BLOCK_OPEN)
+	open, e := p.expect(TK_BLOCK_OPEN)
 	if e != nil {
 		return nil, e
 	}
 
-	p.accept(TERMINATOR)
+	p.accept(TK_TERMINATOR)
 	stats, e := blockStatements(p)
 
-	p.accept(TERMINATOR)
-	close, e := p.expect(BLOCK_CLOSE)
+	p.accept(TK_TERMINATOR)
+	close, e := p.expect(TK_BLOCK_CLOSE)
 	if e != nil {
 		return nil, e
 	}
@@ -350,13 +350,13 @@ func blockStatement(p *pipeline) (st Expression, more bool, e error) {
 		return nil, false, nil
 	}
 
-	return st, p.accept(TERMINATOR), nil
+	return st, p.accept(TK_TERMINATOR), nil
 }
 
 func function(p *pipeline) (Expression, error) {
 	// pattern := FUNC function_parameters function_body
 
-	key, e := p.expect(FUNC)
+	key, e := p.expect(TK_FUNCTION)
 	if e != nil {
 		return nil, e
 	}
@@ -377,7 +377,7 @@ func function(p *pipeline) (Expression, error) {
 func functionParameters(p *pipeline) (Parameters, error) {
 	// pattern := PAREN_OPEN [expression {DELIMITER expression}] PAREN_CLOSE
 
-	open, e := p.expect(PAREN_OPEN)
+	open, e := p.expect(TK_PAREN_OPEN)
 	if e != nil {
 		return nil, e
 	}
@@ -387,7 +387,7 @@ func functionParameters(p *pipeline) (Parameters, error) {
 		return nil, e
 	}
 
-	close, e := p.expect(PAREN_CLOSE)
+	close, e := p.expect(TK_PAREN_CLOSE)
 	if e != nil {
 		return nil, e
 	}
@@ -400,12 +400,12 @@ func parameterIdentifiers(p *pipeline) (in []Token, out []Token, _ error) {
 	in = []Token{}
 	out = []Token{}
 
-	if p.match(PAREN_CLOSE) {
+	if p.match(TK_PAREN_CLOSE) {
 		return in, out, nil
 	}
 
-	p.accept(TERMINATOR)
-	for loop := true; loop; loop = acceptDelimiter(p, PAREN_CLOSE) {
+	p.accept(TK_TERMINATOR)
+	for loop := true; loop; loop = acceptDelimiter(p, TK_PAREN_CLOSE) {
 
 		id, isOutput, e := functionParam(p)
 		if e != nil {
@@ -423,15 +423,15 @@ func parameterIdentifiers(p *pipeline) (in []Token, out []Token, _ error) {
 }
 
 func functionParam(p *pipeline) (Token, bool, error) {
-	output := p.accept(OUTPUT)
-	id, e := p.expect(IDENTIFIER)
+	output := p.accept(TK_OUTPUT)
+	id, e := p.expect(TK_IDENTIFIER)
 	return id, output, e
 }
 
 func expressionFunction(p *pipeline) (Expression, error) {
 	// pattern := EXPR_FUNC exprFuncInputs expression
 
-	key, e := p.expect(EXPR_FUNC)
+	key, e := p.expect(TK_EXPR_FUNC)
 	if e != nil {
 		return nil, e
 	}
@@ -452,12 +452,12 @@ func expressionFunction(p *pipeline) (Expression, error) {
 func expressionFunctionParameters(p *pipeline) ([]Token, error) {
 	// pattern := PAREN_OPEN parameters PAREN_CLOSE
 
-	_, e := p.expect(PAREN_OPEN)
+	_, e := p.expect(TK_PAREN_OPEN)
 	if e != nil {
 		return nil, e
 	}
 
-	if p.accept(PAREN_CLOSE) {
+	if p.accept(TK_PAREN_CLOSE) {
 		return []Token{}, nil
 	}
 
@@ -466,7 +466,7 @@ func expressionFunctionParameters(p *pipeline) ([]Token, error) {
 		return nil, e
 	}
 
-	_, e = p.expect(PAREN_CLOSE)
+	_, e = p.expect(TK_PAREN_CLOSE)
 	if e != nil {
 		return nil, e
 	}
@@ -479,9 +479,9 @@ func expressionFunctionInputs(p *pipeline) ([]Token, error) {
 
 	in := []Token{}
 
-	for loop := true; loop; loop = acceptDelimiter(p, PAREN_CLOSE) {
+	for loop := true; loop; loop = acceptDelimiter(p, TK_PAREN_CLOSE) {
 
-		id, e := p.expect(IDENTIFIER)
+		id, e := p.expect(TK_IDENTIFIER)
 		if e != nil {
 			return nil, e
 		}
@@ -495,7 +495,7 @@ func expressionFunctionInputs(p *pipeline) ([]Token, error) {
 func watch(p *pipeline) (Expression, error) {
 	// pattern := WATCH BLOCK_OPEN {statements} BLOCK_CLOSE
 
-	key, e := p.expect(WATCH)
+	key, e := p.expect(TK_WATCH)
 	if e != nil {
 		return nil, e
 	}
@@ -518,9 +518,9 @@ func watchIdentifiers(p *pipeline) ([]Token, error) {
 
 	ids := []Token{}
 
-	for first := true; first || p.accept(DELIMITER); first = false {
+	for first := true; first || p.accept(TK_DELIMITER); first = false {
 
-		id, e := p.expect(IDENTIFIER)
+		id, e := p.expect(TK_IDENTIFIER)
 		if e != nil {
 			return nil, e
 		}
@@ -552,7 +552,7 @@ func guardExplicit(p *pipeline) (Guard, error) {
 
 func guardCondition(p *pipeline) (Token, Expression, error) {
 
-	open, e := p.expect(GUARD_OPEN)
+	open, e := p.expect(TK_GUARD_OPEN)
 	if e != nil {
 		return nil, nil, e
 	}
@@ -562,7 +562,7 @@ func guardCondition(p *pipeline) (Token, Expression, error) {
 		return nil, nil, e
 	}
 
-	_, e = p.expect(GUARD_CLOSE)
+	_, e = p.expect(TK_GUARD_CLOSE)
 	if e != nil {
 		return nil, nil, e
 	}
@@ -572,7 +572,7 @@ func guardCondition(p *pipeline) (Token, Expression, error) {
 
 func guardBody(p *pipeline) (Block, error) {
 
-	if p.match(BLOCK_OPEN) {
+	if p.match(TK_BLOCK_OPEN) {
 		return block(p)
 	}
 
@@ -588,7 +588,7 @@ func guardBody(p *pipeline) (Block, error) {
 func when(p *pipeline) (Expression, error) {
 	// pattern := WHEN subject BLOCK_OPEN whenCases BLOCK_CLOSE
 
-	key, e := p.expect(WHEN)
+	key, e := p.expect(TK_WHEN)
 	if e != nil {
 		return nil, e
 	}
@@ -598,12 +598,12 @@ func when(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	_, e = p.expect(BLOCK_OPEN)
+	_, e = p.expect(TK_BLOCK_OPEN)
 	if e != nil {
 		return nil, e
 	}
 
-	_, e = p.expect(TERMINATOR)
+	_, e = p.expect(TK_TERMINATOR)
 	if e != nil {
 		return nil, e
 	}
@@ -613,7 +613,7 @@ func when(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	close, e := p.expect(BLOCK_CLOSE)
+	close, e := p.expect(TK_BLOCK_CLOSE)
 	if e != nil {
 		return nil, e
 	}
@@ -631,9 +631,9 @@ func whenCases(p *pipeline) ([]WhenCase, error) {
 
 	cases := []WhenCase{}
 
-	for !p.match(BLOCK_CLOSE) && p.hasMore() {
+	for !p.match(TK_BLOCK_CLOSE) && p.hasMore() {
 
-		if p.match(GUARD_OPEN) {
+		if p.match(TK_GUARD_OPEN) {
 			mc, e = whenGuardCase(p)
 		} else {
 			mc, e = whenCase(p)
@@ -645,7 +645,7 @@ func whenCases(p *pipeline) ([]WhenCase, error) {
 
 		cases = append(cases, mc)
 
-		_, e = p.expect(TERMINATOR)
+		_, e = p.expect(TK_TERMINATOR)
 		if e != nil {
 			return nil, e
 		}
@@ -662,7 +662,7 @@ func whenGuardCase(p *pipeline) (WhenCase, error) {
 		return nil, e
 	}
 
-	_, e = p.expect(THEN)
+	_, e = p.expect(TK_THEN)
 	if e != nil {
 		return nil, e
 	}
@@ -683,7 +683,7 @@ func whenCase(p *pipeline) (WhenCase, error) {
 		return nil, e
 	}
 
-	_, e = p.expect(THEN)
+	_, e = p.expect(TK_THEN)
 	if e != nil {
 		return nil, e
 	}
@@ -699,7 +699,7 @@ func whenCase(p *pipeline) (WhenCase, error) {
 func loop(p *pipeline) (Expression, error) {
 	// pattern := LOOP loopInitialiser guard
 
-	key, e := p.expect(LOOP)
+	key, e := p.expect(TK_LOOP)
 	if e != nil {
 		return nil, e
 	}
@@ -720,14 +720,14 @@ func loop(p *pipeline) (Expression, error) {
 func loopInitialiser(p *pipeline) (Assignment, error) {
 	// pattern := IDENTIFIER ASSIGN SOURCE
 
-	id, e := p.expect(IDENTIFIER)
+	id, e := p.expect(TK_IDENTIFIER)
 	if e != nil {
 		return nil, e
 	}
 
 	target := newIdentifier(id)
 
-	_, e = p.expect(ASSIGN)
+	_, e = p.expect(TK_ASSIGNMENT)
 	if e != nil {
 		return nil, e
 	}

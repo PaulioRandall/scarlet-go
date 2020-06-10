@@ -33,8 +33,8 @@ func ScanAll(s string) ([]Token, error) {
 }
 
 type pattern struct {
-	m Morpheme
-	f mat.PatternMatcher
+	ty TokenType
+	f  mat.PatternMatcher
 }
 
 func (p pattern) Matcher() mat.PatternMatcher {
@@ -42,15 +42,15 @@ func (p pattern) Matcher() mat.PatternMatcher {
 }
 
 func (p pattern) OnMatch(value string, line, col int) interface{} {
-	return NewToken(p.m, value, line, col)
+	return NewToken(p.ty, value, line, col)
 }
 
 var patterns = []mat.Pattern{
-	pattern{NEWLINE, func(s *mat.Symbols) (int, error) {
+	pattern{TK_NEWLINE, func(s *mat.Symbols) (int, error) {
 		_, n := s.IsNewline(0)
 		return n, nil
 	}},
-	pattern{WHITESPACE, func(s *mat.Symbols) (int, error) {
+	pattern{TK_WHITESPACE, func(s *mat.Symbols) (int, error) {
 		// Returns the number of consecutive whitespace terminals.
 		// Newlines are not counted as whitespace.
 		return s.CountWhile(0, func(i int, ru rune) (bool, error) {
@@ -66,7 +66,7 @@ var patterns = []mat.Pattern{
 			return true, nil
 		})
 	}},
-	pattern{COMMENT, func(s *mat.Symbols) (int, error) {
+	pattern{TK_COMMENT, func(s *mat.Symbols) (int, error) {
 
 		PREFIX := "//"
 		PREFIX_LEN := 2
@@ -87,31 +87,31 @@ var patterns = []mat.Pattern{
 
 		return PREFIX_LEN + n, nil
 	}},
-	pattern{WHEN, func(s *mat.Symbols) (int, error) {
+	pattern{TK_WHEN, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "when")
 	}},
-	pattern{WATCH, func(s *mat.Symbols) (int, error) {
+	pattern{TK_WATCH, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "watch")
 	}},
-	pattern{BOOL, func(s *mat.Symbols) (int, error) {
+	pattern{TK_BOOL, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "false")
 	}},
-	pattern{BOOL, func(s *mat.Symbols) (int, error) {
+	pattern{TK_BOOL, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "true")
 	}},
-	pattern{LOOP, func(s *mat.Symbols) (int, error) {
+	pattern{TK_LOOP, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "loop")
 	}},
-	pattern{DEF, func(s *mat.Symbols) (int, error) {
+	pattern{TK_DEFINITION, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "def")
 	}},
-	pattern{FUNC, func(s *mat.Symbols) (int, error) {
+	pattern{TK_FUNCTION, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "F")
 	}},
-	pattern{EXPR_FUNC, func(s *mat.Symbols) (int, error) {
+	pattern{TK_EXPR_FUNC, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "E")
 	}},
-	pattern{IDENTIFIER, func(s *mat.Symbols) (int, error) {
+	pattern{TK_IDENTIFIER, func(s *mat.Symbols) (int, error) {
 		return s.CountWhile(0, func(i int, ru rune) (bool, error) {
 
 			if i == 0 {
@@ -125,85 +125,85 @@ var patterns = []mat.Pattern{
 			return false, nil
 		})
 	}},
-	pattern{ASSIGN, func(s *mat.Symbols) (int, error) {
+	pattern{TK_ASSIGNMENT, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ":=")
 	}},
-	pattern{LESS_THAN_OR_EQUAL, func(s *mat.Symbols) (int, error) {
+	pattern{TK_LESS_THAN_OR_EQUAL, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "<=")
 	}},
-	pattern{MORE_THAN_OR_EQUAL, func(s *mat.Symbols) (int, error) {
+	pattern{TK_MORE_THAN_OR_EQUAL, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ">=")
 	}},
-	pattern{THEN, func(s *mat.Symbols) (int, error) {
+	pattern{TK_THEN, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "->")
 	}},
-	pattern{BLOCK_OPEN, func(s *mat.Symbols) (int, error) {
+	pattern{TK_BLOCK_OPEN, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "{")
 	}},
-	pattern{BLOCK_CLOSE, func(s *mat.Symbols) (int, error) {
+	pattern{TK_BLOCK_CLOSE, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "}")
 	}},
-	pattern{PAREN_OPEN, func(s *mat.Symbols) (int, error) {
+	pattern{TK_PAREN_OPEN, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "(")
 	}},
-	pattern{PAREN_CLOSE, func(s *mat.Symbols) (int, error) {
+	pattern{TK_PAREN_CLOSE, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ")")
 	}},
-	pattern{GUARD_OPEN, func(s *mat.Symbols) (int, error) {
+	pattern{TK_GUARD_OPEN, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "[")
 	}},
-	pattern{GUARD_CLOSE, func(s *mat.Symbols) (int, error) {
+	pattern{TK_GUARD_CLOSE, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "]")
 	}},
-	pattern{OUTPUT, func(s *mat.Symbols) (int, error) {
+	pattern{TK_OUTPUT, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "^")
 	}},
-	pattern{DELIMITER, func(s *mat.Symbols) (int, error) {
+	pattern{TK_DELIMITER, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ",")
 	}},
-	pattern{VOID, func(s *mat.Symbols) (int, error) {
+	pattern{TK_VOID, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "_")
 	}},
-	pattern{TERMINATOR, func(s *mat.Symbols) (int, error) {
+	pattern{TK_TERMINATOR, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ";")
 	}},
-	pattern{SPELL, func(s *mat.Symbols) (int, error) {
+	pattern{TK_SPELL, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "@")
 	}},
-	pattern{ADD, func(s *mat.Symbols) (int, error) {
+	pattern{TK_PLUS, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "+")
 	}},
-	pattern{SUBTRACT, func(s *mat.Symbols) (int, error) {
+	pattern{TK_MINUS, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "-")
 	}},
-	pattern{MULTIPLY, func(s *mat.Symbols) (int, error) {
+	pattern{TK_MULTIPLY, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "*")
 	}},
-	pattern{DIVIDE, func(s *mat.Symbols) (int, error) {
+	pattern{TK_DIVIDE, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "/")
 	}},
-	pattern{REMAINDER, func(s *mat.Symbols) (int, error) {
+	pattern{TK_REMAINDER, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "%")
 	}},
-	pattern{AND, func(s *mat.Symbols) (int, error) {
+	pattern{TK_AND, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "&")
 	}},
-	pattern{OR, func(s *mat.Symbols) (int, error) {
+	pattern{TK_OR, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "|")
 	}},
-	pattern{EQUAL, func(s *mat.Symbols) (int, error) {
+	pattern{TK_EQUAL, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "==")
 	}},
-	pattern{NOT_EQUAL, func(s *mat.Symbols) (int, error) {
+	pattern{TK_NOT_EQUAL, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "!=")
 	}},
-	pattern{LESS_THAN, func(s *mat.Symbols) (int, error) {
+	pattern{TK_LESS_THAN, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "<")
 	}},
-	pattern{MORE_THAN, func(s *mat.Symbols) (int, error) {
+	pattern{TK_MORE_THAN, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ">")
 	}},
-	pattern{STRING, func(s *mat.Symbols) (int, error) {
+	pattern{TK_STRING, func(s *mat.Symbols) (int, error) {
 
 		const (
 			PREFIX     = '"'
@@ -247,7 +247,7 @@ var patterns = []mat.Pattern{
 
 		return n + SUFFIX_LEN, nil
 	}},
-	pattern{NUMBER, func(s *mat.Symbols) (int, error) {
+	pattern{TK_NUMBER, func(s *mat.Symbols) (int, error) {
 
 		const (
 			DELIM     = '.'

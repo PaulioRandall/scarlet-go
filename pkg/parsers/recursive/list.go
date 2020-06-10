@@ -7,33 +7,33 @@ import (
 )
 
 func isList(p *pipe) bool {
-	return p.match(LIST)
+	return p.match(TK_LIST)
 }
 
 func parseList(p *pipe) Expression {
 	// pattern := LIST LIST_OPEN {expression} LIST_CLOSE
 
 	return List{
-		Key:   p.expect(`parseList`, LIST),
-		Open:  p.expect(`parseList`, BLOCK_OPEN),
+		Key:   p.expect(`parseList`, TK_LIST),
+		Open:  p.expect(`parseList`, TK_BLOCK_OPEN),
 		Exprs: parseExpressions(p),
-		Close: p.expect(`parseList`, BLOCK_CLOSE),
+		Close: p.expect(`parseList`, TK_BLOCK_CLOSE),
 	}
 }
 
 func isListAccess(p *pipe) bool {
-	return p.matchSequence(IDENTIFIER, GUARD_OPEN)
+	return p.matchSequence(TK_IDENTIFIER, TK_GUARD_OPEN)
 }
 
 func parseListAccess(p *pipe) ListAccess {
 	// pattern := ID GUARD_OPEN expression GUARD_CLOSE
 
-	tk := p.expect(`parseListAccess`, IDENTIFIER)
+	tk := p.expect(`parseListAccess`, TK_IDENTIFIER)
 	id := Identifier{tk}
 
-	p.expect(`parseListAccess`, GUARD_OPEN)
+	p.expect(`parseListAccess`, TK_GUARD_OPEN)
 	indexExp := parseListItemExpr(p)
-	p.expect(`parseListAccess`, GUARD_CLOSE)
+	p.expect(`parseListAccess`, TK_GUARD_CLOSE)
 
 	return ListAccess{id, indexExp}
 }
@@ -42,7 +42,7 @@ func parseListItemExpr(p *pipe) Expression {
 
 	var expr Expression
 
-	if p.matchAny(LIST_START, LIST_END) {
+	if p.matchAny(TK_LIST_START, TK_LIST_END) {
 		expr = ListItemRef{p.next()}
 	} else {
 		expr = parseExpression(p)

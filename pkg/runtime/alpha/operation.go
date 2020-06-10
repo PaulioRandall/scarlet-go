@@ -12,56 +12,56 @@ func evalOperation(ctx *alphaContext, op Operation) result {
 
 	tk := op.Operator
 
-	switch tk.Morpheme() {
-	case ADD:
+	switch tk.Type() {
+	case TK_PLUS:
 		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return numberLiteral(left.Add(right))
 
-	case SUBTRACT:
+	case TK_MINUS:
 		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return numberLiteral(left.Sub(right))
 
-	case MULTIPLY:
+	case TK_MULTIPLY:
 		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return numberLiteral(left.Mul(right))
 
-	case DIVIDE:
+	case TK_DIVIDE:
 		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return numberLiteral(left.Div(right))
 
-	case REMAINDER:
+	case TK_REMAINDER:
 		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return numberLiteral(left.Mod(right))
 
-	case LESS_THAN:
+	case TK_LESS_THAN:
 		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return boolLiteral(left.LessThan(right))
 
-	case MORE_THAN:
+	case TK_MORE_THAN:
 		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return boolLiteral(left.GreaterThan(right))
 
-	case LESS_THAN_OR_EQUAL:
+	case TK_LESS_THAN_OR_EQUAL:
 		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return boolLiteral(left.LessThanOrEqual(right))
 
-	case MORE_THAN_OR_EQUAL:
+	case TK_MORE_THAN_OR_EQUAL:
 		left, right := evalNumber(ctx, op.Left), evalNumber(ctx, op.Right)
 		return boolLiteral(left.GreaterThanOrEqual(right))
 
-	case AND:
+	case TK_AND:
 		left, right := evalBool(ctx, op.Left), evalBool(ctx, op.Right)
 		return boolLiteral(left && right)
 
-	case OR:
+	case TK_OR:
 		left, right := evalBool(ctx, op.Left), evalBool(ctx, op.Right)
 		return boolLiteral(left || right)
 
-	case EQUAL:
+	case TK_EQUAL:
 		left, right := evalExpression(ctx, op.Left), evalExpression(ctx, op.Right)
 		return boolLiteral(equal(left, right))
 
-	case NOT_EQUAL:
+	case TK_NOT_EQUAL:
 		left, right := evalExpression(ctx, op.Left), evalExpression(ctx, op.Right)
 		return boolLiteral(!equal(left, right))
 	}

@@ -7,17 +7,17 @@ import (
 )
 
 func isLoop(p *pipe) bool {
-	return p.match(LOOP)
+	return p.match(TK_LOOP)
 }
 
 func parseLoop(p *pipe) Statement {
 	// pattern := LOOP ID guard
 	// pattern := LOOP ID DELIM ID DELIM ID UPDATES expression
 
-	key := p.expect(`parseLoop`, LOOP)
-	indexId := p.expect(`parseLoop`, IDENTIFIER)
+	key := p.expect(`parseLoop`, TK_LOOP)
+	indexId := p.expect(`parseLoop`, TK_IDENTIFIER)
 
-	if p.accept(ASSIGN) {
+	if p.accept(TK_ASSIGNMENT) {
 
 		initIndex := parseExpression(p)
 
@@ -36,13 +36,13 @@ func parseLoop(p *pipe) Statement {
 		}
 	}
 
-	p.expect(`parseLoop`, DELIMITER)
-	valueId := p.expect(`parseLoop`, IDENTIFIER)
+	p.expect(`parseLoop`, TK_DELIMITER)
+	valueId := p.expect(`parseLoop`, TK_IDENTIFIER)
 
-	p.expect(`parseLoop`, DELIMITER)
-	moreId := p.expect(`parseLoop`, IDENTIFIER)
+	p.expect(`parseLoop`, TK_DELIMITER)
+	moreId := p.expect(`parseLoop`, TK_IDENTIFIER)
 
-	p.expect(`parseLoop`, UPDATES)
+	p.expect(`parseLoop`, TK_UPDATES)
 
 	return ForEach{
 		Open:    key,

@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func tok(m Morpheme, v string) Token {
-	return NewToken(m, v, 0, 0)
+func tok(ty TokenType, v string) Token {
+	return NewToken(ty, v, 0, 0)
 }
 
 type ScanFunc func(in string) []Token
@@ -78,7 +78,7 @@ func checkToken(t *testing.T, exp, act Token) {
 
 	m := "Expected (" + ToString(exp) + ") but got (" + ToString(act) + ")"
 
-	require.Equal(t, exp.Morpheme(), act.Morpheme(), m)
+	require.Equal(t, exp.Type(), act.Type(), m)
 	require.Equal(t, exp.Value(), act.Value(), m)
 	require.Equal(t, exp.Line(), act.Line(), m)
 	require.Equal(t, exp.Col(), act.Col(), m)

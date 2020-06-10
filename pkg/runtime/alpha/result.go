@@ -159,22 +159,22 @@ func (e exprFuncLiteral) String() string {
 
 func valueOf(tk Token) result {
 
-	switch tk.Morpheme() {
-	case VOID:
+	switch tk.Type() {
+	case TK_VOID:
 		return voidLiteral{}
 
-	case BOOL:
+	case TK_BOOL:
 		return boolLiteral(tk.Value() == `TRUE`)
 
-	case NUMBER:
+	case TK_NUMBER:
 		return parseFloat(tk)
 
-	case STRING:
+	case TK_STRING:
 		return stringLiteral(tk.Value())
 	}
 
 	err.Panic(
-		fmt.Sprintf("SANITY CHECK! Invalid morpheme %s", tk.Morpheme().String()),
+		fmt.Sprintf("SANITY CHECK! Invalid morpheme %s", tk.Type().String()),
 		err.At(tk),
 	)
 	return nil

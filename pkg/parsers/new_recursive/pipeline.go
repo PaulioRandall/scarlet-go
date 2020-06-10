@@ -23,25 +23,25 @@ func (p *pipeline) hasMore() bool {
 	return p.pos < p.size
 }
 
-func (p *pipeline) match(m Morpheme) bool {
+func (p *pipeline) match(ty TokenType) bool {
 
 	tk := p._peek()
 	if tk == nil {
 		return false
 	}
 
-	return m == ANY || m == tk.Morpheme()
+	return ty == TK_ANY || ty == tk.Type()
 }
 
-func (p *pipeline) matchSequence(ms ...Morpheme) bool {
-	for i, m := range ms {
+func (p *pipeline) matchSequence(tys ...TokenType) bool {
+	for i, ty := range tys {
 
 		tk := p._at(i)
 		if tk == nil {
 			return false
 		}
 
-		if m != ANY && m != tk.Morpheme() {
+		if ty != TK_ANY && ty != tk.Type() {
 			return false
 		}
 	}
@@ -57,14 +57,14 @@ func (p *pipeline) any() Token {
 	return p._next()
 }
 
-func (p *pipeline) accept(m Morpheme) bool {
+func (p *pipeline) accept(ty TokenType) bool {
 
 	tk := p._peek()
 	if tk == nil {
 		return false
 	}
 
-	if m == ANY || m == tk.Morpheme() {
+	if ty == TK_ANY || ty == tk.Type() {
 		p._next()
 		return true
 	}
@@ -72,7 +72,7 @@ func (p *pipeline) accept(m Morpheme) bool {
 	return false
 }
 
-func (p *pipeline) expect(exp Morpheme) (Token, error) {
+func (p *pipeline) expect(exp TokenType) (Token, error) {
 
 	if p.accept(exp) {
 		return p.prev, nil
@@ -85,7 +85,7 @@ func (p *pipeline) expect(exp Morpheme) (Token, error) {
 	return nil, p._outOfTokens(p.prev, exp.String())
 }
 
-func (p *pipeline) expectAnyOf(exp ...Morpheme) (Token, error) {
+func (p *pipeline) expectAnyOf(exp ...TokenType) (Token, error) {
 
 	for _, m := range exp {
 		if p.accept(m) {
@@ -94,10 +94,10 @@ func (p *pipeline) expectAnyOf(exp ...Morpheme) (Token, error) {
 	}
 
 	if p.hasMore() {
-		return nil, p._unexpected(p._peek(), JoinMorphemes(exp...))
+		return nil, p._unexpected(p._peek(), JoinTypes(exp...))
 	}
 
-	return nil, p._outOfTokens(p.prev, JoinMorphemes(exp...))
+	return nil, p._outOfTokens(p.prev, JoinTypes(exp...))
 }
 
 func (p *pipeline) _peek() Token {
@@ -136,23 +136,23 @@ func (p *pipeline) _ignoreRedundant() {
 
 	for p.pos < p.size {
 
-		next := p.tks[p.pos].Morpheme()
+		next := p.tks[p.pos].Type()
 
 		switch {
-		case next == COMMENT:
+		case next == TK_COMMENT:
 			p.pos++
 
-		case next == WHITESPACE:
+		case next == TK_WHITESPACE:
 			p.pos++
 
-		case next != TERMINATOR:
+		case next != TK_TERMINATOR:
 			return
 
 			// next must be a TERMINATOR
 		case p.prev == nil: // Ignore TERMINATORs at start of script
 			p.pos++
 
-		case p.prev.Morpheme() == TERMINATOR: // Ignore successive TERMINATORs
+		case p.prev.Type() == TK_TERMINATOR: // Ignore successive TERMINATORs
 			p.pos++
 
 		default: // TERMINATOR
@@ -167,7 +167,7 @@ func (p *pipeline) _outOfTokens(prev Token, exp string) error {
 }
 
 func (p *pipeline) _unexpected(next Token, exp string) error {
-	s := fmt.Sprintf("Expected %s; got %s", exp, next.Morpheme().String())
+	s := fmt.Sprintf("Expected %s; got %s", exp, next.Type().String())
 	return err.New(s, err.At(next))
 }
 

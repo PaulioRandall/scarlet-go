@@ -12,15 +12,15 @@ func SP1(t *testing.T, f ParseFunc) {
 	// @f()
 
 	given := []Token{
-		tok(SPELL, "@"),
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, ""),
+		tok(TK_SPELL, "@"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	sp := SpellCall{
-		tok(IDENTIFIER, "f"),
+		tok(TK_IDENTIFIER, "f"),
 		nil,
 	}
 
@@ -32,21 +32,21 @@ func SP2(t *testing.T, f ParseFunc) {
 	// @f(a, b)
 
 	given := []Token{
-		tok(SPELL, "@"),
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "b"),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, "\n"),
+		tok(TK_SPELL, "@"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, "\n"),
 	}
 
 	exp := SpellCall{
-		tok(IDENTIFIER, "f"),
+		tok(TK_IDENTIFIER, "f"),
 		[]Expression{
-			Identifier{tok(IDENTIFIER, "a")},
-			Identifier{tok(IDENTIFIER, "b")},
+			Identifier{tok(TK_IDENTIFIER, "a")},
+			Identifier{tok(TK_IDENTIFIER, "b")},
 		},
 	}
 
@@ -58,32 +58,32 @@ func SP3(t *testing.T, f ParseFunc) {
 	// @f(1 + 2 - 3)
 
 	given := []Token{
-		tok(SPELL, "@"),
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(NUMBER, "1"),
-		tok(ADD, "+"),
-		tok(NUMBER, "2"),
-		tok(SUBTRACT, "-"),
-		tok(NUMBER, "3"),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, "\n"),
+		tok(TK_SPELL, "@"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_MINUS, "-"),
+		tok(TK_NUMBER, "3"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, "\n"),
 	}
 
 	add := Operation{
-		Value{tok(NUMBER, "1")},
-		tok(ADD, "+"),
-		Value{tok(NUMBER, "2")},
+		Value{tok(TK_NUMBER, "1")},
+		tok(TK_PLUS, "+"),
+		Value{tok(TK_NUMBER, "2")},
 	}
 
 	sub := Operation{
 		Left:     add,
-		Operator: tok(SUBTRACT, "-"),
-		Right:    Value{tok(NUMBER, "3")},
+		Operator: tok(TK_MINUS, "-"),
+		Right:    Value{tok(TK_NUMBER, "3")},
 	}
 
 	sp := SpellCall{
-		ID:     tok(IDENTIFIER, "f"),
+		ID:     tok(TK_IDENTIFIER, "f"),
 		Inputs: []Expression{sub},
 	}
 
@@ -95,24 +95,24 @@ func SP4(t *testing.T, f ParseFunc) {
 	// @f(@abc())
 
 	given := []Token{
-		tok(SPELL, "@"),
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(SPELL, "@"),
-		tok(IDENTIFIER, "abc"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, "\n"),
+		tok(TK_SPELL, "@"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_SPELL, "@"),
+		tok(TK_IDENTIFIER, "abc"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, "\n"),
 	}
 
 	inner := SpellCall{
-		ID:     tok(IDENTIFIER, "abc"),
+		ID:     tok(TK_IDENTIFIER, "abc"),
 		Inputs: nil,
 	}
 
 	outer := SpellCall{
-		ID:     tok(IDENTIFIER, "f"),
+		ID:     tok(TK_IDENTIFIER, "f"),
 		Inputs: []Expression{inner},
 	}
 

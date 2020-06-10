@@ -12,8 +12,8 @@ import (
 type ParseFunc func(in []Token) []Expression
 type TestFunc func(t *testing.T, pf ParseFunc)
 
-func tok(m Morpheme, v string) Token {
-	return NewToken(m, v, 0, 0)
+func tok(ty TokenType, v string) Token {
+	return NewToken(ty, v, 0, 0)
 }
 
 func expectError(t *testing.T, acts []Expression, e error) {

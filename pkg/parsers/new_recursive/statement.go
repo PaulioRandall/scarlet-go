@@ -24,7 +24,7 @@ func statements(p *pipeline) ([]Expression, error) {
 
 		r = append(r, st)
 
-		_, e = p.expect(TERMINATOR)
+		_, e = p.expect(TK_TERMINATOR)
 		if e != nil {
 			return nil, e
 		}
@@ -48,24 +48,24 @@ func statement(p *pipeline) (Expression, error) {
 	// pattern := assignment | expression
 
 	switch {
-	case p.matchSequence(IDENTIFIER, ASSIGN):
+	case p.matchSequence(TK_IDENTIFIER, TK_ASSIGNMENT):
 		fallthrough
-	case p.matchSequence(IDENTIFIER, DELIMITER):
+	case p.matchSequence(TK_IDENTIFIER, TK_DELIMITER):
 		return assignment(p)
 
-	case p.match(GUARD_OPEN):
+	case p.match(TK_GUARD_OPEN):
 		return guard(p)
 
-	case p.match(WATCH):
+	case p.match(TK_WATCH):
 		return watch(p)
 
-	case p.match(WHEN):
+	case p.match(TK_WHEN):
 		return when(p)
 
-	case p.match(LOOP):
+	case p.match(TK_LOOP):
 		return loop(p)
 
-	case p.match(VOID):
+	case p.match(TK_VOID):
 		return assignment(p)
 	}
 
@@ -80,7 +80,7 @@ func assignment(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	_, e = p.expect(ASSIGN)
+	_, e = p.expect(TK_ASSIGNMENT)
 	if e != nil {
 		return nil, e
 	}
@@ -100,7 +100,7 @@ func assignment(p *pipeline) (Expression, error) {
 
 func assignmentSources(p *pipeline) ([]Expression, error) {
 
-	if p.match(FUNC) {
+	if p.match(TK_FUNCTION) {
 
 		src, e := function(p)
 		if e != nil {
@@ -110,7 +110,7 @@ func assignmentSources(p *pipeline) ([]Expression, error) {
 		return []Expression{src}, nil
 	}
 
-	if p.match(EXPR_FUNC) {
+	if p.match(TK_EXPR_FUNC) {
 
 		src, e := expressionFunction(p)
 		if e != nil {
@@ -128,7 +128,7 @@ func assignmentTargets(p *pipeline) ([]Expression, error) {
 
 	var ats []Expression
 
-	for first := true; first || p.accept(DELIMITER); first = false {
+	for first := true; first || p.accept(TK_DELIMITER); first = false {
 
 		at, e := assignmentTarget(p)
 		if e != nil {
@@ -145,10 +145,10 @@ func assignmentTarget(p *pipeline) (Expression, error) {
 	// pattern := identifer | VOID
 
 	switch {
-	case p.match(IDENTIFIER):
+	case p.match(TK_IDENTIFIER):
 		return identifier(p)
 
-	case p.match(VOID):
+	case p.match(TK_VOID):
 		return newVoid(p.any()), nil
 	}
 

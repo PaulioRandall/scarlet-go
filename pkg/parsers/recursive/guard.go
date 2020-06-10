@@ -6,7 +6,7 @@ import (
 )
 
 func isGuard(p *pipe) bool {
-	return p.match(GUARD_OPEN)
+	return p.match(TK_GUARD_OPEN)
 }
 
 func parseGuards(p *pipe) []Guard {
@@ -26,9 +26,9 @@ func parseGuard(p *pipe) Guard {
 	// pattern := GUARD_OPEN expression GUARD_CLOSE (statement | block)
 
 	g := Guard{
-		Open:      p.expect(`parseGuard`, GUARD_OPEN),
+		Open:      p.expect(`parseGuard`, TK_GUARD_OPEN),
 		Condition: parseExpression(p),
-		Close:     p.expect(`parseGuard`, GUARD_CLOSE),
+		Close:     p.expect(`parseGuard`, TK_GUARD_CLOSE),
 	}
 
 	if isBlock(p) {
@@ -47,25 +47,25 @@ func isBoolOperation(ex Expression) bool {
 		return true
 
 	case Value:
-		return v.Token().Morpheme() == BOOL
+		return v.Token().Type() == TK_BOOL
 
 	case Operation:
-		return isBoolOperator(v.Operator.Morpheme())
+		return isBoolOperator(v.Operator.Type())
 	}
 
 	return false
 }
 
-func isBoolOperator(m Morpheme) bool {
-	switch m {
-	case LESS_THAN,
-		LESS_THAN_OR_EQUAL,
-		MORE_THAN,
-		MORE_THAN_OR_EQUAL,
-		EQUAL,
-		NOT_EQUAL,
-		AND,
-		OR:
+func isBoolOperator(ty TokenType) bool {
+	switch ty {
+	case TK_LESS_THAN,
+		TK_LESS_THAN_OR_EQUAL,
+		TK_MORE_THAN,
+		TK_MORE_THAN_OR_EQUAL,
+		TK_EQUAL,
+		TK_NOT_EQUAL,
+		TK_AND,
+		TK_OR:
 
 		return true
 	}

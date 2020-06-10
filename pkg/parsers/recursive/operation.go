@@ -17,7 +17,7 @@ func parseOperation(p *pipe, left Expression, leftPriority int) Expression {
 	}
 
 	op := p.peek()
-	m := op.Morpheme()
+	m := op.Type()
 
 	if leftPriority >= m.Precedence() {
 		// Any token that is not an operator has a precedence of zero, so the left
@@ -72,18 +72,18 @@ func parseSubOperation(p *pipe) Expression {
 
 func isLiteral(p *pipe) bool {
 	return p.matchAny(
-		IDENTIFIER, // Yes I know, need to sort it out
-		VOID,
-		BOOL,
-		NUMBER,
-		STRING,
+		TK_IDENTIFIER, // Yes TK_I know, need to sort it out
+		TK_VOID,
+		TK_BOOL,
+		TK_NUMBER,
+		TK_STRING,
 	)
 }
 
 func parseLiteral(p *pipe) Expression {
 	tk := p.next()
 
-	if tk.Morpheme() == IDENTIFIER {
+	if tk.Type() == TK_IDENTIFIER {
 		return Identifier{tk}
 	} else {
 		return Value{tk}
@@ -91,28 +91,28 @@ func parseLiteral(p *pipe) Expression {
 }
 
 func isGroup(p *pipe) bool {
-	return p.match(PAREN_OPEN)
+	return p.match(TK_PAREN_OPEN)
 }
 
 func parseGroup(p *pipe) Expression {
 	// pattern := PAREN_OPEN expression PAREN_CLOSE
 
-	p.expect(`parseGroup`, PAREN_OPEN)
+	p.expect(`parseGroup`, TK_PAREN_OPEN)
 
 	g := parseExpression(p)
 	if g == nil {
 		err.Panic(
-			errMsg("parseGroup", ANOTHER.String(), p.past()),
+			errMsg("parseGroup", TK_ANOTHER.String(), p.past()),
 			err.At(p.past()),
 		)
 	}
 
-	p.expect(`parseGroup`, PAREN_CLOSE)
+	p.expect(`parseGroup`, TK_PAREN_CLOSE)
 	return g
 }
 
 func isNegation(p *pipe) bool {
-	return p.match(SUBTRACT)
+	return p.match(TK_MINUS)
 }
 
 func parseNegation(p *pipe) Expression {
@@ -120,7 +120,7 @@ func parseNegation(p *pipe) Expression {
 	// pattern := func_call | list_access | literal | group
 
 	n := Negation{
-		Tk: p.expect(`parseNegation`, SUBTRACT),
+		Tk: p.expect(`parseNegation`, TK_MINUS),
 	}
 
 	switch {

@@ -88,7 +88,7 @@ func spellIncrement(ctx *alphaContext, call SpellCall, args []arg) result {
 
 	a := args[0]
 
-	if a.tk.Morpheme() != IDENTIFIER {
+	if a.tk.Type() != TK_IDENTIFIER {
 		return stringLiteral("Not an identifier")
 	}
 
@@ -112,7 +112,7 @@ func spellDecrement(ctx *alphaContext, call SpellCall, args []arg) result {
 
 	a := args[0]
 
-	if a.tk.Morpheme() != IDENTIFIER {
+	if a.tk.Type() != TK_IDENTIFIER {
 		return stringLiteral("Not an identifier")
 	}
 

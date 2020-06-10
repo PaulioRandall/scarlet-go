@@ -14,52 +14,52 @@ func F2_FuncDef(t *testing.T, f ParseFunc) {
 	// }
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":"),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "b"),
-		tok(DELIMITER, ","),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "c"),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(IDENTIFIER, "c"),
-		tok(ASSIGN, ":"),
-		tok(IDENTIFIER, "a"),
-		tok(TERMINATOR, "\n"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":"),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_OUTPUT, "^"),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_ASSIGNMENT, ":"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_BLOCK_CLOSE, "}"),
 	}
 
 	targets := []AssignTarget{
-		AssignTarget{tok(IDENTIFIER, "f"), nil},
+		AssignTarget{tok(TK_IDENTIFIER, "f"), nil},
 	}
 
 	funcBody := Block{ // { c := a }
-		tok(BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_OPEN, "{"),
 		[]Statement{
 			Assignment{
 				false,
-				[]AssignTarget{AssignTarget{tok(IDENTIFIER, "c"), nil}},
-				tok(ASSIGN, ":"),
-				[]Expression{Identifier{tok(IDENTIFIER, "a")}},
+				[]AssignTarget{AssignTarget{tok(TK_IDENTIFIER, "c"), nil}},
+				tok(TK_ASSIGNMENT, ":"),
+				[]Expression{Identifier{tok(TK_IDENTIFIER, "a")}},
 			},
 		},
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_CLOSE, "}"),
 	}
 
 	funcExpr := []Expression{ // F(a, b, ^c) { c := a }
 		FuncDef{
-			tok(FUNC, "F"),
+			tok(TK_FUNCTION, "F"),
 			[]Token{ // a, b
-				tok(IDENTIFIER, "a"),
-				tok(IDENTIFIER, "b"),
+				tok(TK_IDENTIFIER, "a"),
+				tok(TK_IDENTIFIER, "b"),
 			},
 			[]OutputParam{ // ^c
 				OutputParam{
-					Identifier{tok(IDENTIFIER, "c")},
+					Identifier{tok(TK_IDENTIFIER, "c")},
 					nil,
 				},
 			},
@@ -70,7 +70,7 @@ func F2_FuncDef(t *testing.T, f ParseFunc) {
 	exp := Assignment{
 		false,
 		targets,
-		tok(ASSIGN, ":"),
+		tok(TK_ASSIGNMENT, ":"),
 		funcExpr,
 	}
 
@@ -82,14 +82,14 @@ func F3_FuncCall(t *testing.T, f ParseFunc) {
 	// f()
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, "\n"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, "\n"),
 	}
 
 	exp := FuncCall{
-		Identifier{tok(IDENTIFIER, "f")},
+		Identifier{tok(TK_IDENTIFIER, "f")},
 		nil,
 	}
 
@@ -101,20 +101,20 @@ func F4_FuncCall(t *testing.T, f ParseFunc) {
 	// f(a, b)
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "b"),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, "\n"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, "\n"),
 	}
 
 	exp := FuncCall{
-		Identifier{tok(IDENTIFIER, "f")},
+		Identifier{tok(TK_IDENTIFIER, "f")},
 		[]Expression{
-			Identifier{tok(IDENTIFIER, "a")},
-			Identifier{tok(IDENTIFIER, "b")},
+			Identifier{tok(TK_IDENTIFIER, "a")},
+			Identifier{tok(TK_IDENTIFIER, "b")},
 		},
 	}
 
@@ -126,31 +126,31 @@ func F5_FuncCall(t *testing.T, f ParseFunc) {
 	// f(1 + 2 - 3)
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(NUMBER, "1"),
-		tok(ADD, "+"),
-		tok(NUMBER, "2"),
-		tok(SUBTRACT, "-"),
-		tok(NUMBER, "3"),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, "\n"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_MINUS, "-"),
+		tok(TK_NUMBER, "3"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, "\n"),
 	}
 
 	exp := FuncCall{
-		ID: Identifier{tok(IDENTIFIER, "f")},
+		ID: Identifier{tok(TK_IDENTIFIER, "f")},
 	}
 
 	op := Operation{
-		Value{tok(NUMBER, "1")},
-		tok(ADD, "+"),
-		Value{tok(NUMBER, "2")},
+		Value{tok(TK_NUMBER, "1")},
+		tok(TK_PLUS, "+"),
+		Value{tok(TK_NUMBER, "2")},
 	}
 
 	op = Operation{
 		op,
-		tok(SUBTRACT, "-"),
-		Value{tok(NUMBER, "3")},
+		tok(TK_MINUS, "-"),
+		Value{tok(TK_NUMBER, "3")},
 	}
 
 	exp.Inputs = []Expression{op}
@@ -163,21 +163,21 @@ func F6_FuncCall(t *testing.T, f ParseFunc) {
 	// f(abc())
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "abc"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, "\n"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "abc"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, "\n"),
 	}
 
 	outer := FuncCall{
-		ID: Identifier{tok(IDENTIFIER, "f")},
+		ID: Identifier{tok(TK_IDENTIFIER, "f")},
 	}
 
 	inner := FuncCall{
-		Identifier{tok(IDENTIFIER, "abc")},
+		Identifier{tok(TK_IDENTIFIER, "abc")},
 		nil,
 	}
 
@@ -191,9 +191,9 @@ func F7_FuncCallPanics(t *testing.T, f ParseFunc) {
 	// f(
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	expectPanic(t, func() { f(given) })
@@ -204,9 +204,9 @@ func F8_FuncCallPanics(t *testing.T, f ParseFunc) {
 	// f)
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	expectPanic(t, func() { f(given) })
@@ -217,12 +217,12 @@ func F9_FuncCallPanics(t *testing.T, f ParseFunc) {
 	// f(a,)
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	expectPanic(t, func() { f(given) })
@@ -233,12 +233,12 @@ func F10_FuncCallPanics(t *testing.T, f ParseFunc) {
 	// f(a a)
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(IDENTIFIER, "a"),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	expectPanic(t, func() { f(given) })
@@ -249,28 +249,28 @@ func F11_FuncDef(t *testing.T, f ParseFunc) {
 	// f := F() {}
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
 	}
 
 	targets := []AssignTarget{
-		AssignTarget{tok(IDENTIFIER, "f"), nil},
+		AssignTarget{tok(TK_IDENTIFIER, "f"), nil},
 	}
 
 	funcBody := Block{
-		tok(BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_OPEN, "{"),
 		nil,
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_CLOSE, "}"),
 	}
 
 	funcDef := []Expression{
 		FuncDef{
-			tok(FUNC, "F"),
+			tok(TK_FUNCTION, "F"),
 			nil,
 			nil,
 			funcBody, // c := a
@@ -280,7 +280,7 @@ func F11_FuncDef(t *testing.T, f ParseFunc) {
 	exp := Assignment{
 		false,
 		targets,
-		tok(ASSIGN, ":="),
+		tok(TK_ASSIGNMENT, ":="),
 		funcDef,
 	}
 
@@ -292,59 +292,59 @@ func F12_AssignOutput(t *testing.T, f ParseFunc) {
 	// f: F(^a: 5, ^b: 1 + 2) {}
 
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":"),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":"),
-		tok(NUMBER, "5"),
-		tok(DELIMITER, ","),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "b"),
-		tok(ASSIGN, ":"),
-		tok(NUMBER, "1"),
-		tok(ADD, "+"),
-		tok(NUMBER, "2"),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":"),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_OUTPUT, "^"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_ASSIGNMENT, ":"),
+		tok(TK_NUMBER, "5"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_OUTPUT, "^"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_ASSIGNMENT, ":"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
 	}
 
 	targets := []AssignTarget{
-		AssignTarget{tok(IDENTIFIER, "f"), nil},
+		AssignTarget{tok(TK_IDENTIFIER, "f"), nil},
 	}
 
 	funcDef := FuncDef{
-		Key: tok(FUNC, "F"),
+		Key: tok(TK_FUNCTION, "F"),
 	}
 
 	funcDef.Outputs = []OutputParam{
 		OutputParam{
-			Identifier{tok(IDENTIFIER, "a")},
-			Value{tok(NUMBER, "5")},
+			Identifier{tok(TK_IDENTIFIER, "a")},
+			Value{tok(TK_NUMBER, "5")},
 		},
 		OutputParam{
-			Identifier{tok(IDENTIFIER, "b")},
+			Identifier{tok(TK_IDENTIFIER, "b")},
 			Operation{
-				Left:     Value{tok(NUMBER, "1")},
-				Operator: tok(ADD, "+"),
-				Right:    Value{tok(NUMBER, "2")},
+				Left:     Value{tok(TK_NUMBER, "1")},
+				Operator: tok(TK_PLUS, "+"),
+				Right:    Value{tok(TK_NUMBER, "2")},
 			},
 		},
 	}
 
 	funcDef.Body = Block{
-		tok(BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_OPEN, "{"),
 		nil,
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_CLOSE, "}"),
 	}
 
 	a := Assignment{
 		Fixed:   false,
 		Targets: targets,
-		Assign:  tok(ASSIGN, ":"),
+		Assign:  tok(TK_ASSIGNMENT, ":"),
 		Exprs:   []Expression{funcDef},
 	}
 

@@ -62,11 +62,11 @@ func resolveListRef(listSize int64, ref Token, inclusiveRef bool) int64 {
 		min, max = -1, listSize
 	}
 
-	switch ref.Morpheme() {
-	case LIST_START:
+	switch ref.Type() {
+	case TK_LIST_START:
 		return int64(min)
 
-	case LIST_END:
+	case TK_LIST_END:
 		return int64(max)
 	}
 

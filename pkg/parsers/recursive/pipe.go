@@ -27,18 +27,18 @@ func (p *pipe) back() {
 	p.itr.Back()
 }
 
-func (p *pipe) match(m Morpheme) bool {
+func (p *pipe) match(ty TokenType) bool {
 	if p.itr.Peek() == nil {
 		return false
 	}
 
-	o := p.itr.Peek().Morpheme()
-	return o == ANY || o == m
+	o := p.itr.Peek().Type()
+	return o == TK_ANY || o == ty
 }
 
-func (p *pipe) matchAny(ms ...Morpheme) bool {
-	for _, t := range ms {
-		if p.match(t) {
+func (p *pipe) matchAny(tys ...TokenType) bool {
+	for _, ty := range tys {
+		if p.match(ty) {
 			return true
 		}
 	}
@@ -46,7 +46,7 @@ func (p *pipe) matchAny(ms ...Morpheme) bool {
 	return false
 }
 
-func (p *pipe) matchSequence(ms ...Morpheme) bool {
+func (p *pipe) matchSequence(tys ...TokenType) bool {
 
 	count := 0
 
@@ -56,9 +56,9 @@ func (p *pipe) matchSequence(ms ...Morpheme) bool {
 		}
 	}()
 
-	for _, m := range ms {
+	for _, ty := range tys {
 
-		if m == ANY || p.match(m) {
+		if ty == TK_ANY || p.match(ty) {
 			p.itr.Next()
 			count++
 			continue
@@ -70,13 +70,13 @@ func (p *pipe) matchSequence(ms ...Morpheme) bool {
 	return true
 }
 
-func (p *pipe) accept(m Morpheme) bool {
+func (p *pipe) accept(ty TokenType) bool {
 
-	if m == UNDEFINED {
+	if ty == TK_UNDEFINED {
 		return false
 	}
 
-	if m == ANY || p.match(m) {
+	if ty == TK_ANY || p.match(ty) {
 		p.itr.Skip()
 		return true
 	}
@@ -84,10 +84,10 @@ func (p *pipe) accept(m Morpheme) bool {
 	return false
 }
 
-func (p *pipe) expect(tag string, m Morpheme) Token {
-	if !p.accept(m) {
+func (p *pipe) expect(tag string, ty TokenType) Token {
+	if !p.accept(ty) {
 		err.Panic(
-			errMsg(tag, m.String(), p.peek()),
+			errMsg(tag, ty.String(), p.peek()),
 			err.At(p.peek()),
 		)
 	}
@@ -95,20 +95,20 @@ func (p *pipe) expect(tag string, m Morpheme) Token {
 	return p.itr.Past()
 }
 
-func (p *pipe) expectOneOf(tag string, ms ...Morpheme) Token {
-	for _, m := range ms {
-		if p.accept(m) {
+func (p *pipe) expectOneOf(tag string, tys ...TokenType) Token {
+	for _, ty := range tys {
+		if p.accept(ty) {
 			return p.itr.Past()
 		}
 	}
 
 	s := ""
-	for i, m := range ms {
+	for i, ty := range tys {
 		if i != 0 {
 			s += " "
 		}
 
-		s += m.String()
+		s += ty.String()
 	}
 
 	err.Panic(errMsg(tag, s, p.peek()), err.At(p.peek()))

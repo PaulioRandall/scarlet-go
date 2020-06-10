@@ -9,14 +9,14 @@ import (
 )
 
 func isFuncDef(p *pipe) bool {
-	return p.match(FUNC)
+	return p.match(TK_FUNCTION)
 }
 
 func parseFuncDef(p *pipe) Expression {
 	// pattern := FUNC params (statement | block)
 
 	f := FuncDef{
-		Key: p.expect(`parseFuncDef`, FUNC),
+		Key: p.expect(`parseFuncDef`, TK_FUNCTION),
 	}
 
 	f.Inputs, f.Outputs = parseFuncParams(p)
@@ -36,14 +36,14 @@ func parseFuncDef(p *pipe) Expression {
 }
 
 func isExprFuncDef(p *pipe) bool {
-	return p.match(EXPR_FUNC)
+	return p.match(TK_EXPR_FUNC)
 }
 
 func parseExprFuncDef(p *pipe) Expression {
 	// pattern := EXPR_FUNC params expression
 
 	f := ExprFuncDef{
-		Key: p.expect(`parseExprFuncDef`, EXPR_FUNC),
+		Key: p.expect(`parseExprFuncDef`, TK_EXPR_FUNC),
 	}
 
 	var outputs []OutputParam
@@ -57,20 +57,20 @@ func parseExprFuncDef(p *pipe) Expression {
 	}
 
 	f.Expr = parseExpression(p)
-	p.expect(`parseExprFuncDef`, TERMINATOR)
+	p.expect(`parseExprFuncDef`, TK_TERMINATOR)
 	return f
 }
 
 func parseFuncParams(p *pipe) (in []Token, out []OutputParam) {
 	// pattern := PAREN_OPEN [ids] PAREN_CLOSE
 
-	p.expect(`parseFuncParams`, PAREN_OPEN)
+	p.expect(`parseFuncParams`, TK_PAREN_OPEN)
 
-	if p.match(IDENTIFIER) || p.match(OUTPUT) {
+	if p.match(TK_IDENTIFIER) || p.match(TK_OUTPUT) {
 		in, out = parseFuncParamIds(p)
 	}
 
-	p.expect(`parseFuncParams`, PAREN_CLOSE)
+	p.expect(`parseFuncParams`, TK_PAREN_CLOSE)
 
 	return in, out
 }
@@ -80,16 +80,16 @@ func parseFuncParamIds(p *pipe) (in []Token, out []OutputParam) {
 	// param := (ID | (OUTPUT ID ASSIGN expression))
 
 	for {
-		if p.accept(OUTPUT) {
+		if p.accept(TK_OUTPUT) {
 			tk := parseOutputParam(p)
 			out = append(out, tk)
 
 		} else {
-			tk := p.expect(`parseFuncParamIds`, IDENTIFIER)
+			tk := p.expect(`parseFuncParamIds`, TK_IDENTIFIER)
 			in = append(in, tk)
 		}
 
-		if !p.accept(DELIMITER) {
+		if !p.accept(TK_DELIMITER) {
 			break
 		}
 	}
@@ -102,11 +102,11 @@ func parseOutputParam(p *pipe) OutputParam {
 
 	o := OutputParam{
 		ID: Identifier{
-			Tk: p.expect(`parseFuncParamIds`, IDENTIFIER),
+			Tk: p.expect(`parseFuncParamIds`, TK_IDENTIFIER),
 		},
 	}
 
-	if p.accept(ASSIGN) {
+	if p.accept(TK_ASSIGNMENT) {
 		o.Expr = parseExpression(p)
 
 		if o.Expr == nil {
@@ -121,38 +121,38 @@ func parseOutputParam(p *pipe) OutputParam {
 }
 
 func isFuncCall(p *pipe) (is bool) {
-	return p.matchSequence(IDENTIFIER, PAREN_OPEN)
+	return p.matchSequence(TK_IDENTIFIER, TK_PAREN_OPEN)
 }
 
 func parseFuncCall(p *pipe) Expression {
 	// pattern := ID PAREN_OPEN {expression} PAREN_CLOSE
 
-	id := p.expect(`parseFuncCall`, IDENTIFIER)
+	id := p.expect(`parseFuncCall`, TK_IDENTIFIER)
 	left := Identifier{id}
 
-	p.expect(`parseFuncCall`, PAREN_OPEN)
+	p.expect(`parseFuncCall`, TK_PAREN_OPEN)
 
 	f := FuncCall{
 		ID:     left,
 		Inputs: parseExpressions(p),
 	}
 
-	p.expect(`parseFuncCall`, PAREN_CLOSE)
+	p.expect(`parseFuncCall`, TK_PAREN_CLOSE)
 	return f
 }
 
 func isSpellCall(p *pipe) bool {
-	return p.match(SPELL)
+	return p.match(TK_SPELL)
 }
 
 func parseSpellCall(p *pipe) Expression {
 
-	p.expect(`parseSpell`, SPELL)
-	id := p.expect(`parseSpell`, IDENTIFIER)
+	p.expect(`parseSpell`, TK_SPELL)
+	id := p.expect(`parseSpell`, TK_IDENTIFIER)
 
-	p.expect(`parseSpell`, PAREN_OPEN)
+	p.expect(`parseSpell`, TK_PAREN_OPEN)
 	inputs := parseExpressions(p)
-	p.expect(`parseSpell`, PAREN_CLOSE)
+	p.expect(`parseSpell`, TK_PAREN_CLOSE)
 
 	return SpellCall{
 		ID:     id,

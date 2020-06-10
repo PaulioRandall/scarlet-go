@@ -36,26 +36,26 @@ func sanitise(prev, next Token) Token {
 
 func isParsableToken(prev, next Token) bool {
 
-	if next.Morpheme().Redundant() {
+	if next.Type().Redundant() {
 		return false
 	}
 
-	if next.Morpheme() == NEWLINE || next.Morpheme() == TERMINATOR {
+	if next.Type() == TK_NEWLINE || next.Type() == TK_TERMINATOR {
 
 		if prev == nil {
 			return false
 		}
 
-		switch prev.Morpheme() {
+		switch prev.Type() {
 		// Sometimes the extra terminator or newline is redundant.
 		// Removing them makes parsing easier.
-		case TERMINATOR,
-			DELIMITER,
-			BLOCK_OPEN,
-			BLOCK_CLOSE,
-			WHEN,
-			LIST,
-			UNDEFINED:
+		case TK_TERMINATOR,
+			TK_DELIMITER,
+			TK_BLOCK_OPEN,
+			TK_BLOCK_CLOSE,
+			TK_WHEN,
+			TK_LIST,
+			TK_UNDEFINED:
 
 			return false
 		}
@@ -66,16 +66,16 @@ func isParsableToken(prev, next Token) bool {
 
 func formatToken(tk Token) Token {
 
-	switch tk.Morpheme() {
-	case NEWLINE:
+	switch tk.Type() {
+	case TK_NEWLINE:
 		// Non-redundant newline tokens are expression and statement terminators
 		// in disguise.
-		return NewToken(TERMINATOR, tk.Value(), tk.Line(), tk.Col())
+		return NewToken(TK_TERMINATOR, tk.Value(), tk.Line(), tk.Col())
 
-	case STRING:
+	case TK_STRING:
 		v := tk.Value()
 		v = v[1 : len(v)-1] // Remove quotes
-		return NewToken(tk.Morpheme(), v, tk.Line(), tk.Col())
+		return NewToken(tk.Type(), v, tk.Line(), tk.Col())
 	}
 
 	return tk

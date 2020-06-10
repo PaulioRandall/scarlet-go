@@ -6,16 +6,16 @@ import (
 )
 
 func isBlock(p *pipe) bool {
-	return p.match(BLOCK_OPEN)
+	return p.match(TK_BLOCK_OPEN)
 }
 
 func parseBlock(p *pipe) Block {
 	// pattern := BLOCK_OPEN {statement} BLOCK_CLOSE
 
 	return Block{
-		Open:  p.expect(`parseBlock`, BLOCK_OPEN),
+		Open:  p.expect(`parseBlock`, TK_BLOCK_OPEN),
 		Stats: parseStatements(p),
-		Close: p.expect(`parseBlock`, BLOCK_CLOSE),
+		Close: p.expect(`parseBlock`, TK_BLOCK_CLOSE),
 	}
 }
 

@@ -48,7 +48,7 @@ func assertToken(t *testing.T, exp, act Token) {
 
 	m := "Expected (" + ToString(exp) + ")\nActual   (" + ToString(act) + ")"
 
-	require.Equal(t, exp.Morpheme(), act.Morpheme(), m)
+	require.Equal(t, exp.Type(), act.Type(), m)
 	require.Equal(t, exp.Value(), act.Value(), m)
 	require.Equal(t, exp.Line(), act.Line(), m)
 	require.Equal(t, exp.Col(), act.Col(), m)

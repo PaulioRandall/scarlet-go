@@ -50,10 +50,10 @@ func readToken(s *symbols) Token {
 
 func tokenize(s *symbols, terminalCount int, p pattern) Token {
 
-	m := p.morpheme
+	ty := p.tokenType
 	l := s.line
 	c := s.col
 	v := s.readNonTerminal(terminalCount)
 
-	return NewToken(m, v, l, c)
+	return NewToken(ty, v, l, c)
 }

@@ -15,7 +15,7 @@ func Test_S1_1(t *testing.T) {
 
 		var given []Token
 		given = append(given, tk)
-		given = append(given, tok(TERMINATOR, ""))
+		given = append(given, tok(TK_TERMINATOR, ""))
 
 		act, e := testFunc(given)
 		expectOneStat(t, exp, act, e)
@@ -26,26 +26,26 @@ func Test_S1_1(t *testing.T) {
 
 	// a
 	quickSoloTokenTest(t,
-		newIdentifier(tok(IDENTIFIER, "a")),
-		tok(IDENTIFIER, "a"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		tok(TK_IDENTIFIER, "a"),
 	)
 
 	// true
 	quickSoloTokenTest(t,
-		newLiteral(tok(BOOL, "true")),
-		tok(BOOL, "true"),
+		newLiteral(tok(TK_BOOL, "true")),
+		tok(TK_BOOL, "true"),
 	)
 
 	// 1
 	quickSoloTokenTest(t,
-		newLiteral(tok(NUMBER, "1")),
-		tok(NUMBER, "1"),
+		newLiteral(tok(TK_NUMBER, "1")),
+		tok(TK_NUMBER, "1"),
 	)
 
 	// abc
 	quickSoloTokenTest(t,
-		newLiteral(tok(STRING, "abc")),
-		tok(STRING, "abc"),
+		newLiteral(tok(TK_STRING, "abc")),
+		tok(TK_STRING, "abc"),
 	)
 }
 
@@ -57,17 +57,17 @@ func Test_S2_1(t *testing.T) {
 
 	// a: 1
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "a")),
-				newLiteral(tok(NUMBER, "1")),
+				newIdentifier(tok(TK_IDENTIFIER, "a")),
+				newLiteral(tok(TK_NUMBER, "1")),
 			),
 		},
 	)
@@ -85,33 +85,33 @@ func Test_S2_2(t *testing.T) {
 
 	// a, b, c: 1, TRUE, "abc"
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "b"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "c"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "1"),
-		tok(DELIMITER, ","),
-		tok(BOOL, "TRUE"),
-		tok(DELIMITER, ","),
-		tok(STRING, "abc"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_NUMBER, "1"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_BOOL, "TRUE"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_STRING, "abc"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "a")),
-				newLiteral(tok(NUMBER, "1")),
+				newIdentifier(tok(TK_IDENTIFIER, "a")),
+				newLiteral(tok(TK_NUMBER, "1")),
 			),
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "b")),
-				newLiteral(tok(BOOL, "TRUE")),
+				newIdentifier(tok(TK_IDENTIFIER, "b")),
+				newLiteral(tok(TK_BOOL, "TRUE")),
 			),
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "c")),
-				newLiteral(tok(STRING, "abc")),
+				newIdentifier(tok(TK_IDENTIFIER, "c")),
+				newLiteral(tok(TK_STRING, "abc")),
 			),
 		},
 	)
@@ -128,13 +128,13 @@ func Test_S3_1(t *testing.T) {
 
 	// -2
 	given := []Token{
-		tok(SUBTRACT, "-"),
-		tok(NUMBER, "2"),
-		tok(TERMINATOR, ""),
+		tok(TK_MINUS, "-"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := newNegation(
-		newLiteral(tok(NUMBER, "2")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	act, e := testFunc(given)
@@ -148,16 +148,16 @@ func Test_S4_1(t *testing.T) {
 
 	// abc[1]
 	given := []Token{
-		tok(IDENTIFIER, "abc"),
-		tok(GUARD_OPEN, "["),
-		tok(NUMBER, "1"),
-		tok(GUARD_CLOSE, "]"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "abc"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_NUMBER, "1"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := newListAccessor(
-		newIdentifier(tok(IDENTIFIER, "abc")),
-		newLiteral(tok(NUMBER, "1")),
+		newIdentifier(tok(TK_IDENTIFIER, "abc")),
+		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
 	act, e := testFunc(given)
@@ -173,23 +173,23 @@ func Test_S4_2(t *testing.T) {
 
 	// abc[1 + 2]
 	given := []Token{
-		tok(IDENTIFIER, "abc"),
-		tok(GUARD_OPEN, "["),
-		tok(NUMBER, "1"),
-		tok(ADD, "+"),
-		tok(NUMBER, "2"),
-		tok(GUARD_CLOSE, "]"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "abc"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	first := newOperation(
-		tok(ADD, "+"),
-		newLiteral(tok(NUMBER, "1")),
-		newLiteral(tok(NUMBER, "2")),
+		tok(TK_PLUS, "+"),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	exp := newListAccessor(
-		newIdentifier(tok(IDENTIFIER, "abc")),
+		newIdentifier(tok(TK_IDENTIFIER, "abc")),
 		first,
 	)
 
@@ -204,8 +204,8 @@ func Test_S5_1(t *testing.T) {
 
 	// // abc
 	given := []Token{
-		tok(COMMENT, "// abc"),
-		tok(TERMINATOR, ""),
+		tok(TK_COMMENT, "// abc"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := []Expression{}
@@ -220,8 +220,8 @@ func Test_S5_2(t *testing.T) {
 	// THEN no statements are returned
 
 	given := []Token{
-		tok(WHITESPACE, "    "),
-		tok(TERMINATOR, ""),
+		tok(TK_WHITESPACE, "    "),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := []Expression{}
@@ -236,7 +236,7 @@ func Test_S5_3(t *testing.T) {
 	// THEN no statements are returned
 
 	given := []Token{
-		tok(TERMINATOR, ""),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := []Expression{}
@@ -251,9 +251,9 @@ func Test_S5_4(t *testing.T) {
 	// THEN no statements are returned
 
 	given := []Token{
-		tok(TERMINATOR, ""),
-		tok(TERMINATOR, ""),
-		tok(TERMINATOR, ""),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := []Expression{}
@@ -265,13 +265,13 @@ func Test_S5_4(t *testing.T) {
 func quickOperationTest(t *testing.T, left, operator, right Token) {
 
 	express := func(tk Token) Expression {
-		switch tk.Morpheme() {
-		case IDENTIFIER:
+		switch tk.Type() {
+		case TK_IDENTIFIER:
 			return newIdentifier(tk)
-		case BOOL, NUMBER:
+		case TK_BOOL, TK_NUMBER:
 			return newLiteral(tk)
 		default:
-			panic("SANITY CHECK! Unknown token type: " + tk.Morpheme().String())
+			panic("SANITY CHECK! Unknown token type: " + tk.Type().String())
 		}
 	}
 
@@ -279,7 +279,7 @@ func quickOperationTest(t *testing.T, left, operator, right Token) {
 		left,
 		operator,
 		right,
-		tok(TERMINATOR, ""),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := newOperation(
@@ -299,9 +299,9 @@ func Test_S6_1(t *testing.T) {
 
 	// a + 1
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(ADD, "+"),
-		tok(NUMBER, "1"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "1"),
 	)
 }
 
@@ -312,9 +312,9 @@ func Test_S6_2(t *testing.T) {
 
 	// a - 1
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(SUBTRACT, "-"),
-		tok(NUMBER, "1"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MINUS, "-"),
+		tok(TK_NUMBER, "1"),
 	)
 }
 
@@ -325,9 +325,9 @@ func Test_S6_3(t *testing.T) {
 
 	// a * 1
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(MULTIPLY, "*"),
-		tok(NUMBER, "1"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_NUMBER, "1"),
 	)
 }
 
@@ -338,9 +338,9 @@ func Test_S6_4(t *testing.T) {
 
 	// a / 1
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(DIVIDE, "/"),
-		tok(NUMBER, "1"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DIVIDE, "/"),
+		tok(TK_NUMBER, "1"),
 	)
 }
 
@@ -351,9 +351,9 @@ func Test_S6_5(t *testing.T) {
 
 	// a % 1
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(REMAINDER, "%"),
-		tok(NUMBER, "1"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_REMAINDER, "%"),
+		tok(TK_NUMBER, "1"),
 	)
 }
 
@@ -364,9 +364,9 @@ func Test_S6_6(t *testing.T) {
 
 	// a & b
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(AND, "&"),
-		tok(IDENTIFIER, "b"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_AND, "&"),
+		tok(TK_IDENTIFIER, "b"),
 	)
 }
 
@@ -377,9 +377,9 @@ func Test_S6_7(t *testing.T) {
 
 	// a | b
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(OR, "|"),
-		tok(IDENTIFIER, "b"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_OR, "|"),
+		tok(TK_IDENTIFIER, "b"),
 	)
 }
 
@@ -390,9 +390,9 @@ func Test_S6_8(t *testing.T) {
 
 	// a == b
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(EQUAL, "=="),
-		tok(IDENTIFIER, "b"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_EQUAL, "=="),
+		tok(TK_IDENTIFIER, "b"),
 	)
 }
 
@@ -403,9 +403,9 @@ func Test_S6_9(t *testing.T) {
 
 	// a != b
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(NOT_EQUAL, "!="),
-		tok(IDENTIFIER, "b"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_NOT_EQUAL, "!="),
+		tok(TK_IDENTIFIER, "b"),
 	)
 }
 
@@ -416,9 +416,9 @@ func Test_S6_10(t *testing.T) {
 
 	// a < b
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(LESS_THAN, "<"),
-		tok(IDENTIFIER, "b"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_LESS_THAN, "<"),
+		tok(TK_IDENTIFIER, "b"),
 	)
 }
 
@@ -429,9 +429,9 @@ func Test_S6_11(t *testing.T) {
 
 	// a > b
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(MORE_THAN, ">"),
-		tok(IDENTIFIER, "b"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MORE_THAN, ">"),
+		tok(TK_IDENTIFIER, "b"),
 	)
 }
 
@@ -442,9 +442,9 @@ func Test_S6_12(t *testing.T) {
 
 	// a <= b
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(LESS_THAN_OR_EQUAL, "<="),
-		tok(IDENTIFIER, "b"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_LESS_THAN_OR_EQUAL, "<="),
+		tok(TK_IDENTIFIER, "b"),
 	)
 }
 
@@ -455,9 +455,9 @@ func Test_S6_13(t *testing.T) {
 
 	// a >= b
 	quickOperationTest(t,
-		tok(IDENTIFIER, "a"),
-		tok(MORE_THAN_OR_EQUAL, ">="),
-		tok(IDENTIFIER, "b"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MORE_THAN_OR_EQUAL, ">="),
+		tok(TK_IDENTIFIER, "b"),
 	)
 }
 
@@ -470,18 +470,18 @@ func Test_S6_14(t *testing.T) {
 
 	// a + -1
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(ADD, "+"),
-		tok(SUBTRACT, "-"),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_PLUS, "+"),
+		tok(TK_MINUS, "-"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := newOperation(
-		tok(ADD, "+"),
-		newIdentifier(tok(IDENTIFIER, "a")),
+		tok(TK_PLUS, "+"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
 		newNegation(
-			newLiteral(tok(NUMBER, "1")),
+			newLiteral(tok(TK_NUMBER, "1")),
 		),
 	)
 
@@ -498,24 +498,24 @@ func Test_S6_15(t *testing.T) {
 
 	// a + 1 - b
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(ADD, "+"),
-		tok(NUMBER, "1"),
-		tok(SUBTRACT, "-"),
-		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_MINUS, "-"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	left := newOperation(
-		tok(ADD, "+"),
-		newIdentifier(tok(IDENTIFIER, "a")),
-		newLiteral(tok(NUMBER, "1")),
+		tok(TK_PLUS, "+"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
 	exp := newOperation(
-		tok(SUBTRACT, "-"),
+		tok(TK_MINUS, "-"),
 		left,
-		newIdentifier(tok(IDENTIFIER, "b")),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
 	act, e := testFunc(given)
@@ -531,24 +531,24 @@ func Test_S6_16(t *testing.T) {
 
 	// a * 1 / b
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(MULTIPLY, "*"),
-		tok(NUMBER, "1"),
-		tok(DIVIDE, "/"),
-		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_DIVIDE, "/"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	left := newOperation(
-		tok(MULTIPLY, "*"),
-		newIdentifier(tok(IDENTIFIER, "a")),
-		newLiteral(tok(NUMBER, "1")),
+		tok(TK_MULTIPLY, "*"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
 	exp := newOperation(
-		tok(DIVIDE, "/"),
+		tok(TK_DIVIDE, "/"),
 		left,
-		newIdentifier(tok(IDENTIFIER, "b")),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
 	act, e := testFunc(given)
@@ -564,24 +564,24 @@ func Test_S6_17(t *testing.T) {
 
 	// a * 1 + b
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(MULTIPLY, "*"),
-		tok(NUMBER, "1"),
-		tok(ADD, "+"),
-		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PLUS, "+"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	left := newOperation(
-		tok(MULTIPLY, "*"),
-		newIdentifier(tok(IDENTIFIER, "a")),
-		newLiteral(tok(NUMBER, "1")),
+		tok(TK_MULTIPLY, "*"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
 	exp := newOperation(
-		tok(ADD, "+"),
+		tok(TK_PLUS, "+"),
 		left,
-		newIdentifier(tok(IDENTIFIER, "b")),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
 	act, e := testFunc(given)
@@ -597,23 +597,23 @@ func Test_S6_18(t *testing.T) {
 
 	// a + 1 * b
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(ADD, "+"),
-		tok(NUMBER, "1"),
-		tok(MULTIPLY, "*"),
-		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	left := newOperation(
-		tok(MULTIPLY, "*"),
-		newLiteral(tok(NUMBER, "1")),
-		newIdentifier(tok(IDENTIFIER, "b")),
+		tok(TK_MULTIPLY, "*"),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
 	exp := newOperation(
-		tok(ADD, "+"),
-		newIdentifier(tok(IDENTIFIER, "a")),
+		tok(TK_PLUS, "+"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
 		left,
 	)
 
@@ -630,40 +630,40 @@ func Test_S6_19(t *testing.T) {
 
 	// a - 1 * b % 2 + 1
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(SUBTRACT, "-"),
-		tok(NUMBER, "1"),
-		tok(MULTIPLY, "*"),
-		tok(IDENTIFIER, "b"),
-		tok(REMAINDER, "%"),
-		tok(NUMBER, "2"),
-		tok(ADD, "+"),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MINUS, "-"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_REMAINDER, "%"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	first := newOperation(
-		tok(MULTIPLY, "*"),
-		newLiteral(tok(NUMBER, "1")),
-		newIdentifier(tok(IDENTIFIER, "b")),
+		tok(TK_MULTIPLY, "*"),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
 	second := newOperation(
-		tok(REMAINDER, "%"),
+		tok(TK_REMAINDER, "%"),
 		first,
-		newLiteral(tok(NUMBER, "2")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	third := newOperation(
-		tok(SUBTRACT, "-"),
-		newIdentifier(tok(IDENTIFIER, "a")),
+		tok(TK_MINUS, "-"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
 		second,
 	)
 
 	exp := newOperation(
-		tok(ADD, "+"),
+		tok(TK_PLUS, "+"),
 		third,
-		newLiteral(tok(NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
 	act, e := testFunc(given)
@@ -679,86 +679,86 @@ func Test_S6_20(t *testing.T) {
 
 	// a - 1 * b % 2 + 1 == 2 | c > 5 & c % 2 != 0
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(SUBTRACT, "-"),
-		tok(NUMBER, "1"),
-		tok(MULTIPLY, "*"),
-		tok(IDENTIFIER, "b"),
-		tok(REMAINDER, "%"),
-		tok(NUMBER, "2"),
-		tok(ADD, "+"),
-		tok(NUMBER, "1"),
-		tok(EQUAL, "=="),
-		tok(NUMBER, "2"),
-		tok(OR, "|"),
-		tok(IDENTIFIER, "c"),
-		tok(MORE_THAN, ">"),
-		tok(NUMBER, "5"),
-		tok(AND, "&"),
-		tok(IDENTIFIER, "c"),
-		tok(REMAINDER, "%"),
-		tok(NUMBER, "2"),
-		tok(NOT_EQUAL, "!="),
-		tok(NUMBER, "0"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MINUS, "-"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_REMAINDER, "%"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_EQUAL, "=="),
+		tok(TK_NUMBER, "2"),
+		tok(TK_OR, "|"),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_MORE_THAN, ">"),
+		tok(TK_NUMBER, "5"),
+		tok(TK_AND, "&"),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_REMAINDER, "%"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_NOT_EQUAL, "!="),
+		tok(TK_NUMBER, "0"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	first := newOperation(
-		tok(MULTIPLY, "*"),
-		newLiteral(tok(NUMBER, "1")),
-		newIdentifier(tok(IDENTIFIER, "b")),
+		tok(TK_MULTIPLY, "*"),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
 	second := newOperation(
-		tok(REMAINDER, "%"),
+		tok(TK_REMAINDER, "%"),
 		first,
-		newLiteral(tok(NUMBER, "2")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	third := newOperation(
-		tok(SUBTRACT, "-"),
-		newIdentifier(tok(IDENTIFIER, "a")),
+		tok(TK_MINUS, "-"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
 		second,
 	)
 
 	fourth := newOperation(
-		tok(ADD, "+"),
+		tok(TK_PLUS, "+"),
 		third,
-		newLiteral(tok(NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
 	fifth := newOperation(
-		tok(EQUAL, "=="),
+		tok(TK_EQUAL, "=="),
 		fourth,
-		newLiteral(tok(NUMBER, "2")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	sixth := newOperation(
-		tok(MORE_THAN, ">"),
-		newIdentifier(tok(IDENTIFIER, "c")),
-		newLiteral(tok(NUMBER, "5")),
+		tok(TK_MORE_THAN, ">"),
+		newIdentifier(tok(TK_IDENTIFIER, "c")),
+		newLiteral(tok(TK_NUMBER, "5")),
 	)
 
 	seventh := newOperation(
-		tok(REMAINDER, "%"),
-		newIdentifier(tok(IDENTIFIER, "c")),
-		newLiteral(tok(NUMBER, "2")),
+		tok(TK_REMAINDER, "%"),
+		newIdentifier(tok(TK_IDENTIFIER, "c")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	eigth := newOperation(
-		tok(NOT_EQUAL, "!="),
+		tok(TK_NOT_EQUAL, "!="),
 		seventh,
-		newLiteral(tok(NUMBER, "0")),
+		newLiteral(tok(TK_NUMBER, "0")),
 	)
 
 	ninth := newOperation(
-		tok(AND, "&"),
+		tok(TK_AND, "&"),
 		sixth,
 		eigth,
 	)
 
 	exp := newOperation(
-		tok(OR, "|"),
+		tok(TK_OR, "|"),
 		fifth,
 		ninth,
 	)
@@ -772,10 +772,10 @@ func Test_S6_21(t *testing.T) {
 	quickParenTest := func(t *testing.T, exp Expression, tks ...Token) {
 
 		var given []Token
-		given = append(given, tok(PAREN_OPEN, "("))
+		given = append(given, tok(TK_PAREN_OPEN, "("))
 		given = append(given, tks...)
-		given = append(given, tok(PAREN_CLOSE, ")"))
-		given = append(given, tok(TERMINATOR, ""))
+		given = append(given, tok(TK_PAREN_CLOSE, ")"))
+		given = append(given, tok(TK_TERMINATOR, ""))
 
 		act, e := testFunc(given)
 		expectOneStat(t, exp, act, e)
@@ -787,35 +787,35 @@ func Test_S6_21(t *testing.T) {
 
 	// (a)
 	quickParenTest(t,
-		newIdentifier(tok(IDENTIFIER, "a")),
-		tok(IDENTIFIER, "a"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		tok(TK_IDENTIFIER, "a"),
 	)
 
 	// (true)
 	quickParenTest(t,
-		newLiteral(tok(BOOL, "true")),
-		tok(BOOL, "true"),
+		newLiteral(tok(TK_BOOL, "true")),
+		tok(TK_BOOL, "true"),
 	)
 
 	// (1)
 	quickParenTest(t,
-		newLiteral(tok(NUMBER, "1")),
-		tok(NUMBER, "1"),
+		newLiteral(tok(TK_NUMBER, "1")),
+		tok(TK_NUMBER, "1"),
 	)
 
 	// ("abc")
 	quickParenTest(t,
-		newLiteral(tok(STRING, "abc")),
-		tok(STRING, "abc"),
+		newLiteral(tok(TK_STRING, "abc")),
+		tok(TK_STRING, "abc"),
 	)
 
 	// (-1)
 	quickParenTest(t,
 		newNegation(
-			newLiteral(tok(NUMBER, "1")),
+			newLiteral(tok(TK_NUMBER, "1")),
 		),
-		tok(SUBTRACT, "-"),
-		tok(NUMBER, "1"),
+		tok(TK_MINUS, "-"),
+		tok(TK_NUMBER, "1"),
 	)
 }
 
@@ -829,25 +829,25 @@ func Test_S6_22(t *testing.T) {
 	// a * (1 + b)
 	given := []Token{
 
-		tok(IDENTIFIER, "a"),
-		tok(MULTIPLY, "*"),
-		tok(PAREN_OPEN, "("),
-		tok(NUMBER, "1"),
-		tok(ADD, "+"),
-		tok(IDENTIFIER, "b"),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PLUS, "+"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	first := newOperation(
-		tok(ADD, "+"),
-		newLiteral(tok(NUMBER, "1")),
-		newIdentifier(tok(IDENTIFIER, "b")),
+		tok(TK_PLUS, "+"),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
 	exp := newOperation(
-		tok(MULTIPLY, "*"),
-		newIdentifier(tok(IDENTIFIER, "a")),
+		tok(TK_MULTIPLY, "*"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
 		first,
 	)
 
@@ -864,26 +864,26 @@ func Test_S6_23(t *testing.T) {
 
 	// (a * 1) + b
 	given := []Token{
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(MULTIPLY, "*"),
-		tok(NUMBER, "1"),
-		tok(PAREN_CLOSE, ")"),
-		tok(ADD, "+"),
-		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_PLUS, "+"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	first := newOperation(
-		tok(MULTIPLY, "*"),
-		newIdentifier(tok(IDENTIFIER, "a")),
-		newLiteral(tok(NUMBER, "1")),
+		tok(TK_MULTIPLY, "*"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
 	exp := newOperation(
-		tok(ADD, "+"),
+		tok(TK_PLUS, "+"),
 		first,
-		newIdentifier(tok(IDENTIFIER, "b")),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
 	act, e := testFunc(given)
@@ -900,96 +900,96 @@ func Test_S6_24(t *testing.T) {
 
 	// (a - 1 * ((b % 2) + (1 == 2 | c > 5)) & c % 2) != 0
 	given := []Token{
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(SUBTRACT, "-"),
-		tok(NUMBER, "1"),
-		tok(MULTIPLY, "*"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "b"),
-		tok(REMAINDER, "%"),
-		tok(NUMBER, "2"),
-		tok(PAREN_CLOSE, ")"),
-		tok(ADD, "+"),
-		tok(PAREN_OPEN, "("),
-		tok(NUMBER, "1"),
-		tok(EQUAL, "=="),
-		tok(NUMBER, "2"),
-		tok(OR, "|"),
-		tok(IDENTIFIER, "c"),
-		tok(MORE_THAN, ">"),
-		tok(NUMBER, "5"),
-		tok(PAREN_CLOSE, ")"),
-		tok(PAREN_CLOSE, ")"),
-		tok(AND, "&"),
-		tok(IDENTIFIER, "c"),
-		tok(REMAINDER, "%"),
-		tok(NUMBER, "2"),
-		tok(PAREN_CLOSE, ")"),
-		tok(NOT_EQUAL, "!="),
-		tok(NUMBER, "0"),
-		tok(TERMINATOR, ""),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MINUS, "-"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_REMAINDER, "%"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_PLUS, "+"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_NUMBER, "1"),
+		tok(TK_EQUAL, "=="),
+		tok(TK_NUMBER, "2"),
+		tok(TK_OR, "|"),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_MORE_THAN, ">"),
+		tok(TK_NUMBER, "5"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_AND, "&"),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_REMAINDER, "%"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_NOT_EQUAL, "!="),
+		tok(TK_NUMBER, "0"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	first := newOperation(
-		tok(REMAINDER, "%"),
-		newIdentifier(tok(IDENTIFIER, "b")),
-		newLiteral(tok(NUMBER, "2")),
+		tok(TK_REMAINDER, "%"),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	second := newOperation(
-		tok(EQUAL, "=="),
-		newLiteral(tok(NUMBER, "1")),
-		newLiteral(tok(NUMBER, "2")),
+		tok(TK_EQUAL, "=="),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	third := newOperation(
-		tok(MORE_THAN, ">"),
-		newIdentifier(tok(IDENTIFIER, "c")),
-		newLiteral(tok(NUMBER, "5")),
+		tok(TK_MORE_THAN, ">"),
+		newIdentifier(tok(TK_IDENTIFIER, "c")),
+		newLiteral(tok(TK_NUMBER, "5")),
 	)
 
 	fourth := newOperation(
-		tok(OR, "|"),
+		tok(TK_OR, "|"),
 		second,
 		third,
 	)
 
 	fifth := newOperation(
-		tok(ADD, "+"),
+		tok(TK_PLUS, "+"),
 		first,
 		fourth,
 	)
 
 	sixth := newOperation(
-		tok(MULTIPLY, "*"),
-		newLiteral(tok(NUMBER, "1")),
+		tok(TK_MULTIPLY, "*"),
+		newLiteral(tok(TK_NUMBER, "1")),
 		fifth,
 	)
 
 	seventh := newOperation(
-		tok(SUBTRACT, "-"),
-		newIdentifier(tok(IDENTIFIER, "a")),
+		tok(TK_MINUS, "-"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
 		sixth,
 	)
 
 	eigth := newOperation(
-		tok(REMAINDER, "%"),
-		newIdentifier(tok(IDENTIFIER, "c")),
-		newLiteral(tok(NUMBER, "2")),
+		tok(TK_REMAINDER, "%"),
+		newIdentifier(tok(TK_IDENTIFIER, "c")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	ninth := newOperation(
-		tok(AND, "&"),
+		tok(TK_AND, "&"),
 		seventh,
 		eigth,
 	)
 
 	exp := newOperation(
-		tok(NOT_EQUAL, "!="),
+		tok(TK_NOT_EQUAL, "!="),
 		ninth,
-		newLiteral(tok(NUMBER, "0")),
+		newLiteral(tok(TK_NUMBER, "0")),
 	)
 
 	act, e := testFunc(given)
@@ -1005,27 +1005,27 @@ func Test_S7_1(t *testing.T) {
 
 	// f := F() {}
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	f := newFunction(
-		tok(FUNC, "F"),
+		tok(TK_FUNCTION, "F"),
 		newParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
+			tok(TK_PAREN_OPEN, "("),
+			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{},
 			[]Token{},
 		),
 		newBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
+			tok(TK_BLOCK_OPEN, "{"),
+			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{},
 		),
 	)
@@ -1033,7 +1033,7 @@ func Test_S7_1(t *testing.T) {
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "f")),
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
 				f,
 			),
 		},
@@ -1052,30 +1052,30 @@ func Test_S7_2(t *testing.T) {
 
 	// f := F(a) {}
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	f := newFunction(
-		tok(FUNC, "F"),
+		tok(TK_FUNCTION, "F"),
 		newParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
+			tok(TK_PAREN_OPEN, "("),
+			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{
-				tok(IDENTIFIER, "a"),
+				tok(TK_IDENTIFIER, "a"),
 			},
 			[]Token{},
 		),
 		newBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
+			tok(TK_BLOCK_OPEN, "{"),
+			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{},
 		),
 	)
@@ -1083,7 +1083,7 @@ func Test_S7_2(t *testing.T) {
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "f")),
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
 				f,
 			),
 		},
@@ -1102,31 +1102,31 @@ func Test_S7_3(t *testing.T) {
 
 	// f := F(^a) {}
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "a"),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_OUTPUT, "^"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	f := newFunction(
-		tok(FUNC, "F"),
+		tok(TK_FUNCTION, "F"),
 		newParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
+			tok(TK_PAREN_OPEN, "("),
+			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{},
 			[]Token{
-				tok(IDENTIFIER, "a"),
+				tok(TK_IDENTIFIER, "a"),
 			},
 		),
 		newBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
+			tok(TK_BLOCK_OPEN, "{"),
+			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{},
 		),
 	)
@@ -1134,7 +1134,7 @@ func Test_S7_3(t *testing.T) {
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "f")),
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
 				f,
 			),
 		},
@@ -1153,42 +1153,42 @@ func Test_S7_4(t *testing.T) {
 
 	// f := F(a, b, ^c, ^d) {}
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "b"),
-		tok(DELIMITER, ","),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "c"),
-		tok(DELIMITER, ","),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "d"),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_OUTPUT, "^"),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_OUTPUT, "^"),
+		tok(TK_IDENTIFIER, "d"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	f := newFunction(
-		tok(FUNC, "F"),
+		tok(TK_FUNCTION, "F"),
 		newParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
+			tok(TK_PAREN_OPEN, "("),
+			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{
-				tok(IDENTIFIER, "a"),
-				tok(IDENTIFIER, "b"),
+				tok(TK_IDENTIFIER, "a"),
+				tok(TK_IDENTIFIER, "b"),
 			},
 			[]Token{
-				tok(IDENTIFIER, "c"),
-				tok(IDENTIFIER, "d"),
+				tok(TK_IDENTIFIER, "c"),
+				tok(TK_IDENTIFIER, "d"),
 			},
 		),
 		newBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
+			tok(TK_BLOCK_OPEN, "{"),
+			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{},
 		),
 	)
@@ -1196,7 +1196,7 @@ func Test_S7_4(t *testing.T) {
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "f")),
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
 				f,
 			),
 		},
@@ -1215,28 +1215,28 @@ func Test_S7_5(t *testing.T) {
 
 	// f := F() {a := 1}
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "1"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_NUMBER, "1"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	body := newBlock(
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{
 			newAssignmentBlock(
 				[]Assignment{
 					newAssignment(
-						newIdentifier(tok(IDENTIFIER, "a")),
-						newLiteral(tok(NUMBER, "1")),
+						newIdentifier(tok(TK_IDENTIFIER, "a")),
+						newLiteral(tok(TK_NUMBER, "1")),
 					),
 				},
 			),
@@ -1244,10 +1244,10 @@ func Test_S7_5(t *testing.T) {
 	)
 
 	f := newFunction(
-		tok(FUNC, "F"),
+		tok(TK_FUNCTION, "F"),
 		newParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
+			tok(TK_PAREN_OPEN, "("),
+			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{},
 			[]Token{},
 		),
@@ -1257,7 +1257,7 @@ func Test_S7_5(t *testing.T) {
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "f")),
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
 				f,
 			),
 		},
@@ -1281,38 +1281,38 @@ func Test_S7_6(t *testing.T) {
 	// a: b
 	// }
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(FUNC, "F"),
-		tok(PAREN_OPEN, "("),
-		tok(TERMINATOR, "\n"),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(TERMINATOR, "\n"),
-		tok(OUTPUT, "^"),
-		tok(IDENTIFIER, "b"),
-		tok(DELIMITER, ","),
-		tok(TERMINATOR, "\n"),
-		tok(PAREN_CLOSE, ")"),
-		tok(BLOCK_OPEN, "{"),
-		tok(TERMINATOR, "\n"),
-		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, "\n"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_OUTPUT, "^"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	body := newBlock(
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{
 			newAssignmentBlock(
 				[]Assignment{
 					newAssignment(
-						newIdentifier(tok(IDENTIFIER, "a")),
-						newLiteral(tok(NUMBER, "1")),
+						newIdentifier(tok(TK_IDENTIFIER, "a")),
+						newLiteral(tok(TK_NUMBER, "1")),
 					),
 				},
 			),
@@ -1320,15 +1320,15 @@ func Test_S7_6(t *testing.T) {
 	)
 
 	f := newFunction(
-		tok(FUNC, "F"),
+		tok(TK_FUNCTION, "F"),
 		newParameters(
-			tok(PAREN_OPEN, "("),
-			tok(PAREN_CLOSE, ")"),
+			tok(TK_PAREN_OPEN, "("),
+			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{
-				tok(IDENTIFIER, "a"),
+				tok(TK_IDENTIFIER, "a"),
 			},
 			[]Token{
-				tok(IDENTIFIER, "b"),
+				tok(TK_IDENTIFIER, "b"),
 			},
 		),
 		body,
@@ -1337,7 +1337,7 @@ func Test_S7_6(t *testing.T) {
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "f")),
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
 				f,
 			),
 		},
@@ -1356,25 +1356,25 @@ func Test_S8_1(t *testing.T) {
 
 	// f := E() 1
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(EXPR_FUNC, "E"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_EXPR_FUNC, "E"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	f := newExpressionFunction(
-		tok(EXPR_FUNC, "E"),
+		tok(TK_EXPR_FUNC, "E"),
 		[]Token{},
-		newLiteral(tok(NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "f")),
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
 				f,
 			),
 		},
@@ -1393,28 +1393,28 @@ func Test_S8_2(t *testing.T) {
 
 	// f := E(a) 1
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(EXPR_FUNC, "E"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(PAREN_CLOSE, ")"),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_EXPR_FUNC, "E"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	f := newExpressionFunction(
-		tok(EXPR_FUNC, "E"),
+		tok(TK_EXPR_FUNC, "E"),
 		[]Token{
-			tok(IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "a"),
 		},
-		newLiteral(tok(NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "f")),
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
 				f,
 			),
 		},
@@ -1433,34 +1433,34 @@ func Test_S8_3(t *testing.T) {
 
 	// f := E(a) 1
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(EXPR_FUNC, "E"),
-		tok(PAREN_OPEN, "("),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "b"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "c"),
-		tok(PAREN_CLOSE, ")"),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_EXPR_FUNC, "E"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	f := newExpressionFunction(
-		tok(EXPR_FUNC, "E"),
+		tok(TK_EXPR_FUNC, "E"),
 		[]Token{
-			tok(IDENTIFIER, "a"),
-			tok(IDENTIFIER, "b"),
-			tok(IDENTIFIER, "c"),
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+			tok(TK_IDENTIFIER, "c"),
 		},
-		newLiteral(tok(NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "f")),
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
 				f,
 			),
 		},
@@ -1479,31 +1479,31 @@ func Test_S8_4(t *testing.T) {
 
 	// f := E() 1
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(EXPR_FUNC, "E"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(NUMBER, "1"),
-		tok(ADD, "+"),
-		tok(NUMBER, "2"),
-		tok(MULTIPLY, "*"),
-		tok(NUMBER, "3"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_EXPR_FUNC, "E"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_NUMBER, "3"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	expr := newOperation(
-		tok(ADD, "+"),
-		newLiteral(tok(NUMBER, "1")),
+		tok(TK_PLUS, "+"),
+		newLiteral(tok(TK_NUMBER, "1")),
 		newOperation(
-			tok(MULTIPLY, "*"),
-			newLiteral(tok(NUMBER, "2")),
-			newLiteral(tok(NUMBER, "3")),
+			tok(TK_MULTIPLY, "*"),
+			newLiteral(tok(TK_NUMBER, "2")),
+			newLiteral(tok(TK_NUMBER, "3")),
 		),
 	)
 
 	f := newExpressionFunction(
-		tok(EXPR_FUNC, "E"),
+		tok(TK_EXPR_FUNC, "E"),
 		[]Token{},
 		expr,
 	)
@@ -1511,7 +1511,7 @@ func Test_S8_4(t *testing.T) {
 	exp := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "f")),
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
 				f,
 			),
 		},
@@ -1530,23 +1530,23 @@ func Test_S9_1(t *testing.T) {
 
 	// watch a {}
 	given := []Token{
-		tok(WATCH, "watch"),
-		tok(IDENTIFIER, "a"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_WATCH, "watch"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	body := newBlock(
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{},
 	)
 
 	exp := newWatch(
-		tok(WATCH, "watch"),
+		tok(TK_WATCH, "watch"),
 		[]Token{
-			tok(IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "a"),
 		},
 		body,
 	)
@@ -1564,29 +1564,29 @@ func Test_S9_2(t *testing.T) {
 
 	// watch a, b, c {}
 	given := []Token{
-		tok(WATCH, "watch"),
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "b"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "c"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_WATCH, "watch"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	body := newBlock(
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{},
 	)
 
 	exp := newWatch(
-		tok(WATCH, "watch"),
+		tok(TK_WATCH, "watch"),
 		[]Token{
-			tok(IDENTIFIER, "a"),
-			tok(IDENTIFIER, "b"),
-			tok(IDENTIFIER, "c"),
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+			tok(TK_IDENTIFIER, "c"),
 		},
 		body,
 	)
@@ -1604,39 +1604,39 @@ func Test_S9_3(t *testing.T) {
 
 	// watch a, b, c {}
 	given := []Token{
-		tok(WATCH, "watch"),
-		tok(IDENTIFIER, "a"),
-		tok(BLOCK_OPEN, "{"),
-		tok(NUMBER, "1"),
-		tok(ADD, "+"),
-		tok(NUMBER, "2"),
-		tok(TERMINATOR, ""),
-		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "3"),
-		tok(TERMINATOR, ""),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_WATCH, "watch"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_NUMBER, "3"),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	first := newOperation(
-		tok(ADD, "+"),
-		newLiteral(tok(NUMBER, "1")),
-		newLiteral(tok(NUMBER, "2")),
+		tok(TK_PLUS, "+"),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	second := newAssignmentBlock(
 		[]Assignment{
 			newAssignment(
-				newIdentifier(tok(IDENTIFIER, "a")),
-				newLiteral(tok(NUMBER, "3")),
+				newIdentifier(tok(TK_IDENTIFIER, "a")),
+				newLiteral(tok(TK_NUMBER, "3")),
 			),
 		},
 	)
 
 	body := newBlock(
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{
 			first,
 			second,
@@ -1644,9 +1644,9 @@ func Test_S9_3(t *testing.T) {
 	)
 
 	exp := newWatch(
-		tok(WATCH, "watch"),
+		tok(TK_WATCH, "watch"),
 		[]Token{
-			tok(IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "a"),
 		},
 		body,
 	)
@@ -1664,23 +1664,23 @@ func Test_S10_1(t *testing.T) {
 
 	// [true] {}
 	given := []Token{
-		tok(GUARD_OPEN, "["),
-		tok(BOOL, "true"),
-		tok(GUARD_CLOSE, "]"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_BOOL, "true"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	body := newBlock(
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{},
 	)
 
 	exp := newGuard(
-		tok(GUARD_OPEN, "["),
-		newLiteral(tok(BOOL, "true")),
+		tok(TK_GUARD_OPEN, "["),
+		newLiteral(tok(TK_BOOL, "true")),
 		body,
 	)
 
@@ -1697,30 +1697,30 @@ func Test_S10_2(t *testing.T) {
 
 	// [1 == 2] {}
 	given := []Token{
-		tok(GUARD_OPEN, "["),
-		tok(NUMBER, "1"),
-		tok(EQUAL, "=="),
-		tok(NUMBER, "2"),
-		tok(GUARD_CLOSE, "]"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_NUMBER, "1"),
+		tok(TK_EQUAL, "=="),
+		tok(TK_NUMBER, "2"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	condition := newOperation(
-		tok(EQUAL, "=="),
-		newLiteral(tok(NUMBER, "1")),
-		newLiteral(tok(NUMBER, "2")),
+		tok(TK_EQUAL, "=="),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	body := newBlock(
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{},
 	)
 
 	exp := newGuard(
-		tok(GUARD_OPEN, "["),
+		tok(TK_GUARD_OPEN, "["),
 		condition,
 		body,
 	)
@@ -1741,45 +1741,45 @@ func Test_S10_3(t *testing.T) {
 	//   3 * 4
 	// }
 	given := []Token{
-		tok(GUARD_OPEN, "["),
-		tok(BOOL, "true"),
-		tok(GUARD_CLOSE, "]"),
-		tok(BLOCK_OPEN, "{"),
-		tok(TERMINATOR, ""),
-		tok(NUMBER, "1"),
-		tok(ADD, "+"),
-		tok(NUMBER, "2"),
-		tok(TERMINATOR, ""),
-		tok(NUMBER, "3"),
-		tok(MULTIPLY, "*"),
-		tok(NUMBER, "4"),
-		tok(TERMINATOR, ""),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_BOOL, "true"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_NUMBER, "3"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_NUMBER, "4"),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	statements := []Expression{
 		newOperation(
-			tok(ADD, "+"),
-			newLiteral(tok(NUMBER, "1")),
-			newLiteral(tok(NUMBER, "2")),
+			tok(TK_PLUS, "+"),
+			newLiteral(tok(TK_NUMBER, "1")),
+			newLiteral(tok(TK_NUMBER, "2")),
 		),
 		newOperation(
-			tok(MULTIPLY, "*"),
-			newLiteral(tok(NUMBER, "3")),
-			newLiteral(tok(NUMBER, "4")),
+			tok(TK_MULTIPLY, "*"),
+			newLiteral(tok(TK_NUMBER, "3")),
+			newLiteral(tok(TK_NUMBER, "4")),
 		),
 	}
 
 	body := newBlock(
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
 		statements,
 	)
 
 	exp := newGuard(
-		tok(GUARD_OPEN, "["),
-		newLiteral(tok(BOOL, "true")),
+		tok(TK_GUARD_OPEN, "["),
+		newLiteral(tok(TK_BOOL, "true")),
 		body,
 	)
 
@@ -1797,18 +1797,18 @@ func Test_S11_1(t *testing.T) {
 	// when true {
 	// }
 	given := []Token{
-		tok(WHEN, "when"),
-		tok(BOOL, "true"),
-		tok(BLOCK_OPEN, "{"),
-		tok(TERMINATOR, ""),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_WHEN, "when"),
+		tok(TK_BOOL, "true"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	exp := newWhen(
-		tok(WHEN, "when"),
-		tok(BLOCK_CLOSE, "}"),
-		newLiteral(tok(BOOL, "true")),
+		tok(TK_WHEN, "when"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		newLiteral(tok(TK_BOOL, "true")),
 		[]WhenCase{},
 	)
 
@@ -1826,25 +1826,25 @@ func Test_S11_2(t *testing.T) {
 	// when true {
 	// }
 	given := []Token{
-		tok(WHEN, "when"),
-		tok(NUMBER, "1"),
-		tok(EQUAL, "=="),
-		tok(NUMBER, "2"),
-		tok(BLOCK_OPEN, "{"),
-		tok(TERMINATOR, ""),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_WHEN, "when"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_EQUAL, "=="),
+		tok(TK_NUMBER, "2"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	condition := newOperation(
-		tok(EQUAL, "=="),
-		newLiteral(tok(NUMBER, "1")),
-		newLiteral(tok(NUMBER, "2")),
+		tok(TK_EQUAL, "=="),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
 	exp := newWhen(
-		tok(WHEN, "when"),
-		tok(BLOCK_CLOSE, "}"),
+		tok(TK_WHEN, "when"),
+		tok(TK_BLOCK_CLOSE, "}"),
 		condition,
 		[]WhenCase{},
 	)
@@ -1864,36 +1864,36 @@ func Test_S11_3(t *testing.T) {
 	//   1 -> 3 * 4
 	// }
 	given := []Token{
-		tok(WHEN, "when"),
-		tok(NUMBER, "1"),
-		tok(BLOCK_OPEN, "{"),
-		tok(TERMINATOR, "\n"),
-		tok(NUMBER, "1"),
-		tok(THEN, "->"),
-		tok(NUMBER, "3"),
-		tok(MULTIPLY, "*"),
-		tok(NUMBER, "4"),
-		tok(TERMINATOR, "\n"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_WHEN, "when"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_THEN, "->"),
+		tok(TK_NUMBER, "3"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_NUMBER, "4"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
-	firstCase := newLiteral(tok(NUMBER, "1"))
+	firstCase := newLiteral(tok(TK_NUMBER, "1"))
 
 	firstBlock := newUnDelimiteredBlock(
 		[]Expression{
 			newOperation(
-				tok(MULTIPLY, "*"),
-				newLiteral(tok(NUMBER, "3")),
-				newLiteral(tok(NUMBER, "4")),
+				tok(TK_MULTIPLY, "*"),
+				newLiteral(tok(TK_NUMBER, "3")),
+				newLiteral(tok(TK_NUMBER, "4")),
 			),
 		},
 	)
 
 	exp := newWhen(
-		tok(WHEN, "when"),
-		tok(BLOCK_CLOSE, "}"),
-		newLiteral(tok(NUMBER, "1")),
+		tok(TK_WHEN, "when"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		newLiteral(tok(TK_NUMBER, "1")),
 		[]WhenCase{
 			newWhenCase(firstCase, firstBlock),
 		},
@@ -1914,48 +1914,48 @@ func Test_S11_4(t *testing.T) {
 	//   [1 == 2] -> 3 * 4
 	// }
 	given := []Token{
-		tok(WHEN, "when"),
-		tok(NUMBER, "1"),
-		tok(BLOCK_OPEN, "{"),
-		tok(TERMINATOR, "\n"),
-		tok(GUARD_OPEN, "["),
-		tok(NUMBER, "1"),
-		tok(EQUAL, "=="),
-		tok(NUMBER, "2"),
-		tok(GUARD_CLOSE, "]"),
-		tok(THEN, "->"),
-		tok(NUMBER, "3"),
-		tok(MULTIPLY, "*"),
-		tok(NUMBER, "4"),
-		tok(TERMINATOR, "\n"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_WHEN, "when"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_NUMBER, "1"),
+		tok(TK_EQUAL, "=="),
+		tok(TK_NUMBER, "2"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_THEN, "->"),
+		tok(TK_NUMBER, "3"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_NUMBER, "4"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	firstBlock := newUnDelimiteredBlock(
 		[]Expression{
 			newOperation(
-				tok(MULTIPLY, "*"),
-				newLiteral(tok(NUMBER, "3")),
-				newLiteral(tok(NUMBER, "4")),
+				tok(TK_MULTIPLY, "*"),
+				newLiteral(tok(TK_NUMBER, "3")),
+				newLiteral(tok(TK_NUMBER, "4")),
 			),
 		},
 	)
 
 	firstCase := newGuard(
-		tok(GUARD_OPEN, "["),
+		tok(TK_GUARD_OPEN, "["),
 		newOperation(
-			tok(EQUAL, "=="),
-			newLiteral(tok(NUMBER, "1")),
-			newLiteral(tok(NUMBER, "2")),
+			tok(TK_EQUAL, "=="),
+			newLiteral(tok(TK_NUMBER, "1")),
+			newLiteral(tok(TK_NUMBER, "2")),
 		),
 		firstBlock,
 	)
 
 	exp := newWhen(
-		tok(WHEN, "when"),
-		tok(BLOCK_CLOSE, "}"),
-		newLiteral(tok(NUMBER, "1")),
+		tok(TK_WHEN, "when"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		newLiteral(tok(TK_NUMBER, "1")),
 		[]WhenCase{
 			firstCase,
 		},
@@ -1981,88 +1981,88 @@ func Test_S11_5(t *testing.T) {
 	//               }
 	// }
 	given := []Token{
-		tok(WHEN, "when"),
-		tok(NUMBER, "3"),
-		tok(BLOCK_OPEN, "{"),
-		tok(TERMINATOR, "\n"),
-		tok(NUMBER, "1"),
-		tok(THEN, "->"),
-		tok(IDENTIFIER, "a"),
-		tok(TERMINATOR, "\n"),
-		tok(GUARD_OPEN, "["),
-		tok(IDENTIFIER, "a"),
-		tok(EQUAL, "=="),
-		tok(IDENTIFIER, "b"),
-		tok(GUARD_CLOSE, "]"),
-		tok(THEN, "->"),
-		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, "\n"),
-		tok(NUMBER, "2"),
-		tok(THEN, "->"),
-		tok(IDENTIFIER, "c"),
-		tok(TERMINATOR, "\n"),
-		tok(GUARD_OPEN, "["),
-		tok(BOOL, "true"),
-		tok(GUARD_CLOSE, "]"),
-		tok(THEN, "->"),
-		tok(BLOCK_OPEN, "{"),
-		tok(TERMINATOR, "\n"),
-		tok(IDENTIFIER, "d"),
-		tok(TERMINATOR, "\n"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, "\n"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_WHEN, "when"),
+		tok(TK_NUMBER, "3"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_THEN, "->"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_EQUAL, "=="),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_THEN, "->"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_THEN, "->"),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_BOOL, "true"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_THEN, "->"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_IDENTIFIER, "d"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	firstCase := newWhenCase(
-		newLiteral(tok(NUMBER, "1")),
+		newLiteral(tok(TK_NUMBER, "1")),
 		newUnDelimiteredBlock(
 			[]Expression{
-				newIdentifier(tok(IDENTIFIER, "a")),
+				newIdentifier(tok(TK_IDENTIFIER, "a")),
 			},
 		),
 	)
 
 	secondCase := newGuard(
-		tok(GUARD_OPEN, "["),
+		tok(TK_GUARD_OPEN, "["),
 		newOperation(
-			tok(EQUAL, "=="),
-			newIdentifier(tok(IDENTIFIER, "a")),
-			newIdentifier(tok(IDENTIFIER, "b")),
+			tok(TK_EQUAL, "=="),
+			newIdentifier(tok(TK_IDENTIFIER, "a")),
+			newIdentifier(tok(TK_IDENTIFIER, "b")),
 		),
 		newUnDelimiteredBlock(
 			[]Expression{
-				newIdentifier(tok(IDENTIFIER, "b")),
+				newIdentifier(tok(TK_IDENTIFIER, "b")),
 			},
 		),
 	)
 
 	thirdCase := newWhenCase(
-		newLiteral(tok(NUMBER, "2")),
+		newLiteral(tok(TK_NUMBER, "2")),
 		newUnDelimiteredBlock(
 			[]Expression{
-				newIdentifier(tok(IDENTIFIER, "c")),
+				newIdentifier(tok(TK_IDENTIFIER, "c")),
 			},
 		),
 	)
 
 	fourthCase := newGuard(
-		tok(GUARD_OPEN, "["),
-		newLiteral(tok(BOOL, "true")),
+		tok(TK_GUARD_OPEN, "["),
+		newLiteral(tok(TK_BOOL, "true")),
 		newBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
+			tok(TK_BLOCK_OPEN, "{"),
+			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{
-				newIdentifier(tok(IDENTIFIER, "d")),
+				newIdentifier(tok(TK_IDENTIFIER, "d")),
 			},
 		),
 	)
 
 	exp := newWhen(
-		tok(WHEN, "when"),
-		tok(BLOCK_CLOSE, "}"),
-		newLiteral(tok(NUMBER, "3")),
+		tok(TK_WHEN, "when"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		newLiteral(tok(TK_NUMBER, "3")),
 		[]WhenCase{
 			firstCase,
 			secondCase,
@@ -2086,35 +2086,35 @@ func Test_S12_1(t *testing.T) {
 	// loop i := 0 [true] {
 	// }
 	given := []Token{
-		tok(LOOP, "loop"),
-		tok(IDENTIFIER, "i"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "0"),
-		tok(GUARD_OPEN, "["),
-		tok(BOOL, "true"),
-		tok(GUARD_CLOSE, "]"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_LOOP, "loop"),
+		tok(TK_IDENTIFIER, "i"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_NUMBER, "0"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_BOOL, "true"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	init := newAssignment(
-		newIdentifier(tok(IDENTIFIER, "i")),
-		newLiteral(tok(NUMBER, "0")),
+		newIdentifier(tok(TK_IDENTIFIER, "i")),
+		newLiteral(tok(TK_NUMBER, "0")),
 	)
 
 	guard := newGuard(
-		tok(GUARD_OPEN, "["),
-		newLiteral(tok(BOOL, "true")),
+		tok(TK_GUARD_OPEN, "["),
+		newLiteral(tok(TK_BOOL, "true")),
 		newBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
+			tok(TK_BLOCK_OPEN, "{"),
+			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{},
 		),
 	)
 
 	exp := newLoop(
-		tok(LOOP, "loop"),
+		tok(TK_LOOP, "loop"),
 		init,
 		guard,
 	)
@@ -2136,64 +2136,64 @@ func Test_S12_2(t *testing.T) {
 	//   c * d
 	// }
 	given := []Token{
-		tok(LOOP, "loop"),
-		tok(IDENTIFIER, "i"),
-		tok(ASSIGN, ":="),
-		tok(IDENTIFIER, "a"),
-		tok(SUBTRACT, "-"),
-		tok(NUMBER, "1"),
-		tok(GUARD_OPEN, "["),
-		tok(IDENTIFIER, "i"),
-		tok(LESS_THAN, "<"),
-		tok(NUMBER, "10"),
-		tok(GUARD_CLOSE, "]"),
-		tok(BLOCK_OPEN, "{"),
-		tok(TERMINATOR, ""),
-		tok(IDENTIFIER, "a"),
-		tok(ADD, "+"),
-		tok(IDENTIFIER, "b"),
-		tok(TERMINATOR, ""),
-		tok(IDENTIFIER, "c"),
-		tok(MULTIPLY, "*"),
-		tok(IDENTIFIER, "d"),
-		tok(TERMINATOR, ""),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_LOOP, "loop"),
+		tok(TK_IDENTIFIER, "i"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_MINUS, "-"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_IDENTIFIER, "i"),
+		tok(TK_LESS_THAN, "<"),
+		tok(TK_NUMBER, "10"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_PLUS, "+"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "c"),
+		tok(TK_MULTIPLY, "*"),
+		tok(TK_IDENTIFIER, "d"),
+		tok(TK_TERMINATOR, ""),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	init := newAssignment(
-		newIdentifier(tok(IDENTIFIER, "i")),
+		newIdentifier(tok(TK_IDENTIFIER, "i")),
 		newOperation(
-			tok(SUBTRACT, "-"),
-			newIdentifier(tok(IDENTIFIER, "a")),
-			newLiteral(tok(NUMBER, "1")),
+			tok(TK_MINUS, "-"),
+			newIdentifier(tok(TK_IDENTIFIER, "a")),
+			newLiteral(tok(TK_NUMBER, "1")),
 		),
 	)
 
 	condition := newOperation(
-		tok(LESS_THAN, "<"),
-		newIdentifier(tok(IDENTIFIER, "i")),
-		newLiteral(tok(NUMBER, "10")),
+		tok(TK_LESS_THAN, "<"),
+		newIdentifier(tok(TK_IDENTIFIER, "i")),
+		newLiteral(tok(TK_NUMBER, "10")),
 	)
 
 	firstStat := newOperation(
-		tok(ADD, "+"),
-		newIdentifier(tok(IDENTIFIER, "a")),
-		newIdentifier(tok(IDENTIFIER, "b")),
+		tok(TK_PLUS, "+"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
 	secondStat := newOperation(
-		tok(MULTIPLY, "*"),
-		newIdentifier(tok(IDENTIFIER, "c")),
-		newIdentifier(tok(IDENTIFIER, "d")),
+		tok(TK_MULTIPLY, "*"),
+		newIdentifier(tok(TK_IDENTIFIER, "c")),
+		newIdentifier(tok(TK_IDENTIFIER, "d")),
 	)
 
 	guard := newGuard(
-		tok(GUARD_OPEN, "["),
+		tok(TK_GUARD_OPEN, "["),
 		condition,
 		newBlock(
-			tok(BLOCK_OPEN, "{"),
-			tok(BLOCK_CLOSE, "}"),
+			tok(TK_BLOCK_OPEN, "{"),
+			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{
 				firstStat,
 				secondStat,
@@ -2202,7 +2202,7 @@ func Test_S12_2(t *testing.T) {
 	)
 
 	exp := newLoop(
-		tok(LOOP, "loop"),
+		tok(TK_LOOP, "loop"),
 		init,
 		guard,
 	)
@@ -2217,8 +2217,8 @@ func Test_F1(t *testing.T) {
 	// THEN parser returns error
 
 	given := []Token{
-		tok(ASSIGN, ":="),
-		tok(TERMINATOR, ""),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2233,9 +2233,9 @@ func Test_F2(t *testing.T) {
 
 	// a:
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":="),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2250,12 +2250,12 @@ func Test_F3(t *testing.T) {
 
 	// a: 1, 2
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "1"),
-		tok(DELIMITER, ","),
-		tok(NUMBER, "2"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_NUMBER, "1"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_NUMBER, "2"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2270,9 +2270,9 @@ func Test_F4(t *testing.T) {
 
 	// a 1
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2287,13 +2287,13 @@ func Test_F5(t *testing.T) {
 
 	// a b: 1, 2
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(IDENTIFIER, "b"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "1"),
-		tok(DELIMITER, ","),
-		tok(NUMBER, "2"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_NUMBER, "1"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_NUMBER, "2"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2308,13 +2308,13 @@ func Test_F6(t *testing.T) {
 
 	// a, b: 1 2
 	given := []Token{
-		tok(IDENTIFIER, "a"),
-		tok(DELIMITER, ","),
-		tok(IDENTIFIER, "b"),
-		tok(ASSIGN, ":="),
-		tok(NUMBER, "1"),
-		tok(NUMBER, "2"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_NUMBER, "1"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2329,8 +2329,8 @@ func Test_F7(t *testing.T) {
 
 	// -
 	given := []Token{
-		tok(SUBTRACT, "-"),
-		tok(TERMINATOR, ""),
+		tok(TK_MINUS, "-"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2345,12 +2345,12 @@ func Test_F9(t *testing.T) {
 
 	// LIST {,1}
 	given := []Token{
-		tok(LIST, "LIST"),
-		tok(BLOCK_OPEN, "{"),
-		tok(DELIMITER, ","),
-		tok(NUMBER, "1"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_LIST, "LIST"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_NUMBER, "1"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2366,12 +2366,12 @@ func Test_F10(t *testing.T) {
 	// LIST {1
 	// }
 	given := []Token{
-		tok(LIST, "LIST"),
-		tok(BLOCK_OPEN, "{"),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, "\n"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_LIST, "LIST"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2386,10 +2386,10 @@ func Test_F11(t *testing.T) {
 
 	// LIST 1}
 	given := []Token{
-		tok(LIST, "LIST"),
-		tok(NUMBER, "1"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_LIST, "LIST"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2404,10 +2404,10 @@ func Test_F12(t *testing.T) {
 
 	// LIST {1
 	given := []Token{
-		tok(LIST, "LIST"),
-		tok(BLOCK_OPEN, "{"),
-		tok(NUMBER, "1"),
-		tok(TERMINATOR, ""),
+		tok(TK_LIST, "LIST"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2422,9 +2422,9 @@ func Test_F13(t *testing.T) {
 
 	// x +
 	given := []Token{
-		tok(IDENTIFIER, "x"),
-		tok(ADD, "+"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "x"),
+		tok(TK_PLUS, "+"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2439,10 +2439,10 @@ func Test_F14(t *testing.T) {
 
 	// x + +
 	given := []Token{
-		tok(IDENTIFIER, "x"),
-		tok(ADD, "+"),
-		tok(ADD, "+"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "x"),
+		tok(TK_PLUS, "+"),
+		tok(TK_PLUS, "+"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2457,12 +2457,12 @@ func Test_F15(t *testing.T) {
 
 	// f: E()
 	given := []Token{
-		tok(IDENTIFIER, "f"),
-		tok(ASSIGN, ":="),
-		tok(EXPR_FUNC, "E"),
-		tok(PAREN_OPEN, "("),
-		tok(PAREN_CLOSE, ")"),
-		tok(TERMINATOR, ""),
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_EXPR_FUNC, "E"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2477,9 +2477,9 @@ func Test_F16(t *testing.T) {
 
 	// watch a
 	given := []Token{
-		tok(WATCH, "watch"),
-		tok(IDENTIFIER, "a"),
-		tok(TERMINATOR, ""),
+		tok(TK_WATCH, "watch"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2494,10 +2494,10 @@ func Test_F17(t *testing.T) {
 
 	// watch a
 	given := []Token{
-		tok(GUARD_OPEN, "["),
-		tok(BOOL, "true"),
-		tok(GUARD_CLOSE, "]"),
-		tok(TERMINATOR, ""),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_BOOL, "true"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)
@@ -2512,11 +2512,11 @@ func Test_F18(t *testing.T) {
 
 	// watch a
 	given := []Token{
-		tok(GUARD_OPEN, "["),
-		tok(GUARD_CLOSE, "]"),
-		tok(BLOCK_OPEN, "{"),
-		tok(BLOCK_CLOSE, "}"),
-		tok(TERMINATOR, ""),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
 	}
 
 	act, e := testFunc(given)

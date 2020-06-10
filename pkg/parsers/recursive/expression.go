@@ -15,7 +15,7 @@ func parseExpressions(p *pipe) []Expression {
 	for exp != nil {
 		exps = append(exps, exp)
 
-		if p.accept(DELIMITER) {
+		if p.accept(TK_DELIMITER) {
 			exp = parseExpression(p)
 
 			if exp == nil {
@@ -30,7 +30,7 @@ func parseExpressions(p *pipe) []Expression {
 		}
 	}
 
-	p.accept(TERMINATOR) // In some cases
+	p.accept(TK_TERMINATOR) // In some cases
 	return exps
 }
 

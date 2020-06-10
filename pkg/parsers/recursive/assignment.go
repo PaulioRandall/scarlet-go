@@ -10,21 +10,21 @@ func isAssignment(p *pipe) bool {
 	// match := DEF
 	// match := VOID | (ID (DELIM | ASSIGN | GUARD_OPEN))
 
-	return p.match(DEF) ||
-		p.matchSequence(IDENTIFIER, DELIMITER) ||
-		p.matchSequence(IDENTIFIER, ASSIGN) ||
-		p.matchSequence(IDENTIFIER, GUARD_OPEN) ||
-		p.matchSequence(VOID, DELIMITER) ||
-		p.matchSequence(VOID, ASSIGN)
+	return p.match(TK_DEFINITION) ||
+		p.matchSequence(TK_IDENTIFIER, TK_DELIMITER) ||
+		p.matchSequence(TK_IDENTIFIER, TK_ASSIGNMENT) ||
+		p.matchSequence(TK_IDENTIFIER, TK_GUARD_OPEN) ||
+		p.matchSequence(TK_VOID, TK_DELIMITER) ||
+		p.matchSequence(TK_VOID, TK_ASSIGNMENT)
 }
 
 func parseAssignment(p *pipe) Assignment {
 	// pattern := [DEF] assign_target {assign_target} ASSIGN expression {expression}
 
 	a := Assignment{
-		Fixed:   p.accept(DEF),
+		Fixed:   p.accept(TK_DEFINITION),
 		Targets: parseAssignTargets(p),
-		Assign:  p.expect(`parseAssignment`, ASSIGN),
+		Assign:  p.expect(`parseAssignment`, TK_ASSIGNMENT),
 		Exprs:   parseAssignExprs(p),
 	}
 
@@ -59,7 +59,7 @@ func parseAssignTargets(p *pipe) []AssignTarget {
 		at := parseAssignTarget(p)
 		ats = append(ats, at)
 
-		if !p.accept(DELIMITER) {
+		if !p.accept(TK_DELIMITER) {
 			break
 		}
 	}
@@ -71,19 +71,19 @@ func parseAssignTarget(p *pipe) AssignTarget {
 	// pattern := ID [GUARD_OPEN (NUMBER | ID) GUARD_CLOSE]
 
 	at := AssignTarget{
-		ID: p.expectOneOf(`parseAssignTarget`, IDENTIFIER, VOID),
+		ID: p.expectOneOf(`parseAssignTarget`, TK_IDENTIFIER, TK_VOID),
 	}
 
-	if p.accept(GUARD_OPEN) {
+	if p.accept(TK_GUARD_OPEN) {
 
 		switch {
-		case p.matchAny(LIST_START, LIST_END):
+		case p.matchAny(TK_LIST_START, TK_LIST_END):
 			at.Index = ListItemRef{p.next()}
 
-		case p.match(NUMBER):
+		case p.match(TK_NUMBER):
 			at.Index = parseExpression(p)
 
-		case p.match(IDENTIFIER):
+		case p.match(TK_IDENTIFIER):
 			at.Index = parseExpression(p)
 
 		default:
@@ -93,7 +93,7 @@ func parseAssignTarget(p *pipe) AssignTarget {
 			)
 		}
 
-		p.expect(`parseAssignTarget`, GUARD_CLOSE)
+		p.expect(`parseAssignTarget`, TK_GUARD_CLOSE)
 	}
 
 	return at

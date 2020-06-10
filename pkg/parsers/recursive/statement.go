@@ -11,7 +11,7 @@ func parseStatements(p *pipe) []Statement {
 
 	var stats []Statement
 
-	for !p.itr.Empty() && !p.match(BLOCK_CLOSE) {
+	for !p.itr.Empty() && !p.match(TK_BLOCK_CLOSE) {
 		stat := parseStatement(p)
 		stats = append(stats, stat)
 	}
@@ -39,7 +39,7 @@ func parseStatement(p *pipe) Statement {
 	exp := parseExpression(p)
 
 	if exp != nil {
-		p.expect(`parseStatement`, TERMINATOR)
+		p.expect(`parseStatement`, TK_TERMINATOR)
 		return exp
 	}
 

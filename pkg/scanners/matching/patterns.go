@@ -12,53 +12,53 @@ import (
 type matcher func(*symbols) int
 
 type pattern struct {
-	morpheme Morpheme
-	matcher  matcher
+	tokenType TokenType
+	matcher   matcher
 }
 
 func patterns() []pattern {
 	return []pattern{
-		pattern{NEWLINE, func(s *symbols) int {
+		pattern{TK_NEWLINE, func(s *symbols) int {
 			return s.countNewlineSymbols(0)
 		}},
-		pattern{WHITESPACE, func(s *symbols) int {
+		pattern{TK_WHITESPACE, func(s *symbols) int {
 			// Returns the number of consecutive whitespace terminals.
 			// Newlines are not counted as whitespace.
 			return s.countSymbolsWhile(0, func(i int, ru rune) bool {
 				return !s.isNewline(i) && unicode.IsSpace(ru)
 			})
 		}},
-		pattern{COMMENT, func(s *symbols) int {
+		pattern{TK_COMMENT, func(s *symbols) int {
 			if s.isMatch(0, "//") {
 				return s.indexOfNextNewline(0)
 			}
 			return 0
 		}},
-		pattern{WHEN, func(s *symbols) int {
+		pattern{TK_WHEN, func(s *symbols) int {
 			return matchWord(s, "WHEN")
 		}},
-		pattern{BOOL, func(s *symbols) int {
+		pattern{TK_BOOL, func(s *symbols) int {
 			return matchWord(s, "FALSE")
 		}},
-		pattern{BOOL, func(s *symbols) int {
+		pattern{TK_BOOL, func(s *symbols) int {
 			return matchWord(s, "TRUE")
 		}},
-		pattern{LIST, func(s *symbols) int {
+		pattern{TK_LIST, func(s *symbols) int {
 			return matchWord(s, "LIST")
 		}},
-		pattern{LOOP, func(s *symbols) int {
+		pattern{TK_LOOP, func(s *symbols) int {
 			return matchWord(s, "LOOP")
 		}},
-		pattern{DEF, func(s *symbols) int {
+		pattern{TK_DEFINITION, func(s *symbols) int {
 			return matchWord(s, "DEF")
 		}},
-		pattern{FUNC, func(s *symbols) int {
+		pattern{TK_FUNCTION, func(s *symbols) int {
 			return matchWord(s, "F")
 		}},
-		pattern{EXPR_FUNC, func(s *symbols) int {
+		pattern{TK_EXPR_FUNC, func(s *symbols) int {
 			return matchWord(s, "E")
 		}},
-		pattern{IDENTIFIER, func(s *symbols) int {
+		pattern{TK_IDENTIFIER, func(s *symbols) int {
 			return s.countSymbolsWhile(0, func(i int, ru rune) bool {
 
 				if unicode.IsLetter(ru) {
@@ -68,91 +68,91 @@ func patterns() []pattern {
 				return i != 0 && ru == '_'
 			})
 		}},
-		pattern{ASSIGN, func(s *symbols) int {
+		pattern{TK_ASSIGNMENT, func(s *symbols) int {
 			return matchStr(s, ":")
 		}},
-		pattern{UPDATES, func(s *symbols) int {
+		pattern{TK_UPDATES, func(s *symbols) int {
 			return matchStr(s, "<-")
 		}},
-		pattern{LIST_END, func(s *symbols) int {
+		pattern{TK_LIST_END, func(s *symbols) int {
 			return matchStr(s, ">>")
 		}},
-		pattern{LIST_START, func(s *symbols) int {
+		pattern{TK_LIST_START, func(s *symbols) int {
 			return matchStr(s, "<<")
 		}},
-		pattern{LESS_THAN_OR_EQUAL, func(s *symbols) int {
+		pattern{TK_LESS_THAN_OR_EQUAL, func(s *symbols) int {
 			return matchStr(s, "<=")
 		}},
-		pattern{MORE_THAN_OR_EQUAL, func(s *symbols) int {
+		pattern{TK_MORE_THAN_OR_EQUAL, func(s *symbols) int {
 			return matchStr(s, ">=")
 		}},
-		pattern{BLOCK_OPEN, func(s *symbols) int {
+		pattern{TK_BLOCK_OPEN, func(s *symbols) int {
 			return matchStr(s, "{")
 		}},
-		pattern{BLOCK_CLOSE, func(s *symbols) int {
+		pattern{TK_BLOCK_CLOSE, func(s *symbols) int {
 			return matchStr(s, "}")
 		}},
-		pattern{PAREN_OPEN, func(s *symbols) int {
+		pattern{TK_PAREN_OPEN, func(s *symbols) int {
 			return matchStr(s, "(")
 		}},
-		pattern{PAREN_CLOSE, func(s *symbols) int {
+		pattern{TK_PAREN_CLOSE, func(s *symbols) int {
 			return matchStr(s, ")")
 		}},
-		pattern{GUARD_OPEN, func(s *symbols) int {
+		pattern{TK_GUARD_OPEN, func(s *symbols) int {
 			return matchStr(s, "[")
 		}},
-		pattern{GUARD_CLOSE, func(s *symbols) int {
+		pattern{TK_GUARD_CLOSE, func(s *symbols) int {
 			return matchStr(s, "]")
 		}},
-		pattern{OUTPUT, func(s *symbols) int {
+		pattern{TK_OUTPUT, func(s *symbols) int {
 			return matchStr(s, "^")
 		}},
-		pattern{DELIMITER, func(s *symbols) int {
+		pattern{TK_DELIMITER, func(s *symbols) int {
 			return matchStr(s, ",")
 		}},
-		pattern{VOID, func(s *symbols) int {
+		pattern{TK_VOID, func(s *symbols) int {
 			return matchStr(s, "_")
 		}},
-		pattern{TERMINATOR, func(s *symbols) int {
+		pattern{TK_TERMINATOR, func(s *symbols) int {
 			return matchStr(s, ";")
 		}},
-		pattern{SPELL, func(s *symbols) int {
+		pattern{TK_SPELL, func(s *symbols) int {
 			return matchStr(s, "@")
 		}},
-		pattern{ADD, func(s *symbols) int {
+		pattern{TK_PLUS, func(s *symbols) int {
 			return matchStr(s, "+")
 		}},
-		pattern{SUBTRACT, func(s *symbols) int {
+		pattern{TK_MINUS, func(s *symbols) int {
 			return matchStr(s, "-")
 		}},
-		pattern{MULTIPLY, func(s *symbols) int {
+		pattern{TK_MULTIPLY, func(s *symbols) int {
 			return matchStr(s, "*")
 		}},
-		pattern{DIVIDE, func(s *symbols) int {
+		pattern{TK_DIVIDE, func(s *symbols) int {
 			return matchStr(s, "/")
 		}},
-		pattern{REMAINDER, func(s *symbols) int {
+		pattern{TK_REMAINDER, func(s *symbols) int {
 			return matchStr(s, "%")
 		}},
-		pattern{AND, func(s *symbols) int {
+		pattern{TK_AND, func(s *symbols) int {
 			return matchStr(s, "&")
 		}},
-		pattern{OR, func(s *symbols) int {
+		pattern{TK_OR, func(s *symbols) int {
 			return matchStr(s, "|")
 		}},
-		pattern{EQUAL, func(s *symbols) int {
+		pattern{TK_EQUAL, func(s *symbols) int {
 			return matchStr(s, "==")
 		}},
-		pattern{NOT_EQUAL, func(s *symbols) int {
+		pattern{TK_NOT_EQUAL, func(s *symbols) int {
 			return matchStr(s, "!=")
 		}},
-		pattern{LESS_THAN, func(s *symbols) int {
+		pattern{TK_LESS_THAN, func(s *symbols) int {
 			return matchStr(s, "<")
 		}},
-		pattern{MORE_THAN, func(s *symbols) int {
+		pattern{TK_MORE_THAN, func(s *symbols) int {
 			return matchStr(s, ">")
 		}},
-		pattern{STRING, func(s *symbols) int {
+		pattern{TK_STRING, func(s *symbols) int {
 
 			const (
 				PREFIX     = `"`
@@ -187,7 +187,7 @@ func patterns() []pattern {
 
 			return n + SUFFIX_LEN
 		}},
-		pattern{NUMBER, func(s *symbols) int {
+		pattern{TK_NUMBER, func(s *symbols) int {
 
 			const (
 				DELIM   = "."
