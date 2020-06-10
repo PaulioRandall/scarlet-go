@@ -366,3 +366,28 @@ func MatchString(m Match) string {
 
 	return b.String()
 }
+
+type Loop interface {
+	Expression
+	Initialiser() Assignment
+	Guard() Guard
+}
+
+func LoopString(l Loop) string {
+
+	b := builder{}
+
+	b.add(0, "[Loop]")
+
+	b.newline()
+	b.add(1, "Initialiser:")
+	b.newline()
+	b.add(2, AssignmentString(l.Initialiser()))
+
+	b.newline()
+	b.add(1, "Guard:")
+	b.newline()
+	b.add(2, GuardString(l.Guard()))
+
+	return b.String()
+}

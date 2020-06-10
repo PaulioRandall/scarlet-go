@@ -24,6 +24,7 @@ const (
 	ST_GUARD
 	ST_MATCH_CASE
 	ST_MATCH
+	ST_LOOP
 )
 
 var kinds map[Kind]string = map[Kind]string{
@@ -44,6 +45,7 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_GUARD:               `Guard`,
 	ST_MATCH_CASE:          `MatchCase`,
 	ST_MATCH:               `Match`,
+	ST_LOOP:                `Loop`,
 }
 
 func (k Kind) String() string {

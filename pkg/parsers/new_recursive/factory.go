@@ -119,3 +119,11 @@ func newMatch(key, close Token, input Expression, cases []MatchCase) Match {
 		cases: cases,
 	}
 }
+
+func newLoop(key Token, init Assignment, guard Guard) loopStat {
+	return loopStat{
+		key:   key,
+		init:  init,
+		guard: guard,
+	}
+}

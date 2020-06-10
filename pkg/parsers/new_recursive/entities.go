@@ -483,3 +483,33 @@ func (m matchStat) End() (int, int) {
 func (m matchStat) String() string {
 	return MatchString(m)
 }
+
+type loopStat struct {
+	key   Token
+	init  Assignment
+	guard Guard
+}
+
+func (loopStat) Kind() Kind {
+	return ST_LOOP
+}
+
+func (l loopStat) Initialiser() Assignment {
+	return l.init
+}
+
+func (l loopStat) Guard() Guard {
+	return l.guard
+}
+
+func (l loopStat) Begin() (int, int) {
+	return startPos(l.key)
+}
+
+func (l loopStat) End() (int, int) {
+	return l.guard.End()
+}
+
+func (l loopStat) String() string {
+	return LoopString(l)
+}
