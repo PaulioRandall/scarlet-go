@@ -530,3 +530,28 @@ func watchIdentifiers(p *pipeline) ([]Token, error) {
 
 	return ids, nil
 }
+
+func guard(p *pipeline) (Expression, error) {
+
+	open, e := p.expect(GUARD_OPEN)
+	if e != nil {
+		return nil, e
+	}
+
+	condition, e := expectOperation(p)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(GUARD_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	body, e := block(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return newGuard(open, condition, body), nil
+}

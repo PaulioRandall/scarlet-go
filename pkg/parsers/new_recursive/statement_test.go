@@ -1655,6 +1655,134 @@ func Test_S9_3(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S10_1(t *testing.T) {
+
+	// GIVEN a guarded block
+	// WITH a simple condition
+	// WITH no statements
+	// THEN only the parsed guard statement is returned
+
+	// watch a, b, c {}
+	given := []Token{
+		tok(GUARD_OPEN, "["),
+		tok(BOOL, "true"),
+		tok(GUARD_CLOSE, "]"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	body := newBlock(
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		[]Expression{},
+	)
+
+	exp := newGuard(
+		tok(GUARD_OPEN, "["),
+		newLiteral(tok(BOOL, "true")),
+		body,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S10_2(t *testing.T) {
+
+	// GIVEN a guarded block
+	// WITH a complex condition
+	// WITH no statements
+	// THEN only the parsed guard statement is returned
+
+	// watch a, b, c {}
+	given := []Token{
+		tok(GUARD_OPEN, "["),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(GUARD_CLOSE, "]"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	condition := newOperation(
+		tok(ADD, "+"),
+		newLiteral(tok(NUMBER, "1")),
+		newLiteral(tok(NUMBER, "2")),
+	)
+
+	body := newBlock(
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		[]Expression{},
+	)
+
+	exp := newGuard(
+		tok(GUARD_OPEN, "["),
+		condition,
+		body,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S10_3(t *testing.T) {
+
+	// GIVEN a guarded block
+	// WITH a simple condition
+	// WITH several statements
+	// THEN only the parsed guard statement is returned
+
+	// watch a, b, c {}
+	given := []Token{
+		tok(GUARD_OPEN, "["),
+		tok(BOOL, "true"),
+		tok(GUARD_CLOSE, "]"),
+		tok(BLOCK_OPEN, "{"),
+		tok(NUMBER, "1"),
+		tok(ADD, "+"),
+		tok(NUMBER, "2"),
+		tok(TERMINATOR, ""),
+		tok(NUMBER, "3"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "4"),
+		tok(TERMINATOR, ""),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	statements := []Expression{
+		newOperation(
+			tok(ADD, "+"),
+			newLiteral(tok(NUMBER, "1")),
+			newLiteral(tok(NUMBER, "2")),
+		),
+		newOperation(
+			tok(MULTIPLY, "*"),
+			newLiteral(tok(NUMBER, "3")),
+			newLiteral(tok(NUMBER, "4")),
+		),
+	}
+
+	body := newBlock(
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
+		statements,
+	)
+
+	exp := newGuard(
+		tok(GUARD_OPEN, "["),
+		newLiteral(tok(BOOL, "true")),
+		body,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token
@@ -1906,6 +2034,60 @@ func Test_F15(t *testing.T) {
 		tok(EXPR_FUNC, "E"),
 		tok(PAREN_OPEN, "("),
 		tok(PAREN_CLOSE, ")"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(given)
+	expectError(t, act, e)
+}
+
+func Test_F16(t *testing.T) {
+
+	// GIVEN a watch block
+	// WITH no body
+	// THEN parser returns error
+
+	// watch a
+	given := []Token{
+		tok(WATCH, "watch"),
+		tok(IDENTIFIER, "a"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(given)
+	expectError(t, act, e)
+}
+
+func Test_F17(t *testing.T) {
+
+	// GIVEN a guard block
+	// WITH no body
+	// THEN parser returns error
+
+	// watch a
+	given := []Token{
+		tok(GUARD_OPEN, "["),
+		tok(BOOL, "true"),
+		tok(GUARD_CLOSE, "]"),
+		tok(TERMINATOR, ""),
+	}
+
+	act, e := testFunc(given)
+	expectError(t, act, e)
+}
+
+func Test_F18(t *testing.T) {
+
+	// GIVEN a guard block
+	// WITH no condition
+	// THEN parser returns error
+
+	// watch a
+	given := []Token{
+		tok(GUARD_OPEN, "["),
+		tok(GUARD_CLOSE, "]"),
+		tok(BLOCK_OPEN, "{"),
+		tok(BLOCK_CLOSE, "}"),
 		tok(TERMINATOR, ""),
 	}
 

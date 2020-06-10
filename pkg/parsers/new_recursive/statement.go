@@ -53,6 +53,9 @@ func statement(p *pipeline) (Expression, error) {
 	case p.matchSequence(IDENTIFIER, DELIMITER):
 		return assignment(p)
 
+	case p.match(GUARD_OPEN):
+		return guard(p)
+
 	case p.match(WATCH):
 		return watch(p)
 
