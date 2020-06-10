@@ -1662,7 +1662,7 @@ func Test_S10_1(t *testing.T) {
 	// WITH no statements
 	// THEN only the parsed guard statement is returned
 
-	// watch a, b, c {}
+	// [true] {}
 	given := []Token{
 		tok(GUARD_OPEN, "["),
 		tok(BOOL, "true"),
@@ -1695,11 +1695,11 @@ func Test_S10_2(t *testing.T) {
 	// WITH no statements
 	// THEN only the parsed guard statement is returned
 
-	// watch a, b, c {}
+	// [1 == 2] {}
 	given := []Token{
 		tok(GUARD_OPEN, "["),
 		tok(NUMBER, "1"),
-		tok(ADD, "+"),
+		tok(EQUAL, "=="),
 		tok(NUMBER, "2"),
 		tok(GUARD_CLOSE, "]"),
 		tok(BLOCK_OPEN, "{"),
@@ -1708,7 +1708,7 @@ func Test_S10_2(t *testing.T) {
 	}
 
 	condition := newOperation(
-		tok(ADD, "+"),
+		tok(EQUAL, "=="),
 		newLiteral(tok(NUMBER, "1")),
 		newLiteral(tok(NUMBER, "2")),
 	)
@@ -1736,12 +1736,16 @@ func Test_S10_3(t *testing.T) {
 	// WITH several statements
 	// THEN only the parsed guard statement is returned
 
-	// watch a, b, c {}
+	// [true] {
+	//   1 + 2
+	//   3 * 4
+	// }
 	given := []Token{
 		tok(GUARD_OPEN, "["),
 		tok(BOOL, "true"),
 		tok(GUARD_CLOSE, "]"),
 		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, ""),
 		tok(NUMBER, "1"),
 		tok(ADD, "+"),
 		tok(NUMBER, "2"),
@@ -1777,6 +1781,128 @@ func Test_S10_3(t *testing.T) {
 		tok(GUARD_OPEN, "["),
 		newLiteral(tok(BOOL, "true")),
 		body,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S11_1(t *testing.T) {
+
+	// GIVEN a match block
+	// WITH a simple condition
+	// WITH no statements
+	// THEN then the correct match statement is returned
+
+	// match true {
+	// }
+	given := []Token{
+		tok(MATCH, "match"),
+		tok(BOOL, "true"),
+		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, ""),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	exp := newMatch(
+		tok(MATCH, "match"),
+		tok(BLOCK_CLOSE, "}"),
+		newLiteral(tok(BOOL, "true")),
+		[]MatchCase{},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S11_2(t *testing.T) {
+
+	// GIVEN a match block
+	// WITH a complex condition
+	// WITH no statements
+	// THEN then the correct match statement is returned
+
+	// match true {
+	// }
+	given := []Token{
+		tok(MATCH, "match"),
+		tok(NUMBER, "1"),
+		tok(EQUAL, "=="),
+		tok(NUMBER, "2"),
+		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, ""),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	condition := newOperation(
+		tok(EQUAL, "=="),
+		newLiteral(tok(NUMBER, "1")),
+		newLiteral(tok(NUMBER, "2")),
+	)
+
+	exp := newMatch(
+		tok(MATCH, "match"),
+		tok(BLOCK_CLOSE, "}"),
+		condition,
+		[]MatchCase{},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S11_3(t *testing.T) {
+
+	// GIVEN a match block
+	// WITH a simple condition
+	// WITH one case
+	// THEN then the correct match statement is returned
+
+	// match true {
+	//   1 == 2 -> 3 * 4
+	// }
+	given := []Token{
+		tok(MATCH, "match"),
+		tok(BOOL, "true"),
+		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, "\n"),
+		tok(NUMBER, "1"),
+		tok(EQUAL, "=="),
+		tok(NUMBER, "2"),
+		tok(DO, "->"),
+		tok(NUMBER, "3"),
+		tok(MULTIPLY, "*"),
+		tok(NUMBER, "4"),
+		tok(TERMINATOR, "\n"),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	firstCase := newOperation(
+		tok(EQUAL, "=="),
+		newLiteral(tok(NUMBER, "1")),
+		newLiteral(tok(NUMBER, "2")),
+	)
+
+	firstBlock := newUnDelimiteredBlockExpr(
+		[]Expression{
+			newOperation(
+				tok(MULTIPLY, "*"),
+				newLiteral(tok(NUMBER, "3")),
+				newLiteral(tok(NUMBER, "4")),
+			),
+		},
+	)
+
+	exp := newMatch(
+		tok(MATCH, "match"),
+		tok(BLOCK_CLOSE, "}"),
+		newLiteral(tok(BOOL, "true")),
+		[]MatchCase{
+			newMatchCase(firstCase, firstBlock),
+		},
 	)
 
 	act, e := testFunc(given)

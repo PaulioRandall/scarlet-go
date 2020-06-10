@@ -633,10 +633,25 @@ func matchCase(p *pipeline) (MatchCase, error) {
 		return nil, e
 	}
 
-	body, e := block(p)
+	body, e := matchCaseBlock(p)
 	if e != nil {
 		return nil, e
 	}
 
 	return newMatchCase(condition, body), nil
+}
+
+func matchCaseBlock(p *pipeline) (Block, error) {
+
+	if p.match(BLOCK_OPEN) {
+		return block(p)
+	}
+
+	stat, e := expectStatement(p)
+	if e != nil {
+		return nil, e
+	}
+
+	stats := []Expression{stat}
+	return newUnDelimiteredBlockExpr(stats), nil
 }

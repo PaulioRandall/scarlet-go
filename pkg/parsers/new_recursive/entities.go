@@ -243,10 +243,35 @@ func (bk blockExpr) Begin() (int, int) {
 }
 
 func (bk blockExpr) End() (int, int) {
-	return startPos(bk.close)
+	return endPos(bk.close)
 }
 
 func (bk blockExpr) String() string {
+	return BlockString(bk)
+}
+
+type unDelimiteredBlockExpr struct {
+	stats []Expression
+}
+
+func (unDelimiteredBlockExpr) Kind() Kind {
+	return ST_BLOCK
+}
+
+func (bk unDelimiteredBlockExpr) Stats() []Expression {
+	return bk.stats
+}
+
+func (bk unDelimiteredBlockExpr) Begin() (int, int) {
+	return bk.stats[0].Begin()
+}
+
+func (bk unDelimiteredBlockExpr) End() (int, int) {
+	i := len(bk.stats) - 1
+	return bk.stats[i].End()
+}
+
+func (bk unDelimiteredBlockExpr) String() string {
 	return BlockString(bk)
 }
 
