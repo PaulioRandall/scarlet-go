@@ -2123,6 +2123,94 @@ func Test_S12_1(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S12_2(t *testing.T) {
+
+	// GIVEN a loop
+	// WITH a complex initialiser
+	// WITH a complex guard
+	// WITH several body statements
+	// THEN then the correct loop statement is returned
+
+	// loop i := a - 1 [i < 10] {
+	//   a + b
+	//   c * d
+	// }
+	given := []Token{
+		tok(LOOP, "loop"),
+		tok(IDENTIFIER, "i"),
+		tok(ASSIGN, ":="),
+		tok(IDENTIFIER, "a"),
+		tok(SUBTRACT, "-"),
+		tok(NUMBER, "1"),
+		tok(GUARD_OPEN, "["),
+		tok(IDENTIFIER, "i"),
+		tok(LESS_THAN, "<"),
+		tok(NUMBER, "10"),
+		tok(GUARD_CLOSE, "]"),
+		tok(BLOCK_OPEN, "{"),
+		tok(TERMINATOR, ""),
+		tok(IDENTIFIER, "a"),
+		tok(ADD, "+"),
+		tok(IDENTIFIER, "b"),
+		tok(TERMINATOR, ""),
+		tok(IDENTIFIER, "c"),
+		tok(MULTIPLY, "*"),
+		tok(IDENTIFIER, "d"),
+		tok(TERMINATOR, ""),
+		tok(BLOCK_CLOSE, "}"),
+		tok(TERMINATOR, ""),
+	}
+
+	init := newAssignment(
+		newIdentifier(tok(IDENTIFIER, "i")),
+		newOperation(
+			tok(SUBTRACT, "-"),
+			newIdentifier(tok(IDENTIFIER, "a")),
+			newLiteral(tok(NUMBER, "1")),
+		),
+	)
+
+	condition := newOperation(
+		tok(LESS_THAN, "<"),
+		newIdentifier(tok(IDENTIFIER, "i")),
+		newLiteral(tok(NUMBER, "10")),
+	)
+
+	firstStat := newOperation(
+		tok(ADD, "+"),
+		newIdentifier(tok(IDENTIFIER, "a")),
+		newIdentifier(tok(IDENTIFIER, "b")),
+	)
+
+	secondStat := newOperation(
+		tok(MULTIPLY, "*"),
+		newIdentifier(tok(IDENTIFIER, "c")),
+		newIdentifier(tok(IDENTIFIER, "d")),
+	)
+
+	guard := newGuard(
+		tok(GUARD_OPEN, "["),
+		condition,
+		newBlock(
+			tok(BLOCK_OPEN, "{"),
+			tok(BLOCK_CLOSE, "}"),
+			[]Expression{
+				firstStat,
+				secondStat,
+			},
+		),
+	)
+
+	exp := newLoop(
+		tok(LOOP, "loop"),
+		init,
+		guard,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token
