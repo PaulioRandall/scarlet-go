@@ -146,8 +146,8 @@ func Test_I11_List(t *testing.T) {
 	checkIgnores(t, tok(LIST, ""))
 }
 
-func Test_I12_Match(t *testing.T) {
-	checkIgnores(t, tok(MATCH, ""))
+func Test_I12_When(t *testing.T) {
+	checkIgnores(t, tok(WHEN, ""))
 }
 
 func Test_I13_GuardOpen(t *testing.T) {
@@ -275,7 +275,7 @@ func Test_R8_RepeatedTerminators(t *testing.T) {
 }
 
 func Test_R9_RepeatedTerminators(t *testing.T) {
-	checkRemovesTerminators(t, tok(MATCH, ""))
+	checkRemovesTerminators(t, tok(WHEN, ""))
 }
 
 func Test_R10_RepeatedTerminators(t *testing.T) {

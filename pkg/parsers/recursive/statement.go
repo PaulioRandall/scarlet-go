@@ -20,7 +20,7 @@ func parseStatements(p *pipe) []Statement {
 }
 
 func parseStatement(p *pipe) Statement {
-	// pattern := assignment | guard | match | loop | expression TERMINATOR
+	// pattern := assignment | guard | when | loop | expression TERMINATOR
 
 	switch {
 	case isAssignment(p):
@@ -29,8 +29,8 @@ func parseStatement(p *pipe) Statement {
 	case isGuard(p):
 		return parseGuard(p)
 
-	case isMatch(p):
-		return parseMatch(p)
+	case isWhen(p):
+		return parseWhen(p)
 
 	case isLoop(p):
 		return parseLoop(p)

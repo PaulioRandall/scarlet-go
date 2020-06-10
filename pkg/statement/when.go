@@ -4,23 +4,23 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-type Match struct {
+type When struct {
 	Key   Token
 	Open  Token
 	Cases []Guard
 	Close Token
 }
 
-func (m Match) Token() Token {
+func (m When) Token() Token {
 	return m.Key
 }
 
-func (m Match) String(i int) string {
+func (m When) String(i int) string {
 
 	var s str
 
 	s.indent(i).
-		append("[Match] ").
+		append("[When] ").
 		appendTk(m.Key)
 
 	s.newline().

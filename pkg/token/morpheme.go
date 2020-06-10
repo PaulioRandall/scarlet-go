@@ -22,7 +22,7 @@ const (
 	EXPR_FUNC
 	DEF
 	LIST
-	MATCH
+	WHEN
 	WATCH
 	LOOP
 	SPELL
@@ -70,7 +70,7 @@ var morphemes map[Morpheme]string = map[Morpheme]string{
 	EXPR_FUNC:          `EXPR_FUNC`,
 	DEF:                `DEFINE`,
 	LIST:               `LIST`,
-	MATCH:              `MATCH`,
+	WHEN:               `WHEN`,
 	WATCH:              `WATCH`,
 	LOOP:               `LOOP`,
 	SPELL:              `SPELL`,

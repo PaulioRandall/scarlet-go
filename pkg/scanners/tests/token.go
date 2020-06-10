@@ -21,10 +21,10 @@ func T3_Comments(t *testing.T, f ScanFunc) {
 	checkOne(t, exp, f(in))
 }
 
-func T4_Match(t *testing.T, f ScanFunc) {
-	checkOne(t, tok(MATCH, "MATCH"), f("MATCH"))
-	checkFirstNot(t, tok(MATCH, "MATCH"), f("MATCHH"))
-	checkFirstNot(t, tok(MATCH, "MATCHH"), f("MATCHH"))
+func T4_When(t *testing.T, f ScanFunc) {
+	checkOne(t, tok(WHEN, "WHEN"), f("WHEN"))
+	checkFirstNot(t, tok(WHEN, "WHEN"), f("WHENH"))
+	checkFirstNot(t, tok(WHEN, "WHENH"), f("WHENH"))
 }
 
 func T5_False(t *testing.T, f ScanFunc) {

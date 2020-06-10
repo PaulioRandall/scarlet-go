@@ -104,15 +104,15 @@ func newGuard(open Token, condition Expression, body Block) Guard {
 	}
 }
 
-func newMatchCase(object Expression, body Block) MatchCase {
-	return matchCaseStat{
+func newWhenCase(object Expression, body Block) WhenCase {
+	return whenCaseStat{
 		object: object,
 		body:   body,
 	}
 }
 
-func newMatch(key, close Token, input Expression, cases []MatchCase) Match {
-	return matchStat{
+func newWhen(key, close Token, input Expression, cases []WhenCase) When {
+	return whenStat{
 		key:   key,
 		close: close,
 		input: input,

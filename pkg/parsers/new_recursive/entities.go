@@ -425,63 +425,63 @@ func (g guardStat) String() string {
 	return GuardString(g)
 }
 
-type matchCaseStat struct {
+type whenCaseStat struct {
 	object Expression
 	body   Block
 }
 
-func (matchCaseStat) Kind() Kind {
-	return ST_MATCH_CASE
+func (whenCaseStat) Kind() Kind {
+	return ST_WHEN_CASE
 }
 
-func (mc matchCaseStat) Condition() Expression {
-	return mc.object
+func (wc whenCaseStat) Condition() Expression {
+	return wc.object
 }
 
-func (mc matchCaseStat) Body() Block {
-	return mc.body
+func (wc whenCaseStat) Body() Block {
+	return wc.body
 }
 
-func (mc matchCaseStat) Begin() (int, int) {
-	return mc.object.Begin()
+func (wc whenCaseStat) Begin() (int, int) {
+	return wc.object.Begin()
 }
 
-func (mc matchCaseStat) End() (int, int) {
-	return mc.body.End()
+func (wc whenCaseStat) End() (int, int) {
+	return wc.body.End()
 }
 
-func (mc matchCaseStat) String() string {
-	return MatchCaseString(mc)
+func (wc whenCaseStat) String() string {
+	return WhenCaseString(wc)
 }
 
-type matchStat struct {
+type whenStat struct {
 	key, close Token
 	input      Expression
-	cases      []MatchCase
+	cases      []WhenCase
 }
 
-func (matchStat) Kind() Kind {
-	return ST_MATCH
+func (whenStat) Kind() Kind {
+	return ST_WHEN
 }
 
-func (m matchStat) Input() Expression {
-	return m.input
+func (w whenStat) Input() Expression {
+	return w.input
 }
 
-func (m matchStat) Cases() []MatchCase {
-	return m.cases
+func (w whenStat) Cases() []WhenCase {
+	return w.cases
 }
 
-func (m matchStat) Begin() (int, int) {
-	return startPos(m.key)
+func (w whenStat) Begin() (int, int) {
+	return startPos(w.key)
 }
 
-func (m matchStat) End() (int, int) {
-	return endPos(m.close)
+func (w whenStat) End() (int, int) {
+	return endPos(w.close)
 }
 
-func (m matchStat) String() string {
-	return MatchString(m)
+func (w whenStat) String() string {
+	return WhenString(w)
 }
 
 type loopStat struct {

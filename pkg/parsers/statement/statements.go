@@ -321,15 +321,15 @@ func GuardString(g Guard) string {
 	return b.String()
 }
 
-type MatchCase interface {
+type WhenCase interface {
 	Guard
 }
 
-func MatchCaseString(mc MatchCase) string {
+func WhenCaseString(mc WhenCase) string {
 
 	b := builder{}
 
-	b.add(0, "[MatchCase] ")
+	b.add(0, "[WhenCase] ")
 
 	b.newline()
 	b.add(1, "Condition:")
@@ -344,24 +344,24 @@ func MatchCaseString(mc MatchCase) string {
 	return b.String()
 }
 
-type Match interface {
+type When interface {
 	Expression
 	Input() Expression
-	Cases() []MatchCase
+	Cases() []WhenCase
 }
 
-func MatchString(m Match) string {
+func WhenString(m When) string {
 
 	b := builder{}
 
-	b.add(0, "[Match]")
+	b.add(0, "[When]")
 
 	b.newline()
 	b.add(1, m.Input().String())
 
 	for _, mc := range m.Cases() {
 		b.newline()
-		b.add(2, MatchCaseString(mc))
+		b.add(2, WhenCaseString(mc))
 	}
 
 	return b.String()

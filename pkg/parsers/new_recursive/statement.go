@@ -59,8 +59,8 @@ func statement(p *pipeline) (Expression, error) {
 	case p.match(WATCH):
 		return watch(p)
 
-	case p.match(MATCH):
-		return match(p)
+	case p.match(WHEN):
+		return when(p)
 
 	case p.match(LOOP):
 		return loop(p)

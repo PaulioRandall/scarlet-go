@@ -87,8 +87,8 @@ var patterns = []mat.Pattern{
 
 		return PREFIX_LEN + n, nil
 	}},
-	pattern{MATCH, func(s *mat.Symbols) (int, error) {
-		return matchWord(s, "match")
+	pattern{WHEN, func(s *mat.Symbols) (int, error) {
+		return matchWord(s, "when")
 	}},
 	pattern{WATCH, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "watch")

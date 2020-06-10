@@ -22,8 +22,8 @@ const (
 	ST_FUNCTION
 	ST_WATCH
 	ST_GUARD
-	ST_MATCH_CASE
-	ST_MATCH
+	ST_WHEN_CASE
+	ST_WHEN
 	ST_LOOP
 )
 
@@ -43,8 +43,8 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_FUNCTION:            `Function`,
 	ST_WATCH:               `Watch`,
 	ST_GUARD:               `Guard`,
-	ST_MATCH_CASE:          `MatchCase`,
-	ST_MATCH:               `Match`,
+	ST_WHEN_CASE:           `WhenCase`,
+	ST_WHEN:                `When`,
 	ST_LOOP:                `Loop`,
 }
 

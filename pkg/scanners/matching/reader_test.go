@@ -18,8 +18,8 @@ func Test_T3_Comments(t *testing.T) {
 	tests.Run(t, ScanAll, tests.T3_Comments)
 }
 
-func Test_T4_Match(t *testing.T) {
-	tests.Run(t, ScanAll, tests.T4_Match)
+func Test_T4_When(t *testing.T) {
+	tests.Run(t, ScanAll, tests.T4_When)
 }
 
 func Test_T5_False(t *testing.T) {
@@ -186,8 +186,8 @@ func Test_S3_GuardBlock(t *testing.T) {
 	tests.Run(t, ScanAll, tests.S3_GuardBlock)
 }
 
-func Test_S4_MatchBlock(t *testing.T) {
-	tests.Run(t, ScanAll, tests.S4_MatchBlock)
+func Test_S4_WhenBlock(t *testing.T) {
+	tests.Run(t, ScanAll, tests.S4_WhenBlock)
 }
 
 func Test_S5_FuncDef(t *testing.T) {

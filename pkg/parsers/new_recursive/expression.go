@@ -585,10 +585,10 @@ func guardBody(p *pipeline) (Block, error) {
 	return newUnDelimiteredBlock(stats), nil
 }
 
-func match(p *pipeline) (Expression, error) {
-	// pattern := MATCH subject BLOCK_OPEN matchCases BLOCK_CLOSE
+func when(p *pipeline) (Expression, error) {
+	// pattern := WHEN subject BLOCK_OPEN whenCases BLOCK_CLOSE
 
-	key, e := p.expect(MATCH)
+	key, e := p.expect(WHEN)
 	if e != nil {
 		return nil, e
 	}
@@ -608,7 +608,7 @@ func match(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	cases, e := matchCases(p)
+	cases, e := whenCases(p)
 	if e != nil {
 		return nil, e
 	}
@@ -618,25 +618,25 @@ func match(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newMatch(key, close, subject, cases), nil
+	return newWhen(key, close, subject, cases), nil
 }
 
-func matchCases(p *pipeline) ([]MatchCase, error) {
-	// pattern := {matchGuardCase | matchCase}
+func whenCases(p *pipeline) ([]WhenCase, error) {
+	// pattern := {whenGuardCase | whenCase}
 
 	var (
-		mc MatchCase
+		mc WhenCase
 		e  error
 	)
 
-	cases := []MatchCase{}
+	cases := []WhenCase{}
 
 	for !p.match(BLOCK_CLOSE) && p.hasMore() {
 
 		if p.match(GUARD_OPEN) {
-			mc, e = matchGuardCase(p)
+			mc, e = whenGuardCase(p)
 		} else {
-			mc, e = matchCase(p)
+			mc, e = whenCase(p)
 		}
 
 		if e != nil {
@@ -654,7 +654,7 @@ func matchCases(p *pipeline) ([]MatchCase, error) {
 	return cases, nil
 }
 
-func matchGuardCase(p *pipeline) (MatchCase, error) {
+func whenGuardCase(p *pipeline) (WhenCase, error) {
 	// pattern := guardCondition THEN guardBody
 
 	open, condition, e := guardCondition(p)
@@ -675,7 +675,7 @@ func matchGuardCase(p *pipeline) (MatchCase, error) {
 	return newGuard(open, condition, body), nil
 }
 
-func matchCase(p *pipeline) (MatchCase, error) {
+func whenCase(p *pipeline) (WhenCase, error) {
 	// pattern := object THEN guardBody
 
 	object, e := expectOperation(p)
@@ -693,7 +693,7 @@ func matchCase(p *pipeline) (MatchCase, error) {
 		return nil, e
 	}
 
-	return newMatchCase(object, body), nil
+	return newWhenCase(object, body), nil
 }
 
 func loop(p *pipeline) (Expression, error) {

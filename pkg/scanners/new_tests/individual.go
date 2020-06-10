@@ -29,7 +29,7 @@ func T3_1() (in string, expects []Token) {
 }
 
 func T4_1() (in string, expects []Token) {
-	return solo(MATCH, "match")
+	return solo(WHEN, "when")
 }
 
 func T5_1() (in string, expects []Token) {

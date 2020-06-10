@@ -1789,15 +1789,15 @@ func Test_S10_3(t *testing.T) {
 
 func Test_S11_1(t *testing.T) {
 
-	// GIVEN a match block
+	// GIVEN a when block
 	// WITH a simple condition
 	// WITH no statements
-	// THEN then the correct match statement is returned
+	// THEN then the correct when statement is returned
 
-	// match true {
+	// when true {
 	// }
 	given := []Token{
-		tok(MATCH, "match"),
+		tok(WHEN, "when"),
 		tok(BOOL, "true"),
 		tok(BLOCK_OPEN, "{"),
 		tok(TERMINATOR, ""),
@@ -1805,11 +1805,11 @@ func Test_S11_1(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	exp := newMatch(
-		tok(MATCH, "match"),
+	exp := newWhen(
+		tok(WHEN, "when"),
 		tok(BLOCK_CLOSE, "}"),
 		newLiteral(tok(BOOL, "true")),
-		[]MatchCase{},
+		[]WhenCase{},
 	)
 
 	act, e := testFunc(given)
@@ -1818,15 +1818,15 @@ func Test_S11_1(t *testing.T) {
 
 func Test_S11_2(t *testing.T) {
 
-	// GIVEN a match block
+	// GIVEN a when block
 	// WITH a complex condition
 	// WITH no statements
-	// THEN then the correct match statement is returned
+	// THEN then the correct when statement is returned
 
-	// match true {
+	// when true {
 	// }
 	given := []Token{
-		tok(MATCH, "match"),
+		tok(WHEN, "when"),
 		tok(NUMBER, "1"),
 		tok(EQUAL, "=="),
 		tok(NUMBER, "2"),
@@ -1842,11 +1842,11 @@ func Test_S11_2(t *testing.T) {
 		newLiteral(tok(NUMBER, "2")),
 	)
 
-	exp := newMatch(
-		tok(MATCH, "match"),
+	exp := newWhen(
+		tok(WHEN, "when"),
 		tok(BLOCK_CLOSE, "}"),
 		condition,
-		[]MatchCase{},
+		[]WhenCase{},
 	)
 
 	act, e := testFunc(given)
@@ -1855,16 +1855,16 @@ func Test_S11_2(t *testing.T) {
 
 func Test_S11_3(t *testing.T) {
 
-	// GIVEN a match block
+	// GIVEN a when block
 	// WITH a simple condition
 	// WITH one case
-	// THEN then the correct match statement is returned
+	// THEN then the correct when statement is returned
 
-	// match 1 {
+	// when 1 {
 	//   1 -> 3 * 4
 	// }
 	given := []Token{
-		tok(MATCH, "match"),
+		tok(WHEN, "when"),
 		tok(NUMBER, "1"),
 		tok(BLOCK_OPEN, "{"),
 		tok(TERMINATOR, "\n"),
@@ -1890,12 +1890,12 @@ func Test_S11_3(t *testing.T) {
 		},
 	)
 
-	exp := newMatch(
-		tok(MATCH, "match"),
+	exp := newWhen(
+		tok(WHEN, "when"),
 		tok(BLOCK_CLOSE, "}"),
 		newLiteral(tok(NUMBER, "1")),
-		[]MatchCase{
-			newMatchCase(firstCase, firstBlock),
+		[]WhenCase{
+			newWhenCase(firstCase, firstBlock),
 		},
 	)
 
@@ -1905,16 +1905,16 @@ func Test_S11_3(t *testing.T) {
 
 func Test_S11_4(t *testing.T) {
 
-	// GIVEN a match block
+	// GIVEN a when block
 	// WITH a simple condition
 	// WITH a guard case
-	// THEN then the correct match statement is returned
+	// THEN then the correct when statement is returned
 
-	// match 1 {
+	// when 1 {
 	//   [1 == 2] -> 3 * 4
 	// }
 	given := []Token{
-		tok(MATCH, "match"),
+		tok(WHEN, "when"),
 		tok(NUMBER, "1"),
 		tok(BLOCK_OPEN, "{"),
 		tok(TERMINATOR, "\n"),
@@ -1952,11 +1952,11 @@ func Test_S11_4(t *testing.T) {
 		firstBlock,
 	)
 
-	exp := newMatch(
-		tok(MATCH, "match"),
+	exp := newWhen(
+		tok(WHEN, "when"),
 		tok(BLOCK_CLOSE, "}"),
 		newLiteral(tok(NUMBER, "1")),
-		[]MatchCase{
+		[]WhenCase{
 			firstCase,
 		},
 	)
@@ -1967,12 +1967,12 @@ func Test_S11_4(t *testing.T) {
 
 func Test_S11_5(t *testing.T) {
 
-	// GIVEN a match block
+	// GIVEN a when block
 	// WITH a simple condition
-	// WITH a severakl match and guard cases
-	// THEN then the correct match statement is returned
+	// WITH a severakl when and guard cases
+	// THEN then the correct when statement is returned
 
-	// match 3 {
+	// when 3 {
 	//   1        -> a
 	//   [a == b] -> b
 	//	 2        -> c
@@ -1981,7 +1981,7 @@ func Test_S11_5(t *testing.T) {
 	//               }
 	// }
 	given := []Token{
-		tok(MATCH, "match"),
+		tok(WHEN, "when"),
 		tok(NUMBER, "3"),
 		tok(BLOCK_OPEN, "{"),
 		tok(TERMINATOR, "\n"),
@@ -2015,7 +2015,7 @@ func Test_S11_5(t *testing.T) {
 		tok(TERMINATOR, ""),
 	}
 
-	firstCase := newMatchCase(
+	firstCase := newWhenCase(
 		newLiteral(tok(NUMBER, "1")),
 		newUnDelimiteredBlock(
 			[]Expression{
@@ -2038,7 +2038,7 @@ func Test_S11_5(t *testing.T) {
 		),
 	)
 
-	thirdCase := newMatchCase(
+	thirdCase := newWhenCase(
 		newLiteral(tok(NUMBER, "2")),
 		newUnDelimiteredBlock(
 			[]Expression{
@@ -2059,11 +2059,11 @@ func Test_S11_5(t *testing.T) {
 		),
 	)
 
-	exp := newMatch(
-		tok(MATCH, "match"),
+	exp := newWhen(
+		tok(WHEN, "when"),
 		tok(BLOCK_CLOSE, "}"),
 		newLiteral(tok(NUMBER, "3")),
-		[]MatchCase{
+		[]WhenCase{
 			firstCase,
 			secondCase,
 			thirdCase,

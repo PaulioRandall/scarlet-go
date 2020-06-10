@@ -57,18 +57,18 @@ func S3_GuardBlock(t *testing.T, f ScanFunc) {
 	checkMany(t, exps, f(in))
 }
 
-func S4_MatchBlock(t *testing.T, f ScanFunc) {
+func S4_WhenBlock(t *testing.T, f ScanFunc) {
 
-	in := "MATCH {\n" +
+	in := "WHEN {\n" +
 		"\t[FALSE] x:FALSE\n" +
 		"\t[TRUE] x:TRUE\n" +
 		"}"
 
 	exps := []Token{
-		NewToken(MATCH, "MATCH", 0, 0), // Line start
-		NewToken(WHITESPACE, " ", 0, 5),
-		NewToken(BLOCK_OPEN, "{", 0, 6),
-		NewToken(NEWLINE, "\n", 0, 7), // Line start
+		NewToken(WHEN, "WHEN", 0, 0), // Line start
+		NewToken(WHITESPACE, " ", 0, 4),
+		NewToken(BLOCK_OPEN, "{", 0, 5),
+		NewToken(NEWLINE, "\n", 0, 6), // Line start
 		NewToken(WHITESPACE, "\t", 1, 0),
 		NewToken(GUARD_OPEN, "[", 1, 1),
 		NewToken(BOOL, "FALSE", 1, 2),

@@ -57,19 +57,19 @@ func S3() (in string, expects []Token) {
 
 func S4() (in string, expects []Token) {
 
-	in = "match abc {\n" +
+	in = "when abc {\n" +
 		"\t1 -> x:=true\n" +
 		"\t[false] -> x:=false\n" +
 		"\t[true] -> x:=true\n" +
 		"}"
 
 	expects = []Token{
-		NewToken(MATCH, "match", 0, 0), // Line start
-		NewToken(WHITESPACE, " ", 0, 5),
-		NewToken(IDENTIFIER, "abc", 0, 6),
-		NewToken(WHITESPACE, " ", 0, 9),
-		NewToken(BLOCK_OPEN, "{", 0, 10),
-		NewToken(NEWLINE, "\n", 0, 11), // Line start
+		NewToken(WHEN, "when", 0, 0), // Line start
+		NewToken(WHITESPACE, " ", 0, 4),
+		NewToken(IDENTIFIER, "abc", 0, 5),
+		NewToken(WHITESPACE, " ", 0, 8),
+		NewToken(BLOCK_OPEN, "{", 0, 9),
+		NewToken(NEWLINE, "\n", 0, 10), // Line start
 		NewToken(WHITESPACE, "\t", 1, 0),
 		NewToken(NUMBER, "1", 1, 1),
 		NewToken(WHITESPACE, " ", 1, 2),

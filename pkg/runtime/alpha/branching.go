@@ -5,7 +5,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/statement"
 )
 
-func exeMatch(ctx *alphaContext, m Match) {
+func exeWhen(ctx *alphaContext, m When) {
 	for _, g := range m.Cases {
 		if exeGuard(ctx, g) {
 			break

@@ -34,8 +34,8 @@ func patterns() []pattern {
 			}
 			return 0
 		}},
-		pattern{MATCH, func(s *symbols) int {
-			return matchWord(s, "MATCH")
+		pattern{WHEN, func(s *symbols) int {
+			return matchWord(s, "WHEN")
 		}},
 		pattern{BOOL, func(s *symbols) int {
 			return matchWord(s, "FALSE")

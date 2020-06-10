@@ -20,8 +20,8 @@ func exeStatement(ctx *alphaContext, s Statement) {
 	case Assignment:
 		exeAssignment(ctx, v)
 
-	case Match:
-		exeMatch(ctx, v)
+	case When:
+		exeWhen(ctx, v)
 
 	case Guard:
 		exeGuard(ctx, v)

@@ -6,26 +6,26 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func isMatch(p *pipe) bool {
-	return p.match(MATCH)
+func isWhen(p *pipe) bool {
+	return p.match(WHEN)
 }
 
-func parseMatch(p *pipe) Match {
-	// pattern := MATCH BLOCK_OPEN guard {guard} BLOCK_CLOSE
+func parseWhen(p *pipe) When {
+	// pattern := WHEN BLOCK_OPEN guard {guard} BLOCK_CLOSE
 
-	m := Match{
-		Key:   p.expect(`parseMatch`, MATCH),
-		Open:  p.expect(`parseMatch`, BLOCK_OPEN),
+	m := When{
+		Key:   p.expect(`parseWhen`, WHEN),
+		Open:  p.expect(`parseWhen`, BLOCK_OPEN),
 		Cases: parseGuards(p),
 	}
 
 	if m.Cases == nil {
 		err.Panic(
-			errMsg("parseMatch", GUARD_OPEN.String(), p.peek()),
+			errMsg("parseWhen", GUARD_OPEN.String(), p.peek()),
 			err.At(p.peek()),
 		)
 	}
 
-	m.Close = p.expect(`parseMatch`, BLOCK_CLOSE)
+	m.Close = p.expect(`parseWhen`, BLOCK_CLOSE)
 	return m
 }

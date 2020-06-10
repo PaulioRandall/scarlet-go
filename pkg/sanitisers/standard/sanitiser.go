@@ -53,7 +53,7 @@ func isParsableToken(prev, next Token) bool {
 			DELIMITER,
 			BLOCK_OPEN,
 			BLOCK_CLOSE,
-			MATCH,
+			WHEN,
 			LIST,
 			UNDEFINED:
 
