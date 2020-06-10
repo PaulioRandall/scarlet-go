@@ -306,3 +306,24 @@ func WatchString(w Watch) string {
 
 	return b.String()
 }
+
+type Guard interface {
+	Expression
+	Condition() Expression
+	Body() Block
+}
+
+func GuardString(g Guard) string {
+
+	b := builder{}
+
+	b.add(0, "[Guard] ")
+
+	b.newline()
+	b.add(1, g.Condition().String())
+
+	b.newline()
+	b.add(1, BlockString(g.Body()))
+
+	return b.String()
+}

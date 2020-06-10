@@ -397,3 +397,33 @@ func (w watchStat) End() (int, int) {
 func (w watchStat) String() string {
 	return WatchString(w)
 }
+
+type guardStat struct {
+	open      Token
+	condition Expression
+	body      Block
+}
+
+func (guardStat) Kind() Kind {
+	return ST_GUARD
+}
+
+func (g guardStat) Condition() Expression {
+	return g.condition
+}
+
+func (g guardStat) Body() Block {
+	return g.body
+}
+
+func (g guardStat) Begin() (int, int) {
+	return startPos(g.open)
+}
+
+func (g guardStat) End() (int, int) {
+	return g.body.End()
+}
+
+func (g guardStat) String() string {
+	return GuardString(g)
+}

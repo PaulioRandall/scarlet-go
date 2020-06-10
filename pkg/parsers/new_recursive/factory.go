@@ -5,14 +5,6 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func Precedence(expr Expression) int {
-	if v, ok := expr.(Operation); ok {
-		return v.Operator().Morpheme().Precedence()
-	}
-
-	return 0
-}
-
 func newVoid(tk Token) Void {
 	return voidExpr{tk}
 }
@@ -95,5 +87,13 @@ func newWatch(key Token, ids []Token, body Block) Watch {
 		key:  key,
 		ids:  ids,
 		body: body,
+	}
+}
+
+func newGuard(open Token, condition Expression, body Block) Guard {
+	return guardStat{
+		open:      open,
+		condition: condition,
+		body:      body,
 	}
 }
