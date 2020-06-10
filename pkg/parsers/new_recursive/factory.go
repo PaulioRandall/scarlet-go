@@ -97,3 +97,17 @@ func newGuard(open Token, condition Expression, body Block) Guard {
 		body:      body,
 	}
 }
+
+func newMatchCase(condition Expression, body Block) MatchCase {
+	return matchCaseStat{
+		condition: condition,
+		body:      body,
+	}
+}
+
+func newMatch(input Expression, cases []MatchCase) Match {
+	return matchStat{
+		input: input,
+		cases: cases,
+	}
+}

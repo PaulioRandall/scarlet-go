@@ -174,7 +174,6 @@ func AssignmentBlockString(bk AssignmentBlock) string {
 
 type ExpressionFunction interface {
 	Expression
-	Key() Token
 	Inputs() []Token
 	Expr() Expression
 }
@@ -204,8 +203,6 @@ func ExpressionFunctionString(e ExpressionFunction) string {
 
 type Parameters interface {
 	Expression
-	Open() Token
-	Close() Token
 	Inputs() []Token
 	Outputs() []Token
 }
@@ -243,7 +240,6 @@ func ParametersString(p Parameters) string {
 
 type Function interface {
 	Expression
-	Key() Token
 	Params() Parameters
 	Body() Block
 }
@@ -265,8 +261,6 @@ func FunctionString(f Function) string {
 
 type Block interface {
 	Expression
-	Open() Token
-	Close() Token
 	Stats() []Expression
 }
 
@@ -283,7 +277,6 @@ func BlockString(bk Block) string {
 
 type Watch interface {
 	Expression
-	Key() Token
 	Identifiers() []Token
 	Body() Block
 }
@@ -329,9 +322,7 @@ func GuardString(g Guard) string {
 }
 
 type MatchCase interface {
-	Expression
-	Condition() Expression
-	Body() Block
+	Guard
 }
 
 func MatchCaseString(mc MatchCase) string {

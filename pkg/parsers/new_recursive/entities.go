@@ -234,14 +234,6 @@ func (blockExpr) Kind() Kind {
 	return ST_BLOCK
 }
 
-func (bk blockExpr) Open() Token {
-	return bk.open
-}
-
-func (bk blockExpr) Close() Token {
-	return bk.close
-}
-
 func (bk blockExpr) Stats() []Expression {
 	return bk.stats
 }
@@ -266,10 +258,6 @@ type expressionFunctionExpr struct {
 
 func (expressionFunctionExpr) Kind() Kind {
 	return ST_EXPRESSION_FUNCTION
-}
-
-func (e expressionFunctionExpr) Key() Token {
-	return e.key
 }
 
 func (e expressionFunctionExpr) Inputs() []Token {
@@ -302,14 +290,6 @@ func (parametersDef) Kind() Kind {
 	return ST_PARAMETERS
 }
 
-func (p parametersDef) Open() Token {
-	return p.open
-}
-
-func (p parametersDef) Close() Token {
-	return p.close
-}
-
 func (p parametersDef) Inputs() []Token {
 	return p.inputs
 }
@@ -340,10 +320,6 @@ func (functionExpr) Kind() Kind {
 	return ST_FUNCTION
 }
 
-func (f functionExpr) Key() Token {
-	return f.key
-}
-
 func (f functionExpr) Params() Parameters {
 	return f.params
 }
@@ -372,10 +348,6 @@ type watchStat struct {
 
 func (watchStat) Kind() Kind {
 	return ST_WATCH
-}
-
-func (w watchStat) Key() Token {
-	return w.key
 }
 
 func (w watchStat) Identifiers() []Token {
@@ -426,4 +398,63 @@ func (g guardStat) End() (int, int) {
 
 func (g guardStat) String() string {
 	return GuardString(g)
+}
+
+type matchCaseStat struct {
+	condition Expression
+	body      Block
+}
+
+func (matchCaseStat) Kind() Kind {
+	return ST_MATCH_CASE
+}
+
+func (mc matchCaseStat) Condition() Expression {
+	return mc.condition
+}
+
+func (mc matchCaseStat) Body() Block {
+	return mc.body
+}
+
+func (mc matchCaseStat) Begin() (int, int) {
+	return mc.condition.Begin()
+}
+
+func (mc matchCaseStat) End() (int, int) {
+	return mc.body.End()
+}
+
+func (mc matchCaseStat) String() string {
+	return MatchCaseString(mc)
+}
+
+type matchStat struct {
+	key, close Token
+	input      Expression
+	cases      []MatchCase
+}
+
+func (matchStat) Kind() Kind {
+	return ST_MATCH
+}
+
+func (m matchStat) Input() Expression {
+	return m.input
+}
+
+func (m matchStat) Cases() []MatchCase {
+	return m.cases
+}
+
+func (m matchStat) Begin() (int, int) {
+	return startPos(m.key)
+}
+
+func (m matchStat) End() (int, int) {
+	return endPos(m.close)
+}
+
+func (m matchStat) String() string {
+	return MatchString(m)
 }
