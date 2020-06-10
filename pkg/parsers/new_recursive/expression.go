@@ -183,6 +183,21 @@ func operation(p *pipeline) (Expression, error) {
 	return operationExpression(p, left, 0)
 }
 
+func expectOperation(p *pipeline) (Expression, error) {
+	// pattern := operation
+
+	expr, e := operation(p)
+	if e != nil {
+		return nil, e
+	}
+
+	if expr == nil {
+		return nil, err.New("Expected expression", err.At(p.any()))
+	}
+
+	return expr, nil
+}
+
 func operand(p *pipeline) (Expression, error) {
 
 	switch {
@@ -250,21 +265,6 @@ func operationExpression(p *pipeline, left Expression, leftPriority int) (Expres
 	}
 
 	return left, nil
-}
-
-func expectOperation(p *pipeline) (Expression, error) {
-	// pattern := operation
-
-	expr, e := operation(p)
-	if e != nil {
-		return nil, e
-	}
-
-	if expr == nil {
-		return nil, err.New("Expected expression", err.At(p.any()))
-	}
-
-	return expr, nil
 }
 
 func block(p *pipeline) (Block, error) {
@@ -597,10 +597,8 @@ func when(p *pipeline) (Expression, error) {
 func whenCases(p *pipeline) ([]WhenCase, error) {
 	// pattern := {whenGuardCase | whenCase}
 
-	var (
-		mc WhenCase
-		e  error
-	)
+	var mc WhenCase
+	var e error
 
 	cases := []WhenCase{}
 
@@ -629,6 +627,7 @@ func whenCases(p *pipeline) ([]WhenCase, error) {
 
 func whenGuardCase(p *pipeline) (WhenCase, error) {
 	// pattern := guardCondition THEN guardBody
+
 	open, condition, e := guardCondition(p)
 	if e != nil {
 		return nil, e

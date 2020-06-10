@@ -346,7 +346,7 @@ func WhenCaseString(mc WhenCase) string {
 
 type When interface {
 	Expression
-	Input() Expression
+	Subject() Expression
 	Cases() []WhenCase
 }
 
@@ -357,7 +357,7 @@ func WhenString(m When) string {
 	b.add(0, "[When]")
 
 	b.newline()
-	b.add(1, m.Input().String())
+	b.add(1, m.Subject().String())
 
 	for _, mc := range m.Cases() {
 		b.newline()

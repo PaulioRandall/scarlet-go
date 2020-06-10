@@ -456,7 +456,7 @@ func (wc whenCaseStat) String() string {
 
 type whenStat struct {
 	key, close Token
-	input      Expression
+	subject    Expression
 	cases      []WhenCase
 }
 
@@ -464,8 +464,8 @@ func (whenStat) Kind() Kind {
 	return ST_WHEN
 }
 
-func (w whenStat) Input() Expression {
-	return w.input
+func (w whenStat) Subject() Expression {
+	return w.subject
 }
 
 func (w whenStat) Cases() []WhenCase {

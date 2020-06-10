@@ -111,12 +111,12 @@ func newWhenCase(object Expression, body Block) WhenCase {
 	}
 }
 
-func newWhen(key, close Token, input Expression, cases []WhenCase) When {
+func newWhen(key, close Token, subject Expression, cases []WhenCase) When {
 	return whenStat{
-		key:   key,
-		close: close,
-		input: input,
-		cases: cases,
+		key:     key,
+		close:   close,
+		subject: subject,
+		cases:   cases,
 	}
 }
 
