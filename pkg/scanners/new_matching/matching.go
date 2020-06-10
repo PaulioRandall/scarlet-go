@@ -134,7 +134,7 @@ var patterns = []mat.Pattern{
 	pattern{MORE_THAN_OR_EQUAL, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ">=")
 	}},
-	pattern{DO, func(s *mat.Symbols) (int, error) {
+	pattern{THEN, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "->")
 	}},
 	pattern{BLOCK_OPEN, func(s *mat.Symbols) (int, error) {

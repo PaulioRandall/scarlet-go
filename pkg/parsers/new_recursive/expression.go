@@ -655,14 +655,14 @@ func matchCases(p *pipeline) ([]MatchCase, error) {
 }
 
 func matchGuardCase(p *pipeline) (MatchCase, error) {
-	// pattern := guardCondition DO guardBody
+	// pattern := guardCondition THEN guardBody
 
 	open, condition, e := guardCondition(p)
 	if e != nil {
 		return nil, e
 	}
 
-	_, e = p.expect(DO)
+	_, e = p.expect(THEN)
 	if e != nil {
 		return nil, e
 	}
@@ -676,14 +676,14 @@ func matchGuardCase(p *pipeline) (MatchCase, error) {
 }
 
 func matchCase(p *pipeline) (MatchCase, error) {
-	// pattern := object DO guardBody
+	// pattern := object THEN guardBody
 
 	object, e := expectOperation(p)
 	if e != nil {
 		return nil, e
 	}
 
-	_, e = p.expect(DO)
+	_, e = p.expect(THEN)
 	if e != nil {
 		return nil, e
 	}

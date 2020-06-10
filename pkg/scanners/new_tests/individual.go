@@ -207,3 +207,7 @@ func T37_1() (in string, expects []Token) {
 func T41_1() (in string, expects []Token) {
 	return solo(EXPR_FUNC, "E")
 }
+
+func T42_1() (in string, expects []Token) {
+	return solo(THEN, "->")
+}

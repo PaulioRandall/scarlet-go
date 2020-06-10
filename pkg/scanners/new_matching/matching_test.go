@@ -212,6 +212,10 @@ func Test_T41_1(t *testing.T) {
 	okTest(t, T41_1)
 }
 
+func Test_T42_1(t *testing.T) {
+	okTest(t, T42_1)
+}
+
 func Test_S1(t *testing.T) {
 	okTest(t, S1)
 }
