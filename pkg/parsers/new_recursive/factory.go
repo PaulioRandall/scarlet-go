@@ -105,8 +105,10 @@ func newMatchCase(condition Expression, body Block) MatchCase {
 	}
 }
 
-func newMatch(input Expression, cases []MatchCase) Match {
+func newMatch(key, close Token, input Expression, cases []MatchCase) Match {
 	return matchStat{
+		key:   key,
+		close: close,
 		input: input,
 		cases: cases,
 	}

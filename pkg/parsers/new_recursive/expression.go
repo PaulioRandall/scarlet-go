@@ -532,6 +532,10 @@ func watchIdentifiers(p *pipeline) ([]Token, error) {
 }
 
 func guard(p *pipeline) (Expression, error) {
+	return guardExplicit(p)
+}
+
+func guardExplicit(p *pipeline) (Guard, error) {
 
 	open, e := p.expect(GUARD_OPEN)
 	if e != nil {
@@ -554,4 +558,85 @@ func guard(p *pipeline) (Expression, error) {
 	}
 
 	return newGuard(open, condition, body), nil
+}
+
+func match(p *pipeline) (Expression, error) {
+
+	key, e := p.expect(MATCH)
+	if e != nil {
+		return nil, e
+	}
+
+	subject, e := expectOperation(p)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(BLOCK_OPEN)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(TERMINATOR)
+	if e != nil {
+		return nil, e
+	}
+
+	cases, e := matchCases(p)
+	if e != nil {
+		return nil, e
+	}
+
+	close, e := p.expect(BLOCK_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	return newMatch(key, close, subject, cases), nil
+}
+
+func matchCases(p *pipeline) ([]MatchCase, error) {
+
+	cases := []MatchCase{}
+
+	for !p.match(BLOCK_CLOSE) && p.hasMore() {
+
+		mc, e := matchCase(p)
+		if e != nil {
+			return nil, e
+		}
+
+		cases = append(cases, mc)
+
+		_, e = p.expect(TERMINATOR)
+		if e != nil {
+			return nil, e
+		}
+	}
+
+	return cases, nil
+}
+
+func matchCase(p *pipeline) (MatchCase, error) {
+
+	if p.match(GUARD_OPEN) {
+		return guardExplicit(p)
+	}
+
+	condition, e := expectOperation(p)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(DO)
+	if e != nil {
+		return nil, e
+	}
+
+	body, e := block(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return newMatchCase(condition, body), nil
 }
