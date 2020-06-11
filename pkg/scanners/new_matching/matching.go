@@ -125,6 +125,40 @@ var patterns = []mat.Pattern{
 			return false, nil
 		})
 	}},
+	pattern{TK_SPELL, func(s *mat.Symbols) (int, error) {
+
+		if s.At(0) != '@' {
+			return 0, nil
+		}
+
+		i := 0
+		next := func() rune {
+			i++
+			return s.At(i)
+		}
+
+	PART:
+
+		if !unicode.IsLetter(next()) {
+			line, col := s.Pos()
+
+			return 0, err.New(
+				"Spell: identifier must start with letter",
+				err.Pos(line, col+i),
+			)
+		}
+
+		ru := next()
+		for unicode.IsLetter(ru) || ru == '_' {
+			ru = next()
+		}
+
+		if ru == '.' {
+			goto PART
+		}
+
+		return i, nil
+	}},
 	pattern{TK_ASSIGNMENT, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ":=")
 	}},
@@ -166,9 +200,6 @@ var patterns = []mat.Pattern{
 	}},
 	pattern{TK_TERMINATOR, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ";")
-	}},
-	pattern{TK_SPELL, func(s *mat.Symbols) (int, error) {
-		return matchStr(s, "@")
 	}},
 	pattern{TK_PLUS, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "+")

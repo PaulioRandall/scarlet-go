@@ -129,7 +129,15 @@ func T22_1() (in string, expects []Token) {
 }
 
 func T23_1() (in string, expects []Token) {
-	return solo(TK_SPELL, "@")
+	return solo(TK_SPELL, "@abc")
+}
+
+func T23_2() (in string, expects []Token) {
+	return solo(TK_SPELL, "@abc.xyz")
+}
+
+func T23_3() (in string, expects []Token) {
+	return solo(TK_SPELL, "@a.b.c.d")
 }
 
 func T24_1() (in string, expects []Token) {
