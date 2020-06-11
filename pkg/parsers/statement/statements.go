@@ -418,3 +418,26 @@ func LoopString(l Loop) string {
 
 	return b.String()
 }
+
+type SpellCall interface {
+	Expression
+	Spell() Token
+	Arguments() []Expression
+}
+
+func SpellCallString(s SpellCall) string {
+
+	b := builder{}
+
+	b.add(0, "[SpellCall]")
+	b.addToken(2, s.Spell())
+
+	b.newline()
+	b.add(1, "Arguments:")
+	for _, a := range s.Arguments() {
+		b.newline()
+		b.add(2, a.String())
+	}
+
+	return b.String()
+}

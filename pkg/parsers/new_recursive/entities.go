@@ -543,3 +543,32 @@ func (l loopStat) End() (int, int) {
 func (l loopStat) String() string {
 	return LoopString(l)
 }
+
+type spellCallExpr struct {
+	spell, close Token
+	args         []Expression
+}
+
+func (spellCallExpr) Kind() Kind {
+	return ST_SPELL_CALL
+}
+
+func (s spellCallExpr) Spell() Token {
+	return s.spell
+}
+
+func (s spellCallExpr) Arguments() []Expression {
+	return s.args
+}
+
+func (s spellCallExpr) Begin() (int, int) {
+	return startPos(s.spell)
+}
+
+func (s spellCallExpr) End() (int, int) {
+	return endPos(s.close)
+}
+
+func (s spellCallExpr) String() string {
+	return SpellCallString(s)
+}

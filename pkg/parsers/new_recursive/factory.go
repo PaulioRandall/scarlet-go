@@ -5,30 +5,30 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func newVoid(tk Token) Void {
+func newVoid(tk Token) voidExpr {
 	return voidExpr{tk}
 }
 
-func newIdentifier(tk Token) Identifier {
+func newIdentifier(tk Token) identifierExpr {
 	return identifierExpr{tk}
 }
 
-func newLiteral(tk Token) Literal {
+func newLiteral(tk Token) literalExpr {
 	return literalExpr{tk}
 }
 
-func newListAccessor(id, index Expression) ListAccessor {
+func newListAccessor(id, index Expression) listAccessorExpr {
 	return listAccessorExpr{
 		id:    id,
 		index: index,
 	}
 }
 
-func newNegation(expr Expression) Negation {
+func newNegation(expr Expression) negationExpr {
 	return negationExpr{expr}
 }
 
-func newOperation(operator Token, left, right Expression) Operation {
+func newOperation(operator Token, left, right Expression) operationExpr {
 	return operationExpr{
 		operator: operator,
 		left:     left,
@@ -36,20 +36,20 @@ func newOperation(operator Token, left, right Expression) Operation {
 	}
 }
 
-func newAssignment(target, source Expression) Assignment {
+func newAssignment(target, source Expression) assignmentStat {
 	return assignmentStat{
 		target: target,
 		source: source,
 	}
 }
 
-func newAssignmentBlock(assignments []Assignment) AssignmentBlock {
+func newAssignmentBlock(assignments []Assignment) assignmentBlockStat {
 	return assignmentBlockStat{
 		assignments: assignments,
 	}
 }
 
-func newBlock(open, close Token, stats []Expression) Block {
+func newBlock(open, close Token, stats []Expression) blockExpr {
 	return blockExpr{
 		open:  open,
 		close: close,
@@ -57,13 +57,13 @@ func newBlock(open, close Token, stats []Expression) Block {
 	}
 }
 
-func newUnDelimiteredBlock(stats []Expression) Block {
+func newUnDelimiteredBlock(stats []Expression) unDelimiteredBlockExpr {
 	return unDelimiteredBlockExpr{
 		stats: stats,
 	}
 }
 
-func newExpressionFunction(key Token, inputs []Token, expr Expression) ExpressionFunction {
+func newExpressionFunction(key Token, inputs []Token, expr Expression) expressionFunctionExpr {
 	return expressionFunctionExpr{
 		key:    key,
 		inputs: inputs,
@@ -71,7 +71,7 @@ func newExpressionFunction(key Token, inputs []Token, expr Expression) Expressio
 	}
 }
 
-func newParameters(open, close Token, inputs, outputs []Token) Parameters {
+func newParameters(open, close Token, inputs, outputs []Token) parametersDef {
 	return parametersDef{
 		open:    open,
 		close:   close,
@@ -80,7 +80,7 @@ func newParameters(open, close Token, inputs, outputs []Token) Parameters {
 	}
 }
 
-func newFunction(key Token, params Parameters, body Block) Function {
+func newFunction(key Token, params Parameters, body Block) functionExpr {
 	return functionExpr{
 		key:    key,
 		params: params,
@@ -88,7 +88,7 @@ func newFunction(key Token, params Parameters, body Block) Function {
 	}
 }
 
-func newFunctionCall(close Token, f Expression, args []Expression) FunctionCall {
+func newFunctionCall(close Token, f Expression, args []Expression) functionCallExpr {
 	return functionCallExpr{
 		close:    close,
 		function: f,
@@ -96,7 +96,7 @@ func newFunctionCall(close Token, f Expression, args []Expression) FunctionCall 
 	}
 }
 
-func newWatch(key Token, ids []Token, body Block) Watch {
+func newWatch(key Token, ids []Token, body Block) watchStat {
 	return watchStat{
 		key:  key,
 		ids:  ids,
@@ -104,7 +104,7 @@ func newWatch(key Token, ids []Token, body Block) Watch {
 	}
 }
 
-func newGuard(open Token, condition Expression, body Block) Guard {
+func newGuard(open Token, condition Expression, body Block) guardStat {
 	return guardStat{
 		open:      open,
 		condition: condition,
@@ -112,14 +112,14 @@ func newGuard(open Token, condition Expression, body Block) Guard {
 	}
 }
 
-func newWhenCase(object Expression, body Block) WhenCase {
+func newWhenCase(object Expression, body Block) whenCaseStat {
 	return whenCaseStat{
 		object: object,
 		body:   body,
 	}
 }
 
-func newWhen(key, close Token, subject Expression, cases []WhenCase) When {
+func newWhen(key, close Token, subject Expression, cases []WhenCase) whenStat {
 	return whenStat{
 		key:     key,
 		close:   close,
@@ -133,5 +133,13 @@ func newLoop(key Token, init Assignment, guard Guard) loopStat {
 		key:   key,
 		init:  init,
 		guard: guard,
+	}
+}
+
+func newSpellCall(spell, close Token, args []Expression) spellCallExpr {
+	return spellCallExpr{
+		spell: spell,
+		close: close,
+		args:  args,
 	}
 }

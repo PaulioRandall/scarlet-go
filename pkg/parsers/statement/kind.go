@@ -26,6 +26,7 @@ const (
 	ST_WHEN_CASE
 	ST_WHEN
 	ST_LOOP
+	ST_SPELL_CALL
 )
 
 var kinds map[Kind]string = map[Kind]string{
@@ -48,6 +49,7 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_WHEN_CASE:           `WhenCase`,
 	ST_WHEN:                `When`,
 	ST_LOOP:                `Loop`,
+	ST_SPELL_CALL:          `Spell-Call`,
 }
 
 func (k Kind) String() string {
