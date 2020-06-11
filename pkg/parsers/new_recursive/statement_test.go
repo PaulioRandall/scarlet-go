@@ -1141,13 +1141,13 @@ func Test_S7_3(t *testing.T) {
 	// AND no statements in the body
 	// THEN only the parsed function is returned
 
-	// f := F(^a) {}
+	// f := F(-> a) {}
 	given := []Token{
 		tok(TK_IDENTIFIER, "f"),
 		tok(TK_ASSIGNMENT, ":="),
 		tok(TK_FUNCTION, "F"),
 		tok(TK_PAREN_OPEN, "("),
-		tok(TK_OUTPUT, "^"),
+		tok(TK_THEN, "->"),
 		tok(TK_IDENTIFIER, "a"),
 		tok(TK_PAREN_CLOSE, ")"),
 		tok(TK_BLOCK_OPEN, "{"),
@@ -1192,7 +1192,7 @@ func Test_S7_4(t *testing.T) {
 	// AND no statements in the body
 	// THEN only the parsed function is returned
 
-	// f := F(a, b, ^c, ^d) {}
+	// f := F(a, b -> c, d) {}
 	given := []Token{
 		tok(TK_IDENTIFIER, "f"),
 		tok(TK_ASSIGNMENT, ":="),
@@ -1202,10 +1202,9 @@ func Test_S7_4(t *testing.T) {
 		tok(TK_DELIMITER, ","),
 		tok(TK_IDENTIFIER, "b"),
 		tok(TK_DELIMITER, ","),
-		tok(TK_OUTPUT, "^"),
+		tok(TK_THEN, "->"),
 		tok(TK_IDENTIFIER, "c"),
 		tok(TK_DELIMITER, ","),
-		tok(TK_OUTPUT, "^"),
 		tok(TK_IDENTIFIER, "d"),
 		tok(TK_PAREN_CLOSE, ")"),
 		tok(TK_BLOCK_OPEN, "{"),
@@ -1317,7 +1316,7 @@ func Test_S7_6(t *testing.T) {
 
 	// f := F(
 	// a,
-	// ^b,
+	// -> b,
 	// ) {
 	// a: b
 	// }
@@ -1330,7 +1329,7 @@ func Test_S7_6(t *testing.T) {
 		tok(TK_IDENTIFIER, "a"),
 		tok(TK_DELIMITER, ","),
 		tok(TK_TERMINATOR, "\n"),
-		tok(TK_OUTPUT, "^"),
+		tok(TK_THEN, "->"),
 		tok(TK_IDENTIFIER, "b"),
 		tok(TK_DELIMITER, ","),
 		tok(TK_TERMINATOR, "\n"),

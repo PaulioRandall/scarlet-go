@@ -325,9 +325,18 @@ func functionParameters(p *pipeline) (Parameters, error) {
 		return nil, e
 	}
 
-	inputs, outputs, e := parameterIdentifiers(p)
+	inputs, e := parameterIdentifiers(p)
 	if e != nil {
 		return nil, e
+	}
+
+	outputs := []Token{}
+
+	if p.accept(TK_THEN) {
+		outputs, e = parameterIdentifiers(p)
+		if e != nil {
+			return nil, e
+		}
 	}
 
 	close, e := p.expect(TK_PAREN_CLOSE)
@@ -338,36 +347,25 @@ func functionParameters(p *pipeline) (Parameters, error) {
 	return newParameters(open, close, inputs, outputs), nil
 }
 
-func parameterIdentifiers(p *pipeline) (in []Token, out []Token, _ error) {
+func parameterIdentifiers(p *pipeline) ([]Token, error) {
 
-	in = []Token{}
-	out = []Token{}
+	ids := []Token{}
 
-	for !p.match(TK_PAREN_CLOSE) {
+	for !p.match(TK_THEN) && !p.match(TK_PAREN_CLOSE) {
 
-		id, isOutput, e := functionParam(p)
+		id, e := p.expect(TK_IDENTIFIER)
 		if e != nil {
-			return nil, nil, e
+			return nil, e
 		}
 
-		if isOutput {
-			out = append(out, id)
-		} else {
-			in = append(in, id)
-		}
+		ids = append(ids, id)
 
 		if !p.accept(TK_DELIMITER) {
 			break
 		}
 	}
 
-	return in, out, nil
-}
-
-func functionParam(p *pipeline) (Token, bool, error) {
-	output := p.accept(TK_OUTPUT)
-	id, e := p.expect(TK_IDENTIFIER)
-	return id, output, e
+	return ids, nil
 }
 
 func functionCall(p *pipeline, f Expression) (Expression, error) {
