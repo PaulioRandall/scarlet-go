@@ -259,6 +259,33 @@ func FunctionString(f Function) string {
 	return b.String()
 }
 
+type FunctionCall interface {
+	Expression
+	Function() Expression
+	Arguments() []Expression
+}
+
+func FuncCallString(f FunctionCall) string {
+
+	b := builder{}
+
+	b.add(0, "[FunctionCall]")
+
+	b.newline()
+	b.add(1, "Function:")
+	b.newline()
+	b.add(2, f.Function().String())
+
+	b.newline()
+	b.add(1, "Arguments:")
+	for _, a := range f.Arguments() {
+		b.newline()
+		b.add(2, a.String())
+	}
+
+	return b.String()
+}
+
 type Block interface {
 	Expression
 	Stats() []Expression

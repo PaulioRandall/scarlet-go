@@ -20,6 +20,7 @@ const (
 	ST_EXPRESSION_FUNCTION
 	ST_PARAMETERS
 	ST_FUNCTION
+	ST_FUNCTION_CALL
 	ST_WATCH
 	ST_GUARD
 	ST_WHEN_CASE
@@ -41,6 +42,7 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_EXPRESSION_FUNCTION: `Expression-Function`,
 	ST_PARAMETERS:          `Parameters`,
 	ST_FUNCTION:            `Function`,
+	ST_FUNCTION_CALL:       `Function-Call`,
 	ST_WATCH:               `Watch`,
 	ST_GUARD:               `Guard`,
 	ST_WHEN_CASE:           `WhenCase`,
