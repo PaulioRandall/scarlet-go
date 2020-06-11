@@ -23,7 +23,7 @@ func New(text string, patterns []Pattern) Matcher {
 
 func (m Matcher) Next() (token interface{}, e error) {
 
-	if m.s.Empty() {
+	if !m.s.Has(1) {
 		return nil, nil
 	}
 

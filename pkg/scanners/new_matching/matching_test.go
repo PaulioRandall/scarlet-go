@@ -136,6 +136,14 @@ func Test_T23_1(t *testing.T) {
 	okTest(t, T23_1)
 }
 
+func Test_T23_2(t *testing.T) {
+	okTest(t, T23_2)
+}
+
+func Test_T23_3(t *testing.T) {
+	okTest(t, T23_3)
+}
+
 func Test_T24_1(t *testing.T) {
 	okTest(t, T24_1)
 }

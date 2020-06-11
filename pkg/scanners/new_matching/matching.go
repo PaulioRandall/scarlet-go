@@ -53,18 +53,20 @@ var patterns = []mat.Pattern{
 	pattern{TK_WHITESPACE, func(s *mat.Symbols) (int, error) {
 		// Returns the number of consecutive whitespace terminals.
 		// Newlines are not counted as whitespace.
-		return s.CountWhile(0, func(i int, ru rune) (bool, error) {
+
+		for i := 0; s.Has(i + 1); i++ {
+			ru := s.At(i)
 
 			if !unicode.IsSpace(ru) {
-				return false, nil
+				return i, nil
 			}
 
 			if yes, _ := s.IsNewline(i); yes {
-				return false, nil
+				return i, nil
 			}
+		}
 
-			return true, nil
-		})
+		return s.Remaining(), nil
 	}},
 	pattern{TK_COMMENT, func(s *mat.Symbols) (int, error) {
 
@@ -76,16 +78,12 @@ var patterns = []mat.Pattern{
 			return 0, e
 		}
 
-		n, e := s.CountWhile(PREFIX_LEN, func(i int, ru rune) (bool, error) {
-			ok, _ := s.IsNewline(i)
-			return !ok, nil
-		})
-
-		if e != nil {
-			return 0, e
+		n := PREFIX_LEN
+		for exit := false; s.Has(n+1) && !exit; n++ {
+			exit, _ = s.IsNewline(n)
 		}
 
-		return PREFIX_LEN + n, nil
+		return n, nil
 	}},
 	pattern{TK_WHEN, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "when")
@@ -112,18 +110,21 @@ var patterns = []mat.Pattern{
 		return matchWord(s, "E")
 	}},
 	pattern{TK_IDENTIFIER, func(s *mat.Symbols) (int, error) {
-		return s.CountWhile(0, func(i int, ru rune) (bool, error) {
 
-			if i == 0 {
-				return unicode.IsLetter(ru), nil
+		if !unicode.IsLetter(s.At(0)) {
+			return 0, nil
+		}
+
+		i := 0
+		for i++; s.Has(i + 1); i++ {
+			ru := s.At(i)
+
+			if !unicode.IsLetter(ru) && ru != '_' {
+				break
 			}
+		}
 
-			if unicode.IsLetter(ru) || ru == '_' {
-				return true, nil
-			}
-
-			return false, nil
-		})
+		return i, nil
 	}},
 	pattern{TK_SPELL, func(s *mat.Symbols) (int, error) {
 
@@ -131,30 +132,36 @@ var patterns = []mat.Pattern{
 			return 0, nil
 		}
 
-		i := 0
-		next := func() rune {
-			i++
-			return s.At(i)
-		}
-
-	PART:
-
-		if !unicode.IsLetter(next()) {
-			line, col := s.Pos()
-
+		firstLetterError := func(i int) (int, error) {
 			return 0, err.New(
-				"Spell: identifier must start with letter",
-				err.Pos(line, col+i),
+				"Spell identifier or part must start with letter",
+				err.Pos(s.Line(), s.Col()+i),
 			)
 		}
 
-		ru := next()
-		for unicode.IsLetter(ru) || ru == '_' {
-			ru = next()
+		i := 0
+
+	SPELL_PART:
+
+		i++
+		if !s.Has(i + 1) {
+			return firstLetterError(i)
 		}
 
-		if ru == '.' {
-			goto PART
+		if !unicode.IsLetter(s.At(i)) {
+			return firstLetterError(i)
+		}
+
+		for i++; s.Has(i + 1); i++ {
+			ru := s.At(i)
+
+			if ru == '.' {
+				goto SPELL_PART
+			}
+
+			if !unicode.IsLetter(ru) && ru != '_' {
+				break
+			}
 		}
 
 		return i, nil
@@ -247,36 +254,31 @@ var patterns = []mat.Pattern{
 			return 0, nil
 		}
 
-		escaped := true // Init true to escape prefix
+		escaped := false // Init true to escape prefix
 
-		n, e := s.CountWhile(0, func(i int, ru rune) (bool, error) {
+		i := 0
+		for i++; s.Has(i + 1); i++ {
+			ru := s.At(i)
 
-			resume := true
-
-			if escaped {
+			switch {
+			case escaped:
 				escaped = false
-				goto FINALLY
-			}
 
-			if ru == SUFFIX {
-				resume = false
+			case ru == SUFFIX:
 				goto FINALLY
-			}
 
-			if ru == ESCAPE {
+			case ru == ESCAPE:
 				escaped = true
 			}
 
-		FINALLY:
 			e := checkForMissingTermination(s, i)
-			return resume, e
-		})
-
-		if e != nil {
-			return 0, e
+			if e != nil {
+				return 0, e
+			}
 		}
 
-		return n + SUFFIX_LEN, nil
+	FINALLY:
+		return i + SUFFIX_LEN, nil
 	}},
 	pattern{TK_NUMBER, func(s *mat.Symbols) (int, error) {
 
@@ -305,10 +307,9 @@ var patterns = []mat.Pattern{
 
 		if frac == 0 {
 			// One or many fractional digits must follow a delimiter.
-			line, col := s.Pos()
 			return 0, err.New(
 				"Expected digit after decimal point",
-				err.Pos(line, col+n),
+				err.Pos(s.Line(), s.Col()+n),
 			)
 		}
 
@@ -355,28 +356,30 @@ func matchWord(s *mat.Symbols, word string) (int, error) {
 }
 
 func matchInt(s *mat.Symbols, start int) (int, error) {
-	return s.CountWhile(start, func(_ int, ru rune) (bool, error) {
-		return unicode.IsDigit(ru), nil
-	})
+
+	i := 0
+	for s.Has(i+1) && unicode.IsDigit(s.At(i)) {
+		i++
+	}
+
+	return i, nil
 }
 
 // checkForMissingTermination panics if a string or template is found to be
 // unterminated.
 func checkForMissingTermination(s *mat.Symbols, i int) error {
 
-	line, col := s.Pos()
-
 	if ok, _ := s.IsNewline(i); ok {
 		return err.New(
 			"Newline encountered before string was terminated",
-			err.Pos(line, col+i),
+			err.Pos(s.Line(), s.Col()+i),
 		)
 	}
 
 	if s.Remaining()-i <= 0 {
 		return err.New(
 			"EOF encountered before string was terminated",
-			err.Pos(line, col+i),
+			err.Pos(s.Line(), s.Col()+i),
 		)
 	}
 

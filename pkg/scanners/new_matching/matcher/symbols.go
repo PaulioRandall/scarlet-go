@@ -15,12 +15,12 @@ type Symbols struct {
 	offset int
 }
 
-func (s *Symbols) Pos() (int, int) {
-	return s.line, s.col
+func (s *Symbols) Line() int {
+	return s.line
 }
 
-func (s *Symbols) Empty() bool {
-	return s.Remaining() <= 0
+func (s *Symbols) Col() int {
+	return s.col
 }
 
 func (s *Symbols) Remaining() int {
@@ -77,35 +77,6 @@ func (s *Symbols) Match(start int, str string) (bool, error) {
 	}
 
 	return true, nil
-}
-
-func (s *Symbols) CountWhile(start int, f RuneMatcher) (int, error) {
-
-	e := s.checkStartIndex(start)
-	if e != nil {
-		return 0, e
-	}
-
-	runes := s.getRemaining()
-	size := len(runes)
-
-	if start >= size {
-		return 0, nil
-	}
-
-	for i := start; i < size; i++ {
-
-		match, e := f(i, runes[i])
-		if e != nil {
-			return 0, e
-		}
-
-		if !match {
-			return i - start, nil
-		}
-	}
-
-	return size - start, nil
 }
 
 func (s *Symbols) IsNewline(index int) (bool, int) {
