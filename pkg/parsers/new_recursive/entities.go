@@ -365,6 +365,36 @@ func (f functionExpr) String() string {
 	return FunctionString(f)
 }
 
+type functionCallExpr struct {
+	close    Token
+	function Expression
+	args     []Expression
+}
+
+func (functionCallExpr) Kind() Kind {
+	return ST_FUNCTION_CALL
+}
+
+func (f functionCallExpr) Function() Expression {
+	return f.function
+}
+
+func (f functionCallExpr) Arguments() []Expression {
+	return f.args
+}
+
+func (f functionCallExpr) Begin() (int, int) {
+	return f.function.Begin()
+}
+
+func (f functionCallExpr) End() (int, int) {
+	return endPos(f.close)
+}
+
+func (f functionCallExpr) String() string {
+	return FunctionCallString(f)
+}
+
 type watchStat struct {
 	key  Token
 	ids  []Token

@@ -88,6 +88,14 @@ func newFunction(key Token, params Parameters, body Block) Function {
 	}
 }
 
+func newFunctionCall(close Token, f Expression, args []Expression) FunctionCall {
+	return functionCallExpr{
+		close:    close,
+		function: f,
+		args:     args,
+	}
+}
+
 func newWatch(key Token, ids []Token, body Block) Watch {
 	return watchStat{
 		key:  key,

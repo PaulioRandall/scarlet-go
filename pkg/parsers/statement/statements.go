@@ -265,7 +265,7 @@ type FunctionCall interface {
 	Arguments() []Expression
 }
 
-func FuncCallString(f FunctionCall) string {
+func FunctionCallString(f FunctionCall) string {
 
 	b := builder{}
 
