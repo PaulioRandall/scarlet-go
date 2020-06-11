@@ -7,6 +7,7 @@ import (
 )
 
 func delimitered(p *pipeline, closer TokenType, f func() error) error {
+
 	for p.hasMore() && !p.match(closer) {
 
 		e := f()
@@ -58,9 +59,34 @@ func expectExpression(p *pipeline) (Expression, error) {
 }
 
 func identifier(p *pipeline) (Expression, error) {
-	// pattern := IDENTIFIER [list_accessor]
-	id := newIdentifier(p.any())
-	return maybeListAccessor(p, id)
+	// pattern := IDENTIFIER [list_accessor | function_call]
+
+	var e error
+	var id Expression = newIdentifier(p.any())
+
+MAYBE_MORE:
+
+	if p.match(TK_GUARD_OPEN) {
+
+		id, e = listAccessor(p, id)
+		if e != nil {
+			return nil, e
+		}
+
+		goto MAYBE_MORE
+	}
+
+	if p.match(TK_PAREN_OPEN) {
+
+		id, e = functionCall(p, id)
+		if e != nil {
+			return nil, e
+		}
+
+		goto MAYBE_MORE
+	}
+
+	return id, nil
 }
 
 func literal(p *pipeline) (Expression, error) {
@@ -105,7 +131,6 @@ func group(p *pipeline) (Expression, error) {
 }
 
 func maybeListAccessor(p *pipeline, maybeList Expression) (Expression, error) {
-	// pattern := expression [GUARD_OPEN expression GUARD_CLOSE]
 
 	if p.match(TK_GUARD_OPEN) {
 		return listAccessor(p, maybeList)
@@ -709,4 +734,34 @@ func loopInitialiser(p *pipeline) (Assignment, error) {
 	}
 
 	return newAssignment(target, source), nil
+}
+
+func maybeFunctionCall(p *pipeline, maybe Expression) (Expression, error) {
+
+	if p.match(TK_PAREN_OPEN) {
+		return functionCall(p, maybe)
+	}
+
+	return maybe, nil
+}
+
+func functionCall(p *pipeline, f Expression) (Expression, error) {
+	// pattern := expression PAREN_OPEN arguments PAREN_CLOSE
+
+	_, e := p.expect(TK_PAREN_OPEN)
+	if e != nil {
+		return nil, e
+	}
+
+	args, e := operations(p)
+	if e != nil {
+		return nil, e
+	}
+
+	close, e := p.expect(TK_PAREN_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	return newFunctionCall(close, f, args), nil
 }
