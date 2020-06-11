@@ -2345,6 +2345,57 @@ func Test_S13_4(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S13_5(t *testing.T) {
+
+	// GIVEN a function call
+	// WITH several simple arguments over several lines
+	// THEN then the correct function expression is returned
+
+	// f(
+	//   a,
+	//   true,
+	//   1,
+	//   "abc",
+	// )
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_BOOL, "true"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_STRING, "abc"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+
+	args := []Expression{
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		newLiteral(tok(TK_BOOL, "true")),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newLiteral(tok(TK_STRING, "abc")),
+	}
+
+	exp := newFunctionCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		f,
+		args,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token
@@ -2668,6 +2719,28 @@ func Test_F19(t *testing.T) {
 		tok(TK_IDENTIFIER, "f"),
 		tok(TK_PAREN_OPEN, "("),
 		tok(TK_LOOP, "loop"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	act, e := testFunc(given)
+	expectError(t, act, e)
+}
+
+func Test_F20(t *testing.T) {
+
+	// GIVEN a function call
+	// WITH a missig delimiter between arguments
+	// THEN parser returns error
+
+	// f(1, 2 3)
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_NUMBER, "1"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_NUMBER, "2"),
+		tok(TK_NUMBER, "3"),
+		tok(TK_PAREN_CLOSE, ")"),
 		tok(TK_TERMINATOR, ""),
 	}
 
