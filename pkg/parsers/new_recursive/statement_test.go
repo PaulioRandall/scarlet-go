@@ -197,6 +197,47 @@ func Test_S4_2(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S4_3(t *testing.T) {
+
+	// GIVEN a list accessor
+	// WHICH returns another list
+	// WHICH is then accessed
+	// THEN the correctly nested parsed list accessors are returned
+
+	// abc[1][2][3]
+	given := []Token{
+		tok(TK_IDENTIFIER, "abc"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_NUMBER, "1"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_NUMBER, "2"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_NUMBER, "3"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	var first Expression = newListAccessor(
+		newIdentifier(tok(TK_IDENTIFIER, "abc")),
+		newLiteral(tok(TK_NUMBER, "1")),
+	)
+
+	var second Expression = newListAccessor(
+		first,
+		newLiteral(tok(TK_NUMBER, "2")),
+	)
+
+	exp := newListAccessor(
+		second,
+		newLiteral(tok(TK_NUMBER, "3")),
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_S5_1(t *testing.T) {
 
 	// GIVEN only a comment
@@ -2390,6 +2431,49 @@ func Test_S13_5(t *testing.T) {
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		args,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S13_6(t *testing.T) {
+
+	// GIVEN a function call
+	// WHICH returns function
+	// WHICH is then called within the same expression
+	// THEN then the correct function expression is returned
+
+	// f()()()
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "(a"),
+		tok(TK_PAREN_CLOSE, "a)"),
+		tok(TK_PAREN_OPEN, "(b"),
+		tok(TK_PAREN_CLOSE, "b)"),
+		tok(TK_PAREN_OPEN, "(c"),
+		tok(TK_PAREN_CLOSE, "c)"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+
+	var first Expression = newFunctionCall(
+		tok(TK_PAREN_CLOSE, "a)"),
+		f,
+		[]Expression{},
+	)
+
+	var second Expression = newFunctionCall(
+		tok(TK_PAREN_CLOSE, "b)"),
+		first,
+		[]Expression{},
+	)
+
+	exp := newFunctionCall(
+		tok(TK_PAREN_CLOSE, "c)"),
+		second,
+		[]Expression{},
 	)
 
 	act, e := testFunc(given)
