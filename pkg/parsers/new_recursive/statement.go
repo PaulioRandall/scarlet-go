@@ -58,7 +58,7 @@ func statement(p *pipeline) (Expression, error) {
 		return assignment(p)
 	}
 
-	return operation(p)
+	return expression(p)
 }
 
 func expectStatement(p *pipeline) (Expression, error) {
@@ -120,7 +120,7 @@ func assignmentSources(p *pipeline) ([]Expression, error) {
 		return []Expression{src}, nil
 	}
 
-	return operations(p)
+	return expressions(p)
 }
 
 func assignmentTargets(p *pipeline) ([]Expression, error) {

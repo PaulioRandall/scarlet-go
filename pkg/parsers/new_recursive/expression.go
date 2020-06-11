@@ -6,75 +6,62 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func expression(p *pipeline) (Expression, error) {
-	// pattern := identifier | literal
+func identifier(p *pipeline) (Expression, error) {
+	// pattern := IDENTIFIER [list_accessor | function_call]
 
-	switch {
-	case p.match(TK_IDENTIFIER), p.match(TK_VOID):
-		return identifier(p)
-
-	case p.match(TK_BOOL), p.match(TK_NUMBER), p.match(TK_STRING):
-		return literal(p)
-
-	case p.match(TK_MINUS):
-		return negation(p)
-
-	case p.match(TK_PAREN_OPEN):
-		return group(p)
-	}
-
-	return nil, nil
-}
-
-func expectExpression(p *pipeline) (Expression, error) {
-	// pattern := identifier | literal
-
-	expr, e := expression(p)
+	tk, e := p.expect(TK_IDENTIFIER)
 	if e != nil {
 		return nil, e
 	}
 
-	if expr == nil {
-		return nil, err.New("Expected expression", err.At(p.any()))
-	}
+	var id Expression = newIdentifier(tk)
 
-	return expr, nil
-}
-
-func identifier(p *pipeline) (Expression, error) {
-	// pattern := IDENTIFIER [list_accessor | function_call]
-
-	var e error
-	var id Expression = newIdentifier(p.any())
-
-MAYBE_MORE:
-
-	if p.match(TK_GUARD_OPEN) {
-
-		id, e = listAccessor(p, id)
+	for more := true; more; {
+		id, more, e = maybeMore(p, id)
 		if e != nil {
 			return nil, e
 		}
-
-		goto MAYBE_MORE
-	}
-
-	if p.match(TK_PAREN_OPEN) {
-
-		id, e = functionCall(p, id)
-		if e != nil {
-			return nil, e
-		}
-
-		goto MAYBE_MORE
 	}
 
 	return id, nil
 }
 
+func maybeMore(p *pipeline, expr Expression) (_ Expression, more bool, e error) {
+	// pattern := expression list_accessor
+	// pattern := expression function_call
+
+	if p.match(TK_GUARD_OPEN) {
+
+		expr, e = listAccessor(p, expr)
+		if e != nil {
+			return nil, false, e
+		}
+
+		return expr, true, nil
+	}
+
+	if p.match(TK_PAREN_OPEN) {
+
+		expr, e = functionCall(p, expr)
+		if e != nil {
+			return nil, false, e
+		}
+
+		return expr, true, nil
+	}
+
+	return expr, false, nil
+}
+
 func literal(p *pipeline) (Expression, error) {
 	// pattern := BOOL | NUMBER | STRING
-	return newLiteral(p.any()), nil
+
+	l, e := p.expectAnyOf(TK_BOOL, TK_NUMBER, TK_STRING)
+	if e != nil {
+		return nil, e
+	}
+
+	return newLiteral(l), nil
 }
 
 func negation(p *pipeline) (Expression, error) {
@@ -100,7 +87,7 @@ func group(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	expr, e := expectOperation(p)
+	expr, e := expectExpression(p)
 	if e != nil {
 		return nil, e
 	}
@@ -118,7 +105,7 @@ func listAccessor(p *pipeline, left Expression) (Expression, error) {
 
 	p.expect(TK_GUARD_OPEN)
 
-	index, e := expectOperation(p)
+	index, e := expectExpression(p)
 	if e != nil {
 		return nil, e
 	}
@@ -131,14 +118,14 @@ func listAccessor(p *pipeline, left Expression) (Expression, error) {
 	return newListAccessor(left, index), nil
 }
 
-func operations(p *pipeline) ([]Expression, error) {
+func expressions(p *pipeline) ([]Expression, error) {
 	// pattern := [operation {DELIM operation}]
 
 	ops := []Expression{}
 
 	for !p.match(TK_PAREN_CLOSE) && !p.match(TK_TERMINATOR) {
 
-		expr, e := expectOperation(p)
+		expr, e := expectExpression(p)
 		if e != nil {
 			return nil, e
 		}
@@ -153,7 +140,7 @@ func operations(p *pipeline) ([]Expression, error) {
 	return ops, nil
 }
 
-func operation(p *pipeline) (Expression, error) {
+func expression(p *pipeline) (Expression, error) {
 
 	left, e := operand(p)
 	if e != nil {
@@ -164,13 +151,13 @@ func operation(p *pipeline) (Expression, error) {
 		return nil, nil
 	}
 
-	return operationExpression(p, left, 0)
+	return operation(p, left, 0)
 }
 
-func expectOperation(p *pipeline) (Expression, error) {
+func expectExpression(p *pipeline) (Expression, error) {
 	// pattern := operation
 
-	expr, e := operation(p)
+	expr, e := expression(p)
 	if e != nil {
 		return nil, e
 	}
@@ -218,7 +205,7 @@ func expectOperand(p *pipeline) (Expression, error) {
 	return o, nil
 }
 
-func operationExpression(p *pipeline, left Expression, leftPriority int) (Expression, error) {
+func operation(p *pipeline, left Expression, leftPriority int) (Expression, error) {
 
 	if !p.hasMore() {
 		return left, nil
@@ -239,14 +226,14 @@ func operationExpression(p *pipeline, left Expression, leftPriority int) (Expres
 		return nil, e
 	}
 
-	right, e = operationExpression(p, right, rightPriority)
+	right, e = operation(p, right, rightPriority)
 	if e != nil {
 		return nil, e
 	}
 
 	left = newOperation(op, left, right)
 
-	left, e = operationExpression(p, left, leftPriority)
+	left, e = operation(p, left, leftPriority)
 	if e != nil {
 		return nil, e
 	}
@@ -318,7 +305,7 @@ func function(p *pipeline) (Expression, error) {
 }
 
 func functionParameters(p *pipeline) (Parameters, error) {
-	// pattern := PAREN_OPEN [expression {DELIMITER expression}] PAREN_CLOSE
+	// pattern := PAREN_OPEN inputs [THEN outputs] PAREN_CLOSE
 
 	open, e := p.expect(TK_PAREN_OPEN)
 	if e != nil {
@@ -348,6 +335,7 @@ func functionParameters(p *pipeline) (Parameters, error) {
 }
 
 func parameterIdentifiers(p *pipeline) ([]Token, error) {
+	// pattern := [IDENTIFIER {DELIMITER IDENTIFIER}]
 
 	ids := []Token{}
 
@@ -369,14 +357,14 @@ func parameterIdentifiers(p *pipeline) ([]Token, error) {
 }
 
 func functionCall(p *pipeline, f Expression) (Expression, error) {
-	// pattern := expression PAREN_OPEN arguments PAREN_CLOSE
+	// pattern := PAREN_OPEN arguments PAREN_CLOSE
 
 	_, e := p.expect(TK_PAREN_OPEN)
 	if e != nil {
 		return nil, e
 	}
 
-	args, e := operations(p)
+	args, e := expressions(p)
 	if e != nil {
 		return nil, e
 	}
@@ -402,7 +390,7 @@ func expressionFunction(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	expr, e := expectOperation(p)
+	expr, e := expectExpression(p)
 	if e != nil {
 		return nil, e
 	}
@@ -526,7 +514,7 @@ func guardCondition(p *pipeline) (Token, Expression, error) {
 		return nil, nil, e
 	}
 
-	condition, e := expectOperation(p)
+	condition, e := expectExpression(p)
 	if e != nil {
 		return nil, nil, e
 	}
@@ -562,7 +550,7 @@ func when(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	subject, e := expectOperation(p)
+	subject, e := expectExpression(p)
 	if e != nil {
 		return nil, e
 	}
@@ -639,7 +627,7 @@ func whenGuardCase(p *pipeline) (WhenCase, error) {
 func whenCase(p *pipeline) (WhenCase, error) {
 	// pattern := object THEN guardBody
 
-	object, e := expectOperation(p)
+	object, e := expectExpression(p)
 	if e != nil {
 		return nil, e
 	}
@@ -693,7 +681,7 @@ func loopInitialiser(p *pipeline) (Assignment, error) {
 		return nil, e
 	}
 
-	source, e := expectOperation(p)
+	source, e := expectExpression(p)
 	if e != nil {
 		return nil, e
 	}
@@ -704,7 +692,7 @@ func loopInitialiser(p *pipeline) (Assignment, error) {
 func spellCall(p *pipeline) (Expression, error) {
 	// pattern := SPELL PAREN_OPEN arguments PAREN_CLOSE
 
-	spell, e := p.expect(TK_SPELL)
+	id, e := p.expect(TK_SPELL)
 	if e != nil {
 		return nil, e
 	}
@@ -714,7 +702,7 @@ func spellCall(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	args, e := operations(p)
+	args, e := expressions(p)
 	if e != nil {
 		return nil, e
 	}
@@ -724,5 +712,14 @@ func spellCall(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newSpellCall(spell, close, args), nil
+	var spell Expression = newSpellCall(id, close, args)
+
+	for more := true; more; {
+		spell, more, e = maybeMore(p, spell)
+		if e != nil {
+			return nil, e
+		}
+	}
+
+	return spell, nil
 }

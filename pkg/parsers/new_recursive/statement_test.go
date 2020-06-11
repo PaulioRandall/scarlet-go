@@ -2535,6 +2535,48 @@ func Test_S14_1(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S14_2(t *testing.T) {
+
+	// GIVEN a spell call
+	// WHICH returns a list
+	// WHICH is being queried for an item
+	// WHICH returns another function
+	// THEN then the correct spell expression is returned
+
+	// @s()()()
+	given := []Token{
+		tok(TK_SPELL, "@s"),
+		tok(TK_PAREN_OPEN, "(a"),
+		tok(TK_PAREN_CLOSE, "a)"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_NUMBER, "1"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_PAREN_OPEN, "(c"),
+		tok(TK_PAREN_CLOSE, "c)"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	var first Expression = newSpellCall(
+		tok(TK_SPELL, "@s"),
+		tok(TK_PAREN_CLOSE, "a)"),
+		[]Expression{},
+	)
+
+	var second Expression = newListAccessor(
+		first,
+		newLiteral(tok(TK_NUMBER, "1")),
+	)
+
+	exp := newFunctionCall(
+		tok(TK_PAREN_CLOSE, "c)"),
+		second,
+		[]Expression{},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token
