@@ -1827,6 +1827,38 @@ func Test_S10_3(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S10_4(t *testing.T) {
+
+	// GIVEN a guarded block
+	// WITH a simple condition
+	// WITH inline body
+	// THEN only the parsed guard statement is returned
+
+	// [true] {}
+	given := []Token{
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_BOOL, "true"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_NUMBER, "1"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	body := newUnDelimiteredBlock(
+		[]Expression{
+			newLiteral(tok(TK_NUMBER, "1")),
+		},
+	)
+
+	exp := newGuard(
+		tok(TK_GUARD_OPEN, "["),
+		newLiteral(tok(TK_BOOL, "true")),
+		body,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_S11_1(t *testing.T) {
 
 	// GIVEN a when block
