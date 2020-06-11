@@ -2480,6 +2480,30 @@ func Test_S13_6(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S14_1(t *testing.T) {
+
+	// GIVEN a spell call
+	// WITH no arguments
+	// THEN then the correct spell expression is returned
+
+	// @s()
+	given := []Token{
+		tok(TK_SPELL, "@s"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	exp := newSpellCall(
+		tok(TK_SPELL, "@s"),
+		tok(TK_PAREN_CLOSE, ")"),
+		[]Expression{},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token

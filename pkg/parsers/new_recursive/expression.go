@@ -196,6 +196,9 @@ func operand(p *pipeline) (Expression, error) {
 
 	case p.match(TK_PAREN_OPEN):
 		return group(p)
+
+	case p.match(TK_SPELL):
+		return spellCall(p)
 	}
 
 	return nil, nil
@@ -365,6 +368,27 @@ func functionParam(p *pipeline) (Token, bool, error) {
 	output := p.accept(TK_OUTPUT)
 	id, e := p.expect(TK_IDENTIFIER)
 	return id, output, e
+}
+
+func functionCall(p *pipeline, f Expression) (Expression, error) {
+	// pattern := expression PAREN_OPEN arguments PAREN_CLOSE
+
+	_, e := p.expect(TK_PAREN_OPEN)
+	if e != nil {
+		return nil, e
+	}
+
+	args, e := operations(p)
+	if e != nil {
+		return nil, e
+	}
+
+	close, e := p.expect(TK_PAREN_CLOSE)
+	if e != nil {
+		return nil, e
+	}
+
+	return newFunctionCall(close, f, args), nil
 }
 
 func expressionFunction(p *pipeline) (Expression, error) {
@@ -679,10 +703,15 @@ func loopInitialiser(p *pipeline) (Assignment, error) {
 	return newAssignment(target, source), nil
 }
 
-func functionCall(p *pipeline, f Expression) (Expression, error) {
-	// pattern := expression PAREN_OPEN arguments PAREN_CLOSE
+func spellCall(p *pipeline) (Expression, error) {
+	// pattern := SPELL PAREN_OPEN arguments PAREN_CLOSE
 
-	_, e := p.expect(TK_PAREN_OPEN)
+	spell, e := p.expect(TK_SPELL)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(TK_PAREN_OPEN)
 	if e != nil {
 		return nil, e
 	}
@@ -697,5 +726,5 @@ func functionCall(p *pipeline, f Expression) (Expression, error) {
 		return nil, e
 	}
 
-	return newFunctionCall(close, f, args), nil
+	return newSpellCall(spell, close, args), nil
 }
