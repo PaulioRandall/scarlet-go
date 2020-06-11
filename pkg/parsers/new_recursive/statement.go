@@ -33,17 +33,6 @@ func statements(p *pipeline) ([]Expression, error) {
 	return r, nil
 }
 
-func expectStatement(p *pipeline) (Expression, error) {
-
-	st, e := statement(p)
-
-	if e == nil && st == nil {
-		return nil, err.New("Expected statement", err.At(p.any()))
-	}
-
-	return st, e
-}
-
 func statement(p *pipeline) (Expression, error) {
 	// pattern := assignment | expression
 
@@ -70,6 +59,17 @@ func statement(p *pipeline) (Expression, error) {
 	}
 
 	return operation(p)
+}
+
+func expectStatement(p *pipeline) (Expression, error) {
+
+	st, e := statement(p)
+
+	if e == nil && st == nil {
+		return nil, err.New("Expected statement", err.At(p.any()))
+	}
+
+	return st, e
 }
 
 func assignment(p *pipeline) (Expression, error) {
@@ -128,7 +128,7 @@ func assignmentTargets(p *pipeline) ([]Expression, error) {
 
 	var ats []Expression
 
-	for first := true; first || p.accept(TK_DELIMITER); first = false {
+	for {
 
 		at, e := assignmentTarget(p)
 		if e != nil {
@@ -136,6 +136,14 @@ func assignmentTargets(p *pipeline) ([]Expression, error) {
 		}
 
 		ats = append(ats, at)
+
+		if p.match(TK_ASSIGNMENT) {
+			break
+		}
+
+		if !p.accept(TK_DELIMITER) {
+			break
+		}
 	}
 
 	return ats, nil
@@ -144,15 +152,32 @@ func assignmentTargets(p *pipeline) ([]Expression, error) {
 func assignmentTarget(p *pipeline) (Expression, error) {
 	// pattern := identifer | VOID
 
-	switch {
-	case p.match(TK_IDENTIFIER):
-		return identifier(p)
+	if p.match(TK_IDENTIFIER) {
+		return assignmentIdentifier(p)
+	}
 
-	case p.match(TK_VOID):
+	if p.match(TK_VOID) {
 		return newVoid(p.any()), nil
 	}
 
 	return nil, err.New("Expected assignment target", err.At(p.any()))
+}
+
+func assignmentIdentifier(p *pipeline) (Expression, error) {
+	// pattern := IDENTIFIER [list_accessor | function_call]
+
+	var e error
+	var id Expression = newIdentifier(p.any())
+
+	for p.match(TK_GUARD_OPEN) {
+
+		id, e = listAccessor(p, id)
+		if e != nil {
+			return nil, e
+		}
+	}
+
+	return id, nil
 }
 
 func createAssignments(p *pipeline, targets, sources []Expression) ([]Assignment, error) {

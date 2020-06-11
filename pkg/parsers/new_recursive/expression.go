@@ -6,23 +6,6 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func delimitered(p *pipeline, closer TokenType, f func() error) error {
-
-	for p.hasMore() && !p.match(closer) {
-
-		e := f()
-		if e != nil {
-			return e
-		}
-
-		if !p.accept(TK_DELIMITER) {
-			return nil
-		}
-	}
-
-	return nil
-}
-
 func expression(p *pipeline) (Expression, error) {
 	// pattern := identifier | literal
 
@@ -162,33 +145,18 @@ func operations(p *pipeline) ([]Expression, error) {
 
 	ops := []Expression{}
 
-	expr, e := operation(p)
-	if e != nil {
-		return nil, e
-	}
-
-	if expr == nil {
-		return ops, nil
-	}
-
-	ops = append(ops, expr)
-	if !p.accept(TK_DELIMITER) {
-		return ops, nil
-	}
-
-	e = delimitered(p, TK_TERMINATOR, func() error {
+	for !p.match(TK_PAREN_CLOSE) && !p.match(TK_TERMINATOR) {
 
 		expr, e := expectOperation(p)
 		if e != nil {
-			return e
+			return nil, e
 		}
 
 		ops = append(ops, expr)
-		return nil
-	})
 
-	if e != nil {
-		return nil, e
+		if !p.accept(TK_DELIMITER) {
+			break
+		}
 	}
 
 	return ops, nil
@@ -317,33 +285,21 @@ func blockStatements(p *pipeline) ([]Expression, error) {
 		r  = []Expression{}
 	)
 
-	for loop := true; loop && p.hasMore(); {
+	for !p.match(TK_BLOCK_CLOSE) {
 
-		st, loop, e = blockStatement(p)
+		st, e = expectStatement(p)
 		if e != nil {
 			return nil, e
 		}
 
-		if st != nil {
-			r = append(r, st)
+		r = append(r, st)
+
+		if !p.accept(TK_TERMINATOR) {
+			break
 		}
 	}
 
 	return r, nil
-}
-
-func blockStatement(p *pipeline) (st Expression, more bool, e error) {
-
-	st, e = statement(p)
-	if e != nil {
-		return nil, false, e
-	}
-
-	if st == nil {
-		return nil, false, nil
-	}
-
-	return st, p.accept(TK_TERMINATOR), nil
 }
 
 func function(p *pipeline) (Expression, error) {
@@ -393,15 +349,11 @@ func parameterIdentifiers(p *pipeline) (in []Token, out []Token, _ error) {
 	in = []Token{}
 	out = []Token{}
 
-	if p.match(TK_PAREN_CLOSE) {
-		return in, out, nil
-	}
-
-	e := delimitered(p, TK_PAREN_CLOSE, func() error {
+	for !p.match(TK_PAREN_CLOSE) {
 
 		id, isOutput, e := functionParam(p)
 		if e != nil {
-			return e
+			return nil, nil, e
 		}
 
 		if isOutput {
@@ -410,11 +362,9 @@ func parameterIdentifiers(p *pipeline) (in []Token, out []Token, _ error) {
 			in = append(in, id)
 		}
 
-		return nil
-	})
-
-	if e != nil {
-		return nil, nil, e
+		if !p.accept(TK_DELIMITER) {
+			break
+		}
 	}
 
 	return in, out, nil
@@ -477,19 +427,18 @@ func expressionFunctionInputs(p *pipeline) ([]Token, error) {
 
 	in := []Token{}
 
-	e := delimitered(p, TK_PAREN_CLOSE, func() error {
+	for !p.match(TK_PAREN_CLOSE) {
 
 		id, e := p.expect(TK_IDENTIFIER)
 		if e != nil {
-			return e
+			return nil, e
 		}
 
 		in = append(in, id)
-		return nil
-	})
 
-	if e != nil {
-		return nil, e
+		if !p.accept(TK_DELIMITER) {
+			break
+		}
 	}
 
 	return in, nil
@@ -521,7 +470,7 @@ func watchIdentifiers(p *pipeline) ([]Token, error) {
 
 	ids := []Token{}
 
-	for first := true; first || p.accept(TK_DELIMITER); first = false {
+	for !p.match(TK_BLOCK_OPEN) {
 
 		id, e := p.expect(TK_IDENTIFIER)
 		if e != nil {
@@ -529,6 +478,10 @@ func watchIdentifiers(p *pipeline) ([]Token, error) {
 		}
 
 		ids = append(ids, id)
+
+		if !p.accept(TK_DELIMITER) {
+			break
+		}
 	}
 
 	return ids, nil
@@ -627,7 +580,7 @@ func whenCases(p *pipeline) ([]WhenCase, error) {
 
 	cases := []WhenCase{}
 
-	for !p.match(TK_BLOCK_CLOSE) && p.hasMore() {
+	for !p.match(TK_BLOCK_CLOSE) {
 
 		if p.match(TK_GUARD_OPEN) {
 			mc, e = whenGuardCase(p)
@@ -641,9 +594,8 @@ func whenCases(p *pipeline) ([]WhenCase, error) {
 
 		cases = append(cases, mc)
 
-		_, e = p.expect(TK_TERMINATOR)
-		if e != nil {
-			return nil, e
+		if !p.accept(TK_TERMINATOR) {
+			break
 		}
 	}
 
