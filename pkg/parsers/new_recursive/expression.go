@@ -113,15 +113,6 @@ func group(p *pipeline) (Expression, error) {
 	return expr, e
 }
 
-func maybeListAccessor(p *pipeline, maybeList Expression) (Expression, error) {
-
-	if p.match(TK_GUARD_OPEN) {
-		return listAccessor(p, maybeList)
-	}
-
-	return maybeList, nil
-}
-
 func listAccessor(p *pipeline, left Expression) (Expression, error) {
 	// pattern := GUARD_OPEN expression GUARD_CLOSE
 
@@ -686,15 +677,6 @@ func loopInitialiser(p *pipeline) (Assignment, error) {
 	}
 
 	return newAssignment(target, source), nil
-}
-
-func maybeFunctionCall(p *pipeline, maybe Expression) (Expression, error) {
-
-	if p.match(TK_PAREN_OPEN) {
-		return functionCall(p, maybe)
-	}
-
-	return maybe, nil
 }
 
 func functionCall(p *pipeline, f Expression) (Expression, error) {

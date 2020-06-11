@@ -56,6 +56,6 @@ func expectSize(t *testing.T, exp int, acts []Expression) {
 
 func checkNoErr(t *testing.T, e error) {
 	if e != nil {
-		require.Nil(t, e, e.Error())
+		require.FailNow(t, e.Error())
 	}
 }

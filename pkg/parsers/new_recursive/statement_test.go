@@ -2211,6 +2211,140 @@ func Test_S12_2(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S13_1(t *testing.T) {
+
+	// GIVEN a function call
+	// WITH no arguments
+	// THEN then the correct function expression is returned
+
+	// f()
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+
+	exp := newFunctionCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		f,
+		[]Expression{},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S13_2(t *testing.T) {
+
+	// GIVEN a function call
+	// WITH one simple argument
+	// THEN then the correct function expression is returned
+
+	// f(1)
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+
+	args := []Expression{
+		newLiteral(tok(TK_NUMBER, "1")),
+	}
+
+	exp := newFunctionCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		f,
+		args,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S13_3(t *testing.T) {
+
+	// GIVEN a function call
+	// WITH one complex argument
+	// THEN then the correct function expression is returned
+
+	// f(1+2)
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_NUMBER, "1"),
+		tok(TK_PLUS, "+"),
+		tok(TK_NUMBER, "2"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+
+	args := []Expression{
+		newOperation(
+			tok(TK_PLUS, "+"),
+			newLiteral(tok(TK_NUMBER, "1")),
+			newLiteral(tok(TK_NUMBER, "2")),
+		),
+	}
+
+	exp := newFunctionCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		f,
+		args,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S13_4(t *testing.T) {
+
+	// GIVEN a function call
+	// WITH several simple arguments
+	// THEN then the correct function expression is returned
+
+	// f(a, true, 1, "abc")
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_BOOL, "true"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_NUMBER, "1"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_STRING, "abc"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+
+	args := []Expression{
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		newLiteral(tok(TK_BOOL, "true")),
+		newLiteral(tok(TK_NUMBER, "1")),
+		newLiteral(tok(TK_STRING, "abc")),
+	}
+
+	exp := newFunctionCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		f,
+		args,
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token
@@ -2516,6 +2650,24 @@ func Test_F18(t *testing.T) {
 		tok(TK_GUARD_CLOSE, "]"),
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	act, e := testFunc(given)
+	expectError(t, act, e)
+}
+
+func Test_F19(t *testing.T) {
+
+	// GIVEN a function call
+	// WITH no closing parenthesis
+	// THEN parser returns error
+
+	// f(loop
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_LOOP, "loop"),
 		tok(TK_TERMINATOR, ""),
 	}
 
