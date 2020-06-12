@@ -57,21 +57,25 @@ func S3() (in string, expects []Token) {
 
 func S4() (in string, expects []Token) {
 
-	in = "when abc {\n" +
-		"\t1: x:=true\n" +
-		"\t[false]: x:=false\n" +
+	in = "when a := 1 {\n" +
+		"\tb: x:=true\n" +
+		"\t[a==b]:\n" +
 		"\t[true]: x:=true\n" +
 		"}"
 
 	expects = []Token{
 		NewToken(TK_WHEN, "when", 0, 0), // Line start
 		NewToken(TK_WHITESPACE, " ", 0, 4),
-		NewToken(TK_IDENTIFIER, "abc", 0, 5),
-		NewToken(TK_WHITESPACE, " ", 0, 8),
-		NewToken(TK_BLOCK_OPEN, "{", 0, 9),
-		NewToken(TK_NEWLINE, "\n", 0, 10), // Line start
+		NewToken(TK_IDENTIFIER, "a", 0, 5),
+		NewToken(TK_WHITESPACE, " ", 0, 6),
+		NewToken(TK_ASSIGNMENT, ":=", 0, 7),
+		NewToken(TK_WHITESPACE, " ", 0, 9),
+		NewToken(TK_NUMBER, "1", 0, 10),
+		NewToken(TK_WHITESPACE, " ", 0, 11),
+		NewToken(TK_BLOCK_OPEN, "{", 0, 12),
+		NewToken(TK_NEWLINE, "\n", 0, 13), // Line start
 		NewToken(TK_WHITESPACE, "\t", 1, 0),
-		NewToken(TK_NUMBER, "1", 1, 1),
+		NewToken(TK_IDENTIFIER, "b", 1, 1),
 		NewToken(TK_THEN, ":", 1, 2),
 		NewToken(TK_WHITESPACE, " ", 1, 3),
 		NewToken(TK_IDENTIFIER, "x", 1, 4),
@@ -80,14 +84,12 @@ func S4() (in string, expects []Token) {
 		NewToken(TK_NEWLINE, "\n", 1, 11), // Line start
 		NewToken(TK_WHITESPACE, "\t", 2, 0),
 		NewToken(TK_GUARD_OPEN, "[", 2, 1),
-		NewToken(TK_BOOL, "false", 2, 2),
-		NewToken(TK_GUARD_CLOSE, "]", 2, 7),
-		NewToken(TK_THEN, ":", 2, 8),
-		NewToken(TK_WHITESPACE, " ", 2, 9),
-		NewToken(TK_IDENTIFIER, "x", 2, 10),
-		NewToken(TK_ASSIGNMENT, ":=", 2, 11),
-		NewToken(TK_BOOL, "false", 2, 13),
-		NewToken(TK_NEWLINE, "\n", 2, 18),
+		NewToken(TK_IDENTIFIER, "a", 2, 2),
+		NewToken(TK_EQUAL, "==", 2, 3),
+		NewToken(TK_IDENTIFIER, "b", 2, 5),
+		NewToken(TK_GUARD_CLOSE, "]", 2, 6),
+		NewToken(TK_THEN, ":", 2, 7),
+		NewToken(TK_NEWLINE, "\n", 2, 8),
 		NewToken(TK_WHITESPACE, "\t", 3, 0), // Line start
 		NewToken(TK_GUARD_OPEN, "[", 3, 1),
 		NewToken(TK_BOOL, "true", 3, 2),

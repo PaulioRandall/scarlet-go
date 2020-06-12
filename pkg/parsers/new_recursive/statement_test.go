@@ -1870,6 +1870,8 @@ func Test_S11_1(t *testing.T) {
 	// }
 	given := []Token{
 		tok(TK_WHEN, "when"),
+		tok(TK_IDENTIFIER, "x"),
+		tok(TK_ASSIGNMENT, ":="),
 		tok(TK_BOOL, "true"),
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_TERMINATOR, ""),
@@ -1877,10 +1879,15 @@ func Test_S11_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}
 
+	init := newAssignment(
+		newIdentifier(tok(TK_IDENTIFIER, "x")),
+		newLiteral(tok(TK_BOOL, "true")),
+	)
+
 	exp := newWhen(
 		tok(TK_WHEN, "when"),
 		tok(TK_BLOCK_CLOSE, "}"),
-		newLiteral(tok(TK_BOOL, "true")),
+		init,
 		[]WhenCase{},
 	)
 
@@ -1899,6 +1906,8 @@ func Test_S11_2(t *testing.T) {
 	// }
 	given := []Token{
 		tok(TK_WHEN, "when"),
+		tok(TK_IDENTIFIER, "x"),
+		tok(TK_ASSIGNMENT, ":="),
 		tok(TK_NUMBER, "1"),
 		tok(TK_EQUAL, "=="),
 		tok(TK_NUMBER, "2"),
@@ -1914,10 +1923,15 @@ func Test_S11_2(t *testing.T) {
 		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
+	init := newAssignment(
+		newIdentifier(tok(TK_IDENTIFIER, "x")),
+		condition,
+	)
+
 	exp := newWhen(
 		tok(TK_WHEN, "when"),
 		tok(TK_BLOCK_CLOSE, "}"),
-		condition,
+		init,
 		[]WhenCase{},
 	)
 
@@ -1937,6 +1951,8 @@ func Test_S11_3(t *testing.T) {
 	// }
 	given := []Token{
 		tok(TK_WHEN, "when"),
+		tok(TK_IDENTIFIER, "x"),
+		tok(TK_ASSIGNMENT, ":="),
 		tok(TK_NUMBER, "1"),
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_TERMINATOR, "\n"),
@@ -1962,10 +1978,15 @@ func Test_S11_3(t *testing.T) {
 		},
 	)
 
+	init := newAssignment(
+		newIdentifier(tok(TK_IDENTIFIER, "x")),
+		newLiteral(tok(TK_NUMBER, "1")),
+	)
+
 	exp := newWhen(
 		tok(TK_WHEN, "when"),
 		tok(TK_BLOCK_CLOSE, "}"),
-		newLiteral(tok(TK_NUMBER, "1")),
+		init,
 		[]WhenCase{
 			newWhenCase(firstCase, firstBlock),
 		},
@@ -1987,6 +2008,8 @@ func Test_S11_4(t *testing.T) {
 	// }
 	given := []Token{
 		tok(TK_WHEN, "when"),
+		tok(TK_IDENTIFIER, "x"),
+		tok(TK_ASSIGNMENT, ":="),
 		tok(TK_NUMBER, "1"),
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_TERMINATOR, "\n"),
@@ -2024,10 +2047,15 @@ func Test_S11_4(t *testing.T) {
 		firstBlock,
 	)
 
+	init := newAssignment(
+		newIdentifier(tok(TK_IDENTIFIER, "x")),
+		newLiteral(tok(TK_NUMBER, "1")),
+	)
+
 	exp := newWhen(
 		tok(TK_WHEN, "when"),
 		tok(TK_BLOCK_CLOSE, "}"),
-		newLiteral(tok(TK_NUMBER, "1")),
+		init,
 		[]WhenCase{
 			firstCase,
 		},
@@ -2054,6 +2082,8 @@ func Test_S11_5(t *testing.T) {
 	// }
 	given := []Token{
 		tok(TK_WHEN, "when"),
+		tok(TK_IDENTIFIER, "x"),
+		tok(TK_ASSIGNMENT, ":="),
 		tok(TK_NUMBER, "3"),
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_TERMINATOR, "\n"),
@@ -2131,10 +2161,15 @@ func Test_S11_5(t *testing.T) {
 		),
 	)
 
+	init := newAssignment(
+		newIdentifier(tok(TK_IDENTIFIER, "x")),
+		newLiteral(tok(TK_NUMBER, "3")),
+	)
+
 	exp := newWhen(
 		tok(TK_WHEN, "when"),
 		tok(TK_BLOCK_CLOSE, "}"),
-		newLiteral(tok(TK_NUMBER, "3")),
+		init,
 		[]WhenCase{
 			firstCase,
 			secondCase,

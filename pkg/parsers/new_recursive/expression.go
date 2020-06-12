@@ -543,14 +543,14 @@ func guardBody(p *pipeline) (Block, error) {
 }
 
 func when(p *pipeline) (Expression, error) {
-	// pattern := WHEN subject BLOCK_OPEN whenCases BLOCK_CLOSE
+	// pattern := WHEN whenInitialiser BLOCK_OPEN whenCases BLOCK_CLOSE
 
 	key, e := p.expect(TK_WHEN)
 	if e != nil {
 		return nil, e
 	}
 
-	subject, e := expectExpression(p)
+	init, e := whenInitialiser(p)
 	if e != nil {
 		return nil, e
 	}
@@ -570,7 +570,29 @@ func when(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newWhen(key, close, subject, cases), nil
+	return newWhen(key, close, init, cases), nil
+}
+
+func whenInitialiser(p *pipeline) (Assignment, error) {
+
+	id, e := p.expect(TK_IDENTIFIER)
+	if e != nil {
+		return nil, e
+	}
+
+	target := newIdentifier(id)
+
+	_, e = p.expect(TK_ASSIGNMENT)
+	if e != nil {
+		return nil, e
+	}
+
+	source, e := expectExpression(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return newAssignment(target, source), nil
 }
 
 func whenCases(p *pipeline) ([]WhenCase, error) {

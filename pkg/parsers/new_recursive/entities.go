@@ -486,7 +486,7 @@ func (wc whenCaseStat) String() string {
 
 type whenStat struct {
 	key, close Token
-	subject    Expression
+	init       Assignment
 	cases      []WhenCase
 }
 
@@ -494,8 +494,8 @@ func (whenStat) Kind() Kind {
 	return ST_WHEN
 }
 
-func (w whenStat) Subject() Expression {
-	return w.subject
+func (w whenStat) Initialiser() Assignment {
+	return w.init
 }
 
 func (w whenStat) Cases() []WhenCase {
