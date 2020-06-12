@@ -2632,6 +2632,52 @@ func Test_S14_2(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S14_3(t *testing.T) {
+
+	// GIVEN a spell call
+	// WHICH containing a block argument
+	// THEN then the correct spell expression is returned
+
+	// @s(1, {
+	//   "abc"
+	// })
+	given := []Token{
+		tok(TK_SPELL, "@s"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_NUMBER, "1"),
+		tok(TK_DELIMITER, ","),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_STRING, "abc"),
+		tok(TK_TERMINATOR, "\n"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	first := newLiteral(tok(TK_NUMBER, "1"))
+
+	second := newBlock(
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		[]Expression{
+			newLiteral(tok(TK_STRING, "abc")),
+		},
+	)
+
+	exp := newSpellCall(
+		tok(TK_SPELL, "@s"),
+		tok(TK_PAREN_CLOSE, ")"),
+		[]Expression{
+			first,
+			second,
+		},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_S15_1(t *testing.T) {
 
 	// GIVEN an exit

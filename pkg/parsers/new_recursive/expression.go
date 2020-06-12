@@ -727,7 +727,7 @@ func spellCall(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	args, e := expressions(p)
+	args, e := spellCallArguments(p)
 	if e != nil {
 		return nil, e
 	}
@@ -747,4 +747,35 @@ func spellCall(p *pipeline) (Expression, error) {
 	}
 
 	return spell, nil
+}
+
+func spellCallArguments(p *pipeline) ([]Expression, error) {
+	// pattern  := [argument {DELIM argument}]
+	// arugment := expression | block
+
+	var expr Expression
+	var e error
+
+	args := []Expression{}
+
+	for !p.match(TK_PAREN_CLOSE) && !p.match(TK_TERMINATOR) {
+
+		if p.match(TK_BLOCK_OPEN) {
+			expr, e = block(p)
+		} else {
+			expr, e = expectExpression(p)
+		}
+
+		if e != nil {
+			return nil, e
+		}
+
+		args = append(args, expr)
+
+		if !p.accept(TK_DELIMITER) {
+			break
+		}
+	}
+
+	return args, nil
 }

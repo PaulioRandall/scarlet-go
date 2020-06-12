@@ -32,7 +32,7 @@ e := calc()
 when x := 1 + 2 {
 	0:       a := `even`
 	1:       a := `odd`
-	[x < 0]: a := `x`
+	[x < 0]: a := `error`
 	2:       a := `even`
 	[true]:  a := `meh`
 }
