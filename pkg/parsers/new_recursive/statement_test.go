@@ -306,11 +306,17 @@ func Test_S5_4(t *testing.T) {
 func quickOperationTest(t *testing.T, left, operator, right Token) {
 
 	express := func(tk Token) Expression {
+
 		switch tk.Type() {
 		case TK_IDENTIFIER:
 			return newIdentifier(tk)
+
 		case TK_BOOL, TK_NUMBER:
 			return newLiteral(tk)
+
+		case TK_VOID:
+			return newVoid(tk)
+
 		default:
 			panic("SANITY CHECK! Unknown token type: " + tk.Type().String())
 		}
@@ -1035,6 +1041,20 @@ func Test_S6_24(t *testing.T) {
 
 	act, e := testFunc(given)
 	expectOneStat(t, exp, act, e)
+}
+
+func Test_S6_25(t *testing.T) {
+
+	// GIVEN a simple logical != operation
+	// WITH a void as an operand
+	// THEN a single parsed operation is expected
+
+	// a <= b
+	quickOperationTest(t,
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_NOT_EQUAL, "!="),
+		tok(TK_VOID, "_"),
+	)
 }
 
 func Test_S7_1(t *testing.T) {

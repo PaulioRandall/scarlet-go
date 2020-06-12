@@ -172,7 +172,10 @@ func expectExpression(p *pipeline) (Expression, error) {
 func operand(p *pipeline) (Expression, error) {
 
 	switch {
-	case p.match(TK_IDENTIFIER), p.match(TK_VOID):
+	case p.match(TK_VOID):
+		return newVoid(p.any()), nil
+
+	case p.match(TK_IDENTIFIER):
 		return identifier(p)
 
 	case p.match(TK_BOOL), p.match(TK_NUMBER), p.match(TK_STRING):

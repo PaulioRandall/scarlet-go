@@ -27,7 +27,7 @@ calc := F(-> e) {
 })
 
 e := calc()
-[e != _] EXIT 1
+[e != _] exit 1
 
 when x := 1 + 2 {
 	0:       a := `even`
@@ -47,4 +47,4 @@ map := @Map(
 	b, 2,
 )
 
-EXIT 0
+exit 0
