@@ -11,7 +11,7 @@ const (
 	ST_VOID
 	ST_IDENTIFIER
 	ST_LITERAL
-	ST_LIST_ACCESSOR
+	ST_COLLECTION_ACCESSOR
 	ST_NEGATION
 	ST_OPERATION
 	ST_ASSIGNMENT
@@ -34,7 +34,7 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_VOID:                `Void`,
 	ST_IDENTIFIER:          `Identifier`,
 	ST_LITERAL:             `Literal`,
-	ST_LIST_ACCESSOR:       `List-Accessor`,
+	ST_COLLECTION_ACCESSOR: `Collection-Accessor`,
 	ST_NEGATION:            `Negation`,
 	ST_OPERATION:           `Operation`,
 	ST_ASSIGNMENT:          `Assignment`,

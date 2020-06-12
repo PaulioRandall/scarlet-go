@@ -32,7 +32,7 @@ func maybeMore(p *pipeline, expr Expression) (_ Expression, more bool, e error) 
 
 	if p.match(TK_GUARD_OPEN) {
 
-		expr, e = listAccessor(p, expr)
+		expr, e = collectionAccessor(p, expr)
 		if e != nil {
 			return nil, false, e
 		}
@@ -100,7 +100,7 @@ func group(p *pipeline) (Expression, error) {
 	return expr, e
 }
 
-func listAccessor(p *pipeline, left Expression) (Expression, error) {
+func collectionAccessor(p *pipeline, left Expression) (Expression, error) {
 	// pattern := GUARD_OPEN expression GUARD_CLOSE
 
 	p.expect(TK_GUARD_OPEN)
@@ -115,7 +115,7 @@ func listAccessor(p *pipeline, left Expression) (Expression, error) {
 		return nil, e
 	}
 
-	return newListAccessor(left, index), nil
+	return newCollectionAccessor(left, index), nil
 }
 
 func expressions(p *pipeline) ([]Expression, error) {

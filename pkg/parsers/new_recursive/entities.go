@@ -85,33 +85,33 @@ func (l literalExpr) String() string {
 	return LiteralString(l)
 }
 
-type listAccessorExpr struct {
-	id    Expression
-	index Expression
+type collectionAccessorExpr struct {
+	collection Expression
+	key        Expression
 }
 
-func (listAccessorExpr) Kind() Kind {
-	return ST_LIST_ACCESSOR
+func (collectionAccessorExpr) Kind() Kind {
+	return ST_COLLECTION_ACCESSOR
 }
 
-func (l listAccessorExpr) ID() Expression {
-	return l.id
+func (c collectionAccessorExpr) Collection() Expression {
+	return c.collection
 }
 
-func (l listAccessorExpr) Index() Expression {
-	return l.id
+func (c collectionAccessorExpr) Key() Expression {
+	return c.key
 }
 
-func (l listAccessorExpr) Begin() (int, int) {
-	return l.id.Begin()
+func (c collectionAccessorExpr) Begin() (int, int) {
+	return c.collection.Begin()
 }
 
-func (l listAccessorExpr) End() (int, int) {
-	return l.index.End()
+func (c collectionAccessorExpr) End() (int, int) {
+	return c.key.End()
 }
 
-func (l listAccessorExpr) String() string {
-	return ListAccessorString(l)
+func (c collectionAccessorExpr) String() string {
+	return CollectionAccessorString(c)
 }
 
 type negationExpr struct {

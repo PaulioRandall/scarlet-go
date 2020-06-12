@@ -155,7 +155,7 @@ func Test_S4_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}
 
-	exp := newListAccessor(
+	exp := newCollectionAccessor(
 		newIdentifier(tok(TK_IDENTIFIER, "abc")),
 		newLiteral(tok(TK_NUMBER, "1")),
 	)
@@ -188,7 +188,7 @@ func Test_S4_2(t *testing.T) {
 		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	exp := newListAccessor(
+	exp := newCollectionAccessor(
 		newIdentifier(tok(TK_IDENTIFIER, "abc")),
 		first,
 	)
@@ -219,17 +219,17 @@ func Test_S4_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}
 
-	var first Expression = newListAccessor(
+	var first Expression = newCollectionAccessor(
 		newIdentifier(tok(TK_IDENTIFIER, "abc")),
 		newLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	var second Expression = newListAccessor(
+	var second Expression = newCollectionAccessor(
 		first,
 		newLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	exp := newListAccessor(
+	exp := newCollectionAccessor(
 		second,
 		newLiteral(tok(TK_NUMBER, "3")),
 	)
@@ -2597,7 +2597,7 @@ func Test_S14_2(t *testing.T) {
 		[]Expression{},
 	)
 
-	var second Expression = newListAccessor(
+	var second Expression = newCollectionAccessor(
 		first,
 		newLiteral(tok(TK_NUMBER, "1")),
 	)

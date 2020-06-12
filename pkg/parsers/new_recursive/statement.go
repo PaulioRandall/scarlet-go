@@ -166,12 +166,16 @@ func assignmentTarget(p *pipeline) (Expression, error) {
 func assignmentIdentifier(p *pipeline) (Expression, error) {
 	// pattern := IDENTIFIER [list_accessor | function_call]
 
-	var e error
-	var id Expression = newIdentifier(p.any())
+	tk, e := p.expect(TK_IDENTIFIER)
+	if e != nil {
+		return nil, e
+	}
+
+	var id Expression = newIdentifier(tk)
 
 	for p.match(TK_GUARD_OPEN) {
 
-		id, e = listAccessor(p, id)
+		id, e = collectionAccessor(p, id)
 		if e != nil {
 			return nil, e
 		}

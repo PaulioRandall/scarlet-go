@@ -17,10 +17,10 @@ func newLiteral(tk Token) literalExpr {
 	return literalExpr{tk}
 }
 
-func newListAccessor(id, index Expression) listAccessorExpr {
-	return listAccessorExpr{
-		id:    id,
-		index: index,
+func newCollectionAccessor(collection, key Expression) collectionAccessorExpr {
+	return collectionAccessorExpr{
+		collection: collection,
+		key:        key,
 	}
 }
 

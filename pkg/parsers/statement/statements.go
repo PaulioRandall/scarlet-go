@@ -62,27 +62,27 @@ func LiteralString(l Literal) string {
 	return b.String()
 }
 
-type ListAccessor interface {
+type CollectionAccessor interface {
 	Expression
-	ID() Expression
-	Index() Expression
+	Collection() Expression
+	Key() Expression
 }
 
-func ListAccessorString(l ListAccessor) string {
+func CollectionAccessorString(c CollectionAccessor) string {
 
 	b := builder{}
 
-	b.add(0, "[ListAccessor] ")
+	b.add(0, "[CollectionAccessor] ")
 
 	b.newline()
-	b.add(1, "ID: ")
+	b.add(1, "Collection: ")
 	b.newline()
-	b.add(2, l.ID().String())
+	b.add(2, c.Collection().String())
 
 	b.newline()
-	b.add(1, "Index: ")
+	b.add(1, "Key: ")
 	b.newline()
-	b.add(2, l.Index().String())
+	b.add(2, c.Key().String())
 
 	return b.String()
 }
