@@ -85,6 +85,9 @@ var patterns = []mat.Pattern{
 
 		return n, nil
 	}},
+	pattern{TK_EXIT, func(s *mat.Symbols) (int, error) {
+		return matchWord(s, "exit")
+	}},
 	pattern{TK_WHEN, func(s *mat.Symbols) (int, error) {
 		return matchWord(s, "when")
 	}},

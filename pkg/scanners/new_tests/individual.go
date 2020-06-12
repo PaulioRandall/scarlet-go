@@ -223,3 +223,7 @@ func T41_1() (in string, expects []Token) {
 func T42_1() (in string, expects []Token) {
 	return solo(TK_THEN, ":")
 }
+
+func T43_1() (in string, expects []Token) {
+	return solo(TK_EXIT, "exit")
+}

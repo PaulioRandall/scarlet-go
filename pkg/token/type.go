@@ -17,6 +17,7 @@ const (
 	// ------------------
 	TK_COMMENT
 	TK_WHITESPACE
+	TK_EXIT
 	TK_NEWLINE
 	TK_FUNCTION
 	TK_EXPR_FUNC
@@ -66,6 +67,7 @@ var types map[TokenType]string = map[TokenType]string{
 	TK_ANOTHER:            `ANOTHER`,
 	TK_COMMENT:            `COMMENT`,
 	TK_WHITESPACE:         `WHITESPACE`,
+	TK_EXIT:               `EXIT`,
 	TK_NEWLINE:            `NEWLINE`,
 	TK_FUNCTION:           `FUNCTION`,
 	TK_EXPR_FUNC:          `EXPR_FUNCTION`,
