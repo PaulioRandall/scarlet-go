@@ -150,3 +150,10 @@ func newSpellCall(spell, close Token, args []Expression) spellCallExpr {
 		args:  args,
 	}
 }
+
+func newExists(close Token, subject Expression) existsExpr {
+	return existsExpr{
+		close:   close,
+		subject: subject,
+	}
+}

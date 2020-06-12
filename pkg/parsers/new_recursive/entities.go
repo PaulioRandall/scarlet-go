@@ -601,3 +601,28 @@ func (s spellCallExpr) End() (int, int) {
 func (s spellCallExpr) String() string {
 	return SpellCallString(s)
 }
+
+type existsExpr struct {
+	close   Token
+	subject Expression
+}
+
+func (existsExpr) Kind() Kind {
+	return ST_EXISTS
+}
+
+func (e existsExpr) Subject() Expression {
+	return e.subject
+}
+
+func (e existsExpr) Begin() (int, int) {
+	return e.subject.Begin()
+}
+
+func (e existsExpr) End() (int, int) {
+	return endPos(e.close)
+}
+
+func (e existsExpr) String() string {
+	return ExistsString(e)
+}

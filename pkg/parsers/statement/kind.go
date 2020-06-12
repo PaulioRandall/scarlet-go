@@ -1,9 +1,5 @@
 package statement
 
-import (
-//"strings"
-)
-
 type Kind int
 
 const (
@@ -28,6 +24,7 @@ const (
 	ST_WHEN
 	ST_LOOP
 	ST_SPELL_CALL
+	ST_EXISTS
 )
 
 var kinds map[Kind]string = map[Kind]string{
@@ -52,6 +49,7 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_WHEN:                `When`,
 	ST_LOOP:                `Loop`,
 	ST_SPELL_CALL:          `Spell-Call`,
+	ST_EXISTS:              `Exists`,
 }
 
 func (k Kind) String() string {

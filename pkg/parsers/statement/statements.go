@@ -464,3 +464,19 @@ func SpellCallString(s SpellCall) string {
 
 	return b.String()
 }
+
+type Exists interface {
+	Expression
+	Subject() Expression
+}
+
+func ExistsString(e Exists) string {
+
+	b := builder{}
+
+	b.add(0, "[Exists]")
+	b.newline()
+	b.add(1, e.Subject().String())
+
+	return b.String()
+}

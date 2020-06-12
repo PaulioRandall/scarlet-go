@@ -27,7 +27,7 @@ calc := F(-> e) {
 })
 
 e := calc()
-[e != _] exit 1
+[e?] exit 1
 
 when x := 1 + 2 {
 	0:       a := `even`
