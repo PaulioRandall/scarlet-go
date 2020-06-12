@@ -1,28 +1,22 @@
 
-def divideAndFmt := F(a, b, ^r, ^e) {
-	WATCH e {
-		[b == 0] {
-			e := !Can't divide by zero"
-		}
-
-		r, e := @FmtNum(a / b, ".##"")
+def divideAndFmt := F(a, b -> r, e) {
+	watch e {
+		[b == 0] e := "Can't divide by zero"
+		r, e := @FmtNum(a / b, ".##")
 	}
 }
 
-parseArgs := F(args, ^a, ^b, ^e) {
-	WATCH e {
-		[@Len(args) < 3] {
-			e := "Need at least two number arguments"
-		}
-
-		a, e := @ParseNum(args(1))
-		b, e := @ParseNum(args(2))
+def parseArgs := F(args, -> a, b, e) {
+	watch e {
+		[@Len(args) < 3] e := "Need at least two number arguments"
+		a, e := @ParseNum(args[1])
+		b, e := @ParseNum(args[2])
 	}
 }
 
-calc := F(argParser, ^e) {
-	WATCH e {
-		a, b, e := argParser(@Args())
+calc := F(-> e) {
+	watch e {
+		a, b, e := parseArgs(@Args())
 		r, e := divideAndFmt(a, b)
 		@Println("{a} / {b} = {r}")
 	}
@@ -32,15 +26,15 @@ calc := F(argParser, ^e) {
 	@Println(v)
 })
 
-e := calc(parseArgs)
-@Check(e)
+e := calc()
+[e != _] EXIT 1
 
-match 1 + 2 {
-	0        -> a := `even`
-	1        -> a := `odd`
-	[x == 1] -> a := `x`
-	2        -> a := `even`
-	[true]   -> a := `meh`
+when x := 1 + 2 {
+	0:       a := `even`
+	1:       a := `odd`
+	[x < 0]: a := `x`
+	2:       a := `even`
+	[true]:  a := `meh`
 }
 
 list := @List(
@@ -53,27 +47,4 @@ map := @Map(
 	b, 2,
 )
 
-EXIT SCRIPT
-
-// Future stuff
-
-// Quick command line calls
-$"ls -la"              // Execute a terminal process
-output := $"ls -la"    // Return output as a list of strings
-$"ls -la" IN `./other` // Execute within a specified folder
-
-// Pairs
-p := a: b       // Pair together `a` and `b` as KEY and VALUE
-key, val := p   // Get the key and value
-key, _ := p     // Get the key
-_, val := p     // Get the value
-map := {        // Combining lists and pairs produces a map
-	`a`: `alpha`
-	`b`: `beta`
-	`c`: `charlie`
-}
-i, v := @Search(list, `b`) // Finds the specified pair searching on the key
-
-// Spell receivers, the first parameter to the spell is the receiver
-@Args().foreach(F(_, v, _) @Println(v))
-"abc".println()
+EXIT 0

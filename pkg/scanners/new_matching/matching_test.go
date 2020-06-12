@@ -88,6 +88,10 @@ func Test_T11_1(t *testing.T) {
 	okTest(t, T11_1)
 }
 
+func Test_T11_2(t *testing.T) {
+	okTest(t, T11_2)
+}
+
 func Test_T12_1(t *testing.T) {
 	okTest(t, T12_1)
 }

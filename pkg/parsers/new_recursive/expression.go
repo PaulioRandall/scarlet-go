@@ -319,7 +319,7 @@ func functionParameters(p *pipeline) (Parameters, error) {
 
 	outputs := []Token{}
 
-	if p.accept(TK_THEN) {
+	if p.accept(TK_OUTPUTS) {
 		outputs, e = parameterIdentifiers(p)
 		if e != nil {
 			return nil, e
@@ -339,7 +339,7 @@ func parameterIdentifiers(p *pipeline) ([]Token, error) {
 
 	ids := []Token{}
 
-	for !p.match(TK_THEN) && !p.match(TK_PAREN_CLOSE) {
+	for !p.match(TK_OUTPUTS) && !p.match(TK_PAREN_CLOSE) {
 
 		id, e := p.expect(TK_IDENTIFIER)
 		if e != nil {

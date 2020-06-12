@@ -58,9 +58,9 @@ func S3() (in string, expects []Token) {
 func S4() (in string, expects []Token) {
 
 	in = "when abc {\n" +
-		"\t1 -> x:=true\n" +
-		"\t[false] -> x:=false\n" +
-		"\t[true] -> x:=true\n" +
+		"\t1: x:=true\n" +
+		"\t[false]: x:=false\n" +
+		"\t[true]: x:=true\n" +
 		"}"
 
 	expects = []Token{
@@ -72,35 +72,32 @@ func S4() (in string, expects []Token) {
 		NewToken(TK_NEWLINE, "\n", 0, 10), // Line start
 		NewToken(TK_WHITESPACE, "\t", 1, 0),
 		NewToken(TK_NUMBER, "1", 1, 1),
-		NewToken(TK_WHITESPACE, " ", 1, 2),
-		NewToken(TK_THEN, "->", 1, 3),
-		NewToken(TK_WHITESPACE, " ", 1, 5),
-		NewToken(TK_IDENTIFIER, "x", 1, 6),
-		NewToken(TK_ASSIGNMENT, ":=", 1, 7),
-		NewToken(TK_BOOL, "true", 1, 9),
-		NewToken(TK_NEWLINE, "\n", 1, 13), // Line start
+		NewToken(TK_THEN, ":", 1, 2),
+		NewToken(TK_WHITESPACE, " ", 1, 3),
+		NewToken(TK_IDENTIFIER, "x", 1, 4),
+		NewToken(TK_ASSIGNMENT, ":=", 1, 5),
+		NewToken(TK_BOOL, "true", 1, 7),
+		NewToken(TK_NEWLINE, "\n", 1, 11), // Line start
 		NewToken(TK_WHITESPACE, "\t", 2, 0),
 		NewToken(TK_GUARD_OPEN, "[", 2, 1),
 		NewToken(TK_BOOL, "false", 2, 2),
 		NewToken(TK_GUARD_CLOSE, "]", 2, 7),
-		NewToken(TK_WHITESPACE, " ", 2, 8),
-		NewToken(TK_THEN, "->", 2, 9),
-		NewToken(TK_WHITESPACE, " ", 2, 11),
-		NewToken(TK_IDENTIFIER, "x", 2, 12),
-		NewToken(TK_ASSIGNMENT, ":=", 2, 13),
-		NewToken(TK_BOOL, "false", 2, 15),
-		NewToken(TK_NEWLINE, "\n", 2, 20),
+		NewToken(TK_THEN, ":", 2, 8),
+		NewToken(TK_WHITESPACE, " ", 2, 9),
+		NewToken(TK_IDENTIFIER, "x", 2, 10),
+		NewToken(TK_ASSIGNMENT, ":=", 2, 11),
+		NewToken(TK_BOOL, "false", 2, 13),
+		NewToken(TK_NEWLINE, "\n", 2, 18),
 		NewToken(TK_WHITESPACE, "\t", 3, 0), // Line start
 		NewToken(TK_GUARD_OPEN, "[", 3, 1),
 		NewToken(TK_BOOL, "true", 3, 2),
 		NewToken(TK_GUARD_CLOSE, "]", 3, 6),
-		NewToken(TK_WHITESPACE, " ", 3, 7),
-		NewToken(TK_THEN, "->", 3, 8),
-		NewToken(TK_WHITESPACE, " ", 3, 10),
-		NewToken(TK_IDENTIFIER, "x", 3, 11),
-		NewToken(TK_ASSIGNMENT, ":=", 3, 12),
-		NewToken(TK_BOOL, "true", 3, 14),
-		NewToken(TK_NEWLINE, "\n", 3, 18),
+		NewToken(TK_THEN, ":", 3, 7),
+		NewToken(TK_WHITESPACE, " ", 3, 8),
+		NewToken(TK_IDENTIFIER, "x", 3, 9),
+		NewToken(TK_ASSIGNMENT, ":=", 3, 10),
+		NewToken(TK_BOOL, "true", 3, 12),
+		NewToken(TK_NEWLINE, "\n", 3, 16),
 		NewToken(TK_BLOCK_CLOSE, "}", 4, 0), // Line start
 	}
 

@@ -84,6 +84,10 @@ func T11_1() (in string, expects []Token) {
 	return solo(TK_OUTPUT, "^")
 }
 
+func T11_2() (in string, expects []Token) {
+	return solo(TK_OUTPUTS, "->")
+}
+
 func T12_1() (in string, expects []Token) {
 	return solo(TK_LESS_THAN_OR_EQUAL, "<=")
 }
@@ -217,5 +221,5 @@ func T41_1() (in string, expects []Token) {
 }
 
 func T42_1() (in string, expects []Token) {
-	return solo(TK_THEN, "->")
+	return solo(TK_THEN, ":")
 }

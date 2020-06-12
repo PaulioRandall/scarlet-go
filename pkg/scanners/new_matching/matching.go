@@ -176,7 +176,7 @@ var patterns = []mat.Pattern{
 		return matchStr(s, ">=")
 	}},
 	pattern{TK_THEN, func(s *mat.Symbols) (int, error) {
-		return matchStr(s, "->")
+		return matchStr(s, ":")
 	}},
 	pattern{TK_BLOCK_OPEN, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "{")
@@ -198,6 +198,9 @@ var patterns = []mat.Pattern{
 	}},
 	pattern{TK_OUTPUT, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "^")
+	}},
+	pattern{TK_OUTPUTS, func(s *mat.Symbols) (int, error) {
+		return matchStr(s, "->")
 	}},
 	pattern{TK_DELIMITER, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ",")

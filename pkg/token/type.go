@@ -27,6 +27,7 @@ const (
 	TK_LOOP
 	TK_SPELL
 	TK_OUTPUT
+	TK_OUTPUTS
 	TK_IDENTIFIER
 	TK_VOID
 	TK_DELIMITER
@@ -75,6 +76,7 @@ var types map[TokenType]string = map[TokenType]string{
 	TK_LOOP:               `LOOP`,
 	TK_SPELL:              `SPELL`,
 	TK_OUTPUT:             `OUTPUT`,
+	TK_OUTPUTS:            `OUTPUTS`,
 	TK_IDENTIFIER:         `ID`,
 	TK_VOID:               `VOID`,
 	TK_DELIMITER:          `DELIM`,
