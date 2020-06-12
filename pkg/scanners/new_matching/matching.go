@@ -211,6 +211,9 @@ var patterns = []mat.Pattern{
 	pattern{TK_VOID, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "_")
 	}},
+	pattern{TK_EXISTS, func(s *mat.Symbols) (int, error) {
+		return matchStr(s, "?")
+	}},
 	pattern{TK_TERMINATOR, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, ";")
 	}},

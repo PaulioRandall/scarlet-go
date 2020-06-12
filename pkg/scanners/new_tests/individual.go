@@ -227,3 +227,7 @@ func T42_1() (in string, expects []Token) {
 func T43_1() (in string, expects []Token) {
 	return solo(TK_EXIT, "exit")
 }
+
+func T44_1() (in string, expects []Token) {
+	return solo(TK_EXISTS, "?")
+}

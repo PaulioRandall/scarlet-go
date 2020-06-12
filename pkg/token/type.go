@@ -31,6 +31,7 @@ const (
 	TK_OUTPUTS
 	TK_IDENTIFIER
 	TK_VOID
+	TK_EXISTS
 	TK_DELIMITER
 	TK_ASSIGNMENT
 	TK_UPDATES
@@ -81,6 +82,7 @@ var types map[TokenType]string = map[TokenType]string{
 	TK_OUTPUTS:            `OUTPUTS`,
 	TK_IDENTIFIER:         `ID`,
 	TK_VOID:               `VOID`,
+	TK_EXISTS:             `EXISTS`,
 	TK_DELIMITER:          `DELIM`,
 	TK_ASSIGNMENT:         `ASSIGNMENT`,
 	TK_UPDATES:            `UPDATES`,
