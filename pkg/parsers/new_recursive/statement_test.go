@@ -2612,6 +2612,27 @@ func Test_S14_2(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S15_1(t *testing.T) {
+
+	// GIVEN an exit
+	// THEN then the correct exit statement is returned
+
+	// exit
+	given := []Token{
+		tok(TK_EXIT, "exit"),
+		tok(TK_NUMBER, "0"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	exp := newExit(
+		tok(TK_EXIT, "exit"),
+		newLiteral(tok(TK_NUMBER, "0")),
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_F1(t *testing.T) {
 
 	// GIVEN an invalid statement or expression starting token

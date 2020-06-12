@@ -56,6 +56,9 @@ func statement(p *pipeline) (Expression, error) {
 
 	case p.match(TK_VOID):
 		return assignment(p)
+
+	case p.match(TK_EXIT):
+		return exit(p)
 	}
 
 	return expression(p)
@@ -70,6 +73,21 @@ func expectStatement(p *pipeline) (Expression, error) {
 	}
 
 	return st, e
+}
+
+func exit(p *pipeline) (Expression, error) {
+
+	tk, e := p.expect(TK_EXIT)
+	if e != nil {
+		return nil, e
+	}
+
+	code, e := expectExpression(p)
+	if e != nil {
+		return nil, e
+	}
+
+	return newExit(tk, code), nil
 }
 
 func assignment(p *pipeline) (Expression, error) {

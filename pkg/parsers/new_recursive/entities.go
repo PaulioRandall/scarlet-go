@@ -13,6 +13,35 @@ func endPos(tk Token) (line int, col int) {
 	return tk.Line(), tk.Col() + len(tk.Value())
 }
 
+type exitStat struct {
+	tk   Token
+	code Expression
+}
+
+func (exitStat) Kind() Kind {
+	return ST_EXIT
+}
+
+func (e exitStat) Tk() Token {
+	return e.tk
+}
+
+func (e exitStat) Code() Expression {
+	return e.code
+}
+
+func (e exitStat) Begin() (int, int) {
+	return startPos(e.tk)
+}
+
+func (e exitStat) End() (int, int) {
+	return e.code.End()
+}
+
+func (e exitStat) String() string {
+	return ExitString(e)
+}
+
 type voidExpr struct {
 	tk Token
 }

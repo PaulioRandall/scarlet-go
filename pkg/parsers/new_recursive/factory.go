@@ -5,6 +5,13 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
+func newExit(tk Token, code Expression) exitStat {
+	return exitStat{
+		tk:   tk,
+		code: code,
+	}
+}
+
 func newVoid(tk Token) voidExpr {
 	return voidExpr{tk}
 }

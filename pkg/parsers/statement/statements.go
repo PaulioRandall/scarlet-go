@@ -17,6 +17,27 @@ type Snippet interface {
 	End() (line, col int)
 }
 
+type Exit interface {
+	Expression
+	Tk() Token
+	Code() Expression
+}
+
+func ExitString(e Exit) string {
+
+	b := builder{}
+
+	b.add(0, "[Exit] ")
+	b.addToken(0, e.Tk())
+
+	b.newline()
+	b.add(1, "Code: ")
+	b.newline()
+	b.add(2, e.Code().String())
+
+	return b.String()
+}
+
 type Void interface {
 	Expression
 	Tk() Token
