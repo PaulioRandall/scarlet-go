@@ -14,12 +14,10 @@ def parseArgs := F(args, -> a, b, e) {
 	}
 }
 
-calc := F(-> e) {
-	watch e {
-		a, b, e := parseArgs(@Args())
-		r, e := divideAndFmt(a, b)
-		@Println("{a} / {b} = {r}")
-	}
+calc := F(-> e) watch e {
+	a, b, e := parseArgs(@Args())
+	r, e := divideAndFmt(a, b)
+	@Println("{a} / {b} = {r}")
 }
  
 @Foreach(@Args(), F(_, v, _) {
