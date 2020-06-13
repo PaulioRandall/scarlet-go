@@ -1393,6 +1393,176 @@ func Test_S7_6(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
+func Test_S7_7(t *testing.T) {
+
+	// GIVEN a function
+	// WITH no parameters
+	// AND a watch as the body
+	// THEN the correctly parsed function is returned
+
+	// f := F() {}
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_WATCH, "watch"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	f := newFunction(
+		tok(TK_FUNCTION, "F"),
+		newParameters(
+			tok(TK_PAREN_OPEN, "("),
+			tok(TK_PAREN_CLOSE, ")"),
+			[]Token{},
+			[]Token{},
+		),
+		newWatch(
+			tok(TK_WATCH, "watch"),
+			[]Token{
+				tok(TK_IDENTIFIER, "a"),
+			},
+			newBlock(
+				tok(TK_BLOCK_OPEN, "{"),
+				tok(TK_BLOCK_CLOSE, "}"),
+				[]Expression{},
+			),
+		),
+	)
+
+	exp := newAssignmentBlock(
+		[]Assignment{
+			newAssignment(
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S7_8(t *testing.T) {
+
+	// GIVEN a function
+	// WITH no parameters
+	// AND a when as the body
+	// THEN the correctly parsed function is returned
+
+	// f := F() {}
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_WHEN, "when"),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_NUMBER, "1"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	f := newFunction(
+		tok(TK_FUNCTION, "F"),
+		newParameters(
+			tok(TK_PAREN_OPEN, "("),
+			tok(TK_PAREN_CLOSE, ")"),
+			[]Token{},
+			[]Token{},
+		),
+		newWhen(
+			tok(TK_WHEN, "when"),
+			tok(TK_BLOCK_CLOSE, "}"),
+			newAssignment(
+				newIdentifier(tok(TK_IDENTIFIER, "a")),
+				newLiteral(tok(TK_NUMBER, "1")),
+			),
+			[]WhenCase{},
+		),
+	)
+
+	exp := newAssignmentBlock(
+		[]Assignment{
+			newAssignment(
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S7_9(t *testing.T) {
+
+	// GIVEN a function
+	// WITH no parameters
+	// AND a guard as the body
+	// THEN the correctly parsed function is returned
+
+	// f := F() {}
+	given := []Token{
+		tok(TK_IDENTIFIER, "f"),
+		tok(TK_ASSIGNMENT, ":="),
+		tok(TK_FUNCTION, "F"),
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_PAREN_CLOSE, ")"),
+		tok(TK_GUARD_OPEN, "["),
+		tok(TK_NUMBER, "1"),
+		tok(TK_EQUAL, "=="),
+		tok(TK_NUMBER, "1"),
+		tok(TK_GUARD_CLOSE, "]"),
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "}"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	f := newFunction(
+		tok(TK_FUNCTION, "F"),
+		newParameters(
+			tok(TK_PAREN_OPEN, "("),
+			tok(TK_PAREN_CLOSE, ")"),
+			[]Token{},
+			[]Token{},
+		),
+		newGuard(
+			tok(TK_GUARD_OPEN, "["),
+			newOperation(
+				tok(TK_EQUAL, "=="),
+				newLiteral(tok(TK_NUMBER, "1")),
+				newLiteral(tok(TK_NUMBER, "1")),
+			),
+			newBlock(
+				tok(TK_BLOCK_OPEN, "{"),
+				tok(TK_BLOCK_CLOSE, "}"),
+				[]Expression{},
+			),
+		),
+	)
+
+	exp := newAssignmentBlock(
+		[]Assignment{
+			newAssignment(
+				newIdentifier(tok(TK_IDENTIFIER, "f")),
+				f,
+			),
+		},
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
 func Test_S8_1(t *testing.T) {
 
 	// GIVEN an expression function
