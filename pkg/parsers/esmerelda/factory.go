@@ -87,7 +87,7 @@ func newParameters(open, close Token, inputs, outputs []Token) parametersDef {
 	}
 }
 
-func newFunction(key Token, params Parameters, body Block) functionExpr {
+func newFunction(key Token, params Parameters, body Expression) functionExpr {
 	return functionExpr{
 		key:    key,
 		params: params,

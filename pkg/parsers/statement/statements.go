@@ -262,7 +262,7 @@ func ParametersString(p Parameters) string {
 type Function interface {
 	Expression
 	Params() Parameters
-	Body() Block
+	Body() Expression
 }
 
 func FunctionString(f Function) string {
@@ -275,7 +275,7 @@ func FunctionString(f Function) string {
 	b.add(1, ParametersString(f.Params()))
 
 	b.newline()
-	b.add(1, BlockString(f.Body()))
+	b.add(1, f.Body().String())
 
 	return b.String()
 }

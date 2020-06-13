@@ -322,7 +322,7 @@ func function(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	body, e := block(p)
+	body, e := functionBody(p)
 	if e != nil {
 		return nil, e
 	}
@@ -380,6 +380,36 @@ func parameterIdentifiers(p *pipeline) ([]Token, error) {
 	}
 
 	return ids, nil
+}
+
+func functionBody(p *pipeline) (Expression, error) {
+
+	switch {
+	case p.match(TK_BLOCK_OPEN):
+		return block(p)
+
+	case p.match(TK_WATCH):
+		return watch(p)
+
+	case p.match(TK_WHEN):
+		return when(p)
+
+	case p.match(TK_GUARD_OPEN):
+
+		open, condition, e := guardCondition(p)
+		if e != nil {
+			return nil, e
+		}
+
+		body, e := block(p)
+		if e != nil {
+			return nil, e
+		}
+
+		return newGuard(open, condition, body), nil
+	}
+
+	return nil, err.New("Expected function body", err.At(p.any()))
 }
 
 func functionCall(p *pipeline, f Expression) (Expression, error) {

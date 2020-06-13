@@ -367,7 +367,7 @@ func (p parametersDef) String() string {
 type functionExpr struct {
 	key    Token
 	params Parameters
-	body   Block
+	body   Expression
 }
 
 func (functionExpr) Kind() Kind {
@@ -378,7 +378,7 @@ func (f functionExpr) Params() Parameters {
 	return f.params
 }
 
-func (f functionExpr) Body() Block {
+func (f functionExpr) Body() Expression {
 	return f.body
 }
 
