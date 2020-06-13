@@ -1043,20 +1043,6 @@ func Test_S6_24(t *testing.T) {
 	expectOneStat(t, exp, act, e)
 }
 
-func Test_S6_25(t *testing.T) {
-
-	// GIVEN a simple logical != operation
-	// WITH a void as an operand
-	// THEN a single parsed operation is expected
-
-	// a <= b
-	quickOperationTest(t,
-		tok(TK_IDENTIFIER, "a"),
-		tok(TK_NOT_EQUAL, "!="),
-		tok(TK_VOID, "_"),
-	)
-}
-
 func Test_S7_1(t *testing.T) {
 
 	// GIVEN a function
@@ -2693,6 +2679,82 @@ func Test_S15_1(t *testing.T) {
 	exp := newExit(
 		tok(TK_EXIT, "exit"),
 		newLiteral(tok(TK_NUMBER, "0")),
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S16_1(t *testing.T) {
+
+	// GIVEN an exists test
+	// WITH a literal subject
+	// THEN then the correct exists statement is returned
+
+	// 0?
+	given := []Token{
+		tok(TK_NUMBER, "0"),
+		tok(TK_EXISTS, "?"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	exp := newExists(
+		tok(TK_EXISTS, "?"),
+		newLiteral(tok(TK_NUMBER, "0")),
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S16_2(t *testing.T) {
+
+	// GIVEN an exists test
+	// WITH an identifier subject
+	// THEN then the correct exists statement is returned
+
+	// a?
+	given := []Token{
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_EXISTS, "?"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	exp := newExists(
+		tok(TK_EXISTS, "?"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+	)
+
+	act, e := testFunc(given)
+	expectOneStat(t, exp, act, e)
+}
+
+func Test_S16_3(t *testing.T) {
+
+	// GIVEN an exists test
+	// WITH a group as the subject
+	// THEN then the correct exists statement is returned
+
+	// (a + b)?
+	given := []Token{
+		tok(TK_PAREN_OPEN, "("),
+		tok(TK_IDENTIFIER, "a"),
+		tok(TK_PLUS, "+"),
+		tok(TK_IDENTIFIER, "b"),
+		tok(TK_PAREN_CLOSE, "("),
+		tok(TK_EXISTS, "?"),
+		tok(TK_TERMINATOR, ""),
+	}
+
+	op := newOperation(
+		tok(TK_PLUS, "+"),
+		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		newIdentifier(tok(TK_IDENTIFIER, "b")),
+	)
+
+	exp := newExists(
+		tok(TK_EXISTS, "?"),
+		op,
 	)
 
 	act, e := testFunc(given)

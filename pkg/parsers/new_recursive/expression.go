@@ -80,6 +80,25 @@ func negation(p *pipeline) (Expression, error) {
 	return newNegation(expr), nil
 }
 
+func exists(p *pipeline, subject Expression) (Expression, error) {
+	// pattern := subject EXISTS
+
+	close, e := p.expect(TK_EXISTS)
+	if e != nil {
+		return nil, e
+	}
+
+	return newExists(close, subject), nil
+}
+
+func maybeExists(p *pipeline, subject Expression) (Expression, error) {
+	if p.match(TK_EXISTS) {
+		return exists(p, subject)
+	}
+
+	return subject, nil
+}
+
 func group(p *pipeline) (Expression, error) {
 
 	_, e := p.expect(TK_PAREN_OPEN)
@@ -97,7 +116,7 @@ func group(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return expr, e
+	return expr, nil
 }
 
 func collectionAccessor(p *pipeline, left Expression) (Expression, error) {
@@ -169,29 +188,33 @@ func expectExpression(p *pipeline) (Expression, error) {
 	return expr, nil
 }
 
-func operand(p *pipeline) (Expression, error) {
+func operand(p *pipeline) (expr Expression, e error) {
 
 	switch {
-	case p.match(TK_VOID):
-		return newVoid(p.any()), nil
-
 	case p.match(TK_IDENTIFIER):
-		return identifier(p)
+		expr, e = identifier(p)
 
 	case p.match(TK_BOOL), p.match(TK_NUMBER), p.match(TK_STRING):
-		return literal(p)
+		expr, e = literal(p)
 
 	case p.match(TK_MINUS):
-		return negation(p)
+		expr, e = negation(p)
 
 	case p.match(TK_PAREN_OPEN):
-		return group(p)
+		expr, e = group(p)
 
 	case p.match(TK_SPELL):
-		return spellCall(p)
+		expr, e = spellCall(p)
+
+	default:
+		return nil, nil
 	}
 
-	return nil, nil
+	if e != nil {
+		return nil, e
+	}
+
+	return maybeExists(p, expr)
 }
 
 func expectOperand(p *pipeline) (Expression, error) {
