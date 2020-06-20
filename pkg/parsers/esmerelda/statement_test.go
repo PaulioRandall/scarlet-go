@@ -23,10 +23,10 @@ func Test_S2_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "a"))},
-		[]Expression{newLiteral(tok(TK_NUMBER, "1"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+		[]Expression{NewLiteral(tok(TK_NUMBER, "1"))},
 		1,
 	)
 
@@ -57,17 +57,17 @@ func Test_S2_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
 		[]Expression{
-			newIdentifier(tok(TK_IDENTIFIER, "a")),
-			newIdentifier(tok(TK_IDENTIFIER, "b")),
-			newIdentifier(tok(TK_IDENTIFIER, "c")),
+			NewIdentifier(tok(TK_IDENTIFIER, "a")),
+			NewIdentifier(tok(TK_IDENTIFIER, "b")),
+			NewIdentifier(tok(TK_IDENTIFIER, "c")),
 		},
 		[]Expression{
-			newLiteral(tok(TK_NUMBER, "1")),
-			newLiteral(tok(TK_BOOL, "TRUE")),
-			newLiteral(tok(TK_STRING, "abc")),
+			NewLiteral(tok(TK_NUMBER, "1")),
+			NewLiteral(tok(TK_BOOL, "TRUE")),
+			NewLiteral(tok(TK_STRING, "abc")),
 		},
 		3,
 	)
@@ -91,10 +91,10 @@ func Test_S2_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		true,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "a"))},
-		[]Expression{newLiteral(tok(TK_NUMBER, "1"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+		[]Expression{NewLiteral(tok(TK_NUMBER, "1"))},
 		1,
 	)
 
@@ -173,13 +173,13 @@ func quickOperationTest(t *testing.T, left, operator, right Token) {
 
 		switch tk.Type() {
 		case TK_IDENTIFIER:
-			return newIdentifier(tk)
+			return NewIdentifier(tk)
 
 		case TK_BOOL, TK_NUMBER:
-			return newLiteral(tk)
+			return NewLiteral(tk)
 
 		case TK_VOID:
-			return newVoid(tk)
+			return NewVoid(tk)
 
 		default:
 			panic("SANITY CHECK! Unknown token type: " + tk.Type().String())
@@ -195,15 +195,15 @@ func quickOperationTest(t *testing.T, left, operator, right Token) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	op := newOperation(
+	op := NewOperation(
 		operator,
 		express(left),
 		express(right),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -399,17 +399,17 @@ func Test_S6_14(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_PLUS, "+"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
-		newNegation(
-			newLiteral(tok(TK_NUMBER, "1")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewNegation(
+			NewLiteral(tok(TK_NUMBER, "1")),
 		),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -437,21 +437,21 @@ func Test_S6_15(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	left := newOperation(
+	left := NewOperation(
 		tok(TK_PLUS, "+"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_MINUS, "-"),
 		left,
-		newIdentifier(tok(TK_IDENTIFIER, "b")),
+		NewIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -479,21 +479,21 @@ func Test_S6_16(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	left := newOperation(
+	left := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_DIVIDE, "/"),
 		left,
-		newIdentifier(tok(TK_IDENTIFIER, "b")),
+		NewIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -521,21 +521,21 @@ func Test_S6_17(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	left := newOperation(
+	left := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_PLUS, "+"),
 		left,
-		newIdentifier(tok(TK_IDENTIFIER, "b")),
+		NewIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -563,21 +563,21 @@ func Test_S6_18(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	left := newOperation(
+	left := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newIdentifier(tok(TK_IDENTIFIER, "b")),
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_PLUS, "+"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
 		left,
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -609,33 +609,33 @@ func Test_S6_19(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	first := newOperation(
+	first := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newIdentifier(tok(TK_IDENTIFIER, "b")),
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
-	second := newOperation(
+	second := NewOperation(
 		tok(TK_REMAINDER, "%"),
 		first,
-		newLiteral(tok(TK_NUMBER, "2")),
+		NewLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	third := newOperation(
+	third := NewOperation(
 		tok(TK_MINUS, "-"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
 		second,
 	)
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_PLUS, "+"),
 		third,
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -679,69 +679,69 @@ func Test_S6_20(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	first := newOperation(
+	first := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newIdentifier(tok(TK_IDENTIFIER, "b")),
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
-	second := newOperation(
+	second := NewOperation(
 		tok(TK_REMAINDER, "%"),
 		first,
-		newLiteral(tok(TK_NUMBER, "2")),
+		NewLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	third := newOperation(
+	third := NewOperation(
 		tok(TK_MINUS, "-"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
 		second,
 	)
 
-	fourth := newOperation(
+	fourth := NewOperation(
 		tok(TK_PLUS, "+"),
 		third,
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	fifth := newOperation(
+	fifth := NewOperation(
 		tok(TK_EQUAL, "=="),
 		fourth,
-		newLiteral(tok(TK_NUMBER, "2")),
+		NewLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	sixth := newOperation(
+	sixth := NewOperation(
 		tok(TK_MORE_THAN, ">"),
-		newIdentifier(tok(TK_IDENTIFIER, "c")),
-		newLiteral(tok(TK_NUMBER, "5")),
+		NewIdentifier(tok(TK_IDENTIFIER, "c")),
+		NewLiteral(tok(TK_NUMBER, "5")),
 	)
 
-	seventh := newOperation(
+	seventh := NewOperation(
 		tok(TK_REMAINDER, "%"),
-		newIdentifier(tok(TK_IDENTIFIER, "c")),
-		newLiteral(tok(TK_NUMBER, "2")),
+		NewIdentifier(tok(TK_IDENTIFIER, "c")),
+		NewLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	eigth := newOperation(
+	eigth := NewOperation(
 		tok(TK_NOT_EQUAL, "!="),
 		seventh,
-		newLiteral(tok(TK_NUMBER, "0")),
+		NewLiteral(tok(TK_NUMBER, "0")),
 	)
 
-	ninth := newOperation(
+	ninth := NewOperation(
 		tok(TK_AND, "&"),
 		sixth,
 		eigth,
 	)
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_OR, "|"),
 		fifth,
 		ninth,
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -765,9 +765,9 @@ func Test_S6_21(t *testing.T) {
 
 		given := tkStream{&inTks}
 
-		exp := newAssignmentBlock(
+		exp := NewAssignmentBlock(
 			false,
-			[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+			[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 			[]Expression{op},
 			1,
 		)
@@ -782,32 +782,32 @@ func Test_S6_21(t *testing.T) {
 
 	// (a)
 	quickParenTest(t,
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
 		tok(TK_IDENTIFIER, "a"),
 	)
 
 	// (true)
 	quickParenTest(t,
-		newLiteral(tok(TK_BOOL, "true")),
+		NewLiteral(tok(TK_BOOL, "true")),
 		tok(TK_BOOL, "true"),
 	)
 
 	// (1)
 	quickParenTest(t,
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 		tok(TK_NUMBER, "1"),
 	)
 
 	// ("abc")
 	quickParenTest(t,
-		newLiteral(tok(TK_STRING, "abc")),
+		NewLiteral(tok(TK_STRING, "abc")),
 		tok(TK_STRING, "abc"),
 	)
 
 	// (-1)
 	quickParenTest(t,
-		newNegation(
-			newLiteral(tok(TK_NUMBER, "1")),
+		NewNegation(
+			NewLiteral(tok(TK_NUMBER, "1")),
 		),
 		tok(TK_MINUS, "-"),
 		tok(TK_NUMBER, "1"),
@@ -835,21 +835,21 @@ func Test_S6_22(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	first := newOperation(
+	first := NewOperation(
 		tok(TK_PLUS, "+"),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newIdentifier(tok(TK_IDENTIFIER, "b")),
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
 		first,
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -879,21 +879,21 @@ func Test_S6_23(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	first := newOperation(
+	first := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_PLUS, "+"),
 		first,
-		newIdentifier(tok(TK_IDENTIFIER, "b")),
+		NewIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -946,69 +946,69 @@ func Test_S6_24(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	first := newOperation(
+	first := NewOperation(
 		tok(TK_REMAINDER, "%"),
-		newIdentifier(tok(TK_IDENTIFIER, "b")),
-		newLiteral(tok(TK_NUMBER, "2")),
+		NewIdentifier(tok(TK_IDENTIFIER, "b")),
+		NewLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	second := newOperation(
+	second := NewOperation(
 		tok(TK_EQUAL, "=="),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newLiteral(tok(TK_NUMBER, "2")),
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	third := newOperation(
+	third := NewOperation(
 		tok(TK_MORE_THAN, ">"),
-		newIdentifier(tok(TK_IDENTIFIER, "c")),
-		newLiteral(tok(TK_NUMBER, "5")),
+		NewIdentifier(tok(TK_IDENTIFIER, "c")),
+		NewLiteral(tok(TK_NUMBER, "5")),
 	)
 
-	fourth := newOperation(
+	fourth := NewOperation(
 		tok(TK_OR, "|"),
 		second,
 		third,
 	)
 
-	fifth := newOperation(
+	fifth := NewOperation(
 		tok(TK_PLUS, "+"),
 		first,
 		fourth,
 	)
 
-	sixth := newOperation(
+	sixth := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 		fifth,
 	)
 
-	seventh := newOperation(
+	seventh := NewOperation(
 		tok(TK_MINUS, "-"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
 		sixth,
 	)
 
-	eigth := newOperation(
+	eigth := NewOperation(
 		tok(TK_REMAINDER, "%"),
-		newIdentifier(tok(TK_IDENTIFIER, "c")),
-		newLiteral(tok(TK_NUMBER, "2")),
+		NewIdentifier(tok(TK_IDENTIFIER, "c")),
+		NewLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	ninth := newOperation(
+	ninth := NewOperation(
 		tok(TK_AND, "&"),
 		seventh,
 		eigth,
 	)
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_NOT_EQUAL, "!="),
 		ninth,
-		newLiteral(tok(TK_NUMBER, "0")),
+		NewLiteral(tok(TK_NUMBER, "0")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
@@ -1036,24 +1036,24 @@ func Test_S7_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := newFunction(
+	f := NewFunction(
 		tok(TK_FUNCTION, "F"),
-		newParameters(
+		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
 			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{},
 			[]Token{},
 		),
-		newBlock(
+		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{},
 		),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1082,9 +1082,9 @@ func Test_S7_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := newFunction(
+	f := NewFunction(
 		tok(TK_FUNCTION, "F"),
-		newParameters(
+		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
 			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{
@@ -1092,16 +1092,16 @@ func Test_S7_2(t *testing.T) {
 			},
 			[]Token{},
 		),
-		newBlock(
+		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{},
 		),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1131,9 +1131,9 @@ func Test_S7_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := newFunction(
+	f := NewFunction(
 		tok(TK_FUNCTION, "F"),
-		newParameters(
+		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
 			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{},
@@ -1141,16 +1141,16 @@ func Test_S7_3(t *testing.T) {
 				tok(TK_IDENTIFIER, "a"),
 			},
 		),
-		newBlock(
+		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{},
 		),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1186,9 +1186,9 @@ func Test_S7_4(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := newFunction(
+	f := NewFunction(
 		tok(TK_FUNCTION, "F"),
-		newParameters(
+		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
 			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{
@@ -1200,16 +1200,16 @@ func Test_S7_4(t *testing.T) {
 				tok(TK_IDENTIFIER, "d"),
 			},
 		),
-		newBlock(
+		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{},
 		),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1240,22 +1240,22 @@ func Test_S7_5(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	body := newBlock(
+	body := NewBlock(
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{
-			newAssignmentBlock(
+			NewAssignmentBlock(
 				false,
-				[]Expression{newIdentifier(tok(TK_IDENTIFIER, "a"))},
-				[]Expression{newLiteral(tok(TK_NUMBER, "1"))},
+				[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+				[]Expression{NewLiteral(tok(TK_NUMBER, "1"))},
 				1,
 			),
 		},
 	)
 
-	f := newFunction(
+	f := NewFunction(
 		tok(TK_FUNCTION, "F"),
-		newParameters(
+		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
 			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{},
@@ -1264,9 +1264,9 @@ func Test_S7_5(t *testing.T) {
 		body,
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1312,22 +1312,22 @@ func Test_S7_6(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	body := newBlock(
+	body := NewBlock(
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{
-			newAssignmentBlock(
+			NewAssignmentBlock(
 				false,
-				[]Expression{newIdentifier(tok(TK_IDENTIFIER, "a"))},
-				[]Expression{newLiteral(tok(TK_NUMBER, "1"))},
+				[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+				[]Expression{NewLiteral(tok(TK_NUMBER, "1"))},
 				1,
 			),
 		},
 	)
 
-	f := newFunction(
+	f := NewFunction(
 		tok(TK_FUNCTION, "F"),
-		newParameters(
+		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
 			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{
@@ -1340,9 +1340,9 @@ func Test_S7_6(t *testing.T) {
 		body,
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1372,20 +1372,20 @@ func Test_S7_7(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := newFunction(
+	f := NewFunction(
 		tok(TK_FUNCTION, "F"),
-		newParameters(
+		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
 			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{},
 			[]Token{},
 		),
-		newWatch(
+		NewWatch(
 			tok(TK_WATCH, "watch"),
 			[]Token{
 				tok(TK_IDENTIFIER, "a"),
 			},
-			newBlock(
+			NewBlock(
 				tok(TK_BLOCK_OPEN, "{"),
 				tok(TK_BLOCK_CLOSE, "}"),
 				[]Expression{},
@@ -1393,9 +1393,9 @@ func Test_S7_7(t *testing.T) {
 		),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1427,28 +1427,28 @@ func Test_S7_8(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := newFunction(
+	f := NewFunction(
 		tok(TK_FUNCTION, "F"),
-		newParameters(
+		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
 			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{},
 			[]Token{},
 		),
-		newWhen(
+		NewWhen(
 			tok(TK_WHEN, "when"),
 			tok(TK_BLOCK_CLOSE, "}"),
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "a")),
-				newLiteral(tok(TK_NUMBER, "1")),
+			NewAssignment(
+				NewIdentifier(tok(TK_IDENTIFIER, "a")),
+				NewLiteral(tok(TK_NUMBER, "1")),
 			),
 			[]WhenCase{},
 		),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1481,22 +1481,22 @@ func Test_S7_9(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := newFunction(
+	f := NewFunction(
 		tok(TK_FUNCTION, "F"),
-		newParameters(
+		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
 			tok(TK_PAREN_CLOSE, ")"),
 			[]Token{},
 			[]Token{},
 		),
-		newGuard(
+		NewGuard(
 			tok(TK_GUARD_OPEN, "["),
-			newOperation(
+			NewOperation(
 				tok(TK_EQUAL, "=="),
-				newLiteral(tok(TK_NUMBER, "1")),
-				newLiteral(tok(TK_NUMBER, "1")),
+				NewLiteral(tok(TK_NUMBER, "1")),
+				NewLiteral(tok(TK_NUMBER, "1")),
 			),
-			newBlock(
+			NewBlock(
 				tok(TK_BLOCK_OPEN, "{"),
 				tok(TK_BLOCK_CLOSE, "}"),
 				[]Expression{},
@@ -1504,9 +1504,9 @@ func Test_S7_9(t *testing.T) {
 		),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1533,15 +1533,15 @@ func Test_S8_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := newExpressionFunction(
+	f := NewExpressionFunction(
 		tok(TK_EXPR_FUNC, "E"),
 		[]Token{},
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1569,17 +1569,17 @@ func Test_S8_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := newExpressionFunction(
+	f := NewExpressionFunction(
 		tok(TK_EXPR_FUNC, "E"),
 		[]Token{
 			tok(TK_IDENTIFIER, "a"),
 		},
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1611,19 +1611,19 @@ func Test_S8_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := newExpressionFunction(
+	f := NewExpressionFunction(
 		tok(TK_EXPR_FUNC, "E"),
 		[]Token{
 			tok(TK_IDENTIFIER, "a"),
 			tok(TK_IDENTIFIER, "b"),
 			tok(TK_IDENTIFIER, "c"),
 		},
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1654,25 +1654,25 @@ func Test_S8_4(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	expr := newOperation(
+	expr := NewOperation(
 		tok(TK_PLUS, "+"),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newOperation(
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewOperation(
 			tok(TK_MULTIPLY, "*"),
-			newLiteral(tok(TK_NUMBER, "2")),
-			newLiteral(tok(TK_NUMBER, "3")),
+			NewLiteral(tok(TK_NUMBER, "2")),
+			NewLiteral(tok(TK_NUMBER, "3")),
 		),
 	)
 
-	f := newExpressionFunction(
+	f := NewExpressionFunction(
 		tok(TK_EXPR_FUNC, "E"),
 		[]Token{},
 		expr,
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "f"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "f"))},
 		[]Expression{f},
 		1,
 	)
@@ -1697,13 +1697,13 @@ func Test_S9_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	body := newBlock(
+	body := NewBlock(
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{},
 	)
 
-	exp := newWatch(
+	exp := NewWatch(
 		tok(TK_WATCH, "watch"),
 		[]Token{
 			tok(TK_IDENTIFIER, "a"),
@@ -1735,13 +1735,13 @@ func Test_S9_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	body := newBlock(
+	body := NewBlock(
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{},
 	)
 
-	exp := newWatch(
+	exp := NewWatch(
 		tok(TK_WATCH, "watch"),
 		[]Token{
 			tok(TK_IDENTIFIER, "a"),
@@ -1781,27 +1781,27 @@ func Test_S9_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_PLUS, "+"),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newLiteral(tok(TK_NUMBER, "2")),
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	first := newAssignmentBlock(
+	first := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{op},
 		1,
 	)
 
-	second := newAssignmentBlock(
+	second := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "a"))},
-		[]Expression{newLiteral(tok(TK_NUMBER, "3"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+		[]Expression{NewLiteral(tok(TK_NUMBER, "3"))},
 		1,
 	)
 
-	body := newBlock(
+	body := NewBlock(
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{
@@ -1810,7 +1810,7 @@ func Test_S9_3(t *testing.T) {
 		},
 	)
 
-	exp := newWatch(
+	exp := NewWatch(
 		tok(TK_WATCH, "watch"),
 		[]Token{
 			tok(TK_IDENTIFIER, "a"),
@@ -1839,15 +1839,15 @@ func Test_S10_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	body := newBlock(
+	body := NewBlock(
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{},
 	)
 
-	exp := newGuard(
+	exp := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
-		newLiteral(tok(TK_BOOL, "true")),
+		NewLiteral(tok(TK_BOOL, "true")),
 		body,
 	)
 
@@ -1874,19 +1874,19 @@ func Test_S10_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	condition := newOperation(
+	condition := NewOperation(
 		tok(TK_EQUAL, "=="),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newLiteral(tok(TK_NUMBER, "2")),
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	body := newBlock(
+	body := NewBlock(
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{},
 	)
 
-	exp := newGuard(
+	exp := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
 		condition,
 		body,
@@ -1929,31 +1929,31 @@ func Test_S10_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	first := newAssignmentBlock(
+	first := NewAssignmentBlock(
 		false,
 		[]Expression{
-			newIdentifier(tok(TK_IDENTIFIER, "x")),
+			NewIdentifier(tok(TK_IDENTIFIER, "x")),
 		},
 		[]Expression{
-			newOperation(
+			NewOperation(
 				tok(TK_PLUS, "+"),
-				newLiteral(tok(TK_NUMBER, "1")),
-				newLiteral(tok(TK_NUMBER, "2")),
+				NewLiteral(tok(TK_NUMBER, "1")),
+				NewLiteral(tok(TK_NUMBER, "2")),
 			),
 		},
 		1,
 	)
 
-	second := newAssignmentBlock(
+	second := NewAssignmentBlock(
 		false,
 		[]Expression{
-			newIdentifier(tok(TK_IDENTIFIER, "x")),
+			NewIdentifier(tok(TK_IDENTIFIER, "x")),
 		},
 		[]Expression{
-			newOperation(
+			NewOperation(
 				tok(TK_MULTIPLY, "*"),
-				newLiteral(tok(TK_NUMBER, "3")),
-				newLiteral(tok(TK_NUMBER, "4")),
+				NewLiteral(tok(TK_NUMBER, "3")),
+				NewLiteral(tok(TK_NUMBER, "4")),
 			),
 		},
 		1,
@@ -1964,15 +1964,15 @@ func Test_S10_3(t *testing.T) {
 		second,
 	}
 
-	body := newBlock(
+	body := NewBlock(
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		statements,
 	)
 
-	exp := newGuard(
+	exp := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
-		newLiteral(tok(TK_BOOL, "true")),
+		NewLiteral(tok(TK_BOOL, "true")),
 		body,
 	)
 
@@ -1997,18 +1997,18 @@ func Test_S10_4(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	body := newUnDelimiteredBlock(
+	body := NewUnDelimiteredBlock(
 		[]Expression{
-			newExit(
+			NewExit(
 				tok(TK_EXIT, "exit"),
-				newLiteral(tok(TK_NUMBER, "0")),
+				NewLiteral(tok(TK_NUMBER, "0")),
 			),
 		},
 	)
 
-	exp := newGuard(
+	exp := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
-		newLiteral(tok(TK_BOOL, "true")),
+		NewLiteral(tok(TK_BOOL, "true")),
 		body,
 	)
 
@@ -2036,12 +2036,12 @@ func Test_S11_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	init := newAssignment(
-		newIdentifier(tok(TK_IDENTIFIER, "x")),
-		newLiteral(tok(TK_BOOL, "true")),
+	init := NewAssignment(
+		NewIdentifier(tok(TK_IDENTIFIER, "x")),
+		NewLiteral(tok(TK_BOOL, "true")),
 	)
 
-	exp := newWhen(
+	exp := NewWhen(
 		tok(TK_WHEN, "when"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		init,
@@ -2074,18 +2074,18 @@ func Test_S11_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	condition := newOperation(
+	condition := NewOperation(
 		tok(TK_EQUAL, "=="),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newLiteral(tok(TK_NUMBER, "2")),
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "2")),
 	)
 
-	init := newAssignment(
-		newIdentifier(tok(TK_IDENTIFIER, "x")),
+	init := NewAssignment(
+		NewIdentifier(tok(TK_IDENTIFIER, "x")),
 		condition,
 	)
 
-	exp := newWhen(
+	exp := NewWhen(
 		tok(TK_WHEN, "when"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		init,
@@ -2125,36 +2125,36 @@ func Test_S11_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	firstCase := newLiteral(tok(TK_NUMBER, "1"))
+	firstCase := NewLiteral(tok(TK_NUMBER, "1"))
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newLiteral(tok(TK_NUMBER, "3")),
-		newLiteral(tok(TK_NUMBER, "4")),
+		NewLiteral(tok(TK_NUMBER, "3")),
+		NewLiteral(tok(TK_NUMBER, "4")),
 	)
 
-	firstBlock := newUnDelimiteredBlock(
+	firstBlock := NewUnDelimiteredBlock(
 		[]Expression{
-			newAssignmentBlock(
+			NewAssignmentBlock(
 				false,
-				[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+				[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 				[]Expression{op},
 				1,
 			),
 		},
 	)
 
-	init := newAssignment(
-		newIdentifier(tok(TK_IDENTIFIER, "x")),
-		newLiteral(tok(TK_NUMBER, "1")),
+	init := NewAssignment(
+		NewIdentifier(tok(TK_IDENTIFIER, "x")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	exp := newWhen(
+	exp := NewWhen(
 		tok(TK_WHEN, "when"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		init,
 		[]WhenCase{
-			newWhenCase(firstCase, firstBlock),
+			NewWhenCase(firstCase, firstBlock),
 		},
 	)
 
@@ -2195,39 +2195,39 @@ func Test_S11_4(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	op := newOperation(
+	op := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newLiteral(tok(TK_NUMBER, "3")),
-		newLiteral(tok(TK_NUMBER, "4")),
+		NewLiteral(tok(TK_NUMBER, "3")),
+		NewLiteral(tok(TK_NUMBER, "4")),
 	)
 
-	firstBlock := newUnDelimiteredBlock(
+	firstBlock := NewUnDelimiteredBlock(
 		[]Expression{
-			newAssignmentBlock(
+			NewAssignmentBlock(
 				false,
-				[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+				[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 				[]Expression{op},
 				1,
 			),
 		},
 	)
 
-	firstCase := newGuard(
+	firstCase := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
-		newOperation(
+		NewOperation(
 			tok(TK_EQUAL, "=="),
-			newLiteral(tok(TK_NUMBER, "1")),
-			newLiteral(tok(TK_NUMBER, "2")),
+			NewLiteral(tok(TK_NUMBER, "1")),
+			NewLiteral(tok(TK_NUMBER, "2")),
 		),
 		firstBlock,
 	)
 
-	init := newAssignment(
-		newIdentifier(tok(TK_IDENTIFIER, "x")),
-		newLiteral(tok(TK_NUMBER, "1")),
+	init := NewAssignment(
+		NewIdentifier(tok(TK_IDENTIFIER, "x")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	exp := newWhen(
+	exp := NewWhen(
 		tok(TK_WHEN, "when"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		init,
@@ -2292,56 +2292,56 @@ func Test_S11_5(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	firstCase := newWhenCase(
-		newLiteral(tok(TK_NUMBER, "1")),
-		newUnDelimiteredBlock(
+	firstCase := NewWhenCase(
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewUnDelimiteredBlock(
 			[]Expression{
-				newIdentifier(tok(TK_IDENTIFIER, "a")),
+				NewIdentifier(tok(TK_IDENTIFIER, "a")),
 			},
 		),
 	)
 
-	secondCase := newGuard(
+	secondCase := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
-		newOperation(
+		NewOperation(
 			tok(TK_EQUAL, "=="),
-			newIdentifier(tok(TK_IDENTIFIER, "a")),
-			newIdentifier(tok(TK_IDENTIFIER, "b")),
+			NewIdentifier(tok(TK_IDENTIFIER, "a")),
+			NewIdentifier(tok(TK_IDENTIFIER, "b")),
 		),
-		newUnDelimiteredBlock(
+		NewUnDelimiteredBlock(
 			[]Expression{
-				newIdentifier(tok(TK_IDENTIFIER, "b")),
+				NewIdentifier(tok(TK_IDENTIFIER, "b")),
 			},
 		),
 	)
 
-	thirdCase := newWhenCase(
-		newLiteral(tok(TK_NUMBER, "2")),
-		newUnDelimiteredBlock(
+	thirdCase := NewWhenCase(
+		NewLiteral(tok(TK_NUMBER, "2")),
+		NewUnDelimiteredBlock(
 			[]Expression{
-				newIdentifier(tok(TK_IDENTIFIER, "c")),
+				NewIdentifier(tok(TK_IDENTIFIER, "c")),
 			},
 		),
 	)
 
-	fourthCase := newGuard(
+	fourthCase := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
-		newLiteral(tok(TK_BOOL, "true")),
-		newBlock(
+		NewLiteral(tok(TK_BOOL, "true")),
+		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{
-				newIdentifier(tok(TK_IDENTIFIER, "d")),
+				NewIdentifier(tok(TK_IDENTIFIER, "d")),
 			},
 		),
 	)
 
-	init := newAssignment(
-		newIdentifier(tok(TK_IDENTIFIER, "x")),
-		newLiteral(tok(TK_NUMBER, "3")),
+	init := NewAssignment(
+		NewIdentifier(tok(TK_IDENTIFIER, "x")),
+		NewLiteral(tok(TK_NUMBER, "3")),
 	)
 
-	exp := newWhen(
+	exp := NewWhen(
 		tok(TK_WHEN, "when"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		init,
@@ -2380,22 +2380,22 @@ func Test_S12_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	init := newAssignment(
-		newIdentifier(tok(TK_IDENTIFIER, "i")),
-		newLiteral(tok(TK_NUMBER, "0")),
+	init := NewAssignment(
+		NewIdentifier(tok(TK_IDENTIFIER, "i")),
+		NewLiteral(tok(TK_NUMBER, "0")),
 	)
 
-	guard := newGuard(
+	guard := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
-		newLiteral(tok(TK_BOOL, "true")),
-		newBlock(
+		NewLiteral(tok(TK_BOOL, "true")),
+		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{},
 		),
 	)
 
-	exp := newLoop(
+	exp := NewLoop(
 		tok(TK_LOOP, "loop"),
 		init,
 		guard,
@@ -2447,51 +2447,51 @@ func Test_S12_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	init := newAssignment(
-		newIdentifier(tok(TK_IDENTIFIER, "i")),
-		newOperation(
+	init := NewAssignment(
+		NewIdentifier(tok(TK_IDENTIFIER, "i")),
+		NewOperation(
 			tok(TK_MINUS, "-"),
-			newIdentifier(tok(TK_IDENTIFIER, "a")),
-			newLiteral(tok(TK_NUMBER, "1")),
+			NewIdentifier(tok(TK_IDENTIFIER, "a")),
+			NewLiteral(tok(TK_NUMBER, "1")),
 		),
 	)
 
-	condition := newOperation(
+	condition := NewOperation(
 		tok(TK_LESS_THAN, "<"),
-		newIdentifier(tok(TK_IDENTIFIER, "i")),
-		newLiteral(tok(TK_NUMBER, "10")),
+		NewIdentifier(tok(TK_IDENTIFIER, "i")),
+		NewLiteral(tok(TK_NUMBER, "10")),
 	)
 
-	firstOp := newOperation(
+	firstOp := NewOperation(
 		tok(TK_PLUS, "+"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
-		newIdentifier(tok(TK_IDENTIFIER, "b")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewIdentifier(tok(TK_IDENTIFIER, "b")),
 	)
 
-	firstStat := newAssignmentBlock(
+	firstStat := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{firstOp},
 		1,
 	)
 
-	secondOp := newOperation(
+	secondOp := NewOperation(
 		tok(TK_MULTIPLY, "*"),
-		newIdentifier(tok(TK_IDENTIFIER, "c")),
-		newIdentifier(tok(TK_IDENTIFIER, "d")),
+		NewIdentifier(tok(TK_IDENTIFIER, "c")),
+		NewIdentifier(tok(TK_IDENTIFIER, "d")),
 	)
 
-	secondStat := newAssignmentBlock(
+	secondStat := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{secondOp},
 		1,
 	)
 
-	guard := newGuard(
+	guard := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
 		condition,
-		newBlock(
+		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
 			[]Expression{
@@ -2501,7 +2501,7 @@ func Test_S12_2(t *testing.T) {
 		),
 	)
 
-	exp := newLoop(
+	exp := NewLoop(
 		tok(TK_LOOP, "loop"),
 		init,
 		guard,
@@ -2525,9 +2525,9 @@ func Test_S13_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+	var f Expression = NewIdentifier(tok(TK_IDENTIFIER, "f"))
 
-	exp := newFunctionCall(
+	exp := NewFunctionCall(
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		[]Expression{},
@@ -2552,13 +2552,13 @@ func Test_S13_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+	var f Expression = NewIdentifier(tok(TK_IDENTIFIER, "f"))
 
 	args := []Expression{
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	}
 
-	exp := newFunctionCall(
+	exp := NewFunctionCall(
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		args,
@@ -2585,17 +2585,17 @@ func Test_S13_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+	var f Expression = NewIdentifier(tok(TK_IDENTIFIER, "f"))
 
 	args := []Expression{
-		newOperation(
+		NewOperation(
 			tok(TK_PLUS, "+"),
-			newLiteral(tok(TK_NUMBER, "1")),
-			newLiteral(tok(TK_NUMBER, "2")),
+			NewLiteral(tok(TK_NUMBER, "1")),
+			NewLiteral(tok(TK_NUMBER, "2")),
 		),
 	}
 
-	exp := newFunctionCall(
+	exp := NewFunctionCall(
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		args,
@@ -2626,16 +2626,16 @@ func Test_S13_4(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+	var f Expression = NewIdentifier(tok(TK_IDENTIFIER, "f"))
 
 	args := []Expression{
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
-		newLiteral(tok(TK_BOOL, "true")),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newLiteral(tok(TK_STRING, "abc")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewLiteral(tok(TK_BOOL, "true")),
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_STRING, "abc")),
 	}
 
-	exp := newFunctionCall(
+	exp := NewFunctionCall(
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		args,
@@ -2677,16 +2677,16 @@ func Test_S13_5(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+	var f Expression = NewIdentifier(tok(TK_IDENTIFIER, "f"))
 
 	args := []Expression{
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
-		newLiteral(tok(TK_BOOL, "true")),
-		newLiteral(tok(TK_NUMBER, "1")),
-		newLiteral(tok(TK_STRING, "abc")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewLiteral(tok(TK_BOOL, "true")),
+		NewLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_STRING, "abc")),
 	}
 
-	exp := newFunctionCall(
+	exp := NewFunctionCall(
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		args,
@@ -2715,21 +2715,21 @@ func Test_S13_6(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	var f Expression = newIdentifier(tok(TK_IDENTIFIER, "f"))
+	var f Expression = NewIdentifier(tok(TK_IDENTIFIER, "f"))
 
-	var first Expression = newFunctionCall(
+	var first Expression = NewFunctionCall(
 		tok(TK_PAREN_CLOSE, "a)"),
 		f,
 		[]Expression{},
 	)
 
-	var second Expression = newFunctionCall(
+	var second Expression = NewFunctionCall(
 		tok(TK_PAREN_CLOSE, "b)"),
 		first,
 		[]Expression{},
 	)
 
-	exp := newFunctionCall(
+	exp := NewFunctionCall(
 		tok(TK_PAREN_CLOSE, "c)"),
 		second,
 		[]Expression{},
@@ -2753,7 +2753,7 @@ func Test_S14_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	exp := newSpellCall(
+	exp := NewSpellCall(
 		tok(TK_SPELL, "@s"),
 		tok(TK_PAREN_CLOSE, ")"),
 		[]Expression{},
@@ -2784,18 +2784,18 @@ func Test_S14_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	var first Expression = newSpellCall(
+	var first Expression = NewSpellCall(
 		tok(TK_SPELL, "@s"),
 		tok(TK_PAREN_CLOSE, "a)"),
 		[]Expression{},
 	)
 
-	var second Expression = newCollectionAccessor(
+	var second Expression = NewCollectionAccessor(
 		first,
-		newLiteral(tok(TK_NUMBER, "1")),
+		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	exp := newFunctionCall(
+	exp := NewFunctionCall(
 		tok(TK_PAREN_CLOSE, "c)"),
 		second,
 		[]Expression{},
@@ -2830,22 +2830,22 @@ func Test_S14_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	first := newLiteral(tok(TK_NUMBER, "1"))
+	first := NewLiteral(tok(TK_NUMBER, "1"))
 
-	assign := newAssignmentBlock(
+	assign := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
-		[]Expression{newLiteral(tok(TK_STRING, "abc"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewLiteral(tok(TK_STRING, "abc"))},
 		1,
 	)
 
-	second := newBlock(
+	second := NewBlock(
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{assign},
 	)
 
-	exp := newSpellCall(
+	exp := NewSpellCall(
 		tok(TK_SPELL, "@s"),
 		tok(TK_PAREN_CLOSE, ")"),
 		[]Expression{
@@ -2870,9 +2870,9 @@ func Test_S15_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	exp := newExit(
+	exp := NewExit(
 		tok(TK_EXIT, "exit"),
-		newLiteral(tok(TK_NUMBER, "0")),
+		NewLiteral(tok(TK_NUMBER, "0")),
 	)
 
 	act, e := testFunc(given)
@@ -2894,14 +2894,14 @@ func Test_S16_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	exists := newExists(
+	exists := NewExists(
 		tok(TK_EXISTS, "?"),
-		newLiteral(tok(TK_NUMBER, "0")),
+		NewLiteral(tok(TK_NUMBER, "0")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{exists},
 		1,
 	)
@@ -2925,14 +2925,14 @@ func Test_S16_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	exists := newExists(
+	exists := NewExists(
 		tok(TK_EXISTS, "?"),
-		newIdentifier(tok(TK_IDENTIFIER, "a")),
+		NewIdentifier(tok(TK_IDENTIFIER, "a")),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{exists},
 		1,
 	)
@@ -2960,18 +2960,18 @@ func Test_S16_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	exists := newExists(
+	exists := NewExists(
 		tok(TK_EXISTS, "?"),
-		newOperation(
+		NewOperation(
 			tok(TK_PLUS, "+"),
-			newIdentifier(tok(TK_IDENTIFIER, "a")),
-			newIdentifier(tok(TK_IDENTIFIER, "b")),
+			NewIdentifier(tok(TK_IDENTIFIER, "a")),
+			NewIdentifier(tok(TK_IDENTIFIER, "b")),
 		),
 	)
 
-	exp := newAssignmentBlock(
+	exp := NewAssignmentBlock(
 		false,
-		[]Expression{newIdentifier(tok(TK_IDENTIFIER, "x"))},
+		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "x"))},
 		[]Expression{exists},
 		1,
 	)

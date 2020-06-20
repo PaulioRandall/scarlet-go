@@ -14,7 +14,7 @@ func identifier(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	var id Expression = newIdentifier(tk)
+	var id Expression = NewIdentifier(tk)
 
 	for more := true; more; {
 
@@ -62,7 +62,7 @@ func literal(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newLiteral(l), nil
+	return NewLiteral(l), nil
 }
 
 func negation(p *pipeline) (Expression, error) {
@@ -78,7 +78,7 @@ func negation(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newNegation(expr), nil
+	return NewNegation(expr), nil
 }
 
 func exists(p *pipeline, subject Expression) (Expression, error) {
@@ -89,7 +89,7 @@ func exists(p *pipeline, subject Expression) (Expression, error) {
 		return nil, e
 	}
 
-	return newExists(close, subject), nil
+	return NewExists(close, subject), nil
 }
 
 func maybeExists(p *pipeline, subject Expression) (Expression, error) {
@@ -135,7 +135,7 @@ func collectionAccessor(p *pipeline, left Expression) (Expression, error) {
 		return nil, e
 	}
 
-	return newCollectionAccessor(left, index), nil
+	return NewCollectionAccessor(left, index), nil
 }
 
 func expressions(p *pipeline) ([]Expression, error) {
@@ -258,7 +258,7 @@ func operation(p *pipeline, left Expression, leftPriority int) (Expression, erro
 		return nil, e
 	}
 
-	left = newOperation(op, left, right)
+	left = NewOperation(op, left, right)
 
 	left, e = operation(p, left, leftPriority)
 	if e != nil {
@@ -282,7 +282,7 @@ func block(p *pipeline) (Block, error) {
 		return nil, e
 	}
 
-	return newBlock(open, close, stats), nil
+	return NewBlock(open, close, stats), nil
 }
 
 func blockStatements(p *pipeline) ([]Expression, error) {
@@ -328,7 +328,7 @@ func function(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newFunction(key, params, body), nil
+	return NewFunction(key, params, body), nil
 }
 
 func functionParameters(p *pipeline) (Parameters, error) {
@@ -358,7 +358,7 @@ func functionParameters(p *pipeline) (Parameters, error) {
 		return nil, e
 	}
 
-	return newParameters(open, close, inputs, outputs), nil
+	return NewParameters(open, close, inputs, outputs), nil
 }
 
 func parameterIdentifiers(p *pipeline) ([]Token, error) {
@@ -407,7 +407,7 @@ func functionBody(p *pipeline) (Expression, error) {
 			return nil, e
 		}
 
-		return newGuard(open, condition, body), nil
+		return NewGuard(open, condition, body), nil
 	}
 
 	return nil, err.New("Expected function body", err.At(p.any()))
@@ -431,7 +431,7 @@ func functionCall(p *pipeline, f Expression) (Expression, error) {
 		return nil, e
 	}
 
-	return newFunctionCall(close, f, args), nil
+	return NewFunctionCall(close, f, args), nil
 }
 
 func expressionFunction(p *pipeline) (Expression, error) {
@@ -452,7 +452,7 @@ func expressionFunction(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newExpressionFunction(key, inputs, expr), nil
+	return NewExpressionFunction(key, inputs, expr), nil
 }
 
 func expressionFunctionParameters(p *pipeline) ([]Token, error) {
@@ -520,7 +520,7 @@ func watch(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newWatch(key, ids, body), nil
+	return NewWatch(key, ids, body), nil
 }
 
 func watchIdentifiers(p *pipeline) ([]Token, error) {
@@ -561,7 +561,7 @@ func guardExplicit(p *pipeline) (Guard, error) {
 		return nil, e
 	}
 
-	return newGuard(open, condition, body), nil
+	return NewGuard(open, condition, body), nil
 }
 
 func guardCondition(p *pipeline) (Token, Expression, error) {
@@ -596,7 +596,7 @@ func guardBody(p *pipeline) (Block, error) {
 	}
 
 	stats := []Expression{stat}
-	return newUnDelimiteredBlock(stats), nil
+	return NewUnDelimiteredBlock(stats), nil
 }
 
 func when(p *pipeline) (Expression, error) {
@@ -627,7 +627,7 @@ func when(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newWhen(key, close, init, cases), nil
+	return NewWhen(key, close, init, cases), nil
 }
 
 func whenInitialiser(p *pipeline) (Assignment, error) {
@@ -637,7 +637,7 @@ func whenInitialiser(p *pipeline) (Assignment, error) {
 		return nil, e
 	}
 
-	target := newIdentifier(id)
+	target := NewIdentifier(id)
 
 	_, e = p.expect(TK_ASSIGNMENT)
 	if e != nil {
@@ -649,7 +649,7 @@ func whenInitialiser(p *pipeline) (Assignment, error) {
 		return nil, e
 	}
 
-	return newAssignment(target, source), nil
+	return NewAssignment(target, source), nil
 }
 
 func whenCases(p *pipeline) ([]WhenCase, error) {
@@ -700,7 +700,7 @@ func whenGuardCase(p *pipeline) (WhenCase, error) {
 		return nil, e
 	}
 
-	return newGuard(open, condition, body), nil
+	return NewGuard(open, condition, body), nil
 }
 
 func whenCase(p *pipeline) (WhenCase, error) {
@@ -721,7 +721,7 @@ func whenCase(p *pipeline) (WhenCase, error) {
 		return nil, e
 	}
 
-	return newWhenCase(object, body), nil
+	return NewWhenCase(object, body), nil
 }
 
 func loop(p *pipeline) (Expression, error) {
@@ -742,7 +742,7 @@ func loop(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newLoop(key, init, g), nil
+	return NewLoop(key, init, g), nil
 }
 
 func loopInitialiser(p *pipeline) (Assignment, error) {
@@ -753,7 +753,7 @@ func loopInitialiser(p *pipeline) (Assignment, error) {
 		return nil, e
 	}
 
-	target := newIdentifier(id)
+	target := NewIdentifier(id)
 
 	_, e = p.expect(TK_ASSIGNMENT)
 	if e != nil {
@@ -765,7 +765,7 @@ func loopInitialiser(p *pipeline) (Assignment, error) {
 		return nil, e
 	}
 
-	return newAssignment(target, source), nil
+	return NewAssignment(target, source), nil
 }
 
 func spellCall(p *pipeline) (Expression, error) {
@@ -791,7 +791,7 @@ func spellCall(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	var spell Expression = newSpellCall(id, close, args)
+	var spell Expression = NewSpellCall(id, close, args)
 
 	for more := true; more; {
 		spell, more, e = maybeMore(p, spell)

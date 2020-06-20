@@ -5,37 +5,37 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
-func newExit(tk Token, code Expression) exitStat {
+func NewExit(tk Token, code Expression) exitStat {
 	return exitStat{
 		tk:   tk,
 		code: code,
 	}
 }
 
-func newVoid(tk Token) voidExpr {
+func NewVoid(tk Token) voidExpr {
 	return voidExpr{tk}
 }
 
-func newIdentifier(tk Token) identifierExpr {
+func NewIdentifier(tk Token) identifierExpr {
 	return identifierExpr{tk}
 }
 
-func newLiteral(tk Token) literalExpr {
+func NewLiteral(tk Token) literalExpr {
 	return literalExpr{tk}
 }
 
-func newCollectionAccessor(collection, key Expression) collectionAccessorExpr {
+func NewCollectionAccessor(collection, key Expression) collectionAccessorExpr {
 	return collectionAccessorExpr{
 		collection: collection,
 		key:        key,
 	}
 }
 
-func newNegation(expr Expression) negationExpr {
+func NewNegation(expr Expression) negationExpr {
 	return negationExpr{expr}
 }
 
-func newOperation(operator Token, left, right Expression) operationExpr {
+func NewOperation(operator Token, left, right Expression) operationExpr {
 	return operationExpr{
 		operator: operator,
 		left:     left,
@@ -43,14 +43,14 @@ func newOperation(operator Token, left, right Expression) operationExpr {
 	}
 }
 
-func newAssignment(target, source Expression) assignmentStat {
+func NewAssignment(target, source Expression) assignmentStat {
 	return assignmentStat{
 		target: target,
 		source: source,
 	}
 }
 
-func newAssignmentBlock(final bool, targets, sources []Expression, count int) assignmentBlockStat {
+func NewAssignmentBlock(final bool, targets, sources []Expression, count int) assignmentBlockStat {
 	return assignmentBlockStat{
 		final:   final,
 		targets: targets,
@@ -59,7 +59,7 @@ func newAssignmentBlock(final bool, targets, sources []Expression, count int) as
 	}
 }
 
-func newBlock(open, close Token, stats []Expression) blockExpr {
+func NewBlock(open, close Token, stats []Expression) blockExpr {
 	return blockExpr{
 		open:  open,
 		close: close,
@@ -67,13 +67,13 @@ func newBlock(open, close Token, stats []Expression) blockExpr {
 	}
 }
 
-func newUnDelimiteredBlock(stats []Expression) unDelimiteredBlockExpr {
+func NewUnDelimiteredBlock(stats []Expression) unDelimiteredBlockExpr {
 	return unDelimiteredBlockExpr{
 		stats: stats,
 	}
 }
 
-func newExpressionFunction(key Token, inputs []Token, expr Expression) expressionFunctionExpr {
+func NewExpressionFunction(key Token, inputs []Token, expr Expression) expressionFunctionExpr {
 	return expressionFunctionExpr{
 		key:    key,
 		inputs: inputs,
@@ -81,7 +81,7 @@ func newExpressionFunction(key Token, inputs []Token, expr Expression) expressio
 	}
 }
 
-func newParameters(open, close Token, inputs, outputs []Token) parametersDef {
+func NewParameters(open, close Token, inputs, outputs []Token) parametersDef {
 	return parametersDef{
 		open:    open,
 		close:   close,
@@ -90,7 +90,7 @@ func newParameters(open, close Token, inputs, outputs []Token) parametersDef {
 	}
 }
 
-func newFunction(key Token, params Parameters, body Expression) functionExpr {
+func NewFunction(key Token, params Parameters, body Expression) functionExpr {
 	return functionExpr{
 		key:    key,
 		params: params,
@@ -98,7 +98,7 @@ func newFunction(key Token, params Parameters, body Expression) functionExpr {
 	}
 }
 
-func newFunctionCall(close Token, f Expression, args []Expression) functionCallExpr {
+func NewFunctionCall(close Token, f Expression, args []Expression) functionCallExpr {
 	return functionCallExpr{
 		close:    close,
 		function: f,
@@ -106,7 +106,7 @@ func newFunctionCall(close Token, f Expression, args []Expression) functionCallE
 	}
 }
 
-func newWatch(key Token, ids []Token, body Block) watchStat {
+func NewWatch(key Token, ids []Token, body Block) watchStat {
 	return watchStat{
 		key:  key,
 		ids:  ids,
@@ -114,7 +114,7 @@ func newWatch(key Token, ids []Token, body Block) watchStat {
 	}
 }
 
-func newGuard(open Token, condition Expression, body Block) guardStat {
+func NewGuard(open Token, condition Expression, body Block) guardStat {
 	return guardStat{
 		open:      open,
 		condition: condition,
@@ -122,14 +122,14 @@ func newGuard(open Token, condition Expression, body Block) guardStat {
 	}
 }
 
-func newWhenCase(object Expression, body Block) whenCaseStat {
+func NewWhenCase(object Expression, body Block) whenCaseStat {
 	return whenCaseStat{
 		object: object,
 		body:   body,
 	}
 }
 
-func newWhen(key, close Token, init Assignment, cases []WhenCase) whenStat {
+func NewWhen(key, close Token, init Assignment, cases []WhenCase) whenStat {
 	return whenStat{
 		key:   key,
 		close: close,
@@ -138,7 +138,7 @@ func newWhen(key, close Token, init Assignment, cases []WhenCase) whenStat {
 	}
 }
 
-func newLoop(key Token, init Assignment, guard Guard) loopStat {
+func NewLoop(key Token, init Assignment, guard Guard) loopStat {
 	return loopStat{
 		key:   key,
 		init:  init,
@@ -146,7 +146,7 @@ func newLoop(key Token, init Assignment, guard Guard) loopStat {
 	}
 }
 
-func newSpellCall(spell, close Token, args []Expression) spellCallExpr {
+func NewSpellCall(spell, close Token, args []Expression) spellCallExpr {
 	return spellCallExpr{
 		spell: spell,
 		close: close,
@@ -154,7 +154,7 @@ func newSpellCall(spell, close Token, args []Expression) spellCallExpr {
 	}
 }
 
-func newExists(close Token, subject Expression) existsExpr {
+func NewExists(close Token, subject Expression) existsExpr {
 	return existsExpr{
 		close:   close,
 		subject: subject,

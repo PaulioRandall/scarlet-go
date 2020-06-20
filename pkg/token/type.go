@@ -160,6 +160,32 @@ func OperatorTypes() []TokenType {
 	}
 }
 
+func IsComparisonType(ty TokenType) bool {
+
+	switch ty {
+	case TK_LESS_THAN,
+		TK_LESS_THAN_OR_EQUAL,
+		TK_MORE_THAN,
+		TK_MORE_THAN_OR_EQUAL,
+		TK_EQUAL,
+		TK_NOT_EQUAL:
+
+		return true
+	}
+
+	return false
+}
+
+func IsBoolLogicType(ty TokenType) bool {
+
+	switch ty {
+	case TK_AND, TK_OR:
+		return true
+	}
+
+	return false
+}
+
 func (ty TokenType) Redundant() bool {
 	return ty == TK_UNDEFINED || ty == TK_WHITESPACE || ty == TK_COMMENT
 }

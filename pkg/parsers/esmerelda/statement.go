@@ -99,7 +99,7 @@ func exit(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newExit(tk, code), nil
+	return NewExit(tk, code), nil
 }
 
 func assignment(p *pipeline) (Expression, error) {
@@ -127,7 +127,7 @@ func assignment(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newAssignmentBlock(final, targets, sources, count), nil
+	return NewAssignmentBlock(final, targets, sources, count), nil
 }
 
 func assignmentSources(p *pipeline) ([]Expression, error) {
@@ -189,7 +189,7 @@ func assignmentTarget(p *pipeline) (Expression, error) {
 	}
 
 	if p.match(TK_VOID) {
-		return newVoid(p.any()), nil
+		return NewVoid(p.any()), nil
 	}
 
 	return nil, err.New("Expected assignment target", err.At(p.any()))
@@ -203,7 +203,7 @@ func assignmentIdentifier(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	var id Expression = newIdentifier(tk)
+	var id Expression = NewIdentifier(tk)
 
 	for p.match(TK_GUARD_OPEN) {
 
