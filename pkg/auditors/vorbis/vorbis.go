@@ -88,5 +88,5 @@ func expectBoolResult(el *errList, ex Expression) {
 		return
 	}
 
-	// TODO: function & spll calls
+	// TODO: function & spell calls
 }

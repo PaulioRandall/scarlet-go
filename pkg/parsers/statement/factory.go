@@ -1,7 +1,6 @@
-package esmerelda
+package statement
 
 import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/parsers/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
