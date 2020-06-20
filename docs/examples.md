@@ -396,7 +396,3 @@ loop [true] {
 	exit loop
 }
 ```
-
-```
-loop list -> index, value, hasMore {}
-```

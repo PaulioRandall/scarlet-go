@@ -50,9 +50,11 @@ func newAssignment(target, source Expression) assignmentStat {
 	}
 }
 
-func newAssignmentBlock(assignments []Assignment) assignmentBlockStat {
+func newAssignmentBlock(targets, sources []Expression, count int) assignmentBlockStat {
 	return assignmentBlockStat{
-		assignments: assignments,
+		targets: targets,
+		sources: sources,
+		count:   count,
 	}
 }
 

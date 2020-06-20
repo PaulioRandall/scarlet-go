@@ -230,24 +230,33 @@ func (a assignmentStat) String() string {
 }
 
 type assignmentBlockStat struct {
-	assignments []Assignment
+	targets []Expression
+	sources []Expression
+	count   int
 }
 
 func (assignmentBlockStat) Kind() Kind {
 	return ST_ASSIGNMENT_BLOCK
 }
 
-func (a assignmentBlockStat) Assignments() []Assignment {
-	return a.assignments
+func (a assignmentBlockStat) Targets() []Expression {
+	return a.targets
+}
+
+func (a assignmentBlockStat) Sources() []Expression {
+	return a.sources
+}
+
+func (a assignmentBlockStat) Count() int {
+	return a.count
 }
 
 func (a assignmentBlockStat) Begin() (int, int) {
-	return a.assignments[0].Begin()
+	return a.targets[0].Begin()
 }
 
 func (a assignmentBlockStat) End() (int, int) {
-	i := len(a.assignments) - 1
-	return a.assignments[i].End()
+	return a.sources[a.count-1].End()
 }
 
 func (a assignmentBlockStat) String() string {

@@ -59,6 +59,9 @@ func statement(p *pipeline) (Expression, error) {
 
 	case p.match(TK_EXIT):
 		return exit(p)
+
+	case p.match(TK_SPELL):
+		return spellCall(p)
 	}
 
 	return expression(p)
@@ -108,12 +111,12 @@ func assignment(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	r, e := createAssignments(p, targets, sources)
+	count, e := countAssignments(p, targets, sources)
 	if e != nil {
 		return nil, e
 	}
 
-	return newAssignmentBlock(r), nil
+	return newAssignmentBlock(targets, sources, count), nil
 }
 
 func assignmentSources(p *pipeline) ([]Expression, error) {
@@ -202,24 +205,23 @@ func assignmentIdentifier(p *pipeline) (Expression, error) {
 	return id, nil
 }
 
-func createAssignments(p *pipeline, targets, sources []Expression) ([]Assignment, error) {
+func countAssignments(p *pipeline, targets, sources []Expression) (int, error) {
 
-	var r []Assignment
+	var n int
 
 	for i := 0; i < len(targets) || i < len(sources); i++ {
 
 		if i >= len(targets) {
 			line, col := sources[i].Begin()
-			return nil, err.New("Too many expressions", err.Pos(line, col))
+			return 0, err.New("Too many expressions", err.Pos(line, col))
 		}
 
 		if i >= len(sources) {
-			return nil, err.New("Expected expression", err.At(p.any()))
+			return 0, err.New("Expected expression", err.At(p.any()))
 		}
 
-		a := newAssignment(targets[i], sources[i])
-		r = append(r, a)
+		n++
 	}
 
-	return r, nil
+	return n, nil
 }

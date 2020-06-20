@@ -179,15 +179,27 @@ func AssignmentString(a Assignment) string {
 
 type AssignmentBlock interface {
 	Expression
-	Assignments() []Assignment
+	Targets() []Expression
+	Sources() []Expression
+	Count() int
 }
 
 func AssignmentBlockString(bk AssignmentBlock) string {
 
 	b := builder{}
+	b.add(0, "[AssignmentBlock] ")
 
-	for _, a := range bk.Assignments() {
-		b.add(0, a.String())
+	for i := 0; i < bk.Count(); i++ {
+
+		b.newline()
+		b.add(1, "Target: ")
+		b.newline()
+		b.add(1, bk.Targets()[i].String())
+
+		b.newline()
+		b.add(1, "Source: ")
+		b.newline()
+		b.add(2, bk.Sources()[i].String())
 	}
 
 	return b.String()

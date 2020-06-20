@@ -64,12 +64,13 @@ func Test_S2_1(t *testing.T) {
 	}
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "a")),
-				newLiteral(tok(TK_NUMBER, "1")),
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "a")),
 		},
+		[]Expression{
+			newLiteral(tok(TK_NUMBER, "1")),
+		},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -100,20 +101,17 @@ func Test_S2_2(t *testing.T) {
 	}
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "a")),
-				newLiteral(tok(TK_NUMBER, "1")),
-			),
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "b")),
-				newLiteral(tok(TK_BOOL, "TRUE")),
-			),
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "c")),
-				newLiteral(tok(TK_STRING, "abc")),
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "a")),
+			newIdentifier(tok(TK_IDENTIFIER, "b")),
+			newIdentifier(tok(TK_IDENTIFIER, "c")),
 		},
+		[]Expression{
+			newLiteral(tok(TK_NUMBER, "1")),
+			newLiteral(tok(TK_BOOL, "TRUE")),
+			newLiteral(tok(TK_STRING, "abc")),
+		},
+		3,
 	)
 
 	act, e := testFunc(given)
@@ -1078,12 +1076,11 @@ func Test_S7_1(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1128,12 +1125,11 @@ func Test_S7_2(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1179,12 +1175,11 @@ func Test_S7_3(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1240,12 +1235,11 @@ func Test_S7_4(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1279,12 +1273,13 @@ func Test_S7_5(t *testing.T) {
 		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{
 			newAssignmentBlock(
-				[]Assignment{
-					newAssignment(
-						newIdentifier(tok(TK_IDENTIFIER, "a")),
-						newLiteral(tok(TK_NUMBER, "1")),
-					),
+				[]Expression{
+					newIdentifier(tok(TK_IDENTIFIER, "a")),
 				},
+				[]Expression{
+					newLiteral(tok(TK_NUMBER, "1")),
+				},
+				1,
 			),
 		},
 	)
@@ -1301,12 +1296,11 @@ func Test_S7_5(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1355,12 +1349,13 @@ func Test_S7_6(t *testing.T) {
 		tok(TK_BLOCK_CLOSE, "}"),
 		[]Expression{
 			newAssignmentBlock(
-				[]Assignment{
-					newAssignment(
-						newIdentifier(tok(TK_IDENTIFIER, "a")),
-						newLiteral(tok(TK_NUMBER, "1")),
-					),
+				[]Expression{
+					newIdentifier(tok(TK_IDENTIFIER, "a")),
 				},
+				[]Expression{
+					newLiteral(tok(TK_NUMBER, "1")),
+				},
+				1,
 			),
 		},
 	)
@@ -1381,12 +1376,11 @@ func Test_S7_6(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1436,12 +1430,11 @@ func Test_S7_7(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1491,12 +1484,11 @@ func Test_S7_8(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1551,12 +1543,11 @@ func Test_S7_9(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1588,12 +1579,11 @@ func Test_S8_1(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1628,12 +1618,11 @@ func Test_S8_2(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1674,12 +1663,11 @@ func Test_S8_3(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1725,12 +1713,11 @@ func Test_S8_4(t *testing.T) {
 	)
 
 	exp := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "f")),
-				f,
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "f")),
 		},
+		[]Expression{f},
+		1,
 	)
 
 	act, e := testFunc(given)
@@ -1842,12 +1829,13 @@ func Test_S9_3(t *testing.T) {
 	)
 
 	second := newAssignmentBlock(
-		[]Assignment{
-			newAssignment(
-				newIdentifier(tok(TK_IDENTIFIER, "a")),
-				newLiteral(tok(TK_NUMBER, "3")),
-			),
+		[]Expression{
+			newIdentifier(tok(TK_IDENTIFIER, "a")),
 		},
+		[]Expression{
+			newLiteral(tok(TK_NUMBER, "3")),
+		},
+		1,
 	)
 
 	body := newBlock(
