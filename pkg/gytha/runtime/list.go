@@ -5,7 +5,7 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/statement"
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/token"
 )
 
 func evalList(ctx *alphaContext, list List) result {

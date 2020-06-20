@@ -3,7 +3,7 @@ package scanner
 import (
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
 func tok(ty TokenType, v string) Token {
@@ -76,10 +76,6 @@ func Test_T9_7(t *testing.T) {
 
 func Test_T10_1(t *testing.T) {
 	okTest(t, ":=", []Token{tok(TK_ASSIGNMENT, ":=")})
-}
-
-func Test_T11_1(t *testing.T) {
-	okTest(t, "^", []Token{tok(TK_OUTPUT, "^")})
 }
 
 func Test_T11_2(t *testing.T) {

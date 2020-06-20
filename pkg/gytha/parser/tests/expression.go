@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/statement"
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/token"
 )
 
 func E1_Add(t *testing.T, f ParseFunc) {

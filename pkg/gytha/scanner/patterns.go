@@ -4,7 +4,7 @@ import (
 	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/token"
 )
 
 // matcher implementations will return the number of terminals in a token, but

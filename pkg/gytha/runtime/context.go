@@ -2,7 +2,7 @@ package runtime
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/token"
 )
 
 // alphaContext implements pkg/runtime/Context.

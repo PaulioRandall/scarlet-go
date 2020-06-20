@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
 var testFunc func(TokenStream) ([]Expression, error) = ParseStatements

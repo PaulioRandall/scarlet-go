@@ -1,7 +1,7 @@
 package sanitiser
 
 import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/token"
 )
 
 // SanitiseAll removes redundant tokens, such as comment and whitespace, as well

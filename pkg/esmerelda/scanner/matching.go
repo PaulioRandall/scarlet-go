@@ -4,7 +4,7 @@ import (
 	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 
 	mat "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/scanner/matcher"
 )
@@ -198,9 +198,6 @@ var patterns = []mat.Pattern{
 	}},
 	pattern{TK_GUARD_CLOSE, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "]")
-	}},
-	pattern{TK_OUTPUT, func(s *mat.Symbols) (int, error) {
-		return matchStr(s, "^")
 	}},
 	pattern{TK_OUTPUTS, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "->")

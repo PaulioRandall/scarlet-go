@@ -3,7 +3,7 @@ package scanner
 import (
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
 func Test_S1(t *testing.T) {
@@ -110,7 +110,7 @@ func Test_S4(t *testing.T) {
 
 func Test_S5(t *testing.T) {
 
-	in := "F(a,b,^c,^d)"
+	in := "F(a,b->c,d)"
 
 	exp := []Token{
 		NewToken(TK_FUNCTION, "F", 0, 0),
@@ -118,13 +118,11 @@ func Test_S5(t *testing.T) {
 		NewToken(TK_IDENTIFIER, "a", 0, 2),
 		NewToken(TK_DELIMITER, ",", 0, 3),
 		NewToken(TK_IDENTIFIER, "b", 0, 4),
-		NewToken(TK_DELIMITER, ",", 0, 5),
-		NewToken(TK_OUTPUT, "^", 0, 6),
+		NewToken(TK_OUTPUTS, "->", 0, 5),
 		NewToken(TK_IDENTIFIER, "c", 0, 7),
 		NewToken(TK_DELIMITER, ",", 0, 8),
-		NewToken(TK_OUTPUT, "^", 0, 9),
-		NewToken(TK_IDENTIFIER, "d", 0, 10),
-		NewToken(TK_PAREN_CLOSE, ")", 0, 11),
+		NewToken(TK_IDENTIFIER, "d", 0, 9),
+		NewToken(TK_PAREN_CLOSE, ")", 0, 10),
 	}
 
 	okTest(t, in, exp)

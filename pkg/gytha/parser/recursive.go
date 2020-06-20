@@ -2,7 +2,7 @@ package parser
 
 import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/statement"
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/token"
 )
 
 func ParseAll(tks []Token) []Statement {

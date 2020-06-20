@@ -10,7 +10,7 @@ package auditor
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
 type StatementIterator interface {

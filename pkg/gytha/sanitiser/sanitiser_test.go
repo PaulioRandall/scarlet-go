@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/token"
 
 	"github.com/stretchr/testify/require"
 )

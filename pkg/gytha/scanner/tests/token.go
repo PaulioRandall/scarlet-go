@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/token"
 )
 
 func T1_Newlines(t *testing.T, f ScanFunc) {
