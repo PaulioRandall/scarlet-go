@@ -6,10 +6,10 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/pkg/err"
 
-	parser "github.com/PaulioRandall/scarlet-go/pkg/parsers/gytha"
-	runtime "github.com/PaulioRandall/scarlet-go/pkg/runtime/cutangle"
-	sanitiser "github.com/PaulioRandall/scarlet-go/pkg/sanitisers/standard"
-	scanner "github.com/PaulioRandall/scarlet-go/pkg/scanners/lupine"
+	"github.com/PaulioRandall/scarlet-go/pkg/gytha/parser"
+	"github.com/PaulioRandall/scarlet-go/pkg/gytha/runtime"
+	"github.com/PaulioRandall/scarlet-go/pkg/gytha/sanitiser"
+	"github.com/PaulioRandall/scarlet-go/pkg/gytha/scanner"
 )
 
 func main() { // Run it with `./godo run`
