@@ -6,9 +6,6 @@ import (
 
 type TokenType int
 
-// TODO: Some of the const token types don't have meaningful or accurate names,
-//			 consider improving matters.
-
 const (
 	TK_UNDEFINED TokenType = iota
 	// ------------------
