@@ -17,6 +17,7 @@ func identifier(p *pipeline) (Expression, error) {
 	var id Expression = newIdentifier(tk)
 
 	for more := true; more; {
+
 		id, more, e = maybeMore(p, id)
 		if e != nil {
 			return nil, e

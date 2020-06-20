@@ -44,9 +44,12 @@ func statement(p *pipeline) (Expression, error) {
 
 	switch {
 	case p.match(TK_IDENTIFIER):
+
 		if p.matchBeyond(TK_ASSIGNMENT) || p.matchBeyond(TK_DELIMITER) {
 			return assignment(p)
 		}
+
+		return identifier(p)
 
 	case p.match(TK_GUARD_OPEN):
 		return guard(p)
@@ -70,7 +73,7 @@ func statement(p *pipeline) (Expression, error) {
 		return spellCall(p)
 	}
 
-	return expression(p)
+	return nil, nil
 }
 
 func expectStatement(p *pipeline) (Expression, error) {
