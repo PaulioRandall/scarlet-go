@@ -12,8 +12,8 @@ type TokenStream interface {
 	PeekBeyond() Token
 }
 
-func ParseStatements(tks []Token) ([]Expression, error) {
-	p := newPipeline(tks, nil)
+func ParseStatements(ts TokenStream) ([]Expression, error) {
+	p := newPipeline(ts)
 	return statements(p)
 }
 
@@ -43,10 +43,10 @@ func statement(p *pipeline) (Expression, error) {
 	// pattern := assignment | expression
 
 	switch {
-	case p.matchSequence(TK_IDENTIFIER, TK_ASSIGNMENT):
-		fallthrough
-	case p.matchSequence(TK_IDENTIFIER, TK_DELIMITER):
-		return assignment(p)
+	case p.match(TK_IDENTIFIER):
+		if p.matchBeyond(TK_ASSIGNMENT) || p.matchBeyond(TK_DELIMITER) {
+			return assignment(p)
+		}
 
 	case p.match(TK_GUARD_OPEN):
 		return guard(p)

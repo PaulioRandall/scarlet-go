@@ -9,19 +9,20 @@ import (
 
 type pipeline struct {
 	stream TokenStream
-	tks    []Token
-	size   int
-	pos    int
 	prev   Token
 }
 
-func newPipeline(tks []Token, stream TokenStream) *pipeline {
-	return &pipeline{stream, tks, len(tks), 0, nil}
+func newPipeline(stream TokenStream) *pipeline {
+	return &pipeline{stream, nil}
+}
+
+func (p *pipeline) _peek() Token {
+	p._ignoreRedundant()
+	return p.stream.Peek()
 }
 
 func (p *pipeline) hasMore() bool {
-	p._ignoreRedundant()
-	return p.pos < p.size
+	return p._peek() != nil
 }
 
 func (p *pipeline) match(ty TokenType) bool {
@@ -34,20 +35,14 @@ func (p *pipeline) match(ty TokenType) bool {
 	return ty == TK_ANY || ty == tk.Type()
 }
 
-func (p *pipeline) matchSequence(tys ...TokenType) bool {
-	for i, ty := range tys {
+func (p *pipeline) matchBeyond(ty TokenType) bool {
 
-		tk := p._at(i)
-		if tk == nil {
-			return false
-		}
-
-		if ty != TK_ANY && ty != tk.Type() {
-			return false
-		}
+	tk := p.stream.PeekBeyond()
+	if tk == nil {
+		return false
 	}
 
-	return true
+	return ty == TK_ANY || ty == tk.Type()
 }
 
 func (p *pipeline) peek() Token {
@@ -55,7 +50,12 @@ func (p *pipeline) peek() Token {
 }
 
 func (p *pipeline) any() Token {
-	return p._next()
+
+	if p.accept(TK_ANY) {
+		return p.prev
+	}
+
+	return nil
 }
 
 func (p *pipeline) accept(ty TokenType) bool {
@@ -66,7 +66,7 @@ func (p *pipeline) accept(ty TokenType) bool {
 	}
 
 	if ty == TK_ANY || ty == tk.Type() {
-		p._next()
+		p.prev = p.stream.Next()
 		return true
 	}
 
@@ -80,7 +80,7 @@ func (p *pipeline) expect(exp TokenType) (Token, error) {
 	}
 
 	if p.hasMore() {
-		return nil, p._unexpected(p._peek(), exp.String())
+		return nil, p._unexpected(p.stream.Peek(), exp.String())
 	}
 
 	return nil, p._outOfTokens(p.prev, exp.String())
@@ -95,75 +95,43 @@ func (p *pipeline) expectAnyOf(exp ...TokenType) (Token, error) {
 	}
 
 	if p.hasMore() {
-		return nil, p._unexpected(p._peek(), JoinTypes(exp...))
+		return nil, p._unexpected(p.stream.Peek(), JoinTypes(exp...))
 	}
 
 	return nil, p._outOfTokens(p.prev, JoinTypes(exp...))
 }
 
-func (p *pipeline) _peek() Token {
-
-	p._ignoreRedundant()
-	if p.pos >= p.size {
-		return nil
-	}
-
-	return p.tks[p.pos]
-}
-
-func (p *pipeline) _at(i int) Token {
-
-	p._ignoreRedundant()
-	if p.pos+i >= p.size {
-		return nil
-	}
-
-	return p.tks[p.pos+i]
-}
-
-func (p *pipeline) _next() Token {
-
-	tk := p._peek()
-	if tk == nil {
-		return nil
-	}
-
-	p.pos++
-	p.prev = tk
-	return tk
-}
-
 func (p *pipeline) _ignoreRedundant() {
 
-	for p.pos < p.size {
+	for next := p.stream.Peek(); next != nil; next = p.stream.Peek() {
 
-		next := p.tks[p.pos].Type()
+		ty := next.Type()
 
 		switch {
-		case next == TK_COMMENT:
-			p.pos++
+		case ty == TK_COMMENT:
+			p.stream.Next()
 
-		case next == TK_WHITESPACE:
-			p.pos++
+		case ty == TK_WHITESPACE:
+			p.stream.Next()
 
-		case next != TK_TERMINATOR:
+		case ty != TK_TERMINATOR:
 			return
 
 			// next must be a TERMINATOR
 		case p.prev == nil: // Ignore TERMINATORs at start of script
-			p.pos++
+			p.stream.Next()
 
 		case p.prev.Type() == TK_DELIMITER: // Allow "NEWLINE" after delimiter
-			p.pos++
+			p.stream.Next()
 
 		case p.prev.Type() == TK_BLOCK_OPEN: // Allow "NEWLINE" after block start
-			p.pos++
+			p.stream.Next()
 
 		case p.prev.Type() == TK_PAREN_OPEN: // Allow "NEWLINE" after paren start
-			p.pos++
+			p.stream.Next()
 
 		case p.prev.Type() == TK_TERMINATOR: // Ignore successive TERMINATORs
-			p.pos++
+			p.stream.Next()
 
 		default: // TERMINATOR
 			return
