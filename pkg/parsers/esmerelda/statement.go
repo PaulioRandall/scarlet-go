@@ -49,8 +49,6 @@ func statement(p *pipeline) (Expression, error) {
 			return assignment(p)
 		}
 
-		return identifier(p)
-
 	case p.match(TK_GUARD_OPEN):
 		return guard(p)
 
@@ -73,7 +71,7 @@ func statement(p *pipeline) (Expression, error) {
 		return spellCall(p)
 	}
 
-	return nil, nil
+	return expression(p)
 }
 
 func expectStatement(p *pipeline) (Expression, error) {
