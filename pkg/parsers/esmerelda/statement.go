@@ -6,8 +6,14 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/token"
 )
 
+type TokenStream interface {
+	Next() Token
+	Peek() Token
+	PeekBeyond() Token
+}
+
 func ParseStatements(tks []Token) ([]Expression, error) {
-	p := newPipeline(tks)
+	p := newPipeline(tks, nil)
 	return statements(p)
 }
 

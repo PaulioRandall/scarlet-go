@@ -8,6 +8,37 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type tkStream struct {
+	tks []Token
+}
+
+func (s tkStream) get(i int) Token {
+
+	if len(s.tks) > i {
+		return s.tks[i]
+	}
+
+	return nil
+}
+
+func (s tkStream) Next() Token {
+
+	tk := s.get(0)
+	if tk != nil {
+		s.tks = s.tks[1:]
+	}
+
+	return tk
+}
+
+func (s tkStream) Peek() Token {
+	return s.get(0)
+}
+
+func (s tkStream) PeekBeyond() Token {
+	return s.get(1)
+}
+
 func Test_P1(t *testing.T) {
 
 	// p._peek(), p._next(), p._ignoreRedundancy()
@@ -16,7 +47,7 @@ func Test_P1(t *testing.T) {
 		return NewToken(ty, "", 0, 0)
 	}
 
-	p := newPipeline([]Token{
+	tks := []Token{
 		tok(TK_TERMINATOR),
 		tok(TK_NUMBER),
 		tok(TK_TERMINATOR),
@@ -27,7 +58,9 @@ func Test_P1(t *testing.T) {
 		tok(TK_COMMENT),
 		tok(TK_WHITESPACE),
 		tok(TK_NUMBER),
-	})
+	}
+
+	p := newPipeline(tks, tkStream{tks})
 
 	require.Equal(t, tok(TK_NUMBER), p._peek())
 	require.Equal(t, tok(TK_NUMBER), p._next())
@@ -53,11 +86,13 @@ func Test_P2(t *testing.T) {
 		return NewToken(ty, "", 0, 0)
 	}
 
-	p := newPipeline([]Token{
+	tks := []Token{
 		tok(TK_NUMBER),
 		tok(TK_PLUS),
 		tok(TK_NUMBER),
-	})
+	}
+
+	p := newPipeline(tks, tkStream{tks})
 
 	require.Equal(t, true, p.hasMore())
 	require.Equal(t, true, p.match(TK_NUMBER))
@@ -99,11 +134,13 @@ func Test_P3(t *testing.T) {
 		require.Nil(t, nil, act)
 	}
 
-	p := newPipeline([]Token{
+	tks := []Token{
 		tok(TK_NUMBER),
 		tok(TK_PLUS),
 		tok(TK_NUMBER),
-	})
+	}
+
+	p := newPipeline(tks, tkStream{tks})
 
 	checkErr(t, p, TK_PLUS)
 	checkOk(t, p, tok(TK_NUMBER), TK_NUMBER)
@@ -137,11 +174,13 @@ func Test_P4(t *testing.T) {
 		require.Nil(t, nil, act)
 	}
 
-	p := newPipeline([]Token{
+	tks := []Token{
 		tok(TK_NUMBER),
 		tok(TK_PLUS),
 		tok(TK_NUMBER),
-	})
+	}
+
+	p := newPipeline(tks, tkStream{tks})
 
 	checkErr(t, p, TK_PLUS)
 	checkOk(t, p, tok(TK_NUMBER), TK_PLUS, TK_NUMBER)

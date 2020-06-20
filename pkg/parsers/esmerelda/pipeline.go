@@ -8,14 +8,15 @@ import (
 )
 
 type pipeline struct {
-	tks  []Token
-	size int
-	pos  int
-	prev Token
+	stream TokenStream
+	tks    []Token
+	size   int
+	pos    int
+	prev   Token
 }
 
-func newPipeline(tks []Token) *pipeline {
-	return &pipeline{tks, len(tks), 0, nil}
+func newPipeline(tks []Token, stream TokenStream) *pipeline {
+	return &pipeline{stream, tks, len(tks), 0, nil}
 }
 
 func (p *pipeline) hasMore() bool {
