@@ -43,8 +43,10 @@ func statement(p *pipeline) (Expression, error) {
 	// pattern := assignment | expression
 
 	switch {
-	case p.match(TK_IDENTIFIER):
+	case p.match(TK_DEFINITION):
+		return assignment(p)
 
+	case p.match(TK_IDENTIFIER):
 		if p.matchBeyond(TK_ASSIGNMENT) || p.matchBeyond(TK_DELIMITER) {
 			return assignment(p)
 		}
@@ -101,7 +103,9 @@ func exit(p *pipeline) (Expression, error) {
 }
 
 func assignment(p *pipeline) (Expression, error) {
-	// pattern := assignment_targets ASSIGN assignment_sources
+	// pattern := [DEFINITION] assignment_targets ASSIGN assignment_sources
+
+	final := p.accept(TK_DEFINITION)
 
 	targets, e := assignmentTargets(p)
 	if e != nil {
@@ -123,7 +127,7 @@ func assignment(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return newAssignmentBlock(targets, sources, count), nil
+	return newAssignmentBlock(final, targets, sources, count), nil
 }
 
 func assignmentSources(p *pipeline) ([]Expression, error) {

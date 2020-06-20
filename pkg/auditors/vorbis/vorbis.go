@@ -6,3 +6,7 @@ package vorbis
 // that time stays separate from space. Call them auditors. Auditors of
 // reality."
 // - 'Reaper Man' by Terry Pratchett
+
+func AuditStatements() []error {
+	return nil
+}

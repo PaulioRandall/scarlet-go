@@ -201,12 +201,17 @@ func (o operationExpr) String() string {
 }
 
 type assignmentStat struct {
+	final  bool
 	target Expression
 	source Expression
 }
 
 func (assignmentStat) Kind() Kind {
 	return ST_ASSIGNMENT
+}
+
+func (a assignmentStat) Const() bool {
+	return a.final
 }
 
 func (a assignmentStat) Target() Expression {
@@ -230,6 +235,7 @@ func (a assignmentStat) String() string {
 }
 
 type assignmentBlockStat struct {
+	final   bool
 	targets []Expression
 	sources []Expression
 	count   int
@@ -237,6 +243,10 @@ type assignmentBlockStat struct {
 
 func (assignmentBlockStat) Kind() Kind {
 	return ST_ASSIGNMENT_BLOCK
+}
+
+func (a assignmentBlockStat) Const() bool {
+	return a.final
 }
 
 func (a assignmentBlockStat) Targets() []Expression {

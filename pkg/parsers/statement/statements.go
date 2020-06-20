@@ -154,6 +154,7 @@ func OperationString(o Operation) string {
 
 type Assignment interface {
 	Expression
+	Const() bool
 	Target() Expression
 	Source() Expression
 }
@@ -163,6 +164,9 @@ func AssignmentString(a Assignment) string {
 	b := builder{}
 
 	b.add(0, "[Assignment] ")
+	if a.Const() {
+		b.add(0, "Const")
+	}
 
 	b.newline()
 	b.add(1, "Target: ")
@@ -179,6 +183,7 @@ func AssignmentString(a Assignment) string {
 
 type AssignmentBlock interface {
 	Expression
+	Const() bool
 	Targets() []Expression
 	Sources() []Expression
 	Count() int
@@ -188,6 +193,9 @@ func AssignmentBlockString(bk AssignmentBlock) string {
 
 	b := builder{}
 	b.add(0, "[AssignmentBlock] ")
+	if bk.Const() {
+		b.add(0, "Const")
+	}
 
 	for i := 0; i < bk.Count(); i++ {
 
