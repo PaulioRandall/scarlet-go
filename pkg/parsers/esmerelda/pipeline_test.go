@@ -16,7 +16,7 @@ func Test_P2(t *testing.T) {
 		return NewToken(ty, "", 0, 0)
 	}
 
-	p := newPipeline(tkStream{&[]Token{
+	p := newPipeline(&tkStream{[]Token{
 		tok(TK_NUMBER),
 		tok(TK_PLUS),
 		tok(TK_NUMBER),
@@ -62,7 +62,7 @@ func Test_P3(t *testing.T) {
 		require.Nil(t, nil, act)
 	}
 
-	p := newPipeline(tkStream{&[]Token{
+	p := newPipeline(&tkStream{[]Token{
 		tok(TK_NUMBER),
 		tok(TK_PLUS),
 		tok(TK_NUMBER),
@@ -100,7 +100,7 @@ func Test_P4(t *testing.T) {
 		require.Nil(t, nil, act)
 	}
 
-	p := newPipeline(tkStream{&[]Token{
+	p := newPipeline(&tkStream{[]Token{
 		tok(TK_NUMBER),
 		tok(TK_PLUS),
 		tok(TK_NUMBER),

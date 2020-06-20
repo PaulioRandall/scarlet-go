@@ -10,33 +10,33 @@ import (
 )
 
 type tkStream struct {
-	tks *[]Token
+	tks []Token
 }
 
-func (s tkStream) get(i int) Token {
+func (s *tkStream) get(i int) Token {
 
-	if len(*s.tks) > i {
-		return (*s.tks)[i]
+	if len(s.tks) > i {
+		return s.tks[i]
 	}
 
 	return nil
 }
 
-func (s tkStream) Next() Token {
+func (s *tkStream) Next() Token {
 
 	tk := s.get(0)
 	if tk != nil {
-		*s.tks = (*s.tks)[1:]
+		s.tks = s.tks[1:]
 	}
 
 	return tk
 }
 
-func (s tkStream) Peek() Token {
+func (s *tkStream) Peek() Token {
 	return s.get(0)
 }
 
-func (s tkStream) PeekBeyond() Token {
+func (s *tkStream) PeekBeyond() Token {
 	return s.get(1)
 }
 
