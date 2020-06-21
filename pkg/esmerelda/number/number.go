@@ -5,7 +5,6 @@ import (
 )
 
 type Number interface {
-
 	fmt.Stringer
 	Copy() Number
 	Integer() int64

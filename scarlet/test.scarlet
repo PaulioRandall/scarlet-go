@@ -13,3 +13,4 @@ WHEN {
 	[TRUE] b: 3
 }
 
+@Println("b is ", b)
