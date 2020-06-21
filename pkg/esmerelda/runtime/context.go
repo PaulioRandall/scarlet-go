@@ -1,33 +1,41 @@
 package runtime
 
-/*
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/runtime/result"
+	//"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
+	//. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-// alphaContext implements pkg/runtime/Context.
-type alphaContext struct {
-	pure   bool
-	fixed  map[string]result
-	local  map[string]result
-	parent *alphaContext
+type Context struct {
+	parent  *Context
+	pure    bool
+	defined map[string]Result
+	local   map[string]Result
 }
 
-func (ctx alphaContext) String() (s string) {
+func NewCtx(parent *Context, pure bool) Context {
+	return Context{
+		parent:  parent,
+		pure:    true,
+		defined: map[string]Result{},
+		local:   map[string]Result{},
+	}
+}
+
+func (ctx Context) String() (s string) {
 
 	const NEWLINE = "\n"
 	const TAB = "\t"
 
 	s += "variables:" + NEWLINE
 
-	if len(ctx.local) == 0 && len(ctx.fixed) == 0 {
+	if len(ctx.local) == 0 && len(ctx.defined) == 0 {
 		s += TAB + "(Empty)" + NEWLINE
 		return
 	}
 
-	for id, v := range ctx.fixed {
-		s += TAB + "DEF " + id + " " + v.String() + NEWLINE
+	for def, v := range ctx.defined {
+		s += TAB + "def " + def + " " + v.String() + NEWLINE
 	}
 
 	for id, v := range ctx.local {
@@ -37,6 +45,7 @@ func (ctx alphaContext) String() (s string) {
 	return
 }
 
+/*
 func (ctx *alphaContext) Get(id string) result {
 
 	if v := ctx.getFixed(id); v != nil {

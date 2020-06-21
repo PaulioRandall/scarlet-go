@@ -1,25 +1,42 @@
 package result
 
-/*
 import (
 	"fmt"
-	"strconv"
-
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
+	//"strconv"
+	//"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
+	//. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	//. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-type result interface {
+type Void struct{}
+
+func (Void) String() string {
+	return "_"
+}
+
+type Result struct {
 	fmt.Stringer
+	typ ResultType
+	val interface{}
 }
 
-type voidLiteral struct{}
-
-func (_ voidLiteral) String() string {
-	return ""
+func (r Result) String() string {
+	return fmt.Sprintf("%v", r.val)
 }
 
+func (r Result) Type() ResultType {
+	return r.typ
+}
+
+func (r Result) Is(typ ResultType) bool {
+	return r.typ == typ
+}
+
+func (r Result) Void() (Void, bool) {
+	return Void{}, r.Is(RT_VOID)
+}
+
+/*
 type boolLiteral struct {
 	bool
 }
