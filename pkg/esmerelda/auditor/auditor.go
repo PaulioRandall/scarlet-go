@@ -8,7 +8,7 @@ package auditor
 // - 'Reaper Man' by Terry Pratchett
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )

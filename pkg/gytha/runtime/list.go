@@ -3,7 +3,7 @@ package runtime
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/gytha/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/statement"
 	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/token"
 )

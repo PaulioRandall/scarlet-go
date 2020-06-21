@@ -3,7 +3,7 @@ package matcher
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
 )
 
 type RuneMatcher func(index int, value rune) (match bool, e error)

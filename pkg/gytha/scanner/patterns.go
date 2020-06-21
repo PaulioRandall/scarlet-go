@@ -3,7 +3,7 @@ package scanner
 import (
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/gytha/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/gytha/token"
 )
 

@@ -3,7 +3,7 @@ package parser
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 

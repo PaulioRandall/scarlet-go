@@ -3,7 +3,7 @@ package scanner
 import (
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 
 	mat "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/scanner/matcher"

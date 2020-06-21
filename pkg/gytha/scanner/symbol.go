@@ -1,7 +1,7 @@
 package scanner
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/err"
+	"github.com/PaulioRandall/scarlet-go/pkg/gytha/err"
 )
 
 // symbols provides access to an ordered stream of terminal symbols (runes)
