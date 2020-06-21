@@ -230,10 +230,10 @@ var patterns = []mat.Pattern{
 		return matchStr(s, "%")
 	}},
 	pattern{TK_AND, func(s *mat.Symbols) (int, error) {
-		return matchStr(s, "&")
+		return matchStr(s, "&&")
 	}},
 	pattern{TK_OR, func(s *mat.Symbols) (int, error) {
-		return matchStr(s, "|")
+		return matchStr(s, "||")
 	}},
 	pattern{TK_EQUAL, func(s *mat.Symbols) (int, error) {
 		return matchStr(s, "==")

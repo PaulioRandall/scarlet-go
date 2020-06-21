@@ -250,11 +250,11 @@ func Test_T28_1(t *testing.T) {
 }
 
 func Test_T29_1(t *testing.T) {
-	doTest(t, "&", []Token{tok(TK_AND, "&")})
+	doTest(t, "&&", []Token{tok(TK_AND, "&&")})
 }
 
 func Test_T30_1(t *testing.T) {
-	doTest(t, "|", []Token{tok(TK_OR, "|")})
+	doTest(t, "||", []Token{tok(TK_OR, "||")})
 }
 
 func Test_T31_1(t *testing.T) {
