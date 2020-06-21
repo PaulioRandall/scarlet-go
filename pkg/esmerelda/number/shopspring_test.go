@@ -131,3 +131,77 @@ func Test_SH8_1(t *testing.T) {
 	act.Mod(newShopspring("5"))
 	requireEqual(t, shMake(2, 0), act)
 }
+
+func Test_SH9_1(t *testing.T) {
+	// number.Equal returns true if numbers are equal
+
+	act := newShopspring("123.456").Equal(newShopspring("123.456"))
+	require.True(t, act)
+
+	act = newShopspring("123").Equal(newShopspring("456"))
+	require.False(t, act)
+}
+
+func Test_SH10_1(t *testing.T) {
+	// number.NotEqual returns true if numbers are equal
+
+	act := newShopspring("123.456").NotEqual(newShopspring("123.456"))
+	require.False(t, act)
+
+	act = newShopspring("123").NotEqual(newShopspring("456"))
+	require.True(t, act)
+}
+
+func Test_SH11_1(t *testing.T) {
+	// number.LessThan returns true if receiver is less than the argument
+
+	act := newShopspring("123").LessThan(newShopspring("456"))
+	require.True(t, act)
+
+	act = newShopspring("123").LessThan(newShopspring("123"))
+	require.False(t, act)
+
+	act = newShopspring("456").LessThan(newShopspring("123"))
+	require.False(t, act)
+}
+
+func Test_SH12_1(t *testing.T) {
+	// number.LessThanOrEqual returns true if receiver is less or equal than
+	// the argument
+
+	act := newShopspring("123").LessThanOrEqual(newShopspring("456"))
+	require.True(t, act)
+
+	act = newShopspring("123").LessThanOrEqual(newShopspring("123"))
+	require.True(t, act)
+
+	act = newShopspring("456").LessThanOrEqual(newShopspring("123"))
+	require.False(t, act)
+}
+
+func Test_SH13_1(t *testing.T) {
+	// number.MoreThan returns true if receiver is more than the argument
+
+	act := newShopspring("123").MoreThan(newShopspring("456"))
+	require.False(t, act)
+
+	act = newShopspring("123").MoreThan(newShopspring("123"))
+	require.False(t, act)
+
+	act = newShopspring("456").MoreThan(newShopspring("123"))
+	require.True(t, act)
+}
+
+func Test_SH14_1(t *testing.T) {
+	// number.MoreThanOrEqual returns true if receiver is more or equal than
+	// the argument
+
+	act := newShopspring("123").MoreThanOrEqual(newShopspring("456"))
+	require.False(t, act)
+
+	act = newShopspring("123").MoreThanOrEqual(newShopspring("123"))
+	require.True(t, act)
+
+	act = newShopspring("456").MoreThanOrEqual(newShopspring("123"))
+	require.True(t, act)
+}
