@@ -39,9 +39,9 @@ func assertMany(t *testing.T, exps, acts []Token) {
 }
 
 func assertToken(t *testing.T, exp, act Token) {
-	require.NotNil(t, act, "Expected token ("+ToString(exp)+")\nBut got nil")
+	require.NotNil(t, act, "Expected token ("+exp.String()+")\nBut got nil")
 
-	m := "Expected (" + ToString(exp) + ")\nActual   (" + ToString(act) + ")"
+	m := "Expected (" + exp.String() + ")\nActual   (" + act.String() + ")"
 
 	require.Equal(t, exp.Type(), act.Type(), m)
 	require.Equal(t, exp.Value(), act.Value(), m)
@@ -51,7 +51,7 @@ func assertToken(t *testing.T, exp, act Token) {
 
 func tkStr(tks []Token, i int) (_ string) {
 	if i < len(tks) {
-		return ToString(tks[i])
+		return tks[i].String()
 	}
 	return
 }

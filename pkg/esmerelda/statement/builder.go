@@ -3,8 +3,6 @@ package statement
 import (
 	"fmt"
 	"strings"
-
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
 type builder struct {
@@ -22,10 +20,6 @@ func (b *builder) add(indent int, s string) {
 			}
 		}
 	}
-}
-
-func (b *builder) addToken(indent int, tk Token) {
-	b.add(indent, ToString(tk))
 }
 
 func (b *builder) newline() {

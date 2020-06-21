@@ -6,10 +6,15 @@ import (
 )
 
 type Token interface {
+	fmt.Stringer
 	Type() TokenType
 	Value() string
 	Line() int
 	Col() int
+}
+
+func NewToken(ty TokenType, v string, line, col int) Token {
+	return tok{ty, v, line, col}
 }
 
 type tok struct {
@@ -35,18 +40,14 @@ func (tk tok) Col() int {
 	return tk.c
 }
 
-func NewToken(ty TokenType, v string, line, col int) Token {
-	return tok{ty, v, line, col}
+func (tk tok) String() string {
+	return toString(tk)
 }
 
-func ToString(tk Token) string {
+func toString(tk Token) string {
 
 	if tk == nil {
 		return `NIL-TOKEN`
-	}
-
-	if v, ok := tk.(fmt.Stringer); ok {
-		return v.String()
 	}
 
 	var s interface{}

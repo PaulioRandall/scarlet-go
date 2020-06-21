@@ -28,7 +28,7 @@ func ExitString(e Exit) string {
 	b := builder{}
 
 	b.add(0, "[Exit] ")
-	b.addToken(0, e.Tk())
+	b.add(0, e.Tk().String())
 
 	b.newline()
 	b.add(1, "Code: ")
@@ -48,7 +48,7 @@ func VoidString(v Void) string {
 	b := builder{}
 
 	b.add(0, "[Void] ")
-	b.addToken(0, v.Tk())
+	b.add(0, v.Tk().String())
 
 	return b.String()
 }
@@ -63,7 +63,7 @@ func IdentifierString(id Identifier) string {
 	b := builder{}
 
 	b.add(0, "[Identifier] ")
-	b.addToken(0, id.Tk())
+	b.add(0, id.Tk().String())
 
 	return b.String()
 }
@@ -78,7 +78,7 @@ func LiteralString(l Literal) string {
 	b := builder{}
 
 	b.add(0, "[Literal] ")
-	b.addToken(0, l.Tk())
+	b.add(0, l.Tk().String())
 
 	return b.String()
 }
@@ -137,7 +137,7 @@ func OperationString(o Operation) string {
 	b := builder{}
 
 	b.add(0, "[Operation] ")
-	b.addToken(0, o.Operator())
+	b.add(0, o.Operator().String())
 
 	b.newline()
 	b.add(1, "Left: ")
@@ -232,7 +232,7 @@ func ExpressionFunctionString(e ExpressionFunction) string {
 
 		for _, in := range e.Inputs() {
 			b.newline()
-			b.addToken(2, in)
+			b.add(2, in.String())
 		}
 	}
 
@@ -261,7 +261,7 @@ func ParametersString(p Parameters) string {
 
 		for _, in := range p.Inputs() {
 			b.newline()
-			b.addToken(2, in)
+			b.add(2, in.String())
 		}
 	}
 
@@ -272,7 +272,7 @@ func ParametersString(p Parameters) string {
 
 		for _, out := range p.Outputs() {
 			b.newline()
-			b.addToken(2, out)
+			b.add(2, out.String())
 		}
 	}
 
@@ -359,7 +359,7 @@ func WatchString(w Watch) string {
 	b.add(1, "Identifiers:")
 	for _, id := range w.Identifiers() {
 		b.newline()
-		b.addToken(2, id)
+		b.add(2, id.String())
 	}
 
 	b.newline()
@@ -473,7 +473,7 @@ func SpellCallString(s SpellCall) string {
 	b := builder{}
 
 	b.add(0, "[SpellCall]")
-	b.addToken(2, s.Spell())
+	b.add(2, s.Spell().String())
 
 	b.newline()
 	b.add(1, "Arguments:")
