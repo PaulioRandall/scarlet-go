@@ -8,20 +8,9 @@ import (
 	//. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-type Void struct{}
-
-func (Void) String() string {
-	return "_"
-}
-
 type Result struct {
-	fmt.Stringer
 	typ ResultType
 	val interface{}
-}
-
-func (r Result) String() string {
-	return fmt.Sprintf("%v", r.val)
 }
 
 func (r Result) Type() ResultType {
@@ -34,6 +23,16 @@ func (r Result) Is(typ ResultType) bool {
 
 func (r Result) Void() (Void, bool) {
 	return Void{}, r.Is(RT_VOID)
+}
+
+func (r Result) String() string {
+	return fmt.Sprintf("%v", r.val)
+}
+
+type Void struct{}
+
+func (Void) String() string {
+	return "_"
 }
 
 /*
