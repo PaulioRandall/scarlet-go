@@ -1,13 +1,13 @@
 package scanner2
 
 type buffer struct {
-	itr  SymItr
+	SymItr
 	buff rune
 }
 
 func (b buffer) bufferNext() {
 	var ok bool
-	if b.buff, ok = b.itr.Next(); !ok {
+	if b.buff, ok = b.Next(); !ok {
 		b.buff = rune(0)
 	}
 }

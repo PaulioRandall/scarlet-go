@@ -16,11 +16,22 @@ func (l *lexeme) add(ru rune) {
 
 func (s *Scanner) next(lex *lexeme) error {
 
+	switch /*ru := s.peekSym();*/ {
+	case s.symbol(lex):
+		return nil
+	}
+
+	return err.New("Unknown symbol", err.Pos(s.line, s.col))
+}
+
+func (s *Scanner) symbol(lex *lexeme) bool {
+
 	switch s.peekSym() {
 	case '_':
 		lex.add(s.nextSym())
 		lex.ty = TK_VOID
+		return true
 	}
 
-	return err.New("Unknown symbol", err.Pos(s.line, s.col))
+	return false
 }

@@ -17,7 +17,7 @@ type Scanner struct {
 func New(s SymItr) *Scanner {
 
 	b := buffer{
-		itr: s,
+		SymItr: s,
 	}
 	b.bufferNext()
 
