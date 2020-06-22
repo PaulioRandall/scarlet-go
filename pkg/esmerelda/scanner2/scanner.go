@@ -4,58 +4,82 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
+type ScanFunc func() (Token, ScanFunc, error)
+
 type SymItr interface {
 	Next() (rune, bool)
 }
 
-type Scanner struct {
-	buffer
-	line int
-	col  int
-}
-
-func New(s SymItr) *Scanner {
+func New(s SymItr) ScanFunc {
 
 	b := buffer{
 		SymItr: s,
 	}
 	b.bufferNext()
 
-	return &Scanner{
+	if b.empty() {
+		return nil
+	}
+
+	scn := &scanner{
 		buffer: b,
 	}
+
+	return scn.scan
 }
 
-func (s *Scanner) Next() (Token, error) {
-
-	if s.empty() {
-		return nil, nil
-	}
-
-	lex := lexeme{}
-	if e := s.next(&lex); e != nil {
-		return nil, e
-	}
-
-	return s.tokenise(lex), nil
+type scanner struct {
+	buffer
+	line int
+	col  int
 }
 
-func (s *Scanner) tokenise(lex lexeme) Token {
+func (scn *scanner) scan() (Token, ScanFunc, error) {
+
+	if scn.empty() {
+		return nil, nil, nil
+	}
+
+	lex := lexeme{
+		scn: scn,
+	}
+	if e := lex.scan(); e != nil {
+		return nil, nil, e
+	}
+
+	tk := scn.tokenise(lex)
+	if scn.empty() {
+		return tk, nil, nil
+	}
+
+	return tk, scn.scan, nil
+}
+
+func (scn *scanner) tokenise(lex lexeme) Token {
 
 	if lex.ty == TK_UNDEFINED {
-		panic("PROGRAMMERS ERROR! Token type missing")
+		panic("PROGRAMMERS ERROR! Token type not set")
 	}
 
 	val := string(lex.tok)
-
 	tk := NewToken(
 		lex.ty,
 		val,
-		s.line,
-		s.col,
+		scn.line,
+		scn.col,
 	)
 
-	// TODO: update scanner
-
+	scn.update(len(val), lex.ty == TK_NEWLINE)
 	return tk
+}
+
+func (scn *scanner) update(runeCount int, newline bool) {
+
+	if newline {
+		scn.line++
+		scn.col = 0
+		return
+	}
+
+	scn.col += runeCount
 }
