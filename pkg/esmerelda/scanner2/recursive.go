@@ -1,41 +1,63 @@
 package scanner2
 
 import (
-	"unicode"
+	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-func scan(lex *lexeme) error {
-
-	switch {
-	case lex.accept('\r'), lex.match('\n'):
-		lex.ty = TK_NEWLINE
-		return lex.expect('\n')
-
-	case unicode.IsSpace(lex.get()):
-		whitespace(lex)
-		return nil
-
-	case lex.accept('_'):
-		lex.ty = TK_VOID
-		return nil
-	}
-
-	return err.New("Unknown symbol", err.Pos(lex.scn.line, lex.scn.col))
+func fail(scn *scanner, msg string) (TokenType, []rune, error) {
+	return 0, nil, err.New(msg, err.Pos(scn.line, scn.col))
 }
 
-func whitespace(lex *lexeme) {
+func scan(scn *scanner) (TokenType, []rune, error) {
 
-	lex.ty = TK_WHITESPACE
+	switch {
+	case scn.match('\r'), scn.match('\n'):
+		return newline(scn)
 
-	for ru := lex.get(); unicode.IsSpace(ru); ru = lex.get() {
+	case scn.matchSpace():
+		return whitespace(scn)
 
+	case scn.match('_'):
+		return TK_VOID, []rune{scn.next()}, nil
+	}
+
+	msg := fmt.Sprintf("Unknown symbol %q", scn.peek())
+	return fail(scn, msg)
+}
+
+func newline(scn *scanner) (TokenType, []rune, error) {
+
+	var r []rune
+
+	if scn.match('\r') {
+		r = append(r, scn.next())
+	}
+
+	if scn.notMatch('\n') {
+		msg := fmt.Sprintf("Expected %q after %q", '\n', '\r')
+		return fail(scn, msg)
+	}
+
+	r = append(r, scn.next())
+	return TK_NEWLINE, r, nil
+}
+
+func whitespace(scn *scanner) (TokenType, []rune, error) {
+
+	var r []rune
+
+	for scn.matchSpace() {
+
+		ru := scn.peek()
 		if ru == '\r' || ru == '\n' {
-			return
+			break
 		}
 
-		lex.next()
+		r = append(r, scn.next())
 	}
+
+	return TK_WHITESPACE, r, nil
 }

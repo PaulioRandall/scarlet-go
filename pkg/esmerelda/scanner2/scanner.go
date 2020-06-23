@@ -44,14 +44,20 @@ func (scn *scanner) scan() (Token, ScanFunc, error) {
 		return nil, nil, nil
 	}
 
-	lex := lexeme{
-		scn: scn,
-	}
-	if e := scan(&lex); e != nil {
+	ty, runes, e := scan(scn)
+	if e != nil {
 		return nil, nil, e
 	}
 
-	tk := scn.tokenise(lex)
+	if ty == TK_UNDEFINED {
+		progError("Token type not set for " + string(runes))
+	}
+
+	if runes == nil || len(runes) == 0 {
+		progError("Missing runes for " + ty.String())
+	}
+
+	tk := tokenise(scn, ty, runes)
 	if scn.empty() {
 		return tk, nil, nil
 	}
@@ -59,25 +65,21 @@ func (scn *scanner) scan() (Token, ScanFunc, error) {
 	return tk, scn.scan, nil
 }
 
-func (scn *scanner) tokenise(lex lexeme) Token {
+func tokenise(scn *scanner, ty TokenType, runes []rune) Token {
 
-	if lex.ty == TK_UNDEFINED {
-		panic("PROGRAMMERS ERROR! Token type not set")
-	}
-
-	val := string(lex.tok)
+	val := string(runes)
 	tk := NewToken(
-		lex.ty,
+		ty,
 		val,
 		scn.line,
 		scn.col,
 	)
 
-	scn.update(len(val), lex.ty == TK_NEWLINE)
+	update(scn, len(runes), ty == TK_NEWLINE)
 	return tk
 }
 
-func (scn *scanner) update(runeCount int, newline bool) {
+func update(scn *scanner, runeCount int, newline bool) {
 
 	if newline {
 		scn.line++
@@ -86,4 +88,8 @@ func (scn *scanner) update(runeCount int, newline bool) {
 	}
 
 	scn.col += runeCount
+}
+
+func progError(msg string) {
+	panic("PROGRAMMERS ERROR! " + msg)
 }
