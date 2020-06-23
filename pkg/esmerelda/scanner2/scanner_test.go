@@ -202,7 +202,6 @@ func Test_T11_2(t *testing.T) {
 	doTest(t, "->", []Token{tok(TK_OUTPUTS, "->")})
 }
 
-/*
 func Test_T12_1(t *testing.T) {
 	doTest(t, "<=", []Token{tok(TK_LESS_THAN_OR_EQUAL, "<=")})
 }
@@ -238,16 +237,16 @@ func Test_T19_1(t *testing.T) {
 func Test_T20_1(t *testing.T) {
 	doTest(t, ",", []Token{tok(TK_DELIMITER, ",")})
 }
-*/
+
 func Test_T21_1(t *testing.T) {
 	doTest(t, "_", []Token{tok(TK_VOID, "_")})
 }
 
-/*
 func Test_T22_1(t *testing.T) {
 	doTest(t, ";", []Token{tok(TK_TERMINATOR, ";")})
 }
 
+/*
 func Test_T23_1(t *testing.T) {
 	doTest(t, "@abc", []Token{tok(TK_SPELL, "@abc")})
 }
@@ -298,6 +297,7 @@ func Test_T32_1(t *testing.T) {
 	doTest(t, "!=", []Token{tok(TK_NOT_EQUAL, "!=")})
 }
 
+*/
 func Test_T33_1(t *testing.T) {
 	doTest(t, "<", []Token{tok(TK_LESS_THAN, "<")})
 }
@@ -306,6 +306,7 @@ func Test_T34_1(t *testing.T) {
 	doTest(t, ">", []Token{tok(TK_MORE_THAN, ">")})
 }
 
+/*
 func Test_T35_1(t *testing.T) {
 	doTest(t, `""`, []Token{tok(TK_STRING, `""`)})
 }

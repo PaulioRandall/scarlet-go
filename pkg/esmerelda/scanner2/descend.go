@@ -29,6 +29,12 @@ func scan(scn *scanner) (TokenType, []rune, error) {
 	case scn.match(':'):
 		return twoSymbols(scn, TK_ASSIGNMENT, '=')
 
+	case scn.match('<'):
+		return maybeTwoSymbols(scn, TK_LESS_THAN, TK_LESS_THAN_OR_EQUAL, '=')
+
+	case scn.match('>'):
+		return maybeTwoSymbols(scn, TK_MORE_THAN, TK_MORE_THAN_OR_EQUAL, '=')
+
 	case scn.match('+'):
 		return oneSymbol(scn, TK_PLUS)
 
@@ -44,8 +50,32 @@ func scan(scn *scanner) (TokenType, []rune, error) {
 	case scn.match('%'):
 		return oneSymbol(scn, TK_REMAINDER)
 
+	case scn.match('{'):
+		return oneSymbol(scn, TK_BLOCK_OPEN)
+
+	case scn.match('}'):
+		return oneSymbol(scn, TK_BLOCK_CLOSE)
+
+	case scn.match('('):
+		return oneSymbol(scn, TK_PAREN_OPEN)
+
+	case scn.match(')'):
+		return oneSymbol(scn, TK_PAREN_CLOSE)
+
+	case scn.match('['):
+		return oneSymbol(scn, TK_GUARD_OPEN)
+
+	case scn.match(']'):
+		return oneSymbol(scn, TK_GUARD_CLOSE)
+
+	case scn.match(','):
+		return oneSymbol(scn, TK_DELIMITER)
+
 	case scn.match('_'):
 		return oneSymbol(scn, TK_VOID)
+
+	case scn.match(';'):
+		return oneSymbol(scn, TK_TERMINATOR)
 	}
 
 	msg := fmt.Sprintf("Unknown symbol %q", scn.peek())
