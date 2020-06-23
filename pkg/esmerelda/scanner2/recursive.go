@@ -1,76 +1,41 @@
 package scanner2
 
 import (
-	"fmt"
+	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-type lexeme struct {
-	scn *scanner
-	ty  TokenType
-	tok []rune
-}
-
-func (l *lexeme) add(ru rune) {
-	l.tok = append(l.tok, ru)
-}
-
-func (l *lexeme) match(ru rune) bool {
-
-	if l.scn.peekSym() != ru {
-		return false
-	}
-
-	return true
-}
-
-func (l *lexeme) accept(ru rune) bool {
-
-	if l.match(ru) {
-		l.add(l.scn.nextSym())
-		return true
-	}
-
-	return false
-}
-
-func (l *lexeme) expect(exp rune) error {
-
-	if l.accept(exp) {
-		return nil
-	}
-
-	m := fmt.Sprintf("Expected '%v', but got '%v'", exp, l.scn.peekSym())
-	return err.New(m, err.Pos(l.scn.line, l.scn.col))
-}
-
-func (l *lexeme) scan() error {
+func scan(lex *lexeme) error {
 
 	switch {
-	case l.accept('\n'):
-		l.ty = TK_NEWLINE
+	case lex.accept('\r'), lex.match('\n'):
+		lex.ty = TK_NEWLINE
+		return lex.expect('\n')
+
+	case unicode.IsSpace(lex.get()):
+		whitespace(lex)
 		return nil
 
-	case l.accept('\r'):
-		l.ty = TK_NEWLINE
-		return l.expect('\n')
-
-	case l.symbol():
+	case lex.accept('_'):
+		lex.ty = TK_VOID
 		return nil
 	}
 
-	return err.New("Unknown symbol", err.Pos(l.scn.line, l.scn.col))
+	return err.New("Unknown symbol", err.Pos(lex.scn.line, lex.scn.col))
 }
 
-func (l *lexeme) symbol() bool {
+func whitespace(lex *lexeme) {
 
-	switch {
-	case l.accept('_'):
-		l.ty = TK_VOID
-		return true
+	lex.ty = TK_WHITESPACE
+
+	for ru := lex.get(); unicode.IsSpace(ru); ru = lex.get() {
+
+		if ru == '\r' || ru == '\n' {
+			return
+		}
+
+		lex.next()
 	}
-
-	return false
 }

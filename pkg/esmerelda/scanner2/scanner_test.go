@@ -138,11 +138,11 @@ func Test_T1_2(t *testing.T) {
 	doTest(t, "\r\n", []Token{tok(TK_NEWLINE, "\r\n")})
 }
 
-/*
 func Test_T2_1(t *testing.T) {
-	doTest(t, " \t\r\v\f", []Token{tok(TK_WHITESPACE, " \t\r\v\f")})
+	doTest(t, " \t\v\f", []Token{tok(TK_WHITESPACE, " \t\v\f")})
 }
 
+/*
 func Test_T3_1(t *testing.T) {
 	doTest(t, "// This is a comment", []Token{tok(TK_COMMENT, "// This is a comment")})
 }

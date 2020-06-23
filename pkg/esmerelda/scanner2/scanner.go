@@ -47,7 +47,7 @@ func (scn *scanner) scan() (Token, ScanFunc, error) {
 	lex := lexeme{
 		scn: scn,
 	}
-	if e := lex.scan(); e != nil {
+	if e := scan(&lex); e != nil {
 		return nil, nil, e
 	}
 
