@@ -246,7 +246,6 @@ func Test_T22_1(t *testing.T) {
 	doTest(t, ";", []Token{tok(TK_TERMINATOR, ";")})
 }
 
-/*
 func Test_T23_1(t *testing.T) {
 	doTest(t, "@abc", []Token{tok(TK_SPELL, "@abc")})
 }
@@ -258,7 +257,6 @@ func Test_T23_2(t *testing.T) {
 func Test_T23_3(t *testing.T) {
 	doTest(t, "@a.b.c.d", []Token{tok(TK_SPELL, "@a.b.c.d")})
 }
-*/
 
 func Test_T24_1(t *testing.T) {
 	doTest(t, "+", []Token{tok(TK_PLUS, "+")})

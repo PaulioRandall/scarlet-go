@@ -43,13 +43,14 @@ func (b *buffer) peek() rune {
 	return b.buff
 }
 
-func (b *buffer) expect(exp rune) (rune, bool) {
+func (b *buffer) accept(exp rune) bool {
 
 	if b.match(exp) {
-		return b.next(), true
+		b.next()
+		return true
 	}
 
-	return rune(0), false
+	return false
 }
 
 func (b *buffer) match(ru rune) bool {

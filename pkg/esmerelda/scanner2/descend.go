@@ -26,6 +26,9 @@ func scan(scn *scanner) (TokenType, []rune, error) {
 	case scn.matchLetter():
 		return word(scn)
 
+	case scn.match('@'):
+		return spell(scn)
+
 	case scn.match(':'):
 		return maybeTwoSymbols(scn, TK_THEN, TK_ASSIGNMENT, '=')
 
@@ -162,6 +165,30 @@ func word(scn *scanner) (TokenType, []rune, error) {
 	}
 
 	return TK_IDENTIFIER, r, nil
+}
+
+func spell(scn *scanner) (TokenType, []rune, error) {
+
+	var r []rune
+
+	for {
+		r = append(r, scn.next())
+
+		if !scn.matchLetter() {
+			return fail(scn, "Expected letter")
+		}
+
+		r = append(r, scn.next())
+		for scn.matchLetter() {
+			r = append(r, scn.next())
+		}
+
+		if scn.notMatch('.') {
+			break
+		}
+	}
+
+	return TK_SPELL, r, nil
 }
 
 func oneSymbol(scn *scanner, ty TokenType) (TokenType, []rune, error) {
