@@ -27,7 +27,7 @@ func scan(scn *scanner) (TokenType, []rune, error) {
 		return word(scn)
 
 	case scn.match(':'):
-		return twoSymbols(scn, TK_ASSIGNMENT, '=')
+		return maybeTwoSymbols(scn, TK_THEN, TK_ASSIGNMENT, '=')
 
 	case scn.match('{'):
 		return oneSymbol(scn, TK_BLOCK_OPEN)
@@ -89,6 +89,8 @@ func scan(scn *scanner) (TokenType, []rune, error) {
 	case scn.match('!'):
 		return twoSymbols(scn, TK_NOT_EQUAL, '=')
 
+	case scn.match('?'):
+		return oneSymbol(scn, TK_EXISTS)
 	}
 
 	msg := fmt.Sprintf("Unknown symbol %q", scn.peek())
@@ -104,7 +106,7 @@ func newline(scn *scanner) (TokenType, []rune, error) {
 	}
 
 	if scn.notMatch('\n') {
-		msg := fmt.Sprintf("Expected %q after %q", '\n', '\r')
+		msg := fmt.Sprintf("Got %q, expected %q", '\r', string("\r\n"))
 		return fail(scn, msg)
 	}
 
@@ -171,7 +173,8 @@ func twoSymbols(scn *scanner, ty TokenType, second rune) (TokenType, []rune, err
 	first := scn.next()
 
 	if scn.notMatch(second) {
-		msg := fmt.Sprintf("Expected %q after %q", scn.peek(), first)
+		exp := string([]rune{first, second})
+		msg := fmt.Sprintf("Got %q, expected %q", first, exp)
 		return fail(scn, msg)
 	}
 

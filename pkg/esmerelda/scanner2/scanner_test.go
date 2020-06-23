@@ -338,17 +338,14 @@ func Test_T41_1(t *testing.T) {
 	doTest(t, "E", []Token{tok(TK_EXPR_FUNC, "E")})
 }
 
-/*
 func Test_T42_1(t *testing.T) {
 	doTest(t, ":", []Token{tok(TK_THEN, ":")})
 }
-*/
+
 func Test_T43_1(t *testing.T) {
 	doTest(t, "exit", []Token{tok(TK_EXIT, "exit")})
 }
 
-/*
 func Test_T44_1(t *testing.T) {
 	doTest(t, "?", []Token{tok(TK_EXISTS, "?")})
 }
-*/
