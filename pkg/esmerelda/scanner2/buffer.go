@@ -53,12 +53,7 @@ func (b *buffer) expect(exp rune) (rune, bool) {
 }
 
 func (b *buffer) match(ru rune) bool {
-
-	if b.peek() != ru {
-		return false
-	}
-
-	return true
+	return b.peek() == ru
 }
 
 func (b *buffer) notMatch(ru rune) bool {
@@ -71,10 +66,9 @@ func (b *buffer) matchNewline() bool {
 }
 
 func (b *buffer) matchSpace() bool {
+	return unicode.IsSpace(b.peek())
+}
 
-	if unicode.IsSpace(b.peek()) {
-		return true
-	}
-
-	return false
+func (b *buffer) matchLetter() bool {
+	return unicode.IsLetter(b.peek())
 }

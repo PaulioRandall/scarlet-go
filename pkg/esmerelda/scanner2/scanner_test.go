@@ -146,7 +146,6 @@ func Test_T3_1(t *testing.T) {
 	doTest(t, "// This is a comment", []Token{tok(TK_COMMENT, "// This is a comment")})
 }
 
-/*
 func Test_T4_1(t *testing.T) {
 	doTest(t, "when", []Token{tok(TK_WHEN, "when")})
 }
@@ -195,6 +194,7 @@ func Test_T9_7(t *testing.T) {
 	doTest(t, "ddef", []Token{tok(TK_IDENTIFIER, "ddef")})
 }
 
+/*
 func Test_T10_1(t *testing.T) {
 	doTest(t, ":=", []Token{tok(TK_ASSIGNMENT, ":=")})
 }
@@ -327,6 +327,7 @@ func Test_T36_3(t *testing.T) {
 func Test_T36_4(t *testing.T) {
 	doTest(t, "123.456", []Token{tok(TK_NUMBER, "123.456")})
 }
+*/
 
 func Test_T37_1(t *testing.T) {
 	doTest(t, "loop", []Token{tok(TK_LOOP, "loop")})
@@ -336,14 +337,16 @@ func Test_T41_1(t *testing.T) {
 	doTest(t, "E", []Token{tok(TK_EXPR_FUNC, "E")})
 }
 
+/*
 func Test_T42_1(t *testing.T) {
 	doTest(t, ":", []Token{tok(TK_THEN, ":")})
 }
-
+*/
 func Test_T43_1(t *testing.T) {
 	doTest(t, "exit", []Token{tok(TK_EXIT, "exit")})
 }
 
+/*
 func Test_T44_1(t *testing.T) {
 	doTest(t, "?", []Token{tok(TK_EXISTS, "?")})
 }

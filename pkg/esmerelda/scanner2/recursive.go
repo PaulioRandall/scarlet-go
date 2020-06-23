@@ -23,6 +23,9 @@ func scan(scn *scanner) (TokenType, []rune, error) {
 	case scn.match('/'):
 		return comment(scn)
 
+	case scn.matchLetter():
+		return word(scn)
+
 	case scn.match('_'):
 		return TK_VOID, []rune{scn.next()}, nil
 	}
@@ -68,4 +71,32 @@ func comment(scn *scanner) (TokenType, []rune, error) {
 	}
 
 	return TK_COMMENT, r, nil
+}
+
+func word(scn *scanner) (TokenType, []rune, error) {
+
+	r := []rune{scn.next()}
+
+	for scn.matchLetter() || scn.match('_') {
+		r = append(r, scn.next())
+	}
+
+	switch string(r) {
+	case "false", "true":
+		return TK_BOOL, r, nil
+	case "def":
+		return TK_DEFINITION, r, nil
+	case "F":
+		return TK_FUNCTION, r, nil
+	case "E":
+		return TK_EXPR_FUNC, r, nil
+	case "when":
+		return TK_WHEN, r, nil
+	case "loop":
+		return TK_LOOP, r, nil
+	case "exit":
+		return TK_EXIT, r, nil
+	}
+
+	return TK_IDENTIFIER, r, nil
 }
