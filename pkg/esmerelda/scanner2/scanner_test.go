@@ -46,10 +46,10 @@ func doTest(t *testing.T, in string, exps []Token) {
 		acts = append(acts, tk)
 	}
 
-	assertMany(t, exps, acts)
+	assertTokenSlice(t, exps, acts)
 }
 
-func assertMany(t *testing.T, exps, acts []Token) {
+func assertTokenSlice(t *testing.T, exps, acts []Token) {
 
 	expSize := len(exps)
 	actSize := len(acts)
@@ -194,7 +194,6 @@ func Test_T9_7(t *testing.T) {
 	doTest(t, "ddef", []Token{tok(TK_IDENTIFIER, "ddef")})
 }
 
-/*
 func Test_T10_1(t *testing.T) {
 	doTest(t, ":=", []Token{tok(TK_ASSIGNMENT, ":=")})
 }
@@ -203,6 +202,7 @@ func Test_T11_2(t *testing.T) {
 	doTest(t, "->", []Token{tok(TK_OUTPUTS, "->")})
 }
 
+/*
 func Test_T12_1(t *testing.T) {
 	doTest(t, "<=", []Token{tok(TK_LESS_THAN_OR_EQUAL, "<=")})
 }

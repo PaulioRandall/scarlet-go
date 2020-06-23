@@ -16,7 +16,7 @@ func New(s SymItr) ScanFunc {
 		panic("PROGRAMMERS ERROR! SymItr input is nil")
 	}
 
-	b := &buffer{SymItr: s}
+	b := &buffer{symItr: s}
 	b.bufferNext()
 
 	if b.empty() {

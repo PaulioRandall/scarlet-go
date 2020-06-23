@@ -5,14 +5,14 @@ import (
 )
 
 type buffer struct {
-	SymItr
-	buff rune
+	symItr SymItr
+	buff   rune
 }
 
 func (b *buffer) bufferNext() {
 
 	var ok bool
-	b.buff, ok = b.Next()
+	b.buff, ok = b.symItr.Next()
 
 	if !ok {
 		b.buff = rune(0)
