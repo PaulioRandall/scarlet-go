@@ -65,6 +65,11 @@ func (b *buffer) notMatch(ru rune) bool {
 	return !b.match(ru)
 }
 
+func (b *buffer) matchNewline() bool {
+	ru := b.peek()
+	return ru == '\r' || ru == '\n'
+}
+
 func (b *buffer) matchSpace() bool {
 
 	if unicode.IsSpace(b.peek()) {

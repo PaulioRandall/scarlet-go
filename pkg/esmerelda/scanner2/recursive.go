@@ -20,6 +20,9 @@ func scan(scn *scanner) (TokenType, []rune, error) {
 	case scn.matchSpace():
 		return whitespace(scn)
 
+	case scn.match('/'):
+		return comment(scn)
+
 	case scn.match('_'):
 		return TK_VOID, []rune{scn.next()}, nil
 	}
@@ -49,15 +52,20 @@ func whitespace(scn *scanner) (TokenType, []rune, error) {
 
 	var r []rune
 
-	for scn.matchSpace() {
-
-		ru := scn.peek()
-		if ru == '\r' || ru == '\n' {
-			break
-		}
-
+	for !scn.matchNewline() && scn.matchSpace() {
 		r = append(r, scn.next())
 	}
 
 	return TK_WHITESPACE, r, nil
+}
+
+func comment(scn *scanner) (TokenType, []rune, error) {
+
+	var r []rune
+
+	for scn.hasNext() && !scn.matchNewline() {
+		r = append(r, scn.next())
+	}
+
+	return TK_COMMENT, r, nil
 }
