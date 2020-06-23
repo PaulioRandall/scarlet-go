@@ -11,6 +11,47 @@ func fail(scn *scanner, msg string) (TokenType, []rune, error) {
 	return 0, nil, err.New(msg, err.Pos(scn.line, scn.col))
 }
 
+func scan(scn *scanner) (TokenType, []rune, error) {
+
+	switch {
+	case scn.match('\r'), scn.match('\n'):
+		return newline(scn)
+
+	case scn.matchSpace():
+		return whitespace(scn)
+
+	case scn.match('#'):
+		return comment(scn)
+
+	case scn.matchLetter():
+		return word(scn)
+
+	case scn.match(':'):
+		return twoSymbols(scn, TK_ASSIGNMENT, '=')
+
+	case scn.match('+'):
+		return oneSymbol(scn, TK_PLUS)
+
+	case scn.match('-'):
+		return maybeTwoSymbols(scn, TK_MINUS, TK_OUTPUTS, '>')
+
+	case scn.match('*'):
+		return oneSymbol(scn, TK_MULTIPLY)
+
+	case scn.match('/'):
+		return oneSymbol(scn, TK_DIVIDE)
+
+	case scn.match('%'):
+		return oneSymbol(scn, TK_REMAINDER)
+
+	case scn.match('_'):
+		return oneSymbol(scn, TK_VOID)
+	}
+
+	msg := fmt.Sprintf("Unknown symbol %q", scn.peek())
+	return fail(scn, msg)
+}
+
 func newline(scn *scanner) (TokenType, []rune, error) {
 
 	var r []rune
@@ -78,43 +119,28 @@ func word(scn *scanner) (TokenType, []rune, error) {
 	return TK_IDENTIFIER, r, nil
 }
 
-func scan(scn *scanner) (TokenType, []rune, error) {
-
-	switch {
-	case scn.match('\r'), scn.match('\n'):
-		return newline(scn)
-
-	case scn.matchSpace():
-		return whitespace(scn)
-
-	case scn.match('/'):
-		return comment(scn)
-
-	case scn.matchLetter():
-		return word(scn)
-
-	case scn.match(':'):
-		return secondSymbol(scn, TK_ASSIGNMENT, '=')
-
-	case scn.match('-'):
-		return secondSymbol(scn, TK_OUTPUTS, '>')
-
-	case scn.match('_'):
-		return TK_VOID, []rune{scn.next()}, nil
-	}
-
-	msg := fmt.Sprintf("Unknown symbol %q", scn.peek())
-	return fail(scn, msg)
+func oneSymbol(scn *scanner, ty TokenType) (TokenType, []rune, error) {
+	return ty, []rune{scn.next()}, nil
 }
 
-func secondSymbol(scn *scanner, ty TokenType, exp rune) (TokenType, []rune, error) {
+func twoSymbols(scn *scanner, ty TokenType, second rune) (TokenType, []rune, error) {
 
 	first := scn.next()
 
-	if scn.notMatch(exp) {
+	if scn.notMatch(second) {
 		msg := fmt.Sprintf("Expected %q after %q", scn.peek(), first)
 		return fail(scn, msg)
 	}
 
 	return ty, []rune{first, scn.next()}, nil
+}
+
+func maybeTwoSymbols(scn *scanner, ifOne, ifTwo TokenType, second rune) (TokenType, []rune, error) {
+
+	first := scn.next()
+	if scn.notMatch(second) {
+		return ifOne, []rune{first}, nil
+	}
+
+	return ifTwo, []rune{first, scn.next()}, nil
 }

@@ -143,7 +143,7 @@ func Test_T2_1(t *testing.T) {
 }
 
 func Test_T3_1(t *testing.T) {
-	doTest(t, "// This is a comment", []Token{tok(TK_COMMENT, "// This is a comment")})
+	doTest(t, "# This is a comment", []Token{tok(TK_COMMENT, "# This is a comment")})
 }
 
 func Test_T4_1(t *testing.T) {
@@ -259,6 +259,7 @@ func Test_T23_2(t *testing.T) {
 func Test_T23_3(t *testing.T) {
 	doTest(t, "@a.b.c.d", []Token{tok(TK_SPELL, "@a.b.c.d")})
 }
+*/
 
 func Test_T24_1(t *testing.T) {
 	doTest(t, "+", []Token{tok(TK_PLUS, "+")})
@@ -280,6 +281,7 @@ func Test_T28_1(t *testing.T) {
 	doTest(t, "%", []Token{tok(TK_REMAINDER, "%")})
 }
 
+/*
 func Test_T29_1(t *testing.T) {
 	doTest(t, "&&", []Token{tok(TK_AND, "&&")})
 }
