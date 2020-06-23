@@ -5,22 +5,25 @@ type buffer struct {
 	buff rune
 }
 
-func (b buffer) bufferNext() {
+func (b *buffer) bufferNext() {
+
 	var ok bool
-	if b.buff, ok = b.Next(); !ok {
+	b.buff, ok = b.Next()
+
+	if !ok {
 		b.buff = rune(0)
 	}
 }
 
-func (b buffer) hasNext() bool {
+func (b *buffer) hasNext() bool {
 	return b.buff != rune(0)
 }
 
-func (b buffer) empty() bool {
+func (b *buffer) empty() bool {
 	return b.buff == rune(0)
 }
 
-func (b buffer) nextSym() rune {
+func (b *buffer) nextSym() rune {
 
 	if b.empty() {
 		panic("PROGRAMMERS ERROR! No more symbols left")
@@ -32,6 +35,6 @@ func (b buffer) nextSym() rune {
 	return r
 }
 
-func (b buffer) peekSym() rune {
+func (b *buffer) peekSym() rune {
 	return b.buff
 }

@@ -12,7 +12,7 @@ type SymItr interface {
 
 func New(s SymItr) ScanFunc {
 
-	b := buffer{
+	b := &buffer{
 		SymItr: s,
 	}
 	b.bufferNext()
@@ -29,7 +29,7 @@ func New(s SymItr) ScanFunc {
 }
 
 type scanner struct {
-	buffer
+	*buffer
 	line int
 	col  int
 }

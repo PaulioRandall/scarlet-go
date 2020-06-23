@@ -17,31 +17,48 @@ func (l *lexeme) add(ru rune) {
 	l.tok = append(l.tok, ru)
 }
 
-func (l *lexeme) accept(ru rune) bool {
+func (l *lexeme) match(ru rune) bool {
 
 	if l.scn.peekSym() != ru {
 		return false
 	}
 
-	l.add(ru)
 	return true
+}
+
+func (l *lexeme) accept(ru rune) bool {
+
+	if l.match(ru) {
+		l.add(l.scn.nextSym())
+		return true
+	}
+
+	return false
 }
 
 func (l *lexeme) expect(exp rune) error {
 
 	ru := l.scn.peekSym()
-	if ru != exp {
+	if l.accept(exp) {
 		m := fmt.Sprintf("Expected '%v', but got '%v'", exp, ru)
 		return err.New(m, err.Pos(l.scn.line, l.scn.col))
 	}
 
-	l.add(ru)
 	return nil
 }
 
 func (l *lexeme) scan() error {
 
 	switch {
+	case l.accept('\n'):
+		l.ty = TK_NEWLINE
+		return nil
+
+	case l.accept('\r'):
+		l.accept('\n')
+		l.ty = TK_NEWLINE
+		return nil
+
 	case l.symbol():
 		return nil
 	}
