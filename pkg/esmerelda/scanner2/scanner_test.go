@@ -280,7 +280,6 @@ func Test_T28_1(t *testing.T) {
 	doTest(t, "%", []Token{tok(TK_REMAINDER, "%")})
 }
 
-/*
 func Test_T29_1(t *testing.T) {
 	doTest(t, "&&", []Token{tok(TK_AND, "&&")})
 }
@@ -297,7 +296,6 @@ func Test_T32_1(t *testing.T) {
 	doTest(t, "!=", []Token{tok(TK_NOT_EQUAL, "!=")})
 }
 
-*/
 func Test_T33_1(t *testing.T) {
 	doTest(t, "<", []Token{tok(TK_LESS_THAN, "<")})
 }

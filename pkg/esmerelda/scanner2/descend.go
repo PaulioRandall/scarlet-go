@@ -29,27 +29,6 @@ func scan(scn *scanner) (TokenType, []rune, error) {
 	case scn.match(':'):
 		return twoSymbols(scn, TK_ASSIGNMENT, '=')
 
-	case scn.match('<'):
-		return maybeTwoSymbols(scn, TK_LESS_THAN, TK_LESS_THAN_OR_EQUAL, '=')
-
-	case scn.match('>'):
-		return maybeTwoSymbols(scn, TK_MORE_THAN, TK_MORE_THAN_OR_EQUAL, '=')
-
-	case scn.match('+'):
-		return oneSymbol(scn, TK_PLUS)
-
-	case scn.match('-'):
-		return maybeTwoSymbols(scn, TK_MINUS, TK_OUTPUTS, '>')
-
-	case scn.match('*'):
-		return oneSymbol(scn, TK_MULTIPLY)
-
-	case scn.match('/'):
-		return oneSymbol(scn, TK_DIVIDE)
-
-	case scn.match('%'):
-		return oneSymbol(scn, TK_REMAINDER)
-
 	case scn.match('{'):
 		return oneSymbol(scn, TK_BLOCK_OPEN)
 
@@ -76,6 +55,40 @@ func scan(scn *scanner) (TokenType, []rune, error) {
 
 	case scn.match(';'):
 		return oneSymbol(scn, TK_TERMINATOR)
+
+	case scn.match('+'):
+		return oneSymbol(scn, TK_PLUS)
+
+	case scn.match('-'):
+		return maybeTwoSymbols(scn, TK_MINUS, TK_OUTPUTS, '>')
+
+	case scn.match('*'):
+		return oneSymbol(scn, TK_MULTIPLY)
+
+	case scn.match('/'):
+		return oneSymbol(scn, TK_DIVIDE)
+
+	case scn.match('%'):
+		return oneSymbol(scn, TK_REMAINDER)
+
+	case scn.match('&'):
+		return twoSymbols(scn, TK_AND, '&')
+
+	case scn.match('|'):
+		return twoSymbols(scn, TK_OR, '|')
+
+	case scn.match('<'):
+		return maybeTwoSymbols(scn, TK_LESS_THAN, TK_LESS_THAN_OR_EQUAL, '=')
+
+	case scn.match('>'):
+		return maybeTwoSymbols(scn, TK_MORE_THAN, TK_MORE_THAN_OR_EQUAL, '=')
+
+	case scn.match('='):
+		return twoSymbols(scn, TK_EQUAL, '=')
+
+	case scn.match('!'):
+		return twoSymbols(scn, TK_NOT_EQUAL, '=')
+
 	}
 
 	msg := fmt.Sprintf("Unknown symbol %q", scn.peek())
