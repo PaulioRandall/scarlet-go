@@ -38,13 +38,12 @@ func (l *lexeme) accept(ru rune) bool {
 
 func (l *lexeme) expect(exp rune) error {
 
-	ru := l.scn.peekSym()
 	if l.accept(exp) {
-		m := fmt.Sprintf("Expected '%v', but got '%v'", exp, ru)
-		return err.New(m, err.Pos(l.scn.line, l.scn.col))
+		return nil
 	}
 
-	return nil
+	m := fmt.Sprintf("Expected '%v', but got '%v'", exp, l.scn.peekSym())
+	return err.New(m, err.Pos(l.scn.line, l.scn.col))
 }
 
 func (l *lexeme) scan() error {
@@ -55,9 +54,8 @@ func (l *lexeme) scan() error {
 		return nil
 
 	case l.accept('\r'):
-		l.accept('\n')
 		l.ty = TK_NEWLINE
-		return nil
+		return l.expect('\n')
 
 	case l.symbol():
 		return nil
@@ -71,10 +69,8 @@ func (l *lexeme) symbol() bool {
 	switch {
 	case l.accept('_'):
 		l.ty = TK_VOID
-
-	default:
-		return false
+		return true
 	}
 
-	return true
+	return false
 }

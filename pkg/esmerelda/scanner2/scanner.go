@@ -12,6 +12,10 @@ type SymItr interface {
 
 func New(s SymItr) ScanFunc {
 
+	if s == nil {
+		panic("PROGRAMMERS ERROR! SymItr input is nil")
+	}
+
 	b := &buffer{
 		SymItr: s,
 	}
