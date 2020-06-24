@@ -72,19 +72,6 @@ func NewByStr(msg string, line, col, len int) error {
 	return errors.WithStack(e)
 }
 
-func NewByLexeme(msg string, lex Lexeme) error {
-
-	e := sErr{
-		msg:   msg,
-		sLine: lex.Line(),
-		sCol:  lex.Col(),
-		eLine: lex.Line(),
-		eCol:  lex.Line() + lex.Size(),
-	}
-
-	return errors.WithStack(e)
-}
-
 func NewBySnippet(msg string, snip Snippet) error {
 
 	e := sErr{
@@ -94,5 +81,17 @@ func NewBySnippet(msg string, snip Snippet) error {
 	e.sLine, e.sCol = snip.Begin()
 	e.eLine, e.eCol = snip.End()
 
+	return errors.WithStack(e)
+}
+
+func NewAfterSnippet(msg string, snip Snippet) error {
+
+	e := sErr{
+		msg:   msg,
+		eLine: -1,
+		eCol:  -1,
+	}
+
+	e.sLine, e.sCol = snip.End()
 	return errors.WithStack(e)
 }

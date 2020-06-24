@@ -4,14 +4,6 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-func startPos(tk Token) (line int, col int) {
-	return tk.Line(), tk.Col()
-}
-
-func endPos(tk Token) (line int, col int) {
-	return tk.Line(), tk.Col() + len(tk.Value())
-}
-
 type exitStat struct {
 	tk   Token
 	code Expression
@@ -30,7 +22,7 @@ func (e exitStat) Code() Expression {
 }
 
 func (e exitStat) Begin() (int, int) {
-	return startPos(e.tk)
+	return e.tk.Begin()
 }
 
 func (e exitStat) End() (int, int) {
@@ -54,11 +46,11 @@ func (v voidExpr) Tk() Token {
 }
 
 func (v voidExpr) Begin() (int, int) {
-	return startPos(v.tk)
+	return v.tk.Begin()
 }
 
 func (v voidExpr) End() (int, int) {
-	return endPos(v.tk)
+	return v.tk.End()
 }
 
 func (v voidExpr) String() string {
@@ -78,11 +70,11 @@ func (id identifierExpr) Tk() Token {
 }
 
 func (id identifierExpr) Begin() (int, int) {
-	return startPos(id.tk)
+	return id.tk.Begin()
 }
 
 func (id identifierExpr) End() (int, int) {
-	return endPos(id.tk)
+	return id.tk.End()
 }
 
 func (id identifierExpr) String() string {
@@ -102,11 +94,11 @@ func (l literalExpr) Tk() Token {
 }
 
 func (l literalExpr) Begin() (int, int) {
-	return startPos(l.tk)
+	return l.tk.Begin()
 }
 
 func (l literalExpr) End() (int, int) {
-	return endPos(l.tk)
+	return l.tk.End()
 }
 
 func (l literalExpr) String() string {
@@ -286,11 +278,11 @@ func (bk blockExpr) Stats() []Expression {
 }
 
 func (bk blockExpr) Begin() (int, int) {
-	return startPos(bk.open)
+	return bk.open.Begin()
 }
 
 func (bk blockExpr) End() (int, int) {
-	return endPos(bk.close)
+	return bk.close.End()
 }
 
 func (bk blockExpr) String() string {
@@ -341,7 +333,7 @@ func (e expressionFunctionExpr) Expr() Expression {
 }
 
 func (e expressionFunctionExpr) Begin() (int, int) {
-	return startPos(e.key)
+	return e.key.Begin()
 }
 
 func (e expressionFunctionExpr) End() (int, int) {
@@ -371,11 +363,11 @@ func (p parametersDef) Outputs() []Token {
 }
 
 func (p parametersDef) Begin() (int, int) {
-	return startPos(p.open)
+	return p.open.Begin()
 }
 
 func (p parametersDef) End() (int, int) {
-	return endPos(p.close)
+	return p.close.End()
 }
 
 func (p parametersDef) String() string {
@@ -401,7 +393,7 @@ func (f functionExpr) Body() Expression {
 }
 
 func (f functionExpr) Begin() (int, int) {
-	return startPos(f.key)
+	return f.key.Begin()
 }
 
 func (f functionExpr) End() (int, int) {
@@ -435,7 +427,7 @@ func (f functionCallExpr) Begin() (int, int) {
 }
 
 func (f functionCallExpr) End() (int, int) {
-	return endPos(f.close)
+	return f.close.End()
 }
 
 func (f functionCallExpr) String() string {
@@ -461,7 +453,7 @@ func (w watchStat) Body() Block {
 }
 
 func (w watchStat) Begin() (int, int) {
-	return startPos(w.key)
+	return w.key.Begin()
 }
 
 func (w watchStat) End() (int, int) {
@@ -491,7 +483,7 @@ func (g guardStat) Body() Block {
 }
 
 func (g guardStat) Begin() (int, int) {
-	return startPos(g.open)
+	return g.open.Begin()
 }
 
 func (g guardStat) End() (int, int) {
@@ -550,11 +542,11 @@ func (w whenStat) Cases() []WhenCase {
 }
 
 func (w whenStat) Begin() (int, int) {
-	return startPos(w.key)
+	return w.key.Begin()
 }
 
 func (w whenStat) End() (int, int) {
-	return endPos(w.close)
+	return w.close.End()
 }
 
 func (w whenStat) String() string {
@@ -580,7 +572,7 @@ func (l loopStat) Guard() Guard {
 }
 
 func (l loopStat) Begin() (int, int) {
-	return startPos(l.key)
+	return l.key.Begin()
 }
 
 func (l loopStat) End() (int, int) {
@@ -609,11 +601,11 @@ func (s spellCallExpr) Arguments() []Expression {
 }
 
 func (s spellCallExpr) Begin() (int, int) {
-	return startPos(s.spell)
+	return s.spell.Begin()
 }
 
 func (s spellCallExpr) End() (int, int) {
-	return endPos(s.close)
+	return s.close.End()
 }
 
 func (s spellCallExpr) String() string {
@@ -638,7 +630,7 @@ func (e existsExpr) Begin() (int, int) {
 }
 
 func (e existsExpr) End() (int, int) {
-	return endPos(e.close)
+	return e.close.End()
 }
 
 func (e existsExpr) String() string {

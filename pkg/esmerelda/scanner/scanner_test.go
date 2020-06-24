@@ -73,8 +73,16 @@ func assertToken(t *testing.T, exp, act Token) {
 
 	require.Equal(t, exp.Type(), act.Type(), m)
 	require.Equal(t, exp.Value(), act.Value(), m)
-	require.Equal(t, exp.Line(), act.Line(), m)
-	require.Equal(t, exp.Col(), act.Col(), m)
+
+	expLine, expCol := exp.Begin()
+	actLine, actCol := act.Begin()
+	require.Equal(t, expLine, actLine, m)
+	require.Equal(t, expCol, actCol, m)
+
+	expLine, expCol = exp.End()
+	actLine, actCol = act.End()
+	require.Equal(t, expLine, actLine, m)
+	require.Equal(t, expCol, actCol, m)
 }
 
 func tkStr(tks []Token, i int) (_ string) {

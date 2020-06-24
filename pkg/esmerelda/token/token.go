@@ -9,20 +9,25 @@ type Token interface {
 	fmt.Stringer
 	Type() TokenType
 	Value() string
-	Line() int
-	Col() int
-	Size() int
+	Begin() (int, int)
+	End() (int, int)
 }
 
 func NewToken(ty TokenType, v string, line, col int) Token {
-	return tok{ty, v, line, col}
+	return tok{
+		ty:       ty,
+		val:      v,
+		line:     line,
+		colStart: col,
+		colEnd:   col + len(v),
+	}
 }
 
 type tok struct {
-	ty TokenType
-	v  string
-	l  int
-	c  int
+	ty               TokenType
+	val              string
+	line             int
+	colStart, colEnd int
 }
 
 func (tk tok) Type() TokenType {
@@ -30,19 +35,15 @@ func (tk tok) Type() TokenType {
 }
 
 func (tk tok) Value() string {
-	return tk.v
+	return tk.val
 }
 
-func (tk tok) Line() int {
-	return tk.l
+func (tk tok) Begin() (int, int) {
+	return tk.line, tk.colStart
 }
 
-func (tk tok) Col() int {
-	return tk.c
-}
-
-func (tk tok) Size() int {
-	return len(tk.v)
+func (tk tok) End() (int, int) {
+	return tk.line, tk.colEnd
 }
 
 func (tk tok) String() string {
@@ -55,23 +56,17 @@ func toString(tk Token) string {
 		return `NIL`
 	}
 
-	var s interface{}
-	v := tk.Value()
-	ty := tk.Type()
-
-	switch ty {
-	case TK_STRING, TK_TERMINATOR, TK_NEWLINE, TK_WHITESPACE:
-		s = strconv.QuoteToGraphic(v)
-
-	default:
-		s = v
-	}
+	sLine, sCol := tk.Begin()
+	eLine, eCol := tk.End()
+	s := strconv.QuoteToGraphic(tk.Value())
 
 	// +1 for line index to number
-	return fmt.Sprintf(`%d:%d %s %v`,
-		tk.Line()+1,
-		tk.Col(),
-		ty.String(),
+	return fmt.Sprintf(`%d:%d %d:%d %s %s`,
+		sLine+1,
+		sCol,
+		eLine+1,
+		eCol,
+		tk.Type().String(),
 		s,
 	)
 }

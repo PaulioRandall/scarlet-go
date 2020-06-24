@@ -137,10 +137,11 @@ func ResultOf(tk token.Token) Result {
 		}
 	}
 
+	line, sCol := tk.Begin()
+	_, eCol := tk.End()
+
 	msg := fmt.Sprintf("Unknown token type '%s', line %d [%d:%d]",
-		tk.Type().String(),
-		tk.Line()+1,
-		tk.Col(),
-		tk.Col()+tk.Size())
+		tk.Type().String(), line+1, sCol, eCol)
+
 	panic("PROGRAMMERS ERROR! " + msg)
 }

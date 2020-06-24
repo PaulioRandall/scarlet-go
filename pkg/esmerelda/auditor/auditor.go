@@ -22,7 +22,7 @@ type errList struct {
 }
 
 func (el *errList) add(msg string, tk Token) {
-	e := err.NewByLexeme(msg, tk)
+	e := err.NewBySnippet(msg, tk)
 	el.errs = append(el.errs, e)
 }
 

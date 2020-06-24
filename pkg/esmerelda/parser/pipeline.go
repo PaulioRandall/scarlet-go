@@ -141,10 +141,10 @@ func (p *pipeline) _ignoreRedundant() {
 
 func (p *pipeline) _outOfTokens(prev Token, exp string) error {
 	s := fmt.Sprintf("Expected %s; got UNDEFINED", exp)
-	return err.NewByPos(s, prev.Line(), prev.Col()+prev.Size())
+	return err.NewAfterSnippet(s, prev)
 }
 
 func (p *pipeline) _unexpected(next Token, exp string) error {
 	s := fmt.Sprintf("Expected %s; got %s", exp, next.Type().String())
-	return err.NewByLexeme(s, next)
+	return err.NewBySnippet(s, next)
 }
