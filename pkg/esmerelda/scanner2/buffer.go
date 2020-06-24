@@ -39,22 +39,8 @@ func (b *buffer) next() rune {
 	return r
 }
 
-func (b *buffer) peek() rune {
-	return b.buff
-}
-
-func (b *buffer) accept(exp rune) bool {
-
-	if b.match(exp) {
-		b.next()
-		return true
-	}
-
-	return false
-}
-
 func (b *buffer) match(ru rune) bool {
-	return b.peek() == ru
+	return b.buff == ru
 }
 
 func (b *buffer) notMatch(ru rune) bool {
@@ -62,14 +48,17 @@ func (b *buffer) notMatch(ru rune) bool {
 }
 
 func (b *buffer) matchNewline() bool {
-	ru := b.peek()
-	return ru == '\r' || ru == '\n'
+	return b.buff == '\r' || b.buff == '\n'
 }
 
 func (b *buffer) matchSpace() bool {
-	return unicode.IsSpace(b.peek())
+	return unicode.IsSpace(b.buff)
 }
 
 func (b *buffer) matchLetter() bool {
-	return unicode.IsLetter(b.peek())
+	return unicode.IsLetter(b.buff)
+}
+
+func (b *buffer) matchDigit() bool {
+	return unicode.IsDigit(b.buff)
 }

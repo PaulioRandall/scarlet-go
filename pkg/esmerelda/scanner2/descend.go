@@ -94,9 +94,15 @@ func scan(scn *scanner) (TokenType, []rune, error) {
 
 	case scn.match('?'):
 		return oneSymbol(scn, TK_EXISTS)
+
+	case scn.match('"'):
+		return stringLiteral(scn)
+
+	case scn.matchDigit():
+		return numberLiteral(scn)
 	}
 
-	msg := fmt.Sprintf("Unknown symbol %q", scn.peek())
+	msg := fmt.Sprintf("Unknown symbol %q", scn.next())
 	return fail(scn, msg)
 }
 
@@ -216,4 +222,53 @@ func maybeTwoSymbols(scn *scanner, ifOne, ifTwo TokenType, second rune) (TokenTy
 	}
 
 	return ifTwo, []rune{first, scn.next()}, nil
+}
+
+func stringLiteral(scn *scanner) (TokenType, []rune, error) {
+
+	r := []rune{scn.next()}
+
+	for scn.notMatch('"') {
+
+		if scn.match('\\') {
+			r = append(r, scn.next())
+		}
+
+		if scn.empty() {
+			return fail(scn, "EOF encountered before string was terminated")
+		}
+
+		if scn.matchNewline() {
+			return fail(scn, "Newline encountered before string was terminated")
+		}
+
+		r = append(r, scn.next())
+	}
+
+	r = append(r, scn.next())
+	return TK_STRING, r, nil
+}
+
+func numberLiteral(scn *scanner) (TokenType, []rune, error) {
+
+	var r []rune
+
+	for scn.matchDigit() {
+		r = append(r, scn.next())
+	}
+
+	if scn.empty() || scn.notMatch('.') {
+		return TK_NUMBER, r, nil
+	}
+	r = append(r, scn.next())
+
+	if !scn.matchDigit() {
+		return fail(scn, "Expected digit after decimal point")
+	}
+
+	for scn.matchDigit() {
+		r = append(r, scn.next())
+	}
+
+	return TK_NUMBER, r, nil
 }

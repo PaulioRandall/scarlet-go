@@ -88,7 +88,6 @@ func tok(ty TokenType, v string) Token {
 	return NewToken(ty, v, 0, 0)
 }
 
-/*
 func Test_S1(t *testing.T) {
 
 	in := "x := 1"
@@ -129,7 +128,7 @@ func Test_S2(t *testing.T) {
 
 	doTest(t, in, exp)
 }
-*/
+
 func Test_T1_1(t *testing.T) {
 	doTest(t, "\n", []Token{tok(TK_NEWLINE, "\n")})
 }
@@ -302,7 +301,6 @@ func Test_T34_1(t *testing.T) {
 	doTest(t, ">", []Token{tok(TK_MORE_THAN, ">")})
 }
 
-/*
 func Test_T35_1(t *testing.T) {
 	doTest(t, `""`, []Token{tok(TK_STRING, `""`)})
 }
@@ -326,7 +324,6 @@ func Test_T36_3(t *testing.T) {
 func Test_T36_4(t *testing.T) {
 	doTest(t, "123.456", []Token{tok(TK_NUMBER, "123.456")})
 }
-*/
 
 func Test_T37_1(t *testing.T) {
 	doTest(t, "loop", []Token{tok(TK_LOOP, "loop")})
