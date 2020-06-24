@@ -1,9 +1,12 @@
 package runtime
 
 import (
+	"fmt"
+
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/runtime/result"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
 func evalStatements(ctx *Context, stats []Expression) error {
@@ -25,7 +28,7 @@ func evalStatement(ctx *Context, st Expression) error {
 		return evalAssignmentBlock(ctx, st.(AssignmentBlock))
 	}
 
-	return err.NewBySnippet("Unknown statement type", st)
+	panic(err.NewBySnippet("Unknown statement type", st))
 }
 
 func evalAssignmentBlock(ctx *Context, as AssignmentBlock) error {
@@ -82,11 +85,43 @@ func doAssignment(
 	target Expression,
 	value Result,
 ) error {
-	// TODO
+
+	switch target.Kind() {
+	case ST_IDENTIFIER:
+
+		id := target.(Identifier).Tk()
+		e := checkNotDefined(ctx, id)
+		if e != nil {
+			return e
+		}
+
+		ctx.Set(final, id.Value(), value)
+	}
+
+	return nil
+}
+
+func checkNotDefined(ctx *Context, tk Token) error {
+
+	v := tk.Value()
+	if _, ok := ctx.GetDefined(v); ok {
+		msg := fmt.Sprintf("%q cannot be changed, it was defined as constant", v)
+		return err.NewBySnippet(msg, tk)
+	}
+
 	return nil
 }
 
 func evalExpression(ctx *Context, expr Expression) (Result, error) {
-	// TODO
-	return Result{}, nil
+
+	switch expr.Kind() {
+	case ST_LITERAL:
+		return evalLiteral(expr.(Literal)), nil
+	}
+
+	panic(err.NewBySnippet("Unknown expression type", expr))
+}
+
+func evalLiteral(lit Literal) Result {
+	return ResultOf(lit.Tk())
 }

@@ -76,6 +76,16 @@ func (ctx *Context) Get(id string) (Result, bool) {
 	return ctx.GetVar(id)
 }
 
+func (ctx *Context) Set(final bool, id string, r Result) {
+
+	if final {
+		ctx.SetDefined(id, r)
+		return
+	}
+
+	ctx.SetVar(id, r)
+}
+
 func (ctx Context) String() string {
 
 	const NEWLINE = "\n"
