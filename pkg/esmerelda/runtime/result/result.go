@@ -2,11 +2,10 @@ package result
 
 import (
 	"fmt"
-	//"strconv"
-	//"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
-	//. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
+
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/number"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
 type Void struct{}
@@ -108,38 +107,40 @@ func (r Result) Tuple() ([]Result, bool) {
 	return nil, false
 }
 
-/*
-
-func valueOf(tk Token) result {
+func valueOf(tk token.Token) Result {
 
 	switch tk.Type() {
-	case TK_VOID:
-		return voidLiteral{}
+	case token.TK_VOID:
+		return Result{
+			typ: RT_VOID,
+			val: Void{},
+		}
 
-	case TK_BOOL:
-		return boolLiteral(tk.Value() == `TRUE`)
+	case token.TK_BOOL:
+		return Result{
+			typ: RT_BOOL,
+			val: tk.Value() == "true",
+		}
 
-	case TK_NUMBER:
-		return parseFloat(tk)
+	case token.TK_NUMBER:
+		return Result{
+			typ: RT_NUMBER,
+			val: number.New(tk.Value()),
+		}
 
-	case TK_STRING:
-		return stringLiteral(tk.Value())
+	case token.TK_STRING:
+		s := tk.Value()
+
+		return Result{
+			typ: RT_STRING,
+			val: s[1 : len(s)-1],
+		}
 	}
 
-	err.Panic(
-		fmt.Sprintf("SANITY CHECK! Invalid morpheme %s", tk.Type().String()),
-		err.At(tk),
-	)
-	return nil
+	msg := fmt.Sprintf("Unknown token type '%s', line %d [%d:%d]",
+		tk.Type().String(),
+		tk.Line()+1,
+		tk.Col(),
+		tk.Col()+tk.Size())
+	panic("PROGRAMMERS ERROR! " + msg)
 }
-
-func parseFloat(tk Token) numberLiteral {
-	d, e := decimal.NewFromString(tk.Value())
-
-	if e != nil {
-		err.Panic("Unparsable number", err.At(tk))
-	}
-
-	return numberLiteral(d)
-}
-*/
