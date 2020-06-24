@@ -1,8 +1,12 @@
-package scanner2
+package scanner
 
 import (
 	"unicode"
 )
+
+type SymItr interface {
+	Next() (rune, bool)
+}
 
 type buffer struct {
 	symItr SymItr

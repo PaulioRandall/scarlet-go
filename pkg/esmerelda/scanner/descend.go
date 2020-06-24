@@ -1,4 +1,4 @@
-package scanner2
+package scanner
 
 import (
 	"fmt"
@@ -6,10 +6,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
-
-func fail(scn *scanner, msg string) (TokenType, []rune, error) {
-	return 0, nil, err.New(msg, err.Pos(scn.line, scn.col))
-}
 
 func scan(scn *scanner) (TokenType, []rune, error) {
 
@@ -271,4 +267,8 @@ func numberLiteral(scn *scanner) (TokenType, []rune, error) {
 	}
 
 	return TK_NUMBER, r, nil
+}
+
+func fail(scn *scanner, msg string) (TokenType, []rune, error) {
+	return 0, nil, err.New(msg, err.Pos(scn.line, scn.col))
 }

@@ -14,7 +14,7 @@ type Context struct {
 func NewCtx(parent *Context, pure bool) *Context {
 	return &Context{
 		parent:  parent,
-		pure:    true,
+		pure:    pure,
 		defined: map[string]Result{},
 		local:   map[string]Result{},
 	}

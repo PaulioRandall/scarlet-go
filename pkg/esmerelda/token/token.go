@@ -11,6 +11,7 @@ type Token interface {
 	Value() string
 	Line() int
 	Col() int
+	Size() int
 }
 
 func NewToken(ty TokenType, v string, line, col int) Token {
@@ -40,6 +41,10 @@ func (tk tok) Col() int {
 	return tk.c
 }
 
+func (tk tok) Size() int {
+	return len(tk.v)
+}
+
 func (tk tok) String() string {
 	return toString(tk)
 }
@@ -47,7 +52,7 @@ func (tk tok) String() string {
 func toString(tk Token) string {
 
 	if tk == nil {
-		return `NIL-TOKEN`
+		return `NIL`
 	}
 
 	var s interface{}
@@ -69,14 +74,4 @@ func toString(tk Token) string {
 		ty.String(),
 		s,
 	)
-}
-
-func PrettyPrint(tks []Token) {
-
-	for _, tk := range tks {
-		s := tk.Type().String()
-		fmt.Print(s + " ")
-	}
-
-	fmt.Println()
 }

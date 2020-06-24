@@ -8,20 +8,48 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func doTest(t *testing.T, in string, exps []Token) {
-
-	acts, e := ScanAll(in)
-
-	if e != nil {
-		require.FailNow(t, "%s", e)
-	}
-
-	require.NotNil(t, exps, "SANITY CHECK! What tokens were expected?")
-	require.NotNil(t, acts, "Expected a non-nil token slice")
-	assertMany(t, exps, acts)
+type dummyItr struct {
+	symbols []rune
+	size    int
+	i       int
 }
 
-func assertMany(t *testing.T, exps, acts []Token) {
+func (d *dummyItr) Next() (rune, bool) {
+
+	if d.i >= d.size {
+		return rune(0), false
+	}
+
+	ru := d.symbols[d.i]
+	d.i++
+	return ru, true
+}
+
+func doTest(t *testing.T, in string, exps []Token) {
+
+	require.NotNil(t, exps, "SANITY CHECK! Expected tokens missing")
+
+	var (
+		itr = &dummyItr{
+			symbols: []rune(in),
+			size:    len(in),
+		}
+		acts = []Token{}
+		tk   Token
+		f    ScanFunc
+		e    error
+	)
+
+	for f = New(itr); f != nil; {
+		tk, f, e = f()
+		require.Nil(t, e)
+		acts = append(acts, tk)
+	}
+
+	assertTokenSlice(t, exps, acts)
+}
+
+func assertTokenSlice(t *testing.T, exps, acts []Token) {
 
 	expSize := len(exps)
 	actSize := len(acts)
@@ -110,11 +138,11 @@ func Test_T1_2(t *testing.T) {
 }
 
 func Test_T2_1(t *testing.T) {
-	doTest(t, " \t\r\v\f", []Token{tok(TK_WHITESPACE, " \t\r\v\f")})
+	doTest(t, " \t\v\f", []Token{tok(TK_WHITESPACE, " \t\v\f")})
 }
 
 func Test_T3_1(t *testing.T) {
-	doTest(t, "// This is a comment", []Token{tok(TK_COMMENT, "// This is a comment")})
+	doTest(t, "# This is a comment", []Token{tok(TK_COMMENT, "# This is a comment")})
 }
 
 func Test_T4_1(t *testing.T) {
