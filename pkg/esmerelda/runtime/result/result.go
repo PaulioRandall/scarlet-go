@@ -4,13 +4,24 @@ import (
 	"fmt"
 	//"strconv"
 	//"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
-	//. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
 	//. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/number"
 )
+
+type Void struct{}
+
+func (Void) String() string {
+	return "_"
+}
 
 type Result struct {
 	typ ResultType
 	val interface{}
+}
+
+func (r Result) String() string {
+	return fmt.Sprintf("%v", r.val)
 }
 
 func (r Result) Type() ResultType {
@@ -25,118 +36,79 @@ func (r Result) Void() (Void, bool) {
 	return Void{}, r.Is(RT_VOID)
 }
 
-func (r Result) String() string {
-	return fmt.Sprintf("%v", r.val)
+func (r Result) Bool() (bool, bool) {
+
+	if r.Is(RT_BOOL) {
+		return r.val.(bool), true
+	}
+
+	return false, false
 }
 
-type Void struct{}
+func (r Result) Num() (number.Number, bool) {
 
-func (Void) String() string {
-	return "_"
+	if r.Is(RT_NUMBER) {
+		return r.val.(number.Number), true
+	}
+
+	return nil, false
+}
+
+func (r Result) Str() (string, bool) {
+
+	if r.Is(RT_STRING) {
+		return r.val.(string), true
+	}
+
+	return "", false
+}
+
+func (r Result) List() ([]Result, bool) {
+
+	if r.Is(RT_LIST) {
+		return r.val.([]Result), true
+	}
+
+	return nil, false
+}
+
+func (r Result) Map() (map[Result]Result, bool) {
+
+	if r.Is(RT_MAP) {
+		return r.val.(map[Result]Result), true
+	}
+
+	return nil, false
+}
+
+func (r Result) Func() (statement.Function, bool) {
+
+	if r.Is(RT_FUNC_DEF) {
+		return r.val.(statement.Function), true
+	}
+
+	return nil, false
+}
+
+func (r Result) ExprFunc() (statement.ExpressionFunction, bool) {
+
+	if r.Is(RT_EXPR_FUNC_DEF) {
+		return r.val.(statement.ExpressionFunction), true
+	}
+
+	return nil, false
+}
+
+func (r Result) Tuple() ([]Result, bool) {
+
+	if r.Is(RT_TUPLE) {
+		return r.val.([]Result), true
+	}
+
+	return nil, false
 }
 
 /*
-type boolLiteral struct {
-	bool
-}
-
-func (b boolLiteral) String() string {
-	return strconv.FormatBool(b.bool)
-}
-
-type numberLiteral decimal.Decimal
-
-func (n numberLiteral) ToInt() int64 {
-	return decimal.Decimal(n).IntPart()
-}
-
-func (n numberLiteral) String() string {
-	return decimal.Decimal(n).String()
-}
-
-type stringLiteral string
-
-func (s stringLiteral) String() string {
-	return string(s)
-}
-
-type listLiteral []result
-
-func (l listLiteral) String() string {
-	s := "{"
-	for i, item := range []result(l) {
-		if i != 0 {
-			s += ","
-		}
-		s += item.String()
-	}
-	return s + "}"
-}
-
-type tuple []result
-
-func newTuple(rs ...result) tuple {
-	return tuple(rs)
-}
-
-func (t tuple) String() string {
-	s := "("
-	for i, item := range []result(t) {
-		if i != 0 {
-			s += ","
-		}
-		s += item.String()
-	}
-	return s + ")"
-}
-
-type funcLiteral FuncDef
-
-func (f funcLiteral) String() string {
-
-	s := "F("
-
-	if f.Inputs != nil {
-		for i, item := range f.Inputs {
-			if i != 0 {
-				s += ", "
-			}
-
-			s += item.Value()
-		}
-	}
-
-	if f.Outputs != nil {
-		for i, item := range f.Outputs {
-			if i != 0 || f.Inputs != nil {
-				s += ", "
-			}
-
-			s += "^" + item.Token().Value()
-		}
-	}
-
-	return s + ")"
-}
-
-type exprFuncLiteral ExprFuncDef
-
-func (e exprFuncLiteral) String() string {
-
-	s := "E("
-
-	if e.Inputs != nil {
-		for i, item := range e.Inputs {
-			if i != 0 {
-				s += ", "
-			}
-
-			s += item.Value()
-		}
-	}
-
-	return s + ")"
-}
 
 func valueOf(tk Token) result {
 
