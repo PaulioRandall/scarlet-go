@@ -141,69 +141,10 @@ func (p *pipeline) _ignoreRedundant() {
 
 func (p *pipeline) _outOfTokens(prev Token, exp string) error {
 	s := fmt.Sprintf("Expected %s; got UNDEFINED", exp)
-	return err.New(s, err.After(prev))
+	return err.NewByPos(s, prev.Line(), prev.Col()+prev.Size())
 }
 
 func (p *pipeline) _unexpected(next Token, exp string) error {
 	s := fmt.Sprintf("Expected %s; got %s", exp, next.Type().String())
-	return err.New(s, err.At(next))
+	return err.NewByLexeme(s, next)
 }
-
-//****************************************************************************
-
-/*
-func (p *pipe) matchAny(ms ...Morpheme) bool {
-	for _, t := range ms {
-		if p.match(t) {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (p *pipe) matchSequence(ms ...Morpheme) bool {
-
-	count := 0
-
-	defer func() { // Undo all calls to p.itr.Next
-		for ; count > 0; count-- {
-			p.itr.Back()
-		}
-	}()
-
-	for _, m := range ms {
-
-		if m == ANY || p.match(m) {
-			p.itr.Next()
-			count++
-			continue
-		}
-
-		return false
-	}
-
-	return true
-}
-
-
-func (p *pipe) expectOneOf(tag string, ms ...Morpheme) Token {
-	for _, m := range ms {
-		if p.accept(m) {
-			return p.itr.Past()
-		}
-	}
-
-	s := ""
-	for i, m := range ms {
-		if i != 0 {
-			s += " "
-		}
-
-		s += m.String()
-	}
-
-	err.Panic(errMsg(tag, s, p.peek()), err.At(p.peek()))
-	return nil
-}
-*/

@@ -183,7 +183,7 @@ func expectExpression(p *pipeline) (Expression, error) {
 	}
 
 	if expr == nil {
-		return nil, err.New("Expected expression", err.At(p.any()))
+		return nil, err.NewByLexeme("Expected expression", p.any())
 	}
 
 	return expr, nil
@@ -226,7 +226,7 @@ func expectOperand(p *pipeline) (Expression, error) {
 	}
 
 	if o == nil {
-		return nil, err.New("Expected expression", err.At(p.any()))
+		return nil, err.NewByLexeme("Expected expression", p.any())
 	}
 
 	return o, nil
@@ -410,7 +410,7 @@ func functionBody(p *pipeline) (Expression, error) {
 		return NewGuard(open, condition, body), nil
 	}
 
-	return nil, err.New("Expected function body", err.At(p.any()))
+	return nil, err.NewByLexeme("Expected function body", p.any())
 }
 
 func functionCall(p *pipeline, f Expression) (Expression, error) {

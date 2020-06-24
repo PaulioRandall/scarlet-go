@@ -24,7 +24,7 @@ func evalStatement(ctx *Context, st Expression) error {
 		return evalAssignment(ctx, st.(Assignment))
 	}
 
-	return err.New("Unknown statement type", err.Pos(st.Begin()))
+	return err.NewBySnippet("Unknown statement type", st)
 }
 
 func evalAssignment(ctx *Context, as Assignment) error {

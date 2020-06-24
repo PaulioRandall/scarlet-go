@@ -70,7 +70,7 @@ func expectStatement(p *pipeline) (Expression, error) {
 	st, e := statement(p)
 
 	if e == nil && st == nil {
-		return nil, err.New("Expected statement", err.At(p.any()))
+		return nil, err.NewByLexeme("Expected statement", p.any())
 	}
 
 	return st, e
@@ -181,7 +181,7 @@ func assignmentTarget(p *pipeline) (Expression, error) {
 		return NewVoid(p.any()), nil
 	}
 
-	return nil, err.New("Expected assignment target", err.At(p.any()))
+	return nil, err.NewByLexeme("Expected assignment target", p.any())
 }
 
 func assignmentIdentifier(p *pipeline) (Expression, error) {
@@ -212,12 +212,11 @@ func countAssignments(p *pipeline, targets, sources []Expression) (int, error) {
 	for i := 0; i < len(targets) || i < len(sources); i++ {
 
 		if i >= len(targets) {
-			line, col := sources[i].Begin()
-			return 0, err.New("Too many expressions", err.Pos(line, col))
+			return 0, err.NewBySnippet("Too many expressions", sources[i])
 		}
 
 		if i >= len(sources) {
-			return 0, err.New("Expected expression", err.At(p.any()))
+			return 0, err.NewByLexeme("Expected expression", p.any())
 		}
 
 		n++

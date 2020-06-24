@@ -9,7 +9,7 @@ type ScriptFile interface {
 	GetLine(index int) (string, bool)
 }
 
-func Print(w io.Writer, script ScriptFile, e Err) {
+func Print(w io.Writer, script ScriptFile, e error) {
 
 	const (
 		LEADING_LINES  = 5

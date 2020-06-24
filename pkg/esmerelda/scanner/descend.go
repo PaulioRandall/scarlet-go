@@ -270,5 +270,5 @@ func numberLiteral(scn *scanner) (TokenType, []rune, error) {
 }
 
 func fail(scn *scanner, msg string) (TokenType, []rune, error) {
-	return 0, nil, err.New(msg, err.Pos(scn.line, scn.col))
+	return 0, nil, err.NewByPos(msg, scn.line, scn.col)
 }

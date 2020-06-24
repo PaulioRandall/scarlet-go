@@ -4,25 +4,19 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Err interface {
-	error
-	Line() int // DEAD
-	Col() int  // DEAD
-	Len() int  // DEAD
-	Begin() (int, int)
-	End() (int, int)
-}
-
 type Snippet interface {
 	Begin() (int, int)
 	End() (int, int)
 }
 
+type Lexeme interface {
+	Line() int
+	Col() int
+	Size() int
+}
+
 type sErr struct {
 	msg         string
-	line        int
-	col         int
-	len         int
 	sLine, sCol int
 	eLine, eCol int
 }
@@ -39,106 +33,66 @@ func (e sErr) End() (int, int) {
 	return e.eLine, e.eCol
 }
 
-// DEAD
-func (e sErr) Line() int {
-	return e.line
-}
+func New(msg string) error {
 
-// DEAD
-func (e sErr) Col() int {
-	return e.col
-}
+	e := sErr{
+		msg:   msg,
+		sLine: -1,
+		sCol:  -1,
+		eLine: -1,
+		eCol:  -1,
+	}
 
-// DEAD
-func (e sErr) Len() int {
-	return e.len
-}
-
-type Option func(*sErr)
-
-// DEAD
-type Lexeme interface {
-	Value() string
-	Line() int // DEAD
-	Col() int  // DEAD
-}
-
-// DEAD
-func Panic(msg string, ops ...Option) {
-	er := New(msg, ops...)
-	panic(er)
-}
-
-func New(msg string, ops ...Option) error {
-	e := error(newErr(msg, ops...))
 	return errors.WithStack(e)
 }
 
-func newErr(msg string, ops ...Option) Err {
+func NewByPos(msg string, line, col int) error {
 
-	s := sErr{
-		msg:  msg,
-		line: -1,
-		col:  -1,
+	e := sErr{
+		msg:   msg,
+		sLine: line,
+		sCol:  col,
+		eLine: line,
+		eCol:  col + 1,
 	}
 
-	applyOptions(&s, ops...)
-	return s
-}
-
-func Wrap(e error, ops ...Option) error {
-	e = wrap(e, ops...)
 	return errors.WithStack(e)
 }
 
-func wrap(e error, ops ...Option) Err {
+func NewByStr(msg string, line, col, len int) error {
 
-	s := sErr{
-		msg:  e.Error(),
-		line: -1,
-		col:  -1,
+	e := sErr{
+		msg:   msg,
+		sLine: line,
+		sCol:  col,
+		eLine: line,
+		eCol:  col + len,
 	}
 
-	applyOptions(&s, ops...)
-	return s
+	return errors.WithStack(e)
 }
 
-func applyOptions(e *sErr, ops ...Option) {
-	for _, op := range ops {
-		op(e)
+func NewByLexeme(msg string, lex Lexeme) error {
+
+	e := sErr{
+		msg:   msg,
+		sLine: lex.Line(),
+		sCol:  lex.Col(),
+		eLine: lex.Line(),
+		eCol:  lex.Line() + lex.Size(),
 	}
+
+	return errors.WithStack(e)
 }
 
-func Pos(line, col int) Option {
-	return func(s *sErr) {
-		s.line = line
-		s.col = col
+func NewBySnippet(msg string, snip Snippet) error {
+
+	e := sErr{
+		msg: msg,
 	}
-}
 
-func Len(len int) Option {
-	return func(s *sErr) {
-		s.len = len
-	}
-}
+	e.sLine, e.sCol = snip.Begin()
+	e.eLine, e.eCol = snip.End()
 
-func At(lex Lexeme) Option {
-	l, c, ln := lex.Line(), lex.Col(), len(lex.Value())
-
-	return func(s *sErr) {
-		s.line = l
-		s.col = c
-		s.len = ln
-	}
-}
-
-func After(lex Lexeme) Option {
-	l := lex.Line()
-	c := lex.Col() + len(lex.Value())
-
-	return func(s *sErr) {
-		s.line = l
-		s.col = c
-		s.len = 0
-	}
+	return errors.WithStack(e)
 }
