@@ -6,42 +6,64 @@ import (
 
 type Err interface {
 	error
-	Line() int // index
-	Col() int  // index
-	Len() int
+	Line() int // DEAD
+	Col() int  // DEAD
+	Len() int  // DEAD
+	Begin() (int, int)
+	End() (int, int)
+}
+
+type Snippet interface {
+	Begin() (int, int)
+	End() (int, int)
 }
 
 type sErr struct {
-	msg  string
-	line int
-	col  int
-	len  int
+	msg         string
+	line        int
+	col         int
+	len         int
+	sLine, sCol int
+	eLine, eCol int
 }
 
 func (e sErr) Error() string {
 	return e.msg
 }
 
+func (e sErr) Begin() (int, int) {
+	return e.sLine, e.sCol
+}
+
+func (e sErr) End() (int, int) {
+	return e.eLine, e.eCol
+}
+
+// DEAD
 func (e sErr) Line() int {
 	return e.line
 }
 
+// DEAD
 func (e sErr) Col() int {
 	return e.col
 }
 
+// DEAD
 func (e sErr) Len() int {
 	return e.len
 }
 
 type Option func(*sErr)
 
+// DEAD
 type Lexeme interface {
 	Value() string
-	Line() int
-	Col() int
+	Line() int // DEAD
+	Col() int  // DEAD
 }
 
+// DEAD
 func Panic(msg string, ops ...Option) {
 	er := New(msg, ops...)
 	panic(er)
@@ -119,42 +141,4 @@ func After(lex Lexeme) Option {
 		s.col = c
 		s.len = 0
 	}
-}
-
-func Try(f func()) (err Err) {
-
-	func() {
-		defer func() {
-
-			v := recover()
-			if v == nil {
-				return
-			}
-
-			e, ok := v.(error)
-			if !ok {
-				s := `¯\_(ツ)_/¯ Something panicked, but I don't understand the error`
-				err = newErr(s)
-				return
-			}
-
-			errors.As(e, err)
-			if err != nil {
-				return
-			}
-
-			var s string
-			errors.As(e, s)
-			if s != `` {
-				err = newErr(s)
-				return
-			}
-
-			err = wrap(e)
-		}()
-
-		f()
-	}()
-
-	return
 }

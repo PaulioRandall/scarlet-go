@@ -107,7 +107,7 @@ func (r Result) Tuple() ([]Result, bool) {
 	return nil, false
 }
 
-func valueOf(tk token.Token) Result {
+func ResultOf(tk token.Token) Result {
 
 	switch tk.Type() {
 	case token.TK_VOID:
