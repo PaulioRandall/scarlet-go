@@ -8,9 +8,9 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-type Void struct{}
+type VoidResult struct{}
 
-func (Void) String() string {
+func (VoidResult) String() string {
 	return "_"
 }
 
@@ -31,8 +31,8 @@ func (r Result) Is(typ ResultType) bool {
 	return r.typ == typ
 }
 
-func (r Result) Void() (Void, bool) {
-	return Void{}, r.Is(RT_VOID)
+func (r Result) Void() (VoidResult, bool) {
+	return VoidResult{}, r.Is(RT_VOID)
 }
 
 func (r Result) Bool() (bool, bool) {
@@ -113,7 +113,7 @@ func ResultOf(tk token.Token) Result {
 	case token.TK_VOID:
 		return Result{
 			typ: RT_VOID,
-			val: Void{},
+			val: VoidResult{},
 		}
 
 	case token.TK_BOOL:

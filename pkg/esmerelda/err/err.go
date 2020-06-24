@@ -9,12 +9,6 @@ type Snippet interface {
 	End() (int, int)
 }
 
-type Lexeme interface {
-	Line() int
-	Col() int
-	Size() int
-}
-
 type sErr struct {
 	msg         string
 	sLine, sCol int
