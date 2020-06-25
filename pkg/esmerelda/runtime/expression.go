@@ -10,6 +10,9 @@ func EvalExpression(ctx *Context, expr Expression) (Result, error) {
 	switch expr.Kind() {
 	case ST_LITERAL:
 		return EvalLiteral(expr.(Literal)), nil
+
+	case ST_IDENTIFIER:
+		return EvalIdentifier(ctx, expr.(Identifier)), nil
 	}
 
 	panic(err.NewBySnippet("Unknown expression type", expr))
@@ -17,4 +20,17 @@ func EvalExpression(ctx *Context, expr Expression) (Result, error) {
 
 func EvalLiteral(lit Literal) Result {
 	return ResultOf(lit.Tk())
+}
+
+func EvalIdentifier(ctx *Context, id Identifier) Result {
+
+	v, ok := ctx.Get(id.Tk().Value())
+	if ok {
+		return v
+	}
+
+	return Result{
+		typ: RT_VOID,
+		val: VoidResult{},
+	}
 }

@@ -46,8 +46,9 @@ func requireCtxValue(t *testing.T, ctx *Context, final bool, id string, exp Resu
 
 func Test_R1_1(t *testing.T) {
 
+	// GIVEN an empty context
 	// EVAL an assignment block
-	// WITH only one identifier and one expression
+	// WITH one literal assigned to one target
 	// AND is a const definition
 	// THEN the context will be updated to reflect the const assignment
 
@@ -71,8 +72,9 @@ func Test_R1_1(t *testing.T) {
 
 func Test_R1_2(t *testing.T) {
 
+	// GIVEN an empty context
 	// EVAL an assignment block
-	// WITH only one identifier and one expression
+	// WITH a const definition assignment
 	// THEN the context will be updated to reflect the assignment
 
 	// a := 1
@@ -95,6 +97,7 @@ func Test_R1_2(t *testing.T) {
 
 func Test_R1_3(t *testing.T) {
 
+	// GIVEN an empty context
 	// EVAL an assignment block
 	// WITH multiple assignments
 	// THEN the context will be updated to reflect the assignments
@@ -133,4 +136,34 @@ func Test_R1_3(t *testing.T) {
 		typ: RT_STRING,
 		val: "abc",
 	})
+}
+
+func Test_R1_4(t *testing.T) {
+
+	// GIVEN a non-empty context
+	// EVAL an assignment block
+	// WITH an identifier assigned to another
+	// THEN the context will be updated to reflect the const assignment
+
+	// a := 1
+	given := NewAssignmentBlock(
+		false,
+		[]Expression{NewIdentifier(tok(token.TK_IDENTIFIER, "a"))},
+		[]Expression{NewIdentifier(tok(token.TK_IDENTIFIER, "b"))},
+		1,
+	)
+
+	id := Result{
+		typ: RT_NUMBER,
+		val: number.New("1"),
+	}
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("b", id)
+
+	e := EvalAssignmentBlock(ctx, given)
+	require.Nil(t, e)
+
+	requireCtxValue(t, ctx, false, "a", id)
+	requireCtxValue(t, ctx, false, "b", id)
 }
