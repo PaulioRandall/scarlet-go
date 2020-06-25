@@ -123,7 +123,7 @@ func assignmentSources(p *pipeline) ([]Expr, error) {
 
 	if p.match(TK_FUNCTION) {
 
-		src, e := function(p)
+		src, e := funcDef(p)
 		if e != nil {
 			return nil, e
 		}

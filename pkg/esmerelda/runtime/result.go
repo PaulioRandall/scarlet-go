@@ -80,10 +80,10 @@ func (r Result) Map() (map[Result]Result, bool) {
 	return nil, false
 }
 
-func (r Result) Func() (stats.Function, bool) {
+func (r Result) Func() (stats.FuncDef, bool) {
 
 	if r.Is(RT_FUNC_DEF) {
-		return r.val.(stats.Function), true
+		return r.val.(stats.FuncDef), true
 	}
 
 	return nil, false

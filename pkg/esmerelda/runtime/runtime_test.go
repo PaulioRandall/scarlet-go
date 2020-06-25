@@ -175,7 +175,7 @@ func Test_R1_5(t *testing.T) {
 	// WITH a function assigned to an identifier
 	// THEN the context will be updated to reflect the assignment
 
-	f := NewFunction(
+	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
 		NewParameters(
 			tok(TK_PAREN_OPEN, "("),

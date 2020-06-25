@@ -1036,7 +1036,7 @@ func Test_S7_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := NewFunction(
+	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
 		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
@@ -1082,7 +1082,7 @@ func Test_S7_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := NewFunction(
+	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
 		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
@@ -1131,7 +1131,7 @@ func Test_S7_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := NewFunction(
+	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
 		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
@@ -1186,7 +1186,7 @@ func Test_S7_4(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := NewFunction(
+	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
 		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
@@ -1253,7 +1253,7 @@ func Test_S7_5(t *testing.T) {
 		},
 	)
 
-	f := NewFunction(
+	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
 		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
@@ -1325,7 +1325,7 @@ func Test_S7_6(t *testing.T) {
 		},
 	)
 
-	f := NewFunction(
+	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
 		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
@@ -1372,7 +1372,7 @@ func Test_S7_7(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := NewFunction(
+	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
 		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
@@ -1427,7 +1427,7 @@ func Test_S7_8(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := NewFunction(
+	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
 		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
@@ -1481,7 +1481,7 @@ func Test_S7_9(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := NewFunction(
+	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
 		NewParameters(
 			tok(TK_PAREN_OPEN, "("),
@@ -2527,7 +2527,7 @@ func Test_S13_1(t *testing.T) {
 
 	var f Expr = NewIdentifier(tok(TK_IDENTIFIER, "f"))
 
-	exp := NewFunctionCall(
+	exp := NewFuncCall(
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		[]Expr{},
@@ -2558,7 +2558,7 @@ func Test_S13_2(t *testing.T) {
 		NewLiteral(tok(TK_NUMBER, "1")),
 	}
 
-	exp := NewFunctionCall(
+	exp := NewFuncCall(
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		args,
@@ -2595,7 +2595,7 @@ func Test_S13_3(t *testing.T) {
 		),
 	}
 
-	exp := NewFunctionCall(
+	exp := NewFuncCall(
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		args,
@@ -2635,7 +2635,7 @@ func Test_S13_4(t *testing.T) {
 		NewLiteral(tok(TK_STRING, "abc")),
 	}
 
-	exp := NewFunctionCall(
+	exp := NewFuncCall(
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		args,
@@ -2686,7 +2686,7 @@ func Test_S13_5(t *testing.T) {
 		NewLiteral(tok(TK_STRING, "abc")),
 	}
 
-	exp := NewFunctionCall(
+	exp := NewFuncCall(
 		tok(TK_PAREN_CLOSE, ")"),
 		f,
 		args,
@@ -2717,19 +2717,19 @@ func Test_S13_6(t *testing.T) {
 
 	var f Expr = NewIdentifier(tok(TK_IDENTIFIER, "f"))
 
-	var first Expr = NewFunctionCall(
+	var first Expr = NewFuncCall(
 		tok(TK_PAREN_CLOSE, "a)"),
 		f,
 		[]Expr{},
 	)
 
-	var second Expr = NewFunctionCall(
+	var second Expr = NewFuncCall(
 		tok(TK_PAREN_CLOSE, "b)"),
 		first,
 		[]Expr{},
 	)
 
-	exp := NewFunctionCall(
+	exp := NewFuncCall(
 		tok(TK_PAREN_CLOSE, "c)"),
 		second,
 		[]Expr{},
@@ -2795,7 +2795,7 @@ func Test_S14_2(t *testing.T) {
 		NewLiteral(tok(TK_NUMBER, "1")),
 	)
 
-	exp := NewFunctionCall(
+	exp := NewFuncCall(
 		tok(TK_PAREN_CLOSE, "c)"),
 		second,
 		[]Expr{},

@@ -43,7 +43,7 @@ func maybeMore(p *pipeline, expr Expr) (_ Expr, more bool, e error) {
 
 	if p.match(TK_PAREN_OPEN) {
 
-		expr, e = functionCall(p, expr)
+		expr, e = funcCall(p, expr)
 		if e != nil {
 			return nil, false, e
 		}
@@ -310,7 +310,7 @@ func blockStatements(p *pipeline) ([]Expr, error) {
 	return r, nil
 }
 
-func function(p *pipeline) (Expr, error) {
+func funcDef(p *pipeline) (Expr, error) {
 	// pattern := FUNC function_parameters function_body
 
 	key, e := p.expect(TK_FUNCTION)
@@ -318,20 +318,20 @@ func function(p *pipeline) (Expr, error) {
 		return nil, e
 	}
 
-	params, e := functionParameters(p)
+	params, e := funcDefParams(p)
 	if e != nil {
 		return nil, e
 	}
 
-	body, e := functionBody(p)
+	body, e := funcBody(p)
 	if e != nil {
 		return nil, e
 	}
 
-	return NewFunction(key, params, body), nil
+	return NewFuncDef(key, params, body), nil
 }
 
-func functionParameters(p *pipeline) (Parameters, error) {
+func funcDefParams(p *pipeline) (Parameters, error) {
 	// pattern := PAREN_OPEN inputs [THEN outputs] PAREN_CLOSE
 
 	open, e := p.expect(TK_PAREN_OPEN)
@@ -339,7 +339,7 @@ func functionParameters(p *pipeline) (Parameters, error) {
 		return nil, e
 	}
 
-	inputs, e := parameterIdentifiers(p)
+	inputs, e := paramIdentifiers(p)
 	if e != nil {
 		return nil, e
 	}
@@ -347,7 +347,7 @@ func functionParameters(p *pipeline) (Parameters, error) {
 	outputs := []Token{}
 
 	if p.accept(TK_OUTPUTS) {
-		outputs, e = parameterIdentifiers(p)
+		outputs, e = paramIdentifiers(p)
 		if e != nil {
 			return nil, e
 		}
@@ -361,7 +361,7 @@ func functionParameters(p *pipeline) (Parameters, error) {
 	return NewParameters(open, close, inputs, outputs), nil
 }
 
-func parameterIdentifiers(p *pipeline) ([]Token, error) {
+func paramIdentifiers(p *pipeline) ([]Token, error) {
 	// pattern := [IDENTIFIER {DELIMITER IDENTIFIER}]
 
 	ids := []Token{}
@@ -383,7 +383,7 @@ func parameterIdentifiers(p *pipeline) ([]Token, error) {
 	return ids, nil
 }
 
-func functionBody(p *pipeline) (Expr, error) {
+func funcBody(p *pipeline) (Expr, error) {
 
 	switch {
 	case p.match(TK_BLOCK_OPEN):
@@ -413,7 +413,7 @@ func functionBody(p *pipeline) (Expr, error) {
 	return nil, err.NewBySnippet("Expected function body", p.any())
 }
 
-func functionCall(p *pipeline, f Expr) (Expr, error) {
+func funcCall(p *pipeline, f Expr) (Expr, error) {
 	// pattern := PAREN_OPEN arguments PAREN_CLOSE
 
 	_, e := p.expect(TK_PAREN_OPEN)
@@ -431,7 +431,7 @@ func functionCall(p *pipeline, f Expr) (Expr, error) {
 		return nil, e
 	}
 
-	return NewFunctionCall(close, f, args), nil
+	return NewFuncCall(close, f, args), nil
 }
 
 func exprFunc(p *pipeline) (Expr, error) {

@@ -279,17 +279,17 @@ func ParametersString(p Parameters) string {
 	return b.String()
 }
 
-type Function interface {
+type FuncDef interface {
 	Expr
 	Params() Parameters
 	Body() Expr
 }
 
-func FunctionString(f Function) string {
+func FuncDefString(f FuncDef) string {
 
 	b := builder{}
 
-	b.add(0, "[Function] ")
+	b.add(0, "[FuncDef] ")
 
 	b.newline()
 	b.add(1, ParametersString(f.Params()))
@@ -300,17 +300,17 @@ func FunctionString(f Function) string {
 	return b.String()
 }
 
-type FunctionCall interface {
+type FuncCall interface {
 	Expr
 	Function() Expr
 	Arguments() []Expr
 }
 
-func FunctionCallString(f FunctionCall) string {
+func FuncCallString(f FuncCall) string {
 
 	b := builder{}
 
-	b.add(0, "[FunctionCall]")
+	b.add(0, "[FuncCall]")
 
 	b.newline()
 	b.add(1, "Function:")

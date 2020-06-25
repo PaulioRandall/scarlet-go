@@ -89,16 +89,16 @@ func NewParameters(open, close Token, inputs, outputs []Token) parametersDef {
 	}
 }
 
-func NewFunction(key Token, params Parameters, body Expr) functionExpr {
-	return functionExpr{
+func NewFuncDef(key Token, params Parameters, body Expr) funcDefExpr {
+	return funcDefExpr{
 		key:    key,
 		params: params,
 		body:   body,
 	}
 }
 
-func NewFunctionCall(close Token, f Expr, args []Expr) functionCallExpr {
-	return functionCallExpr{
+func NewFuncCall(close Token, f Expr, args []Expr) funcCallExpr {
+	return funcCallExpr{
 		close:    close,
 		function: f,
 		args:     args,

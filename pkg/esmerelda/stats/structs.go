@@ -374,64 +374,64 @@ func (p parametersDef) String() string {
 	return ParametersString(p)
 }
 
-type functionExpr struct {
+type funcDefExpr struct {
 	key    Token
 	params Parameters
 	body   Expr
 }
 
-func (functionExpr) Kind() Kind {
-	return ST_FUNCTION
+func (funcDefExpr) Kind() Kind {
+	return ST_FUNC_DEF
 }
 
-func (f functionExpr) Params() Parameters {
+func (f funcDefExpr) Params() Parameters {
 	return f.params
 }
 
-func (f functionExpr) Body() Expr {
+func (f funcDefExpr) Body() Expr {
 	return f.body
 }
 
-func (f functionExpr) Begin() (int, int) {
+func (f funcDefExpr) Begin() (int, int) {
 	return f.key.Begin()
 }
 
-func (f functionExpr) End() (int, int) {
+func (f funcDefExpr) End() (int, int) {
 	return f.body.End()
 }
 
-func (f functionExpr) String() string {
-	return FunctionString(f)
+func (f funcDefExpr) String() string {
+	return FuncDefString(f)
 }
 
-type functionCallExpr struct {
+type funcCallExpr struct {
 	close    Token
 	function Expr
 	args     []Expr
 }
 
-func (functionCallExpr) Kind() Kind {
-	return ST_FUNCTION_CALL
+func (funcCallExpr) Kind() Kind {
+	return ST_FUNC_CALL
 }
 
-func (f functionCallExpr) Function() Expr {
+func (f funcCallExpr) Function() Expr {
 	return f.function
 }
 
-func (f functionCallExpr) Arguments() []Expr {
+func (f funcCallExpr) Arguments() []Expr {
 	return f.args
 }
 
-func (f functionCallExpr) Begin() (int, int) {
+func (f funcCallExpr) Begin() (int, int) {
 	return f.function.Begin()
 }
 
-func (f functionCallExpr) End() (int, int) {
+func (f funcCallExpr) End() (int, int) {
 	return f.close.End()
 }
 
-func (f functionCallExpr) String() string {
-	return FunctionCallString(f)
+func (f funcCallExpr) String() string {
+	return FuncCallString(f)
 }
 
 type watchStat struct {
