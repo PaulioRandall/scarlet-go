@@ -105,33 +105,33 @@ func (l literalExpr) String() string {
 	return LiteralString(l)
 }
 
-type collectionAccessorExpr struct {
-	collection Expr
-	key        Expr
+type containerItemExpr struct {
+	container Expr
+	key       Expr
 }
 
-func (collectionAccessorExpr) Kind() Kind {
-	return ST_COLLECTION_ACCESSOR
+func (containerItemExpr) Kind() Kind {
+	return ST_CONTAINER_ITEM
 }
 
-func (c collectionAccessorExpr) Collection() Expr {
-	return c.collection
+func (c containerItemExpr) Container() Expr {
+	return c.container
 }
 
-func (c collectionAccessorExpr) Key() Expr {
+func (c containerItemExpr) Key() Expr {
 	return c.key
 }
 
-func (c collectionAccessorExpr) Begin() (int, int) {
-	return c.collection.Begin()
+func (c containerItemExpr) Begin() (int, int) {
+	return c.container.Begin()
 }
 
-func (c collectionAccessorExpr) End() (int, int) {
+func (c containerItemExpr) End() (int, int) {
 	return c.key.End()
 }
 
-func (c collectionAccessorExpr) String() string {
-	return CollectionAccessorString(c)
+func (c containerItemExpr) String() string {
+	return ContainerItemString(c)
 }
 
 type negationExpr struct {

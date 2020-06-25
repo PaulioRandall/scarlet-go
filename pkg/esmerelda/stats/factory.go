@@ -23,10 +23,10 @@ func NewLiteral(tk Token) literalExpr {
 	return literalExpr{tk}
 }
 
-func NewCollectionAccessor(collection, key Expr) collectionAccessorExpr {
-	return collectionAccessorExpr{
-		collection: collection,
-		key:        key,
+func NewContainerItem(container, key Expr) containerItemExpr {
+	return containerItemExpr{
+		container: container,
+		key:       key,
 	}
 }
 

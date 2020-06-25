@@ -135,7 +135,7 @@ func collectionAccessor(p *pipeline, left Expr) (Expr, error) {
 		return nil, e
 	}
 
-	return NewCollectionAccessor(left, index), nil
+	return NewContainerItem(left, index), nil
 }
 
 func expressions(p *pipeline) ([]Expr, error) {

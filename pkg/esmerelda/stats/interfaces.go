@@ -83,22 +83,22 @@ func LiteralString(l Literal) string {
 	return b.String()
 }
 
-type CollectionAccessor interface {
+type ContainerItem interface {
 	Expr
-	Collection() Expr
+	Container() Expr
 	Key() Expr
 }
 
-func CollectionAccessorString(c CollectionAccessor) string {
+func ContainerItemString(c ContainerItem) string {
 
 	b := builder{}
 
-	b.add(0, "[CollectionAccessor] ")
+	b.add(0, "[ContainerItem] ")
 
 	b.newline()
-	b.add(1, "Collection: ")
+	b.add(1, "Container: ")
 	b.newline()
-	b.add(2, c.Collection().String())
+	b.add(2, c.Container().String())
 
 	b.newline()
 	b.add(1, "Key: ")

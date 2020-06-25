@@ -2790,7 +2790,7 @@ func Test_S14_2(t *testing.T) {
 		[]Expr{},
 	)
 
-	var second Expr = NewCollectionAccessor(
+	var second Expr = NewContainerItem(
 		first,
 		NewLiteral(tok(TK_NUMBER, "1")),
 	)
