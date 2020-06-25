@@ -15,19 +15,41 @@ func tok(ty token.TokenType, val string) token.Token {
 }
 
 func requireCtxValue(t *testing.T, ctx *Context, final bool, id string, exp Result) {
-	act, ok := ctx.Get(id)
-	require.True(t, ok, "Context missing value %q", exp.String())
-	require.Equal(t, exp, act, "Wrong value in context, have %q, want %q",
-		act.String(),
-		exp.String(),
-	)
+
+	actDef, okDef := ctx.GetDefined(id)
+	actVar, okVar := ctx.GetVar(id)
+
+	if final {
+
+		require.True(t, okDef, "Context missing definintion %q", exp.String())
+		require.False(t, okVar, "Unexpected context variable %q", exp.String())
+		require.Empty(t, actVar)
+
+		require.Equal(t, exp, actDef, "Wrong value in context, have %q, want %q",
+			actVar.String(),
+			exp.String(),
+		)
+
+	} else {
+
+		require.True(t, okVar, "Context missing variable %q", exp.String())
+		require.False(t, okDef, "Unexpected context definition %q", exp.String())
+		require.Empty(t, actDef)
+
+		require.Equal(t, exp, actVar, "Wrong value in context, have %q, want %q",
+			actVar.String(),
+			exp.String(),
+		)
+	}
+
 }
 
 func Test_R1_1(t *testing.T) {
 
 	// EVAL an assignment block
 	// WITH only one identifier and one expression
-	// THEN the context will be updated to reflect the assignment
+	// AND is a const definition
+	// THEN the context will be updated to reflect the const assignment
 
 	// a := 1
 	given := NewAssignmentBlock(
@@ -48,6 +70,30 @@ func Test_R1_1(t *testing.T) {
 }
 
 func Test_R1_2(t *testing.T) {
+
+	// EVAL an assignment block
+	// WITH only one identifier and one expression
+	// THEN the context will be updated to reflect the assignment
+
+	// a := 1
+	given := NewAssignmentBlock(
+		true,
+		[]Expression{NewIdentifier(tok(token.TK_IDENTIFIER, "a"))},
+		[]Expression{NewLiteral(tok(token.TK_NUMBER, "1"))},
+		1,
+	)
+
+	ctx := NewCtx(nil, true)
+	e := EvalAssignmentBlock(ctx, given)
+	require.Nil(t, e)
+
+	requireCtxValue(t, ctx, true, "a", Result{
+		typ: RT_NUMBER,
+		val: number.New("1"),
+	})
+}
+
+func Test_R1_3(t *testing.T) {
 
 	// EVAL an assignment block
 	// WITH multiple assignments
