@@ -213,17 +213,17 @@ func AssignmentBlockString(bk AssignmentBlock) string {
 	return b.String()
 }
 
-type ExpressionFunction interface {
+type ExprFunc interface {
 	Expression
 	Inputs() []Token
 	Expr() Expression
 }
 
-func ExpressionFunctionString(e ExpressionFunction) string {
+func ExprFuncString(e ExprFunc) string {
 
 	b := builder{}
 
-	b.add(0, "[ExpressionFunction] ")
+	b.add(0, "[ExprFunc] ")
 
 	if len(e.Inputs()) > 0 {
 

@@ -442,7 +442,7 @@ func expressionFunction(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	inputs, e := expressionFunctionParameters(p)
+	inputs, e := exprFuncParams(p)
 	if e != nil {
 		return nil, e
 	}
@@ -452,10 +452,10 @@ func expressionFunction(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	return NewExpressionFunction(key, inputs, expr), nil
+	return NewExprFunc(key, inputs, expr), nil
 }
 
-func expressionFunctionParameters(p *pipeline) ([]Token, error) {
+func exprFuncParams(p *pipeline) ([]Token, error) {
 	// pattern := PAREN_OPEN parameters PAREN_CLOSE
 
 	_, e := p.expect(TK_PAREN_OPEN)
@@ -467,7 +467,7 @@ func expressionFunctionParameters(p *pipeline) ([]Token, error) {
 		return []Token{}, nil
 	}
 
-	in, e := expressionFunctionInputs(p)
+	in, e := exprFuncInputs(p)
 	if e != nil {
 		return nil, e
 	}
@@ -480,7 +480,7 @@ func expressionFunctionParameters(p *pipeline) ([]Token, error) {
 	return in, nil
 }
 
-func expressionFunctionInputs(p *pipeline) ([]Token, error) {
+func exprFuncInputs(p *pipeline) ([]Token, error) {
 	// pattern := [identifier {DELIMITER identifier} [DELIMITER]]
 
 	in := []Token{}

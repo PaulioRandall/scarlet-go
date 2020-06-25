@@ -14,7 +14,7 @@ const (
 	ST_ASSIGNMENT
 	ST_ASSIGNMENT_BLOCK
 	ST_BLOCK
-	ST_EXPRESSION_FUNCTION
+	ST_EXPR_FUNC
 	ST_PARAMETERS
 	ST_FUNCTION
 	ST_FUNCTION_CALL
@@ -39,7 +39,7 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_ASSIGNMENT:          `Assignment`,
 	ST_ASSIGNMENT_BLOCK:    `Assignment-Block`,
 	ST_BLOCK:               `Block`,
-	ST_EXPRESSION_FUNCTION: `Expression-Function`,
+	ST_EXPR_FUNC:           `Expression-Function`,
 	ST_PARAMETERS:          `Parameters`,
 	ST_FUNCTION:            `Function`,
 	ST_FUNCTION_CALL:       `Function-Call`,

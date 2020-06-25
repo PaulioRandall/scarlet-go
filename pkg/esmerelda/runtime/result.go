@@ -89,10 +89,10 @@ func (r Result) Func() (stats.Function, bool) {
 	return nil, false
 }
 
-func (r Result) ExprFunc() (stats.ExpressionFunction, bool) {
+func (r Result) ExprFunc() (stats.ExprFunc, bool) {
 
 	if r.Is(RT_EXPR_FUNC_DEF) {
-		return r.val.(stats.ExpressionFunction), true
+		return r.val.(stats.ExprFunc), true
 	}
 
 	return nil, false

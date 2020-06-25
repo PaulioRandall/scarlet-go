@@ -314,34 +314,34 @@ func (bk unDelimiteredBlockExpr) String() string {
 	return BlockString(bk)
 }
 
-type expressionFunctionExpr struct {
+type exprFuncExpr struct {
 	key    Token
 	inputs []Token
 	expr   Expression
 }
 
-func (expressionFunctionExpr) Kind() Kind {
-	return ST_EXPRESSION_FUNCTION
+func (exprFuncExpr) Kind() Kind {
+	return ST_EXPR_FUNC
 }
 
-func (e expressionFunctionExpr) Inputs() []Token {
+func (e exprFuncExpr) Inputs() []Token {
 	return e.inputs
 }
 
-func (e expressionFunctionExpr) Expr() Expression {
+func (e exprFuncExpr) Expr() Expression {
 	return e.expr
 }
 
-func (e expressionFunctionExpr) Begin() (int, int) {
+func (e exprFuncExpr) Begin() (int, int) {
 	return e.key.Begin()
 }
 
-func (e expressionFunctionExpr) End() (int, int) {
+func (e exprFuncExpr) End() (int, int) {
 	return e.expr.End()
 }
 
-func (e expressionFunctionExpr) String() string {
-	return ExpressionFunctionString(e)
+func (e exprFuncExpr) String() string {
+	return ExprFuncString(e)
 }
 
 type parametersDef struct {

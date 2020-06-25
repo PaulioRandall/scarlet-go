@@ -1533,7 +1533,7 @@ func Test_S8_1(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := NewExpressionFunction(
+	f := NewExprFunc(
 		tok(TK_EXPR_FUNC, "E"),
 		[]Token{},
 		NewLiteral(tok(TK_NUMBER, "1")),
@@ -1569,7 +1569,7 @@ func Test_S8_2(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := NewExpressionFunction(
+	f := NewExprFunc(
 		tok(TK_EXPR_FUNC, "E"),
 		[]Token{
 			tok(TK_IDENTIFIER, "a"),
@@ -1611,7 +1611,7 @@ func Test_S8_3(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	f := NewExpressionFunction(
+	f := NewExprFunc(
 		tok(TK_EXPR_FUNC, "E"),
 		[]Token{
 			tok(TK_IDENTIFIER, "a"),
@@ -1664,7 +1664,7 @@ func Test_S8_4(t *testing.T) {
 		),
 	)
 
-	f := NewExpressionFunction(
+	f := NewExprFunc(
 		tok(TK_EXPR_FUNC, "E"),
 		[]Token{},
 		expr,

@@ -72,8 +72,8 @@ func NewUnDelimiteredBlock(stats []Expression) unDelimiteredBlockExpr {
 	}
 }
 
-func NewExpressionFunction(key Token, inputs []Token, expr Expression) expressionFunctionExpr {
-	return expressionFunctionExpr{
+func NewExprFunc(key Token, inputs []Token, expr Expression) exprFuncExpr {
+	return exprFuncExpr{
 		key:    key,
 		inputs: inputs,
 		expr:   expr,
