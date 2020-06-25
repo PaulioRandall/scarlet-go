@@ -596,7 +596,7 @@ func guardBody(p *pipeline) (Block, error) {
 	}
 
 	sts := []Expr{st}
-	return NewUnDelimiteredBlock(sts), nil
+	return NewUndelimBlock(sts), nil
 }
 
 func when(p *pipeline) (Expr, error) {

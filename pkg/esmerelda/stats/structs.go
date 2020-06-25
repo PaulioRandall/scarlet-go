@@ -289,28 +289,28 @@ func (bk blockExpr) String() string {
 	return BlockString(bk)
 }
 
-type unDelimiteredBlockExpr struct {
+type undelimBlockExpr struct {
 	stats []Expr
 }
 
-func (unDelimiteredBlockExpr) Kind() Kind {
+func (undelimBlockExpr) Kind() Kind {
 	return ST_BLOCK
 }
 
-func (bk unDelimiteredBlockExpr) Stats() []Expr {
+func (bk undelimBlockExpr) Stats() []Expr {
 	return bk.stats
 }
 
-func (bk unDelimiteredBlockExpr) Begin() (int, int) {
+func (bk undelimBlockExpr) Begin() (int, int) {
 	return bk.stats[0].Begin()
 }
 
-func (bk unDelimiteredBlockExpr) End() (int, int) {
+func (bk undelimBlockExpr) End() (int, int) {
 	i := len(bk.stats) - 1
 	return bk.stats[i].End()
 }
 
-func (bk unDelimiteredBlockExpr) String() string {
+func (bk undelimBlockExpr) String() string {
 	return BlockString(bk)
 }
 

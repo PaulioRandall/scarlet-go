@@ -66,8 +66,8 @@ func NewBlock(open, close Token, stats []Expr) blockExpr {
 	}
 }
 
-func NewUnDelimiteredBlock(stats []Expr) unDelimiteredBlockExpr {
-	return unDelimiteredBlockExpr{
+func NewUndelimBlock(stats []Expr) undelimBlockExpr {
+	return undelimBlockExpr{
 		stats: stats,
 	}
 }

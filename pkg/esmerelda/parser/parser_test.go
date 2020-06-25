@@ -1961,7 +1961,7 @@ func Test_S10_4(t *testing.T) {
 		tok(TK_TERMINATOR, ""),
 	}}
 
-	body := NewUnDelimiteredBlock(
+	body := NewUndelimBlock(
 		[]Expr{
 			NewExit(
 				tok(TK_EXIT, "exit"),
@@ -2097,7 +2097,7 @@ func Test_S11_3(t *testing.T) {
 		NewLiteral(tok(TK_NUMBER, "4")),
 	)
 
-	firstBlock := NewUnDelimiteredBlock(
+	firstBlock := NewUndelimBlock(
 		[]Expr{
 			NewAssignBlock(
 				false,
@@ -2165,7 +2165,7 @@ func Test_S11_4(t *testing.T) {
 		NewLiteral(tok(TK_NUMBER, "4")),
 	)
 
-	firstBlock := NewUnDelimiteredBlock(
+	firstBlock := NewUndelimBlock(
 		[]Expr{
 			NewAssignBlock(
 				false,
@@ -2258,7 +2258,7 @@ func Test_S11_5(t *testing.T) {
 
 	firstCase := NewWhenCase(
 		NewLiteral(tok(TK_NUMBER, "1")),
-		NewUnDelimiteredBlock(
+		NewUndelimBlock(
 			[]Expr{
 				NewIdentifier(tok(TK_IDENTIFIER, "a")),
 			},
@@ -2272,7 +2272,7 @@ func Test_S11_5(t *testing.T) {
 			NewIdentifier(tok(TK_IDENTIFIER, "a")),
 			NewIdentifier(tok(TK_IDENTIFIER, "b")),
 		),
-		NewUnDelimiteredBlock(
+		NewUndelimBlock(
 			[]Expr{
 				NewIdentifier(tok(TK_IDENTIFIER, "b")),
 			},
@@ -2281,7 +2281,7 @@ func Test_S11_5(t *testing.T) {
 
 	thirdCase := NewWhenCase(
 		NewLiteral(tok(TK_NUMBER, "2")),
-		NewUnDelimiteredBlock(
+		NewUndelimBlock(
 			[]Expr{
 				NewIdentifier(tok(TK_IDENTIFIER, "c")),
 			},
