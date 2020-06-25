@@ -16,6 +16,9 @@ func EvalExpr(ctx *Context, expr Expr) (Result, error) {
 
 	case ST_FUNC_DEF:
 		return EvalFuncDef(ctx, expr.(FuncDef)), nil
+
+	case ST_EXPR_FUNC:
+		return EvalExprFunc(ctx, expr.(ExprFunc)), nil
 	}
 
 	panic(err.NewBySnippet("Unknown expression type", expr))
@@ -41,6 +44,13 @@ func EvalIdentifier(ctx *Context, id Identifier) Result {
 func EvalFuncDef(ctx *Context, f FuncDef) Result {
 	return Result{
 		typ: RT_FUNC_DEF,
+		val: f,
+	}
+}
+
+func EvalExprFunc(ctx *Context, f ExprFunc) Result {
+	return Result{
+		typ: RT_EXPR_FUNC_DEF,
 		val: f,
 	}
 }

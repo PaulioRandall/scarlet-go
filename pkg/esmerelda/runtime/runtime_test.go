@@ -203,3 +203,34 @@ func Test_R1_5(t *testing.T) {
 		val: f,
 	})
 }
+
+func Test_R1_6(t *testing.T) {
+
+	// GIVEN an empty context
+	// EVAL an assignment block
+	// WITH a function assigned to an identifier
+	// THEN the context will be updated to reflect the assignment
+
+	f := NewExprFunc(
+		tok(TK_EXPR_FUNC, "E"),
+		[]Token{},
+		NewLiteral(tok(TK_NUMBER, "1")),
+	)
+
+	// a := E() 1
+	given := NewAssignBlock(
+		false,
+		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+		[]Expr{f},
+		1,
+	)
+
+	ctx := NewCtx(nil, true)
+	e := EvalAssignBlock(ctx, given)
+	require.Nil(t, e)
+
+	requireCtxValue(t, ctx, false, "a", Result{
+		typ: RT_EXPR_FUNC_DEF,
+		val: f,
+	})
+}
