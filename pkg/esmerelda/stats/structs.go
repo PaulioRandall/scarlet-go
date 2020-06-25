@@ -6,7 +6,7 @@ import (
 
 type exitStat struct {
 	tk   Token
-	code Expression
+	code Expr
 }
 
 func (exitStat) Kind() Kind {
@@ -17,7 +17,7 @@ func (e exitStat) Tk() Token {
 	return e.tk
 }
 
-func (e exitStat) Code() Expression {
+func (e exitStat) Code() Expr {
 	return e.code
 }
 
@@ -106,19 +106,19 @@ func (l literalExpr) String() string {
 }
 
 type collectionAccessorExpr struct {
-	collection Expression
-	key        Expression
+	collection Expr
+	key        Expr
 }
 
 func (collectionAccessorExpr) Kind() Kind {
 	return ST_COLLECTION_ACCESSOR
 }
 
-func (c collectionAccessorExpr) Collection() Expression {
+func (c collectionAccessorExpr) Collection() Expr {
 	return c.collection
 }
 
-func (c collectionAccessorExpr) Key() Expression {
+func (c collectionAccessorExpr) Key() Expr {
 	return c.key
 }
 
@@ -135,14 +135,14 @@ func (c collectionAccessorExpr) String() string {
 }
 
 type negationExpr struct {
-	expr Expression
+	expr Expr
 }
 
 func (negationExpr) Kind() Kind {
 	return ST_NEGATION
 }
 
-func (n negationExpr) Expr() Expression {
+func (n negationExpr) Expr() Expr {
 	return n.expr
 }
 
@@ -160,7 +160,7 @@ func (n negationExpr) String() string {
 
 type operationExpr struct {
 	operator    Token
-	left, right Expression
+	left, right Expr
 }
 
 func (operationExpr) Kind() Kind {
@@ -171,11 +171,11 @@ func (o operationExpr) Operator() Token {
 	return o.operator
 }
 
-func (o operationExpr) Left() Expression {
+func (o operationExpr) Left() Expr {
 	return o.left
 }
 
-func (o operationExpr) Right() Expression {
+func (o operationExpr) Right() Expr {
 	return o.right
 }
 
@@ -193,8 +193,8 @@ func (o operationExpr) String() string {
 
 type assignmentStat struct {
 	final  bool
-	target Expression
-	source Expression
+	target Expr
+	source Expr
 }
 
 func (assignmentStat) Kind() Kind {
@@ -205,11 +205,11 @@ func (a assignmentStat) Const() bool {
 	return a.final
 }
 
-func (a assignmentStat) Target() Expression {
+func (a assignmentStat) Target() Expr {
 	return a.target
 }
 
-func (a assignmentStat) Source() Expression {
+func (a assignmentStat) Source() Expr {
 	return a.source
 }
 
@@ -227,8 +227,8 @@ func (a assignmentStat) String() string {
 
 type assignmentBlockStat struct {
 	final   bool
-	targets []Expression
-	sources []Expression
+	targets []Expr
+	sources []Expr
 	count   int
 }
 
@@ -240,11 +240,11 @@ func (a assignmentBlockStat) Const() bool {
 	return a.final
 }
 
-func (a assignmentBlockStat) Targets() []Expression {
+func (a assignmentBlockStat) Targets() []Expr {
 	return a.targets
 }
 
-func (a assignmentBlockStat) Sources() []Expression {
+func (a assignmentBlockStat) Sources() []Expr {
 	return a.sources
 }
 
@@ -266,14 +266,14 @@ func (a assignmentBlockStat) String() string {
 
 type blockExpr struct {
 	open, close Token
-	stats       []Expression
+	stats       []Expr
 }
 
 func (blockExpr) Kind() Kind {
 	return ST_BLOCK
 }
 
-func (bk blockExpr) Stats() []Expression {
+func (bk blockExpr) Stats() []Expr {
 	return bk.stats
 }
 
@@ -290,14 +290,14 @@ func (bk blockExpr) String() string {
 }
 
 type unDelimiteredBlockExpr struct {
-	stats []Expression
+	stats []Expr
 }
 
 func (unDelimiteredBlockExpr) Kind() Kind {
 	return ST_BLOCK
 }
 
-func (bk unDelimiteredBlockExpr) Stats() []Expression {
+func (bk unDelimiteredBlockExpr) Stats() []Expr {
 	return bk.stats
 }
 
@@ -317,7 +317,7 @@ func (bk unDelimiteredBlockExpr) String() string {
 type exprFuncExpr struct {
 	key    Token
 	inputs []Token
-	expr   Expression
+	expr   Expr
 }
 
 func (exprFuncExpr) Kind() Kind {
@@ -328,7 +328,7 @@ func (e exprFuncExpr) Inputs() []Token {
 	return e.inputs
 }
 
-func (e exprFuncExpr) Expr() Expression {
+func (e exprFuncExpr) Expr() Expr {
 	return e.expr
 }
 
@@ -377,7 +377,7 @@ func (p parametersDef) String() string {
 type functionExpr struct {
 	key    Token
 	params Parameters
-	body   Expression
+	body   Expr
 }
 
 func (functionExpr) Kind() Kind {
@@ -388,7 +388,7 @@ func (f functionExpr) Params() Parameters {
 	return f.params
 }
 
-func (f functionExpr) Body() Expression {
+func (f functionExpr) Body() Expr {
 	return f.body
 }
 
@@ -406,19 +406,19 @@ func (f functionExpr) String() string {
 
 type functionCallExpr struct {
 	close    Token
-	function Expression
-	args     []Expression
+	function Expr
+	args     []Expr
 }
 
 func (functionCallExpr) Kind() Kind {
 	return ST_FUNCTION_CALL
 }
 
-func (f functionCallExpr) Function() Expression {
+func (f functionCallExpr) Function() Expr {
 	return f.function
 }
 
-func (f functionCallExpr) Arguments() []Expression {
+func (f functionCallExpr) Arguments() []Expr {
 	return f.args
 }
 
@@ -466,7 +466,7 @@ func (w watchStat) String() string {
 
 type guardStat struct {
 	open      Token
-	condition Expression
+	condition Expr
 	body      Block
 }
 
@@ -474,7 +474,7 @@ func (guardStat) Kind() Kind {
 	return ST_GUARD
 }
 
-func (g guardStat) Condition() Expression {
+func (g guardStat) Condition() Expr {
 	return g.condition
 }
 
@@ -495,7 +495,7 @@ func (g guardStat) String() string {
 }
 
 type whenCaseStat struct {
-	object Expression
+	object Expr
 	body   Block
 }
 
@@ -503,7 +503,7 @@ func (whenCaseStat) Kind() Kind {
 	return ST_WHEN_CASE
 }
 
-func (wc whenCaseStat) Condition() Expression {
+func (wc whenCaseStat) Condition() Expr {
 	return wc.object
 }
 
@@ -585,7 +585,7 @@ func (l loopStat) String() string {
 
 type spellCallExpr struct {
 	spell, close Token
-	args         []Expression
+	args         []Expr
 }
 
 func (spellCallExpr) Kind() Kind {
@@ -596,7 +596,7 @@ func (s spellCallExpr) Spell() Token {
 	return s.spell
 }
 
-func (s spellCallExpr) Arguments() []Expression {
+func (s spellCallExpr) Arguments() []Expr {
 	return s.args
 }
 
@@ -614,14 +614,14 @@ func (s spellCallExpr) String() string {
 
 type existsExpr struct {
 	close   Token
-	subject Expression
+	subject Expr
 }
 
 func (existsExpr) Kind() Kind {
 	return ST_EXISTS
 }
 
-func (e existsExpr) Subject() Expression {
+func (e existsExpr) Subject() Expr {
 	return e.subject
 }
 

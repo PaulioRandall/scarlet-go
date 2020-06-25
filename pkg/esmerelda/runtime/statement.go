@@ -8,7 +8,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-func EvalStatements(ctx *Context, sts []Expression) error {
+func EvalStatements(ctx *Context, sts []Expr) error {
 
 	for _, st := range sts {
 		e := EvalStatement(ctx, st)
@@ -20,7 +20,7 @@ func EvalStatements(ctx *Context, sts []Expression) error {
 	return nil
 }
 
-func EvalStatement(ctx *Context, st Expression) error {
+func EvalStatement(ctx *Context, st Expr) error {
 
 	switch st.Kind() {
 	case ST_ASSIGNMENT:
@@ -42,7 +42,7 @@ func EvalAssignmentBlock(ctx *Context, as AssignmentBlock) error {
 
 func EvalAssignmentSources(
 	ctx *Context,
-	sources []Expression,
+	sources []Expr,
 	count int,
 ) ([]Result, error) {
 
@@ -51,7 +51,7 @@ func EvalAssignmentSources(
 
 	for i, s := range sources {
 
-		r[i], e = EvalExpression(ctx, s)
+		r[i], e = EvalExpr(ctx, s)
 		if e != nil {
 			return nil, e
 		}
@@ -63,7 +63,7 @@ func EvalAssignmentSources(
 func doAssignments(
 	ctx *Context,
 	final bool,
-	targets []Expression,
+	targets []Expr,
 	values []Result,
 	count int,
 ) error {
@@ -81,7 +81,7 @@ func doAssignments(
 func doAssignment(
 	ctx *Context,
 	final bool,
-	target Expression,
+	target Expr,
 	value Result,
 ) error {
 

@@ -6,7 +6,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-func identifier(p *pipeline) (Expression, error) {
+func identifier(p *pipeline) (Expr, error) {
 	// pattern := IDENTIFIER [list_accessor | function_call]
 
 	tk, e := p.expect(TK_IDENTIFIER)
@@ -14,7 +14,7 @@ func identifier(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	var id Expression = NewIdentifier(tk)
+	var id Expr = NewIdentifier(tk)
 
 	for more := true; more; {
 
@@ -27,7 +27,7 @@ func identifier(p *pipeline) (Expression, error) {
 	return id, nil
 }
 
-func maybeMore(p *pipeline, expr Expression) (_ Expression, more bool, e error) {
+func maybeMore(p *pipeline, expr Expr) (_ Expr, more bool, e error) {
 	// pattern := expression list_accessor
 	// pattern := expression function_call
 
@@ -54,7 +54,7 @@ func maybeMore(p *pipeline, expr Expression) (_ Expression, more bool, e error) 
 	return expr, false, nil
 }
 
-func literal(p *pipeline) (Expression, error) {
+func literal(p *pipeline) (Expr, error) {
 	// pattern := BOOL | NUMBER | STRING
 
 	l, e := p.expectAnyOf(TK_BOOL, TK_NUMBER, TK_STRING)
@@ -65,7 +65,7 @@ func literal(p *pipeline) (Expression, error) {
 	return NewLiteral(l), nil
 }
 
-func negation(p *pipeline) (Expression, error) {
+func negation(p *pipeline) (Expr, error) {
 	// pattern := MINUS expression
 
 	_, e := p.expect(TK_MINUS)
@@ -73,7 +73,7 @@ func negation(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	expr, e := expectExpression(p)
+	expr, e := expectExpr(p)
 	if e != nil {
 		return nil, e
 	}
@@ -81,7 +81,7 @@ func negation(p *pipeline) (Expression, error) {
 	return NewNegation(expr), nil
 }
 
-func exists(p *pipeline, subject Expression) (Expression, error) {
+func exists(p *pipeline, subject Expr) (Expr, error) {
 	// pattern := subject EXISTS
 
 	close, e := p.expect(TK_EXISTS)
@@ -92,7 +92,7 @@ func exists(p *pipeline, subject Expression) (Expression, error) {
 	return NewExists(close, subject), nil
 }
 
-func maybeExists(p *pipeline, subject Expression) (Expression, error) {
+func maybeExists(p *pipeline, subject Expr) (Expr, error) {
 	if p.match(TK_EXISTS) {
 		return exists(p, subject)
 	}
@@ -100,14 +100,14 @@ func maybeExists(p *pipeline, subject Expression) (Expression, error) {
 	return subject, nil
 }
 
-func group(p *pipeline) (Expression, error) {
+func group(p *pipeline) (Expr, error) {
 
 	_, e := p.expect(TK_PAREN_OPEN)
 	if e != nil {
 		return nil, e
 	}
 
-	expr, e := expectExpression(p)
+	expr, e := expectExpr(p)
 	if e != nil {
 		return nil, e
 	}
@@ -120,12 +120,12 @@ func group(p *pipeline) (Expression, error) {
 	return expr, nil
 }
 
-func collectionAccessor(p *pipeline, left Expression) (Expression, error) {
+func collectionAccessor(p *pipeline, left Expr) (Expr, error) {
 	// pattern := GUARD_OPEN expression GUARD_CLOSE
 
 	p.expect(TK_GUARD_OPEN)
 
-	index, e := expectExpression(p)
+	index, e := expectExpr(p)
 	if e != nil {
 		return nil, e
 	}
@@ -138,14 +138,14 @@ func collectionAccessor(p *pipeline, left Expression) (Expression, error) {
 	return NewCollectionAccessor(left, index), nil
 }
 
-func expressions(p *pipeline) ([]Expression, error) {
+func expressions(p *pipeline) ([]Expr, error) {
 	// pattern := [operation {DELIM operation}]
 
-	ops := []Expression{}
+	ops := []Expr{}
 
 	for !p.match(TK_PAREN_CLOSE) && !p.match(TK_TERMINATOR) {
 
-		expr, e := expectExpression(p)
+		expr, e := expectExpr(p)
 		if e != nil {
 			return nil, e
 		}
@@ -160,7 +160,7 @@ func expressions(p *pipeline) ([]Expression, error) {
 	return ops, nil
 }
 
-func expression(p *pipeline) (Expression, error) {
+func expression(p *pipeline) (Expr, error) {
 
 	left, e := operand(p)
 	if e != nil {
@@ -174,7 +174,7 @@ func expression(p *pipeline) (Expression, error) {
 	return operation(p, left, 0)
 }
 
-func expectExpression(p *pipeline) (Expression, error) {
+func expectExpr(p *pipeline) (Expr, error) {
 	// pattern := operation
 
 	expr, e := expression(p)
@@ -189,7 +189,7 @@ func expectExpression(p *pipeline) (Expression, error) {
 	return expr, nil
 }
 
-func operand(p *pipeline) (expr Expression, e error) {
+func operand(p *pipeline) (expr Expr, e error) {
 
 	switch {
 	case p.match(TK_IDENTIFIER):
@@ -218,7 +218,7 @@ func operand(p *pipeline) (expr Expression, e error) {
 	return maybeExists(p, expr)
 }
 
-func expectOperand(p *pipeline) (Expression, error) {
+func expectOperand(p *pipeline) (Expr, error) {
 
 	o, e := operand(p)
 	if e != nil {
@@ -232,7 +232,7 @@ func expectOperand(p *pipeline) (Expression, error) {
 	return o, nil
 }
 
-func operation(p *pipeline, left Expression, leftPriority int) (Expression, error) {
+func operation(p *pipeline, left Expr, leftPriority int) (Expr, error) {
 
 	if !p.hasMore() {
 		return left, nil
@@ -285,12 +285,12 @@ func block(p *pipeline) (Block, error) {
 	return NewBlock(open, close, sts), nil
 }
 
-func blockStatements(p *pipeline) ([]Expression, error) {
+func blockStatements(p *pipeline) ([]Expr, error) {
 
 	var (
-		st Expression
+		st Expr
 		e  error
-		r  = []Expression{}
+		r  = []Expr{}
 	)
 
 	for !p.match(TK_BLOCK_CLOSE) {
@@ -310,7 +310,7 @@ func blockStatements(p *pipeline) ([]Expression, error) {
 	return r, nil
 }
 
-func function(p *pipeline) (Expression, error) {
+func function(p *pipeline) (Expr, error) {
 	// pattern := FUNC function_parameters function_body
 
 	key, e := p.expect(TK_FUNCTION)
@@ -383,7 +383,7 @@ func parameterIdentifiers(p *pipeline) ([]Token, error) {
 	return ids, nil
 }
 
-func functionBody(p *pipeline) (Expression, error) {
+func functionBody(p *pipeline) (Expr, error) {
 
 	switch {
 	case p.match(TK_BLOCK_OPEN):
@@ -413,7 +413,7 @@ func functionBody(p *pipeline) (Expression, error) {
 	return nil, err.NewBySnippet("Expected function body", p.any())
 }
 
-func functionCall(p *pipeline, f Expression) (Expression, error) {
+func functionCall(p *pipeline, f Expr) (Expr, error) {
 	// pattern := PAREN_OPEN arguments PAREN_CLOSE
 
 	_, e := p.expect(TK_PAREN_OPEN)
@@ -434,7 +434,7 @@ func functionCall(p *pipeline, f Expression) (Expression, error) {
 	return NewFunctionCall(close, f, args), nil
 }
 
-func expressionFunction(p *pipeline) (Expression, error) {
+func exprFunc(p *pipeline) (Expr, error) {
 	// pattern := EXPR_FUNC exprFuncInputs expression
 
 	key, e := p.expect(TK_EXPR_FUNC)
@@ -447,7 +447,7 @@ func expressionFunction(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	expr, e := expectExpression(p)
+	expr, e := expectExpr(p)
 	if e != nil {
 		return nil, e
 	}
@@ -502,7 +502,7 @@ func exprFuncInputs(p *pipeline) ([]Token, error) {
 	return in, nil
 }
 
-func watch(p *pipeline) (Expression, error) {
+func watch(p *pipeline) (Expr, error) {
 	// pattern := WATCH BLOCK_OPEN {statements} BLOCK_CLOSE
 
 	key, e := p.expect(TK_WATCH)
@@ -545,7 +545,7 @@ func watchIdentifiers(p *pipeline) ([]Token, error) {
 	return ids, nil
 }
 
-func guard(p *pipeline) (Expression, error) {
+func guard(p *pipeline) (Expr, error) {
 	return guardExplicit(p)
 }
 
@@ -564,14 +564,14 @@ func guardExplicit(p *pipeline) (Guard, error) {
 	return NewGuard(open, condition, body), nil
 }
 
-func guardCondition(p *pipeline) (Token, Expression, error) {
+func guardCondition(p *pipeline) (Token, Expr, error) {
 
 	open, e := p.expect(TK_GUARD_OPEN)
 	if e != nil {
 		return nil, nil, e
 	}
 
-	condition, e := expectExpression(p)
+	condition, e := expectExpr(p)
 	if e != nil {
 		return nil, nil, e
 	}
@@ -595,11 +595,11 @@ func guardBody(p *pipeline) (Block, error) {
 		return nil, e
 	}
 
-	sts := []Expression{st}
+	sts := []Expr{st}
 	return NewUnDelimiteredBlock(sts), nil
 }
 
-func when(p *pipeline) (Expression, error) {
+func when(p *pipeline) (Expr, error) {
 	// pattern := WHEN whenInitialiser BLOCK_OPEN whenCases BLOCK_CLOSE
 
 	key, e := p.expect(TK_WHEN)
@@ -644,7 +644,7 @@ func whenInitialiser(p *pipeline) (Assignment, error) {
 		return nil, e
 	}
 
-	source, e := expectExpression(p)
+	source, e := expectExpr(p)
 	if e != nil {
 		return nil, e
 	}
@@ -706,7 +706,7 @@ func whenGuardCase(p *pipeline) (WhenCase, error) {
 func whenCase(p *pipeline) (WhenCase, error) {
 	// pattern := object THEN guardBody
 
-	object, e := expectExpression(p)
+	object, e := expectExpr(p)
 	if e != nil {
 		return nil, e
 	}
@@ -724,7 +724,7 @@ func whenCase(p *pipeline) (WhenCase, error) {
 	return NewWhenCase(object, body), nil
 }
 
-func loop(p *pipeline) (Expression, error) {
+func loop(p *pipeline) (Expr, error) {
 	// pattern := LOOP loopInitialiser guard
 
 	key, e := p.expect(TK_LOOP)
@@ -760,7 +760,7 @@ func loopInitialiser(p *pipeline) (Assignment, error) {
 		return nil, e
 	}
 
-	source, e := expectExpression(p)
+	source, e := expectExpr(p)
 	if e != nil {
 		return nil, e
 	}
@@ -768,7 +768,7 @@ func loopInitialiser(p *pipeline) (Assignment, error) {
 	return NewAssignment(target, source), nil
 }
 
-func spellCall(p *pipeline) (Expression, error) {
+func spellCall(p *pipeline) (Expr, error) {
 	// pattern := SPELL PAREN_OPEN arguments PAREN_CLOSE
 
 	id, e := p.expect(TK_SPELL)
@@ -791,7 +791,7 @@ func spellCall(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	var spell Expression = NewSpellCall(id, close, args)
+	var spell Expr = NewSpellCall(id, close, args)
 
 	for more := true; more; {
 		spell, more, e = maybeMore(p, spell)
@@ -803,21 +803,21 @@ func spellCall(p *pipeline) (Expression, error) {
 	return spell, nil
 }
 
-func spellCallArguments(p *pipeline) ([]Expression, error) {
+func spellCallArguments(p *pipeline) ([]Expr, error) {
 	// pattern  := [argument {DELIM argument}]
 	// arugment := expression | block
 
-	var expr Expression
+	var expr Expr
 	var e error
 
-	args := []Expression{}
+	args := []Expr{}
 
 	for !p.match(TK_PAREN_CLOSE) && !p.match(TK_TERMINATOR) {
 
 		if p.match(TK_BLOCK_OPEN) {
 			expr, e = block(p)
 		} else {
-			expr, e = expectExpression(p)
+			expr, e = expectExpr(p)
 		}
 
 		if e != nil {

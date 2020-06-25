@@ -11,7 +11,7 @@ type TokenStream interface {
 	PeekBeyond() Token
 }
 
-func ParseStatements(ts TokenStream) ([]Expression, error) {
+func ParseStatements(ts TokenStream) ([]Expr, error) {
 	p := newPipeline(ts)
 	return statements(p)
 }

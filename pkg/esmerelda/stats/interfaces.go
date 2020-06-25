@@ -6,7 +6,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-type Expression interface {
+type Expr interface {
 	Snippet
 	Kind() Kind
 }
@@ -18,9 +18,9 @@ type Snippet interface {
 }
 
 type Exit interface {
-	Expression
+	Expr
 	Tk() Token
-	Code() Expression
+	Code() Expr
 }
 
 func ExitString(e Exit) string {
@@ -39,7 +39,7 @@ func ExitString(e Exit) string {
 }
 
 type Void interface {
-	Expression
+	Expr
 	Tk() Token
 }
 
@@ -54,7 +54,7 @@ func VoidString(v Void) string {
 }
 
 type Identifier interface {
-	Expression
+	Expr
 	Tk() Token
 }
 
@@ -69,7 +69,7 @@ func IdentifierString(id Identifier) string {
 }
 
 type Literal interface {
-	Expression
+	Expr
 	Tk() Token
 }
 
@@ -84,9 +84,9 @@ func LiteralString(l Literal) string {
 }
 
 type CollectionAccessor interface {
-	Expression
-	Collection() Expression
-	Key() Expression
+	Expr
+	Collection() Expr
+	Key() Expr
 }
 
 func CollectionAccessorString(c CollectionAccessor) string {
@@ -109,8 +109,8 @@ func CollectionAccessorString(c CollectionAccessor) string {
 }
 
 type Negation interface {
-	Expression
-	Expr() Expression
+	Expr
+	Expr() Expr
 }
 
 func NegationString(n Negation) string {
@@ -126,10 +126,10 @@ func NegationString(n Negation) string {
 }
 
 type Operation interface {
-	Expression
+	Expr
 	Operator() Token
-	Left() Expression
-	Right() Expression
+	Left() Expr
+	Right() Expr
 }
 
 func OperationString(o Operation) string {
@@ -153,10 +153,10 @@ func OperationString(o Operation) string {
 }
 
 type Assignment interface {
-	Expression
+	Expr
 	Const() bool
-	Target() Expression
-	Source() Expression
+	Target() Expr
+	Source() Expr
 }
 
 func AssignmentString(a Assignment) string {
@@ -182,10 +182,10 @@ func AssignmentString(a Assignment) string {
 }
 
 type AssignmentBlock interface {
-	Expression
+	Expr
 	Const() bool
-	Targets() []Expression
-	Sources() []Expression
+	Targets() []Expr
+	Sources() []Expr
 	Count() int
 }
 
@@ -214,9 +214,9 @@ func AssignmentBlockString(bk AssignmentBlock) string {
 }
 
 type ExprFunc interface {
-	Expression
+	Expr
 	Inputs() []Token
-	Expr() Expression
+	Expr() Expr
 }
 
 func ExprFuncString(e ExprFunc) string {
@@ -243,7 +243,7 @@ func ExprFuncString(e ExprFunc) string {
 }
 
 type Parameters interface {
-	Expression
+	Expr
 	Inputs() []Token
 	Outputs() []Token
 }
@@ -280,9 +280,9 @@ func ParametersString(p Parameters) string {
 }
 
 type Function interface {
-	Expression
+	Expr
 	Params() Parameters
-	Body() Expression
+	Body() Expr
 }
 
 func FunctionString(f Function) string {
@@ -301,9 +301,9 @@ func FunctionString(f Function) string {
 }
 
 type FunctionCall interface {
-	Expression
-	Function() Expression
-	Arguments() []Expression
+	Expr
+	Function() Expr
+	Arguments() []Expr
 }
 
 func FunctionCallString(f FunctionCall) string {
@@ -328,8 +328,8 @@ func FunctionCallString(f FunctionCall) string {
 }
 
 type Block interface {
-	Expression
-	Stats() []Expression
+	Expr
+	Stats() []Expr
 }
 
 func BlockString(bk Block) string {
@@ -344,7 +344,7 @@ func BlockString(bk Block) string {
 }
 
 type Watch interface {
-	Expression
+	Expr
 	Identifiers() []Token
 	Body() Block
 }
@@ -369,8 +369,8 @@ func WatchString(w Watch) string {
 }
 
 type Guard interface {
-	Expression
-	Condition() Expression
+	Expr
+	Condition() Expr
 	Body() Block
 }
 
@@ -413,7 +413,7 @@ func WhenCaseString(mc WhenCase) string {
 }
 
 type When interface {
-	Expression
+	Expr
 	Initialiser() Assignment
 	Cases() []WhenCase
 }
@@ -438,7 +438,7 @@ func WhenString(m When) string {
 }
 
 type Loop interface {
-	Expression
+	Expr
 	Initialiser() Assignment
 	Guard() Guard
 }
@@ -463,9 +463,9 @@ func LoopString(l Loop) string {
 }
 
 type SpellCall interface {
-	Expression
+	Expr
 	Spell() Token
-	Arguments() []Expression
+	Arguments() []Expr
 }
 
 func SpellCallString(s SpellCall) string {
@@ -486,8 +486,8 @@ func SpellCallString(s SpellCall) string {
 }
 
 type Exists interface {
-	Expression
-	Subject() Expression
+	Expr
+	Subject() Expr
 }
 
 func ExistsString(e Exists) string {

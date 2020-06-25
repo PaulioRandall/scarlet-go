@@ -5,7 +5,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/stats"
 )
 
-func EvalExpression(ctx *Context, expr Expression) (Result, error) {
+func EvalExpr(ctx *Context, expr Expr) (Result, error) {
 
 	switch expr.Kind() {
 	case ST_LITERAL:

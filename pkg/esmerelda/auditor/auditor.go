@@ -14,7 +14,7 @@ import (
 )
 
 type StatementIterator interface {
-	Next() (Expression, error)
+	Next() (Expr, error)
 }
 
 type errList struct {
@@ -47,13 +47,13 @@ func AuditStatements(si StatementIterator) []error {
 	return el.errs
 }
 
-func statements(el *errList, sts []Expression) {
+func statements(el *errList, sts []Expr) {
 	for _, st := range sts {
 		statement(el, st)
 	}
 }
 
-func statement(el *errList, st Expression) {
+func statement(el *errList, st Expr) {
 
 	switch st.Kind() {
 	case ST_GUARD:
@@ -66,7 +66,7 @@ func guard(el *errList, g Guard) {
 	expectBoolResult(el, g.Condition())
 }
 
-func expectBoolResult(el *errList, ex Expression) {
+func expectBoolResult(el *errList, ex Expr) {
 
 	if v, ok := ex.(Operation); ok {
 

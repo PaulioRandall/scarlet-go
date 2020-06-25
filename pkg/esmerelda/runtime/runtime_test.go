@@ -55,8 +55,8 @@ func Test_R1_1(t *testing.T) {
 	// a := 1
 	given := NewAssignmentBlock(
 		false,
-		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
-		[]Expression{NewLiteral(tok(TK_NUMBER, "1"))},
+		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+		[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
 		1,
 	)
 
@@ -80,8 +80,8 @@ func Test_R1_2(t *testing.T) {
 	// def a := 1
 	given := NewAssignmentBlock(
 		true,
-		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
-		[]Expression{NewLiteral(tok(TK_NUMBER, "1"))},
+		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+		[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
 		1,
 	)
 
@@ -105,12 +105,12 @@ func Test_R1_3(t *testing.T) {
 	// a, b, c := true, 1, "abc"
 	given := NewAssignmentBlock(
 		false,
-		[]Expression{
+		[]Expr{
 			NewIdentifier(tok(TK_IDENTIFIER, "a")),
 			NewIdentifier(tok(TK_IDENTIFIER, "b")),
 			NewIdentifier(tok(TK_IDENTIFIER, "c")),
 		},
-		[]Expression{
+		[]Expr{
 			NewLiteral(tok(TK_BOOL, "true")),
 			NewLiteral(tok(TK_NUMBER, "1")),
 			NewLiteral(tok(TK_STRING, `"abc"`)),
@@ -148,8 +148,8 @@ func Test_R1_4(t *testing.T) {
 	// a := b
 	given := NewAssignmentBlock(
 		false,
-		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
-		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "b"))},
+		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "b"))},
 		1,
 	)
 
@@ -186,15 +186,15 @@ func Test_R1_5(t *testing.T) {
 		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
-			[]Expression{},
+			[]Expr{},
 		),
 	)
 
 	// a := F() {}
 	given := NewAssignmentBlock(
 		false,
-		[]Expression{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
-		[]Expression{f},
+		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+		[]Expr{f},
 		1,
 	)
 

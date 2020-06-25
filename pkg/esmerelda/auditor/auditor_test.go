@@ -11,11 +11,11 @@ import (
 
 type stItr struct {
 	StatementIterator
-	sts   []Expression
+	sts   []Expr
 	index int
 }
 
-func (i *stItr) Next() (Expression, error) {
+func (i *stItr) Next() (Expr, error) {
 
 	if i.index >= len(i.sts) {
 		return nil, nil
@@ -34,13 +34,13 @@ func emptyBlock() Block {
 	return NewBlock(
 		tok(TK_BLOCK_OPEN, "{"),
 		tok(TK_BLOCK_CLOSE, "}"),
-		[]Expression{},
+		[]Expr{},
 	)
 }
 
 func Test_S1_1(t *testing.T) {
 
-	sts := []Expression{
+	sts := []Expr{
 		NewGuard(
 			tok(TK_GUARD_OPEN, "["),
 			NewOperation(
@@ -62,7 +62,7 @@ func Test_S1_1(t *testing.T) {
 
 func Test_S1_2(t *testing.T) {
 
-	sts := []Expression{
+	sts := []Expr{
 		NewGuard(
 			tok(TK_GUARD_OPEN, "["),
 			NewOperation(
@@ -84,7 +84,7 @@ func Test_S1_2(t *testing.T) {
 
 func Test_S1_3(t *testing.T) {
 
-	sts := []Expression{
+	sts := []Expr{
 		NewGuard(
 			tok(TK_GUARD_OPEN, "["),
 			NewOperation(

@@ -40,25 +40,25 @@ func (s *tkStream) PeekBeyond() Token {
 	return s.get(1)
 }
 
-type ParseFunc func(in []Token) []Expression
+type ParseFunc func(in []Token) []Expr
 type TestFunc func(t *testing.T, pf ParseFunc)
 
 func tok(ty TokenType, v string) Token {
 	return NewToken(ty, v, 0, 0)
 }
 
-func expectError(t *testing.T, acts []Expression, e error) {
+func expectError(t *testing.T, acts []Expr, e error) {
 	require.NotNil(t, e, "Expected error")
 	require.Nil(t, acts, "Only expected an error, but result was not nil")
 }
 
-func expectOneStat(t *testing.T, exp Expression, acts []Expression, e error) {
+func expectOneStat(t *testing.T, exp Expr, acts []Expr, e error) {
 	checkNoErr(t, e)
 	expectSize(t, 1, acts)
 	expectStat(t, exp, acts[0])
 }
 
-func expectStats(t *testing.T, exps []Expression, acts []Expression, e error) {
+func expectStats(t *testing.T, exps []Expr, acts []Expr, e error) {
 	checkNoErr(t, e)
 
 	expLen, actLen := len(exps), len(acts)
@@ -75,12 +75,12 @@ func expectStats(t *testing.T, exps []Expression, acts []Expression, e error) {
 	}
 }
 
-func expectStat(t *testing.T, exp, act Expression) {
+func expectStat(t *testing.T, exp, act Expr) {
 	require.Equal(t, exp, act,
 		"Expect: %s\nActual: %s", exp.String(), act.String())
 }
 
-func expectSize(t *testing.T, exp int, acts []Expression) {
+func expectSize(t *testing.T, exp int, acts []Expr) {
 	require.Equal(t, exp, len(acts),
 		"Expected %d statements, got %d", exp, len(acts))
 }

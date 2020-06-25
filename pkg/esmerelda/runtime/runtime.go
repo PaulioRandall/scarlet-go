@@ -4,7 +4,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/stats"
 )
 
-func Run(sts []Expression) (*Context, error) {
+func Run(sts []Expr) (*Context, error) {
 
 	ctx := NewCtx(nil, true)
 	e := EvalStatements(ctx, sts)

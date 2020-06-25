@@ -6,9 +6,9 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-func statements(p *pipeline) ([]Expression, error) {
+func statements(p *pipeline) ([]Expr, error) {
 
-	r := []Expression{}
+	r := []Expr{}
 
 	for p.hasMore() {
 
@@ -28,7 +28,7 @@ func statements(p *pipeline) ([]Expression, error) {
 	return r, nil
 }
 
-func statement(p *pipeline) (Expression, error) {
+func statement(p *pipeline) (Expr, error) {
 	// pattern := assignment | expression
 
 	switch {
@@ -65,7 +65,7 @@ func statement(p *pipeline) (Expression, error) {
 	return expression(p)
 }
 
-func expectStatement(p *pipeline) (Expression, error) {
+func expectStatement(p *pipeline) (Expr, error) {
 
 	st, e := statement(p)
 
@@ -76,14 +76,14 @@ func expectStatement(p *pipeline) (Expression, error) {
 	return st, e
 }
 
-func exit(p *pipeline) (Expression, error) {
+func exit(p *pipeline) (Expr, error) {
 
 	tk, e := p.expect(TK_EXIT)
 	if e != nil {
 		return nil, e
 	}
 
-	code, e := expectExpression(p)
+	code, e := expectExpr(p)
 	if e != nil {
 		return nil, e
 	}
@@ -91,7 +91,7 @@ func exit(p *pipeline) (Expression, error) {
 	return NewExit(tk, code), nil
 }
 
-func assignment(p *pipeline) (Expression, error) {
+func assignment(p *pipeline) (Expr, error) {
 	// pattern := [DEFINITION] assignment_targets ASSIGN assignment_sources
 
 	final := p.accept(TK_DEFINITION)
@@ -119,7 +119,7 @@ func assignment(p *pipeline) (Expression, error) {
 	return NewAssignmentBlock(final, targets, sources, count), nil
 }
 
-func assignmentSources(p *pipeline) ([]Expression, error) {
+func assignmentSources(p *pipeline) ([]Expr, error) {
 
 	if p.match(TK_FUNCTION) {
 
@@ -128,26 +128,26 @@ func assignmentSources(p *pipeline) ([]Expression, error) {
 			return nil, e
 		}
 
-		return []Expression{src}, nil
+		return []Expr{src}, nil
 	}
 
 	if p.match(TK_EXPR_FUNC) {
 
-		src, e := expressionFunction(p)
+		src, e := exprFunc(p)
 		if e != nil {
 			return nil, e
 		}
 
-		return []Expression{src}, nil
+		return []Expr{src}, nil
 	}
 
 	return expressions(p)
 }
 
-func assignmentTargets(p *pipeline) ([]Expression, error) {
+func assignmentTargets(p *pipeline) ([]Expr, error) {
 	// pattern := assignmentTarget {DELIMITER assignment_target}
 
-	var ats []Expression
+	var ats []Expr
 
 	for {
 
@@ -170,7 +170,7 @@ func assignmentTargets(p *pipeline) ([]Expression, error) {
 	return ats, nil
 }
 
-func assignmentTarget(p *pipeline) (Expression, error) {
+func assignmentTarget(p *pipeline) (Expr, error) {
 	// pattern := identifer | VOID
 
 	if p.match(TK_IDENTIFIER) {
@@ -184,7 +184,7 @@ func assignmentTarget(p *pipeline) (Expression, error) {
 	return nil, err.NewBySnippet("Expected assignment target", p.any())
 }
 
-func assignmentIdentifier(p *pipeline) (Expression, error) {
+func assignmentIdentifier(p *pipeline) (Expr, error) {
 	// pattern := IDENTIFIER [list_accessor | function_call]
 
 	tk, e := p.expect(TK_IDENTIFIER)
@@ -192,7 +192,7 @@ func assignmentIdentifier(p *pipeline) (Expression, error) {
 		return nil, e
 	}
 
-	var id Expression = NewIdentifier(tk)
+	var id Expr = NewIdentifier(tk)
 
 	for p.match(TK_GUARD_OPEN) {
 
@@ -205,7 +205,7 @@ func assignmentIdentifier(p *pipeline) (Expression, error) {
 	return id, nil
 }
 
-func countAssignments(p *pipeline, targets, sources []Expression) (int, error) {
+func countAssignments(p *pipeline, targets, sources []Expr) (int, error) {
 
 	var n int
 
