@@ -53,7 +53,7 @@ func Test_R1_1(t *testing.T) {
 	// THEN the context will be updated to reflect the const assignment
 
 	// a := 1
-	given := NewAssignmentBlock(
+	given := NewAssignBlock(
 		false,
 		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
 		[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
@@ -61,7 +61,7 @@ func Test_R1_1(t *testing.T) {
 	)
 
 	ctx := NewCtx(nil, true)
-	e := EvalAssignmentBlock(ctx, given)
+	e := EvalAssignBlock(ctx, given)
 	require.Nil(t, e)
 
 	requireCtxValue(t, ctx, false, "a", Result{
@@ -78,7 +78,7 @@ func Test_R1_2(t *testing.T) {
 	// THEN the context will be updated to reflect the assignment
 
 	// def a := 1
-	given := NewAssignmentBlock(
+	given := NewAssignBlock(
 		true,
 		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
 		[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
@@ -86,7 +86,7 @@ func Test_R1_2(t *testing.T) {
 	)
 
 	ctx := NewCtx(nil, true)
-	e := EvalAssignmentBlock(ctx, given)
+	e := EvalAssignBlock(ctx, given)
 	require.Nil(t, e)
 
 	requireCtxValue(t, ctx, true, "a", Result{
@@ -103,7 +103,7 @@ func Test_R1_3(t *testing.T) {
 	// THEN the context will be updated to reflect the assignments
 
 	// a, b, c := true, 1, "abc"
-	given := NewAssignmentBlock(
+	given := NewAssignBlock(
 		false,
 		[]Expr{
 			NewIdentifier(tok(TK_IDENTIFIER, "a")),
@@ -119,7 +119,7 @@ func Test_R1_3(t *testing.T) {
 	)
 
 	ctx := NewCtx(nil, true)
-	e := EvalAssignmentBlock(ctx, given)
+	e := EvalAssignBlock(ctx, given)
 	require.Nil(t, e)
 
 	requireCtxValue(t, ctx, false, "a", Result{
@@ -146,7 +146,7 @@ func Test_R1_4(t *testing.T) {
 	// THEN the context will be updated to reflect the assignment
 
 	// a := b
-	given := NewAssignmentBlock(
+	given := NewAssignBlock(
 		false,
 		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
 		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "b"))},
@@ -161,7 +161,7 @@ func Test_R1_4(t *testing.T) {
 	ctx := NewCtx(nil, true)
 	ctx.SetLocal("b", id)
 
-	e := EvalAssignmentBlock(ctx, given)
+	e := EvalAssignBlock(ctx, given)
 	require.Nil(t, e)
 
 	requireCtxValue(t, ctx, false, "a", id)
@@ -191,7 +191,7 @@ func Test_R1_5(t *testing.T) {
 	)
 
 	// a := F() {}
-	given := NewAssignmentBlock(
+	given := NewAssignBlock(
 		false,
 		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
 		[]Expr{f},
@@ -199,7 +199,7 @@ func Test_R1_5(t *testing.T) {
 	)
 
 	ctx := NewCtx(nil, true)
-	e := EvalAssignmentBlock(ctx, given)
+	e := EvalAssignBlock(ctx, given)
 	require.Nil(t, e)
 
 	requireCtxValue(t, ctx, false, "a", Result{

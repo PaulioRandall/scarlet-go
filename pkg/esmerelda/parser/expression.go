@@ -33,7 +33,7 @@ func maybeMore(p *pipeline, expr Expr) (_ Expr, more bool, e error) {
 
 	if p.match(TK_GUARD_OPEN) {
 
-		expr, e = collectionAccessor(p, expr)
+		expr, e = containerItem(p, expr)
 		if e != nil {
 			return nil, false, e
 		}
@@ -120,7 +120,7 @@ func group(p *pipeline) (Expr, error) {
 	return expr, nil
 }
 
-func collectionAccessor(p *pipeline, left Expr) (Expr, error) {
+func containerItem(p *pipeline, left Expr) (Expr, error) {
 	// pattern := GUARD_OPEN expression GUARD_CLOSE
 
 	p.expect(TK_GUARD_OPEN)
@@ -630,7 +630,7 @@ func when(p *pipeline) (Expr, error) {
 	return NewWhen(key, close, init, cases), nil
 }
 
-func whenInitialiser(p *pipeline) (Assignment, error) {
+func whenInitialiser(p *pipeline) (Assign, error) {
 
 	id, e := p.expect(TK_IDENTIFIER)
 	if e != nil {
@@ -649,7 +649,7 @@ func whenInitialiser(p *pipeline) (Assignment, error) {
 		return nil, e
 	}
 
-	return NewAssignment(target, source), nil
+	return NewAssign(target, source), nil
 }
 
 func whenCases(p *pipeline) ([]WhenCase, error) {
@@ -745,7 +745,7 @@ func loop(p *pipeline) (Expr, error) {
 	return NewLoop(key, init, g), nil
 }
 
-func loopInitialiser(p *pipeline) (Assignment, error) {
+func loopInitialiser(p *pipeline) (Assign, error) {
 	// pattern := IDENTIFIER ASSIGN SOURCE
 
 	id, e := p.expect(TK_IDENTIFIER)
@@ -765,7 +765,7 @@ func loopInitialiser(p *pipeline) (Assignment, error) {
 		return nil, e
 	}
 
-	return NewAssignment(target, source), nil
+	return NewAssign(target, source), nil
 }
 
 func spellCall(p *pipeline) (Expr, error) {

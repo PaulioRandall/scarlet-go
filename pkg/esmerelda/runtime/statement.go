@@ -23,16 +23,16 @@ func EvalStatements(ctx *Context, sts []Expr) error {
 func EvalStatement(ctx *Context, st Expr) error {
 
 	switch st.Kind() {
-	case ST_ASSIGNMENT:
-		return EvalAssignmentBlock(ctx, st.(AssignmentBlock))
+	case ST_ASSIGN:
+		return EvalAssignBlock(ctx, st.(AssignBlock))
 	}
 
 	panic(err.NewBySnippet("Unknown statement type", st))
 }
 
-func EvalAssignmentBlock(ctx *Context, as AssignmentBlock) error {
+func EvalAssignBlock(ctx *Context, as AssignBlock) error {
 
-	values, e := EvalAssignmentSources(ctx, as.Sources(), as.Count())
+	values, e := EvalAssignSources(ctx, as.Sources(), as.Count())
 	if e != nil {
 		return e
 	}
@@ -40,7 +40,7 @@ func EvalAssignmentBlock(ctx *Context, as AssignmentBlock) error {
 	return doAssignments(ctx, as.Const(), as.Targets(), values, as.Count())
 }
 
-func EvalAssignmentSources(
+func EvalAssignSources(
 	ctx *Context,
 	sources []Expr,
 	count int,

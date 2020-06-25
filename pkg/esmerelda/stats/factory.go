@@ -42,15 +42,15 @@ func NewOperation(operator Token, left, right Expr) operationExpr {
 	}
 }
 
-func NewAssignment(target, source Expr) assignmentStat {
-	return assignmentStat{
+func NewAssign(target, source Expr) assignStat {
+	return assignStat{
 		target: target,
 		source: source,
 	}
 }
 
-func NewAssignmentBlock(final bool, targets, sources []Expr, count int) assignmentBlockStat {
-	return assignmentBlockStat{
+func NewAssignBlock(final bool, targets, sources []Expr, count int) assignBlockStat {
+	return assignBlockStat{
 		final:   final,
 		targets: targets,
 		sources: sources,
@@ -128,7 +128,7 @@ func NewWhenCase(object Expr, body Block) whenCaseStat {
 	}
 }
 
-func NewWhen(key, close Token, init Assignment, cases []WhenCase) whenStat {
+func NewWhen(key, close Token, init Assign, cases []WhenCase) whenStat {
 	return whenStat{
 		key:   key,
 		close: close,
@@ -137,7 +137,7 @@ func NewWhen(key, close Token, init Assignment, cases []WhenCase) whenStat {
 	}
 }
 
-func NewLoop(key Token, init Assignment, guard Guard) loopStat {
+func NewLoop(key Token, init Assign, guard Guard) loopStat {
 	return loopStat{
 		key:   key,
 		init:  init,

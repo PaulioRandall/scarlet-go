@@ -152,18 +152,18 @@ func OperationString(o Operation) string {
 	return b.String()
 }
 
-type Assignment interface {
+type Assign interface {
 	Expr
 	Const() bool
 	Target() Expr
 	Source() Expr
 }
 
-func AssignmentString(a Assignment) string {
+func AssignString(a Assign) string {
 
 	b := builder{}
 
-	b.add(0, "[Assignment] ")
+	b.add(0, "[Assign] ")
 	if a.Const() {
 		b.add(0, "Const")
 	}
@@ -181,7 +181,7 @@ func AssignmentString(a Assignment) string {
 	return b.String()
 }
 
-type AssignmentBlock interface {
+type AssignBlock interface {
 	Expr
 	Const() bool
 	Targets() []Expr
@@ -189,10 +189,10 @@ type AssignmentBlock interface {
 	Count() int
 }
 
-func AssignmentBlockString(bk AssignmentBlock) string {
+func AssignBlockString(bk AssignBlock) string {
 
 	b := builder{}
-	b.add(0, "[AssignmentBlock] ")
+	b.add(0, "[AssignBlock] ")
 	if bk.Const() {
 		b.add(0, "Const")
 	}
@@ -414,7 +414,7 @@ func WhenCaseString(mc WhenCase) string {
 
 type When interface {
 	Expr
-	Initialiser() Assignment
+	Initialiser() Assign
 	Cases() []WhenCase
 }
 
@@ -427,7 +427,7 @@ func WhenString(m When) string {
 	b.newline()
 	b.add(1, "Initialiser:")
 	b.newline()
-	b.add(1, AssignmentString(m.Initialiser()))
+	b.add(1, AssignString(m.Initialiser()))
 
 	for _, mc := range m.Cases() {
 		b.newline()
@@ -439,7 +439,7 @@ func WhenString(m When) string {
 
 type Loop interface {
 	Expr
-	Initialiser() Assignment
+	Initialiser() Assign
 	Guard() Guard
 }
 
@@ -452,7 +452,7 @@ func LoopString(l Loop) string {
 	b.newline()
 	b.add(1, "Initialiser:")
 	b.newline()
-	b.add(2, AssignmentString(l.Initialiser()))
+	b.add(2, AssignString(l.Initialiser()))
 
 	b.newline()
 	b.add(1, "Guard:")
@@ -465,7 +465,7 @@ func LoopString(l Loop) string {
 type SpellCall interface {
 	Expr
 	Spell() Token
-	Arguments() []Expr
+	Args() []Expr
 }
 
 func SpellCallString(s SpellCall) string {
@@ -476,8 +476,8 @@ func SpellCallString(s SpellCall) string {
 	b.add(2, s.Spell().String())
 
 	b.newline()
-	b.add(1, "Arguments:")
-	for _, a := range s.Arguments() {
+	b.add(1, "Args:")
+	for _, a := range s.Args() {
 		b.newline()
 		b.add(2, a.String())
 	}

@@ -116,7 +116,7 @@ func assignment(p *pipeline) (Expr, error) {
 		return nil, e
 	}
 
-	return NewAssignmentBlock(final, targets, sources, count), nil
+	return NewAssignBlock(final, targets, sources, count), nil
 }
 
 func assignmentSources(p *pipeline) ([]Expr, error) {
@@ -196,7 +196,7 @@ func assignmentIdentifier(p *pipeline) (Expr, error) {
 
 	for p.match(TK_GUARD_OPEN) {
 
-		id, e = collectionAccessor(p, id)
+		id, e = containerItem(p, id)
 		if e != nil {
 			return nil, e
 		}

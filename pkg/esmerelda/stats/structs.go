@@ -191,77 +191,77 @@ func (o operationExpr) String() string {
 	return OperationString(o)
 }
 
-type assignmentStat struct {
+type assignStat struct {
 	final  bool
 	target Expr
 	source Expr
 }
 
-func (assignmentStat) Kind() Kind {
-	return ST_ASSIGNMENT
+func (assignStat) Kind() Kind {
+	return ST_ASSIGN
 }
 
-func (a assignmentStat) Const() bool {
+func (a assignStat) Const() bool {
 	return a.final
 }
 
-func (a assignmentStat) Target() Expr {
+func (a assignStat) Target() Expr {
 	return a.target
 }
 
-func (a assignmentStat) Source() Expr {
+func (a assignStat) Source() Expr {
 	return a.source
 }
 
-func (a assignmentStat) Begin() (int, int) {
+func (a assignStat) Begin() (int, int) {
 	return a.target.Begin()
 }
 
-func (a assignmentStat) End() (int, int) {
+func (a assignStat) End() (int, int) {
 	return a.source.End()
 }
 
-func (a assignmentStat) String() string {
-	return AssignmentString(a)
+func (a assignStat) String() string {
+	return AssignString(a)
 }
 
-type assignmentBlockStat struct {
+type assignBlockStat struct {
 	final   bool
 	targets []Expr
 	sources []Expr
 	count   int
 }
 
-func (assignmentBlockStat) Kind() Kind {
-	return ST_ASSIGNMENT_BLOCK
+func (assignBlockStat) Kind() Kind {
+	return ST_ASSIGN_BLOCK
 }
 
-func (a assignmentBlockStat) Const() bool {
+func (a assignBlockStat) Const() bool {
 	return a.final
 }
 
-func (a assignmentBlockStat) Targets() []Expr {
+func (a assignBlockStat) Targets() []Expr {
 	return a.targets
 }
 
-func (a assignmentBlockStat) Sources() []Expr {
+func (a assignBlockStat) Sources() []Expr {
 	return a.sources
 }
 
-func (a assignmentBlockStat) Count() int {
+func (a assignBlockStat) Count() int {
 	return a.count
 }
 
-func (a assignmentBlockStat) Begin() (int, int) {
+func (a assignBlockStat) Begin() (int, int) {
 	return a.targets[0].Begin()
 }
 
-func (a assignmentBlockStat) End() (int, int) {
+func (a assignBlockStat) End() (int, int) {
 	return a.sources[a.count-1].End()
 }
 
-func (a assignmentBlockStat) String() string {
-	return AssignmentBlockString(a)
+func (a assignBlockStat) String() string {
+	return AssignBlockString(a)
 }
 
 type blockExpr struct {
@@ -525,7 +525,7 @@ func (wc whenCaseStat) String() string {
 
 type whenStat struct {
 	key, close Token
-	init       Assignment
+	init       Assign
 	cases      []WhenCase
 }
 
@@ -533,7 +533,7 @@ func (whenStat) Kind() Kind {
 	return ST_WHEN
 }
 
-func (w whenStat) Initialiser() Assignment {
+func (w whenStat) Initialiser() Assign {
 	return w.init
 }
 
@@ -555,7 +555,7 @@ func (w whenStat) String() string {
 
 type loopStat struct {
 	key   Token
-	init  Assignment
+	init  Assign
 	guard Guard
 }
 
@@ -563,7 +563,7 @@ func (loopStat) Kind() Kind {
 	return ST_LOOP
 }
 
-func (l loopStat) Initialiser() Assignment {
+func (l loopStat) Initialiser() Assign {
 	return l.init
 }
 
@@ -596,7 +596,7 @@ func (s spellCallExpr) Spell() Token {
 	return s.spell
 }
 
-func (s spellCallExpr) Arguments() []Expr {
+func (s spellCallExpr) Args() []Expr {
 	return s.args
 }
 
