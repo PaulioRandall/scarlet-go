@@ -1,19 +1,13 @@
 package runtime
 
 import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/stats"
 )
 
-type Token interface {
-	Value() string
-	Begin() (int, int)
-	End() (int, int)
-}
-
-func Run(stats []Expression) (*Context, error) {
+func Run(sts []Expression) (*Context, error) {
 
 	ctx := NewCtx(nil, true)
-	e := EvalStatements(ctx, stats)
+	e := EvalStatements(ctx, sts)
 	if e != nil {
 		return nil, e
 	}

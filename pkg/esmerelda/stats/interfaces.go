@@ -1,4 +1,4 @@
-package statement
+package stats
 
 import (
 	"fmt"

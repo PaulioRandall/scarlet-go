@@ -2,7 +2,7 @@ package parser
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/stats"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
@@ -275,14 +275,14 @@ func block(p *pipeline) (Block, error) {
 		return nil, e
 	}
 
-	stats, e := blockStatements(p)
+	sts, e := blockStatements(p)
 
 	close, e := p.expect(TK_BLOCK_CLOSE)
 	if e != nil {
 		return nil, e
 	}
 
-	return NewBlock(open, close, stats), nil
+	return NewBlock(open, close, sts), nil
 }
 
 func blockStatements(p *pipeline) ([]Expression, error) {
@@ -590,13 +590,13 @@ func guardBody(p *pipeline) (Block, error) {
 		return block(p)
 	}
 
-	stat, e := expectStatement(p)
+	st, e := expectStatement(p)
 	if e != nil {
 		return nil, e
 	}
 
-	stats := []Expression{stat}
-	return NewUnDelimiteredBlock(stats), nil
+	sts := []Expression{st}
+	return NewUnDelimiteredBlock(sts), nil
 }
 
 func when(p *pipeline) (Expression, error) {

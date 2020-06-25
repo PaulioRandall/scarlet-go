@@ -3,7 +3,7 @@ package auditor
 import (
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/stats"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 
 	"github.com/stretchr/testify/require"
@@ -11,17 +11,17 @@ import (
 
 type stItr struct {
 	StatementIterator
-	stats []Expression
+	sts   []Expression
 	index int
 }
 
 func (i *stItr) Next() (Expression, error) {
 
-	if i.index >= len(i.stats) {
+	if i.index >= len(i.sts) {
 		return nil, nil
 	}
 
-	st := i.stats[i.index]
+	st := i.sts[i.index]
 	i.index++
 	return st, nil
 }
@@ -40,7 +40,7 @@ func emptyBlock() Block {
 
 func Test_S1_1(t *testing.T) {
 
-	stats := []Expression{
+	sts := []Expression{
 		NewGuard(
 			tok(TK_GUARD_OPEN, "["),
 			NewOperation(
@@ -53,7 +53,7 @@ func Test_S1_1(t *testing.T) {
 	}
 
 	itr := &stItr{
-		stats: stats,
+		sts: sts,
 	}
 
 	errs := AuditStatements(itr)
@@ -62,7 +62,7 @@ func Test_S1_1(t *testing.T) {
 
 func Test_S1_2(t *testing.T) {
 
-	stats := []Expression{
+	sts := []Expression{
 		NewGuard(
 			tok(TK_GUARD_OPEN, "["),
 			NewOperation(
@@ -75,7 +75,7 @@ func Test_S1_2(t *testing.T) {
 	}
 
 	itr := &stItr{
-		stats: stats,
+		sts: sts,
 	}
 
 	errs := AuditStatements(itr)
@@ -84,7 +84,7 @@ func Test_S1_2(t *testing.T) {
 
 func Test_S1_3(t *testing.T) {
 
-	stats := []Expression{
+	sts := []Expression{
 		NewGuard(
 			tok(TK_GUARD_OPEN, "["),
 			NewOperation(
@@ -97,7 +97,7 @@ func Test_S1_3(t *testing.T) {
 	}
 
 	itr := &stItr{
-		stats: stats,
+		sts: sts,
 	}
 
 	errs := AuditStatements(itr)

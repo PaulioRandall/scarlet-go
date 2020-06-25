@@ -1,4 +1,4 @@
-package statement
+package stats
 
 import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"

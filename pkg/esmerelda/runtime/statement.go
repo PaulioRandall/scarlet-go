@@ -4,12 +4,13 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/stats"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-func EvalStatements(ctx *Context, stats []Expression) error {
+func EvalStatements(ctx *Context, sts []Expression) error {
 
-	for _, st := range stats {
+	for _, st := range sts {
 		e := EvalStatement(ctx, st)
 		if e != nil {
 			return e

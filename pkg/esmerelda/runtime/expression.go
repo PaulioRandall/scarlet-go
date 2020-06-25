@@ -2,7 +2,7 @@ package runtime
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/stats"
 )
 
 func EvalExpression(ctx *Context, expr Expression) (Result, error) {

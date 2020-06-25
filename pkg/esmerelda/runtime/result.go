@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/number"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/stats"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
@@ -80,19 +80,19 @@ func (r Result) Map() (map[Result]Result, bool) {
 	return nil, false
 }
 
-func (r Result) Func() (statement.Function, bool) {
+func (r Result) Func() (stats.Function, bool) {
 
 	if r.Is(RT_FUNC_DEF) {
-		return r.val.(statement.Function), true
+		return r.val.(stats.Function), true
 	}
 
 	return nil, false
 }
 
-func (r Result) ExprFunc() (statement.ExpressionFunction, bool) {
+func (r Result) ExprFunc() (stats.ExpressionFunction, bool) {
 
 	if r.Is(RT_EXPR_FUNC_DEF) {
-		return r.val.(statement.ExpressionFunction), true
+		return r.val.(stats.ExpressionFunction), true
 	}
 
 	return nil, false

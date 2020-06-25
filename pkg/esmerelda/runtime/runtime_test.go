@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/number"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/stats"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 
 	"github.com/stretchr/testify/require"

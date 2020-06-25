@@ -1,4 +1,4 @@
-package statement
+package stats
 
 type Kind int
 
