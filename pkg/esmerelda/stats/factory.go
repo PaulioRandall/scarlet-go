@@ -80,20 +80,12 @@ func NewExprFunc(key Token, inputs []Token, expr Expr) exprFuncExpr {
 	}
 }
 
-func NewParameters(open, close Token, inputs, outputs []Token) parametersDef {
-	return parametersDef{
-		open:    open,
-		close:   close,
+func NewFuncDef(key Token, inputs, outputs []Token, body Expr) funcDefExpr {
+	return funcDefExpr{
+		key:     key,
 		inputs:  inputs,
 		outputs: outputs,
-	}
-}
-
-func NewFuncDef(key Token, params Parameters, body Expr) funcDefExpr {
-	return funcDefExpr{
-		key:    key,
-		params: params,
-		body:   body,
+		body:    body,
 	}
 }
 

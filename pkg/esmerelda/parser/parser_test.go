@@ -1038,12 +1038,8 @@ func Test_S7_1(t *testing.T) {
 
 	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
-		NewParameters(
-			tok(TK_PAREN_OPEN, "("),
-			tok(TK_PAREN_CLOSE, ")"),
-			[]Token{},
-			[]Token{},
-		),
+		[]Token{},
+		[]Token{},
 		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
@@ -1084,14 +1080,10 @@ func Test_S7_2(t *testing.T) {
 
 	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
-		NewParameters(
-			tok(TK_PAREN_OPEN, "("),
-			tok(TK_PAREN_CLOSE, ")"),
-			[]Token{
-				tok(TK_IDENTIFIER, "a"),
-			},
-			[]Token{},
-		),
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+		},
+		[]Token{},
 		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
@@ -1133,14 +1125,10 @@ func Test_S7_3(t *testing.T) {
 
 	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
-		NewParameters(
-			tok(TK_PAREN_OPEN, "("),
-			tok(TK_PAREN_CLOSE, ")"),
-			[]Token{},
-			[]Token{
-				tok(TK_IDENTIFIER, "a"),
-			},
-		),
+		[]Token{},
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+		},
 		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
@@ -1188,18 +1176,14 @@ func Test_S7_4(t *testing.T) {
 
 	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
-		NewParameters(
-			tok(TK_PAREN_OPEN, "("),
-			tok(TK_PAREN_CLOSE, ")"),
-			[]Token{
-				tok(TK_IDENTIFIER, "a"),
-				tok(TK_IDENTIFIER, "b"),
-			},
-			[]Token{
-				tok(TK_IDENTIFIER, "c"),
-				tok(TK_IDENTIFIER, "d"),
-			},
-		),
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+		},
+		[]Token{
+			tok(TK_IDENTIFIER, "c"),
+			tok(TK_IDENTIFIER, "d"),
+		},
 		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),
@@ -1255,12 +1239,8 @@ func Test_S7_5(t *testing.T) {
 
 	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
-		NewParameters(
-			tok(TK_PAREN_OPEN, "("),
-			tok(TK_PAREN_CLOSE, ")"),
-			[]Token{},
-			[]Token{},
-		),
+		[]Token{},
+		[]Token{},
 		body,
 	)
 
@@ -1327,16 +1307,12 @@ func Test_S7_6(t *testing.T) {
 
 	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
-		NewParameters(
-			tok(TK_PAREN_OPEN, "("),
-			tok(TK_PAREN_CLOSE, ")"),
-			[]Token{
-				tok(TK_IDENTIFIER, "a"),
-			},
-			[]Token{
-				tok(TK_IDENTIFIER, "b"),
-			},
-		),
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+		},
+		[]Token{
+			tok(TK_IDENTIFIER, "b"),
+		},
 		body,
 	)
 
@@ -1374,12 +1350,8 @@ func Test_S7_7(t *testing.T) {
 
 	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
-		NewParameters(
-			tok(TK_PAREN_OPEN, "("),
-			tok(TK_PAREN_CLOSE, ")"),
-			[]Token{},
-			[]Token{},
-		),
+		[]Token{},
+		[]Token{},
 		NewWatch(
 			tok(TK_WATCH, "watch"),
 			[]Token{
@@ -1429,12 +1401,8 @@ func Test_S7_8(t *testing.T) {
 
 	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
-		NewParameters(
-			tok(TK_PAREN_OPEN, "("),
-			tok(TK_PAREN_CLOSE, ")"),
-			[]Token{},
-			[]Token{},
-		),
+		[]Token{},
+		[]Token{},
 		NewWhen(
 			tok(TK_WHEN, "when"),
 			tok(TK_BLOCK_CLOSE, "}"),
@@ -1483,12 +1451,8 @@ func Test_S7_9(t *testing.T) {
 
 	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
-		NewParameters(
-			tok(TK_PAREN_OPEN, "("),
-			tok(TK_PAREN_CLOSE, ")"),
-			[]Token{},
-			[]Token{},
-		),
+		[]Token{},
+		[]Token{},
 		NewGuard(
 			tok(TK_GUARD_OPEN, "["),
 			NewOperation(

@@ -177,12 +177,8 @@ func Test_R1_5(t *testing.T) {
 
 	f := NewFuncDef(
 		tok(TK_FUNCTION, "F"),
-		NewParameters(
-			tok(TK_PAREN_OPEN, "("),
-			tok(TK_PAREN_CLOSE, ")"),
-			[]Token{},
-			[]Token{},
-		),
+		[]Token{},
+		[]Token{},
 		NewBlock(
 			tok(TK_BLOCK_OPEN, "{"),
 			tok(TK_BLOCK_CLOSE, "}"),

@@ -15,7 +15,6 @@ const (
 	ST_ASSIGN_BLOCK
 	ST_BLOCK
 	ST_EXPR_FUNC
-	ST_PARAMETERS
 	ST_FUNC_DEF
 	ST_FUNC_CALL
 	ST_WATCH
@@ -40,8 +39,7 @@ var kinds map[Kind]string = map[Kind]string{
 	ST_ASSIGN_BLOCK:   `Assignment-Block`,
 	ST_BLOCK:          `Block`,
 	ST_EXPR_FUNC:      `Expression-Function`,
-	ST_PARAMETERS:     `Parameters`,
-	ST_FUNC_DEF:       `Function-Def`,
+	ST_FUNC_DEF:       `Function-Definition`,
 	ST_FUNC_CALL:      `Function-Call`,
 	ST_WATCH:          `Watch`,
 	ST_GUARD:          `Guard`,

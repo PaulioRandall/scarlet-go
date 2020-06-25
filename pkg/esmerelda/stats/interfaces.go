@@ -242,46 +242,10 @@ func ExprFuncString(e ExprFunc) string {
 	return b.String()
 }
 
-type Parameters interface {
+type FuncDef interface {
 	Expr
 	Inputs() []Token
 	Outputs() []Token
-}
-
-func ParametersString(p Parameters) string {
-
-	b := builder{}
-
-	b.add(0, "[Parameters] ")
-
-	if len(p.Inputs()) > 0 {
-
-		b.newline()
-		b.add(1, "Inputs: ")
-
-		for _, in := range p.Inputs() {
-			b.newline()
-			b.add(2, in.String())
-		}
-	}
-
-	if len(p.Outputs()) > 0 {
-
-		b.newline()
-		b.add(1, "Outputs: ")
-
-		for _, out := range p.Outputs() {
-			b.newline()
-			b.add(2, out.String())
-		}
-	}
-
-	return b.String()
-}
-
-type FuncDef interface {
-	Expr
-	Params() Parameters
 	Body() Expr
 }
 
@@ -291,8 +255,27 @@ func FuncDefString(f FuncDef) string {
 
 	b.add(0, "[FuncDef] ")
 
-	b.newline()
-	b.add(1, ParametersString(f.Params()))
+	if len(f.Inputs()) > 0 {
+
+		b.newline()
+		b.add(1, "Inputs: ")
+
+		for _, in := range f.Inputs() {
+			b.newline()
+			b.add(2, in.String())
+		}
+	}
+
+	if len(f.Outputs()) > 0 {
+
+		b.newline()
+		b.add(1, "Outputs: ")
+
+		for _, out := range f.Outputs() {
+			b.newline()
+			b.add(2, out.String())
+		}
+	}
 
 	b.newline()
 	b.add(1, f.Body().String())

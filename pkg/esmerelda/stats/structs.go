@@ -344,48 +344,23 @@ func (e exprFuncExpr) String() string {
 	return ExprFuncString(e)
 }
 
-type parametersDef struct {
-	open, close Token
-	inputs      []Token
-	outputs     []Token
-}
-
-func (parametersDef) Kind() Kind {
-	return ST_PARAMETERS
-}
-
-func (p parametersDef) Inputs() []Token {
-	return p.inputs
-}
-
-func (p parametersDef) Outputs() []Token {
-	return p.outputs
-}
-
-func (p parametersDef) Begin() (int, int) {
-	return p.open.Begin()
-}
-
-func (p parametersDef) End() (int, int) {
-	return p.close.End()
-}
-
-func (p parametersDef) String() string {
-	return ParametersString(p)
-}
-
 type funcDefExpr struct {
-	key    Token
-	params Parameters
-	body   Expr
+	key     Token
+	inputs  []Token
+	outputs []Token
+	body    Expr
 }
 
 func (funcDefExpr) Kind() Kind {
 	return ST_FUNC_DEF
 }
 
-func (f funcDefExpr) Params() Parameters {
-	return f.params
+func (f funcDefExpr) Inputs() []Token {
+	return f.inputs
+}
+
+func (f funcDefExpr) Outputs() []Token {
+	return f.outputs
 }
 
 func (f funcDefExpr) Body() Expr {

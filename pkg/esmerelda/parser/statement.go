@@ -96,7 +96,7 @@ func assignment(p *pipeline) (Expr, error) {
 
 	final := p.accept(TK_DEFINITION)
 
-	targets, e := assignmentTargets(p)
+	targets, e := assignTargets(p)
 	if e != nil {
 		return nil, e
 	}
@@ -106,7 +106,7 @@ func assignment(p *pipeline) (Expr, error) {
 		return nil, e
 	}
 
-	sources, e := assignmentSources(p)
+	sources, e := assignSources(p)
 	if e != nil {
 		return nil, e
 	}
@@ -119,7 +119,7 @@ func assignment(p *pipeline) (Expr, error) {
 	return NewAssignBlock(final, targets, sources, count), nil
 }
 
-func assignmentSources(p *pipeline) ([]Expr, error) {
+func assignSources(p *pipeline) ([]Expr, error) {
 
 	if p.match(TK_FUNCTION) {
 
@@ -144,14 +144,14 @@ func assignmentSources(p *pipeline) ([]Expr, error) {
 	return expressions(p)
 }
 
-func assignmentTargets(p *pipeline) ([]Expr, error) {
+func assignTargets(p *pipeline) ([]Expr, error) {
 	// pattern := assignmentTarget {DELIMITER assignment_target}
 
 	var ats []Expr
 
 	for {
 
-		at, e := assignmentTarget(p)
+		at, e := assignTarget(p)
 		if e != nil {
 			return nil, e
 		}
@@ -170,11 +170,11 @@ func assignmentTargets(p *pipeline) ([]Expr, error) {
 	return ats, nil
 }
 
-func assignmentTarget(p *pipeline) (Expr, error) {
+func assignTarget(p *pipeline) (Expr, error) {
 	// pattern := identifer | VOID
 
 	if p.match(TK_IDENTIFIER) {
-		return assignmentIdentifier(p)
+		return assignIdentifier(p)
 	}
 
 	if p.match(TK_VOID) {
@@ -184,7 +184,7 @@ func assignmentTarget(p *pipeline) (Expr, error) {
 	return nil, err.NewBySnippet("Expected assignment target", p.any())
 }
 
-func assignmentIdentifier(p *pipeline) (Expr, error) {
+func assignIdentifier(p *pipeline) (Expr, error) {
 	// pattern := IDENTIFIER [list_accessor | function_call]
 
 	tk, e := p.expect(TK_IDENTIFIER)

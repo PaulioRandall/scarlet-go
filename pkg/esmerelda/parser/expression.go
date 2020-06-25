@@ -318,7 +318,7 @@ func funcDef(p *pipeline) (Expr, error) {
 		return nil, e
 	}
 
-	params, e := funcDefParams(p)
+	inputs, outputs, e := funcDefParams(p)
 	if e != nil {
 		return nil, e
 	}
@@ -328,20 +328,20 @@ func funcDef(p *pipeline) (Expr, error) {
 		return nil, e
 	}
 
-	return NewFuncDef(key, params, body), nil
+	return NewFuncDef(key, inputs, outputs, body), nil
 }
 
-func funcDefParams(p *pipeline) (Parameters, error) {
+func funcDefParams(p *pipeline) ([]Token, []Token, error) {
 	// pattern := PAREN_OPEN inputs [THEN outputs] PAREN_CLOSE
 
-	open, e := p.expect(TK_PAREN_OPEN)
+	_, e := p.expect(TK_PAREN_OPEN)
 	if e != nil {
-		return nil, e
+		return nil, nil, e
 	}
 
 	inputs, e := paramIdentifiers(p)
 	if e != nil {
-		return nil, e
+		return nil, nil, e
 	}
 
 	outputs := []Token{}
@@ -349,16 +349,16 @@ func funcDefParams(p *pipeline) (Parameters, error) {
 	if p.accept(TK_OUTPUTS) {
 		outputs, e = paramIdentifiers(p)
 		if e != nil {
-			return nil, e
+			return nil, nil, e
 		}
 	}
 
-	close, e := p.expect(TK_PAREN_CLOSE)
+	_, e = p.expect(TK_PAREN_CLOSE)
 	if e != nil {
-		return nil, e
+		return nil, nil, e
 	}
 
-	return NewParameters(open, close, inputs, outputs), nil
+	return inputs, outputs, nil
 }
 
 func paramIdentifiers(p *pipeline) ([]Token, error) {
