@@ -1,9 +1,5 @@
 package runtime
 
-import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/runtime/result"
-)
-
 type Context struct {
 	parent  *Context
 	pure    bool

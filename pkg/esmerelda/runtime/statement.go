@@ -4,15 +4,13 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/err"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/runtime/result"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/token"
 )
 
-func evalStatements(ctx *Context, stats []Expression) error {
+func EvalStatements(ctx *Context, stats []Expression) error {
 
 	for _, st := range stats {
-		e := evalStatement(ctx, st)
+		e := EvalStatement(ctx, st)
 		if e != nil {
 			return e
 		}
@@ -21,19 +19,19 @@ func evalStatements(ctx *Context, stats []Expression) error {
 	return nil
 }
 
-func evalStatement(ctx *Context, st Expression) error {
+func EvalStatement(ctx *Context, st Expression) error {
 
 	switch st.Kind() {
 	case ST_ASSIGNMENT:
-		return evalAssignmentBlock(ctx, st.(AssignmentBlock))
+		return EvalAssignmentBlock(ctx, st.(AssignmentBlock))
 	}
 
 	panic(err.NewBySnippet("Unknown statement type", st))
 }
 
-func evalAssignmentBlock(ctx *Context, as AssignmentBlock) error {
+func EvalAssignmentBlock(ctx *Context, as AssignmentBlock) error {
 
-	values, e := evalAssignmentSources(ctx, as.Sources(), as.Count())
+	values, e := EvalAssignmentSources(ctx, as.Sources(), as.Count())
 	if e != nil {
 		return e
 	}
@@ -41,7 +39,7 @@ func evalAssignmentBlock(ctx *Context, as AssignmentBlock) error {
 	return doAssignments(ctx, as.Const(), as.Targets(), values, as.Count())
 }
 
-func evalAssignmentSources(
+func EvalAssignmentSources(
 	ctx *Context,
 	sources []Expression,
 	count int,
@@ -52,7 +50,7 @@ func evalAssignmentSources(
 
 	for i, s := range sources {
 
-		r[i], e = evalExpression(ctx, s)
+		r[i], e = EvalExpression(ctx, s)
 		if e != nil {
 			return nil, e
 		}
@@ -110,18 +108,4 @@ func checkNotDefined(ctx *Context, tk Token) error {
 	}
 
 	return nil
-}
-
-func evalExpression(ctx *Context, expr Expression) (Result, error) {
-
-	switch expr.Kind() {
-	case ST_LITERAL:
-		return evalLiteral(expr.(Literal)), nil
-	}
-
-	panic(err.NewBySnippet("Unknown expression type", expr))
-}
-
-func evalLiteral(lit Literal) Result {
-	return ResultOf(lit.Tk())
 }

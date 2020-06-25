@@ -4,10 +4,16 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/statement"
 )
 
+type Token interface {
+	Value() string
+	Begin() (int, int)
+	End() (int, int)
+}
+
 func Run(stats []Expression) (*Context, error) {
 
 	ctx := NewCtx(nil, true)
-	e := evalStatements(ctx, stats)
+	e := EvalStatements(ctx, stats)
 	if e != nil {
 		return nil, e
 	}

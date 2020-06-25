@@ -62,7 +62,7 @@ type identifierExpr struct {
 }
 
 func (identifierExpr) Kind() Kind {
-	return ST_VOID
+	return ST_IDENTIFIER
 }
 
 func (id identifierExpr) Tk() Token {
