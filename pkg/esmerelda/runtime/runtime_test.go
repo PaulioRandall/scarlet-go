@@ -264,7 +264,7 @@ func Test_R2_2(t *testing.T) {
 	// WITH a bool
 	// THEN the negated bool is returned
 
-	// -1
+	// -true
 	given := NewNegation(
 		NewLiteral(tok(TK_BOOL, "true")),
 	)
@@ -279,4 +279,95 @@ func Test_R2_2(t *testing.T) {
 
 	require.Nil(t, e)
 	require.Equal(t, exp, act)
+}
+
+func Test_R3_1(t *testing.T) {
+
+	// EVAL a guard statement
+	// WITH a true condition
+	// THEN the body is evaluated
+
+	// [true] { a := 1 }
+	given := NewGuard(
+		tok(TK_GUARD_OPEN, "["),
+		NewLiteral(tok(TK_BOOL, "true")),
+		NewBlock(
+			tok(TK_BLOCK_OPEN, "{"),
+			tok(TK_BLOCK_CLOSE, "{"),
+			[]Expr{
+				NewAssignBlock(
+					false,
+					[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+					[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
+					1,
+				),
+			},
+		),
+	)
+
+	ctx := NewCtx(nil, true)
+	e := EvalStatement(ctx, given)
+
+	require.Nil(t, e)
+
+	requireCtxValue(t, ctx, false, "a", Result{
+		typ: RT_NUMBER,
+		val: number.New("1"),
+	})
+}
+
+func Test_R3_2(t *testing.T) {
+
+	// EVAL a guard statement
+	// WITH a false condition
+	// THEN the body is not evaluated
+
+	// [false] { a := 1 }
+	given := NewGuard(
+		tok(TK_GUARD_OPEN, "["),
+		NewLiteral(tok(TK_BOOL, "false")),
+		NewBlock(
+			tok(TK_BLOCK_OPEN, "{"),
+			tok(TK_BLOCK_CLOSE, "{"),
+			[]Expr{
+				NewAssignBlock(
+					false,
+					[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
+					[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
+					1,
+				),
+			},
+		),
+	)
+
+	ctx := NewCtx(nil, true)
+	e := EvalStatement(ctx, given)
+
+	require.Nil(t, e)
+
+	require.Empty(t, ctx.Definitions(), "Expected empty context")
+	require.Empty(t, ctx.Locals(), "Expected empty context")
+}
+
+func Test_R3_3(t *testing.T) {
+
+	// EVAL a guard statement
+	// WITH a false condition
+	// THEN the body is not evaluated
+
+	// ["abc"] { }
+	given := NewGuard(
+		tok(TK_GUARD_OPEN, "["),
+		NewLiteral(tok(TK_STRING, `"abc"`)),
+		NewBlock(
+			tok(TK_BLOCK_OPEN, "{"),
+			tok(TK_BLOCK_CLOSE, "{"),
+			[]Expr{},
+		),
+	)
+
+	ctx := NewCtx(nil, true)
+	e := EvalStatement(ctx, given)
+
+	require.NotNil(t, e, "Expected error: invalid condition expression")
 }

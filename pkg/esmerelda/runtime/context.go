@@ -16,6 +16,14 @@ func NewCtx(parent *Context, pure bool) *Context {
 	}
 }
 
+func (ctx *Context) Definitions() map[string]Result {
+	return ctx.defined
+}
+
+func (ctx *Context) Locals() map[string]Result {
+	return ctx.local
+}
+
 func (ctx *Context) GetDefined(id string) (Result, bool) {
 
 	for c := ctx; c != nil; c = ctx.parent {

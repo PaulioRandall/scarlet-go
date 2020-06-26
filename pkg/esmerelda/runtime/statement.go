@@ -23,8 +23,11 @@ func EvalStatements(ctx *Context, sts []Expr) error {
 func EvalStatement(ctx *Context, st Expr) error {
 
 	switch st.Kind() {
-	case ST_ASSIGN:
+	case ST_ASSIGN_BLOCK:
 		return EvalAssignBlock(ctx, st.(AssignBlock))
+	case ST_GUARD:
+		_, e := EvalGuard(ctx, st.(Guard))
+		return e
 	}
 
 	panic(err.NewBySnippet("Unknown statement type", st))
@@ -109,4 +112,33 @@ func checkNotDefined(ctx *Context, tk Token) error {
 	}
 
 	return nil
+}
+
+func EvalGuard(ctx *Context, g Guard) (bool, error) {
+
+	r, e := EvalExpr(ctx, g.Condition())
+	if e != nil {
+		return false, e
+	}
+
+	conditionMeet, ok := r.Bool()
+	if !ok {
+		msg := "Guard condition requires a boolean result"
+		return false, err.NewBySnippet(msg, g.Condition())
+	}
+
+	if !conditionMeet {
+		return false, nil
+	}
+
+	e = EvalBlock(ctx, g.Body())
+	if e != nil {
+		return false, e
+	}
+
+	return true, nil
+}
+
+func EvalBlock(ctx *Context, b Block) error {
+	return EvalStatements(ctx, b.Stats())
 }
