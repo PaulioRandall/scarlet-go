@@ -355,7 +355,7 @@ func Test_R3_3(t *testing.T) {
 	// WITH a false condition
 	// THEN the body is not evaluated
 
-	// ["abc"] { }
+	// ["abc"] {}
 	given := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
 		NewLiteral(tok(TK_STRING, `"abc"`)),

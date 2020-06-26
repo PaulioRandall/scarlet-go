@@ -107,6 +107,12 @@ func (p *pipeline) _ignoreRedundant() {
 
 		ty := next.Type()
 
+		if ty == TK_NEWLINE {
+			ty = TK_TERMINATOR
+			line, col := next.Begin()
+			next = NewToken(ty, next.Value(), line, col)
+		}
+
 		switch {
 		case ty == TK_COMMENT:
 			p.stream.Next()

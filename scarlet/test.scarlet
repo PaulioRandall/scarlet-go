@@ -1,16 +1,2 @@
 
-DEF speedOfLight: 299792458
-DEF square: E(s) s * s
-
-energy: E(mass) mass * square(speedOfLight)
-
-e: energy(1)
-
-b: 0
-WHEN {
-	[1 == 2] b: 1
-	[2 == 3] b: 2
-	[TRUE] b: 3
-}
-
-@Println("b is ", b)
+x := 1
