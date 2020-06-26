@@ -23,21 +23,41 @@ func Test_P2(t *testing.T) {
 	}})
 
 	require.Equal(t, true, p.hasMore())
+	require.Equal(t, false, p.empty())
+
 	require.Equal(t, true, p.match(TK_NUMBER))
 	require.Equal(t, false, p.accept(TK_PLUS))
 	require.Equal(t, true, p.accept(TK_NUMBER))
 
 	require.Equal(t, true, p.hasMore())
+	require.Equal(t, false, p.empty())
+
 	require.Equal(t, true, p.match(TK_PLUS))
 	require.Equal(t, false, p.accept(TK_NUMBER))
 	require.Equal(t, true, p.accept(TK_PLUS))
 
 	require.Equal(t, true, p.hasMore())
+	require.Equal(t, false, p.empty())
+
 	require.Equal(t, true, p.match(TK_NUMBER))
 	require.Equal(t, false, p.accept(TK_PLUS))
 	require.Equal(t, true, p.accept(TK_NUMBER))
 
 	require.Equal(t, false, p.hasMore())
+	require.Equal(t, true, p.empty())
+
+	require.Equal(t, false, p.match(TK_NUMBER))
+	require.Equal(t, false, p.accept(TK_NUMBER))
+
+	p.backup()
+
+	require.Equal(t, true, p.match(TK_NUMBER))
+	require.Equal(t, false, p.accept(TK_PLUS))
+	require.Equal(t, true, p.accept(TK_NUMBER))
+
+	require.Equal(t, false, p.hasMore())
+	require.Equal(t, true, p.empty())
+
 	require.Equal(t, false, p.match(TK_NUMBER))
 	require.Equal(t, false, p.accept(TK_NUMBER))
 }

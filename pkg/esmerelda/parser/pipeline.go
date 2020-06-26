@@ -8,149 +8,97 @@ import (
 )
 
 type pipeline struct {
-	stream TokenStream
-	prev   Token
+	buffer sanitiser
 }
 
 func newPipeline(stream TokenStream) *pipeline {
-	return &pipeline{stream, nil}
-}
-
-func (p *pipeline) _peek() Token {
-	p._ignoreRedundant()
-	return p.stream.Peek()
+	return &pipeline{
+		buffer: newSanitiser(stream),
+	}
 }
 
 func (p *pipeline) hasMore() bool {
-	return p._peek() != nil
+	return !p.buffer.empty()
 }
 
-func (p *pipeline) match(ty TokenType) bool {
-
-	tk := p._peek()
-	if tk == nil {
-		return false
-	}
-
-	return ty == TK_ANY || ty == tk.Type()
-}
-
-func (p *pipeline) matchBeyond(ty TokenType) bool {
-
-	tk := p.stream.PeekBeyond()
-	if tk == nil {
-		return false
-	}
-
-	return ty == TK_ANY || ty == tk.Type()
+func (p *pipeline) empty() bool {
+	return p.buffer.empty()
 }
 
 func (p *pipeline) peek() Token {
-	return p._peek()
+	return p.buffer.peek()
 }
 
-func (p *pipeline) any() Token {
+func (p *pipeline) next() Token {
+	return p.buffer.next()
+}
 
-	if p.accept(TK_ANY) {
-		return p.prev
-	}
+func (p *pipeline) backup() {
+	p.buffer.backup()
+}
 
-	return nil
+func (p *pipeline) match(ty TokenType) bool {
+	return p._match(ty)
 }
 
 func (p *pipeline) accept(ty TokenType) bool {
 
-	tk := p._peek()
-	if tk == nil {
+	if p.buffer.empty() {
 		return false
 	}
 
-	if ty == TK_ANY || ty == tk.Type() {
-		p.prev = p.stream.Next()
+	if ty == TK_ANY || p._match(ty) {
+		p.buffer.next()
 		return true
 	}
 
 	return false
 }
 
-func (p *pipeline) expect(exp TokenType) (Token, error) {
+func (p *pipeline) expect(ty TokenType) (Token, error) {
 
-	if p.accept(exp) {
-		return p.prev, nil
+	if p.buffer.empty() {
+		return nil, p._outOfTokens(p.buffer.past(), ty.String())
 	}
 
-	if p.hasMore() {
-		return nil, p._unexpected(p.stream.Peek(), exp.String())
+	if p._match(ty) {
+		return p.buffer.next(), nil
 	}
 
-	return nil, p._outOfTokens(p.prev, exp.String())
+	return nil, p._unexpected(p.buffer.peek(), ty.String())
 }
 
-func (p *pipeline) expectAnyOf(exp ...TokenType) (Token, error) {
+func (p *pipeline) expectAnyOf(tys ...TokenType) (Token, error) {
 
-	for _, m := range exp {
-		if p.accept(m) {
-			return p.prev, nil
+	if p.buffer.empty() {
+		return nil, p._outOfTokens(p.buffer.past(), JoinTypes(tys...))
+	}
+
+	for _, ty := range tys {
+		if p._match(ty) {
+			return p.buffer.next(), nil
 		}
 	}
 
-	if p.hasMore() {
-		return nil, p._unexpected(p.stream.Peek(), JoinTypes(exp...))
-	}
-
-	return nil, p._outOfTokens(p.prev, JoinTypes(exp...))
+	return nil, p._unexpected(p.buffer.peek(), JoinTypes(tys...))
 }
 
-func (p *pipeline) _ignoreRedundant() {
+func (p *pipeline) _match(ty TokenType) bool {
 
-	for next := p.stream.Peek(); next != nil; next = p.stream.Peek() {
-
-		ty := next.Type()
-
-		if ty == TK_NEWLINE {
-			ty = TK_TERMINATOR
-			line, col := next.Begin()
-			next = NewToken(ty, next.Value(), line, col)
-		}
-
-		switch {
-		case ty == TK_COMMENT:
-			p.stream.Next()
-
-		case ty == TK_WHITESPACE:
-			p.stream.Next()
-
-		case ty != TK_TERMINATOR:
-			return
-
-			// next must be a TERMINATOR
-		case p.prev == nil: // Ignore TERMINATORs at start of script
-			p.stream.Next()
-
-		case p.prev.Type() == TK_DELIMITER: // Allow "NEWLINE" after delimiter
-			p.stream.Next()
-
-		case p.prev.Type() == TK_BLOCK_OPEN: // Allow "NEWLINE" after block start
-			p.stream.Next()
-
-		case p.prev.Type() == TK_PAREN_OPEN: // Allow "NEWLINE" after paren start
-			p.stream.Next()
-
-		case p.prev.Type() == TK_TERMINATOR: // Ignore successive TERMINATORs
-			p.stream.Next()
-
-		default: // TERMINATOR
-			return
-		}
+	tk := p.buffer.peek()
+	if tk == nil {
+		return false
 	}
+
+	return ty == TK_ANY || ty == tk.Type()
 }
 
 func (p *pipeline) _outOfTokens(prev Token, exp string) error {
-	s := fmt.Sprintf("Expected %s; got UNDEFINED", exp)
-	return err.NewAfterSnippet(s, prev)
+	msg := fmt.Sprintf("Out of tokens, expected %q", exp)
+	return err.NewAfterSnippet(msg, prev)
 }
 
 func (p *pipeline) _unexpected(next Token, exp string) error {
-	s := fmt.Sprintf("Expected %s; got %s", exp, next.Type().String())
-	return err.NewBySnippet(s, next)
+	msg := fmt.Sprintf("Expected %q; got %q", exp, next.Type().String())
+	return err.NewBySnippet(msg, next)
 }

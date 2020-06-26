@@ -7,8 +7,6 @@ import (
 
 type TokenStream interface {
 	Next() Token
-	Peek() Token
-	PeekBeyond() Token
 }
 
 func ParseStatements(ts TokenStream) ([]Expr, error) {

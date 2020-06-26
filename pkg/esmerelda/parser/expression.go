@@ -183,7 +183,7 @@ func expectExpr(p *pipeline) (Expr, error) {
 	}
 
 	if expr == nil {
-		return nil, err.NewBySnippet("Expected expression", p.any())
+		return nil, err.NewBySnippet("Expected expression", p.peek())
 	}
 
 	return expr, nil
@@ -226,7 +226,7 @@ func expectOperand(p *pipeline) (Expr, error) {
 	}
 
 	if o == nil {
-		return nil, err.NewBySnippet("Expected expression", p.any())
+		return nil, err.NewBySnippet("Expected expression", p.peek())
 	}
 
 	return o, nil
@@ -410,7 +410,7 @@ func funcBody(p *pipeline) (Expr, error) {
 		return NewGuard(open, condition, body), nil
 	}
 
-	return nil, err.NewBySnippet("Expected function body", p.any())
+	return nil, err.NewBySnippet("Expected function body", p.peek())
 }
 
 func funcCall(p *pipeline, f Expr) (Expr, error) {

@@ -36,9 +36,14 @@ func statement(p *pipeline) (Expr, error) {
 		return assignment(p)
 
 	case p.match(TK_IDENTIFIER):
-		if p.matchBeyond(TK_ASSIGNMENT) || p.matchBeyond(TK_DELIMITER) {
+
+		p.next()
+		if p.match(TK_ASSIGNMENT) || p.match(TK_DELIMITER) {
+			p.backup()
 			return assignment(p)
 		}
+
+		p.backup()
 
 	case p.match(TK_GUARD_OPEN):
 		return guard(p)
@@ -70,7 +75,7 @@ func expectStatement(p *pipeline) (Expr, error) {
 	st, e := statement(p)
 
 	if e == nil && st == nil {
-		return nil, err.NewBySnippet("Expected statement", p.any())
+		return nil, err.NewBySnippet("Expected statement", p.next())
 	}
 
 	return st, e
@@ -178,10 +183,10 @@ func assignTarget(p *pipeline) (Expr, error) {
 	}
 
 	if p.match(TK_VOID) {
-		return NewVoid(p.any()), nil
+		return NewVoid(p.next()), nil
 	}
 
-	return nil, err.NewBySnippet("Expected assignment target", p.any())
+	return nil, err.NewBySnippet("Expected assignment target", p.next())
 }
 
 func assignIdentifier(p *pipeline) (Expr, error) {
@@ -216,7 +221,7 @@ func countAssignments(p *pipeline, targets, sources []Expr) (int, error) {
 		}
 
 		if i >= len(sources) {
-			return 0, err.NewBySnippet("Expected expression", p.any())
+			return 0, err.NewBySnippet("Expected expression", p.next())
 		}
 
 		n++

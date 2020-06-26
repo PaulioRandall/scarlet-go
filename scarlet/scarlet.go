@@ -99,32 +99,15 @@ type tokenStream struct {
 	i      int
 }
 
-func (s *tokenStream) peek(i int) token.Token {
-
-	if i >= s.size {
-		return nil
-	}
-
-	return s.tokens[i]
-}
-
 func (s *tokenStream) Next() token.Token {
 
-	tk := s.peek(s.i)
-	if tk == nil {
+	if s.i >= s.size {
 		return nil
 	}
 
+	tk := s.tokens[s.i]
 	s.i++
 	return tk
-}
-
-func (s *tokenStream) Peek() token.Token {
-	return s.peek(s.i)
-}
-
-func (s *tokenStream) PeekBeyond() token.Token {
-	return s.peek(s.i + 1)
 }
 
 func parse(tks []token.Token) ([]stats.Expr, error) {
