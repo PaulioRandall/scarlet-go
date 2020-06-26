@@ -27,17 +27,17 @@ func (s *sanitiser) bufferNext() {
 		return
 	}
 
-	buff := s.stream.Next()
-	for buff != nil && s._ignore(buff, s.prev) {
-		buff = s.stream.Next()
-	}
+	for {
+		s.buff = s.stream.Next()
+		if s.buff == nil {
+			return
+		}
 
-	if buff == nil {
-		s.buff = nil
-		return
+		s.buff = s._format(s.buff)
+		if s._parsable(s.buff, s.prev) {
+			return
+		}
 	}
-
-	s.buff = s._format(buff)
 }
 
 func (s *sanitiser) empty() bool {
@@ -72,38 +72,38 @@ func (s *sanitiser) backup() {
 	s.prev = nil
 }
 
-func (s *sanitiser) _ignore(next, prev token.Token) bool {
+func (s *sanitiser) _parsable(next, prev token.Token) bool {
 
 	ty := next.Type()
 
 	switch {
 	case ty == token.TK_COMMENT:
-		return true
+		return false
 
 	case ty == token.TK_WHITESPACE:
-		return true
+		return false
 
 	case ty != token.TK_TERMINATOR:
-		return false
+		return true
 
 		// next must be a TERMINATOR
 	case prev == nil: // Ignore TERMINATORs at start of script
-		return true
+		return false
 
 	case prev.Type() == token.TK_DELIMITER: // Allow "NEWLINE" after delimiter
-		return true
+		return false
 
 	case prev.Type() == token.TK_BLOCK_OPEN: // Allow "NEWLINE" after block start
-		return true
+		return false
 
 	case prev.Type() == token.TK_PAREN_OPEN: // Allow "NEWLINE" after paren start
-		return true
+		return false
 
 	case prev.Type() == token.TK_TERMINATOR: // Ignore successive TERMINATORs
-		return true
+		return false
 	}
 
-	return false
+	return true
 }
 
 func (s *sanitiser) _format(tk token.Token) token.Token {
