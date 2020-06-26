@@ -1,16 +1,13 @@
 
-_, x := -1, 1
-y, z := true, "abc"
+x := 0
 
-a := 0
-
-when x := false {
-	0: a := false
-	a: a := false
-	[false]: a := false
-	false: a := 12
-	[true]: {
-		a := 99
+when v := 4 {
+	0:       x := false
+	x:       x := false
+	[false]: {
+		x := false
 	}
-	3: a := x
+	false:   x := false
+	3:       x := false
+	[true]:  x := 99
 }
