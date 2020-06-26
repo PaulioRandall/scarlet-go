@@ -234,3 +234,49 @@ func Test_R1_6(t *testing.T) {
 		val: f,
 	})
 }
+
+func Test_R2_1(t *testing.T) {
+
+	// EVAL a negation expression
+	// WITH a number
+	// THEN the negated number is returned
+
+	// -1
+	given := NewNegation(
+		NewLiteral(tok(TK_NUMBER, "1")),
+	)
+
+	exp := Result{
+		typ: RT_NUMBER,
+		val: number.New("-1"),
+	}
+
+	ctx := NewCtx(nil, true)
+	act, e := EvalExpr(ctx, given)
+
+	require.Nil(t, e)
+	require.Equal(t, exp, act)
+}
+
+func Test_R2_2(t *testing.T) {
+
+	// EVAL a negation expression
+	// WITH a bool
+	// THEN the negated bool is returned
+
+	// -1
+	given := NewNegation(
+		NewLiteral(tok(TK_BOOL, "true")),
+	)
+
+	exp := Result{
+		typ: RT_BOOL,
+		val: false,
+	}
+
+	ctx := NewCtx(nil, true)
+	act, e := EvalExpr(ctx, given)
+
+	require.Nil(t, e)
+	require.Equal(t, exp, act)
+}

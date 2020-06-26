@@ -59,6 +59,10 @@ func (n *number) Dec(count int64) {
 	n.d = n.d.Sub(o)
 }
 
+func (n *number) Neg() {
+	n.d = n.d.Neg()
+}
+
 func (n *number) Add(other Number) {
 	o := cast(other)
 	n.d = n.d.Add(o.d)

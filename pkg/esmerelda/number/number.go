@@ -11,6 +11,7 @@ type Number interface {
 
 	Inc(int64)
 	Dec(int64)
+	Neg()
 
 	Add(Number)
 	Sub(Number)

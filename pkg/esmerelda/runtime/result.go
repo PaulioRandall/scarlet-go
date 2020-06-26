@@ -31,6 +31,25 @@ func (r Result) Is(typ ResultType) bool {
 	return r.typ == typ
 }
 
+func (r Result) IsNot(typ ResultType) bool {
+	return r.typ != typ
+}
+
+func (r *Result) Negate() {
+
+	if r.Is(RT_BOOL) {
+		r.val = !(r.val.(bool))
+		return
+	}
+
+	if r.Is(RT_NUMBER) {
+		r.val.(number.Number).Neg()
+		return
+	}
+
+	panic("PROGRAMMERS ERROR! Can only negate booleans or numbers")
+}
+
 func (r Result) Void() (VoidResult, bool) {
 	return VoidResult{}, r.Is(RT_VOID)
 }

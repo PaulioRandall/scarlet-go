@@ -19,6 +19,9 @@ func EvalExpr(ctx *Context, expr Expr) (Result, error) {
 
 	case ST_EXPR_FUNC:
 		return EvalExprFunc(ctx, expr.(ExprFunc)), nil
+
+	case ST_NEGATION:
+		return EvalNegation(ctx, expr.(Negation))
 	}
 
 	panic(err.NewBySnippet("Unknown expression type", expr))
@@ -53,4 +56,22 @@ func EvalExprFunc(ctx *Context, f ExprFunc) Result {
 		typ: RT_EXPR_FUNC_DEF,
 		val: f,
 	}
+}
+
+func EvalNegation(ctx *Context, neg Negation) (Result, error) {
+
+	subject, e := EvalExpr(ctx, neg.Expr())
+	if e != nil {
+		return Result{}, e
+	}
+
+	if subject.IsNot(RT_BOOL) && subject.IsNot(RT_NUMBER) {
+		return Result{}, err.NewBySnippet(
+			"Expected boolean or number result",
+			neg.Expr(),
+		)
+	}
+
+	subject.Negate()
+	return subject, nil
 }
