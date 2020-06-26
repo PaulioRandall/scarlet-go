@@ -4,7 +4,7 @@
 # Change these parameters as needed
 EXE_NAME="scarlet"
 MAIN_GO_FILE="scarlet/scarlet.go"
-TEST_TIMEOUT="3s"
+TEST_TIMEOUT="2s"
 BUILD_FLAGS=""
 #BUILD_FLAGS=-gcflags -m -ldflags "-s -w"
 RESOURCE_FILES="scarlet/test.scarlet"

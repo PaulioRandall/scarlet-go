@@ -478,7 +478,7 @@ func (whenCaseStat) Kind() Kind {
 	return ST_WHEN_CASE
 }
 
-func (wc whenCaseStat) Condition() Expr {
+func (wc whenCaseStat) Object() Expr {
 	return wc.object
 }
 
@@ -500,19 +500,24 @@ func (wc whenCaseStat) String() string {
 
 type whenStat struct {
 	key, close Token
-	init       Assign
-	cases      []WhenCase
+	subject    Token
+	init       Expr
+	cases      []Expr
 }
 
 func (whenStat) Kind() Kind {
 	return ST_WHEN
 }
 
-func (w whenStat) Initialiser() Assign {
+func (w whenStat) Subject() Token {
+	return w.subject
+}
+
+func (w whenStat) Init() Expr {
 	return w.init
 }
 
-func (w whenStat) Cases() []WhenCase {
+func (w whenStat) Cases() []Expr {
 	return w.cases
 }
 

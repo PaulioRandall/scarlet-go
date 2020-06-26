@@ -33,7 +33,7 @@ type parser struct {
 
 func (par *parser) parse() (Expr, ParseFunc, error) {
 
-	expr, e := statement(par.p)
+	expr, e := terminatedStatement(par.p)
 	if e != nil {
 		return nil, nil, e
 	}

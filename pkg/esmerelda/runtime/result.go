@@ -50,6 +50,30 @@ func (r *Result) Negate() {
 	panic("PROGRAMMERS ERROR! Can only negate booleans or numbers")
 }
 
+func (r Result) Equal(o Result) bool {
+
+	if r.IsNot(o.Type()) {
+		return false
+	}
+
+	switch r.typ {
+	case RT_BOOL:
+		return r.val.(bool) == o.val.(bool)
+
+	case RT_NUMBER:
+		return r.val.(number.Number).Equal(o.val.(number.Number))
+
+	case RT_STRING:
+		return r.val.(string) == o.val.(string)
+	}
+
+	return false
+}
+
+func (r Result) NotEqual(o Result) bool {
+	return !r.Equal(o)
+}
+
 func (r Result) Void() (VoidResult, bool) {
 	return VoidResult{}, r.Is(RT_VOID)
 }

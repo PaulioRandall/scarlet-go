@@ -12,7 +12,7 @@ func statements(p *pipeline) ([]Expr, error) {
 
 	for p.hasMore() {
 
-		st, e := statement(p)
+		st, e := terminatedStatement(p)
 		if e != nil {
 			return nil, e
 		}
@@ -21,6 +21,21 @@ func statements(p *pipeline) ([]Expr, error) {
 	}
 
 	return r, nil
+}
+
+func terminatedStatement(p *pipeline) (Expr, error) {
+
+	st, e := statement(p)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(TK_TERMINATOR)
+	if e != nil {
+		return nil, e
+	}
+
+	return st, nil
 }
 
 func statement(p *pipeline) (st Expr, e error) {
@@ -40,6 +55,7 @@ func statement(p *pipeline) (st Expr, e error) {
 		}
 
 		p.backup()
+		st, e = expression(p)
 
 	case p.match(TK_GUARD_OPEN):
 		st, e = guard(p)
@@ -74,12 +90,7 @@ func statement(p *pipeline) (st Expr, e error) {
 		return nil, err.NewBySnippet("Expected statement", p.next())
 	}
 
-	_, e = p.expect(TK_TERMINATOR)
-	if e != nil {
-		return nil, e
-	}
-
-	return
+	return st, nil
 }
 
 func exit(p *pipeline) (Expr, error) {

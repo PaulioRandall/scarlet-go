@@ -120,12 +120,13 @@ func NewWhenCase(object Expr, body Block) whenCaseStat {
 	}
 }
 
-func NewWhen(key, close Token, init Assign, cases []WhenCase) whenStat {
+func NewWhen(key, close, subject Token, init Expr, cases []Expr) whenStat {
 	return whenStat{
-		key:   key,
-		close: close,
-		init:  init,
-		cases: cases,
+		key:     key,
+		close:   close,
+		subject: subject,
+		init:    init,
+		cases:   cases,
 	}
 }
 

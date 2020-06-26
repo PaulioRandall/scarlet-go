@@ -302,8 +302,13 @@ func blockStatements(p *pipeline) ([]Expr, error) {
 
 		r = append(r, st)
 
-		if !p.accept(TK_TERMINATOR) {
-			break
+		if p.match(TK_BLOCK_CLOSE) {
+			return r, nil
+		}
+
+		_, e = p.expect(TK_TERMINATOR)
+		if e != nil {
+			return nil, e
 		}
 	}
 
@@ -587,10 +592,21 @@ func guardCondition(p *pipeline) (Token, Expr, error) {
 func guardBody(p *pipeline) (Block, error) {
 
 	if p.match(TK_BLOCK_OPEN) {
-		return block(p)
+
+		b, e := block(p)
+		if e != nil {
+			return nil, e
+		}
+
+		_, e = p.expect(TK_TERMINATOR)
+		if e != nil {
+			return nil, e
+		}
+
+		return b, nil
 	}
 
-	st, e := statement(p)
+	st, e := terminatedStatement(p)
 	if e != nil {
 		return nil, e
 	}
@@ -607,7 +623,17 @@ func when(p *pipeline) (Expr, error) {
 		return nil, e
 	}
 
-	init, e := whenInitialiser(p)
+	subject, e := p.expect(TK_IDENTIFIER)
+	if e != nil {
+		return nil, e
+	}
+
+	_, e = p.expect(TK_ASSIGNMENT)
+	if e != nil {
+		return nil, e
+	}
+
+	init, e := expectExpr(p)
 	if e != nil {
 		return nil, e
 	}
@@ -627,62 +653,40 @@ func when(p *pipeline) (Expr, error) {
 		return nil, e
 	}
 
-	return NewWhen(key, close, init, cases), nil
+	return NewWhen(key, close, subject, init, cases), nil
 }
 
-func whenInitialiser(p *pipeline) (Assign, error) {
-
-	id, e := p.expect(TK_IDENTIFIER)
-	if e != nil {
-		return nil, e
-	}
-
-	target := NewIdentifier(id)
-
-	_, e = p.expect(TK_ASSIGNMENT)
-	if e != nil {
-		return nil, e
-	}
-
-	source, e := expectExpr(p)
-	if e != nil {
-		return nil, e
-	}
-
-	return NewAssign(target, source), nil
-}
-
-func whenCases(p *pipeline) ([]WhenCase, error) {
+func whenCases(p *pipeline) ([]Expr, error) {
 	// pattern := {whenGuardCase | whenCase}
 
-	var mc WhenCase
+	var wc Expr
 	var e error
 
-	cases := []WhenCase{}
+	cases := []Expr{}
 
 	for !p.match(TK_BLOCK_CLOSE) {
 
 		if p.match(TK_GUARD_OPEN) {
-			mc, e = whenGuardCase(p)
+			wc, e = whenGuardCase(p)
 		} else {
-			mc, e = whenCase(p)
+			wc, e = whenCase(p)
 		}
 
 		if e != nil {
 			return nil, e
 		}
 
-		cases = append(cases, mc)
+		cases = append(cases, wc)
 
-		if !p.accept(TK_TERMINATOR) {
-			break
+		if p.match(TK_BLOCK_CLOSE) {
+			return cases, nil
 		}
 	}
 
 	return cases, nil
 }
 
-func whenGuardCase(p *pipeline) (WhenCase, error) {
+func whenGuardCase(p *pipeline) (Guard, error) {
 	// pattern := guardCondition THEN guardBody
 
 	open, condition, e := guardCondition(p)

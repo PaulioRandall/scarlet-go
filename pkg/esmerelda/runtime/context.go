@@ -26,7 +26,7 @@ func (ctx *Context) Locals() map[string]Result {
 
 func (ctx *Context) GetDefined(id string) (Result, bool) {
 
-	for c := ctx; c != nil; c = ctx.parent {
+	for c := ctx; c != nil; c = c.parent {
 		if def, ok := c.defined[id]; ok {
 			return def, ok
 		}
@@ -50,9 +50,13 @@ func (ctx *Context) SetLocal(id string, r Result) {
 
 func (ctx *Context) GetVar(id string) (Result, bool) {
 
-	for c := ctx; c != nil; c = ctx.parent {
+	for c := ctx; c != nil; c = c.parent {
 		if v, ok := c.GetLocal(id); ok {
 			return v, ok
+		}
+
+		if c.pure {
+			break
 		}
 	}
 
@@ -61,9 +65,13 @@ func (ctx *Context) GetVar(id string) (Result, bool) {
 
 func (ctx *Context) SetVar(id string, r Result) {
 
-	for c := ctx; c != nil; c = ctx.parent {
+	for c := ctx; c != nil; c = c.parent {
 		if _, ok := c.GetLocal(id); ok {
 			c.SetLocal(id, r)
+		}
+
+		if c.pure {
+			break
 		}
 	}
 

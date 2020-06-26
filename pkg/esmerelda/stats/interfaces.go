@@ -373,7 +373,9 @@ func GuardString(g Guard) string {
 }
 
 type WhenCase interface {
-	Guard
+	Expr
+	Object() Expr
+	Body() Block
 }
 
 func WhenCaseString(mc WhenCase) string {
@@ -383,9 +385,9 @@ func WhenCaseString(mc WhenCase) string {
 	b.add(0, "[WhenCase] ")
 
 	b.newline()
-	b.add(1, "Condition:")
+	b.add(1, "Object:")
 	b.newline()
-	b.add(2, mc.Condition().String())
+	b.add(2, mc.Object().String())
 
 	b.newline()
 	b.add(1, "Body:")
@@ -397,8 +399,9 @@ func WhenCaseString(mc WhenCase) string {
 
 type When interface {
 	Expr
-	Initialiser() Assign
-	Cases() []WhenCase
+	Subject() Token
+	Init() Expr
+	Cases() []Expr
 }
 
 func WhenString(m When) string {
@@ -406,15 +409,19 @@ func WhenString(m When) string {
 	b := builder{}
 
 	b.add(0, "[When]")
+	b.newline()
+
+	b.add(1, "Target ")
+	b.add(1, m.Subject().String())
 
 	b.newline()
-	b.add(1, "Initialiser:")
+	b.add(1, "Init:")
 	b.newline()
-	b.add(1, AssignString(m.Initialiser()))
+	b.add(2, m.Init().String())
 
 	for _, mc := range m.Cases() {
 		b.newline()
-		b.add(2, WhenCaseString(mc))
+		b.add(2, mc.String())
 	}
 
 	return b.String()

@@ -25,9 +25,16 @@ func EvalStatement(ctx *Context, st Expr) error {
 	switch st.Kind() {
 	case ST_ASSIGN_BLOCK:
 		return EvalAssignBlock(ctx, st.(AssignBlock))
+
+	case ST_ASSIGN:
+		return EvalAssign(ctx, st.(Assign))
+
 	case ST_GUARD:
 		_, e := EvalGuard(ctx, st.(Guard))
 		return e
+
+	case ST_WHEN:
+		return EvalWhen(ctx, st.(When))
 	}
 
 	panic(err.NewBySnippet("Unknown statement type", st))
@@ -41,6 +48,16 @@ func EvalAssignBlock(ctx *Context, as AssignBlock) error {
 	}
 
 	return doAssignments(ctx, as.Const(), as.Targets(), values, as.Count())
+}
+
+func EvalAssign(ctx *Context, as Assign) error {
+
+	v, e := EvalExpr(ctx, as.Source())
+	if e != nil {
+		return e
+	}
+
+	return doAssignment(ctx, as.Const(), as.Target(), v)
 }
 
 func EvalAssignSources(
@@ -114,6 +131,10 @@ func checkNotDefined(ctx *Context, tk Token) error {
 	return nil
 }
 
+func EvalBlock(ctx *Context, b Block) error {
+	return EvalStatements(ctx, b.Stats())
+}
+
 func EvalGuard(ctx *Context, g Guard) (bool, error) {
 
 	r, e := EvalExpr(ctx, g.Condition())
@@ -131,6 +152,7 @@ func EvalGuard(ctx *Context, g Guard) (bool, error) {
 		return false, nil
 	}
 
+	ctx = NewCtx(ctx, false)
 	e = EvalBlock(ctx, g.Body())
 	if e != nil {
 		return false, e
@@ -139,6 +161,55 @@ func EvalGuard(ctx *Context, g Guard) (bool, error) {
 	return true, nil
 }
 
-func EvalBlock(ctx *Context, b Block) error {
-	return EvalStatements(ctx, b.Stats())
+func EvalWhen(ctx *Context, w When) error {
+
+	subject, e := EvalExpr(ctx, w.Init())
+	if e != nil {
+		return e
+	}
+
+	ctx = NewCtx(ctx, false)
+	id := w.Subject().Value()
+	ctx.SetVar(id, subject)
+
+	for _, wc := range w.Cases() {
+
+		var match bool
+
+		switch wc.Kind() {
+		case ST_GUARD:
+			match, e = EvalGuard(ctx, wc.(Guard))
+
+		case ST_WHEN_CASE:
+			match, e = EvalWhenCase(ctx, wc.(WhenCase), subject)
+
+		default:
+			return err.NewBySnippet("Unknown when case type", wc)
+		}
+
+		if match || e != nil {
+			return e
+		}
+	}
+
+	return nil
+}
+
+func EvalWhenCase(ctx *Context, wc WhenCase, subject Result) (bool, error) {
+
+	r, e := EvalExpr(ctx, wc.Object())
+	if e != nil {
+		return false, e
+	}
+
+	if r.NotEqual(subject) {
+		return false, nil
+	}
+
+	e = EvalBlock(ctx, wc.Body())
+	if e != nil {
+		return false, e
+	}
+
+	return true, nil
 }

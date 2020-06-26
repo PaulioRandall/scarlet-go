@@ -306,8 +306,12 @@ func Test_R3_1(t *testing.T) {
 	)
 
 	ctx := NewCtx(nil, true)
-	e := EvalStatement(ctx, given)
+	ctx.SetLocal("a", Result{
+		typ: RT_NUMBER,
+		val: number.New("0"),
+	})
 
+	e := EvalStatement(ctx, given)
 	require.Nil(t, e)
 
 	requireCtxValue(t, ctx, false, "a", Result{
