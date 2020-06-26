@@ -12,73 +12,74 @@ func statements(p *pipeline) ([]Expr, error) {
 
 	for p.hasMore() {
 
-		st, e := expectStatement(p)
+		st, e := statement(p)
 		if e != nil {
 			return nil, e
 		}
 
 		r = append(r, st)
-
-		_, e = p.expect(TK_TERMINATOR)
-		if e != nil {
-			return nil, e
-		}
 	}
 
 	return r, nil
 }
 
-func statement(p *pipeline) (Expr, error) {
+func statement(p *pipeline) (st Expr, e error) {
 	// pattern := assignment | expression
 
 	switch {
 	case p.match(TK_DEFINITION):
-		return assignment(p)
+		st, e = assignment(p)
 
 	case p.match(TK_IDENTIFIER):
 
 		p.next()
 		if p.match(TK_ASSIGNMENT) || p.match(TK_DELIMITER) {
 			p.backup()
-			return assignment(p)
+			st, e = assignment(p)
+			break
 		}
 
 		p.backup()
 
 	case p.match(TK_GUARD_OPEN):
-		return guard(p)
+		st, e = guard(p)
 
 	case p.match(TK_WATCH):
-		return watch(p)
+		st, e = watch(p)
 
 	case p.match(TK_WHEN):
-		return when(p)
+		st, e = when(p)
 
 	case p.match(TK_LOOP):
-		return loop(p)
+		st, e = loop(p)
 
 	case p.match(TK_VOID):
-		return assignment(p)
+		st, e = assignment(p)
 
 	case p.match(TK_EXIT):
-		return exit(p)
+		st, e = exit(p)
 
 	case p.match(TK_SPELL):
-		return spellCall(p)
+		st, e = spellCall(p)
+
+	default:
+		st, e = expression(p)
 	}
 
-	return expression(p)
-}
+	if e != nil {
+		return nil, e
+	}
 
-func expectStatement(p *pipeline) (Expr, error) {
-
-	st, e := statement(p)
-
-	if e == nil && st == nil {
+	if st == nil {
 		return nil, err.NewBySnippet("Expected statement", p.next())
 	}
 
-	return st, e
+	_, e = p.expect(TK_TERMINATOR)
+	if e != nil {
+		return nil, e
+	}
+
+	return
 }
 
 func exit(p *pipeline) (Expr, error) {

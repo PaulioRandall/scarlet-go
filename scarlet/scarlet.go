@@ -114,13 +114,30 @@ func parse(tks []token.Token) ([]stats.Expr, error) {
 
 	println("# Parsing...")
 
-	stream := &tokenStream{
+	ts := &tokenStream{
 		tokens: tks,
 		size:   len(tks),
 		i:      0,
 	}
 
-	return parser.ParseStatements(stream)
+	var (
+		exprs = []stats.Expr{}
+		expr  stats.Expr
+		f     parser.ParseFunc
+		e     error
+	)
+
+	for f = parser.New(ts); f != nil; {
+
+		expr, f, e = f()
+		if e != nil {
+			return nil, e
+		}
+
+		exprs = append(exprs, expr)
+	}
+
+	return exprs, e
 }
 
 func run(sts []stats.Expr) (*runtime.Context, error) {

@@ -295,7 +295,7 @@ func blockStatements(p *pipeline) ([]Expr, error) {
 
 	for !p.match(TK_BLOCK_CLOSE) {
 
-		st, e = expectStatement(p)
+		st, e = statement(p)
 		if e != nil {
 			return nil, e
 		}
@@ -590,7 +590,7 @@ func guardBody(p *pipeline) (Block, error) {
 		return block(p)
 	}
 
-	st, e := expectStatement(p)
+	st, e := statement(p)
 	if e != nil {
 		return nil, e
 	}

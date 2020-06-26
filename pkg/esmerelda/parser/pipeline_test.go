@@ -8,6 +8,21 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type pipeStream struct {
+	tks []Token
+}
+
+func (p *pipeStream) Next() Token {
+
+	if len(p.tks) == 0 {
+		return nil
+	}
+
+	tk := p.tks[0]
+	p.tks = p.tks[1:]
+	return tk
+}
+
 func Test_P2(t *testing.T) {
 
 	// p.hasMore(), p.match(), p.accept()
@@ -16,7 +31,7 @@ func Test_P2(t *testing.T) {
 		return NewToken(ty, "", 0, 0)
 	}
 
-	p := newPipeline(&tkStream{[]Token{
+	p := newPipeline(&pipeStream{[]Token{
 		tok(TK_NUMBER),
 		tok(TK_PLUS),
 		tok(TK_NUMBER),
@@ -82,7 +97,7 @@ func Test_P3(t *testing.T) {
 		require.Nil(t, nil, act)
 	}
 
-	p := newPipeline(&tkStream{[]Token{
+	p := newPipeline(&pipeStream{[]Token{
 		tok(TK_NUMBER),
 		tok(TK_PLUS),
 		tok(TK_NUMBER),
@@ -120,7 +135,7 @@ func Test_P4(t *testing.T) {
 		require.Nil(t, nil, act)
 	}
 
-	p := newPipeline(&tkStream{[]Token{
+	p := newPipeline(&pipeStream{[]Token{
 		tok(TK_NUMBER),
 		tok(TK_PLUS),
 		tok(TK_NUMBER),

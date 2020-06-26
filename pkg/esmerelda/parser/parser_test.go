@@ -1,5 +1,6 @@
 package parser
 
+/*
 import (
 	"testing"
 
@@ -3295,3 +3296,4 @@ func Test_F20(t *testing.T) {
 	act, e := testFunc(given)
 	expectError(t, act, e)
 }
+*/
