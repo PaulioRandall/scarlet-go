@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/number"
@@ -12,6 +13,37 @@ import (
 
 func tok(ty TokenType, val string) Token {
 	return NewToken(ty, val, 0, 0)
+}
+
+func quickBlock(exprs ...Expr) Block {
+	return NewBlock(
+		tok(TK_BLOCK_OPEN, "{"),
+		tok(TK_BLOCK_CLOSE, "{"),
+		exprs,
+	)
+}
+
+func quickAssignBlock(final bool, target string, source interface{}) AssignBlock {
+
+	var src Token
+
+	switch v := source.(type) {
+	case bool:
+		src = tok(TK_BOOL, strconv.FormatBool(v))
+	case int:
+		src = tok(TK_NUMBER, strconv.Itoa(v))
+	case float64:
+		src = tok(TK_NUMBER, strconv.FormatFloat(v, 'f', -1, 64))
+	case string:
+		src = tok(TK_STRING, v)
+	}
+
+	return NewAssignBlock(
+		final,
+		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, target))},
+		[]Expr{NewLiteral(src)},
+		1,
+	)
 }
 
 func requireCtxValue(t *testing.T, ctx *Context, final bool, id string, exp Result) {
@@ -53,12 +85,7 @@ func Test_R1_1(t *testing.T) {
 	// THEN the context will be updated to reflect the const assignment
 
 	// a := 1
-	given := NewAssignBlock(
-		false,
-		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
-		[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
-		1,
-	)
+	given := quickAssignBlock(false, "a", 1)
 
 	ctx := NewCtx(nil, true)
 	e := EvalAssignBlock(ctx, given)
@@ -78,12 +105,7 @@ func Test_R1_2(t *testing.T) {
 	// THEN the context will be updated to reflect the assignment
 
 	// def a := 1
-	given := NewAssignBlock(
-		true,
-		[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
-		[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
-		1,
-	)
+	given := quickAssignBlock(true, "a", 1)
 
 	ctx := NewCtx(nil, true)
 	e := EvalAssignBlock(ctx, given)
@@ -291,18 +313,7 @@ func Test_R3_1(t *testing.T) {
 	given := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
 		NewLiteral(tok(TK_BOOL, "true")),
-		NewBlock(
-			tok(TK_BLOCK_OPEN, "{"),
-			tok(TK_BLOCK_CLOSE, "{"),
-			[]Expr{
-				NewAssignBlock(
-					false,
-					[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
-					[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
-					1,
-				),
-			},
-		),
+		quickBlock(quickAssignBlock(false, "a", 1)),
 	)
 
 	ctx := NewCtx(nil, true)
@@ -330,18 +341,7 @@ func Test_R3_2(t *testing.T) {
 	given := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
 		NewLiteral(tok(TK_BOOL, "false")),
-		NewBlock(
-			tok(TK_BLOCK_OPEN, "{"),
-			tok(TK_BLOCK_CLOSE, "{"),
-			[]Expr{
-				NewAssignBlock(
-					false,
-					[]Expr{NewIdentifier(tok(TK_IDENTIFIER, "a"))},
-					[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
-					1,
-				),
-			},
-		),
+		quickBlock(quickAssignBlock(false, "a", 1)),
 	)
 
 	ctx := NewCtx(nil, true)
@@ -363,15 +363,248 @@ func Test_R3_3(t *testing.T) {
 	given := NewGuard(
 		tok(TK_GUARD_OPEN, "["),
 		NewLiteral(tok(TK_STRING, `"abc"`)),
-		NewBlock(
-			tok(TK_BLOCK_OPEN, "{"),
-			tok(TK_BLOCK_CLOSE, "{"),
-			[]Expr{},
-		),
+		quickBlock(),
 	)
 
 	ctx := NewCtx(nil, true)
 	e := EvalStatement(ctx, given)
 
 	require.NotNil(t, e, "Expected error: invalid condition expression")
+}
+
+func Test_R4_1(t *testing.T) {
+
+	// EVAL a when statement
+	// WITH a true subject
+	// AND no cases
+	// THEN no case is evaluated
+
+	// when x := true {
+	//
+	// }
+	given := NewWhen(
+		tok(TK_WHEN, "when"),
+		tok(TK_BLOCK_CLOSE, "{"),
+		tok(TK_IDENTIFIER, "x"),
+		NewLiteral(tok(TK_BOOL, `true`)),
+		[]Expr{},
+	)
+
+	ctx := NewCtx(nil, true)
+	e := EvalStatement(ctx, given)
+
+	require.Nil(t, e)
+}
+
+func Test_R4_2(t *testing.T) {
+
+	// GIVEN a context with an intiialised variable
+	// EVAL a when statement
+	// WITH a 'true' subject
+	// AND one 'false' when case then one 'true' when case
+	// THEN the 'true' case is evaluated
+
+	// y := false
+	// when x := true {
+	//   false: y := 0
+	//   true:  y := 1
+	// }
+	given := NewWhen(
+		tok(TK_WHEN, "when"),
+		tok(TK_BLOCK_CLOSE, "{"),
+		tok(TK_IDENTIFIER, "x"),
+		NewLiteral(tok(TK_BOOL, `true`)),
+		[]Expr{
+			NewWhenCase(
+				NewLiteral(tok(TK_BOOL, `false`)),
+				quickBlock(quickAssignBlock(false, "y", 0)),
+			),
+			NewWhenCase(
+				NewLiteral(tok(TK_BOOL, `true`)),
+				quickBlock(quickAssignBlock(false, "y", 1)),
+			),
+		},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("y", Result{
+		typ: RT_BOOL,
+		val: false,
+	})
+
+	e := EvalStatement(ctx, given)
+	require.Nil(t, e)
+
+	requireCtxValue(t, ctx, false, "y", Result{
+		typ: RT_NUMBER,
+		val: number.New("1"),
+	})
+}
+
+func Test_R4_3(t *testing.T) {
+
+	// GIVEN a context with an intiialised variable
+	// EVAL a when statement
+	// WITH a false evaluating guard then a true evaluating guard
+	// THEN the true guard body is evaluated
+
+	// y := false
+	// when x := true {
+	//   [false]: y := 0
+	//   [true]:  y := 1
+	// }
+	given := NewWhen(
+		tok(TK_WHEN, "when"),
+		tok(TK_BLOCK_CLOSE, "{"),
+		tok(TK_IDENTIFIER, "x"),
+		NewLiteral(tok(TK_BOOL, `true`)),
+		[]Expr{
+			NewGuard(
+				tok(TK_GUARD_OPEN, "["),
+				NewLiteral(tok(TK_BOOL, "false")),
+				quickBlock(quickAssignBlock(false, "y", 0)),
+			),
+			NewGuard(
+				tok(TK_GUARD_OPEN, "["),
+				NewLiteral(tok(TK_BOOL, "true")),
+				quickBlock(quickAssignBlock(false, "y", 1)),
+			),
+		},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("y", Result{
+		typ: RT_BOOL,
+		val: false,
+	})
+
+	e := EvalStatement(ctx, given)
+	require.Nil(t, e)
+
+	requireCtxValue(t, ctx, false, "y", Result{
+		typ: RT_NUMBER,
+		val: number.New("1"),
+	})
+}
+
+func Test_R4_4(t *testing.T) {
+
+	// GIVEN a context with an intiialised variable
+	// EVAL a when statement
+	// WITH a 'true' subject
+	// AND one 'true' when case with an inline block body
+	// THEN the true guard body is evaluated
+
+	// y := false
+	// when x := true {
+	//   [true]:  y := 1
+	// }
+	given := NewWhen(
+		tok(TK_WHEN, "when"),
+		tok(TK_BLOCK_CLOSE, "{"),
+		tok(TK_IDENTIFIER, "x"),
+		NewLiteral(tok(TK_BOOL, `true`)),
+		[]Expr{
+			NewWhenCase(
+				NewLiteral(tok(TK_BOOL, `true`)),
+				NewUndelimBlock(
+					[]Expr{quickAssignBlock(false, "y", 1)},
+				),
+			),
+		},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("y", Result{
+		typ: RT_BOOL,
+		val: false,
+	})
+
+	e := EvalStatement(ctx, given)
+	require.Nil(t, e)
+
+	requireCtxValue(t, ctx, false, "y", Result{
+		typ: RT_NUMBER,
+		val: number.New("1"),
+	})
+}
+
+func Test_R4_5(t *testing.T) {
+
+	// GIVEN a context with an intiialised variable
+	// EVAL a when statement
+	// WITH a several interlaced when and guard cases
+	// THEN the correct case body is evaluated
+
+	// y := 0
+	// when x := 4 {
+	//   0:       y := false
+	//   1:       y := false
+	//   [false]: y := false
+	//   3:       y := false
+	//   [-true]: y := false
+	//   4:       y := true
+	//   5:       y := false
+	//   [true]:  y := false
+	// }
+
+	notEvaluated := quickBlock(quickAssignBlock(false, "y", false))
+
+	given := NewWhen(
+		tok(TK_WHEN, "when"),
+		tok(TK_BLOCK_CLOSE, "{"),
+		tok(TK_IDENTIFIER, "x"),
+		NewLiteral(tok(TK_NUMBER, "4")),
+		[]Expr{
+			NewWhenCase(
+				NewLiteral(tok(TK_NUMBER, "0")),
+				notEvaluated,
+			),
+			NewWhenCase(
+				NewLiteral(tok(TK_NUMBER, "1")),
+				notEvaluated,
+			),
+			NewGuard(
+				tok(TK_GUARD_OPEN, "["),
+				NewLiteral(tok(TK_BOOL, "false")),
+				notEvaluated,
+			),
+			NewWhenCase(
+				NewLiteral(tok(TK_NUMBER, "3")),
+				notEvaluated,
+			),
+			NewGuard(
+				tok(TK_GUARD_OPEN, "["),
+				NewNegation(NewLiteral(tok(TK_BOOL, "true"))),
+				notEvaluated,
+			),
+			NewWhenCase(
+				NewLiteral(tok(TK_NUMBER, "4")),
+				quickBlock(quickAssignBlock(false, "y", true)),
+			),
+			NewWhenCase(
+				NewLiteral(tok(TK_NUMBER, "5")),
+				notEvaluated,
+			),
+			NewGuard(
+				tok(TK_GUARD_OPEN, "["),
+				NewLiteral(tok(TK_BOOL, "true")),
+				notEvaluated,
+			),
+		},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("y", Result{
+		typ: RT_NUMBER,
+		val: number.New("0"),
+	})
+
+	e := EvalStatement(ctx, given)
+	require.Nil(t, e)
+
+	requireCtxValue(t, ctx, false, "y", Result{
+		typ: RT_BOOL,
+		val: true,
+	})
 }
