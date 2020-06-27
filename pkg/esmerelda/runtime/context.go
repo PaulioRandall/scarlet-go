@@ -52,7 +52,7 @@ func (ctx *Context) GetVar(id string) (Result, bool) {
 
 	for c := ctx; c != nil; c = c.parent {
 		if v, ok := c.GetLocal(id); ok {
-			return v, ok
+			return v, true
 		}
 
 		if c.pure {
@@ -68,6 +68,7 @@ func (ctx *Context) SetVar(id string, r Result) {
 	for c := ctx; c != nil; c = c.parent {
 		if _, ok := c.GetLocal(id); ok {
 			c.SetLocal(id, r)
+			return
 		}
 
 		if c.pure {

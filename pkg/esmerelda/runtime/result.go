@@ -2,6 +2,7 @@ package runtime
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/number"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/stats"
@@ -20,7 +21,35 @@ type Result struct {
 }
 
 func (r Result) String() string {
-	return fmt.Sprintf("%v", r.val)
+
+	if r.IsNot(RT_FUNC_DEF) {
+		return fmt.Sprintf("%v", r.val)
+	}
+
+	f := r.val.(stats.FuncDef)
+	sb := strings.Builder{}
+	sb.WriteString("F(")
+
+	for i, in := range f.Inputs() {
+		if i != 0 {
+			sb.WriteString(", ")
+		}
+		sb.WriteString(in.Value())
+	}
+
+	if len(f.Outputs()) > 0 {
+		sb.WriteString(" -> ")
+
+		for i, out := range f.Outputs() {
+			if i != 0 {
+				sb.WriteString(", ")
+			}
+			sb.WriteString(out.Value())
+		}
+	}
+
+	sb.WriteRune(')')
+	return sb.String()
 }
 
 func (r Result) Type() ResultType {

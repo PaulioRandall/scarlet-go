@@ -389,11 +389,11 @@ func (funcCallExpr) Kind() Kind {
 	return ST_FUNC_CALL
 }
 
-func (f funcCallExpr) Function() Expr {
+func (f funcCallExpr) Func() Expr {
 	return f.function
 }
 
-func (f funcCallExpr) Arguments() []Expr {
+func (f funcCallExpr) Args() []Expr {
 	return f.args
 }
 

@@ -42,12 +42,48 @@ func EvalStatement(ctx *Context, st Expr) error {
 
 func EvalAssignBlock(ctx *Context, as AssignBlock) error {
 
-	values, e := EvalAssignSources(ctx, as.Sources(), as.Count())
+	values := []Result{}
+
+	for _, s := range as.Sources() {
+
+		v, e := EvalExpr(ctx, s)
+		if e != nil {
+			return e
+		}
+
+		if t, ok := v.Tuple(); !ok {
+			values = append(values, v)
+
+		} else {
+			for _, vr := range t {
+				values = append(values, vr)
+			}
+		}
+	}
+
+	e := checkAssignResults(values, as)
 	if e != nil {
 		return e
 	}
 
 	return doAssignments(ctx, as.Const(), as.Targets(), values, as.Count())
+}
+
+func checkAssignResults(values []Result, as AssignBlock) error {
+
+	size := len(values)
+	expect := as.Count()
+	suffix := fmt.Sprintf(", want %d but given %d", expect, size)
+
+	if size > expect {
+		return err.NewBySnippet("Too many results to store"+suffix, as)
+	}
+
+	if size < expect {
+		return err.NewBySnippet("Too few results to store"+suffix, as)
+	}
+
+	return nil
 }
 
 func EvalAssign(ctx *Context, as Assign) error {
@@ -58,26 +94,6 @@ func EvalAssign(ctx *Context, as Assign) error {
 	}
 
 	return doAssignment(ctx, as.Const(), as.Target(), v)
-}
-
-func EvalAssignSources(
-	ctx *Context,
-	sources []Expr,
-	count int,
-) ([]Result, error) {
-
-	var e error
-	r := make([]Result, count)
-
-	for i, s := range sources {
-
-		r[i], e = EvalExpr(ctx, s)
-		if e != nil {
-			return nil, e
-		}
-	}
-
-	return r, nil
 }
 
 func doAssignments(

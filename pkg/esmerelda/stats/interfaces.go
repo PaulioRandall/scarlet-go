@@ -285,8 +285,8 @@ func FuncDefString(f FuncDef) string {
 
 type FuncCall interface {
 	Expr
-	Function() Expr
-	Arguments() []Expr
+	Func() Expr
+	Args() []Expr
 }
 
 func FuncCallString(f FuncCall) string {
@@ -298,11 +298,11 @@ func FuncCallString(f FuncCall) string {
 	b.newline()
 	b.add(1, "Function:")
 	b.newline()
-	b.add(2, f.Function().String())
+	b.add(2, f.Func().String())
 
 	b.newline()
 	b.add(1, "Arguments:")
-	for _, a := range f.Arguments() {
+	for _, a := range f.Args() {
 		b.newline()
 		b.add(2, a.String())
 	}

@@ -1,13 +1,6 @@
 
-x := 0
-
-when v := 4 {
-	0:       x := false
-	x:       x := false
-	[false]: {
-		x := false
-	}
-	false:   x := false
-	3:       x := false
-	[true]:  x := 99
+not := F(a -> b) {
+	b := -a
 }
+
+b := not(false)
