@@ -257,6 +257,26 @@ func Test_R1_6(t *testing.T) {
 	})
 }
 
+func Test_R1_7(t *testing.T) {
+
+	// GIVEN a context with a const definition
+	// EVAL an assignment block
+	// WITH a const definition override assignment
+	// THEN an error will be returned
+
+	// def a := 1
+	given := quickAssignBlock(true, "a", 1)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetDefinition("a", Result{
+		typ: RT_NUMBER,
+		val: number.New("1"),
+	})
+
+	e := EvalAssignBlock(ctx, given)
+	require.NotNil(t, e, "Should not be able to reassign defintions")
+}
+
 func Test_R2_1(t *testing.T) {
 
 	// EVAL a negation expression
