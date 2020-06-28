@@ -277,6 +277,30 @@ func Test_R1_7(t *testing.T) {
 	require.NotNil(t, e, "Should not be able to reassign defintions")
 }
 
+func Test_R1_8(t *testing.T) {
+
+	// GIVEN an empty context
+	// EVAL an assignment block
+	// WITH a void as target
+	// THEN no error will be returned
+	// AND no entry placed in the context
+
+	// a := 1
+	given := NewAssignBlock(
+		false,
+		[]Expr{NewVoid(tok(TK_VOID, "_"))},
+		[]Expr{NewLiteral(tok(TK_NUMBER, "1"))},
+		1,
+	)
+
+	ctx := NewCtx(nil, true)
+	e := EvalAssignBlock(ctx, given)
+
+	require.Nil(t, e)
+	require.Empty(t, ctx.Locals(), "Void assignment targets should be ignored")
+	require.Empty(t, ctx.Definitions(), "Void assignment targets should be ignored")
+}
+
 func Test_R2_1(t *testing.T) {
 
 	// EVAL a negation expression

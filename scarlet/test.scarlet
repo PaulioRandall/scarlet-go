@@ -3,4 +3,4 @@ not := F(a -> b) {
 	b := -a
 }
 
-b := not(false)
+_ := not(false)
