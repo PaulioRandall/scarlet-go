@@ -8,12 +8,20 @@ type Context struct {
 }
 
 func NewCtx(parent *Context, pure bool) *Context {
-	return &Context{
-		parent:  parent,
-		pure:    pure,
-		defined: &map[string]Result{},
-		local:   map[string]Result{},
+
+	ctx := &Context{
+		parent: parent,
+		pure:   pure,
+		local:  map[string]Result{},
 	}
+
+	if parent == nil {
+		ctx.defined = &map[string]Result{}
+	} else {
+		ctx.defined = parent.defined
+	}
+
+	return ctx
 }
 
 func (ctx *Context) Definitions() map[string]Result {
