@@ -19,10 +19,10 @@ calc := F(-> e) watch e {
 	r, e := divideAndFmt(a, b)
 	@Println("{a} / {b} = {r}")
 }
- 
-@Foreach(@Args(), F(_, v, _) {
+
+loop @Args() -> i, v, m {
 	@Println(v)
-})
+}
 
 e := calc()
 [e?] exit 1

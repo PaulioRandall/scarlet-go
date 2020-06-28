@@ -608,3 +608,409 @@ func Test_R4_5(t *testing.T) {
 		val: true,
 	})
 }
+
+func Test_R5_1(t *testing.T) {
+
+	// EVAL a func call
+	// WITH no arguments
+	// AND no statements in the body
+	// THEN no errors are returned
+
+	// f := F() {}
+	setup := NewFuncDef(
+		tok(TK_FUNCTION, "F"),
+		[]Token{},
+		[]Token{},
+		Expr(quickBlock()),
+	)
+
+	// f()
+	given := NewFuncCall(
+		tok(TK_PAREN_CLOSE, "}"),
+		NewIdentifier(tok(TK_IDENTIFIER, "f")),
+		[]Expr{},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("f", Result{
+		typ: RT_FUNC_DEF,
+		val: setup,
+	})
+
+	e := EvalStatement(ctx, given)
+
+	require.Nil(t, e)
+}
+
+func Test_R5_2(t *testing.T) {
+
+	// EVAL a func call
+	// WITH multiple input arguments
+	// AND no statements in the body
+	// THEN no errors are returned
+
+	// f := F(a, b, c) {}
+	setup := NewFuncDef(
+		tok(TK_FUNCTION, "F"),
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+			tok(TK_IDENTIFIER, "c"),
+		},
+		[]Token{},
+		Expr(quickBlock()),
+	)
+
+	// f(1, true, "abc")
+	given := NewFuncCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		NewIdentifier(tok(TK_IDENTIFIER, "f")),
+		[]Expr{
+			NewLiteral(tok(TK_NUMBER, "1")),
+			NewLiteral(tok(TK_BOOL, "true")),
+			NewLiteral(tok(TK_STRING, `"abc"`)),
+		},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("f", Result{
+		typ: RT_FUNC_DEF,
+		val: setup,
+	})
+
+	e := EvalStatement(ctx, given)
+
+	require.Nil(t, e)
+}
+
+func Test_R5_3(t *testing.T) {
+
+	// EVAL a func call
+	// WITH multiple output arguments
+	// AND no statements in the body
+	// THEN no errors are returned
+
+	// f := F(-> a, b, c) {}
+	setup := NewFuncDef(
+		tok(TK_FUNCTION, "F"),
+		[]Token{},
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+			tok(TK_IDENTIFIER, "c"),
+		},
+		Expr(quickBlock()),
+	)
+
+	// f()
+	given := NewFuncCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		NewIdentifier(tok(TK_IDENTIFIER, "f")),
+		[]Expr{},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("f", Result{
+		typ: RT_FUNC_DEF,
+		val: setup,
+	})
+
+	e := EvalStatement(ctx, given)
+
+	require.Nil(t, e)
+}
+
+func Test_R5_4(t *testing.T) {
+
+	// EVAL a func call
+	// WITH multiple input and output arguments
+	// AND no statements in the body
+	// THEN no errors are returned
+
+	// f := F(a, b, c-> a, b, c) {}
+	setup := NewFuncDef(
+		tok(TK_FUNCTION, "F"),
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+			tok(TK_IDENTIFIER, "c"),
+		},
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+			tok(TK_IDENTIFIER, "c"),
+		},
+		Expr(quickBlock()),
+	)
+
+	// f(1, true, "abc")
+	given := NewFuncCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		NewIdentifier(tok(TK_IDENTIFIER, "f")),
+		[]Expr{
+			NewLiteral(tok(TK_NUMBER, "1")),
+			NewLiteral(tok(TK_BOOL, "true")),
+			NewLiteral(tok(TK_STRING, `"abc"`)),
+		},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("f", Result{
+		typ: RT_FUNC_DEF,
+		val: setup,
+	})
+
+	e := EvalStatement(ctx, given)
+
+	require.Nil(t, e)
+}
+
+func Test_R5_5(t *testing.T) {
+
+	// EVAL a func call
+	// WITH not enough input arguments
+	// AND no statements in the body
+	// THEN an error is returned
+
+	// f := F(a, b, c) {}
+	setup := NewFuncDef(
+		tok(TK_FUNCTION, "F"),
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+			tok(TK_IDENTIFIER, "c"),
+		},
+		[]Token{},
+		Expr(quickBlock()),
+	)
+
+	// f(1, true)
+	given := NewFuncCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		NewIdentifier(tok(TK_IDENTIFIER, "f")),
+		[]Expr{
+			NewLiteral(tok(TK_NUMBER, "1")),
+			NewLiteral(tok(TK_BOOL, "true")),
+		},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("f", Result{
+		typ: RT_FUNC_DEF,
+		val: setup,
+	})
+
+	e := EvalStatement(ctx, given)
+	require.NotNil(t, e)
+}
+
+func Test_R5_6(t *testing.T) {
+
+	// EVAL a func call
+	// WITH too many input arguments
+	// AND no statements in the body
+	// THEN an error is returned
+
+	// f := F(a, b) {}
+	setup := NewFuncDef(
+		tok(TK_FUNCTION, "F"),
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+		},
+		[]Token{},
+		Expr(quickBlock()),
+	)
+
+	// f(1, true, "abc")
+	given := NewFuncCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		NewIdentifier(tok(TK_IDENTIFIER, "f")),
+		[]Expr{
+			NewLiteral(tok(TK_NUMBER, "1")),
+			NewLiteral(tok(TK_BOOL, "true")),
+			NewLiteral(tok(TK_STRING, `"abc"`)),
+		},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("f", Result{
+		typ: RT_FUNC_DEF,
+		val: setup,
+	})
+
+	e := EvalStatement(ctx, given)
+	require.NotNil(t, e)
+}
+
+func Test_R5_7(t *testing.T) {
+
+	// EVAL a func call
+	// WITH input arguments as output arguments
+	// AND no statements in the body
+	// THEN the output results equal the input arguments
+
+	// f := F(a, b, c -> a, b, c) {}
+	setup := NewFuncDef(
+		tok(TK_FUNCTION, "F"),
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+			tok(TK_IDENTIFIER, "c"),
+		},
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+			tok(TK_IDENTIFIER, "c"),
+		},
+		Expr(quickBlock()),
+	)
+
+	// f(1, true, "abc")
+	given := NewFuncCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		NewIdentifier(tok(TK_IDENTIFIER, "f")),
+		[]Expr{
+			NewLiteral(tok(TK_NUMBER, "1")),
+			NewLiteral(tok(TK_BOOL, "true")),
+			NewLiteral(tok(TK_STRING, `"abc"`)),
+		},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("f", Result{
+		typ: RT_FUNC_DEF,
+		val: setup,
+	})
+
+	r, e := EvalExpr(ctx, given)
+	require.Nil(t, e)
+
+	require.True(t, r.Is(RT_TUPLE), "Expected tuple as output")
+	results, _ := r.Tuple()
+
+	require.Equal(t, 3, len(results), "Expected exactly 3 function outputs")
+
+	exp := Result{typ: RT_NUMBER, val: number.New("1")}
+	require.Equal(t, exp, results[0])
+
+	exp = Result{typ: RT_BOOL, val: true}
+	require.Equal(t, exp, results[1])
+
+	exp = Result{typ: RT_STRING, val: "abc"}
+	require.Equal(t, exp, results[2])
+}
+
+func Test_R5_8(t *testing.T) {
+
+	// EVAL a func call
+	// WITH input arguments
+	// AND output arguments
+	// AND a statement assigning inputs variables to outputs variables
+	// THEN the output results equal the input arguments
+
+	// f := F(a, b, c -> x, y, z) {}
+	setup := NewFuncDef(
+		tok(TK_FUNCTION, "F"),
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+			tok(TK_IDENTIFIER, "b"),
+			tok(TK_IDENTIFIER, "c"),
+		},
+		[]Token{
+			tok(TK_IDENTIFIER, "x"),
+			tok(TK_IDENTIFIER, "y"),
+			tok(TK_IDENTIFIER, "z"),
+		},
+		quickBlock(NewAssignBlock(
+			false,
+			[]Expr{
+				NewIdentifier(tok(TK_IDENTIFIER, "x")),
+				NewIdentifier(tok(TK_IDENTIFIER, "y")),
+				NewIdentifier(tok(TK_IDENTIFIER, "z")),
+			},
+			[]Expr{
+				NewIdentifier(tok(TK_IDENTIFIER, "a")),
+				NewIdentifier(tok(TK_IDENTIFIER, "b")),
+				NewIdentifier(tok(TK_IDENTIFIER, "c")),
+			},
+			3,
+		)),
+	)
+
+	// f(1, true, "abc")
+	given := NewFuncCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		NewIdentifier(tok(TK_IDENTIFIER, "f")),
+		[]Expr{
+			NewLiteral(tok(TK_NUMBER, "1")),
+			NewLiteral(tok(TK_BOOL, "true")),
+			NewLiteral(tok(TK_STRING, `"abc"`)),
+		},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("f", Result{
+		typ: RT_FUNC_DEF,
+		val: setup,
+	})
+
+	r, e := EvalExpr(ctx, given)
+	require.Nil(t, e)
+
+	require.True(t, r.Is(RT_TUPLE), "Expected tuple as output")
+	results, _ := r.Tuple()
+
+	require.Equal(t, 3, len(results), "Expected exactly 3 function outputs")
+
+	exp := Result{typ: RT_NUMBER, val: number.New("1")}
+	require.Equal(t, exp, results[0])
+
+	exp = Result{typ: RT_BOOL, val: true}
+	require.Equal(t, exp, results[1])
+
+	exp = Result{typ: RT_STRING, val: "abc"}
+	require.Equal(t, exp, results[2])
+}
+
+func Test_R5_9(t *testing.T) {
+
+	// EVAL a func call
+	// WITH an unassigned output argument
+	// AND no statements in the body
+	// THEN a single void result is returned
+
+	// f := F(-> a) {}
+	setup := NewFuncDef(
+		tok(TK_FUNCTION, "F"),
+		[]Token{},
+		[]Token{
+			tok(TK_IDENTIFIER, "a"),
+		},
+		Expr(quickBlock()),
+	)
+
+	// f()
+	given := NewFuncCall(
+		tok(TK_PAREN_CLOSE, ")"),
+		NewIdentifier(tok(TK_IDENTIFIER, "f")),
+		[]Expr{},
+	)
+
+	ctx := NewCtx(nil, true)
+	ctx.SetLocal("f", Result{
+		typ: RT_FUNC_DEF,
+		val: setup,
+	})
+
+	r, e := EvalExpr(ctx, given)
+	require.Nil(t, e)
+
+	require.True(t, r.Is(RT_TUPLE), "Expected tuple as output")
+	results, _ := r.Tuple()
+
+	require.Equal(t, 1, len(results), "Expected exactly 1 function output")
+
+	exp := Result{typ: RT_VOID, val: VoidResult{}}
+	require.Equal(t, exp, results[0])
+}

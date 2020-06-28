@@ -35,6 +35,10 @@ func EvalStatement(ctx *Context, st Expr) error {
 
 	case ST_WHEN:
 		return EvalWhen(ctx, st.(When))
+
+	case ST_FUNC_CALL:
+		_, e := EvalFuncCall(ctx, st.(FuncCall))
+		return e
 	}
 
 	panic(err.NewBySnippet("Unknown statement type", st))
