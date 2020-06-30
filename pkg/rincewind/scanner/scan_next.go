@@ -27,12 +27,27 @@ func scanNext(scn *scanner, tk *tok) error {
 
 	case scn.match('_'):
 		tk.gt, tk.st = GT_IDENTIFIER, ST_VOID
-		tk.raw, tk.val = string([]rune{scn.next()}), nil
+		tk.raw, tk.val = string(scn.next()), nil
 		return nil
 
 	case scn.match(';'):
 		tk.gt, tk.st = GT_TERMINATOR, ST_TERMINATOR
-		tk.raw, tk.val = string([]rune{scn.next()}), nil
+		tk.raw, tk.val = string(scn.next()), nil
+		return nil
+
+	case scn.match(','):
+		tk.gt, tk.st = GT_DELIMITER, ST_VALUE_DELIM
+		tk.raw, tk.val = string(scn.next()), nil
+		return nil
+
+	case scn.match('('):
+		tk.gt, tk.st = GT_BRACKET, ST_PAREN_OPEN
+		tk.raw, tk.val = string(scn.next()), nil
+		return nil
+
+	case scn.match(')'):
+		tk.gt, tk.st = GT_BRACKET, ST_PAREN_CLOSE
+		tk.raw, tk.val = string(scn.next()), nil
 		return nil
 
 	case scn.match('"'):

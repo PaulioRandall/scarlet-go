@@ -50,6 +50,9 @@ const (
 	// ------------------
 	GT_SPELL GenType = iota
 	// ------------------
+	GT_DELIMITER   GenType = iota
+	ST_VALUE_DELIM SubType = iota
+	// ------------------
 	GT_BRACKET    GenType = iota
 	ST_PAREN_OPEN SubType = iota
 	ST_PAREN_CLOSE
