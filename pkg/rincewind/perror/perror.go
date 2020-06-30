@@ -75,6 +75,10 @@ func NewByStr(msg string, line, col, len int) error {
 
 func NewBySnippet(msg string, snip Snippet) error {
 
+	if snip == nil {
+		return New(msg)
+	}
+
 	e := perr{
 		msg: msg,
 	}

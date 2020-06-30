@@ -6,28 +6,9 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
-func newToken(
-	gt GenType,
-	st SubType,
-	raw string,
-	val interface{},
-	line, col int,
-) Token {
-
-	return tok{
-		gt:       gt,
-		st:       st,
-		raw:      raw,
-		val:      val,
-		line:     line,
-		colBegin: col,
-		colEnd:   col + len(raw),
-	}
-}
-
 type tok struct {
-	gt       GenType
-	st       SubType
+	ge       GenType
+	su       SubType
 	raw      string
 	val      interface{}
 	line     int
@@ -36,11 +17,11 @@ type tok struct {
 }
 
 func (tk tok) GenType() GenType {
-	return tk.gt
+	return tk.ge
 }
 
 func (tk tok) SubType() SubType {
-	return tk.st
+	return tk.su
 }
 
 func (tk tok) Raw() string {
@@ -67,8 +48,8 @@ func (tk tok) String() string {
 		tk.colBegin,
 		tk.line+1,
 		tk.colEnd,
-		tk.gt.String(),
-		tk.st.String(),
+		tk.ge.String(),
+		tk.su.String(),
 		tk.val,
 	)
 }

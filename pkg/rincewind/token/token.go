@@ -21,62 +21,62 @@ type Snippet interface {
 type GenType int // General type
 type SubType int
 
-func (gt GenType) String() string {
-	return genTypes[gt]
+func (ge GenType) String() string {
+	return genTypes[ge]
 }
 
-func (st SubType) String() string {
-	return subTypes[st]
+func (su SubType) String() string {
+	return subTypes[su]
 }
 
 const (
-	GT_UNDEFINED GenType = 0
-	ST_UNDEFINED SubType = 0
+	GE_UNDEFINED GenType = 0
+	SU_UNDEFINED SubType = 0
 	// ------------------
-	GT_WHITESPACE GenType = iota
+	GE_WHITESPACE GenType = iota
 	// ------------------
-	GT_TERMINATOR GenType = iota
-	ST_TERMINATOR SubType = iota
-	ST_NEWLINE
+	GE_TERMINATOR GenType = iota
+	SU_TERMINATOR SubType = iota
+	SU_NEWLINE
 	// ------------------
-	GT_IDENTIFIER GenType = iota
-	ST_IDENTIFIER SubType = iota
-	ST_VOID
+	GE_IDENTIFIER GenType = iota
+	SU_IDENTIFIER SubType = iota
+	SU_VOID
 	// ------------------
-	GT_LITERAL GenType = iota
-	ST_BOOL    SubType = iota
-	ST_NUMBER
-	ST_STRING
+	GE_LITERAL GenType = iota
+	SU_BOOL    SubType = iota
+	SU_NUMBER
+	SU_STRING
 	// ------------------
-	GT_SPELL GenType = iota
+	GE_SPELL GenType = iota
 	// ------------------
-	GT_DELIMITER   GenType = iota
-	ST_VALUE_DELIM SubType = iota
+	GE_DELIMITER   GenType = iota
+	SU_VALUE_DELIM SubType = iota
 	// ------------------
-	GT_BRACKET    GenType = iota
-	ST_PAREN_OPEN SubType = iota
-	ST_PAREN_CLOSE
+	GE_BRACKET    GenType = iota
+	SU_PAREN_OPEN SubType = iota
+	SU_PAREN_CLOSE
 )
 
 var genTypes = map[GenType]string{
-	GT_WHITESPACE: `whitespace`,
-	GT_TERMINATOR: `terminator`,
-	GT_IDENTIFIER: `identifier`,
-	GT_LITERAL:    `literal`,
-	GT_SPELL:      `spell`,
-	GT_BRACKET:    `bracket`,
+	GE_WHITESPACE: `whitespace`,
+	GE_TERMINATOR: `terminator`,
+	GE_IDENTIFIER: `identifier`,
+	GE_LITERAL:    `literal`,
+	GE_SPELL:      `spell`,
+	GE_BRACKET:    `bracket`,
 }
 
 var subTypes = map[SubType]string{
-	ST_IDENTIFIER:  `identifier`,
-	ST_VOID:        `void`,
-	ST_TERMINATOR:  `terminator`,
-	ST_NEWLINE:     `newline`,
-	ST_BOOL:        `bool`,
-	ST_NUMBER:      `number`,
-	ST_STRING:      `string`,
-	ST_PAREN_OPEN:  `paren_open`,
-	ST_PAREN_CLOSE: `paren_close`,
+	SU_IDENTIFIER:  `identifier`,
+	SU_VOID:        `void`,
+	SU_TERMINATOR:  `terminator`,
+	SU_NEWLINE:     `newline`,
+	SU_BOOL:        `bool`,
+	SU_NUMBER:      `number`,
+	SU_STRING:      `string`,
+	SU_PAREN_OPEN:  `paren_open`,
+	SU_PAREN_CLOSE: `paren_close`,
 }
 
 /*

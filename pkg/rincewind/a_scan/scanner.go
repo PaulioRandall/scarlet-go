@@ -37,6 +37,33 @@ type scanner struct {
 	col  int
 }
 
+func (scn *scanner) scan() (tok, ScanFunc, error) {
+
+	tk := tok{}
+	line, col := scn.line, scn.col
+
+	e := scanNext(scn, &tk)
+	if e != nil {
+		return tok{}, nil, e
+	}
+
+	tk.line = line
+	tk.colBegin = col
+	tk.colEnd = scn.col
+	checkTok(tk, line, col) // TODO: Remove once tests have been created
+
+	if tk.su == SU_NEWLINE {
+		scn.line++
+		scn.col = 0
+	}
+
+	if scn.empty() {
+		return tk, nil, nil
+	}
+
+	return tk, scn.scan, nil
+}
+
 func (scn *scanner) bufferNext() {
 
 	var ok bool
@@ -61,7 +88,8 @@ func (scn *scanner) empty() bool {
 func (scn *scanner) next() rune {
 
 	if scn.empty() {
-		perror.ProgPanic("No symbols remain, should call `hasNext` or `empty` first")
+		perror.ProgPanic(
+			"No symbols remain, should call `match`, `hasNext`, or `empty` first")
 	}
 
 	r := scn.buff
@@ -94,45 +122,14 @@ func (scn *scanner) matchDigit() bool {
 	return unicode.IsDigit(scn.buff)
 }
 
-func (scn *scanner) scan() (tok, ScanFunc, error) {
-
-	if scn.empty() {
-		return tok{}, nil, nil
-	}
-
-	tk := tok{}
-	line, col := scn.line, scn.col
-
-	e := scanNext(scn, &tk)
-	if e != nil {
-		return tok{}, nil, e
-	}
-
-	tk.line = line
-	tk.colBegin = col
-	tk.colEnd = scn.col
-	checkTok(tk, line, col) // TODO: Remove once tests have been created
-
-	if tk.st == ST_NEWLINE {
-		scn.line++
-		scn.col = 0
-	}
-
-	if scn.empty() {
-		return tk, nil, nil
-	}
-
-	return tk, scn.scan, nil
-}
-
 // TODO: Remove once tests have been created
 func checkTok(tk tok, line, col int) {
 
-	if tk.gt == GT_UNDEFINED {
+	if tk.ge == GE_UNDEFINED {
 		perror.ProgPanic("Missing GenType for token at %d:%d...", line, col)
 	}
 
-	if tk.st == ST_UNDEFINED {
+	if tk.su == SU_UNDEFINED {
 		perror.ProgPanic("Missing SubType for token at %d:%d...", line, col)
 	}
 

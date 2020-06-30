@@ -26,27 +26,27 @@ func scanNext(scn *scanner, tk *tok) error {
 		return spell(scn, tk)
 
 	case scn.match('_'):
-		tk.gt, tk.st = GT_IDENTIFIER, ST_VOID
+		tk.ge, tk.su = GE_IDENTIFIER, SU_VOID
 		tk.raw, tk.val = string(scn.next()), nil
 		return nil
 
 	case scn.match(';'):
-		tk.gt, tk.st = GT_TERMINATOR, ST_TERMINATOR
+		tk.ge, tk.su = GE_TERMINATOR, SU_TERMINATOR
 		tk.raw, tk.val = string(scn.next()), nil
 		return nil
 
 	case scn.match(','):
-		tk.gt, tk.st = GT_DELIMITER, ST_VALUE_DELIM
+		tk.ge, tk.su = GE_DELIMITER, SU_VALUE_DELIM
 		tk.raw, tk.val = string(scn.next()), nil
 		return nil
 
 	case scn.match('('):
-		tk.gt, tk.st = GT_BRACKET, ST_PAREN_OPEN
+		tk.ge, tk.su = GE_BRACKET, SU_PAREN_OPEN
 		tk.raw, tk.val = string(scn.next()), nil
 		return nil
 
 	case scn.match(')'):
-		tk.gt, tk.st = GT_BRACKET, ST_PAREN_CLOSE
+		tk.ge, tk.su = GE_BRACKET, SU_PAREN_CLOSE
 		tk.raw, tk.val = string(scn.next()), nil
 		return nil
 
@@ -73,7 +73,7 @@ func newline(scn *scanner, tk *tok) error {
 	}
 	sb.WriteRune(scn.next())
 
-	tk.gt, tk.st = GT_TERMINATOR, ST_NEWLINE
+	tk.ge, tk.su = GE_TERMINATOR, SU_NEWLINE
 	tk.raw, tk.val = sb.String(), nil
 	return nil
 }
@@ -86,7 +86,7 @@ func whitespace(scn *scanner, tk *tok) error {
 		sb.WriteRune(scn.next())
 	}
 
-	tk.gt, tk.st = GT_WHITESPACE, ST_UNDEFINED
+	tk.ge, tk.su = GE_WHITESPACE, SU_UNDEFINED
 	tk.raw, tk.val = sb.String(), nil
 	return nil
 }
@@ -102,10 +102,10 @@ func word(scn *scanner, tk *tok) error {
 
 	switch sb.String() {
 	case "false", "true":
-		tk.gt, tk.st = GT_LITERAL, ST_BOOL
+		tk.ge, tk.su = GE_LITERAL, SU_BOOL
 
 	default:
-		tk.gt, tk.st = GT_IDENTIFIER, ST_IDENTIFIER
+		tk.ge, tk.su = GE_IDENTIFIER, SU_IDENTIFIER
 	}
 
 	tk.raw, tk.val = sb.String(), nil
@@ -132,7 +132,7 @@ func spell(scn *scanner, tk *tok) error {
 		}
 	}
 
-	tk.gt, tk.st = GT_IDENTIFIER, ST_IDENTIFIER
+	tk.ge, tk.su = GE_IDENTIFIER, SU_IDENTIFIER
 	tk.raw, tk.val = sb.String(), sb.String()[1:]
 	return nil
 }
@@ -160,7 +160,7 @@ func stringLiteral(scn *scanner, tk *tok) error {
 	}
 
 	size := len(sb.String())
-	tk.gt, tk.st = GT_LITERAL, ST_STRING
+	tk.ge, tk.su = GE_LITERAL, SU_STRING
 
 	if size == 2 {
 		tk.raw, tk.val = sb.String(), ""
@@ -193,7 +193,7 @@ func numberLiteral(scn *scanner, tk *tok) error {
 	}
 
 FINALISE:
-	tk.gt, tk.st = GT_LITERAL, ST_NUMBER
+	tk.ge, tk.su = GE_LITERAL, SU_NUMBER
 	tk.raw, tk.val = sb.String(), number.New(sb.String())
 	return nil
 }
