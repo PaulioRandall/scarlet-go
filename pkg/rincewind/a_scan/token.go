@@ -29,15 +29,19 @@ func (tk tok) Raw() string {
 
 func (tk tok) Value() string {
 
-	if tk.su != SU_STRING {
-		return tk.raw
+	switch {
+	case tk.ge == GE_SPELL:
+		return tk.raw[1:]
+
+	case tk.su == SU_STRING:
+		if len(tk.raw) == 2 {
+			return ""
+		}
+
+		return tk.raw[1 : len(tk.raw)-1]
 	}
 
-	if len(tk.raw) == 2 {
-		return ""
-	}
-
-	return tk.raw[1 : len(tk.raw)-1]
+	return tk.raw
 }
 
 func (tk tok) Begin() (int, int) {

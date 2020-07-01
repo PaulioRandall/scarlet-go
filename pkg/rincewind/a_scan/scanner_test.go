@@ -146,6 +146,10 @@ func Test_S1(t *testing.T) {
 	doTest(t, in, exp)
 }
 
+func Test_T0_1(t *testing.T) {
+	doErrorTest(t, "~") // Unknown symbol
+}
+
 func Test_T1_1(t *testing.T) {
 	doTest(t, " \t\v\f", []tok{halfTok(GE_WHITESPACE, SU_UNDEFINED, " \t\v\f")})
 }

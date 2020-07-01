@@ -66,7 +66,7 @@ func (clt *collector) bufferNext() {
 			return
 		}
 
-		if clt.notMatch(GE_WHITESPACE) {
+		if clt.notMatchGen(GE_WHITESPACE) {
 			break
 		}
 	}
@@ -84,7 +84,7 @@ func (clt *collector) next() Token {
 
 	if clt.empty() {
 		perror.ProgPanic(
-			"No tokens remain, should call `match`, `hasNext`, or `empty` first")
+			"No tokens remain, you should call `match`, `hasNext`, or `empty` first")
 	}
 
 	r := clt.buff
@@ -93,27 +93,25 @@ func (clt *collector) next() Token {
 	return r
 }
 
-func (clt *collector) match(ge GenType) bool {
+func (clt *collector) matchGen(ge GenType) bool {
 	return clt.hasNext() && clt.buff.GenType() == ge
 }
 
-func (clt *collector) notMatch(ge GenType) bool {
-	return !clt.match(ge)
+func (clt *collector) notMatchGen(ge GenType) bool {
+	return !clt.matchGen(ge)
 }
 
-func (clt *collector) accept(ge GenType) bool {
-
-	if clt.match(ge) {
-		clt.next()
-		return true
-	}
-
-	return false
+func (clt *collector) matchSub(su SubType) bool {
+	return clt.hasNext() && clt.buff.SubType() == su
 }
 
-func (clt *collector) expect(ge GenType) (Token, error) {
+func (clt *collector) notMatchSub(su SubType) bool {
+	return !clt.matchSub(su)
+}
 
-	if clt.match(ge) {
+func (clt *collector) expectGen(ge GenType) (Token, error) {
+
+	if clt.matchGen(ge) {
 		return clt.next(), nil
 	}
 
@@ -125,5 +123,22 @@ func (clt *collector) expect(ge GenType) (Token, error) {
 	}
 
 	msg := fmt.Sprintf("Expected %s, got %s", ge.String(), exp)
+	return nil, perror.NewBySnippet(msg, clt.buff)
+}
+
+func (clt *collector) expectSub(su SubType) (Token, error) {
+
+	if clt.matchSub(su) {
+		return clt.next(), nil
+	}
+
+	var exp string
+	if clt.buff == nil {
+		exp = "EOF"
+	} else {
+		exp = clt.buff.SubType().String()
+	}
+
+	msg := fmt.Sprintf("Expected %s, got %s", su.String(), exp)
 	return nil, perror.NewBySnippet(msg, clt.buff)
 }
