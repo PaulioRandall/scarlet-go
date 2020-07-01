@@ -135,12 +135,12 @@ func Test_S1(t *testing.T) {
 
 	exp := []tok{
 		fullTok(GE_SPELL, SU_UNDEFINED, "@Set", 0, 0, 4),
-		fullTok(GE_BRACKET, SU_PAREN_OPEN, "(", 0, 4, 5),
+		fullTok(GE_PARENTHESIS, SU_PAREN_OPEN, "(", 0, 4, 5),
 		fullTok(GE_IDENTIFIER, SU_IDENTIFIER, "x", 0, 5, 6),
 		fullTok(GE_DELIMITER, SU_VALUE_DELIM, ",", 0, 6, 7),
 		fullTok(GE_WHITESPACE, SU_UNDEFINED, " ", 0, 7, 8),
 		fullTok(GE_LITERAL, SU_NUMBER, "1", 0, 8, 9),
-		fullTok(GE_BRACKET, SU_PAREN_CLOSE, ")", 0, 9, 10),
+		fullTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")", 0, 9, 10),
 	}
 
 	doTest(t, in, exp)
@@ -184,6 +184,10 @@ func Test_T4_3(t *testing.T) {
 
 func Test_T4_4(t *testing.T) {
 	doTest(t, "123.456", []tok{halfTok(GE_LITERAL, SU_NUMBER, "123.456")})
+}
+
+func Test_T4_5(t *testing.T) {
+	doErrorTest(t, "123.")
 }
 
 func Test_T5_1(t *testing.T) {
@@ -231,11 +235,11 @@ func Test_T6_5(t *testing.T) {
 }
 
 func Test_T7_1(t *testing.T) {
-	doTest(t, "(", []tok{halfTok(GE_BRACKET, SU_PAREN_OPEN, "(")})
+	doTest(t, "(", []tok{halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "(")})
 }
 
 func Test_T7_2(t *testing.T) {
-	doTest(t, ")", []tok{halfTok(GE_BRACKET, SU_PAREN_CLOSE, ")")})
+	doTest(t, ")", []tok{halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")")})
 }
 
 func Test_T8_1(t *testing.T) {

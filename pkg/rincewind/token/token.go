@@ -53,18 +53,18 @@ const (
 	GE_DELIMITER   GenType = iota
 	SU_VALUE_DELIM SubType = iota
 	// ------------------
-	GE_BRACKET    GenType = iota
-	SU_PAREN_OPEN SubType = iota
+	GE_PARENTHESIS GenType = iota
+	SU_PAREN_OPEN  SubType = iota
 	SU_PAREN_CLOSE
 )
 
 var genTypes = map[GenType]string{
-	GE_WHITESPACE: `whitespace`,
-	GE_TERMINATOR: `terminator`,
-	GE_LITERAL:    `literal`,
-	GE_IDENTIFIER: `identifier`,
-	GE_SPELL:      `spell`,
-	GE_BRACKET:    `bracket`,
+	GE_WHITESPACE:  `whitespace`,
+	GE_TERMINATOR:  `terminator`,
+	GE_LITERAL:     `literal`,
+	GE_IDENTIFIER:  `identifier`,
+	GE_SPELL:       `spell`,
+	GE_PARENTHESIS: `parenthesis`,
 }
 
 var subTypes = map[SubType]string{

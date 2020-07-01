@@ -37,11 +37,11 @@ func scanNext(scn *scanner, tk *tok) error {
 		return nil
 
 	case scn.match('('):
-		tk.ge, tk.su, tk.raw = GE_BRACKET, SU_PAREN_OPEN, string(scn.next())
+		tk.ge, tk.su, tk.raw = GE_PARENTHESIS, SU_PAREN_OPEN, string(scn.next())
 		return nil
 
 	case scn.match(')'):
-		tk.ge, tk.su, tk.raw = GE_BRACKET, SU_PAREN_CLOSE, string(scn.next())
+		tk.ge, tk.su, tk.raw = GE_PARENTHESIS, SU_PAREN_CLOSE, string(scn.next())
 		return nil
 
 	case scn.match('"'):
