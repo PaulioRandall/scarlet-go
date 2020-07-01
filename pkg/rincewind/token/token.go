@@ -39,14 +39,14 @@ const (
 	SU_TERMINATOR SubType = iota
 	SU_NEWLINE
 	// ------------------
-	GE_IDENTIFIER GenType = iota
-	SU_IDENTIFIER SubType = iota
-	SU_VOID
-	// ------------------
 	GE_LITERAL GenType = iota
 	SU_BOOL    SubType = iota
 	SU_NUMBER
 	SU_STRING
+	// ------------------
+	GE_IDENTIFIER GenType = iota
+	SU_IDENTIFIER SubType = iota
+	SU_VOID
 	// ------------------
 	GE_SPELL GenType = iota
 	// ------------------
@@ -61,20 +61,20 @@ const (
 var genTypes = map[GenType]string{
 	GE_WHITESPACE: `whitespace`,
 	GE_TERMINATOR: `terminator`,
-	GE_IDENTIFIER: `identifier`,
 	GE_LITERAL:    `literal`,
+	GE_IDENTIFIER: `identifier`,
 	GE_SPELL:      `spell`,
 	GE_BRACKET:    `bracket`,
 }
 
 var subTypes = map[SubType]string{
-	SU_IDENTIFIER:  `identifier`,
-	SU_VOID:        `void`,
 	SU_TERMINATOR:  `terminator`,
 	SU_NEWLINE:     `newline`,
 	SU_BOOL:        `bool`,
 	SU_NUMBER:      `number`,
 	SU_STRING:      `string`,
+	SU_IDENTIFIER:  `identifier`,
+	SU_VOID:        `void`,
 	SU_PAREN_OPEN:  `paren_open`,
 	SU_PAREN_CLOSE: `paren_close`,
 }

@@ -108,13 +108,12 @@ func word(scn *scanner, tk *tok) error {
 func spell(scn *scanner, tk *tok) error {
 
 	sb := strings.Builder{}
+	sb.WriteRune(scn.next())
 
 	for {
 		if !scn.matchLetter() {
 			return fail(scn, "Expected letter")
 		}
-
-		sb.WriteRune(scn.next())
 
 		for scn.matchLetter() {
 			sb.WriteRune(scn.next())
@@ -123,9 +122,11 @@ func spell(scn *scanner, tk *tok) error {
 		if scn.notMatch('.') {
 			break
 		}
+
+		sb.WriteRune(scn.next())
 	}
 
-	tk.ge, tk.su, tk.raw = GE_IDENTIFIER, SU_IDENTIFIER, sb.String()
+	tk.ge, tk.su, tk.raw = GE_SPELL, SU_UNDEFINED, sb.String()
 	return nil
 }
 
@@ -150,6 +151,8 @@ func stringLiteral(scn *scanner, tk *tok) error {
 
 		sb.WriteRune(scn.next())
 	}
+
+	sb.WriteRune(scn.next())
 
 	tk.ge, tk.su, tk.raw = GE_LITERAL, SU_STRING, sb.String()
 	return nil

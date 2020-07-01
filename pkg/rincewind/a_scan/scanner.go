@@ -20,7 +20,10 @@ func New(itr SymbolItr) ScanFunc {
 		perror.ProgPanic("Non-nil SymbolItr required")
 	}
 
-	scn := &scanner{itr: itr}
+	scn := &scanner{
+		itr: itr,
+		col: -1, // -1 so index is before first symbol
+	}
 	scn.bufferNext()
 
 	if scn.empty() {
@@ -50,7 +53,6 @@ func (scn *scanner) scan() (tok, ScanFunc, error) {
 	tk.line = line
 	tk.colBegin = col
 	tk.colEnd = scn.col
-	checkTok(tk, line, col) // TODO: Remove once tests have been created
 
 	if tk.su == SU_NEWLINE {
 		scn.line++
@@ -66,15 +68,18 @@ func (scn *scanner) scan() (tok, ScanFunc, error) {
 
 func (scn *scanner) bufferNext() {
 
-	var ok bool
-	scn.buff, ok = scn.itr.Next()
+	buff, ok := scn.itr.Next()
 
-	if !ok {
-		scn.buff = rune(0)
+	if ok || scn.buff != rune(0) {
+		scn.col++
+	}
+
+	if ok {
+		scn.buff = buff
 		return
 	}
 
-	scn.col++
+	scn.buff = rune(0)
 }
 
 func (scn *scanner) hasNext() bool {
@@ -120,19 +125,4 @@ func (scn *scanner) matchLetter() bool {
 
 func (scn *scanner) matchDigit() bool {
 	return unicode.IsDigit(scn.buff)
-}
-
-// TODO: Remove once tests have been created
-func checkTok(tk tok, line, col int) {
-
-	switch {
-	case tk.ge == GE_UNDEFINED:
-		perror.ProgPanic("Missing GenType for token at %d:%d...", line, col)
-
-	case tk.su == SU_UNDEFINED:
-		perror.ProgPanic("Missing SubType for token at %d:%d...", line, col)
-
-	case tk.raw == "":
-		perror.ProgPanic("Missing raw text for token at %d:%d...", line, col)
-	}
 }
