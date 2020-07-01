@@ -125,23 +125,14 @@ func (scn *scanner) matchDigit() bool {
 // TODO: Remove once tests have been created
 func checkTok(tk tok, line, col int) {
 
-	if tk.ge == GE_UNDEFINED {
+	switch {
+	case tk.ge == GE_UNDEFINED:
 		perror.ProgPanic("Missing GenType for token at %d:%d...", line, col)
-	}
 
-	if tk.su == SU_UNDEFINED {
+	case tk.su == SU_UNDEFINED:
 		perror.ProgPanic("Missing SubType for token at %d:%d...", line, col)
-	}
 
-	if tk.raw == "" {
+	case tk.raw == "":
 		perror.ProgPanic("Missing raw text for token at %d:%d...", line, col)
-	}
-
-	if tk.val == nil {
-		perror.ProgPanic("Missing value for token at %d:%d...", line, col)
-	}
-
-	if tk.val == nil {
-		perror.ProgPanic("Missing value for token at %d:%d...", line, col)
 	}
 }

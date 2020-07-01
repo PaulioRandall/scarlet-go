@@ -8,7 +8,7 @@ type Token interface {
 	GenType() GenType
 	SubType() SubType
 	Raw() string
-	Val() interface{}
+	Value() string
 	Snippet
 	fmt.Stringer
 }

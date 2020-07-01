@@ -10,7 +10,6 @@ type tok struct {
 	ge       GenType
 	su       SubType
 	raw      string
-	val      interface{}
 	line     int
 	colBegin int
 	colEnd   int
@@ -28,8 +27,17 @@ func (tk tok) Raw() string {
 	return tk.raw
 }
 
-func (tk tok) Val() interface{} {
-	return tk.val
+func (tk tok) Value() string {
+
+	if tk.su != SU_STRING {
+		return tk.raw
+	}
+
+	if len(tk.raw) == 2 {
+		return ""
+	}
+
+	return tk.raw[1 : len(tk.raw)-1]
 }
 
 func (tk tok) Begin() (int, int) {
@@ -50,6 +58,6 @@ func (tk tok) String() string {
 		tk.colEnd,
 		tk.ge.String(),
 		tk.su.String(),
-		tk.val,
+		tk.Value(),
 	)
 }
