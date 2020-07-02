@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Tok(ge GenType, su SubType, raw string, line, colBegin, colEnd int) tok {
+func Tok(ge GenType, su SubType, raw string, line, colBegin, colEnd int) Token {
 	return tok{
 		ge:       ge,
 		su:       su,
@@ -20,7 +20,7 @@ func Tok(ge GenType, su SubType, raw string, line, colBegin, colEnd int) tok {
 	}
 }
 
-func HalfTok(ge GenType, su SubType, raw string) tok {
+func HalfTok(ge GenType, su SubType, raw string) Token {
 	return tok{
 		ge:     ge,
 		su:     su,

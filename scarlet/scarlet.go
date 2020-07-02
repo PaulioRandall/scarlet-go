@@ -45,6 +45,7 @@ func main() { // Run it with `./godo run`
 
 	println()
 	println("[Next]")
+	println("Update pkg a_scan to use tokentest pkg")
 	println("Write tests for pkg b_group")
 
 	println()
