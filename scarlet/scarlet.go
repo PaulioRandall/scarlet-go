@@ -42,6 +42,16 @@ func main() { // Run it with `./godo run`
 
 	println()
 	println(ctx.String())
+
+	println()
+	println("[Next]")
+	println("Write tests for pkg b_group")
+
+	println()
+	println("[Think]")
+	println("How to test errors without comparing the message?")
+	println("	Pooling errors will easily allow IDs but cause coupling issues")
+	println("	Enum of pkg local error IDs?")
 }
 
 type symItr struct {

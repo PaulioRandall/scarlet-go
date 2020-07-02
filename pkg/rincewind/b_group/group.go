@@ -5,16 +5,10 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/stat"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
 type GroupFunc func() (grp, GroupFunc, error)
-
-type grp struct {
-	st  StatType
-	tks []Token
-}
 
 type TokenStream interface {
 	Next() Token

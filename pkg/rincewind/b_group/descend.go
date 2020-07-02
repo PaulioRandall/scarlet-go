@@ -5,8 +5,19 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/stat"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
+
+func accept_discard_gen(clt *collector, ge GenType) bool {
+
+	if clt.matchGen(ge) {
+		clt.next()
+		return true
+	}
+
+	return false
+}
 
 func accept_append_gen(clt *collector, gp *grp, ge GenType) bool {
 
@@ -16,6 +27,11 @@ func accept_append_gen(clt *collector, gp *grp, ge GenType) bool {
 	}
 
 	return false
+}
+
+func expect_discard_gen(clt *collector, ge GenType) error {
+	_, e := clt.expectGen(ge)
+	return e
 }
 
 func expect_append_gen(clt *collector, gp *grp, ge GenType) error {
@@ -50,21 +66,6 @@ func expect_append_sub(clt *collector, gp *grp, su SubType) error {
 	return nil
 }
 
-func accept_discard_gen(clt *collector, ge GenType) bool {
-
-	if clt.matchGen(ge) {
-		clt.next()
-		return true
-	}
-
-	return false
-}
-
-func expect_discard_gen(clt *collector, ge GenType) error {
-	_, e := clt.expectGen(ge)
-	return e
-}
-
 func nextGroup(clt *collector, gp *grp) error {
 
 	for accept_discard_gen(clt, GE_TERMINATOR) {
@@ -92,6 +93,8 @@ func nextGroup(clt *collector, gp *grp) error {
 
 func spell(clt *collector, gp *grp) error {
 
+	gp.st = ST_SPELL_CALL
+
 	if e := expect_append_gen(clt, gp, GE_SPELL); e != nil {
 		return e
 	}
@@ -116,11 +119,12 @@ func spell(clt *collector, gp *grp) error {
 func expressions(clt *collector, gp *grp) error {
 
 	for {
+		println(clt.buff.String())
 		if e := expression(clt, gp); e != nil {
 			return e
 		}
 
-		if clt.notMatchSub(SU_VALUE_DELIM) {
+		if !accept_append_sub(clt, gp, SU_VALUE_DELIM) {
 			break
 		}
 	}
