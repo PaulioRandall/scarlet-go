@@ -92,6 +92,152 @@ func requireGrp(t *testing.T, exps, acts []grp) {
 
 func Test1_1(t *testing.T) {
 
+	// WHEN grouping a statement containing redudant whitespace
+	// @Println (  )
+	in := []Token{
+		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		tkt.HalfTok(GE_WHITESPACE, SU_UNDEFINED, " "),
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tkt.HalfTok(GE_WHITESPACE, SU_UNDEFINED, "  "),
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+	}
+
+	// THEN whitespace is removed
+	// AND the statement grp is returned
+	exp := []grp{
+		grp{
+			st: ST_SPELL_CALL,
+			tks: []Token{
+				tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
+				tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+				tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+			},
+		},
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test1_2(t *testing.T) {
+
+	// WHEN grouping four statements separated by terminators
+	// @Set(x, 1); @Set(y, 2)
+	// @Println(x)
+	// @Println(y)
+	in := []Token{
+		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Set"), // 0
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		tkt.HalfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		tkt.HalfTok(GE_LITERAL, SU_NUMBER, "1"),
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tkt.HalfTok(GE_TERMINATOR, SU_TERMINATOR, ";"), // 6
+		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Set"),    // 7
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "y"),
+		tkt.HalfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		tkt.HalfTok(GE_LITERAL, SU_NUMBER, "2"),
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),  // 13
+		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"), // 14
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),  // 18
+		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"), // 19
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "y"),
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		// 23
+	}
+
+	// THEN four statement grps are returned
+	// AND each will contain only their tokens in the same order
+	exp := []grp{
+		grp{
+			st:  ST_SPELL_CALL,
+			tks: in[0:6],
+		},
+		grp{
+			st:  ST_SPELL_CALL,
+			tks: in[7:13],
+		},
+		grp{
+			st:  ST_SPELL_CALL,
+			tks: in[14:18],
+		},
+		grp{
+			st:  ST_SPELL_CALL,
+			tks: in[19:23],
+		},
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test1_3(t *testing.T) {
+
+	// WHEN grouping two statements separated by multiple empty statements
+	// @Println()
+	//
+	//
+	//
+	// @Println()
+	in := []Token{
+		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"), // 0
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"), // 3
+		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"), // 6
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		// 9
+	}
+
+	// THEN the empty statements will be ignored
+	// AND two spell call grps are returned
+	// AND each will contain only their tokens in the same order
+	exp := []grp{
+		grp{
+			st:  ST_SPELL_CALL,
+			tks: in[0:3],
+		},
+		grp{
+			st:  ST_SPELL_CALL,
+			tks: in[6:9],
+		},
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test2_1(t *testing.T) {
+
+	// WHEN grouping a spell with no parameters
+	// @Println()
+	in := []Token{
+		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+	}
+
+	// THEN a spell call grp is returned
+	// AND it will contain all the input tokens in the same order
+	exp := []grp{
+		grp{
+			st:  ST_SPELL_CALL,
+			tks: in,
+		},
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test2_2(t *testing.T) {
+
+	// WHEN grouping a spell with multiple parameters
 	// @Set(x, 1)
 	in := []Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Set"),
@@ -102,6 +248,8 @@ func Test1_1(t *testing.T) {
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
+	// THEN a spell call grp is returned
+	// AND it will contain all the input tokens in the same order
 	exp := []grp{
 		grp{
 			st:  ST_SPELL_CALL,

@@ -119,7 +119,6 @@ func spell(clt *collector, gp *grp) error {
 func expressions(clt *collector, gp *grp) error {
 
 	for {
-		println(clt.buff.String())
 		if e := expression(clt, gp); e != nil {
 			return e
 		}
