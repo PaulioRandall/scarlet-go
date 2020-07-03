@@ -44,14 +44,18 @@ func main() { // Run it with `./godo run`
 	println(ctx.String())
 
 	println()
-	println("[Next]")
-	println("Write tests for pkg b_group")
-
-	println()
-	println("[Think]")
-	println("How to test errors without comparing the message?")
-	println("	Pooling errors will easily allow IDs but cause coupling issues")
-	println("	Enum of pkg local error IDs?")
+	println("[Next] Reduce & tidy pkg b_group")
+	println("[Think] How to test errors without comparing the message?")
+	println("- Pooling errors will easily allow IDs but cause coupling issues")
+	println("- Pkg local enum of error IDs used in the package?")
+	println("[Plan]")
+	println("- a_scan:  scans in tokens including redundant ones")
+	println("- b_group: groups tokens into statements")
+	println("- c_inst:  sub-divides statements into instructions")
+	println("- d_check: checks sequences of instructions follow language rules")
+	println("- e_amass: amalgamates instructions into a single list")
+	println("- f_exec:  executes an instruction list")
+	println("- ...")
 }
 
 type symItr struct {
