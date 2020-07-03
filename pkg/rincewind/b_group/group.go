@@ -39,7 +39,7 @@ func (clt *collector) group() (grp, GroupFunc, error) {
 
 	gp := grp{}
 
-	e := nextGroup(clt, &gp)
+	e := group(clt, &gp)
 	if e != nil {
 		return grp{}, nil, e
 	}
@@ -95,14 +95,6 @@ func (clt *collector) notMatchGen(ge GenType) bool {
 	return !clt.matchGen(ge)
 }
 
-func (clt *collector) matchSub(su SubType) bool {
-	return clt.hasNext() && clt.buff.SubType() == su
-}
-
-func (clt *collector) notMatchSub(su SubType) bool {
-	return !clt.matchSub(su)
-}
-
 func (clt *collector) expectGen(ge GenType) (Token, error) {
 
 	if clt.matchGen(ge) {
@@ -120,6 +112,14 @@ func (clt *collector) expectGen(ge GenType) (Token, error) {
 	return nil, perror.NewBySnippet(msg, clt.buff)
 }
 
+func (clt *collector) matchSub(su SubType) bool {
+	return clt.hasNext() && clt.buff.SubType() == su
+}
+
+func (clt *collector) notMatchSub(su SubType) bool {
+	return !clt.matchSub(su)
+}
+
 func (clt *collector) expectSub(su SubType) (Token, error) {
 
 	if clt.matchSub(su) {
@@ -135,4 +135,46 @@ func (clt *collector) expectSub(su SubType) (Token, error) {
 
 	msg := fmt.Sprintf("Expected %s, got %s", su.String(), exp)
 	return nil, perror.NewBySnippet(msg, clt.buff)
+}
+
+func (clt *collector) acceptAppendGen(gp *grp, ge GenType) bool {
+
+	if clt.matchGen(ge) {
+		gp.tks = append(gp.tks, clt.next())
+		return true
+	}
+
+	return false
+}
+
+func (clt *collector) expectAppendGen(gp *grp, ge GenType) error {
+
+	tk, e := clt.expectGen(ge)
+	if e != nil {
+		return e
+	}
+
+	gp.tks = append(gp.tks, tk)
+	return nil
+}
+
+func (clt *collector) acceptAppendSub(gp *grp, su SubType) bool {
+
+	if clt.matchSub(su) {
+		gp.tks = append(gp.tks, clt.next())
+		return true
+	}
+
+	return false
+}
+
+func (clt *collector) expectAppendSub(gp *grp, su SubType) error {
+
+	tk, e := clt.expectSub(su)
+	if e != nil {
+		return e
+	}
+
+	gp.tks = append(gp.tks, tk)
+	return nil
 }

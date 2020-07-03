@@ -9,67 +9,10 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
-func accept_discard_gen(clt *collector, ge GenType) bool {
+func group(clt *collector, gp *grp) error {
 
-	if clt.matchGen(ge) {
-		clt.next()
-		return true
-	}
-
-	return false
-}
-
-func accept_append_gen(clt *collector, gp *grp, ge GenType) bool {
-
-	if clt.matchGen(ge) {
-		gp.tks = append(gp.tks, clt.next())
-		return true
-	}
-
-	return false
-}
-
-func expect_discard_gen(clt *collector, ge GenType) error {
-	_, e := clt.expectGen(ge)
-	return e
-}
-
-func expect_append_gen(clt *collector, gp *grp, ge GenType) error {
-
-	tk, e := clt.expectGen(ge)
-	if e != nil {
-		return e
-	}
-
-	gp.tks = append(gp.tks, tk)
-	return nil
-}
-
-func accept_append_sub(clt *collector, gp *grp, su SubType) bool {
-
-	if clt.matchSub(su) {
-		gp.tks = append(gp.tks, clt.next())
-		return true
-	}
-
-	return false
-}
-
-func expect_append_sub(clt *collector, gp *grp, su SubType) error {
-
-	tk, e := clt.expectSub(su)
-	if e != nil {
-		return e
-	}
-
-	gp.tks = append(gp.tks, tk)
-	return nil
-}
-
-func nextGroup(clt *collector, gp *grp) error {
-
-	for accept_discard_gen(clt, GE_TERMINATOR) {
-		// Ignore empty statements
+	for clt.matchGen(GE_TERMINATOR) {
+		clt.next() // Ignore empty statements
 	}
 
 	var e error
@@ -87,19 +30,23 @@ func nextGroup(clt *collector, gp *grp) error {
 		return e
 	}
 
-	expect_discard_gen(clt, GE_TERMINATOR)
-	return nil
+	if clt.empty() {
+		return nil
+	}
+
+	_, e = clt.expectGen(GE_TERMINATOR)
+	return e
 }
 
 func spell(clt *collector, gp *grp) error {
 
 	gp.st = ST_SPELL_CALL
 
-	if e := expect_append_gen(clt, gp, GE_SPELL); e != nil {
+	if e := clt.expectAppendGen(gp, GE_SPELL); e != nil {
 		return e
 	}
 
-	if e := expect_append_sub(clt, gp, SU_PAREN_OPEN); e != nil {
+	if e := clt.expectAppendSub(gp, SU_PAREN_OPEN); e != nil {
 		return e
 	}
 
@@ -109,7 +56,7 @@ func spell(clt *collector, gp *grp) error {
 		}
 	}
 
-	if e := expect_append_sub(clt, gp, SU_PAREN_CLOSE); e != nil {
+	if e := clt.expectAppendSub(gp, SU_PAREN_CLOSE); e != nil {
 		return e
 	}
 
@@ -123,7 +70,7 @@ func expressions(clt *collector, gp *grp) error {
 			return e
 		}
 
-		if !accept_append_sub(clt, gp, SU_VALUE_DELIM) {
+		if !clt.acceptAppendSub(gp, SU_VALUE_DELIM) {
 			break
 		}
 	}
@@ -134,8 +81,8 @@ func expressions(clt *collector, gp *grp) error {
 func expression(clt *collector, gp *grp) error {
 
 	switch {
-	case accept_append_gen(clt, gp, GE_LITERAL):
-	case accept_append_gen(clt, gp, GE_IDENTIFIER):
+	case clt.acceptAppendGen(gp, GE_LITERAL):
+	case clt.acceptAppendGen(gp, GE_IDENTIFIER):
 
 	default:
 		msg := fmt.Sprintf("Expected expression, got %s", clt.buff.String())

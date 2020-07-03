@@ -16,6 +16,32 @@ import (
 
 func main() { // Run it with `./godo run`
 
+	esme()
+
+	println()
+	println("[Think] How to test errors without comparing the message?")
+	println("- Pooling errors will easily allow IDs but cause coupling issues")
+	println("- Pkg local enum of error IDs used in the package?")
+	println("[Next] Start work on c_inst")
+	println("[Plan]")
+	println("- a_scan:  scans in tokens including redundant ones")
+	println("- b_group: groups tokens into statements")
+	println("- c_inst:  sub-divides statements into instructions")
+	println("- d_check: checks sequences of instructions follow language rules")
+	println("- e_amass: amalgamates instructions into a single list")
+	println("- f_exec:  executes an instruction list")
+	println("- ...")
+}
+
+type symItr struct {
+	scanner.SymItr
+	symbols []rune
+	size    int
+	i       int
+}
+
+func esme() {
+
 	f := "test.scarlet"
 	s, e := ioutil.ReadFile(f)
 	if e != nil {
@@ -42,27 +68,6 @@ func main() { // Run it with `./godo run`
 
 	println()
 	println(ctx.String())
-
-	println()
-	println("[Next] Reduce & tidy pkg b_group")
-	println("[Think] How to test errors without comparing the message?")
-	println("- Pooling errors will easily allow IDs but cause coupling issues")
-	println("- Pkg local enum of error IDs used in the package?")
-	println("[Plan]")
-	println("- a_scan:  scans in tokens including redundant ones")
-	println("- b_group: groups tokens into statements")
-	println("- c_inst:  sub-divides statements into instructions")
-	println("- d_check: checks sequences of instructions follow language rules")
-	println("- e_amass: amalgamates instructions into a single list")
-	println("- f_exec:  executes an instruction list")
-	println("- ...")
-}
-
-type symItr struct {
-	scanner.SymItr
-	symbols []rune
-	size    int
-	i       int
 }
 
 func (itr *symItr) Next() (rune, bool) {
