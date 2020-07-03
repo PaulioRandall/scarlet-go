@@ -1,10 +1,6 @@
 package group
 
 import (
-	"fmt"
-
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
-
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
@@ -17,7 +13,7 @@ type TokenStream interface {
 func New(ts TokenStream) GroupFunc {
 
 	if ts == nil {
-		perror.ProgPanic("Non-nil TokenStream required")
+		failNow("Non-nil TokenStream required")
 	}
 
 	clt := &collector{ts: ts}
@@ -77,8 +73,7 @@ func (clt *collector) empty() bool {
 func (clt *collector) next() Token {
 
 	if clt.empty() {
-		perror.ProgPanic(
-			"No tokens remain, you should call `match`, `hasNext`, or `empty` first")
+		failNow("No tokens remaining, call `match`, `hasNext`, or `empty` first")
 	}
 
 	r := clt.buff
@@ -101,15 +96,11 @@ func (clt *collector) expectGen(ge GenType) (Token, error) {
 		return clt.next(), nil
 	}
 
-	var exp string
 	if clt.buff == nil {
-		exp = "EOF"
-	} else {
-		exp = clt.buff.GenType().String()
+		return nil, errorUnexpectedEOF(clt)
 	}
 
-	msg := fmt.Sprintf("Expected %s, got %s", ge.String(), exp)
-	return nil, perror.NewBySnippet(msg, clt.buff)
+	return nil, errorWrongToken(clt, clt.buff)
 }
 
 func (clt *collector) matchSub(su SubType) bool {
@@ -126,15 +117,11 @@ func (clt *collector) expectSub(su SubType) (Token, error) {
 		return clt.next(), nil
 	}
 
-	var exp string
 	if clt.buff == nil {
-		exp = "EOF"
-	} else {
-		exp = clt.buff.SubType().String()
+		return nil, errorUnexpectedEOF(clt)
 	}
 
-	msg := fmt.Sprintf("Expected %s, got %s", su.String(), exp)
-	return nil, perror.NewBySnippet(msg, clt.buff)
+	return nil, errorWrongToken(clt, clt.buff)
 }
 
 func (clt *collector) acceptAppendGen(gp *grp, ge GenType) bool {

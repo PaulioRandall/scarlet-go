@@ -11,6 +11,12 @@ func ProgPanic(msg string, args ...interface{}) {
 	panic("PROGRAMMERS ERROR! " + msg)
 }
 
+type Error interface {
+	error
+	Snippet
+	Code() string
+}
+
 type Snippet interface {
 	Begin() (int, int)
 	End() (int, int)
@@ -20,6 +26,7 @@ type perr struct {
 	msg                 string
 	lineBegin, colBegin int
 	lineEnd, colEnd     int
+	code                string
 }
 
 func (e perr) Error() string {
@@ -34,7 +41,11 @@ func (e perr) End() (int, int) {
 	return e.lineEnd, e.colEnd
 }
 
-func New(msg string) error {
+func (e perr) Code() string {
+	return e.code
+}
+
+func New(code string, msg string) error {
 
 	e := perr{
 		msg:       msg,
@@ -42,12 +53,13 @@ func New(msg string) error {
 		colBegin:  -1,
 		lineEnd:   -1,
 		colEnd:    -1,
+		code:      code,
 	}
 
 	return errors.WithStack(e)
 }
 
-func NewByPos(msg string, line, col int) error {
+func NewByPos(code string, msg string, line, col int) error {
 
 	e := perr{
 		msg:       msg,
@@ -55,12 +67,13 @@ func NewByPos(msg string, line, col int) error {
 		colBegin:  col,
 		lineEnd:   line,
 		colEnd:    col + 1,
+		code:      code,
 	}
 
 	return errors.WithStack(e)
 }
 
-func NewByStr(msg string, line, col, len int) error {
+func NewByStr(code string, msg string, line, col, len int) error {
 
 	e := perr{
 		msg:       msg,
@@ -68,19 +81,21 @@ func NewByStr(msg string, line, col, len int) error {
 		colBegin:  col,
 		lineEnd:   line,
 		colEnd:    col + len,
+		code:      code,
 	}
 
 	return errors.WithStack(e)
 }
 
-func NewBySnippet(msg string, snip Snippet) error {
+func NewBySnippet(code string, msg string, snip Snippet) error {
 
 	if snip == nil {
-		return New(msg)
+		return New(code, msg)
 	}
 
 	e := perr{
-		msg: msg,
+		msg:  msg,
+		code: code,
 	}
 
 	e.lineBegin, e.colBegin = snip.Begin()
@@ -89,14 +104,21 @@ func NewBySnippet(msg string, snip Snippet) error {
 	return errors.WithStack(e)
 }
 
-func NewAfterSnippet(msg string, snip Snippet) error {
+func NewAfterSnippet(code string, msg string, snip Snippet) error {
 
 	e := perr{
 		msg:     msg,
 		lineEnd: -1,
 		colEnd:  -1,
+		code:    code,
 	}
 
 	e.lineBegin, e.colBegin = snip.End()
 	return errors.WithStack(e)
+}
+
+func Unwrap(e error) Error {
+	err := (Error)(nil)
+	errors.As(e, &err)
+	return err
 }

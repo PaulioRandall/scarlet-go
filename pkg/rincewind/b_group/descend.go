@@ -1,10 +1,6 @@
 package group
 
 import (
-	"fmt"
-
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
-
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/stat"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
@@ -18,12 +14,14 @@ func group(clt *collector, gp *grp) error {
 	var e error
 
 	switch {
+	case clt.empty():
+		return errorMissingStatement(clt)
+
 	case clt.matchGen(GE_SPELL):
 		e = spell(clt, gp)
 
 	default:
-		msg := fmt.Sprintf("Expected statement, got %s", clt.buff.String())
-		e = perror.NewBySnippet(msg, clt.buff)
+		return errorUnexpectedToken(clt)
 	}
 
 	if e != nil {
@@ -85,8 +83,7 @@ func expression(clt *collector, gp *grp) error {
 	case clt.acceptAppendGen(gp, GE_IDENTIFIER):
 
 	default:
-		msg := fmt.Sprintf("Expected expression, got %s", clt.buff.String())
-		return perror.NewBySnippet(msg, clt.buff)
+		return errorMissingExpression(clt)
 	}
 
 	return nil

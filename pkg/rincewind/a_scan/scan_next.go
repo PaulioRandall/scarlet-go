@@ -1,10 +1,7 @@
 package scan
 
 import (
-	"fmt"
 	"strings"
-
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
@@ -51,7 +48,7 @@ func scanNext(scn *scanner, tk *tok) error {
 		return numberLiteral(scn, tk)
 	}
 
-	return fail(scn, "Unknown symbol %q", scn.next())
+	return errorUnknownSymbol(scn)
 }
 
 func newline(scn *scanner, tk *tok) error {
@@ -63,7 +60,7 @@ func newline(scn *scanner, tk *tok) error {
 	}
 
 	if scn.notMatch('\n') {
-		return fail(scn, "Got %q, expected %q", '\r', string("\r\n"))
+		return errorBadNewline(scn)
 	}
 	sb.WriteRune(scn.next())
 
@@ -112,7 +109,7 @@ func spell(scn *scanner, tk *tok) error {
 
 	for {
 		if !scn.matchLetter() {
-			return fail(scn, "Expected letter")
+			return errorBadSpellName(scn)
 		}
 
 		for scn.matchLetter() {
@@ -141,12 +138,8 @@ func stringLiteral(scn *scanner, tk *tok) error {
 			sb.WriteRune(scn.next())
 		}
 
-		if scn.empty() {
-			return fail(scn, "EOF encountered before string was terminated")
-		}
-
-		if scn.matchNewline() {
-			return fail(scn, "Newline encountered before string was terminated")
+		if scn.empty() || scn.matchNewline() {
+			return errorBadString(scn)
 		}
 
 		sb.WriteRune(scn.next())
@@ -172,7 +165,7 @@ func numberLiteral(scn *scanner, tk *tok) error {
 	sb.WriteRune(scn.next())
 
 	if !scn.matchDigit() {
-		return fail(scn, "Expected digit after decimal point")
+		return errorBadNumber(scn)
 	}
 
 	for scn.matchDigit() {
@@ -182,9 +175,4 @@ func numberLiteral(scn *scanner, tk *tok) error {
 FINALISE:
 	tk.ge, tk.su, tk.raw = GE_LITERAL, SU_NUMBER, sb.String()
 	return nil
-}
-
-func fail(scn *scanner, msg string, args ...interface{}) error {
-	msg = fmt.Sprintf(msg, args...)
-	return perror.NewByPos(msg, scn.line, scn.col)
 }
