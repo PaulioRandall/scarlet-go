@@ -1,23 +1,16 @@
 #!/bin/bash
 
-# *********************************
-# Change these parameters as needed
+ROOT_DIR="$PWD"
+BUILD_DIR="build"
+
 EXE_NAME="scarlet"
-MAIN_GO_FILE="scarlet/scarlet.go"
-TEST_TIMEOUT="2s"
+EXE_FILE="$BUILD_DIR/$EXE_NAME"
+GO_MAIN="scarlet/scarlet.go"
+
 BUILD_FLAGS=""
 #BUILD_FLAGS=-gcflags -m -ldflags "-s -w"
 RESOURCE_FILES="scarlet/test.scarlet"
-# *********************************
-
-OUTPUT_FILE="-o $EXE_NAME"
-ROOT_DIR="$PWD"
-BUILD_DIR="build"
-EXE_FILE="$BUILD_DIR/$EXE_NAME"
-
-tabs -2
-clear
-mkdir -p "$BUILD_DIR"
+TEST_TIMEOUT="2s"
 
 # println prints the arguments then a line feed.
 # $@: List of text strings to print
@@ -30,9 +23,9 @@ println() {
   printf "\n"
 }
 
-# copyResources copies a space separated list of resource files into the build
-# folder.
-copyResources() {
+# copyBuildResources copies a space separated list of resource files into the
+# build folder.
+copyBuildResources() {
 	for X in $RESOURCE_FILES
 	do
     cp -f -r "$X" "$BUILD_DIR"
@@ -50,24 +43,62 @@ checkExitCode() {
   fi
 }
 
+# printUsage needs no explanation
+printUsage() {
+  println "Usage:"
+  println "\t" "./godo clean   " "\t" "Delete build directory"
+  println "\t" "./godo build   " "\t" "Build -> format"
+  println "\t" "./godo test    " "\t" "Build -> format -> test" 
+  println "\t" "./godo run     " "\t" "Build -> format -> test -> run"
+  println "\t" "./godo compress" "\t" "Compress binary if 'upx' is installed"
+  println "\t" "./godo help    " "\t" "Show help"
+}
+
+# begin prepares the console
+begin() {
+  tabs -2
+  clear
+}
+
+# setupBuildDir creates or clears the build directory
+setupBuildDir() {
+  println "Setting up..."
+  
+  mkdir -p "$BUILD_DIR"
+  checkExitCode $? "Setup failed"
+
+  rm -f "$BUILD_DIR/*"
+  checkExitCode $? "Setup failed"
+}
+
+# clean needs no explanation
+clean() {
+  println "Cleaning..."
+
+  rm -r -f "$BUILD_DIR"
+  checkExitCode $? "Could not remove build directory"
+}
+
 # goBuild builds the Go program.
 goBuild() {
   println "Building..."
- 	rm -f "$BUILD_DIR/*"
-  go build -o "$EXE_FILE" $BUILD_FLAGS "$MAIN_GO_FILE"
+
+  go build -o "$EXE_FILE" $BUILD_FLAGS "$GO_MAIN"
   checkExitCode $? "'go build ...' failed"
 }
 
 # goFmt formats the Go code.
 goFmt() {
   println "Formatting..."
+
   go fmt ./...
   checkExitCode $? "'go fmt ...' failed"
 }
 
-# goTest runs the Go test code.
+# goTest runs the Go tests.
 goTest() {
   println "Testing..."
+
   go test ./... -timeout "$TEST_TIMEOUT"
   checkExitCode $? "'go test ...' failed"
 }
@@ -75,13 +106,14 @@ goTest() {
 # runExe runs the built executable.
 runExe() {
   println "Running..." "\n"
-  cd "$BUILD_DIR"
+
+  cd $BUILD_DIR
   ./"$EXE_NAME"
   checkExitCode $? "'./$EXE_FILE' failed"
-  cd "$ROOT_DIR"
+  cd $ROOT_DIR
 }
 
-# upxCompress compresses the binary executable.
+# upxCompress compresses the binary executable if possible.
 upxCompress() {
   println Compressing...
   cd $BUILD_DIR
@@ -96,15 +128,26 @@ upxCompress() {
   cd $ROOT_DIR
 }
 
-# If you just want to build the binary.
+# If you want to remove the build directories.
+if [[ "$1" == "clean" ]]; then
+  clean
+  println
+  exit 0
+fi
+
+# If you want to build the project.
 if [[ "$1" == "build" ]]; then
+  begin
+  setupBuildDir
   goBuild
   goFmt
   exit 0
 fi
 
-# If you want to build and test the binary.
+# If you want to build and test the project.
 if [[ "$1" == "test" ]]; then
+  begin
+  setupBuildDir
   goBuild
   goFmt
   goTest
@@ -113,10 +156,12 @@ fi
 
 # If you want to build, test, then run the binary.
 if [[ "$1" == "run" ]]; then
+  begin
+  setupBuildDir
   goBuild
   goFmt
   goTest
-  copyResources
+  copyBuildResources
   runExe
   println
   exit 0
@@ -124,13 +169,16 @@ fi
 
 # If you want to compress a built binary.
 if [[ "$1" == "compress" ]]; then
+  begin
   upxCompress $2
   exit 0
 fi
 
+if [[ "$1" == "help" ]]; then
+  printUsage
+  exit 0
+fi
+
 println "I don't understand the option or no option supplied '$1'. Usage:"
-println "	./godo build            " "Build -> format"
-println "	./godo test             " "Build -> format -> test" 
-println "	./godo run              " "Build -> format -> test -> run"
-println "	./godo compress         " "Compresses binary if UPX is installed"
+printUsage
 exit 1

@@ -17,7 +17,7 @@ type ScanFunc func() (tok, ScanFunc, error)
 func New(itr SymbolItr) ScanFunc {
 
 	if itr == nil {
-		perror.ProgPanic("Non-nil SymbolItr required")
+		perror.Panic("Non-nil SymbolItr required")
 	}
 
 	scn := &scanner{
@@ -93,7 +93,7 @@ func (scn *scanner) empty() bool {
 func (scn *scanner) next() rune {
 
 	if scn.empty() {
-		perror.ProgPanic(
+		perror.Panic(
 			"No symbols remain, should call `match`, `hasNext`, or `empty` first")
 	}
 

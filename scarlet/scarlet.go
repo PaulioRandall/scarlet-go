@@ -19,9 +19,6 @@ func main() { // Run it with `./godo run`
 	esme()
 
 	println()
-	println("[Think] How to test errors without comparing the message?")
-	println("- Pooling errors will easily allow IDs but cause coupling issues")
-	println("- Pkg local enum of error IDs used in the package?")
 	println("[Next] Start work on c_inst")
 	println("[Plan]")
 	println("- a_scan:  scans in tokens including redundant ones")

@@ -6,7 +6,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func ProgPanic(msg string, args ...interface{}) {
+func Panic(msg string, args ...interface{}) {
 	msg = fmt.Sprintf(msg, args...)
 	panic("PROGRAMMERS ERROR! " + msg)
 }
