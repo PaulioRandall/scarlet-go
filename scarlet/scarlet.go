@@ -21,12 +21,12 @@ func main() { // Run it with `./godo run`
 	println()
 	println("[Next] Start work on c_inst")
 	println("[Plan]")
-	println("- a_scan:  scans in tokens including redundant ones")
-	println("- b_group: groups tokens into statements")
-	println("- c_inst:  sub-divides statements into instructions")
-	println("- d_check: checks sequences of instructions follow language rules")
-	println("- e_amass: amalgamates instructions into a single list")
-	println("- f_exec:  executes an instruction list")
+	println("- a_scan:    scans in tokens including redundant ones")
+	println("- b_group:   groups tokens into statements")
+	println("- c_compile: sub-divides statements into instructions")
+	println("- d_check:   checks sequences of instructions follow language rules")
+	println("- e_amass:   amalgamates instructions into a single list")
+	println("- f_exec:    executes an instruction list")
 	println("- ...")
 }
 
