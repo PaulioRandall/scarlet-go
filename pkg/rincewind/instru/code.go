@@ -1,9 +1,9 @@
-package compile
+package instru
 
-type InstructionCode int
+type Code int
 
 const (
-	IN_UNDEFINED InstructionCode = iota
+	IN_UNDEFINED Code = iota
 
 	// Set the program counter to the instruction number at the top of the value
 	// stack.
@@ -35,10 +35,10 @@ const (
 
 	// Call a spell with the contents of the value stack.
 	//
-	// Arg: spellname
-	//
 	// Expected value stack:
-	// ...: value...
+	// top: spell name
+	// 001: number of arguments
+	// ...: args
 	IN_SPELL
 )
 
