@@ -14,6 +14,7 @@ func Compile(ts TokenStream) ([]instruction, error) {
 
 type compiler struct {
 	ts   TokenStream
+	ins  stack
 	buff Token
 }
 

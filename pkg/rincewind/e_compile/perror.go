@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	ERR_UNEXPECTED_EOF string = "GROUP_ERR_UNEXPECTED_EOF"
-	//ERR_UNEXPECTED_TOKEN   string = "GROUP_ERR_UNEXPECTED_TOKEN"
-	ERR_WRONG_TOKEN string = "GROUP_ERR_WRONG_TOKEN"
+	ERR_UNEXPECTED_EOF   string = "GROUP_ERR_UNEXPECTED_EOF"
+	ERR_UNEXPECTED_TOKEN string = "GROUP_ERR_UNEXPECTED_TOKEN"
+	ERR_WRONG_TOKEN      string = "GROUP_ERR_WRONG_TOKEN"
 	//ERR_MISSING_EXPRESSION string = "GROUP_ERR_MISSING_EXPRESSION"
 	//ERR_MISSING_STATEMENT  string = "GROUP_ERR_MISSING_STATEMENT"
 )
@@ -19,10 +19,10 @@ func errorUnexpectedEOF(com *compiler) error {
 	return fail(com.buff, ERR_UNEXPECTED_EOF, "Want %q, have EOF")
 }
 
-//func errorUnexpectedToken(clt *collector) error {
-//return fail(clt.buff, ERR_UNEXPECTED_TOKEN,
-//"Token not expected here %q", clt.buff.String())
-//}
+func errorUnexpectedToken(com *compiler) error {
+	return fail(com.buff, ERR_UNEXPECTED_TOKEN,
+		"Token not expected here %q", com.buff.String())
+}
 
 func errorWrongToken(com *compiler, want Token) error {
 	return fail(com.buff, ERR_WRONG_TOKEN,
