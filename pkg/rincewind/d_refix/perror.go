@@ -1,13 +1,12 @@
 package refix
 
 import (
-	//	"fmt"
+	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
-	//. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
-/*
 const (
 	ERR_UNEXPECTED_EOF   string = "GROUP_ERR_UNEXPECTED_EOF"
 	ERR_UNEXPECTED_TOKEN string = "GROUP_ERR_UNEXPECTED_TOKEN"
@@ -16,18 +15,18 @@ const (
 	//ERR_MISSING_STATEMENT  string = "GROUP_ERR_MISSING_STATEMENT"
 )
 
-func errorUnexpectedEOF(com *compiler) error {
-	return fail(com.buff, ERR_UNEXPECTED_EOF, "Want %q, have EOF")
+func errorUnexpectedEOF(rfx *refixer) error {
+	return fail(rfx.buff, ERR_UNEXPECTED_EOF, "Want %q, have EOF")
 }
 
-func errorUnexpectedToken(com *compiler) error {
-	return fail(com.buff, ERR_UNEXPECTED_TOKEN,
-		"Token not expected here %q", com.buff.String())
+func errorUnexpectedToken(rfx *refixer) error {
+	return fail(rfx.buff, ERR_UNEXPECTED_TOKEN,
+		"Token not expected here %q", rfx.buff.String())
 }
 
-func errorWrongToken(com *compiler, want Token) error {
-	return fail(com.buff, ERR_WRONG_TOKEN,
-		"Want %q, have %q", want.String(), com.buff.String())
+func errorWrongToken(rfx *refixer, want Token) error {
+	return fail(rfx.buff, ERR_WRONG_TOKEN,
+		"Want %q, have %q", want.String(), rfx.buff.String())
 }
 
 //func errorMissingExpression(clt *collector) error {
@@ -42,7 +41,7 @@ func fail(snip perror.Snippet, code, msg string, args ...interface{}) error {
 	msg = fmt.Sprintf(msg, args...)
 	return perror.NewBySnippet(code, msg, snip)
 }
-*/
+
 func failNow(msg string, args ...interface{}) {
 	perror.Panic(msg, args...)
 }
