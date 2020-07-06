@@ -8,7 +8,7 @@ type TokenStream interface {
 	Next() Token
 }
 
-func compile(ts TokenStream) ([]instruction, error) {
+func Compile(ts TokenStream) ([]instruction, error) {
 	return nil, nil
 }
 

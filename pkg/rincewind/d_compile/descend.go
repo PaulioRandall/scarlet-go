@@ -1,5 +1,5 @@
 package compile
 
-func compileBlock(com *compiler, ts TokenStream) ([]instruction, error) {
+func compileBlock(com *compiler) ([]instruction, error) {
 	return nil, nil
 }
