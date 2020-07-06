@@ -8,11 +8,10 @@ import (
 )
 
 const (
-	ERR_UNEXPECTED_EOF   string = "GROUP_ERR_UNEXPECTED_EOF"
-	ERR_UNEXPECTED_TOKEN string = "GROUP_ERR_UNEXPECTED_TOKEN"
-	ERR_WRONG_TOKEN      string = "GROUP_ERR_WRONG_TOKEN"
-	//ERR_MISSING_EXPRESSION string = "GROUP_ERR_MISSING_EXPRESSION"
-	//ERR_MISSING_STATEMENT  string = "GROUP_ERR_MISSING_STATEMENT"
+	ERR_UNEXPECTED_EOF     string = "GROUP_ERR_UNEXPECTED_EOF"
+	ERR_UNEXPECTED_TOKEN   string = "GROUP_ERR_UNEXPECTED_TOKEN"
+	ERR_WRONG_TOKEN        string = "GROUP_ERR_WRONG_TOKEN"
+	ERR_MISSING_EXPRESSION string = "GROUP_ERR_MISSING_EXPRESSION"
 )
 
 func errorUnexpectedEOF(rfx *refixer) error {
@@ -29,13 +28,9 @@ func errorWrongToken(rfx *refixer, want Token) error {
 		"Want %q, have %q", want.String(), rfx.buff.String())
 }
 
-//func errorMissingExpression(clt *collector) error {
-//	return fail(clt.buff, ERR_MISSING_EXPRESSION, "Missing expression")
-//}
-
-//func errorMissingStatement(clt *collector) error {
-//	return fail(clt.buff, ERR_MISSING_STATEMENT, "Missing statement")
-//}
+func errorMissingExpression(rfx *refixer) error {
+	return fail(rfx.buff, ERR_MISSING_EXPRESSION, "Missing expression")
+}
 
 func fail(snip perror.Snippet, code, msg string, args ...interface{}) error {
 	msg = fmt.Sprintf(msg, args...)

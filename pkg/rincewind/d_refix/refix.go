@@ -98,3 +98,12 @@ func (rfx *refixer) next() Token {
 
 	return tk
 }
+
+func (rfx *refixer) pushNext() {
+
+	if rfx.empty() {
+		failNow("No tokens remaining, call `match` or `empty` first")
+	}
+
+	rfx.stk.push(rfx.next())
+}
