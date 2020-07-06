@@ -32,6 +32,8 @@ func (su SubType) String() string {
 const (
 	GE_UNDEFINED GenType = 0
 	SU_UNDEFINED SubType = 0
+	GE_ANY       GenType = iota
+	SU_ANY       SubType = iota
 	// ------------------
 	GE_WHITESPACE GenType = iota
 	// ------------------
