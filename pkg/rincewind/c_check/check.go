@@ -75,18 +75,20 @@ func (chk *checker) match(ty interface{}) bool {
 
 	case SubType:
 		return v == chk.buff.SubType()
-
-	default:
-		perror.Panic("Invalid kind of token type")
 	}
 
+	perror.Panic("Invalid kind of token type")
 	return false
 }
 
 func (chk *checker) accept(ty interface{}) bool {
-	match := chk.match(ty)
-	chk.bufferNext()
-	return match
+
+	if chk.match(ty) {
+		chk.bufferNext()
+		return true
+	}
+
+	return false
 }
 
 const ERR_WRONG_TOKEN string = "CHECK_ERR_WRONG_TOKEN"

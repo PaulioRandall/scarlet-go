@@ -30,6 +30,7 @@ func (q *queue) put(tk Token) {
 	}
 
 	q.back.next = n
+	q.back = n
 }
 
 func (q *queue) take() Token {
