@@ -13,7 +13,7 @@ type Matcher interface {
 	Expect(data, other interface{}) error
 }
 
-type Stack struct {
+type PipeStack struct {
 	ds   DataPipe
 	mtc  Matcher
 	buff interface{}
@@ -26,9 +26,9 @@ type node struct {
 	next *node
 }
 
-func New(ds DataPipe, mtc Matcher) *Stack {
+func NewPipeStack(ds DataPipe, mtc Matcher) *PipeStack {
 
-	stk := &Stack{
+	stk := &PipeStack{
 		ds:  ds,
 		mtc: mtc,
 	}
@@ -37,15 +37,15 @@ func New(ds DataPipe, mtc Matcher) *Stack {
 	return stk
 }
 
-func (stk *Stack) Empty() bool {
+func (stk *PipeStack) Empty() bool {
 	return stk.buff == nil && stk.size == 0
 }
 
-func (stk *Stack) EmptyStk() bool {
+func (stk *PipeStack) EmptyStack() bool {
 	return stk.size == 0
 }
 
-func (stk *Stack) Next() interface{} {
+func (stk *PipeStack) Next() interface{} {
 
 	if stk.Empty() {
 		perror.Panic("No data remaining, check first")
@@ -56,11 +56,11 @@ func (stk *Stack) Next() interface{} {
 	return data
 }
 
-func (stk *Stack) PeekNext() interface{} {
+func (stk *PipeStack) PeekNext() interface{} {
 	return stk.buff
 }
 
-func (stk *Stack) PeekStk() interface{} {
+func (stk *PipeStack) PeekStack() interface{} {
 
 	if stk.size == 0 {
 		return nil
@@ -69,10 +69,10 @@ func (stk *Stack) PeekStk() interface{} {
 	return stk.top.data
 }
 
-func (stk *Stack) push(data interface{}) {
+func (stk *PipeStack) push(data interface{}) {
 
 	if data == nil {
-		perror.Panic("Iterator Stack does not allow nil data")
+		perror.Panic("PipeStack does not allow nil data")
 	}
 
 	stk.top = &node{
@@ -83,7 +83,7 @@ func (stk *Stack) push(data interface{}) {
 	stk.size++
 }
 
-func (stk *Stack) Pop() interface{} {
+func (stk *PipeStack) Pop() interface{} {
 
 	if stk.size == 0 {
 		perror.Panic("Nothing to pop, check stack first")
@@ -96,11 +96,11 @@ func (stk *Stack) Pop() interface{} {
 	return data
 }
 
-func (stk *Stack) MatchNext(other interface{}) bool {
+func (stk *PipeStack) MatchNext(other interface{}) bool {
 	return stk.mtc.Match(stk.buff, other)
 }
 
-func (stk *Stack) AcceptPush(other interface{}) bool {
+func (stk *PipeStack) AcceptPush(other interface{}) bool {
 
 	if stk.MatchNext(other) {
 		stk.push(stk.Next())
@@ -110,7 +110,7 @@ func (stk *Stack) AcceptPush(other interface{}) bool {
 	return false
 }
 
-func (stk *Stack) ExpectPush(other interface{}) error {
+func (stk *PipeStack) ExpectPush(other interface{}) error {
 
 	e := stk.mtc.Expect(stk.buff, other)
 	if e != nil {
@@ -121,22 +121,22 @@ func (stk *Stack) ExpectPush(other interface{}) error {
 	return nil
 }
 
-func (stk *Stack) MatchStk(other interface{}) bool {
-	return stk.mtc.Match(stk.PeekStk(), other)
+func (stk *PipeStack) MatchStack(other interface{}) bool {
+	return stk.mtc.Match(stk.PeekStack(), other)
 }
 
-func (stk *Stack) AcceptPop(other interface{}) interface{} {
+func (stk *PipeStack) AcceptPop(other interface{}) interface{} {
 
-	if stk.MatchStk(other) {
+	if stk.MatchStack(other) {
 		return stk.Pop()
 	}
 
 	return nil
 }
 
-func (stk *Stack) ExpectPop(other interface{}) (interface{}, error) {
+func (stk *PipeStack) ExpectPop(other interface{}) (interface{}, error) {
 
-	if stk.EmptyStk() {
+	if stk.EmptyStack() {
 		return nil, stk.mtc.Expect(nil, other)
 	}
 
@@ -146,4 +146,10 @@ func (stk *Stack) ExpectPop(other interface{}) (interface{}, error) {
 	}
 
 	return stk.Pop(), nil
+}
+
+func (stk *PipeStack) DescendStack(f func(data interface{})) {
+	for n := stk.top; n != nil; n = n.next {
+		f(n.data)
+	}
 }

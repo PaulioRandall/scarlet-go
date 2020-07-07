@@ -65,9 +65,9 @@ type testItem struct {
 	age  int
 }
 
-func setup(t *testing.T, items []testItem) *Stack {
+func setup(t *testing.T, items []testItem) *PipeStack {
 	tpm := &testPipeAndMatcher{t, items, len(items), 0}
-	return New(tpm, tpm)
+	return NewPipeStack(tpm, tpm)
 }
 
 func Test1_1(t *testing.T) {
@@ -79,7 +79,7 @@ func Test1_1(t *testing.T) {
 
 	require.NotNil(t, ps)
 	require.False(t, ps.Empty())
-	require.True(t, ps.EmptyStk())
+	require.True(t, ps.EmptyStack())
 
 	require.True(t, ps.MatchNext(alice))
 	require.False(t, ps.MatchNext(bob))
@@ -89,7 +89,7 @@ func Test1_1(t *testing.T) {
 
 	require.Equal(t, alice, ps.Next())
 	require.False(t, ps.Empty())
-	require.True(t, ps.EmptyStk())
+	require.True(t, ps.EmptyStack())
 
 	require.True(t, ps.MatchNext(bob))
 	require.False(t, ps.MatchNext(alice))
@@ -111,25 +111,25 @@ func Test2_1(t *testing.T) {
 
 	require.True(t, ps.AcceptPush(alice))
 	require.False(t, ps.Empty())
-	require.False(t, ps.EmptyStk())
-	require.Equal(t, alice, ps.PeekStk())
-	require.True(t, ps.MatchStk(alice))
+	require.False(t, ps.EmptyStack())
+	require.Equal(t, alice, ps.PeekStack())
+	require.True(t, ps.MatchStack(alice))
 
 	require.Equal(t, alice, ps.Pop())
 	require.False(t, ps.Empty())
-	require.True(t, ps.EmptyStk())
+	require.True(t, ps.EmptyStack())
 
 	require.Nil(t, ps.ExpectPush(bob))
 	require.False(t, ps.Empty())
-	require.False(t, ps.EmptyStk())
-	require.Equal(t, bob, ps.PeekStk())
-	require.True(t, ps.MatchStk(bob))
+	require.False(t, ps.EmptyStack())
+	require.Equal(t, bob, ps.PeekStack())
+	require.True(t, ps.MatchStack(bob))
 
 	require.Nil(t, ps.ExpectPush("Charlie"))
 	require.False(t, ps.Empty())
-	require.False(t, ps.EmptyStk())
-	require.Equal(t, charlie, ps.PeekStk())
-	require.True(t, ps.MatchStk(charlie))
+	require.False(t, ps.EmptyStack())
+	require.Equal(t, charlie, ps.PeekStack())
+	require.True(t, ps.MatchStack(charlie))
 
 	require.Nil(t, ps.AcceptPop(bob))
 	_, e := ps.ExpectPop(bob)
@@ -137,13 +137,13 @@ func Test2_1(t *testing.T) {
 
 	require.Equal(t, charlie, ps.AcceptPop("Charlie"))
 	require.False(t, ps.Empty())
-	require.False(t, ps.EmptyStk())
-	require.Equal(t, bob, ps.PeekStk())
-	require.True(t, ps.MatchStk(bob))
+	require.False(t, ps.EmptyStack())
+	require.Equal(t, bob, ps.PeekStack())
+	require.True(t, ps.MatchStack(bob))
 
 	data, e := ps.ExpectPop(bob)
 	require.Nil(t, e)
 	require.Equal(t, bob, data)
 	require.True(t, ps.Empty())
-	require.True(t, ps.EmptyStk())
+	require.True(t, ps.EmptyStack())
 }

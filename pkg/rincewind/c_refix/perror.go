@@ -14,22 +14,22 @@ const (
 	ERR_MISSING_EXPRESSION string = "GROUP_ERR_MISSING_EXPRESSION"
 )
 
-func errorUnexpectedEOF(rfx *refixer) error {
-	return fail(rfx.buff, ERR_UNEXPECTED_EOF, "Want %q, have EOF")
+func errorUnexpectedEOF(want Token) error {
+	return fail(want, ERR_UNEXPECTED_EOF, "Want %q, have EOF")
 }
 
-func errorUnexpectedToken(rfx *refixer) error {
-	return fail(rfx.buff, ERR_UNEXPECTED_TOKEN,
-		"Token not expected here %q", rfx.buff.String())
+func errorUnexpectedToken(have Token) error {
+	return fail(have, ERR_UNEXPECTED_TOKEN,
+		"Token not expected here %q", have.String())
 }
 
-func errorWrongToken(rfx *refixer, want Token) error {
-	return fail(rfx.buff, ERR_WRONG_TOKEN,
-		"Want %q, have %q", want.String(), rfx.buff.String())
+func errorWrongToken(want fmt.Stringer, have Token) error {
+	return fail(have, ERR_WRONG_TOKEN,
+		"Want %q, have %q", want.String(), have.String())
 }
 
-func errorMissingExpression(rfx *refixer) error {
-	return fail(rfx.buff, ERR_MISSING_EXPRESSION, "Missing expression")
+func errorMissingExpression(have Token) error {
+	return fail(have, ERR_MISSING_EXPRESSION, "Missing expression")
 }
 
 func fail(snip perror.Snippet, code, msg string, args ...interface{}) error {

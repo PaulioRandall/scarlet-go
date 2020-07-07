@@ -1,161 +1,48 @@
 package refix
 
 import (
+	"fmt"
+
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/c_refix/pipestack"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
-type stack struct {
-	top  *node
-	size int
-}
+type RefixFunc func() (Token, RefixFunc, error)
 
-type node struct {
-	tk   Token
-	next *node
+type TokenStream interface {
+	Next() Token
 }
 
 type refixer struct {
-	ts   TokenStream
-	stk  stack
-	buff Token
+	*PipeStack
 }
 
-func (rfx *refixer) push(tk Token) {
+type pipeAndMatch struct {
+	ts TokenStream
+}
 
-	rfx.stk.top = &node{
-		tk:   tk,
-		next: rfx.stk.top,
+func New(ts TokenStream) RefixFunc {
+
+	if ts == nil {
+		failNow("Non-nil TokenStream required")
 	}
 
-	rfx.stk.size++
-}
+	pam := pipeAndMatch{ts}
+	rfx := &refixer{
+		NewPipeStack(pam, pam),
+	}
 
-func (rfx *refixer) peek() Token {
-
-	if rfx.stk.size == 0 {
+	if rfx.Empty() {
 		return nil
 	}
 
-	return rfx.stk.top.tk
-}
-
-func (rfx *refixer) pop() Token {
-
-	if rfx.stk.size == 0 {
-		failNow("Nothing to pop")
-	}
-
-	tk := rfx.stk.top.tk
-	rfx.stk.top = rfx.stk.top.next
-	rfx.stk.size--
-
-	return tk
-}
-
-func (rfx *refixer) bufferNext() {
-	rfx.buff = rfx.ts.Next()
-}
-
-func (rfx *refixer) emptyStk() bool {
-	return rfx.stk.size == 0
-}
-
-func (rfx *refixer) empty() bool {
-	return rfx.buff == nil && rfx.stk.size == 0
-}
-
-func match(tk Token, gen GenType, sub SubType) bool {
-
-	if tk == nil {
-		return false
-	}
-
-	g := gen == GE_ANY || gen == tk.GenType()
-	s := sub == SU_ANY || sub == tk.SubType()
-
-	return g && s
-}
-
-func (rfx *refixer) match(gen GenType, sub SubType) bool {
-	return match(rfx.buff, gen, sub)
-}
-
-func (rfx *refixer) notMatch(gen GenType, sub SubType) bool {
-	return !match(rfx.buff, gen, sub)
-}
-
-func (rfx *refixer) expect(gen GenType, sub SubType) (Token, error) {
-
-	if rfx.empty() {
-		return nil, errorUnexpectedEOF(rfx)
-	}
-
-	if rfx.match(gen, sub) {
-		return rfx.next(), nil
-	}
-
-	return nil, errorWrongToken(rfx, rfx.buff)
-}
-
-func (rfx *refixer) next() Token {
-
-	if rfx.empty() {
-		failNow("No tokens remaining, call `match` or `empty` first")
-	}
-
-	tk := rfx.buff
-	rfx.bufferNext()
-
-	return tk
-}
-
-func (rfx *refixer) pushNext() {
-
-	if rfx.empty() {
-		failNow("No tokens remaining, call `match` or `empty` first")
-	}
-
-	rfx.push(rfx.next())
-}
-
-func (rfx *refixer) matchPush(gen GenType, sub SubType) bool {
-
-	if rfx.match(gen, sub) {
-		rfx.push(rfx.next())
-		return true
-	}
-
-	return false
-}
-
-func (rfx *refixer) expectPush(gen GenType, sub SubType) error {
-
-	tk, e := rfx.expect(gen, sub)
-	if e != nil {
-		return e
-	}
-
-	rfx.push(tk)
-	return nil
-}
-
-func (rfx *refixer) matchStk(gen GenType, sub SubType) bool {
-	return match(rfx.peek(), gen, sub)
-}
-
-func (rfx *refixer) matchPop(gen GenType, sub SubType) Token {
-
-	if match(rfx.peek(), gen, sub) {
-		return rfx.pop()
-	}
-
-	return nil
+	return rfx.refix
 }
 
 func (rfx *refixer) refix() (Token, RefixFunc, error) {
 
-	if rfx.empty() {
-		failNow("No tokens remain, should call 'empty' or 'match' first")
+	if rfx.Empty() {
+		failNow("No tokens remain, should call 'empty', 'match', etc first")
 	}
 
 	tk, e := next(rfx)
@@ -163,9 +50,85 @@ func (rfx *refixer) refix() (Token, RefixFunc, error) {
 		return nil, nil, e
 	}
 
-	if rfx.empty() {
+	if rfx.Empty() {
 		return tk, nil, nil
 	}
 
 	return tk, rfx.refix, nil
+}
+
+func (rfx *refixer) Next() Token {
+	return rfx.PipeStack.Next().(Token)
+}
+
+func (rfx *refixer) PeekNext() Token {
+	return rfx.PipeStack.PeekNext().(Token)
+}
+
+func (rfx *refixer) PeekStack() Token {
+	return rfx.PipeStack.PeekStack().(Token)
+}
+
+func (rfx *refixer) Pop() Token {
+	return rfx.PipeStack.Pop().(Token)
+}
+
+func (rfx *refixer) AcceptPop(other interface{}) Token {
+	return rfx.PipeStack.AcceptPop(other).(Token)
+}
+
+func (rfx *refixer) ExpectPop(other interface{}) (Token, error) {
+
+	tk, e := rfx.PipeStack.ExpectPop(other)
+	if e != nil {
+		return nil, e
+	}
+
+	return tk.(Token), nil
+}
+
+func (dp pipeAndMatch) Next() interface{} {
+	return dp.ts.Next()
+}
+
+// Implements pipstack.Matcher.Match
+func (pipeAndMatch) Match(ifaceTk, ifacePat interface{}) bool {
+
+	if ifaceTk == nil {
+		return false
+	}
+
+	tk, ok := ifaceTk.(Token)
+	if !ok {
+		failNow("refixer pipestack contains something other than a Token")
+	}
+
+	if pat, ok := ifacePat.(GenType); ok {
+		return pat == GE_ANY || pat == tk.GenType()
+	}
+
+	if pat, ok := ifacePat.(SubType); ok {
+		return pat == SU_ANY || pat == tk.SubType()
+	}
+
+	failNow("refixer.Match requires a GenType or SubType as the second argument")
+	return false
+}
+
+// Implements pipstack.Matcher.Expect
+func (m pipeAndMatch) Expect(ifaceTk, ifacePat interface{}) error {
+
+	if ifaceTk == nil {
+		return errorUnexpectedEOF(ifaceTk.(Token))
+	}
+
+	if ifacePat == nil {
+		failNow("GenType or SubType required")
+	}
+
+	if m.Match(ifaceTk, ifacePat) {
+		return nil
+	}
+
+	return errorWrongToken(ifacePat.(fmt.Stringer), ifaceTk.(Token))
 }
