@@ -4,32 +4,53 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
+func (rfx *refixer) println() {
+
+	println("*************************************")
+
+	if rfx.buff == nil {
+		println("rfx.buff: ---")
+	} else {
+		println("rfx.buff:    " + rfx.buff.String())
+	}
+
+	println("rfx.stk:")
+	if rfx.stk.top == nil {
+		println("\t ---")
+		return
+	}
+
+	for n := rfx.stk.top; n != nil; n = n.next {
+		println("\t" + n.tk.String())
+	}
+}
+
 func next(rfx *refixer) (Token, error) {
 
 CONTINUE:
+
+	rfx.println()
 
 	switch {
 	case rfx.empty():
 		return nil, errorMissingExpression(rfx)
 
-	case rfx.match(GE_SPELL, SU_ANY):
-		rfx.pushNext()
+	case rfx.matchPush(GE_SPELL, SU_ANY):
 
-		tk, e := rfx.expect(GE_PARENTHESIS, SU_PAREN_OPEN)
+		e := rfx.expectPush(GE_PARENTHESIS, SU_PAREN_OPEN)
 		if e != nil {
 			return nil, e
 		}
 
-		rfx.stk.push(tk)
 		goto CONTINUE
 
 	case rfx.match(GE_PARENTHESIS, SU_PAREN_CLOSE):
-		if rfx.stk.peek().SubType() == SU_PAREN_OPEN {
-			rfx.stk.pop()
+
+		if tk := rfx.matchPop(GE_ANY, SU_PAREN_OPEN); tk != nil {
 			rfx.next()
 		}
 
-		return rfx.stk.pop(), nil
+		return rfx.pop(), nil
 
 	case rfx.match(GE_IDENTIFIER, SU_ANY):
 		return rfx.next(), nil
@@ -38,15 +59,16 @@ CONTINUE:
 		return rfx.next(), nil
 
 	case rfx.match(GE_DELIMITER, SU_VALUE_DELIM):
-		if rfx.stk.peek().SubType() != SU_PAREN_OPEN {
-			return rfx.stk.pop(), nil
+
+		if rfx.matchStk(GE_PARENTHESIS, SU_PAREN_OPEN) {
+			rfx.next()
+			goto CONTINUE
 		}
 
-		rfx.next()
-		goto CONTINUE
+		return rfx.pop(), nil
 
 	case rfx.match(GE_TERMINATOR, SU_ANY):
-		if rfx.stk.empty() {
+		if rfx.emptyStk() {
 			return rfx.next(), nil
 		}
 	}

@@ -19,8 +19,7 @@ func main() { // Run it with `./godo run`
 	esme()
 
 	println()
-	println("[Next] Test c_refix pkg")
-	println("[Then] Refactor c_refix pkg for readability")
+	println("[Then] Create interface based stack pkg")
 	println()
 	println("[Plan]")
 	println("- a_scan:     scans in tokens including redundant ones")

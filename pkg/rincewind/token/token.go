@@ -66,6 +66,7 @@ var genTypes = map[GenType]string{
 	GE_LITERAL:     `literal`,
 	GE_IDENTIFIER:  `identifier`,
 	GE_SPELL:       `spell`,
+	GE_DELIMITER:   `delimiter`,
 	GE_PARENTHESIS: `parenthesis`,
 }
 
@@ -77,6 +78,7 @@ var subTypes = map[SubType]string{
 	SU_STRING:      `string`,
 	SU_IDENTIFIER:  `identifier`,
 	SU_VOID:        `void`,
+	SU_VALUE_DELIM: `value_delim`,
 	SU_PAREN_OPEN:  `paren_open`,
 	SU_PAREN_CLOSE: `paren_close`,
 }
