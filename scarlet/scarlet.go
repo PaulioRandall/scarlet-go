@@ -19,7 +19,9 @@ func main() { // Run it with `./godo run`
 	esme()
 
 	println()
-	println("[Next] Write checker pkg but put it before refix pkg")
+	println("[Next] Rewrite compile pkg")
+	println("[Next] Add special token before spell args to indicate when spell")
+	println("       arguments start so we can count the number of arguments")
 	println()
 	println("[Plan]")
 	println("- a_scan:     scans in tokens including redundant ones")

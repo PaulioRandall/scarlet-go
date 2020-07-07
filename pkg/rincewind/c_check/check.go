@@ -69,6 +69,10 @@ func (chk *checker) empty() bool {
 
 func (chk *checker) match(ty interface{}) bool {
 
+	if chk.buff == nil {
+		return false
+	}
+
 	switch v := ty.(type) {
 	case GenType:
 		return v == chk.buff.GenType()
@@ -95,26 +99,26 @@ const ERR_WRONG_TOKEN string = "CHECK_ERR_WRONG_TOKEN"
 
 func (chk *checker) expect(ty interface{}) error {
 
-	err := func(want, have string) error {
-		msg := fmt.Sprintf("Want %q, have %q", want, have)
-		return perror.NewBySnippet(ERR_WRONG_TOKEN, msg, chk.buff)
+	if chk.match(ty) {
+		chk.bufferNext()
+		return nil
 	}
+
+	if chk.buff == nil {
+		return perror.New(ERR_WRONG_TOKEN, "Unexpected EOF")
+	}
+
+	var msg string
 
 	switch v := ty.(type) {
 	case GenType:
-		if v != chk.buff.GenType() {
-			return err(v.String(), chk.buff.GenType().String())
-		}
+		msg = fmt.Sprintf("Want %q, have %q",
+			v.String(), chk.buff.GenType().String())
 
 	case SubType:
-		if v != chk.buff.SubType() {
-			return err(v.String(), chk.buff.SubType().String())
-		}
-
-	default:
-		perror.Panic("Invalid kind of token type")
+		msg = fmt.Sprintf("Want %q, have %q",
+			v.String(), chk.buff.SubType().String())
 	}
 
-	chk.bufferNext()
-	return nil
+	return perror.NewBySnippet(ERR_WRONG_TOKEN, msg, chk.buff)
 }
