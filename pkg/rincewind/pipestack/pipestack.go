@@ -38,7 +38,11 @@ func NewPipeStack(ds DataPipe, mtc Matcher) *PipeStack {
 }
 
 func (stk *PipeStack) Empty() bool {
-	return stk.buff == nil && stk.size == 0
+	return stk.EmptyBuff() && stk.EmptyStack()
+}
+
+func (stk *PipeStack) EmptyBuff() bool {
+	return stk.buff == nil
 }
 
 func (stk *PipeStack) EmptyStack() bool {
