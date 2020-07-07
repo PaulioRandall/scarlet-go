@@ -19,7 +19,7 @@ func main() { // Run it with `./godo run`
 	esme()
 
 	println()
-	println("[Then] Create interface based stack pkg")
+	println("[Next] Test new iterator stack package")
 	println()
 	println("[Plan]")
 	println("- a_scan:     scans in tokens including redundant ones")
