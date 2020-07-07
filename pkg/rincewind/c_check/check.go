@@ -29,6 +29,7 @@ func New(ts TokenStream) CheckFunc {
 		queue: queue{},
 		ts:    ts,
 	}
+	chk.bufferNext()
 
 	if chk.empty() {
 		return nil
@@ -39,9 +40,10 @@ func New(ts TokenStream) CheckFunc {
 
 func (chk *checker) check() (Token, CheckFunc, error) {
 
-	e := next(chk)
-	if e != nil {
-		return nil, nil, e
+	if chk.queue.empty() {
+		if e := next(chk); e != nil {
+			return nil, nil, e
+		}
 	}
 
 	tk := chk.queue.take()
@@ -53,6 +55,11 @@ func (chk *checker) check() (Token, CheckFunc, error) {
 }
 
 func (chk *checker) bufferNext() {
+
+	if chk.buff != nil {
+		chk.queue.put(chk.buff)
+	}
+
 	chk.buff = chk.ts.Next()
 }
 
@@ -60,21 +67,24 @@ func (chk *checker) empty() bool {
 	return chk.buff == nil && chk.queue.empty()
 }
 
-func (chk *checker) accept(ty interface{}) bool {
-
-	var match bool
+func (chk *checker) match(ty interface{}) bool {
 
 	switch v := ty.(type) {
 	case GenType:
-		match = v == chk.buff.GenType()
+		return v == chk.buff.GenType()
 
 	case SubType:
-		match = v == chk.buff.SubType()
+		return v == chk.buff.SubType()
 
 	default:
 		perror.Panic("Invalid kind of token type")
 	}
 
+	return false
+}
+
+func (chk *checker) accept(ty interface{}) bool {
+	match := chk.match(ty)
 	chk.bufferNext()
 	return match
 }
