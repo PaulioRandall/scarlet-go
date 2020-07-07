@@ -1,4 +1,4 @@
-package itr_stk
+package pipestack
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
@@ -56,6 +56,19 @@ func (stk *Stack) Next() interface{} {
 	return data
 }
 
+func (stk *Stack) PeekNext() interface{} {
+	return stk.buff
+}
+
+func (stk *Stack) PeekStk() interface{} {
+
+	if stk.size == 0 {
+		return nil
+	}
+
+	return stk.top.data
+}
+
 func (stk *Stack) Push(data interface{}) {
 
 	if data == nil {
@@ -68,15 +81,6 @@ func (stk *Stack) Push(data interface{}) {
 	}
 
 	stk.size++
-}
-
-func (stk *Stack) Peek() interface{} {
-
-	if stk.size == 0 {
-		return nil
-	}
-
-	return stk.top.data
 }
 
 func (stk *Stack) Pop() interface{} {
@@ -118,7 +122,7 @@ func (stk *Stack) ExpectPush(other interface{}) error {
 }
 
 func (stk *Stack) MatchStk(other interface{}) bool {
-	return stk.mtc.Match(stk.Peek(), other)
+	return stk.mtc.Match(stk.PeekStk(), other)
 }
 
 func (stk *Stack) AcceptPop(other interface{}) interface{} {
