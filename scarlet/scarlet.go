@@ -19,7 +19,7 @@ func main() { // Run it with `./godo run`
 	esme()
 
 	println()
-	println("[Next] Test new iterator stack package")
+	println("[Next] Integrate pipestack into refix pkg")
 	println()
 	println("[Plan]")
 	println("- a_scan:     scans in tokens including redundant ones")

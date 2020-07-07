@@ -4,7 +4,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 )
 
-type DataStream interface {
+type DataPipe interface {
 	Next() interface{}
 }
 
@@ -14,7 +14,7 @@ type Matcher interface {
 }
 
 type Stack struct {
-	ds   DataStream
+	ds   DataPipe
 	mtc  Matcher
 	buff interface{}
 	top  *node
@@ -26,7 +26,7 @@ type node struct {
 	next *node
 }
 
-func New(ds DataStream, mtc Matcher) *Stack {
+func New(ds DataPipe, mtc Matcher) *Stack {
 
 	stk := &Stack{
 		ds:  ds,
@@ -69,7 +69,7 @@ func (stk *Stack) PeekStk() interface{} {
 	return stk.top.data
 }
 
-func (stk *Stack) Push(data interface{}) {
+func (stk *Stack) push(data interface{}) {
 
 	if data == nil {
 		perror.Panic("Iterator Stack does not allow nil data")
@@ -103,7 +103,7 @@ func (stk *Stack) MatchNext(other interface{}) bool {
 func (stk *Stack) AcceptPush(other interface{}) bool {
 
 	if stk.MatchNext(other) {
-		stk.Push(stk.Next())
+		stk.push(stk.Next())
 		return true
 	}
 
@@ -117,7 +117,7 @@ func (stk *Stack) ExpectPush(other interface{}) error {
 		return e
 	}
 
-	stk.Push(stk.Next())
+	stk.push(stk.Next())
 	return nil
 }
 
