@@ -56,7 +56,7 @@ CONTINUE:
 		return rfx.Next(), nil
 
 	case rfx.MatchNext(SU_VALUE_DELIM):
-		if rfx.MatchStack(SU_PAREN_OPEN) {
+		if rfx.MatchTop(SU_PAREN_OPEN) {
 			rfx.Next()
 			goto CONTINUE
 		}

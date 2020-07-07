@@ -3,7 +3,7 @@ package refix
 import (
 	"fmt"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/c_refix/pipestack"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/pipestack"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
@@ -13,12 +13,12 @@ type TokenStream interface {
 	Next() Token
 }
 
-type refixer struct {
-	*PipeStack
-}
-
 type pipeAndMatch struct {
 	ts TokenStream
+}
+
+type refixer struct {
+	*PipeStack
 }
 
 func New(ts TokenStream) RefixFunc {
@@ -66,7 +66,7 @@ func (rfx *refixer) PeekNext() Token {
 }
 
 func (rfx *refixer) PeekStack() Token {
-	return rfx.PipeStack.PeekStack().(Token)
+	return rfx.PipeStack.PeekTop().(Token)
 }
 
 func (rfx *refixer) Pop() Token {
@@ -87,11 +87,10 @@ func (rfx *refixer) ExpectPop(other interface{}) (Token, error) {
 	return tk.(Token), nil
 }
 
-func (dp pipeAndMatch) Next() interface{} {
-	return dp.ts.Next()
+func (m pipeAndMatch) Next() interface{} {
+	return m.ts.Next()
 }
 
-// Implements pipstack.Matcher.Match
 func (pipeAndMatch) Match(ifaceTk, ifacePat interface{}) bool {
 
 	if ifaceTk == nil {
@@ -115,7 +114,6 @@ func (pipeAndMatch) Match(ifaceTk, ifacePat interface{}) bool {
 	return false
 }
 
-// Implements pipstack.Matcher.Expect
 func (m pipeAndMatch) Expect(ifaceTk, ifacePat interface{}) error {
 
 	if ifaceTk == nil {

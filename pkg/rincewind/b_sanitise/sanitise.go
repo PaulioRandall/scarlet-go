@@ -1,4 +1,4 @@
-package sanitiser
+package sanitise
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"

@@ -60,7 +60,7 @@ func (stk *PipeStack) PeekNext() interface{} {
 	return stk.buff
 }
 
-func (stk *PipeStack) PeekStack() interface{} {
+func (stk *PipeStack) PeekTop() interface{} {
 
 	if stk.size == 0 {
 		return nil
@@ -121,13 +121,13 @@ func (stk *PipeStack) ExpectPush(other interface{}) error {
 	return nil
 }
 
-func (stk *PipeStack) MatchStack(other interface{}) bool {
-	return stk.mtc.Match(stk.PeekStack(), other)
+func (stk *PipeStack) MatchTop(other interface{}) bool {
+	return stk.mtc.Match(stk.PeekTop(), other)
 }
 
 func (stk *PipeStack) AcceptPop(other interface{}) interface{} {
 
-	if stk.MatchStack(other) {
+	if stk.MatchTop(other) {
 		return stk.Pop()
 	}
 

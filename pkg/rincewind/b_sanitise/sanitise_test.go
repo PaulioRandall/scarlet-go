@@ -1,4 +1,4 @@
-package sanitiser
+package sanitise
 
 import (
 	"testing"
