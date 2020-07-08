@@ -65,7 +65,7 @@ func (rfx *refixer) PeekNext() Token {
 	return rfx.PipeStack.PeekNext().(Token)
 }
 
-func (rfx *refixer) PeekStack() Token {
+func (rfx *refixer) PeekTop() Token {
 	return rfx.PipeStack.PeekTop().(Token)
 }
 

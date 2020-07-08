@@ -40,7 +40,7 @@ CONTINUE:
 			return nil, e
 		}
 
-		goto CONTINUE
+		return MagicToken(GE_PARAMS, SU_UNDEFINED, rfx.PeekTop()), nil
 
 	case rfx.MatchNext(SU_PAREN_CLOSE):
 		if tk := rfx.AcceptPop(SU_PAREN_OPEN); tk != nil {

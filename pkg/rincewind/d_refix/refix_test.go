@@ -65,7 +65,9 @@ func Test1_1(t *testing.T) {
 	}
 
 	// THEN parenthesis are removed
+	// AND magic token indicating parameter start inserted before spell
 	exp := []Token{
+		tkt.Tok(GE_PARAMS, SU_UNDEFINED, "", 0, 0, 1),
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
 		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
@@ -87,7 +89,9 @@ func Test1_2(t *testing.T) {
 
 	// THEN parenthesis are removed
 	// AND the argument is placed before the spell
+	// AND magic token indicating parameter start inserted before the argument
 	exp := []Token{
+		tkt.Tok(GE_PARAMS, SU_UNDEFINED, "", 0, 0, 1),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
 		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
@@ -115,7 +119,9 @@ func Test1_3(t *testing.T) {
 	// THEN parenthesis are removed
 	// AND the delimiters are removed
 	// AND the arguments are placed before the spell
+	// AND magic token indicating parameter start inserted before the arguments
 	exp := []Token{
+		tkt.Tok(GE_PARAMS, SU_UNDEFINED, "", 0, 0, 1),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "y"),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "z"),

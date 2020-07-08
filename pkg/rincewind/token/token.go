@@ -52,6 +52,8 @@ const (
 	// ------------------
 	GE_SPELL GenType = iota
 	// ------------------
+	GE_PARAMS GenType = iota
+	// ------------------
 	GE_DELIMITER   GenType = iota
 	SU_VALUE_DELIM SubType = iota
 	// ------------------
@@ -66,6 +68,7 @@ var genTypes = map[GenType]string{
 	GE_LITERAL:     `literal`,
 	GE_IDENTIFIER:  `identifier`,
 	GE_SPELL:       `spell`,
+	GE_PARAMS:      `parameters`,
 	GE_DELIMITER:   `delimiter`,
 	GE_PARENTHESIS: `parenthesis`,
 }
