@@ -1,4 +1,4 @@
-package instru
+package inst
 
 type Code int
 
@@ -29,14 +29,14 @@ const (
 
 	// Gets a variable from the current context and push it onto the value stack.
 	//
-	// Expected value stack:
-	// top: identifier
+	// Arg: identifier
 	IN_CTX_GET
 
 	// Call a spell with the contents of the value stack.
 	//
+	// Arg: spell name
+	//
 	// Expected value stack:
-	// top: spell name
 	// 001: number of arguments
 	// ...: args
 	IN_SPELL

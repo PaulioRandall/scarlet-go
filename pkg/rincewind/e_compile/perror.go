@@ -1,5 +1,6 @@
 package compile
 
+/*
 import (
 	"fmt"
 
@@ -45,3 +46,4 @@ func fail(snip perror.Snippet, code, msg string, args ...interface{}) error {
 func failNow(msg string, args ...interface{}) {
 	perror.Panic(msg, args...)
 }
+*/

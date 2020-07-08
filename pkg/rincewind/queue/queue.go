@@ -1,27 +1,23 @@
-package check
+package queue
 
-import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
-)
-
-type queue struct {
+type Queue struct {
 	front *node
 	back  *node
 }
 
 type node struct {
-	data Token
+	data interface{}
 	next *node
 }
 
-func (q *queue) empty() bool {
+func (q *Queue) Empty() bool {
 	return q.front == nil
 }
 
-func (q *queue) put(tk Token) {
+func (q *Queue) Put(data interface{}) {
 
 	n := &node{
-		data: tk,
+		data: data,
 	}
 
 	if q.front == nil {
@@ -33,18 +29,18 @@ func (q *queue) put(tk Token) {
 	q.back = n
 }
 
-func (q *queue) take() Token {
+func (q *Queue) Take() interface{} {
 
 	if q.front == nil {
 		return nil
 	}
 
-	tk := q.front.data
+	data := q.front.data
 	q.front = q.front.next
 
 	if q.front == nil {
 		q.back = nil
 	}
 
-	return tk
+	return data
 }

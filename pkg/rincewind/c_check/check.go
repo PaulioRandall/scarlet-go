@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/queue"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
@@ -14,7 +15,7 @@ type TokenStream interface {
 }
 
 type checker struct {
-	queue
+	Queue
 	ts   TokenStream
 	buff Token
 }
@@ -26,7 +27,7 @@ func New(ts TokenStream) CheckFunc {
 	}
 
 	chk := &checker{
-		queue: queue{},
+		Queue: Queue{},
 		ts:    ts,
 	}
 	chk.bufferNext()
@@ -40,13 +41,13 @@ func New(ts TokenStream) CheckFunc {
 
 func (chk *checker) check() (Token, CheckFunc, error) {
 
-	if chk.queue.empty() {
+	if chk.Queue.Empty() {
 		if e := next(chk); e != nil {
 			return nil, nil, e
 		}
 	}
 
-	tk := chk.queue.take()
+	tk := chk.Take()
 	if chk.empty() {
 		return tk, nil, nil
 	}
@@ -54,17 +55,25 @@ func (chk *checker) check() (Token, CheckFunc, error) {
 	return tk, chk.check, nil
 }
 
+func (chk *checker) Put(tk Token) {
+	chk.Queue.Put(tk)
+}
+
+func (chk *checker) Take() Token {
+	return chk.Queue.Take().(Token)
+}
+
 func (chk *checker) bufferNext() {
 
 	if chk.buff != nil {
-		chk.queue.put(chk.buff)
+		chk.Put(chk.buff)
 	}
 
 	chk.buff = chk.ts.Next()
 }
 
 func (chk *checker) empty() bool {
-	return chk.buff == nil && chk.queue.empty()
+	return chk.buff == nil && chk.Queue.Empty()
 }
 
 func (chk *checker) match(ty interface{}) bool {
