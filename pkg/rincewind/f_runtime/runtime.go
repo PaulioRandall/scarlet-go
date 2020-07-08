@@ -29,6 +29,11 @@ func (run Runtime) ExitCode() int {
 
 func (run Runtime) Start() (bool, error) {
 
+	if run.e != nil {
+		perror.Panic("Runtime previously encountered an error and cannot continue")
+	}
+
+	run.halt = false
 	size := len(run.ins)
 
 	for i := run.env.tick(); i < size; i = run.env.tick() {
@@ -40,6 +45,7 @@ func (run Runtime) Start() (bool, error) {
 		}
 	}
 
+	run.exitCode = 0
 	return true, nil
 }
 
@@ -85,6 +91,7 @@ func (run Runtime) exe(in Instruction) {
 		}
 
 	case IN_SPELL:
+		invokeSpell(run.env, in)
 
 	default:
 		run.err(perror.NewBySnippet("", "Unknown instruction code", in))

@@ -43,11 +43,8 @@ func call(com *compiler) error {
 	tk := com.next()
 
 	com.Put(instruction{
-		code: IN_SPELL,
-		data: []interface{}{
-			argCount,
-			tk.Value(),
-		},
+		code:   IN_SPELL,
+		data:   []interface{}{argCount, tk.Value()},
 		opener: tk,
 		closer: tk,
 	})

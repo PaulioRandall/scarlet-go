@@ -42,6 +42,9 @@ type symItr struct {
 	i       int
 }
 
+func rince() {
+}
+
 func esme() {
 
 	f := "test.scarlet"
