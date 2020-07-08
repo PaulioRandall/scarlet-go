@@ -1,23 +1,20 @@
 package compile
 
-/*
 import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/queue"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
-type CompileFunc func() (Instruction, CompileFunc, error)
+type CompileFunc func() (instruction, CompileFunc, error)
 
 type TokenStream interface {
 	Next() Token
 }
 
-type pipeAndMatch struct {
-	ts TokenStream
-}
-
 type compiler struct {
-	*PipeStack
+	Queue
+	ts   TokenStream
+	buff Token
 }
 
 func New(ts TokenStream) CompileFunc {
@@ -26,9 +23,9 @@ func New(ts TokenStream) CompileFunc {
 		failNow("Non-nil TokenStream required")
 	}
 
-	pam := pipeAndMatch{ts}
 	com := &compiler{
-		NewPipeStack(pam, pam),
+		Queue: Queue{},
+		ts:    ts,
 	}
 
 	if com.empty() {
@@ -38,18 +35,24 @@ func New(ts TokenStream) CompileFunc {
 	return com.compile
 }
 
-func (com *compiler) compile() (Instruction, CompileFunc, error) {
+func (com *compiler) compile() (instruction, CompileFunc, error) {
 
-	in, e := next(com)
-	if e != nil {
-		return nil, nil, e
+	if com.Queue.Empty() {
+		if e := next(com); e != nil {
+			return instruction{}, nil, e
+		}
 	}
 
-	if rfx.Empty() {
-		return tk, nil, nil
+	in := com.Take().(instruction)
+	if com.empty() {
+		return in, nil, nil
 	}
 
-	return tk, rfx.refix, nil
+	return in, com.compile, nil
+}
+
+func (com *compiler) empty() bool {
+	return com.buff == nil
 }
 
 func (com *compiler) next() Token {
@@ -64,11 +67,7 @@ func (com *compiler) next() Token {
 	return r
 }
 
-
-func (com *compiler) empty() bool {
-	return com.buff == nil
-}
-
+// DELETE?
 func (com *compiler) match(gen GenType, sub SubType) bool {
 
 	if com.empty() {
@@ -80,21 +79,3 @@ func (com *compiler) match(gen GenType, sub SubType) bool {
 
 	return g && s
 }
-
-func (com *compiler) notMatch(gen GenType, sub SubType) bool {
-	return !com.match(gen, sub)
-}
-
-func (com *compiler) expect(gen GenType, sub SubType) (Token, error) {
-
-	if com.empty() {
-		return nil, errorUnexpectedEOF(com)
-	}
-
-	if com.match(gen, sub) {
-		return com.next(), nil
-	}
-
-	return nil, errorWrongToken(com, com.buff)
-}
-*/

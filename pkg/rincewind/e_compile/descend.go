@@ -5,5 +5,6 @@ package compile
 // 2: IN_VAL_PUSH		"Scarlet"
 // 2: IN_SPELL   		@Set
 
-// ********************
-// https://www.geeksforgeeks.org/stack-set-2-infix-to-postfix/
+func next(com *compiler) error {
+	return nil
+}
