@@ -97,7 +97,7 @@ func Test1_2(t *testing.T) {
 
 func Test1_3(t *testing.T) {
 
-	// WHEN compiling a spell with a multiple arguments of diffeerent types
+	// WHEN compiling a spell with a multiple arguments of different types
 	// @Println(x, 1, "abc")
 	in := []Token{
 		tkt.MinTok(GE_PARAMS, SU_UNDEFINED, "("),

@@ -19,7 +19,10 @@ func main() { // Run it with `./godo run`
 	esme()
 
 	println()
-	println("[Next] Rewrite compile pkg")
+	println("[Next] Move shared code to shared pkg")
+	println()
+	println("[Think] About how to abstract structs (tokens, instructions)")
+	println("[Think] About how to abstract test utilities")
 	println()
 	println("[Plan]")
 	println("- a_scan:     scans in tokens including redundant ones")
