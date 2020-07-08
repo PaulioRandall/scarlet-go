@@ -24,9 +24,14 @@ func newEnv() *environment {
 	}
 }
 
-func (env *environment) tick() int {
-	env.ctx.counter++
+func (env *environment) counter() int {
 	return env.ctx.counter
+}
+
+func (env *environment) tick() int {
+	c := env.ctx.counter
+	env.ctx.counter++
+	return c
 }
 
 func (env *environment) jump(idx int) {
