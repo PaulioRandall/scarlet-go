@@ -19,6 +19,7 @@ func main() { // Run it with `./godo run`
 	esme()
 
 	println()
+	println("[Next] Start work on f_runtime pkg")
 	println("[Next] Move shared code to shared pkg")
 	println()
 	println("[Think] About how to abstract structs (tokens, instructions)")
@@ -30,8 +31,7 @@ func main() { // Run it with `./godo run`
 	println("- c_check:    checks the token sequence follows language rules")
 	println("- d_refix:    converts from infix to postfix notation")
 	println("- e_compile:  converts the tokens into instructions")
-	println("- f_amass:    amalgamates instructions from all blocks into a single list")
-	println("- g_exec:     executes an instruction list")
+	println("- f_runtime:  executes an instruction list")
 	println("- ...")
 }
 
