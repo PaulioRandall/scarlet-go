@@ -6,12 +6,18 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
-// Example: @Set("x", "Scarlet")
-// 1: IN_VAL_PUSH		"x"
-// 2: IN_VAL_PUSH		"Scarlet"
-// 3: IN_SPELL   		@Set
+func (com *compiler) println() {
+
+	println("*************************************")
+
+	com.Queue.Descend(func(data interface{}) {
+		println(data.(Instruction).String())
+	})
+}
 
 func next(com *compiler) error {
+
+	defer com.discard() // GE_TERMINATOR, now redundant
 
 	if com.match(GE_PARAMS) {
 		return call(com)
@@ -22,7 +28,7 @@ func next(com *compiler) error {
 
 func call(com *compiler) error {
 
-	com.discard()
+	com.discard() // GE_PARAMS, now redundant
 	argCount := 0
 
 	for !com.match(GE_SPELL) {
@@ -33,6 +39,18 @@ func call(com *compiler) error {
 			return e
 		}
 	}
+
+	tk := com.next()
+
+	com.Put(instruction{
+		code: IN_SPELL,
+		data: []interface{}{
+			argCount,
+			tk.Value(),
+		},
+		opener: tk,
+		closer: tk,
+	})
 
 	return nil
 }
@@ -70,14 +88,14 @@ func literal(com *compiler) {
 	var val interface{}
 	tk := com.next()
 
-	switch {
-	case com.match(SU_BOOL):
+	switch tk.SubType() {
+	case SU_BOOL:
 		val = tk.Value() == "true"
 
-	case com.match(SU_NUMBER):
+	case SU_NUMBER:
 		val = number.New(tk.Value())
 
-	case com.match(SU_STRING):
+	case SU_STRING:
 		val = tk.Value()
 	}
 

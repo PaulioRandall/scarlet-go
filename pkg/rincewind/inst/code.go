@@ -2,6 +2,10 @@ package inst
 
 type Code int
 
+func (c Code) String() string {
+	return codes[c]
+}
+
 const (
 	IN_UNDEFINED Code = iota
 
@@ -59,3 +63,9 @@ const (
 // 1: IN_VAL_PUSH		"x"
 // 2: IN_CTX_GET 		y
 // 2: IN_SPELL   		@Set
+
+var codes = map[Code]string{
+	IN_VAL_PUSH: `IN_VAL_PUSH`,
+	IN_CTX_GET:  `IN_CTX_GET`,
+	IN_SPELL:    `IN_SPELL`,
+}

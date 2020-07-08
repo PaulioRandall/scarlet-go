@@ -6,6 +6,34 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
+func Tok(ge GenType, su SubType, raw string, line, colBegin, colEnd int) Token {
+	return tok{
+		ge:       ge,
+		su:       su,
+		raw:      raw,
+		line:     line,
+		colBegin: colBegin,
+		colEnd:   colEnd,
+	}
+}
+
+func HalfTok(ge GenType, su SubType, raw string) Token {
+	return tok{
+		ge:     ge,
+		su:     su,
+		raw:    raw,
+		colEnd: len(raw),
+	}
+}
+
+func MinTok(ge GenType, su SubType, raw string) Token {
+	return tok{
+		ge:  ge,
+		su:  su,
+		raw: raw,
+	}
+}
+
 type tok struct {
 	ge       GenType
 	su       SubType

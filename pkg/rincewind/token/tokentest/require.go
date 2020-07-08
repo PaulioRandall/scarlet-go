@@ -9,26 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Tok(ge GenType, su SubType, raw string, line, colBegin, colEnd int) Token {
-	return tok{
-		ge:       ge,
-		su:       su,
-		raw:      raw,
-		line:     line,
-		colBegin: colBegin,
-		colEnd:   colEnd,
-	}
-}
-
-func HalfTok(ge GenType, su SubType, raw string) Token {
-	return tok{
-		ge:     ge,
-		su:     su,
-		raw:    raw,
-		colEnd: len(raw),
-	}
-}
-
 func RequireSlice(t *testing.T, exps, acts []Token) {
 
 	expSize := len(exps)

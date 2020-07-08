@@ -44,3 +44,9 @@ func (q *Queue) Take() interface{} {
 
 	return data
 }
+
+func (q *Queue) Descend(f func(interface{})) {
+	for n := q.front; n != nil; n = n.next {
+		f(n.data)
+	}
+}

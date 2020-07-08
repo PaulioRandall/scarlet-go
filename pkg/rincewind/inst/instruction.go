@@ -5,4 +5,5 @@ type Instruction interface {
 	Data() interface{}
 	Begin() (int, int)
 	End() (int, int)
+	String() string
 }

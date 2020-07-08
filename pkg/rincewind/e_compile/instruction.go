@@ -1,6 +1,8 @@
 package compile
 
 import (
+	"fmt"
+
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
@@ -13,18 +15,31 @@ type instruction struct {
 	closer Token
 }
 
-func (ins instruction) Code() Code {
-	return ins.code
+func (in instruction) Code() Code {
+	return in.code
 }
 
-func (ins instruction) Data() interface{} {
-	return ins.data
+func (in instruction) Data() interface{} {
+	return in.data
 }
 
-func (ins instruction) Begin() (int, int) {
-	return ins.opener.Begin()
+func (in instruction) Begin() (int, int) {
+	return in.opener.Begin()
 }
 
-func (ins instruction) End() (int, int) {
-	return ins.closer.End()
+func (in instruction) End() (int, int) {
+	return in.closer.End()
+}
+
+func (in instruction) String() string {
+
+	lineBegin, colBegin := in.opener.Begin()
+	lineEnd, colEnd := in.closer.End()
+
+	return fmt.Sprintf("%d:%d %d:%d %v %v",
+		lineBegin, colBegin,
+		lineEnd, colEnd,
+		in.code.String(),
+		in.data,
+	)
 }

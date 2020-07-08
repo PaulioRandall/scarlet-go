@@ -27,6 +27,7 @@ func New(ts TokenStream) CompileFunc {
 		Queue: Queue{},
 		ts:    ts,
 	}
+	com.buff = com.ts.Next()
 
 	if com.empty() {
 		return nil
@@ -52,7 +53,7 @@ func (com *compiler) compile() (instruction, CompileFunc, error) {
 }
 
 func (com *compiler) empty() bool {
-	return com.buff == nil
+	return com.buff == nil && com.Queue.Empty()
 }
 
 func (com *compiler) next() Token {
