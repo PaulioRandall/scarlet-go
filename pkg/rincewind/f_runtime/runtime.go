@@ -2,6 +2,7 @@ package runtime
 
 import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 )
 
 type Runtime struct {
@@ -33,15 +34,7 @@ func (run Runtime) Start() (bool, error) {
 		run.exe(run.ins[i])
 
 		if run.halt {
-			if run.e != nil {
-				return false, run.e
-			}
-
-			if run.exitCode >= 0 {
-				return true, nil
-			}
-
-			return i+1 >= size, nil
+			return run.halted(i+1 >= size)
 		}
 	}
 
@@ -52,5 +45,30 @@ func (run Runtime) Stop() {
 	run.halt = true
 }
 
+func (run Runtime) halted(hasMore bool) (bool, error) {
+
+	if run.e != nil {
+		return false, run.e
+	}
+
+	if run.exitCode >= 0 {
+		return true, nil
+	}
+
+	return hasMore, nil
+}
+
 func (run Runtime) exe(in Instruction) {
+
+	switch in.Code() {
+	case IN_VAL_PUSH:
+		//run.env.
+
+	case IN_CTX_GET:
+
+	case IN_SPELL:
+
+	default:
+		run.e = perror.NewBySnippet("", "Unknown instruction code", in)
+	}
 }

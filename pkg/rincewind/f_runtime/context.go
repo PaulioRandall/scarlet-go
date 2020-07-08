@@ -6,16 +6,16 @@ type environment struct {
 }
 
 type context struct {
+	*stack
 	counter int
-	values  *stack
 	vars    *map[string]result
 }
 
 func newEnv() *environment {
 
 	ctx := &context{
+		stack:   &stack{},
 		counter: -1,
-		values:  &stack{},
 		vars:    &map[string]result{},
 	}
 
