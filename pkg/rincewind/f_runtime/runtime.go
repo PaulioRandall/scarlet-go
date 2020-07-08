@@ -1,6 +1,8 @@
 package runtime
 
 import (
+	"fmt"
+
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 )
@@ -58,17 +60,33 @@ func (run Runtime) halted(hasMore bool) (bool, error) {
 	return hasMore, nil
 }
 
+func (run Runtime) err(e error) {
+	run.e, run.halt = e, true
+}
+
 func (run Runtime) exe(in Instruction) {
 
 	switch in.Code() {
 	case IN_VAL_PUSH:
-		//run.env.
+		run.env.push(result{
+			ty:  resultTypeOf(in.Data()),
+			val: in.Data(),
+		})
 
 	case IN_CTX_GET:
+		id := in.Data().(string)
+		r, ok := run.env.get(id)
+
+		if ok {
+			run.env.push(r)
+		} else {
+			msg := fmt.Sprintf("Undeclared variable %q", id)
+			run.err(perror.NewBySnippet("", msg, in))
+		}
 
 	case IN_SPELL:
 
 	default:
-		run.e = perror.NewBySnippet("", "Unknown instruction code", in)
+		run.err(perror.NewBySnippet("", "Unknown instruction code", in))
 	}
 }

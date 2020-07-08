@@ -35,6 +35,14 @@ func (env *environment) jump(idx int) {
 	env.ctx.counter = idx - 1
 }
 
+func (env *environment) push(r result) {
+	env.ctx.push(r)
+}
+
+func (env *environment) pop() result {
+	return env.ctx.pop()
+}
+
 func (env *environment) get(id string) (result, bool) {
 
 	v, ok := (*env.ctx.vars)[id]
