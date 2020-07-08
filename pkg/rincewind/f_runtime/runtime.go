@@ -28,7 +28,7 @@ func (run Runtime) Start() (bool, error) {
 
 	size := len(run.ins)
 
-	for i := run.env.counter(); i < size; i = run.env.tick() {
+	for i := run.env.tick(); i < size; i = run.env.tick() {
 
 		run.exe(run.ins[i])
 
