@@ -19,14 +19,14 @@ func errorUnexpectedEOF(com *compiler) error {
 	return fail(com.buff, ERR_UNEXPECTED_EOF, "Want %q, have EOF")
 }
 
-func errorUnexpectedToken(com *compiler) error {
-	return fail(com.buff, ERR_UNEXPECTED_TOKEN,
-		"Token not expected here %q", com.buff.String())
+func errorUnexpectedToken(have Token) error {
+	return fail(have, ERR_UNEXPECTED_TOKEN,
+		"Token not expected here %q", have.String())
 }
 
-func errorWrongToken(com *compiler, want Token) error {
-	return fail(com.buff, ERR_WRONG_TOKEN,
-		"Want %q, have %q", want.String(), com.buff.String())
+func errorWrongToken(want fmt.Stringer, have Token) error {
+	return fail(have, ERR_WRONG_TOKEN,
+		"Want %q, have %q", want.String(), have.String())
 }
 
 //func errorMissingExpression(clt *collector) error {

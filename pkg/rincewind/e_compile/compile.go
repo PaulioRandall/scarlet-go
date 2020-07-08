@@ -67,15 +67,20 @@ func (com *compiler) next() Token {
 	return r
 }
 
-// DELETE?
-func (com *compiler) match(gen GenType, sub SubType) bool {
+func (com *compiler) discard() {
+	com.next()
+}
 
-	if com.empty() {
-		return false
+func (com *compiler) match(ty interface{}) bool {
+
+	switch v := ty.(type) {
+	case GenType:
+		return v == GE_ANY || v == com.buff.GenType()
+
+	case SubType:
+		return v == SU_ANY || v == com.buff.SubType()
 	}
 
-	g := gen == GE_ANY || gen == com.buff.GenType()
-	s := sub == SU_ANY || sub == com.buff.SubType()
-
-	return g && s
+	failNow("com.Match requires a GenType or SubType as an argument")
+	return false
 }
