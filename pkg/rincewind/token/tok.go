@@ -13,22 +13,23 @@ func MagicToken(
 	r := tok{
 		gen: gen,
 		sub: sub,
-		raw: "",
+		raw: tk.Raw(),
 	}
 
-	r.line, r.colBegin = tk.Begin()
-	_, r.colEnd = tk.End()
+	r.lineBegin, r.colBegin = tk.Begin()
+	r.lineEnd, r.colEnd = tk.End()
 
 	return r
 }
 
 type tok struct {
-	gen      GenType
-	sub      SubType
-	raw      string
-	line     int
-	colBegin int
-	colEnd   int
+	gen       GenType
+	sub       SubType
+	raw       string
+	lineBegin int
+	colBegin  int
+	lineEnd   int
+	colEnd    int
 }
 
 func (tk tok) GenType() GenType {
@@ -61,20 +62,20 @@ func (tk tok) Value() string {
 }
 
 func (tk tok) Begin() (int, int) {
-	return tk.line, tk.colBegin
+	return tk.lineBegin, tk.colBegin
 }
 
 func (tk tok) End() (int, int) {
-	return tk.line, tk.colEnd
+	return tk.lineEnd, tk.colEnd
 }
 
 func (tk tok) String() string {
 
 	// +1 converts from line index to number
 	return fmt.Sprintf(`%d:%d %d:%d %s:%s %q`,
-		tk.line+1,
+		tk.lineBegin+1,
 		tk.colBegin,
-		tk.line+1,
+		tk.lineEnd+1,
 		tk.colEnd,
 		tk.gen.String(),
 		tk.sub.String(),
