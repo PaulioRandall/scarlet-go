@@ -1,10 +1,10 @@
 package compile
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/queue"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/queue"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 )
 
 type compiler struct {

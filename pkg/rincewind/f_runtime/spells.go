@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/perror"
 )
 
 func invokeSpell(env *environment, in inst.Instruction) {

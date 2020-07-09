@@ -3,8 +3,8 @@ package runtime
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/number"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/number"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/perror"
 )
 
 type resultType int

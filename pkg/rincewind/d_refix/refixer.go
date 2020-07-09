@@ -1,8 +1,8 @@
 package refix
 
 import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/pipestack"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/pipestack"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 )
 
 type refixer struct {
@@ -31,8 +31,8 @@ func (rfx *refixer) Next() token.Token {
 	return rfx.PipeStack.Next().(token.Token)
 }
 
-func (rfx *refixer) PeekNext() token.Token {
-	return rfx.PipeStack.PeekNext().(token.Token)
+func (rfx *refixer) PeekBuff() token.Token {
+	return rfx.PipeStack.PeekBuff().(token.Token)
 }
 
 func (rfx *refixer) PeekTop() token.Token {

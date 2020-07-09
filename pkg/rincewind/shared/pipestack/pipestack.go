@@ -1,7 +1,7 @@
 package pipestack
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/perror"
 )
 
 type DataPipe interface {
@@ -60,7 +60,7 @@ func (stk *PipeStack) Next() interface{} {
 	return data
 }
 
-func (stk *PipeStack) PeekNext() interface{} {
+func (stk *PipeStack) PeekBuff() interface{} {
 	return stk.buff
 }
 
@@ -100,13 +100,13 @@ func (stk *PipeStack) Pop() interface{} {
 	return data
 }
 
-func (stk *PipeStack) MatchNext(other interface{}) bool {
+func (stk *PipeStack) MatchBuff(other interface{}) bool {
 	return stk.mtc.Match(stk.buff, other)
 }
 
 func (stk *PipeStack) AcceptPush(other interface{}) bool {
 
-	if stk.MatchNext(other) {
+	if stk.MatchBuff(other) {
 		stk.push(stk.Next())
 		return true
 	}

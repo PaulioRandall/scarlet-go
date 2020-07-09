@@ -3,8 +3,8 @@ package scan
 import (
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 )
 
 type scanner struct {

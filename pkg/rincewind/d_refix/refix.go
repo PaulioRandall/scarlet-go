@@ -1,8 +1,8 @@
 package refix
 
 import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/pipestack"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/pipestack"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 )
 
 type RefixFunc func() (token.Token, RefixFunc, error)

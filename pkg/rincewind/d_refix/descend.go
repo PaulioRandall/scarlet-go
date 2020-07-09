@@ -1,18 +1,18 @@
 package refix
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 )
 
 func (rfx *refixer) println() {
 
 	println("*************************************")
 
-	if rfx.PeekNext() == nil {
+	if rfx.PeekBuff() == nil {
 		println("nxt: ---")
 	} else {
-		println("nxt:    " + rfx.PeekNext().String())
+		println("nxt:    " + rfx.PeekBuff().String())
 	}
 
 	println("stk:")
@@ -34,7 +34,7 @@ CONTINUE:
 
 	switch {
 	case rfx.Empty():
-		return nil, errorMissingExpression(rfx.PeekNext().(token.Token))
+		return nil, errorMissingExpression(rfx.PeekBuff())
 
 	case rfx.AcceptPush(GE_SPELL):
 		if e := rfx.ExpectPush(SU_PAREN_OPEN); e != nil {
@@ -43,20 +43,20 @@ CONTINUE:
 
 		return retypeToken(rfx.PeekTop(), GE_PARAMS, SU_UNDEFINED), nil
 
-	case rfx.MatchNext(SU_PAREN_CLOSE):
+	case rfx.MatchBuff(SU_PAREN_CLOSE):
 		if tk := rfx.AcceptPop(SU_PAREN_OPEN); tk != nil {
 			rfx.Next()
 		}
 
 		return rfx.Pop(), nil
 
-	case rfx.MatchNext(GE_IDENTIFIER):
+	case rfx.MatchBuff(GE_IDENTIFIER):
 		return rfx.Next(), nil
 
-	case rfx.MatchNext(GE_LITERAL):
+	case rfx.MatchBuff(GE_LITERAL):
 		return rfx.Next(), nil
 
-	case rfx.MatchNext(SU_VALUE_DELIM):
+	case rfx.MatchBuff(SU_VALUE_DELIM):
 		if rfx.MatchTop(SU_PAREN_OPEN) {
 			rfx.Next()
 			goto CONTINUE
@@ -64,13 +64,13 @@ CONTINUE:
 
 		return rfx.Pop(), nil
 
-	case rfx.MatchNext(GE_TERMINATOR):
+	case rfx.MatchBuff(GE_TERMINATOR):
 		if rfx.EmptyStack() {
 			return rfx.Next(), nil
 		}
 	}
 
-	return nil, errorUnexpectedToken(rfx.PeekNext())
+	return nil, errorUnexpectedToken(rfx.PeekBuff())
 }
 
 func retypeToken(tk token.Token, gen GenType, sub SubType) token.Token {

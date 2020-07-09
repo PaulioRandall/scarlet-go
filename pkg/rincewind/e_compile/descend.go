@@ -1,10 +1,10 @@
 package compile
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/number"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/number"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 )
 
 func (com *compiler) println() {

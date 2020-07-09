@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/number"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/number"
 
 	"github.com/stretchr/testify/require"
 )

@@ -3,7 +3,7 @@ package insttest
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
 )
 
 func Ins(code inst.Code, data interface{}, line, colBegin, colEnd int) inst.Instruction {

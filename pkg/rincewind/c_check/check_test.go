@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 
-	tkt "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/tokentest"
+	tkt "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/tokentest"
 
 	"github.com/stretchr/testify/require"
 )

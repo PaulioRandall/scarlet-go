@@ -1,7 +1,7 @@
 package scan
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 )
 
 type ScanFunc func() (token.Tok, ScanFunc, error)

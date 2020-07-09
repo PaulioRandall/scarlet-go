@@ -1,9 +1,9 @@
 package sanitise
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/perror"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 )
 
 type sanitiser struct {

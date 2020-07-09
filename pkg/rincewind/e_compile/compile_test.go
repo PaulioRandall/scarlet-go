@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/number"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/number"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 
-	ist "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst/insttest"
+	ist "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst/insttest"
 
 	"github.com/stretchr/testify/require"
 )
