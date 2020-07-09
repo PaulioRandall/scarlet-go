@@ -15,32 +15,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type dummyStream struct {
-	tks  []token.Token
-	size int
-	idx  int
-}
-
-func (d *dummyStream) Next() token.Token {
-
-	if d.idx >= d.size {
-		return nil
-	}
-
-	tk := d.tks[d.idx]
-	d.idx++
-	return tk
-}
-
 func doTest(t *testing.T, rpn []token.Token, exps []inst.Instruction) {
 
 	require.NotNil(t, exps, "SANITY CHECK! Expected tokens missing")
 
-	stream := &dummyStream{
-		tks:  rpn,
-		size: len(rpn),
-	}
-
+	stream := token.NewStream(rpn)
 	acts := []inst.Instruction{}
 
 	var (
