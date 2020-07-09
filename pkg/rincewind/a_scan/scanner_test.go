@@ -3,7 +3,6 @@ package scan
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 	tkn "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 
 	pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
@@ -54,7 +53,7 @@ func doTest(t *testing.T, in string, exps []tkn.Token) {
 	tkt.RequireSlice(t, exps, acts)
 }
 
-func doErrorTest(t *testing.T, expCode, in string) {
+func doErrorTest(t *testing.T, in string) {
 
 	itr := &dummyItr{
 		symbols: []rune(in),
@@ -64,11 +63,6 @@ func doErrorTest(t *testing.T, expCode, in string) {
 	var e error
 	for f := New(itr); f != nil; {
 		if _, f, e = f(); e != nil {
-
-			err := perror.Unwrap(e)
-			require.NotNil(t, err,
-				"All errors must be an perror.Error or have an perror.Error cause")
-			require.Equal(t, expCode, err.Code())
 			return
 		}
 	}
@@ -94,7 +88,7 @@ func Test_S1(t *testing.T) {
 }
 
 func Test_T0_1(t *testing.T) {
-	doErrorTest(t, ERR_UNKNOWN_SYMBOL, "~")
+	doErrorTest(t, "~")
 }
 
 func Test_T1_1(t *testing.T) {
@@ -122,7 +116,7 @@ func Test_T2_3(t *testing.T) {
 }
 
 func Test_T2_4(t *testing.T) {
-	doErrorTest(t, ERR_BAD_NEWLINE, "\r")
+	doErrorTest(t, "\r")
 }
 
 func Test_T3_1(t *testing.T) {
@@ -162,7 +156,7 @@ func Test_T4_4(t *testing.T) {
 }
 
 func Test_T4_5(t *testing.T) {
-	doErrorTest(t, ERR_BAD_NUMBER, "123.")
+	doErrorTest(t, "123.")
 }
 
 func Test_T5_1(t *testing.T) {
@@ -178,19 +172,19 @@ func Test_T5_2(t *testing.T) {
 }
 
 func Test_T5_3(t *testing.T) {
-	doErrorTest(t, ERR_BAD_STRING, `"`)
+	doErrorTest(t, `"`)
 }
 
 func Test_T5_4(t *testing.T) {
-	doErrorTest(t, ERR_BAD_STRING, `"abc`)
+	doErrorTest(t, `"abc`)
 }
 
 func Test_T5_5(t *testing.T) {
-	doErrorTest(t, ERR_BAD_STRING, `"\"`)
+	doErrorTest(t, `"\"`)
 }
 
 func Test_T5_6(t *testing.T) {
-	doErrorTest(t, ERR_BAD_STRING, `"\"\"abc\"\"`)
+	doErrorTest(t, `"\"\"abc\"\"`)
 }
 
 func Test_T6_1(t *testing.T) {
@@ -254,19 +248,19 @@ func Test_T8_3(t *testing.T) {
 }
 
 func Test_T8_4(t *testing.T) {
-	doErrorTest(t, ERR_BAD_SPELL_NAME, "@")
+	doErrorTest(t, "@")
 }
 
 func Test_T8_5(t *testing.T) {
-	doErrorTest(t, ERR_BAD_SPELL_NAME, "@.")
+	doErrorTest(t, "@.")
 }
 
 func Test_T8_6(t *testing.T) {
-	doErrorTest(t, ERR_BAD_SPELL_NAME, "@a.")
+	doErrorTest(t, "@a.")
 }
 
 func Test_T8_7(t *testing.T) {
-	doErrorTest(t, ERR_BAD_SPELL_NAME, "@a..a")
+	doErrorTest(t, "@a..a")
 }
 
 func Test_T9_1(t *testing.T) {

@@ -104,8 +104,6 @@ func (chk *checker) accept(ty interface{}) bool {
 	return false
 }
 
-const ERR_WRONG_TOKEN string = "CHECK_ERR_WRONG_TOKEN"
-
 func (chk *checker) expect(ty interface{}) error {
 
 	if chk.match(ty) {
@@ -114,7 +112,7 @@ func (chk *checker) expect(ty interface{}) error {
 	}
 
 	if chk.buff == nil {
-		return perror.New(ERR_WRONG_TOKEN, "Unexpected EOF")
+		return perror.New("Unexpected EOF")
 	}
 
 	var msg string
@@ -129,5 +127,5 @@ func (chk *checker) expect(ty interface{}) error {
 			v.String(), chk.buff.SubType().String())
 	}
 
-	return perror.NewBySnippet(ERR_WRONG_TOKEN, msg, chk.buff)
+	return perror.NewBySnippet(msg, chk.buff)
 }

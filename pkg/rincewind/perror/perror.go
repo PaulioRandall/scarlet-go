@@ -41,11 +41,7 @@ func (e perr) End() (int, int) {
 	return e.lineEnd, e.colEnd
 }
 
-func (e perr) Code() string {
-	return e.code
-}
-
-func New(code string, msg string) error {
+func New(msg string) error {
 
 	e := perr{
 		msg:       msg,
@@ -53,13 +49,12 @@ func New(code string, msg string) error {
 		colBegin:  -1,
 		lineEnd:   -1,
 		colEnd:    -1,
-		code:      code,
 	}
 
 	return errors.WithStack(e)
 }
 
-func NewByPos(code string, msg string, line, col int) error {
+func NewByPos(msg string, line, col int) error {
 
 	e := perr{
 		msg:       msg,
@@ -67,13 +62,12 @@ func NewByPos(code string, msg string, line, col int) error {
 		colBegin:  col,
 		lineEnd:   line,
 		colEnd:    col + 1,
-		code:      code,
 	}
 
 	return errors.WithStack(e)
 }
 
-func NewByStr(code string, msg string, line, col, len int) error {
+func NewByStr(msg string, line, col, len int) error {
 
 	e := perr{
 		msg:       msg,
@@ -81,21 +75,19 @@ func NewByStr(code string, msg string, line, col, len int) error {
 		colBegin:  col,
 		lineEnd:   line,
 		colEnd:    col + len,
-		code:      code,
 	}
 
 	return errors.WithStack(e)
 }
 
-func NewBySnippet(code string, msg string, snip Snippet) error {
+func NewBySnippet(msg string, snip Snippet) error {
 
 	if snip == nil {
-		return New(code, msg)
+		return New(msg)
 	}
 
 	e := perr{
-		msg:  msg,
-		code: code,
+		msg: msg,
 	}
 
 	e.lineBegin, e.colBegin = snip.Begin()
@@ -104,13 +96,12 @@ func NewBySnippet(code string, msg string, snip Snippet) error {
 	return errors.WithStack(e)
 }
 
-func NewAfterSnippet(code string, msg string, snip Snippet) error {
+func NewAfterSnippet(msg string, snip Snippet) error {
 
 	e := perr{
 		msg:     msg,
 		lineEnd: -1,
 		colEnd:  -1,
-		code:    code,
 	}
 
 	e.lineBegin, e.colBegin = snip.End()

@@ -83,13 +83,13 @@ func (run Runtime) exe(in inst.Instruction) {
 			run.env.push(r)
 		} else {
 			msg := fmt.Sprintf("Undeclared variable %q", id)
-			run.err(perror.NewBySnippet("", msg, in))
+			run.err(perror.NewBySnippet(msg, in))
 		}
 
 	case inst.IN_SPELL:
 		invokeSpell(run.env, in)
 
 	default:
-		run.err(perror.NewBySnippet("", "Unknown instruction code", in))
+		run.err(perror.NewBySnippet("Unknown instruction code", in))
 	}
 }

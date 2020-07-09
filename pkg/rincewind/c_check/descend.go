@@ -37,7 +37,7 @@ MORE:
 	case chk.accept(SU_IDENTIFIER):
 	case chk.accept(GE_LITERAL):
 	default:
-		return perror.NewBySnippet(ERR_WRONG_TOKEN, "Unexpected token", chk.buff)
+		return perror.NewBySnippet("Unexpected token", chk.buff)
 	}
 
 	if chk.accept(SU_VALUE_DELIM) {

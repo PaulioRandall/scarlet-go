@@ -3,7 +3,6 @@ package check
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 
 	pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
@@ -52,7 +51,7 @@ func doTest(t *testing.T, in []Token) {
 	tkt.RequireSlice(t, in, acts)
 }
 
-func doErrorTest(t *testing.T, expCode string, in []Token) {
+func doErrorTest(t *testing.T, in []Token) {
 
 	itr := &dummyStream{
 		tks:  in,
@@ -62,11 +61,6 @@ func doErrorTest(t *testing.T, expCode string, in []Token) {
 	var e error
 	for f := New(itr); f != nil; {
 		if _, f, e = f(); e != nil {
-
-			err := perror.Unwrap(e)
-			require.NotNil(t, err,
-				"All errors must be an perror.Error or have an perror.Error cause")
-			require.Equal(t, expCode, err.Code())
 			return
 		}
 	}
@@ -136,7 +130,7 @@ func Test2_1(t *testing.T) {
 		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
-	doErrorTest(t, ERR_WRONG_TOKEN, in)
+	doErrorTest(t, in)
 }
 
 func Test2_2(t *testing.T) {
@@ -150,7 +144,7 @@ func Test2_2(t *testing.T) {
 		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
-	doErrorTest(t, ERR_WRONG_TOKEN, in)
+	doErrorTest(t, in)
 }
 
 func Test2_3(t *testing.T) {
@@ -166,7 +160,7 @@ func Test2_3(t *testing.T) {
 		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
-	doErrorTest(t, ERR_WRONG_TOKEN, in)
+	doErrorTest(t, in)
 }
 
 func Test2_4(t *testing.T) {
@@ -183,7 +177,7 @@ func Test2_4(t *testing.T) {
 		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
-	doErrorTest(t, ERR_WRONG_TOKEN, in)
+	doErrorTest(t, in)
 }
 
 func Test2_5(t *testing.T) {
@@ -200,7 +194,7 @@ func Test2_5(t *testing.T) {
 		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
-	doErrorTest(t, ERR_WRONG_TOKEN, in)
+	doErrorTest(t, in)
 }
 
 func Test2_6(t *testing.T) {
@@ -214,5 +208,5 @@ func Test2_6(t *testing.T) {
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
-	doErrorTest(t, ERR_WRONG_TOKEN, in)
+	doErrorTest(t, in)
 }
