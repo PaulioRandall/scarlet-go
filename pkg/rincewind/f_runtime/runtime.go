@@ -8,58 +8,54 @@ import (
 )
 
 type Runtime struct {
-	ins      []Instruction
-	env      *environment
-	halt     bool
-	exitCode int
-	e        error
+	ins []Instruction
+	env *environment
 }
 
 func New(ins []Instruction) Runtime {
 	return Runtime{
-		ins:      ins,
-		env:      newEnv(),
-		exitCode: -1,
+		ins: ins,
+		env: newEnv(),
 	}
 }
 
 func (run Runtime) ExitCode() int {
-	return run.exitCode
+	return run.env.exitCode
 }
 
 func (run Runtime) Start() (bool, error) {
 
-	if run.e != nil {
+	if run.env.e != nil {
 		perror.Panic("Runtime previously encountered an error and cannot continue")
 	}
 
-	run.halt = false
+	run.env.halt = false
 	size := len(run.ins)
 
 	for i := run.env.tick(); i < size; i = run.env.tick() {
 
 		run.exe(run.ins[i])
 
-		if run.halt {
+		if run.env.halt {
 			return run.halted(i+1 >= size)
 		}
 	}
 
-	run.exitCode = 0
+	run.env.exitCode = 0
 	return true, nil
 }
 
 func (run Runtime) Stop() {
-	run.halt = true
+	run.env.halt = true
 }
 
 func (run Runtime) halted(hasMore bool) (bool, error) {
 
-	if run.e != nil {
-		return false, run.e
+	if run.env.e != nil {
+		return false, run.env.e
 	}
 
-	if run.exitCode >= 0 {
+	if run.env.exitCode >= 0 {
 		return true, nil
 	}
 
@@ -67,7 +63,7 @@ func (run Runtime) halted(hasMore bool) (bool, error) {
 }
 
 func (run Runtime) err(e error) {
-	run.e, run.halt = e, true
+	run.env.e, run.env.halt = e, true
 }
 
 func (run Runtime) exe(in Instruction) {

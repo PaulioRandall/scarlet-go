@@ -1,8 +1,11 @@
 package runtime
 
 type environment struct {
-	ctx  *context
-	defs map[string]result
+	ctx      *context
+	defs     map[string]result
+	halt     bool
+	exitCode int
+	e        error
 }
 
 type context struct {
@@ -20,8 +23,9 @@ func newEnv() *environment {
 	}
 
 	return &environment{
-		ctx:  ctx,
-		defs: map[string]result{},
+		ctx:      ctx,
+		defs:     map[string]result{},
+		exitCode: -1,
 	}
 }
 
