@@ -1,16 +1,12 @@
 package token
 
-import (
-	"fmt"
-)
-
 type Token interface {
 	GenType() GenType
 	SubType() SubType
 	Raw() string
 	Value() string
 	Snippet
-	fmt.Stringer
+	String() string
 }
 
 type Snippet interface {

@@ -3,7 +3,7 @@ package scan
 import (
 	"strings"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	tkn "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
 func scanNext(scn *scanner, tk *tok) error {
@@ -22,23 +22,23 @@ func scanNext(scn *scanner, tk *tok) error {
 		return spell(scn, tk)
 
 	case scn.match('_'):
-		tk.ge, tk.su, tk.raw = GE_IDENTIFIER, SU_VOID, string(scn.next())
+		tk.gen, tk.sub, tk.raw = tkn.GE_IDENTIFIER, tkn.SU_VOID, string(scn.next())
 		return nil
 
 	case scn.match(';'):
-		tk.ge, tk.su, tk.raw = GE_TERMINATOR, SU_TERMINATOR, string(scn.next())
+		tk.gen, tk.sub, tk.raw = tkn.GE_TERMINATOR, tkn.SU_TERMINATOR, string(scn.next())
 		return nil
 
 	case scn.match(','):
-		tk.ge, tk.su, tk.raw = GE_DELIMITER, SU_VALUE_DELIM, string(scn.next())
+		tk.gen, tk.sub, tk.raw = tkn.GE_DELIMITER, tkn.SU_VALUE_DELIM, string(scn.next())
 		return nil
 
 	case scn.match('('):
-		tk.ge, tk.su, tk.raw = GE_PARENTHESIS, SU_PAREN_OPEN, string(scn.next())
+		tk.gen, tk.sub, tk.raw = tkn.GE_PARENTHESIS, tkn.SU_PAREN_OPEN, string(scn.next())
 		return nil
 
 	case scn.match(')'):
-		tk.ge, tk.su, tk.raw = GE_PARENTHESIS, SU_PAREN_CLOSE, string(scn.next())
+		tk.gen, tk.sub, tk.raw = tkn.GE_PARENTHESIS, tkn.SU_PAREN_CLOSE, string(scn.next())
 		return nil
 
 	case scn.match('"'):
@@ -64,7 +64,7 @@ func newline(scn *scanner, tk *tok) error {
 	}
 	sb.WriteRune(scn.next())
 
-	tk.ge, tk.su, tk.raw = GE_TERMINATOR, SU_NEWLINE, sb.String()
+	tk.gen, tk.sub, tk.raw = tkn.GE_TERMINATOR, tkn.SU_NEWLINE, sb.String()
 	return nil
 }
 
@@ -76,7 +76,7 @@ func whitespace(scn *scanner, tk *tok) error {
 		sb.WriteRune(scn.next())
 	}
 
-	tk.ge, tk.su, tk.raw = GE_WHITESPACE, SU_UNDEFINED, sb.String()
+	tk.gen, tk.sub, tk.raw = tkn.GE_WHITESPACE, tkn.SU_UNDEFINED, sb.String()
 	return nil
 }
 
@@ -93,10 +93,10 @@ func word(scn *scanner, tk *tok) error {
 
 	switch tk.raw {
 	case "false", "true":
-		tk.ge, tk.su = GE_LITERAL, SU_BOOL
+		tk.gen, tk.sub = tkn.GE_LITERAL, tkn.SU_BOOL
 
 	default:
-		tk.ge, tk.su = GE_IDENTIFIER, SU_IDENTIFIER
+		tk.gen, tk.sub = tkn.GE_IDENTIFIER, tkn.SU_IDENTIFIER
 	}
 
 	return nil
@@ -123,7 +123,7 @@ func spell(scn *scanner, tk *tok) error {
 		sb.WriteRune(scn.next())
 	}
 
-	tk.ge, tk.su, tk.raw = GE_SPELL, SU_UNDEFINED, sb.String()
+	tk.gen, tk.sub, tk.raw = tkn.GE_SPELL, tkn.SU_UNDEFINED, sb.String()
 	return nil
 }
 
@@ -147,7 +147,7 @@ func stringLiteral(scn *scanner, tk *tok) error {
 
 	sb.WriteRune(scn.next())
 
-	tk.ge, tk.su, tk.raw = GE_LITERAL, SU_STRING, sb.String()
+	tk.gen, tk.sub, tk.raw = tkn.GE_LITERAL, tkn.SU_STRING, sb.String()
 	return nil
 }
 
@@ -173,6 +173,6 @@ func numberLiteral(scn *scanner, tk *tok) error {
 	}
 
 FINALISE:
-	tk.ge, tk.su, tk.raw = GE_LITERAL, SU_NUMBER, sb.String()
+	tk.gen, tk.sub, tk.raw = tkn.GE_LITERAL, tkn.SU_NUMBER, sb.String()
 	return nil
 }

@@ -7,20 +7,19 @@ import (
 )
 
 type tok struct {
-	ge       GenType
-	su       SubType
-	raw      string
-	line     int
-	colBegin int
-	colEnd   int
+	gen        GenType
+	sub        SubType
+	raw        string
+	line       int
+	begin, end int
 }
 
 func (tk tok) GenType() GenType {
-	return tk.ge
+	return tk.gen
 }
 
 func (tk tok) SubType() SubType {
-	return tk.su
+	return tk.sub
 }
 
 func (tk tok) Raw() string {
@@ -30,10 +29,10 @@ func (tk tok) Raw() string {
 func (tk tok) Value() string {
 
 	switch {
-	case tk.ge == GE_SPELL:
+	case tk.gen == GE_SPELL:
 		return tk.raw[1:]
 
-	case tk.su == SU_STRING:
+	case tk.sub == SU_STRING:
 		if len(tk.raw) == 2 {
 			return ""
 		}
@@ -45,11 +44,11 @@ func (tk tok) Value() string {
 }
 
 func (tk tok) Begin() (int, int) {
-	return tk.line, tk.colBegin
+	return tk.line, tk.begin
 }
 
 func (tk tok) End() (int, int) {
-	return tk.line, tk.colEnd
+	return tk.line, tk.end
 }
 
 func (tk tok) String() string {
@@ -57,11 +56,11 @@ func (tk tok) String() string {
 	// +1 converts from line index to number
 	return fmt.Sprintf(`%d:%d %d:%d %s:%s %q`,
 		tk.line+1,
-		tk.colBegin,
+		tk.begin,
 		tk.line+1,
-		tk.colEnd,
-		tk.ge.String(),
-		tk.su.String(),
+		tk.end,
+		tk.gen.String(),
+		tk.sub.String(),
 		tk.Value(),
 	)
 }

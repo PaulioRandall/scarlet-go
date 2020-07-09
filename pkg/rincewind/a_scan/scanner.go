@@ -5,7 +5,7 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	tkn "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
 type SymbolItr interface {
@@ -51,10 +51,10 @@ func (scn *scanner) scan() (tok, ScanFunc, error) {
 	}
 
 	tk.line = line
-	tk.colBegin = col
-	tk.colEnd = scn.col
+	tk.begin = col
+	tk.end = scn.col
 
-	if tk.su == SU_NEWLINE {
+	if tk.sub == tkn.SU_NEWLINE {
 		scn.line++
 		scn.col = 0
 	}
