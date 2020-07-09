@@ -41,7 +41,7 @@ CONTINUE:
 			return nil, e
 		}
 
-		return token.Retype(rfx.PeekTop(), GE_PARAMS, SU_UNDEFINED), nil
+		return retypeToken(rfx.PeekTop(), GE_PARAMS, SU_UNDEFINED), nil
 
 	case rfx.MatchNext(SU_PAREN_CLOSE):
 		if tk := rfx.AcceptPop(SU_PAREN_OPEN); tk != nil {
@@ -71,4 +71,18 @@ CONTINUE:
 	}
 
 	return nil, errorUnexpectedToken(rfx.PeekNext())
+}
+
+func retypeToken(tk token.Token, gen GenType, sub SubType) token.Token {
+
+	r := token.Tok{
+		Gen:    gen,
+		Sub:    sub,
+		RawStr: tk.Raw(),
+	}
+
+	r.Line, r.ColBegin = tk.Begin()
+	_, r.ColEnd = tk.End()
+
+	return r
 }

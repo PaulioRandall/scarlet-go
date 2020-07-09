@@ -20,20 +20,6 @@ type Snippet interface {
 	End() (int, int)
 }
 
-func Retype(tk Token, gen GenType, sub SubType) Tok {
-
-	r := Tok{
-		Gen:    gen,
-		Sub:    sub,
-		RawStr: tk.Raw(),
-	}
-
-	r.Line, r.ColBegin = tk.Begin()
-	_, r.ColEnd = tk.End()
-
-	return r
-}
-
 type Tok struct {
 	Gen              GenType
 	Sub              SubType
@@ -55,7 +41,20 @@ func (tk Tok) Raw() string {
 }
 
 func (tk Tok) Value() string {
-	return Value(tk)
+
+	switch {
+	case tk.Gen == GE_SPELL:
+		return tk.RawStr[1:]
+
+	case tk.Sub == SU_STRING:
+		if len(tk.RawStr) == 2 {
+			return ""
+		}
+
+		return tk.RawStr[1 : len(tk.RawStr)-1]
+	}
+
+	return tk.RawStr
 }
 
 func (tk Tok) Begin() (int, int) {
@@ -67,39 +66,15 @@ func (tk Tok) End() (int, int) {
 }
 
 func (tk Tok) String() string {
-	return String(tk)
-}
-
-func Value(tk Token) string {
-
-	switch {
-	case tk.GenType() == GE_SPELL:
-		return tk.Raw()[1:]
-
-	case tk.SubType() == SU_STRING:
-		if len(tk.Raw()) == 2 {
-			return ""
-		}
-
-		return tk.Raw()[1 : len(tk.Raw())-1]
-	}
-
-	return tk.Raw()
-}
-
-func String(tk Token) string {
-
-	line, begin := tk.Begin()
-	_, end := tk.End()
 
 	// +1 converts from line index to number
 	return fmt.Sprintf(`%d:%d %d:%d %s:%s %q`,
-		line+1,
-		begin,
-		line+1,
-		end,
-		tk.GenType().String(),
-		tk.SubType().String(),
+		tk.Line+1,
+		tk.ColBegin,
+		tk.Line+1,
+		tk.ColEnd,
+		tk.Gen.String(),
+		tk.Sub.String(),
 		tk.Value(),
 	)
 }
