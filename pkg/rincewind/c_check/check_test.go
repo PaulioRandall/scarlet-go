@@ -12,29 +12,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type dummyStream struct {
-	tks  []token.Token
-	size int
-	idx  int
-}
-
-func (d *dummyStream) Next() token.Token {
-
-	if d.idx >= d.size {
-		return nil
-	}
-
-	tk := d.tks[d.idx]
-	d.idx++
-	return tk
-}
-
 func doTest(t *testing.T, in []token.Token) {
 
-	stream := &dummyStream{
-		tks:  in,
-		size: len(in),
-	}
+	stream := token.NewStream(in)
 	acts := []token.Token{}
 
 	var (
@@ -54,10 +34,7 @@ func doTest(t *testing.T, in []token.Token) {
 
 func doErrorTest(t *testing.T, in []token.Token) {
 
-	itr := &dummyStream{
-		tks:  in,
-		size: len(in),
-	}
+	itr := token.NewStream(in)
 
 	var e error
 	for f := New(itr); f != nil; {
