@@ -32,3 +32,7 @@ func fail(line, col int, msg string, args ...interface{}) error {
 	msg = fmt.Sprintf(msg, args...)
 	return perror.NewByPos(msg, line, col)
 }
+
+func failNow(msg string, args ...interface{}) {
+	perror.Panic(msg, args...)
+}

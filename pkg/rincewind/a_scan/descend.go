@@ -7,7 +7,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
-func scanNext(scn *scanner, tk *token.Tok) error {
+func next(scn *scanner, tk *token.Tok) error {
 
 	switch {
 	case scn.match('\r'), scn.match('\n'):
