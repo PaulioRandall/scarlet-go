@@ -3,16 +3,16 @@ package runtime
 import (
 	"fmt"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 )
 
 type Runtime struct {
-	ins []Instruction
+	ins []inst.Instruction
 	env *environment
 }
 
-func New(ins []Instruction) Runtime {
+func New(ins []inst.Instruction) Runtime {
 	return Runtime{
 		ins: ins,
 		env: newEnv(),
@@ -66,16 +66,16 @@ func (run Runtime) err(e error) {
 	run.env.e, run.env.halt = e, true
 }
 
-func (run Runtime) exe(in Instruction) {
+func (run Runtime) exe(in inst.Instruction) {
 
 	switch in.Code() {
-	case IN_VAL_PUSH:
+	case inst.IN_VAL_PUSH:
 		run.env.push(result{
 			ty:  resultTypeOf(in.Data()),
 			val: in.Data(),
 		})
 
-	case IN_CTX_GET:
+	case inst.IN_CTX_GET:
 		id := in.Data().(string)
 		r, ok := run.env.get(id)
 
@@ -86,7 +86,7 @@ func (run Runtime) exe(in Instruction) {
 			run.err(perror.NewBySnippet("", msg, in))
 		}
 
-	case IN_SPELL:
+	case inst.IN_SPELL:
 		invokeSpell(run.env, in)
 
 	default:

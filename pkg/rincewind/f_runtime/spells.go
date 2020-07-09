@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 )
 
-func invokeSpell(env *environment, in Instruction) {
+func invokeSpell(env *environment, in inst.Instruction) {
 
 	data := in.Data().([]interface{})
 	argCount, val := data[0].(int), data[1].(string)

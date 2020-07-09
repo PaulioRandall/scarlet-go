@@ -1,11 +1,12 @@
 package compile
 
 import (
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/queue"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
-type CompileFunc func() (instruction, CompileFunc, error)
+type CompileFunc func() (inst.Instruction, CompileFunc, error)
 
 type TokenStream interface {
 	Next() Token
@@ -36,15 +37,15 @@ func New(ts TokenStream) CompileFunc {
 	return com.compile
 }
 
-func (com *compiler) compile() (instruction, CompileFunc, error) {
+func (com *compiler) compile() (inst.Instruction, CompileFunc, error) {
 
 	if com.Queue.Empty() {
 		if e := next(com); e != nil {
-			return instruction{}, nil, e
+			return nil, nil, e
 		}
 	}
 
-	in := com.Take().(instruction)
+	in := com.Take().(inst.Instruction)
 	if com.empty() {
 		return in, nil, nil
 	}

@@ -3,7 +3,7 @@ package compile
 import (
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/number"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 
@@ -31,7 +31,7 @@ func (d *dummyStream) Next() Token {
 	return tk
 }
 
-func doTest(t *testing.T, rpn []Token, exps []Instruction) {
+func doTest(t *testing.T, rpn []Token, exps []inst.Instruction) {
 
 	require.NotNil(t, exps, "SANITY CHECK! Expected tokens missing")
 
@@ -40,10 +40,10 @@ func doTest(t *testing.T, rpn []Token, exps []Instruction) {
 		size: len(rpn),
 	}
 
-	acts := []Instruction{}
+	acts := []inst.Instruction{}
 
 	var (
-		in Instruction
+		in inst.Instruction
 		f  CompileFunc
 		e  error
 	)
@@ -68,8 +68,8 @@ func Test1_1(t *testing.T) {
 	}
 
 	// THEN these are the expected instructions
-	exp := []Instruction{
-		ist.HalfIns(IN_SPELL, []interface{}{0, "Println"}),
+	exp := []inst.Instruction{
+		ist.HalfIns(inst.IN_SPELL, []interface{}{0, "Println"}),
 	}
 
 	doTest(t, in, exp)
@@ -87,9 +87,9 @@ func Test1_2(t *testing.T) {
 	}
 
 	// THEN these are the expected instructions
-	exp := []Instruction{
-		ist.HalfIns(IN_CTX_GET, "x"),
-		ist.HalfIns(IN_SPELL, []interface{}{1, "Println"}),
+	exp := []inst.Instruction{
+		ist.HalfIns(inst.IN_CTX_GET, "x"),
+		ist.HalfIns(inst.IN_SPELL, []interface{}{1, "Println"}),
 	}
 
 	doTest(t, in, exp)
@@ -109,11 +109,11 @@ func Test1_3(t *testing.T) {
 	}
 
 	// THEN these are the expected instructions
-	exp := []Instruction{
-		ist.HalfIns(IN_CTX_GET, "x"),
-		ist.HalfIns(IN_VAL_PUSH, number.New("1")),
-		ist.HalfIns(IN_VAL_PUSH, "abc"),
-		ist.HalfIns(IN_SPELL, []interface{}{3, "Println"}),
+	exp := []inst.Instruction{
+		ist.HalfIns(inst.IN_CTX_GET, "x"),
+		ist.HalfIns(inst.IN_VAL_PUSH, number.New("1")),
+		ist.HalfIns(inst.IN_VAL_PUSH, "abc"),
+		ist.HalfIns(inst.IN_SPELL, []interface{}{3, "Println"}),
 	}
 
 	doTest(t, in, exp)

@@ -1,7 +1,7 @@
 package compile
 
 import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/number"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
@@ -11,7 +11,7 @@ func (com *compiler) println() {
 	println("*************************************")
 
 	com.Queue.Descend(func(data interface{}) {
-		println(data.(Instruction).String())
+		println(data.(inst.Instruction).String())
 	})
 }
 
@@ -41,13 +41,8 @@ func call(com *compiler) error {
 	}
 
 	tk := com.next()
-
-	com.Put(instruction{
-		code:   IN_SPELL,
-		data:   []interface{}{argCount, tk.Value()},
-		opener: tk,
-		closer: tk,
-	})
+	in := inst.New(inst.IN_SPELL, []interface{}{argCount, tk.Value()}, tk, tk)
+	com.Put(in)
 
 	return nil
 }
@@ -69,15 +64,9 @@ func expression(com *compiler) error {
 }
 
 func identifier(com *compiler) {
-
 	tk := com.next()
-
-	com.Put(instruction{
-		code:   IN_CTX_GET,
-		data:   tk.Value(),
-		opener: tk,
-		closer: tk,
-	})
+	in := inst.New(inst.IN_CTX_GET, tk.Value(), tk, tk)
+	com.Put(in)
 }
 
 func literal(com *compiler) {
@@ -96,10 +85,6 @@ func literal(com *compiler) {
 		val = tk.Value()
 	}
 
-	com.Put(instruction{
-		code:   IN_VAL_PUSH,
-		data:   val,
-		opener: tk,
-		closer: tk,
-	})
+	in := inst.New(inst.IN_VAL_PUSH, val, tk, tk)
+	com.Put(in)
 }
