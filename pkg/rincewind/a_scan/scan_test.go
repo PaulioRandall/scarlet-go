@@ -1,12 +1,12 @@
 package scan
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 
-	pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
 	tkt "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/tokentest"
 
 	"github.com/stretchr/testify/require"
@@ -31,23 +31,21 @@ func (d *dummyItr) Next() (rune, bool) {
 
 func doTest(t *testing.T, in string, exps []token.Token) {
 
-	require.NotNil(t, exps, "SANITY CHECK! Expected tokens missing")
-
-	itr := &dummyItr{
-		symbols: []rune(in),
-		size:    len(in),
-	}
-	acts := []token.Token{}
-
 	var (
-		tk token.Tok
-		f  ScanFunc
-		e  error
+		tk   token.Token
+		e    error
+		acts = []token.Token{}
+		itr  = &dummyItr{
+			symbols: []rune(in),
+			size:    len(in),
+		}
 	)
 
-	for f = New(itr); f != nil; {
-		tk, f, e = f()
-		pet.RequireNil(t, e)
+	for f := New(itr); f != nil; {
+		if tk, f, e = f(); e != nil {
+			require.NotNil(t, fmt.Sprintf("%+v", e))
+		}
+
 		acts = append(acts, tk)
 	}
 

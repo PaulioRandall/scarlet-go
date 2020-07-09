@@ -1,12 +1,12 @@
 package check
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 
-	pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
 	tkt "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/tokentest"
 
 	"github.com/stretchr/testify/require"
@@ -14,18 +14,18 @@ import (
 
 func doTest(t *testing.T, in []token.Token) {
 
-	stream := token.NewStream(in)
-	acts := []token.Token{}
-
 	var (
-		tk token.Token
-		f  CheckFunc
-		e  error
+		tk     token.Token
+		e      error
+		stream = token.NewStream(in)
+		acts   = []token.Token{}
 	)
 
-	for f = New(stream); f != nil; {
-		tk, f, e = f()
-		pet.RequireNil(t, e)
+	for f := New(stream); f != nil; {
+		if tk, f, e = f(); e != nil {
+			require.NotNil(t, fmt.Sprintf("%+v", e))
+		}
+
 		acts = append(acts, tk)
 	}
 
@@ -34,9 +34,11 @@ func doTest(t *testing.T, in []token.Token) {
 
 func doErrorTest(t *testing.T, in []token.Token) {
 
-	itr := token.NewStream(in)
+	var (
+		e   error
+		itr = token.NewStream(in)
+	)
 
-	var e error
 	for f := New(itr); f != nil; {
 		if _, f, e = f(); e != nil {
 			return

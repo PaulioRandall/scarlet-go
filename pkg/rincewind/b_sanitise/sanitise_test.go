@@ -1,32 +1,30 @@
 package sanitise
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 
-	pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
 	tkt "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/tokentest"
 	"github.com/stretchr/testify/require"
 )
 
-func doTest(t *testing.T, in []token.Token, exps []token.Token) {
-
-	require.NotNil(t, exps, "SANITY CHECK! Expected Tokens missing")
-
-	stream := token.NewStream(in)
-	acts := []token.Token{}
+func doTest(t *testing.T, in, exps []token.Token) {
 
 	var (
-		tk token.Token
-		f  SanitiseFunc
-		e  error
+		tk     token.Token
+		e      error
+		stream = token.NewStream(in)
+		acts   = []token.Token{}
 	)
 
-	for f = New(stream); f != nil; {
-		tk, f, e = f()
-		pet.RequireNil(t, e)
+	for f := New(stream); f != nil; {
+		if tk, f, e = f(); e != nil {
+			require.NotNil(t, fmt.Sprintf("%+v", e))
+		}
+
 		acts = append(acts, tk)
 	}
 

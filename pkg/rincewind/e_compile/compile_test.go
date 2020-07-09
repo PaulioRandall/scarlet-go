@@ -1,6 +1,7 @@
 package compile
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
@@ -10,27 +11,24 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 
 	ist "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst/insttest"
-	pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
 
 	"github.com/stretchr/testify/require"
 )
 
 func doTest(t *testing.T, rpn []token.Token, exps []inst.Instruction) {
 
-	require.NotNil(t, exps, "SANITY CHECK! Expected tokens missing")
-
-	stream := token.NewStream(rpn)
-	acts := []inst.Instruction{}
-
 	var (
-		in inst.Instruction
-		f  CompileFunc
-		e  error
+		in     inst.Instruction
+		e      error
+		stream = token.NewStream(rpn)
+		acts   = []inst.Instruction{}
 	)
 
-	for f = New(stream); f != nil; {
-		in, f, e = f()
-		pet.RequireNil(t, e)
+	for f := New(stream); f != nil; {
+		if in, f, e = f(); e != nil {
+			require.NotNil(t, fmt.Sprintf("%+v", e))
+		}
+
 		acts = append(acts, in)
 	}
 
