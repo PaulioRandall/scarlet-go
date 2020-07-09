@@ -4,6 +4,7 @@ import (
 	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
@@ -11,7 +12,7 @@ type SymbolItr interface {
 	Next() (rune, bool)
 }
 
-type ScanFunc func() (tok, ScanFunc, error)
+type ScanFunc func() (token.Tok, ScanFunc, error)
 
 func New(itr SymbolItr) ScanFunc {
 
@@ -39,21 +40,21 @@ type scanner struct {
 	col  int
 }
 
-func (scn *scanner) scan() (tok, ScanFunc, error) {
+func (scn *scanner) scan() (token.Tok, ScanFunc, error) {
 
-	tk := tok{}
+	tk := token.Tok{}
 	line, col := scn.line, scn.col
 
 	e := scanNext(scn, &tk)
 	if e != nil {
-		return tok{}, nil, e
+		return token.Tok{}, nil, e
 	}
 
-	tk.line = line
-	tk.begin = col
-	tk.end = scn.col
+	tk.Line = line
+	tk.ColBegin = col
+	tk.ColEnd = scn.col
 
-	if tk.sub == SU_NEWLINE {
+	if tk.Sub == SU_NEWLINE {
 		scn.line++
 		scn.col = 0
 	}

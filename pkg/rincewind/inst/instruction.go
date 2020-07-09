@@ -2,8 +2,6 @@ package inst
 
 import (
 	"fmt"
-
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
 type Instruction interface {
@@ -18,11 +16,16 @@ type instruction struct {
 	Instruction
 	code   Code
 	data   interface{}
-	opener Token
-	closer Token
+	opener Snippet
+	closer Snippet
 }
 
-func New(code Code, data interface{}, opener, closer Token) instruction {
+type Snippet interface {
+	Begin() (int, int)
+	End() (int, int)
+}
+
+func New(code Code, data interface{}, opener, closer Snippet) instruction {
 	return instruction{
 		code:   code,
 		data:   data,

@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/number"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 
 	"github.com/stretchr/testify/require"
 )
 
-func RequireSlice(t *testing.T, exps, acts []Instruction) {
+func RequireSlice(t *testing.T, exps, acts []inst.Instruction) {
 
 	expSize := len(exps)
 	actSize := len(acts)
@@ -28,7 +27,7 @@ func RequireSlice(t *testing.T, exps, acts []Instruction) {
 	}
 }
 
-func RequireInstruction(t *testing.T, exp, act Instruction) {
+func RequireInstruction(t *testing.T, exp, act inst.Instruction) {
 
 	require.NotNil(t, act, "Expected instruction ("+exp.String()+")\nBut got nil")
 	msg := "Expected (" + exp.String() + ")\nActual   (" + act.String() + ")"
@@ -79,7 +78,7 @@ func RequireDataItem(t *testing.T, exp, act interface{}, msg string) {
 	}
 }
 
-func RequireSnippet(t *testing.T, exp, act Snippet) {
+func RequireSnippet(t *testing.T, exp, act inst.Snippet) {
 
 	var msg string
 	if v, ok := exp.(fmt.Stringer); ok {
@@ -93,7 +92,7 @@ func RequireSnippet(t *testing.T, exp, act Snippet) {
 	requireSnippet(t, exp, act, msg)
 }
 
-func requireSnippet(t *testing.T, exp, act Snippet, msg string) {
+func requireSnippet(t *testing.T, exp, act inst.Snippet, msg string) {
 	requirePos(t, exp.Begin, act.Begin, msg)
 	requirePos(t, exp.End, act.End, msg)
 }

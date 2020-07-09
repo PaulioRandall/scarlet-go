@@ -41,7 +41,7 @@ CONTINUE:
 			return nil, e
 		}
 
-		return token.MagicToken(GE_PARAMS, SU_UNDEFINED, rfx.PeekTop()), nil
+		return token.Retype(rfx.PeekTop(), GE_PARAMS, SU_UNDEFINED), nil
 
 	case rfx.MatchNext(SU_PAREN_CLOSE):
 		if tk := rfx.AcceptPop(SU_PAREN_OPEN); tk != nil {

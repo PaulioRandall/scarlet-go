@@ -11,7 +11,6 @@ import (
 
 	ist "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst/insttest"
 	pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
-	tkt "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/tokentest"
 
 	"github.com/stretchr/testify/require"
 )
@@ -59,14 +58,22 @@ func doTest(t *testing.T, rpn []token.Token, exps []inst.Instruction) {
 	ist.RequireSlice(t, exps, acts)
 }
 
+func halfTok(gen GenType, sub SubType, raw string) token.Tok {
+	return token.Tok{
+		Gen:    gen,
+		Sub:    sub,
+		RawStr: raw,
+	}
+}
+
 func Test1_1(t *testing.T) {
 
 	// WHEN compiling a spell with no arguments
 	// @Println()
 	in := []token.Token{
-		tkt.MinTok(GE_PARAMS, SU_UNDEFINED, "("),
-		tkt.MinTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.MinTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_PARAMS, SU_UNDEFINED, "("),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	// THEN these are the expected instructions
@@ -82,10 +89,10 @@ func Test1_2(t *testing.T) {
 	// WHEN compiling a spell with an identifier argument
 	// @Println(x)
 	in := []token.Token{
-		tkt.MinTok(GE_PARAMS, SU_UNDEFINED, "("),
-		tkt.MinTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tkt.MinTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.MinTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_PARAMS, SU_UNDEFINED, "("),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	// THEN these are the expected instructions
@@ -102,12 +109,12 @@ func Test1_3(t *testing.T) {
 	// WHEN compiling a spell with a multiple arguments of different types
 	// @Println(x, 1, "abc")
 	in := []token.Token{
-		tkt.MinTok(GE_PARAMS, SU_UNDEFINED, "("),
-		tkt.MinTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tkt.MinTok(GE_LITERAL, SU_NUMBER, "1"),
-		tkt.MinTok(GE_LITERAL, SU_STRING, `"abc"`),
-		tkt.MinTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.MinTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_PARAMS, SU_UNDEFINED, "("),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		halfTok(GE_LITERAL, SU_NUMBER, "1"),
+		halfTok(GE_LITERAL, SU_STRING, `"abc"`),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	// THEN these are the expected instructions

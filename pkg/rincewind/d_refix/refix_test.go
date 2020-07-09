@@ -54,23 +54,32 @@ func doTest(t *testing.T, in, exps []token.Token) {
 	tkt.RequireSlice(t, exps, acts)
 }
 
+func halfTok(gen GenType, sub SubType, raw string) token.Tok {
+	return token.Tok{
+		Gen:    gen,
+		Sub:    sub,
+		RawStr: raw,
+		ColEnd: len(raw),
+	}
+}
+
 func Test1_1(t *testing.T) {
 
 	// WHEN refixing a spell with no arguments
 	// @Println()
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	// THEN parenthesis are removed
 	// AND magic token indicating parameter start inserted before spell
 	exp := []token.Token{
-		tkt.HalfTok(GE_PARAMS, SU_UNDEFINED, "("),
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_PARAMS, SU_UNDEFINED, "("),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doTest(t, in, exp)
@@ -81,21 +90,21 @@ func Test1_2(t *testing.T) {
 	// WHEN refixing a spell with one argument
 	// @Println(x)
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	// THEN parenthesis are removed
 	// AND the argument is placed before the spell
 	// AND magic token indicating parameter start inserted before the argument
 	exp := []token.Token{
-		tkt.HalfTok(GE_PARAMS, SU_UNDEFINED, "("),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_PARAMS, SU_UNDEFINED, "("),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doTest(t, in, exp)
@@ -106,15 +115,15 @@ func Test1_3(t *testing.T) {
 	// WHEN refixing a spell with multiple arguments
 	// @Println(x, y, z)
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tkt.HalfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "y"),
-		tkt.HalfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "z"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		halfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "y"),
+		halfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "z"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	// THEN parenthesis are removed
@@ -122,12 +131,12 @@ func Test1_3(t *testing.T) {
 	// AND the arguments are placed before the spell
 	// AND magic token indicating parameter start inserted before the arguments
 	exp := []token.Token{
-		tkt.HalfTok(GE_PARAMS, SU_UNDEFINED, "("),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "y"),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "z"),
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_PARAMS, SU_UNDEFINED, "("),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "y"),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "z"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doTest(t, in, exp)

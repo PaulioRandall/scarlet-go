@@ -69,16 +69,25 @@ func doErrorTest(t *testing.T, in []token.Token) {
 	require.Fail(t, "Expected error")
 }
 
+func halfTok(gen GenType, sub SubType, raw string) token.Tok {
+	return token.Tok{
+		Gen:    gen,
+		Sub:    sub,
+		RawStr: raw,
+		ColEnd: len(raw),
+	}
+}
+
 func Test1_1(t *testing.T) {
 
 	// WHEN checking a spell with no arguments
 	// THEN no errors should be returned
 	// @Println()
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doTest(t, in)
@@ -90,11 +99,11 @@ func Test1_2(t *testing.T) {
 	// THEN no errors should be returned
 	// @Println(x)
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doTest(t, in)
@@ -106,15 +115,15 @@ func Test1_3(t *testing.T) {
 	// THEN no errors should be returned
 	// @Println(x, 1, true)
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tkt.HalfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
-		tkt.HalfTok(GE_LITERAL, SU_NUMBER, "1"),
-		tkt.HalfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
-		tkt.HalfTok(GE_LITERAL, SU_BOOL, "true"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		halfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		halfTok(GE_LITERAL, SU_NUMBER, "1"),
+		halfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		halfTok(GE_LITERAL, SU_BOOL, "true"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doTest(t, in)
@@ -126,9 +135,9 @@ func Test2_1(t *testing.T) {
 	// THEN an error should be returned
 	// @Println)
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doErrorTest(t, in)
@@ -140,9 +149,9 @@ func Test2_2(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doErrorTest(t, in)
@@ -154,11 +163,11 @@ func Test2_3(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doErrorTest(t, in)
@@ -170,12 +179,12 @@ func Test2_4(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tkt.HalfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		halfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doErrorTest(t, in)
@@ -187,12 +196,12 @@ func Test2_5(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "y"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
+		halfTok(GE_IDENTIFIER, SU_IDENTIFIER, "y"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	doErrorTest(t, in)
@@ -204,9 +213,9 @@ func Test2_6(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := []token.Token{
-		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		halfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
+		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
 	doErrorTest(t, in)

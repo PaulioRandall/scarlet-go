@@ -3,10 +3,10 @@ package insttest
 import (
 	"fmt"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 )
 
-func Ins(code Code, data interface{}, line, colBegin, colEnd int) Instruction {
+func Ins(code inst.Code, data interface{}, line, colBegin, colEnd int) inst.Instruction {
 	return ins{
 		code:      code,
 		data:      data,
@@ -17,7 +17,7 @@ func Ins(code Code, data interface{}, line, colBegin, colEnd int) Instruction {
 	}
 }
 
-func HalfIns(code Code, data interface{}) Instruction {
+func HalfIns(code inst.Code, data interface{}) inst.Instruction {
 	return ins{
 		code: code,
 		data: data,
@@ -25,14 +25,14 @@ func HalfIns(code Code, data interface{}) Instruction {
 }
 
 type ins struct {
-	Instruction
-	code                Code
+	inst.Instruction
+	code                inst.Code
 	data                interface{}
 	lineBegin, colBegin int
 	lineEnd, colEnd     int
 }
 
-func (in ins) Code() Code {
+func (in ins) Code() inst.Code {
 	return in.code
 }
 

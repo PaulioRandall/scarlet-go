@@ -4,22 +4,22 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
 )
 
-func errorUnexpectedEOF(want Token) error {
+func errorUnexpectedEOF(want token.Token) error {
 	return fail(want, "Want %q, have EOF")
 }
 
-func errorUnexpectedToken(have Token) error {
+func errorUnexpectedToken(have token.Token) error {
 	return fail(have, "Token not expected here %q", have.String())
 }
 
-func errorWrongToken(want fmt.Stringer, have Token) error {
+func errorWrongToken(want fmt.Stringer, have token.Token) error {
 	return fail(have, "Want %q, have %q", want.String(), have.String())
 }
 
-func errorMissingExpression(have Token) error {
+func errorMissingExpression(have token.Token) error {
 	return fail(have, "Missing expression")
 }
 

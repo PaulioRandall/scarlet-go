@@ -20,6 +20,90 @@ type Snippet interface {
 	End() (int, int)
 }
 
+func Retype(tk Token, gen GenType, sub SubType) Tok {
+
+	r := Tok{
+		Gen:    gen,
+		Sub:    sub,
+		RawStr: tk.Raw(),
+	}
+
+	r.Line, r.ColBegin = tk.Begin()
+	_, r.ColEnd = tk.End()
+
+	return r
+}
+
+type Tok struct {
+	Gen              GenType
+	Sub              SubType
+	RawStr           string
+	Line             int
+	ColBegin, ColEnd int
+}
+
+func (tk Tok) GenType() GenType {
+	return tk.Gen
+}
+
+func (tk Tok) SubType() SubType {
+	return tk.Sub
+}
+
+func (tk Tok) Raw() string {
+	return tk.RawStr
+}
+
+func (tk Tok) Value() string {
+	return Value(tk)
+}
+
+func (tk Tok) Begin() (int, int) {
+	return tk.Line, tk.ColBegin
+}
+
+func (tk Tok) End() (int, int) {
+	return tk.Line, tk.ColEnd
+}
+
+func (tk Tok) String() string {
+	return String(tk)
+}
+
+func Value(tk Token) string {
+
+	switch {
+	case tk.GenType() == GE_SPELL:
+		return tk.Raw()[1:]
+
+	case tk.SubType() == SU_STRING:
+		if len(tk.Raw()) == 2 {
+			return ""
+		}
+
+		return tk.Raw()[1 : len(tk.Raw())-1]
+	}
+
+	return tk.Raw()
+}
+
+func String(tk Token) string {
+
+	line, begin := tk.Begin()
+	_, end := tk.End()
+
+	// +1 converts from line index to number
+	return fmt.Sprintf(`%d:%d %d:%d %s:%s %q`,
+		line+1,
+		begin,
+		line+1,
+		end,
+		tk.GenType().String(),
+		tk.SubType().String(),
+		tk.Value(),
+	)
+}
+
 /*
 func (ty TokenType) Precedence() int {
 	switch ty {
@@ -45,91 +129,3 @@ func (ty TokenType) Precedence() int {
 	return 0
 }
 */
-
-func MagicToken(
-	gen GenType,
-	sub SubType,
-	tk Token,
-) Token {
-
-	r := tok{
-		gen: gen,
-		sub: sub,
-		raw: tk.Raw(),
-	}
-
-	r.line, r.begin = tk.Begin()
-	_, r.end = tk.End()
-
-	return r
-}
-
-func New_(gen GenType, sub SubType, raw string, line, col int) tok {
-	return tok{
-		gen:   gen,
-		sub:   sub,
-		raw:   raw,
-		line:  line,
-		begin: col,
-		end:   col + len(raw),
-	}
-}
-
-type tok struct {
-	gen        GenType
-	sub        SubType
-	raw        string
-	line       int
-	begin, end int
-}
-
-func (tk tok) GenType() GenType {
-	return tk.gen
-}
-
-func (tk tok) SubType() SubType {
-	return tk.sub
-}
-
-func (tk tok) Raw() string {
-	return tk.raw
-}
-
-func (tk tok) Value() string {
-
-	switch {
-	case tk.gen == GE_SPELL:
-		return tk.raw[1:]
-
-	case tk.sub == SU_STRING:
-		if len(tk.raw) == 2 {
-			return ""
-		}
-
-		return tk.raw[1 : len(tk.raw)-1]
-	}
-
-	return tk.raw
-}
-
-func (tk tok) Begin() (int, int) {
-	return tk.line, tk.begin
-}
-
-func (tk tok) End() (int, int) {
-	return tk.line, tk.end
-}
-
-func (tk tok) String() string {
-
-	// +1 converts from line index to number
-	return fmt.Sprintf(`%d:%d %d:%d %s:%s %q`,
-		tk.line+1,
-		tk.begin,
-		tk.line+1,
-		tk.end,
-		tk.gen.String(),
-		tk.sub.String(),
-		tk.Value(),
-	)
-}
