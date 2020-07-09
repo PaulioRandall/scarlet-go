@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
 func Tok(ge GenType, su SubType, raw string, line, colBegin, colEnd int) Token {

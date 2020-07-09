@@ -3,7 +3,8 @@ package check
 import (
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 
 	pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
 	tkt "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/tokentest"
@@ -12,12 +13,12 @@ import (
 )
 
 type dummyStream struct {
-	tks  []Token
+	tks  []token.Token
 	size int
 	idx  int
 }
 
-func (d *dummyStream) Next() Token {
+func (d *dummyStream) Next() token.Token {
 
 	if d.idx >= d.size {
 		return nil
@@ -28,16 +29,16 @@ func (d *dummyStream) Next() Token {
 	return tk
 }
 
-func doTest(t *testing.T, in []Token) {
+func doTest(t *testing.T, in []token.Token) {
 
 	stream := &dummyStream{
 		tks:  in,
 		size: len(in),
 	}
-	acts := []Token{}
+	acts := []token.Token{}
 
 	var (
-		tk Token
+		tk token.Token
 		f  CheckFunc
 		e  error
 	)
@@ -51,7 +52,7 @@ func doTest(t *testing.T, in []Token) {
 	tkt.RequireSlice(t, in, acts)
 }
 
-func doErrorTest(t *testing.T, in []Token) {
+func doErrorTest(t *testing.T, in []token.Token) {
 
 	itr := &dummyStream{
 		tks:  in,
@@ -73,7 +74,7 @@ func Test1_1(t *testing.T) {
 	// WHEN checking a spell with no arguments
 	// THEN no errors should be returned
 	// @Println()
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
@@ -88,7 +89,7 @@ func Test1_2(t *testing.T) {
 	// WHEN checking a spell with one argument
 	// THEN no errors should be returned
 	// @Println(x)
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
@@ -104,7 +105,7 @@ func Test1_3(t *testing.T) {
 	// WHEN checking a spell with multiple arguments
 	// THEN no errors should be returned
 	// @Println(x, 1, true)
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
@@ -124,7 +125,7 @@ func Test2_1(t *testing.T) {
 	// WHEN checking a spell with missing opening parenthesis
 	// THEN an error should be returned
 	// @Println)
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
@@ -138,7 +139,7 @@ func Test2_2(t *testing.T) {
 	// WHEN checking a spell with missing closing parenthesis
 	// THEN an error should be returned
 	// @Println(
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
@@ -152,7 +153,7 @@ func Test2_3(t *testing.T) {
 	// WHEN checking a spell with a stray value delimiter
 	// THEN an error should be returned
 	// @Println(
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
@@ -168,7 +169,7 @@ func Test2_4(t *testing.T) {
 	// WHEN checking a spell with a stray value delimiter
 	// THEN an error should be returned
 	// @Println(
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
@@ -185,7 +186,7 @@ func Test2_5(t *testing.T) {
 	// WHEN checking a spell with a missing value delimiter
 	// THEN an error should be returned
 	// @Println(
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
@@ -202,7 +203,7 @@ func Test2_6(t *testing.T) {
 	// WHEN checking a spell with a missing final terminator
 	// THEN an error should be returned
 	// @Println(
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),

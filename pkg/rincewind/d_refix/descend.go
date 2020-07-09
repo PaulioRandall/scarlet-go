@@ -1,7 +1,8 @@
 package refix
 
 import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
 func (rfx *refixer) println() {
@@ -21,11 +22,11 @@ func (rfx *refixer) println() {
 	}
 
 	rfx.DescendStack(func(data interface{}) {
-		println("\t " + data.(Token).String())
+		println("\t " + data.(token.Token).String())
 	})
 }
 
-func next(rfx *refixer) (Token, error) {
+func next(rfx *refixer) (token.Token, error) {
 
 CONTINUE:
 
@@ -33,14 +34,14 @@ CONTINUE:
 
 	switch {
 	case rfx.Empty():
-		return nil, errorMissingExpression(rfx.PeekNext().(Token))
+		return nil, errorMissingExpression(rfx.PeekNext().(token.Token))
 
 	case rfx.AcceptPush(GE_SPELL):
 		if e := rfx.ExpectPush(SU_PAREN_OPEN); e != nil {
 			return nil, e
 		}
 
-		return MagicToken(GE_PARAMS, SU_UNDEFINED, rfx.PeekTop()), nil
+		return token.MagicToken(GE_PARAMS, SU_UNDEFINED, rfx.PeekTop()), nil
 
 	case rfx.MatchNext(SU_PAREN_CLOSE):
 		if tk := rfx.AcceptPop(SU_PAREN_OPEN); tk != nil {

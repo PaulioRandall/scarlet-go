@@ -5,19 +5,21 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/queue"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
-type CheckFunc func() (Token, CheckFunc, error)
+type CheckFunc func() (token.Token, CheckFunc, error)
 
 type TokenStream interface {
-	Next() Token
+	Next() token.Token
 }
 
 type checker struct {
 	Queue
 	ts   TokenStream
-	buff Token
+	buff token.Token
 }
 
 func New(ts TokenStream) CheckFunc {
@@ -39,7 +41,7 @@ func New(ts TokenStream) CheckFunc {
 	return chk.check
 }
 
-func (chk *checker) check() (Token, CheckFunc, error) {
+func (chk *checker) check() (token.Token, CheckFunc, error) {
 
 	if chk.Queue.Empty() {
 		if e := next(chk); e != nil {
@@ -55,12 +57,12 @@ func (chk *checker) check() (Token, CheckFunc, error) {
 	return tk, chk.check, nil
 }
 
-func (chk *checker) Put(tk Token) {
+func (chk *checker) Put(tk token.Token) {
 	chk.Queue.Put(tk)
 }
 
-func (chk *checker) Take() Token {
-	return chk.Queue.Take().(Token)
+func (chk *checker) Take() token.Token {
+	return chk.Queue.Take().(token.Token)
 }
 
 func (chk *checker) bufferNext() {

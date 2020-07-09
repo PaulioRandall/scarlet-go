@@ -5,7 +5,9 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/number"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 
 	ist "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst/insttest"
 	pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
@@ -15,12 +17,12 @@ import (
 )
 
 type dummyStream struct {
-	tks  []Token
+	tks  []token.Token
 	size int
 	idx  int
 }
 
-func (d *dummyStream) Next() Token {
+func (d *dummyStream) Next() token.Token {
 
 	if d.idx >= d.size {
 		return nil
@@ -31,7 +33,7 @@ func (d *dummyStream) Next() Token {
 	return tk
 }
 
-func doTest(t *testing.T, rpn []Token, exps []inst.Instruction) {
+func doTest(t *testing.T, rpn []token.Token, exps []inst.Instruction) {
 
 	require.NotNil(t, exps, "SANITY CHECK! Expected tokens missing")
 
@@ -61,7 +63,7 @@ func Test1_1(t *testing.T) {
 
 	// WHEN compiling a spell with no arguments
 	// @Println()
-	in := []Token{
+	in := []token.Token{
 		tkt.MinTok(GE_PARAMS, SU_UNDEFINED, "("),
 		tkt.MinTok(GE_SPELL, SU_UNDEFINED, "@Println"),
 		tkt.MinTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
@@ -79,7 +81,7 @@ func Test1_2(t *testing.T) {
 
 	// WHEN compiling a spell with an identifier argument
 	// @Println(x)
-	in := []Token{
+	in := []token.Token{
 		tkt.MinTok(GE_PARAMS, SU_UNDEFINED, "("),
 		tkt.MinTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
 		tkt.MinTok(GE_SPELL, SU_UNDEFINED, "@Println"),
@@ -99,7 +101,7 @@ func Test1_3(t *testing.T) {
 
 	// WHEN compiling a spell with a multiple arguments of different types
 	// @Println(x, 1, "abc")
-	in := []Token{
+	in := []token.Token{
 		tkt.MinTok(GE_PARAMS, SU_UNDEFINED, "("),
 		tkt.MinTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
 		tkt.MinTok(GE_LITERAL, SU_NUMBER, "1"),

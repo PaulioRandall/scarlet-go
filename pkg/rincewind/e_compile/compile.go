@@ -3,19 +3,20 @@ package compile
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/queue"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
 type CompileFunc func() (inst.Instruction, CompileFunc, error)
 
 type TokenStream interface {
-	Next() Token
+	Next() token.Token
 }
 
 type compiler struct {
 	Queue
 	ts   TokenStream
-	buff Token
+	buff token.Token
 }
 
 func New(ts TokenStream) CompileFunc {
@@ -57,7 +58,7 @@ func (com *compiler) empty() bool {
 	return com.buff == nil && com.Queue.Empty()
 }
 
-func (com *compiler) next() Token {
+func (com *compiler) next() token.Token {
 
 	if com.empty() {
 		failNow("No tokens remaining, call `match` or `empty` first")

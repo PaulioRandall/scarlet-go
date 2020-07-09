@@ -2,7 +2,7 @@ package check
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
 func next(chk *checker) error {

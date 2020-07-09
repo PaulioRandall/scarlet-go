@@ -3,7 +3,8 @@ package refix
 import (
 	"testing"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 
 	pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
 	tkt "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/tokentest"
@@ -12,12 +13,12 @@ import (
 )
 
 type dummyStream struct {
-	tks  []Token
+	tks  []token.Token
 	size int
 	idx  int
 }
 
-func (d *dummyStream) Next() Token {
+func (d *dummyStream) Next() token.Token {
 
 	if d.idx >= d.size {
 		return nil
@@ -28,7 +29,7 @@ func (d *dummyStream) Next() Token {
 	return tk
 }
 
-func doTest(t *testing.T, in []Token, exps []Token) {
+func doTest(t *testing.T, in, exps []token.Token) {
 
 	require.NotNil(t, exps, "SANITY CHECK! Expected tokens missing")
 
@@ -36,10 +37,10 @@ func doTest(t *testing.T, in []Token, exps []Token) {
 		tks:  in,
 		size: len(in),
 	}
-	acts := []Token{}
+	acts := []token.Token{}
 
 	var (
-		tk Token
+		tk token.Token
 		f  RefixFunc
 		e  error
 	)
@@ -57,7 +58,7 @@ func Test1_1(t *testing.T) {
 
 	// WHEN refixing a spell with no arguments
 	// @Println()
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
@@ -66,7 +67,7 @@ func Test1_1(t *testing.T) {
 
 	// THEN parenthesis are removed
 	// AND magic token indicating parameter start inserted before spell
-	exp := []Token{
+	exp := []token.Token{
 		tkt.HalfTok(GE_PARAMS, SU_UNDEFINED, "("),
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
 		tkt.HalfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
@@ -79,7 +80,7 @@ func Test1_2(t *testing.T) {
 
 	// WHEN refixing a spell with one argument
 	// @Println(x)
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
@@ -90,7 +91,7 @@ func Test1_2(t *testing.T) {
 	// THEN parenthesis are removed
 	// AND the argument is placed before the spell
 	// AND magic token indicating parameter start inserted before the argument
-	exp := []Token{
+	exp := []token.Token{
 		tkt.HalfTok(GE_PARAMS, SU_UNDEFINED, "("),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
@@ -104,7 +105,7 @@ func Test1_3(t *testing.T) {
 
 	// WHEN refixing a spell with multiple arguments
 	// @Println(x, y, z)
-	in := []Token{
+	in := []token.Token{
 		tkt.HalfTok(GE_SPELL, SU_UNDEFINED, "@Println"),
 		tkt.HalfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
@@ -120,7 +121,7 @@ func Test1_3(t *testing.T) {
 	// AND the delimiters are removed
 	// AND the arguments are placed before the spell
 	// AND magic token indicating parameter start inserted before the arguments
-	exp := []Token{
+	exp := []token.Token{
 		tkt.HalfTok(GE_PARAMS, SU_UNDEFINED, "("),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
 		tkt.HalfTok(GE_IDENTIFIER, SU_IDENTIFIER, "y"),

@@ -3,7 +3,8 @@ package compile
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/number"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
 func (com *compiler) println() {

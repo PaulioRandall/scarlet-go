@@ -3,7 +3,7 @@ package scan
 import (
 	"fmt"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
 type tok struct {

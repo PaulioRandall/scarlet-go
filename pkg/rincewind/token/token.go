@@ -1,5 +1,11 @@
 package token
 
+import (
+	"fmt"
+
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
+)
+
 type Token interface {
 	GenType() GenType
 	SubType() SubType
@@ -12,74 +18,6 @@ type Token interface {
 type Snippet interface {
 	Begin() (int, int)
 	End() (int, int)
-}
-
-type GenType int // General type
-type SubType int
-
-func (ge GenType) String() string {
-	return genTypes[ge]
-}
-
-func (su SubType) String() string {
-	return subTypes[su]
-}
-
-const (
-	GE_UNDEFINED GenType = 0
-	SU_UNDEFINED SubType = 0
-	GE_ANY       GenType = iota
-	SU_ANY       SubType = iota
-	// ------------------
-	GE_WHITESPACE GenType = iota
-	// ------------------
-	GE_TERMINATOR GenType = iota
-	SU_TERMINATOR SubType = iota
-	SU_NEWLINE
-	// ------------------
-	GE_LITERAL GenType = iota
-	SU_BOOL    SubType = iota
-	SU_NUMBER
-	SU_STRING
-	// ------------------
-	GE_IDENTIFIER GenType = iota
-	SU_IDENTIFIER SubType = iota
-	SU_VOID
-	// ------------------
-	GE_SPELL GenType = iota
-	// ------------------
-	GE_PARAMS GenType = iota
-	// ------------------
-	GE_DELIMITER   GenType = iota
-	SU_VALUE_DELIM SubType = iota
-	// ------------------
-	GE_PARENTHESIS GenType = iota
-	SU_PAREN_OPEN  SubType = iota
-	SU_PAREN_CLOSE
-)
-
-var genTypes = map[GenType]string{
-	GE_WHITESPACE:  `whitespace`,
-	GE_TERMINATOR:  `terminator`,
-	GE_LITERAL:     `literal`,
-	GE_IDENTIFIER:  `identifier`,
-	GE_SPELL:       `spell`,
-	GE_PARAMS:      `parameters`,
-	GE_DELIMITER:   `delimiter`,
-	GE_PARENTHESIS: `parenthesis`,
-}
-
-var subTypes = map[SubType]string{
-	SU_TERMINATOR:  `terminator`,
-	SU_NEWLINE:     `newline`,
-	SU_BOOL:        `bool`,
-	SU_NUMBER:      `number`,
-	SU_STRING:      `string`,
-	SU_IDENTIFIER:  `identifier`,
-	SU_VOID:        `void`,
-	SU_VALUE_DELIM: `value_delim`,
-	SU_PAREN_OPEN:  `paren_open`,
-	SU_PAREN_CLOSE: `paren_close`,
 }
 
 /*
@@ -107,3 +45,91 @@ func (ty TokenType) Precedence() int {
 	return 0
 }
 */
+
+func MagicToken(
+	gen GenType,
+	sub SubType,
+	tk Token,
+) Token {
+
+	r := tok{
+		gen: gen,
+		sub: sub,
+		raw: tk.Raw(),
+	}
+
+	r.line, r.begin = tk.Begin()
+	_, r.end = tk.End()
+
+	return r
+}
+
+func New_(gen GenType, sub SubType, raw string, line, col int) tok {
+	return tok{
+		gen:   gen,
+		sub:   sub,
+		raw:   raw,
+		line:  line,
+		begin: col,
+		end:   col + len(raw),
+	}
+}
+
+type tok struct {
+	gen        GenType
+	sub        SubType
+	raw        string
+	line       int
+	begin, end int
+}
+
+func (tk tok) GenType() GenType {
+	return tk.gen
+}
+
+func (tk tok) SubType() SubType {
+	return tk.sub
+}
+
+func (tk tok) Raw() string {
+	return tk.raw
+}
+
+func (tk tok) Value() string {
+
+	switch {
+	case tk.gen == GE_SPELL:
+		return tk.raw[1:]
+
+	case tk.sub == SU_STRING:
+		if len(tk.raw) == 2 {
+			return ""
+		}
+
+		return tk.raw[1 : len(tk.raw)-1]
+	}
+
+	return tk.raw
+}
+
+func (tk tok) Begin() (int, int) {
+	return tk.line, tk.begin
+}
+
+func (tk tok) End() (int, int) {
+	return tk.line, tk.end
+}
+
+func (tk tok) String() string {
+
+	// +1 converts from line index to number
+	return fmt.Sprintf(`%d:%d %d:%d %s:%s %q`,
+		tk.line+1,
+		tk.begin,
+		tk.line+1,
+		tk.end,
+		tk.gen.String(),
+		tk.sub.String(),
+		tk.Value(),
+	)
+}

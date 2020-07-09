@@ -4,13 +4,14 @@ import (
 	"fmt"
 
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/pipestack"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
-type RefixFunc func() (Token, RefixFunc, error)
+type RefixFunc func() (token.Token, RefixFunc, error)
 
 type TokenStream interface {
-	Next() Token
+	Next() token.Token
 }
 
 type pipeAndMatch struct {
@@ -39,7 +40,7 @@ func New(ts TokenStream) RefixFunc {
 	return rfx.refix
 }
 
-func (rfx *refixer) refix() (Token, RefixFunc, error) {
+func (rfx *refixer) refix() (token.Token, RefixFunc, error) {
 
 	if rfx.Empty() {
 		failNow("No tokens remain, should call 'empty', 'match', etc first")
@@ -57,34 +58,34 @@ func (rfx *refixer) refix() (Token, RefixFunc, error) {
 	return tk, rfx.refix, nil
 }
 
-func (rfx *refixer) Next() Token {
-	return rfx.PipeStack.Next().(Token)
+func (rfx *refixer) Next() token.Token {
+	return rfx.PipeStack.Next().(token.Token)
 }
 
-func (rfx *refixer) PeekNext() Token {
-	return rfx.PipeStack.PeekNext().(Token)
+func (rfx *refixer) PeekNext() token.Token {
+	return rfx.PipeStack.PeekNext().(token.Token)
 }
 
-func (rfx *refixer) PeekTop() Token {
-	return rfx.PipeStack.PeekTop().(Token)
+func (rfx *refixer) PeekTop() token.Token {
+	return rfx.PipeStack.PeekTop().(token.Token)
 }
 
-func (rfx *refixer) Pop() Token {
-	return rfx.PipeStack.Pop().(Token)
+func (rfx *refixer) Pop() token.Token {
+	return rfx.PipeStack.Pop().(token.Token)
 }
 
-func (rfx *refixer) AcceptPop(other interface{}) Token {
-	return rfx.PipeStack.AcceptPop(other).(Token)
+func (rfx *refixer) AcceptPop(other interface{}) token.Token {
+	return rfx.PipeStack.AcceptPop(other).(token.Token)
 }
 
-func (rfx *refixer) ExpectPop(other interface{}) (Token, error) {
+func (rfx *refixer) ExpectPop(other interface{}) (token.Token, error) {
 
 	tk, e := rfx.PipeStack.ExpectPop(other)
 	if e != nil {
 		return nil, e
 	}
 
-	return tk.(Token), nil
+	return tk.(token.Token), nil
 }
 
 func (m pipeAndMatch) Next() interface{} {
@@ -97,7 +98,7 @@ func (pipeAndMatch) Match(ifaceTk, ifacePat interface{}) bool {
 		return false
 	}
 
-	tk, ok := ifaceTk.(Token)
+	tk, ok := ifaceTk.(token.Token)
 	if !ok {
 		failNow("refixer pipestack contains something other than a Token")
 	}
@@ -117,7 +118,7 @@ func (pipeAndMatch) Match(ifaceTk, ifacePat interface{}) bool {
 func (m pipeAndMatch) Expect(ifaceTk, ifacePat interface{}) error {
 
 	if ifaceTk == nil {
-		return errorUnexpectedEOF(ifaceTk.(Token))
+		return errorUnexpectedEOF(ifaceTk.(token.Token))
 	}
 
 	if ifacePat == nil {
@@ -128,5 +129,5 @@ func (m pipeAndMatch) Expect(ifaceTk, ifacePat interface{}) error {
 		return nil
 	}
 
-	return errorWrongToken(ifacePat.(fmt.Stringer), ifaceTk.(Token))
+	return errorWrongToken(ifacePat.(fmt.Stringer), ifaceTk.(token.Token))
 }

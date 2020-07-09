@@ -2,13 +2,14 @@ package sanitise
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror"
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/types"
 )
 
-type SanitiseFunc func() (Token, SanitiseFunc, error)
+type SanitiseFunc func() (token.Token, SanitiseFunc, error)
 
 type TokenStream interface {
-	Next() Token
+	Next() token.Token
 }
 
 func New(ts TokenStream) SanitiseFunc {
@@ -29,10 +30,10 @@ func New(ts TokenStream) SanitiseFunc {
 
 type sanitiser struct {
 	ts   TokenStream
-	buff Token
+	buff token.Token
 }
 
-func (san *sanitiser) next() (Token, SanitiseFunc, error) {
+func (san *sanitiser) next() (token.Token, SanitiseFunc, error) {
 
 	if san.empty() {
 		perror.Panic("No tokens remaining, call `match`, `hasNext`, or `empty` first")
@@ -51,7 +52,7 @@ func (san *sanitiser) empty() bool {
 	return san.buff == nil
 }
 
-func (san *sanitiser) bufferNext() Token {
+func (san *sanitiser) bufferNext() token.Token {
 
 	prev := san.buff
 
