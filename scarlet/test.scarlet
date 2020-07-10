@@ -5,6 +5,9 @@
 @Set("y", 1)
 @Set("z", "abc")
 
+@Println()
 @Println("x == ", x)
 @Println("y == ", y)
 @Println("z == ", z)
+
+@Exit(0)
