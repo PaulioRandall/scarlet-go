@@ -1,4 +1,4 @@
-package refix
+package shunt
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 )
 
-func errorUnexpectedEOF(want token.Token) error {
-	return fail(want, "Want %q, have EOF")
+func errorUnexpectedEOF(after token.Snippet) error {
+	return perror.NewAfterSnippet("Unexpected EOF", after)
 }
 
 func errorUnexpectedToken(have token.Token) error {

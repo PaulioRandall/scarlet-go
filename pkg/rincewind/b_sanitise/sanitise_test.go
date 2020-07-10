@@ -31,7 +31,7 @@ func doTest(t *testing.T, in, exps []token.Token) {
 	tkt.RequireSlice(t, exps, acts)
 }
 
-func halfTok(gen GenType, sub SubType, raw string) token.Tok {
+func tok(gen GenType, sub SubType, raw string) token.Tok {
 	return token.Tok{
 		Gen:    gen,
 		Sub:    sub,
@@ -45,18 +45,18 @@ func Test1_1(t *testing.T) {
 	// WHEN sanitising a statement containing redudant whitespace
 	// @Println (  )
 	in := []token.Token{
-		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		halfTok(GE_WHITESPACE, SU_UNDEFINED, " "),
-		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		halfTok(GE_WHITESPACE, SU_UNDEFINED, "  "),
-		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		tok(GE_WHITESPACE, SU_UNDEFINED, " "),
+		tok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tok(GE_WHITESPACE, SU_UNDEFINED, "  "),
+		tok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
 	// THEN the whitespace is removed
 	exp := []token.Token{
-		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		tok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
 	doTest(t, in, exp)
@@ -68,17 +68,17 @@ func Test2_1(t *testing.T) {
 	// @Println(
 	// )
 	in := []token.Token{
-		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		tok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
 	// THEN the newline is removed
 	exp := []token.Token{
-		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		tok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
 	doTest(t, in, exp)
@@ -90,23 +90,23 @@ func Test3_1(t *testing.T) {
 	// @Println(1,
 	// 1)
 	in := []token.Token{
-		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		halfTok(GE_LITERAL, SU_NUMBER, "1"),
-		halfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
-		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
-		halfTok(GE_LITERAL, SU_NUMBER, "1"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		tok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tok(GE_LITERAL, SU_NUMBER, "1"),
+		tok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		tok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GE_LITERAL, SU_NUMBER, "1"),
+		tok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
 	// THEN the newline is removed
 	exp := []token.Token{
-		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		halfTok(GE_LITERAL, SU_NUMBER, "1"),
-		halfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
-		halfTok(GE_LITERAL, SU_NUMBER, "1"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		tok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tok(GE_LITERAL, SU_NUMBER, "1"),
+		tok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		tok(GE_LITERAL, SU_NUMBER, "1"),
+		tok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
 	doTest(t, in, exp)
@@ -119,20 +119,20 @@ func Test3_2(t *testing.T) {
 	// @Println(1,
 	// )
 	in := []token.Token{
-		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		halfTok(GE_LITERAL, SU_NUMBER, "1"),
-		halfTok(GE_DELIMITER, SU_VALUE_DELIM, ","),
-		halfTok(GE_TERMINATOR, SU_NEWLINE, "\n"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		tok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tok(GE_LITERAL, SU_NUMBER, "1"),
+		tok(GE_DELIMITER, SU_VALUE_DELIM, ","),
+		tok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
 	// THEN the newline is removed along with the value delimiter
 	exp := []token.Token{
-		halfTok(GE_SPELL, SU_UNDEFINED, "@Print"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
-		halfTok(GE_LITERAL, SU_NUMBER, "1"),
-		halfTok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tok(GE_SPELL, SU_UNDEFINED, "@Print"),
+		tok(GE_PARENTHESIS, SU_PAREN_OPEN, "("),
+		tok(GE_LITERAL, SU_NUMBER, "1"),
+		tok(GE_PARENTHESIS, SU_PAREN_CLOSE, ")"),
 	}
 
 	doTest(t, in, exp)

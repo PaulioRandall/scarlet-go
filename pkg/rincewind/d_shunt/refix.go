@@ -1,7 +1,6 @@
-package refix
+package shunt
 
 import (
-	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/pipestack"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 )
 
@@ -13,14 +12,15 @@ func New(ts token.Stream) RefixFunc {
 		failNow("Non-nil Token Stream required")
 	}
 
-	p := piper{ts}
-	rfx := &refixer{
-		NewPipeStack(p, p),
+	shy := &shuntingYard{
+		Stack: &token.Stack{},
+		ts:    ts,
 	}
+	shy.buff = shy.ts.Next()
 
-	if rfx.Empty() {
+	if shy.empty() {
 		return nil
 	}
 
-	return rfx.refix
+	return shy.shunt
 }
