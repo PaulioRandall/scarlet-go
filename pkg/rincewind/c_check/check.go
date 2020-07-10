@@ -2,7 +2,6 @@ package check
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/perror"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/queue"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 )
 
@@ -15,7 +14,7 @@ func New(ts token.Stream) CheckFunc {
 	}
 
 	chk := &checker{
-		Queue: queue.Queue{},
+		Queue: token.Queue{},
 		ts:    ts,
 	}
 	chk.bufferNext()

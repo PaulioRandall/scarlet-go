@@ -9,7 +9,7 @@ import (
 )
 
 type shuntingYard struct {
-	*token.Stack
+	token.Stack
 	ts   token.Stream
 	buff token.Token
 }

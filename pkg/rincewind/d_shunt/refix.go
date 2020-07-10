@@ -13,7 +13,7 @@ func New(ts token.Stream) RefixFunc {
 	}
 
 	shy := &shuntingYard{
-		Stack: &token.Stack{},
+		Stack: token.Stack{},
 		ts:    ts,
 	}
 	shy.buff = shy.ts.Next()

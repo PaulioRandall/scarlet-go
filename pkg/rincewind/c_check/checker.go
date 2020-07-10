@@ -4,13 +4,12 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/perror"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/queue"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 )
 
 type checker struct {
-	queue.Queue
+	token.Queue
 	ts   token.Stream
 	buff token.Token
 }
