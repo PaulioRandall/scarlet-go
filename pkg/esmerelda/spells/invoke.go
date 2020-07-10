@@ -8,7 +8,7 @@ import (
 )
 
 type Enviro interface {
-	Exit(code uint32)
+	Exit(code int)
 	Fail(error)
 	Bind(id string, value result.Result)
 	Unbind(id string)

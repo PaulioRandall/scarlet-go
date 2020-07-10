@@ -25,10 +25,10 @@ func main() { // Run it with `./godo run`
 	fmt.Printf("Exit code: %d\n", exitCode)
 
 	todo()
-	os.Exit(int(exitCode))
+	os.Exit(exitCode)
 }
 
-func esme(file string) (uint32, error) {
+func esme(file string) (int, error) {
 
 	const ERROR_CODE = 1
 

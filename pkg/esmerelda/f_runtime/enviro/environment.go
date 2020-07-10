@@ -16,7 +16,7 @@ type Environment struct {
 	Halted   bool
 	Err      error
 	Done     bool
-	ExitCode uint32
+	ExitCode int
 }
 
 type Context struct {
@@ -40,7 +40,7 @@ func New() *Environment {
 	}
 }
 
-func (env *Environment) Exit(code uint32) {
+func (env *Environment) Exit(code int) {
 	env.Done, env.ExitCode, env.Halted = true, code, true
 }
 

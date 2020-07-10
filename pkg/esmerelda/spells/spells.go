@@ -15,7 +15,7 @@ func spell_exit(env Enviro, args []result.Result) {
 	}
 
 	if c, ok := args[0].Num(); ok {
-		env.Exit(uint32(c.Integer()))
+		env.Exit(int(c.Integer()))
 		return
 	}
 
