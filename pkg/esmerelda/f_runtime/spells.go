@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -49,7 +50,8 @@ func popArgs(env *environment, size int) []result {
 func spell_exit(env *environment, args []result) {
 
 	if len(args) != 1 {
-		perror.Panic("@Exit requires one argument")
+		env.err(errors.New("@Exit requires one argument"))
+		return
 	}
 
 	if c, ok := args[0].Num(); ok {
@@ -58,7 +60,7 @@ func spell_exit(env *environment, args []result) {
 		return
 	}
 
-	perror.Panic("@Exit requires its argument be a number")
+	env.err(errors.New("@Exit requires its argument be a number"))
 }
 
 func spell_print(env *environment, args []result) {
@@ -75,12 +77,14 @@ func spell_println(env *environment, args []result) {
 func spell_set(env *environment, args []result) {
 
 	if len(args) != 2 {
-		perror.Panic("@Set requires two arguments")
+		env.err(errors.New("@Set requires one argument"))
+		return
 	}
 
 	id, ok := args[0].Str()
 	if !ok {
-		perror.Panic("@Set requires the first argument be an identifier string")
+		env.err(errors.New("@Set requires the first argument be an identifier string"))
+		return
 	}
 
 	env.put(id, args[1])
@@ -89,12 +93,14 @@ func spell_set(env *environment, args []result) {
 func spell_del(env *environment, args []result) {
 
 	if len(args) != 1 {
-		perror.Panic("@Del requires one argument")
+		env.err(errors.New("@Del requires one argument"))
+		return
 	}
 
 	id, ok := args[0].Str()
 	if !ok {
-		perror.Panic("@Del requires its argument be an identifier string")
+		env.err(errors.New("@Del requires its argument be an identifier string"))
+		return
 	}
 
 	env.del(id)

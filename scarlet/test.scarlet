@@ -1,13 +1,17 @@
 
 @Println("Hello, Scarlet!")
 
-@Set("x", true)
-@Set("y", 1)
-@Set("z", "abc")
+@Set("a", true)
+@Set("b", 1)
+@Set("c", "abc")
+@Set("d", a)
 
 @Println()
-@Println("x == ", x)
-@Println("y == ", y)
-@Println("z == ", z)
+@Println("a == ", a)
+@Println("b == ", b)
+@Println("c == ", c)
+@Println("d == ", d)
+
+@Del("d")
 
 @Exit(0)

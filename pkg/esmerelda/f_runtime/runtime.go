@@ -63,10 +63,6 @@ func (run Runtime) halted(hasMore bool) (bool, error) {
 	return hasMore, nil
 }
 
-func (run Runtime) err(e error) {
-	run.env.e, run.env.halt = e, true
-}
-
 func (run Runtime) exe(in inst.Instruction) {
 
 	switch in.Code() {
@@ -84,13 +80,13 @@ func (run Runtime) exe(in inst.Instruction) {
 			run.env.push(r)
 		} else {
 			msg := fmt.Sprintf("Undeclared variable %q", id)
-			run.err(perror.NewBySnippet(msg, in))
+			run.env.err(perror.NewBySnippet(msg, in))
 		}
 
 	case IN_SPELL:
 		invokeSpell(run.env, in)
 
 	default:
-		run.err(perror.NewBySnippet("Unknown instruction code", in))
+		run.env.err(perror.NewBySnippet("Unknown instruction code", in))
 	}
 }

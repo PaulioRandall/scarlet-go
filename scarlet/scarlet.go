@@ -69,6 +69,8 @@ func esme(file string) (int, error) {
 
 func todo() {
 	println()
+	println()
+	println("TODO:")
 	println("[Next] Test f_runtime pkg")
 	println("[Next] Check an identifier is valid when using @set")
 	println("[Next] Put spells in their own pkg & create spell register")

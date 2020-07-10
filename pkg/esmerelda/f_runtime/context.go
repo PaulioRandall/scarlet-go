@@ -28,6 +28,10 @@ func newEnv() *environment {
 	}
 }
 
+func (env *environment) err(e error) {
+	env.e, env.halt = e, true
+}
+
 func (env *environment) tick() int {
 	c := env.ctx.counter
 	env.ctx.counter++
