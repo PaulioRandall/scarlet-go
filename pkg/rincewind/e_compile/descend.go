@@ -18,9 +18,9 @@ func (com *compiler) println() {
 
 func next(com *compiler) error {
 
-	defer com.discard() // GE_TERMINATOR, now redundant
+	defer com.discard() // GEN_TERMINATOR, now redundant
 
-	if com.match(GE_PARAMS) {
+	if com.match(GEN_PARAMS) {
 		return call(com)
 	}
 
@@ -29,10 +29,10 @@ func next(com *compiler) error {
 
 func call(com *compiler) error {
 
-	com.discard() // GE_PARAMS, now redundant
+	com.discard() // GEN_PARAMS, now redundant
 	argCount := 0
 
-	for !com.match(GE_SPELL) {
+	for !com.match(GEN_SPELL) {
 		argCount++
 
 		e := expression(com)
@@ -58,7 +58,7 @@ func expression(com *compiler) error {
 	case com.match(SU_IDENTIFIER):
 		identifier(com)
 
-	case com.match(GE_LITERAL):
+	case com.match(GEN_LITERAL):
 		literal(com)
 
 	default:

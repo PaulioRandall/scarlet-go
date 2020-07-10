@@ -23,27 +23,27 @@ func next(scn *scanner, tk *token.Tok) error {
 		return spell(scn, tk)
 
 	case scn.match('_'):
-		tk.Gen, tk.Sub = GE_IDENTIFIER, SU_VOID
+		tk.Gen, tk.Sub = GEN_IDENTIFIER, SU_VOID
 		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match(';'):
-		tk.Gen, tk.Sub = GE_TERMINATOR, SU_TERMINATOR
+		tk.Gen, tk.Sub = GEN_TERMINATOR, SU_TERMINATOR
 		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match(','):
-		tk.Gen, tk.Sub = GE_DELIMITER, SU_VALUE_DELIM
+		tk.Gen, tk.Sub = GEN_DELIMITER, SU_VALUE_DELIM
 		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match('('):
-		tk.Gen, tk.Sub = GE_PARENTHESIS, SU_PAREN_OPEN
+		tk.Gen, tk.Sub = GEN_PARENTHESIS, SU_PAREN_OPEN
 		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match(')'):
-		tk.Gen, tk.Sub = GE_PARENTHESIS, SU_PAREN_CLOSE
+		tk.Gen, tk.Sub = GEN_PARENTHESIS, SU_PAREN_CLOSE
 		tk.RawStr = string(scn.next())
 		return nil
 
@@ -70,7 +70,7 @@ func newline(scn *scanner, tk *token.Tok) error {
 	}
 	sb.WriteRune(scn.next())
 
-	tk.Gen, tk.Sub, tk.RawStr = GE_TERMINATOR, SU_NEWLINE, sb.String()
+	tk.Gen, tk.Sub, tk.RawStr = GEN_TERMINATOR, SU_NEWLINE, sb.String()
 	return nil
 }
 
@@ -82,7 +82,7 @@ func whitespace(scn *scanner, tk *token.Tok) error {
 		sb.WriteRune(scn.next())
 	}
 
-	tk.Gen, tk.Sub, tk.RawStr = GE_WHITESPACE, SU_UNDEFINED, sb.String()
+	tk.Gen, tk.Sub, tk.RawStr = GEN_WHITESPACE, SU_UNDEFINED, sb.String()
 	return nil
 }
 
@@ -99,10 +99,10 @@ func word(scn *scanner, tk *token.Tok) error {
 
 	switch tk.RawStr {
 	case "false", "true":
-		tk.Gen, tk.Sub = GE_LITERAL, SU_BOOL
+		tk.Gen, tk.Sub = GEN_LITERAL, SU_BOOL
 
 	default:
-		tk.Gen, tk.Sub = GE_IDENTIFIER, SU_IDENTIFIER
+		tk.Gen, tk.Sub = GEN_IDENTIFIER, SU_IDENTIFIER
 	}
 
 	return nil
@@ -129,7 +129,7 @@ func spell(scn *scanner, tk *token.Tok) error {
 		sb.WriteRune(scn.next())
 	}
 
-	tk.Gen, tk.Sub, tk.RawStr = GE_SPELL, SU_UNDEFINED, sb.String()
+	tk.Gen, tk.Sub, tk.RawStr = GEN_SPELL, SU_UNDEFINED, sb.String()
 	return nil
 }
 
@@ -153,7 +153,7 @@ func stringLiteral(scn *scanner, tk *token.Tok) error {
 
 	sb.WriteRune(scn.next())
 
-	tk.Gen, tk.Sub, tk.RawStr = GE_LITERAL, SU_STRING, sb.String()
+	tk.Gen, tk.Sub, tk.RawStr = GEN_LITERAL, SU_STRING, sb.String()
 	return nil
 }
 
@@ -179,6 +179,6 @@ func numberLiteral(scn *scanner, tk *token.Tok) error {
 	}
 
 FINALISE:
-	tk.Gen, tk.Sub, tk.RawStr = GE_LITERAL, SU_NUMBER, sb.String()
+	tk.Gen, tk.Sub, tk.RawStr = GEN_LITERAL, SU_NUMBER, sb.String()
 	return nil
 }

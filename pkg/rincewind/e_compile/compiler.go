@@ -53,7 +53,7 @@ func (com *compiler) match(ty interface{}) bool {
 
 	switch v := ty.(type) {
 	case GenType:
-		return v == GE_ANY || v == com.buff.GenType()
+		return v == GEN_ANY || v == com.buff.GenType()
 
 	case SubType:
 		return v == SU_ANY || v == com.buff.SubType()

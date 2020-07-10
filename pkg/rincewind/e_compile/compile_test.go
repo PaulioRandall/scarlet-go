@@ -56,9 +56,9 @@ func Test1_1(t *testing.T) {
 	// WHEN compiling a spell with no arguments
 	// @Println()
 	in := []token.Token{
-		tok(GE_PARAMS, SU_UNDEFINED, "("),
-		tok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_PARAMS, SU_UNDEFINED, "("),
+		tok(GEN_SPELL, SU_UNDEFINED, "@Println"),
+		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	// THEN these are the expected instructions
@@ -74,10 +74,10 @@ func Test1_2(t *testing.T) {
 	// WHEN compiling a spell with an identifier argument
 	// @Println(x)
 	in := []token.Token{
-		tok(GE_PARAMS, SU_UNDEFINED, "("),
-		tok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_PARAMS, SU_UNDEFINED, "("),
+		tok(GEN_IDENTIFIER, SU_IDENTIFIER, "x"),
+		tok(GEN_SPELL, SU_UNDEFINED, "@Println"),
+		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	// THEN these are the expected instructions
@@ -94,12 +94,12 @@ func Test1_3(t *testing.T) {
 	// WHEN compiling a spell with a multiple arguments of different types
 	// @Println(x, 1, "abc")
 	in := []token.Token{
-		tok(GE_PARAMS, SU_UNDEFINED, "("),
-		tok(GE_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tok(GE_LITERAL, SU_NUMBER, "1"),
-		tok(GE_LITERAL, SU_STRING, `"abc"`),
-		tok(GE_SPELL, SU_UNDEFINED, "@Println"),
-		tok(GE_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_PARAMS, SU_UNDEFINED, "("),
+		tok(GEN_IDENTIFIER, SU_IDENTIFIER, "x"),
+		tok(GEN_LITERAL, SU_NUMBER, "1"),
+		tok(GEN_LITERAL, SU_STRING, `"abc"`),
+		tok(GEN_SPELL, SU_UNDEFINED, "@Println"),
+		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
 	}
 
 	// THEN these are the expected instructions

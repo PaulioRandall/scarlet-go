@@ -3,56 +3,56 @@ package types
 type GenType int // General type
 type SubType int
 
-func (ge GenType) String() string {
-	return genTypes[ge]
+func (gen GenType) String() string {
+	return genTypes[gen]
 }
 
-func (su SubType) String() string {
-	return subTypes[su]
+func (sub SubType) String() string {
+	return subTypes[sub]
 }
 
 const (
-	GE_UNDEFINED GenType = 0
-	SU_UNDEFINED SubType = 0
-	GE_ANY       GenType = iota
-	SU_ANY       SubType = iota
+	GEN_UNDEFINED GenType = 0
+	SU_UNDEFINED  SubType = 0
+	GEN_ANY       GenType = iota
+	SU_ANY        SubType = iota
 	// ------------------
-	GE_WHITESPACE GenType = iota
+	GEN_WHITESPACE GenType = iota
 	// ------------------
-	GE_TERMINATOR GenType = iota
-	SU_TERMINATOR SubType = iota
+	GEN_TERMINATOR GenType = iota
+	SU_TERMINATOR  SubType = iota
 	SU_NEWLINE
 	// ------------------
-	GE_LITERAL GenType = iota
-	SU_BOOL    SubType = iota
+	GEN_LITERAL GenType = iota
+	SU_BOOL     SubType = iota
 	SU_NUMBER
 	SU_STRING
 	// ------------------
-	GE_IDENTIFIER GenType = iota
-	SU_IDENTIFIER SubType = iota
+	GEN_IDENTIFIER GenType = iota
+	SU_IDENTIFIER  SubType = iota
 	SU_VOID
 	// ------------------
-	GE_SPELL GenType = iota
+	GEN_SPELL GenType = iota
 	// ------------------
-	GE_PARAMS GenType = iota
+	GEN_PARAMS GenType = iota
 	// ------------------
-	GE_DELIMITER   GenType = iota
+	GEN_DELIMITER  GenType = iota
 	SU_VALUE_DELIM SubType = iota
 	// ------------------
-	GE_PARENTHESIS GenType = iota
-	SU_PAREN_OPEN  SubType = iota
+	GEN_PARENTHESIS GenType = iota
+	SU_PAREN_OPEN   SubType = iota
 	SU_PAREN_CLOSE
 )
 
 var genTypes = map[GenType]string{
-	GE_WHITESPACE:  `whitespace`,
-	GE_TERMINATOR:  `terminator`,
-	GE_LITERAL:     `literal`,
-	GE_IDENTIFIER:  `identifier`,
-	GE_SPELL:       `spell`,
-	GE_PARAMS:      `parameters`,
-	GE_DELIMITER:   `delimiter`,
-	GE_PARENTHESIS: `parenthesis`,
+	GEN_WHITESPACE:  `whitespace`,
+	GEN_TERMINATOR:  `terminator`,
+	GEN_LITERAL:     `literal`,
+	GEN_IDENTIFIER:  `identifier`,
+	GEN_SPELL:       `spell`,
+	GEN_PARAMS:      `parameters`,
+	GEN_DELIMITER:   `delimiter`,
+	GEN_PARENTHESIS: `parenthesis`,
 }
 
 var subTypes = map[SubType]string{

@@ -43,7 +43,7 @@ func (tk Tok) Raw() string {
 func (tk Tok) Value() string {
 
 	switch {
-	case tk.Gen == GE_SPELL:
+	case tk.Gen == GEN_SPELL:
 		return tk.RawStr[1:]
 
 	case tk.Sub == SU_STRING:

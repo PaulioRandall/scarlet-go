@@ -10,10 +10,10 @@ func next(shy *shuntingYard) (token.Token, error) {
 	for !shy.empty() {
 
 		switch {
-		case shy.matchBuff(GE_IDENTIFIER):
+		case shy.matchBuff(GEN_IDENTIFIER):
 			return shy.next(), nil
 
-		case shy.matchBuff(GE_LITERAL):
+		case shy.matchBuff(GEN_LITERAL):
 			return shy.next(), nil
 
 		case shy.matchBuff(SU_VALUE_DELIM):
@@ -24,12 +24,12 @@ func next(shy *shuntingYard) (token.Token, error) {
 
 			return shy.Pop(), nil
 
-		case shy.acceptPush(GE_SPELL):
+		case shy.acceptPush(GEN_SPELL):
 			if e := shy.expectPush(SU_PAREN_OPEN); e != nil {
 				return nil, e
 			}
 
-			return retypeToken(shy.Top(), GE_PARAMS, SU_UNDEFINED), nil
+			return retypeToken(shy.Top(), GEN_PARAMS, SU_UNDEFINED), nil
 
 		case shy.matchBuff(SU_PAREN_CLOSE):
 			if tk := shy.acceptPop(SU_PAREN_OPEN); tk != nil {
@@ -38,7 +38,7 @@ func next(shy *shuntingYard) (token.Token, error) {
 
 			return shy.Pop(), nil
 
-		case shy.matchBuff(GE_TERMINATOR):
+		case shy.matchBuff(GEN_TERMINATOR):
 			if shy.emptyStack() {
 				return shy.next(), nil
 			}

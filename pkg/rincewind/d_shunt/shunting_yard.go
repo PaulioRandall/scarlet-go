@@ -114,7 +114,7 @@ func matchToken(tk token.Token, ty interface{}) bool {
 	}
 
 	if pat, ok := ty.(GenType); ok {
-		return pat == GE_ANY || pat == tk.GenType()
+		return pat == GEN_ANY || pat == tk.GenType()
 	}
 
 	if pat, ok := ty.(SubType); ok {

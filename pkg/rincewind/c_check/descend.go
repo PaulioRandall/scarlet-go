@@ -12,12 +12,12 @@ func next(chk *checker) error {
 		return e
 	}
 
-	return chk.expect(GE_TERMINATOR)
+	return chk.expect(GEN_TERMINATOR)
 }
 
 func spell(chk *checker) error {
 
-	e := chk.expect(GE_SPELL)
+	e := chk.expect(GEN_SPELL)
 	if e != nil {
 		return e
 	}
@@ -35,7 +35,7 @@ MORE:
 
 	switch {
 	case chk.accept(SU_IDENTIFIER):
-	case chk.accept(GE_LITERAL):
+	case chk.accept(GEN_LITERAL):
 	default:
 		return perror.NewBySnippet("Unexpected token", chk.buff)
 	}

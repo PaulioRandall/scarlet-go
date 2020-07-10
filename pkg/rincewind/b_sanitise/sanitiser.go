@@ -41,10 +41,10 @@ BUFFER:
 	case san.buff == nil:
 		return prev
 
-	case san.buff.GenType() == GE_WHITESPACE:
+	case san.buff.GenType() == GEN_WHITESPACE:
 		goto BUFFER
 
-	case prev.GenType() == GE_TERMINATOR && san.buff.GenType() == GE_TERMINATOR:
+	case prev.GenType() == GEN_TERMINATOR && san.buff.GenType() == GEN_TERMINATOR:
 		goto BUFFER
 
 	case prev.SubType() == SU_PAREN_OPEN && san.buff.SubType() == SU_NEWLINE:
