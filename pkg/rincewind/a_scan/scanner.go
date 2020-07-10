@@ -8,7 +8,7 @@ import (
 )
 
 type scanner struct {
-	itr  SymbolItr
+	itr  RuneItr
 	buff rune
 	line int
 	col  int

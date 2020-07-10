@@ -6,19 +6,19 @@ import (
 
 type ScanFunc func() (token.Tok, ScanFunc, error)
 
-type SymbolItr interface {
+type RuneItr interface {
 	Next() (rune, bool)
 }
 
-func New(itr SymbolItr) ScanFunc {
+func New(itr RuneItr) ScanFunc {
 
 	if itr == nil {
-		failNow("Non-nil SymbolItr required")
+		failNow("Non-nil RuneItr required")
 	}
 
 	scn := &scanner{
 		itr: itr,
-		col: -1, // -1 so index is before first symbol
+		col: -1, // -1 so index is before the first symbol
 	}
 	scn.bufferNext()
 
@@ -29,7 +29,7 @@ func New(itr SymbolItr) ScanFunc {
 	return scn.scan
 }
 
-func ScanAll(itr SymbolItr) ([]token.Token, error) {
+func ScanAll(itr RuneItr) ([]token.Token, error) {
 
 	var (
 		e   error

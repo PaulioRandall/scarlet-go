@@ -11,28 +11,28 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type symItr struct {
-	syms []rune
-	size int
-	i    int
+type runeItr struct {
+	runes []rune
+	size  int
+	i     int
 }
 
-func (itr *symItr) Next() (rune, bool) {
+func (itr *runeItr) Next() (rune, bool) {
 
 	if itr.i >= itr.size {
 		return rune(0), false
 	}
 
-	ru := itr.syms[itr.i]
+	ru := itr.runes[itr.i]
 	itr.i++
 	return ru, true
 }
 
 func doTest(t *testing.T, in string, exps []token.Token) {
 
-	itr := &symItr{
-		syms: []rune(in),
-		size: len(in),
+	itr := &runeItr{
+		runes: []rune(in),
+		size:  len(in),
 	}
 
 	acts, e := ScanAll(itr)
@@ -45,9 +45,9 @@ func doTest(t *testing.T, in string, exps []token.Token) {
 
 func doErrorTest(t *testing.T, in string) {
 
-	itr := &symItr{
-		syms: []rune(in),
-		size: len(in),
+	itr := &runeItr{
+		runes: []rune(in),
+		size:  len(in),
 	}
 
 	_, e := ScanAll(itr)
