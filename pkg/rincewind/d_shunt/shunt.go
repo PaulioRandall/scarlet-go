@@ -6,7 +6,11 @@ import (
 
 type RefixFunc func() (token.Token, RefixFunc, error)
 
-func New(ts token.Stream) RefixFunc {
+type TokenStream interface {
+	Next() token.Token
+}
+
+func New(ts TokenStream) RefixFunc {
 
 	if ts == nil {
 		failNow("Non-nil Token Stream required")

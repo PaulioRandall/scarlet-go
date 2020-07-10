@@ -7,7 +7,11 @@ import (
 
 type CompileFunc func() (inst.Instruction, CompileFunc, error)
 
-func New(ts token.Stream) CompileFunc {
+type TokenStream interface {
+	Next() token.Token
+}
+
+func New(ts TokenStream) CompileFunc {
 
 	if ts == nil {
 		failNow("Non-nil TokenStream required")

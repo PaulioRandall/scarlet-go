@@ -7,7 +7,11 @@ import (
 
 type SanitiseFunc func() (token.Token, SanitiseFunc, error)
 
-func New(ts token.Stream) SanitiseFunc {
+type TokenStream interface {
+	Next() token.Token
+}
+
+func New(ts TokenStream) SanitiseFunc {
 
 	if ts == nil {
 		perror.Panic("Non-nil TokenStream required")

@@ -8,7 +8,7 @@ import (
 
 type compiler struct {
 	inst.Queue
-	ts   token.Stream
+	ts   TokenStream
 	buff token.Token
 }
 

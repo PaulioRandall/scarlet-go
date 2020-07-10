@@ -7,7 +7,7 @@ import (
 )
 
 type sanitiser struct {
-	ts   token.Stream
+	ts   TokenStream
 	buff token.Token
 }
 

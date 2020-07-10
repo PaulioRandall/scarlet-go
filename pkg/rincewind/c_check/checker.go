@@ -10,7 +10,7 @@ import (
 
 type checker struct {
 	token.Queue
-	ts   token.Stream
+	ts   TokenStream
 	buff token.Token
 }
 

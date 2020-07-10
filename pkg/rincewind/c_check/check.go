@@ -7,7 +7,11 @@ import (
 
 type CheckFunc func() (token.Token, CheckFunc, error)
 
-func New(ts token.Stream) CheckFunc {
+type TokenStream interface {
+	Next() token.Token
+}
+
+func New(ts TokenStream) CheckFunc {
 
 	if ts == nil {
 		perror.Panic("Non-nil TokenStream required")
