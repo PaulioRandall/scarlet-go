@@ -118,7 +118,7 @@ func matchToken(tk token.Token, ty interface{}) bool {
 	}
 
 	if pat, ok := ty.(SubType); ok {
-		return pat == SU_ANY || pat == tk.SubType()
+		return pat == SUB_ANY || pat == tk.SubType()
 	}
 
 	failNow("GenType or SubType required")

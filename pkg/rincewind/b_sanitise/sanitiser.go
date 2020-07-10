@@ -47,13 +47,13 @@ BUFFER:
 	case prev.GenType() == GEN_TERMINATOR && san.buff.GenType() == GEN_TERMINATOR:
 		goto BUFFER
 
-	case prev.SubType() == SU_PAREN_OPEN && san.buff.SubType() == SU_NEWLINE:
+	case prev.SubType() == SUB_PAREN_OPEN && san.buff.SubType() == SUB_NEWLINE:
 		goto BUFFER
 
-	case prev.SubType() == SU_VALUE_DELIM && san.buff.SubType() == SU_NEWLINE:
+	case prev.SubType() == SUB_VALUE_DELIM && san.buff.SubType() == SUB_NEWLINE:
 		goto BUFFER
 
-	case prev.SubType() == SU_VALUE_DELIM && san.buff.SubType() == SU_PAREN_CLOSE:
+	case prev.SubType() == SUB_VALUE_DELIM && san.buff.SubType() == SUB_PAREN_CLOSE:
 		prev = san.buff
 		goto BUFFER
 	}

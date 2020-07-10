@@ -13,35 +13,35 @@ func (sub SubType) String() string {
 
 const (
 	GEN_UNDEFINED GenType = 0
-	SU_UNDEFINED  SubType = 0
+	SUB_UNDEFINED SubType = 0
 	GEN_ANY       GenType = iota
-	SU_ANY        SubType = iota
+	SUB_ANY       SubType = iota
 	// ------------------
 	GEN_WHITESPACE GenType = iota
 	// ------------------
 	GEN_TERMINATOR GenType = iota
-	SU_TERMINATOR  SubType = iota
-	SU_NEWLINE
+	SUB_TERMINATOR SubType = iota
+	SUB_NEWLINE
 	// ------------------
 	GEN_LITERAL GenType = iota
-	SU_BOOL     SubType = iota
-	SU_NUMBER
-	SU_STRING
+	SUB_BOOL    SubType = iota
+	SUB_NUMBER
+	SUB_STRING
 	// ------------------
 	GEN_IDENTIFIER GenType = iota
-	SU_IDENTIFIER  SubType = iota
-	SU_VOID
+	SUB_IDENTIFIER SubType = iota
+	SUB_VOID
 	// ------------------
 	GEN_SPELL GenType = iota
 	// ------------------
 	GEN_PARAMS GenType = iota
 	// ------------------
-	GEN_DELIMITER  GenType = iota
-	SU_VALUE_DELIM SubType = iota
+	GEN_DELIMITER   GenType = iota
+	SUB_VALUE_DELIM SubType = iota
 	// ------------------
 	GEN_PARENTHESIS GenType = iota
-	SU_PAREN_OPEN   SubType = iota
-	SU_PAREN_CLOSE
+	SUB_PAREN_OPEN  SubType = iota
+	SUB_PAREN_CLOSE
 )
 
 var genTypes = map[GenType]string{
@@ -56,14 +56,14 @@ var genTypes = map[GenType]string{
 }
 
 var subTypes = map[SubType]string{
-	SU_TERMINATOR:  `terminator`,
-	SU_NEWLINE:     `newline`,
-	SU_BOOL:        `bool`,
-	SU_NUMBER:      `number`,
-	SU_STRING:      `string`,
-	SU_IDENTIFIER:  `identifier`,
-	SU_VOID:        `void`,
-	SU_VALUE_DELIM: `value_delim`,
-	SU_PAREN_OPEN:  `paren_open`,
-	SU_PAREN_CLOSE: `paren_close`,
+	SUB_TERMINATOR:  `terminator`,
+	SUB_NEWLINE:     `newline`,
+	SUB_BOOL:        `bool`,
+	SUB_NUMBER:      `number`,
+	SUB_STRING:      `string`,
+	SUB_IDENTIFIER:  `identifier`,
+	SUB_VOID:        `void`,
+	SUB_VALUE_DELIM: `value_delim`,
+	SUB_PAREN_OPEN:  `paren_open`,
+	SUB_PAREN_CLOSE: `paren_close`,
 }

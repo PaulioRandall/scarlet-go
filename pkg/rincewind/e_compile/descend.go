@@ -55,7 +55,7 @@ func call(com *compiler) error {
 func expression(com *compiler) error {
 
 	switch {
-	case com.match(SU_IDENTIFIER):
+	case com.match(SUB_IDENTIFIER):
 		identifier(com)
 
 	case com.match(GEN_LITERAL):
@@ -84,13 +84,13 @@ func literal(com *compiler) {
 	tk := com.next()
 
 	switch tk.SubType() {
-	case SU_BOOL:
+	case SUB_BOOL:
 		val = tk.Value() == "true"
 
-	case SU_NUMBER:
+	case SUB_NUMBER:
 		val = number.New(tk.Value())
 
-	case SU_STRING:
+	case SUB_STRING:
 		val = tk.Value()
 	}
 

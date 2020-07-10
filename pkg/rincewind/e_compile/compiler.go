@@ -56,7 +56,7 @@ func (com *compiler) match(ty interface{}) bool {
 		return v == GEN_ANY || v == com.buff.GenType()
 
 	case SubType:
-		return v == SU_ANY || v == com.buff.SubType()
+		return v == SUB_ANY || v == com.buff.SubType()
 	}
 
 	failNow("com.Match requires a GenType or SubType as an argument")

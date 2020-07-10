@@ -22,27 +22,27 @@ func spell(chk *checker) error {
 		return e
 	}
 
-	e = chk.expect(SU_PAREN_OPEN)
+	e = chk.expect(SUB_PAREN_OPEN)
 	if e != nil {
 		return e
 	}
 
-	if chk.accept(SU_PAREN_CLOSE) {
+	if chk.accept(SUB_PAREN_CLOSE) {
 		return nil
 	}
 
 MORE:
 
 	switch {
-	case chk.accept(SU_IDENTIFIER):
+	case chk.accept(SUB_IDENTIFIER):
 	case chk.accept(GEN_LITERAL):
 	default:
 		return perror.NewBySnippet("Unexpected token", chk.buff)
 	}
 
-	if chk.accept(SU_VALUE_DELIM) {
+	if chk.accept(SUB_VALUE_DELIM) {
 		goto MORE
 	}
 
-	return chk.expect(SU_PAREN_CLOSE)
+	return chk.expect(SUB_PAREN_CLOSE)
 }

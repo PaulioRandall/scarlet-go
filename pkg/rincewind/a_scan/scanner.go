@@ -28,7 +28,7 @@ func (scn *scanner) scan() (token.Tok, ScanFunc, error) {
 	tk.ColBegin = col
 	tk.ColEnd = scn.col
 
-	if tk.Sub == SU_NEWLINE {
+	if tk.Sub == SUB_NEWLINE {
 		scn.line++
 		scn.col = 0
 	}

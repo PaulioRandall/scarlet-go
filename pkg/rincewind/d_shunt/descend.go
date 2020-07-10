@@ -16,8 +16,8 @@ func next(shy *shuntingYard) (token.Token, error) {
 		case shy.matchBuff(GEN_LITERAL):
 			return shy.next(), nil
 
-		case shy.matchBuff(SU_VALUE_DELIM):
-			if shy.matchTop(SU_PAREN_OPEN) {
+		case shy.matchBuff(SUB_VALUE_DELIM):
+			if shy.matchTop(SUB_PAREN_OPEN) {
 				shy.next()
 				continue
 			}
@@ -25,14 +25,14 @@ func next(shy *shuntingYard) (token.Token, error) {
 			return shy.Pop(), nil
 
 		case shy.acceptPush(GEN_SPELL):
-			if e := shy.expectPush(SU_PAREN_OPEN); e != nil {
+			if e := shy.expectPush(SUB_PAREN_OPEN); e != nil {
 				return nil, e
 			}
 
-			return retypeToken(shy.Top(), GEN_PARAMS, SU_UNDEFINED), nil
+			return retypeToken(shy.Top(), GEN_PARAMS, SUB_UNDEFINED), nil
 
-		case shy.matchBuff(SU_PAREN_CLOSE):
-			if tk := shy.acceptPop(SU_PAREN_OPEN); tk != nil {
+		case shy.matchBuff(SUB_PAREN_CLOSE):
+			if tk := shy.acceptPop(SUB_PAREN_OPEN); tk != nil {
 				shy.next()
 			}
 

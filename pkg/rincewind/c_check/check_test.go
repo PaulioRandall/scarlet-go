@@ -62,10 +62,10 @@ func Test1_1(t *testing.T) {
 	// THEN no errors should be returned
 	// @Println()
 	in := []token.Token{
-		tok(GEN_SPELL, SU_UNDEFINED, "@Print"),
-		tok(GEN_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tok(GEN_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
+		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 
 	doTest(t, in)
@@ -77,11 +77,11 @@ func Test1_2(t *testing.T) {
 	// THEN no errors should be returned
 	// @Println(x)
 	in := []token.Token{
-		tok(GEN_SPELL, SU_UNDEFINED, "@Print"),
-		tok(GEN_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tok(GEN_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tok(GEN_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
+		tok(GEN_IDENTIFIER, SUB_IDENTIFIER, "x"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 
 	doTest(t, in)
@@ -93,15 +93,15 @@ func Test1_3(t *testing.T) {
 	// THEN no errors should be returned
 	// @Println(x, 1, true)
 	in := []token.Token{
-		tok(GEN_SPELL, SU_UNDEFINED, "@Println"),
-		tok(GEN_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tok(GEN_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tok(GEN_DELIMITER, SU_VALUE_DELIM, ","),
-		tok(GEN_LITERAL, SU_NUMBER, "1"),
-		tok(GEN_DELIMITER, SU_VALUE_DELIM, ","),
-		tok(GEN_LITERAL, SU_BOOL, "true"),
-		tok(GEN_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Println"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
+		tok(GEN_IDENTIFIER, SUB_IDENTIFIER, "x"),
+		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ","),
+		tok(GEN_LITERAL, SUB_NUMBER, "1"),
+		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ","),
+		tok(GEN_LITERAL, SUB_BOOL, "true"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 
 	doTest(t, in)
@@ -113,9 +113,9 @@ func Test2_1(t *testing.T) {
 	// THEN an error should be returned
 	// @Println)
 	in := []token.Token{
-		tok(GEN_SPELL, SU_UNDEFINED, "@Println"),
-		tok(GEN_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Println"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 
 	doErrorTest(t, in)
@@ -127,9 +127,9 @@ func Test2_2(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := []token.Token{
-		tok(GEN_SPELL, SU_UNDEFINED, "@Println"),
-		tok(GEN_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Println"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
+		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 
 	doErrorTest(t, in)
@@ -141,11 +141,11 @@ func Test2_3(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := []token.Token{
-		tok(GEN_SPELL, SU_UNDEFINED, "@Println"),
-		tok(GEN_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tok(GEN_DELIMITER, SU_VALUE_DELIM, ","),
-		tok(GEN_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Println"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
+		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ","),
+		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 
 	doErrorTest(t, in)
@@ -157,12 +157,12 @@ func Test2_4(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := []token.Token{
-		tok(GEN_SPELL, SU_UNDEFINED, "@Println"),
-		tok(GEN_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tok(GEN_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tok(GEN_DELIMITER, SU_VALUE_DELIM, ","),
-		tok(GEN_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Println"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
+		tok(GEN_IDENTIFIER, SUB_IDENTIFIER, "x"),
+		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ","),
+		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 
 	doErrorTest(t, in)
@@ -174,12 +174,12 @@ func Test2_5(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := []token.Token{
-		tok(GEN_SPELL, SU_UNDEFINED, "@Println"),
-		tok(GEN_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tok(GEN_IDENTIFIER, SU_IDENTIFIER, "x"),
-		tok(GEN_IDENTIFIER, SU_IDENTIFIER, "y"),
-		tok(GEN_PARENTHESIS, SU_PAREN_CLOSE, ")"),
-		tok(GEN_TERMINATOR, SU_NEWLINE, "\n"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Println"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
+		tok(GEN_IDENTIFIER, SUB_IDENTIFIER, "x"),
+		tok(GEN_IDENTIFIER, SUB_IDENTIFIER, "y"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 
 	doErrorTest(t, in)
@@ -191,9 +191,9 @@ func Test2_6(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := []token.Token{
-		tok(GEN_SPELL, SU_UNDEFINED, "@Println"),
-		tok(GEN_PARENTHESIS, SU_PAREN_OPEN, "("),
-		tok(GEN_PARENTHESIS, SU_PAREN_CLOSE, ")"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Println"),
+		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
+		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
 	}
 
 	doErrorTest(t, in)

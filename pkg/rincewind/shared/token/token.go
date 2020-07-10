@@ -46,7 +46,7 @@ func (tk Tok) Value() string {
 	case tk.Gen == GEN_SPELL:
 		return tk.RawStr[1:]
 
-	case tk.Sub == SU_STRING:
+	case tk.Sub == SUB_STRING:
 		if len(tk.RawStr) == 2 {
 			return ""
 		}
