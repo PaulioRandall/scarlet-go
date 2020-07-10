@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/number"
+
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst/codes"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
@@ -42,7 +44,7 @@ func tok(gen GenType, sub SubType, raw string) token.Tok {
 	}
 }
 
-func instruction(code inst.Code, data interface{}) inst.Instruction {
+func instruction(code Code, data interface{}) inst.Instruction {
 	return inst.Inst{
 		InstCode: code,
 		InstData: data,
@@ -63,7 +65,7 @@ func Test1_1(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		instruction(inst.IN_SPELL, []interface{}{0, "Println"}),
+		instruction(IN_SPELL, []interface{}{0, "Println"}),
 	}
 
 	doTest(t, in, exp)
@@ -82,8 +84,8 @@ func Test1_2(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		instruction(inst.IN_CTX_GET, "x"),
-		instruction(inst.IN_SPELL, []interface{}{1, "Println"}),
+		instruction(IN_CTX_GET, "x"),
+		instruction(IN_SPELL, []interface{}{1, "Println"}),
 	}
 
 	doTest(t, in, exp)
@@ -104,10 +106,10 @@ func Test1_3(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		instruction(inst.IN_CTX_GET, "x"),
-		instruction(inst.IN_VAL_PUSH, number.New("1")),
-		instruction(inst.IN_VAL_PUSH, "abc"),
-		instruction(inst.IN_SPELL, []interface{}{3, "Println"}),
+		instruction(IN_CTX_GET, "x"),
+		instruction(IN_VAL_PUSH, number.New("1")),
+		instruction(IN_VAL_PUSH, "abc"),
+		instruction(IN_SPELL, []interface{}{3, "Println"}),
 	}
 
 	doTest(t, in, exp)

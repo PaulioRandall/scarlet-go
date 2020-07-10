@@ -1,4 +1,4 @@
-package inst
+package codes
 
 type Code int
 

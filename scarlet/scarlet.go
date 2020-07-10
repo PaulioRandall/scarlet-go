@@ -20,7 +20,6 @@ func main() { // Run it with `./godo run`
 
 	println()
 	println("[Next] Test f_runtime pkg")
-	println("[Next] Create specific Queue implementations")
 	println("[Next] Write functions for all stages to process all tokens at once")
 	println("[Next] Check an identifier is valid when using @set")
 	println("[Next] Put spells in their own pkg & create spell register")
@@ -31,7 +30,7 @@ func main() { // Run it with `./godo run`
 	println("- a_scan:     scans in tokens including redundant ones")
 	println("- b_sanitise: removes redundant tokens")
 	println("- c_check:    checks the token sequence follows language rules")
-	println("- d_refix:    converts from infix to postfix notation")
+	println("- d_shunt:    converts from infix to postfix notation")
 	println("- e_compile:  converts the tokens into instructions")
 	println("- f_runtime:  executes an instruction list")
 	println("- ...")

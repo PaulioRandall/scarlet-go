@@ -1,9 +1,10 @@
 package compile
 
 import (
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/number"
 
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst/codes"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 )
 
@@ -43,7 +44,7 @@ func call(com *compiler) error {
 
 	tk := com.next()
 	com.Put(inst.Inst{
-		InstCode: inst.IN_SPELL,
+		InstCode: IN_SPELL,
 		InstData: []interface{}{argCount, tk.Value()},
 		Opener:   tk,
 		Closer:   tk,
@@ -71,7 +72,7 @@ func expression(com *compiler) error {
 func identifier(com *compiler) {
 	tk := com.next()
 	com.Put(inst.Inst{
-		InstCode: inst.IN_CTX_GET,
+		InstCode: IN_CTX_GET,
 		InstData: tk.Value(),
 		Opener:   tk,
 		Closer:   tk,
@@ -95,7 +96,7 @@ func literal(com *compiler) {
 	}
 
 	com.Put(inst.Inst{
-		InstCode: inst.IN_VAL_PUSH,
+		InstCode: IN_VAL_PUSH,
 		InstData: val,
 		Opener:   tk,
 		Closer:   tk,

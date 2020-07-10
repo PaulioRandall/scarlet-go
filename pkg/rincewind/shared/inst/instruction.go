@@ -2,6 +2,8 @@ package inst
 
 import (
 	"fmt"
+
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst/codes"
 )
 
 type Instruction interface {

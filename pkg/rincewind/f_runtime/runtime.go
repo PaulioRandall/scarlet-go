@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
+	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/perror"
 )
 
@@ -69,13 +70,13 @@ func (run Runtime) err(e error) {
 func (run Runtime) exe(in inst.Instruction) {
 
 	switch in.Code() {
-	case inst.IN_VAL_PUSH:
+	case IN_VAL_PUSH:
 		run.env.push(result{
 			ty:  resultTypeOf(in.Data()),
 			val: in.Data(),
 		})
 
-	case inst.IN_CTX_GET:
+	case IN_CTX_GET:
 		id := in.Data().(string)
 		r, ok := run.env.get(id)
 
@@ -86,7 +87,7 @@ func (run Runtime) exe(in inst.Instruction) {
 			run.err(perror.NewBySnippet(msg, in))
 		}
 
-	case inst.IN_SPELL:
+	case IN_SPELL:
 		invokeSpell(run.env, in)
 
 	default:
