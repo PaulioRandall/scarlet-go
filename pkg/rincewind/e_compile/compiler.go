@@ -2,18 +2,17 @@ package compile
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/queue"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 )
 
 type compiler struct {
-	queue.Queue
+	inst.Queue
 	ts   token.Stream
 	buff token.Token
 }
 
-func (com *compiler) compile() (inst.Inst, CompileFunc, error) {
+func (com *compiler) compile() (inst.Instruction, CompileFunc, error) {
 
 	if com.Queue.Empty() {
 		if e := next(com); e != nil {
@@ -21,7 +20,7 @@ func (com *compiler) compile() (inst.Inst, CompileFunc, error) {
 		}
 	}
 
-	in := com.Take().(inst.Inst)
+	in := com.Take()
 	if com.empty() {
 		return in, nil, nil
 	}

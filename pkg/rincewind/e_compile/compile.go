@@ -2,11 +2,10 @@ package compile
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst"
-	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/queue"
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 )
 
-type CompileFunc func() (inst.Inst, CompileFunc, error)
+type CompileFunc func() (inst.Instruction, CompileFunc, error)
 
 func New(ts token.Stream) CompileFunc {
 
@@ -15,7 +14,7 @@ func New(ts token.Stream) CompileFunc {
 	}
 
 	com := &compiler{
-		Queue: queue.Queue{},
+		Queue: inst.Queue{},
 		ts:    ts,
 	}
 	com.buff = com.ts.Next()

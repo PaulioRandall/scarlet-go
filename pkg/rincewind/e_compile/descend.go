@@ -11,8 +11,8 @@ func (com *compiler) println() {
 
 	println("*************************************")
 
-	com.Queue.Descend(func(data interface{}) {
-		println(data.(inst.Inst).String())
+	com.Queue.Descend(func(data inst.Instruction) {
+		println(data.String())
 	})
 }
 

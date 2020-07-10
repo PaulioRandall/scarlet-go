@@ -17,7 +17,7 @@ import (
 func doTest(t *testing.T, rpn []token.Token, exps []inst.Instruction) {
 
 	var (
-		in     inst.Inst
+		in     inst.Instruction
 		e      error
 		stream = token.NewStream(rpn)
 		acts   = []inst.Instruction{}

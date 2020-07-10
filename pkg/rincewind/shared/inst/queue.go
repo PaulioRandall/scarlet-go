@@ -1,22 +1,22 @@
-package queue
+package inst
 
 type Queue struct {
-	front *node
-	back  *node
+	front *instNode
+	back  *instNode
 }
 
-type node struct {
-	data interface{}
-	next *node
+type instNode struct {
+	data Instruction
+	next *instNode
 }
 
 func (q *Queue) Empty() bool {
 	return q.front == nil
 }
 
-func (q *Queue) Put(data interface{}) {
+func (q *Queue) Put(data Instruction) {
 
-	n := &node{
+	n := &instNode{
 		data: data,
 	}
 
@@ -29,7 +29,7 @@ func (q *Queue) Put(data interface{}) {
 	q.back = n
 }
 
-func (q *Queue) Take() interface{} {
+func (q *Queue) Take() Instruction {
 
 	if q.front == nil {
 		return nil
@@ -45,7 +45,7 @@ func (q *Queue) Take() interface{} {
 	return data
 }
 
-func (q *Queue) Descend(f func(interface{})) {
+func (q *Queue) Descend(f func(Instruction)) {
 	for n := q.front; n != nil; n = n.next {
 		f(n.data)
 	}
