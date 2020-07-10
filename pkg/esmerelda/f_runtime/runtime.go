@@ -48,15 +48,11 @@ func (run *Runtime) Stop() {
 	run.env.Halted = true
 }
 
-func (run *Runtime) halted(hasMore bool) (bool, error) {
+func (run *Runtime) halted(done bool) (bool, error) {
 
 	if run.env.Err != nil {
 		return false, run.env.Err
 	}
 
-	if run.env.ExitCode >= 0 {
-		return true, nil
-	}
-
-	return hasMore, nil
+	return run.env.Done || done, nil
 }

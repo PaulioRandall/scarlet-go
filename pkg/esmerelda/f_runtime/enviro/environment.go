@@ -6,35 +6,42 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/result"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/spells"
 )
 
 type Environment struct {
 	Ctx      *Context
-	Defs     map[string]Result
+	Defs     map[string]result.Result
 	Halted   bool
 	Err      error
-	ExitCode int
+	Done     bool
+	ExitCode uint32
 }
 
 type Context struct {
 	*Stack
 	Counter  int
-	Bindings *map[string]Result
+	Bindings *map[string]result.Result
 }
 
 func New() *Environment {
 
 	ctx := &Context{
 		Stack:    &Stack{},
-		Bindings: &map[string]Result{},
+		Bindings: &map[string]result.Result{},
 	}
 
 	return &Environment{
 		Ctx:      ctx,
-		Defs:     map[string]Result{},
+		Defs:     map[string]result.Result{},
 		Halted:   true,
-		ExitCode: -1,
+		ExitCode: 0,
 	}
+}
+
+func (env *Environment) Exit(code uint32) {
+	env.Done, env.ExitCode, env.Halted = true, code, true
 }
 
 func (env *Environment) Fail(e error) {
@@ -51,15 +58,15 @@ func (env *Environment) Jump(idx int) {
 	env.Ctx.Counter = idx
 }
 
-func (env *Environment) Push(r Result) {
+func (env *Environment) Push(r result.Result) {
 	env.Ctx.Push(r)
 }
 
-func (env *Environment) Pop() Result {
+func (env *Environment) Pop() result.Result {
 	return env.Ctx.Pop()
 }
 
-func (env *Environment) Get(id string) (Result, bool) {
+func (env *Environment) Get(id string) (result.Result, bool) {
 
 	v, ok := (*env.Ctx.Bindings)[id]
 
@@ -70,15 +77,15 @@ func (env *Environment) Get(id string) (Result, bool) {
 	return v, ok
 }
 
-func (env *Environment) Bind(id string, v Result) {
+func (env *Environment) Bind(id string, v result.Result) {
 	(*env.Ctx.Bindings)[id] = v
 }
 
-func (env *Environment) Del(id string) {
+func (env *Environment) Unbind(id string) {
 	delete((*env.Ctx.Bindings), id)
 }
 
-func (env *Environment) Def(id string, v Result) bool {
+func (env *Environment) Def(id string, v result.Result) bool {
 
 	if _, ok := env.Defs[id]; ok {
 		return false
@@ -92,9 +99,9 @@ func (env *Environment) Exe(in inst.Instruction) {
 
 	switch in.Code() {
 	case IN_VAL_PUSH:
-		env.Push(Result{
-			ty:  resultTypeOf(in.Data()),
-			val: in.Data(),
+		env.Push(result.Result{
+			RType: result.ResultTypeOf(in.Data()),
+			Value: in.Data(),
 		})
 
 	case IN_CTX_GET:
@@ -109,9 +116,24 @@ func (env *Environment) Exe(in inst.Instruction) {
 		}
 
 	case IN_SPELL:
-		invokeSpell(env, in)
+		data := in.Data().([]interface{})
+		argCount, name := data[0].(int), data[1].(string)
+		args := popArgs(env, argCount)
+		spells.Invoke(env, name, args)
 
 	default:
 		env.Fail(perror.NewBySnippet("Unknown instruction code", in))
 	}
+}
+
+func popArgs(env *Environment, size int) []result.Result {
+
+	rs := make([]result.Result, size)
+
+	for i := size - 1; i >= 0; i-- {
+		rs[i] = env.Pop()
+		size--
+	}
+
+	return rs
 }

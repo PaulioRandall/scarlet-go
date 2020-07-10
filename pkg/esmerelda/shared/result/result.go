@@ -1,4 +1,4 @@
-package enviro
+package result
 
 import (
 	"fmt"
@@ -27,18 +27,18 @@ func (rt ResultType) String() string {
 }
 
 type Result struct {
-	ty  ResultType
-	val interface{}
+	RType ResultType
+	Value interface{}
 }
 
-func (r Result) is(ty ResultType) bool {
-	return r.ty == ty
+func (r Result) Is(ty ResultType) bool {
+	return r.RType == ty
 }
 
 func (r Result) Bool() (bool, bool) {
 
-	if r.ty == RT_BOOL {
-		return r.val.(bool), true
+	if r.RType == RT_BOOL {
+		return r.Value.(bool), true
 	}
 
 	return false, false
@@ -46,8 +46,8 @@ func (r Result) Bool() (bool, bool) {
 
 func (r Result) Num() (number.Number, bool) {
 
-	if r.ty == RT_NUMBER {
-		return r.val.(number.Number), true
+	if r.RType == RT_NUMBER {
+		return r.Value.(number.Number), true
 	}
 
 	return nil, false
@@ -55,18 +55,18 @@ func (r Result) Num() (number.Number, bool) {
 
 func (r Result) Str() (string, bool) {
 
-	if r.ty == RT_STRING {
-		return r.val.(string), true
+	if r.RType == RT_STRING {
+		return r.Value.(string), true
 	}
 
 	return "", false
 }
 
 func (r Result) String() string {
-	return fmt.Sprintf("%v", r.val)
+	return fmt.Sprintf("%v", r.Value)
 }
 
-func resultTypeOf(v interface{}) ResultType {
+func ResultTypeOf(v interface{}) ResultType {
 
 	switch v.(type) {
 	case bool:
