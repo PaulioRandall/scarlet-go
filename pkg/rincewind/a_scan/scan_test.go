@@ -11,28 +11,28 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type dummyItr struct {
-	symbols []rune
-	size    int
-	i       int
+type symItr struct {
+	syms []rune
+	size int
+	i    int
 }
 
-func (d *dummyItr) Next() (rune, bool) {
+func (itr *symItr) Next() (rune, bool) {
 
-	if d.i >= d.size {
+	if itr.i >= itr.size {
 		return rune(0), false
 	}
 
-	ru := d.symbols[d.i]
-	d.i++
+	ru := itr.syms[itr.i]
+	itr.i++
 	return ru, true
 }
 
 func doTest(t *testing.T, in string, exps []token.Token) {
 
-	itr := &dummyItr{
-		symbols: []rune(in),
-		size:    len(in),
+	itr := &symItr{
+		syms: []rune(in),
+		size: len(in),
 	}
 
 	acts, e := ScanAll(itr)
@@ -45,19 +45,13 @@ func doTest(t *testing.T, in string, exps []token.Token) {
 
 func doErrorTest(t *testing.T, in string) {
 
-	itr := &dummyItr{
-		symbols: []rune(in),
-		size:    len(in),
+	itr := &symItr{
+		syms: []rune(in),
+		size: len(in),
 	}
 
-	var e error
-	for f := New(itr); f != nil; {
-		if _, f, e = f(); e != nil {
-			return
-		}
-	}
-
-	require.Fail(t, "Expected error")
+	_, e := ScanAll(itr)
+	require.NotNil(t, e, "Expected an error")
 }
 
 func tok(gen GenType, sub SubType, raw string, line, begin, end int) token.Tok {
