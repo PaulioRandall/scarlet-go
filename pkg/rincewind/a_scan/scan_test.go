@@ -30,22 +30,14 @@ func (d *dummyItr) Next() (rune, bool) {
 
 func doTest(t *testing.T, in string, exps []token.Token) {
 
-	var (
-		tk   token.Token
-		e    error
-		acts = []token.Token{}
-		itr  = &dummyItr{
-			symbols: []rune(in),
-			size:    len(in),
-		}
-	)
+	itr := &dummyItr{
+		symbols: []rune(in),
+		size:    len(in),
+	}
 
-	for f := New(itr); f != nil; {
-		if tk, f, e = f(); e != nil {
-			require.NotNil(t, fmt.Sprintf("%+v", e))
-		}
-
-		acts = append(acts, tk)
+	acts, e := ScanAll(itr)
+	if e != nil {
+		require.Nil(t, fmt.Sprintf("%+v", e))
 	}
 
 	testutils.RequireTokenSlice(t, exps, acts)

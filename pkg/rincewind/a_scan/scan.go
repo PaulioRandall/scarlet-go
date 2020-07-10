@@ -28,3 +28,22 @@ func New(itr SymbolItr) ScanFunc {
 
 	return scn.scan
 }
+
+func ScanAll(itr SymbolItr) ([]token.Token, error) {
+
+	var (
+		e   error
+		tk  token.Token
+		tks = []token.Token{}
+	)
+
+	for f := New(itr); f != nil; {
+		if tk, f, e = f(); e != nil {
+			return nil, e
+		}
+
+		tks = append(tks, tk)
+	}
+
+	return tks, nil
+}
