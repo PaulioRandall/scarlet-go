@@ -1,8 +1,10 @@
 
-not := F(a -> b) {
-	b := -a
-}
+@Println("Hello, Scarlet!")
 
-_ := not(false)
+@Set("x", true)
+@Set("y", 1)
+@Set("z", "abc")
 
-
+@Println("x == ", x)
+@Println("y == ", y)
+@Println("z == ", z)

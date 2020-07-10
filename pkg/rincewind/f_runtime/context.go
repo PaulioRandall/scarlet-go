@@ -17,9 +17,8 @@ type context struct {
 func newEnv() *environment {
 
 	ctx := &context{
-		stack:   &stack{},
-		counter: -1,
-		vars:    &map[string]result{},
+		stack: &stack{},
+		vars:  &map[string]result{},
 	}
 
 	return &environment{
@@ -36,7 +35,7 @@ func (env *environment) tick() int {
 }
 
 func (env *environment) jump(idx int) {
-	env.ctx.counter = idx - 1
+	env.ctx.counter = idx
 }
 
 func (env *environment) push(r result) {

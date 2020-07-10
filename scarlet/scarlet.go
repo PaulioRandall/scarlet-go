@@ -22,14 +22,13 @@ import (
 
 func main() { // Run it with `./godo run`
 
-	/*
-		e := rince("test.scarlet")
-		if e != nil {
-			fmt.Printf("%+v\n", e)
-			return
-		}
-	*/
-	esme()
+	e := rince("test.scarlet")
+	if e != nil {
+		fmt.Printf("%+v\n", e)
+		return
+	}
+
+	//esme()
 
 	println()
 	println("[Next] Test f_runtime pkg")

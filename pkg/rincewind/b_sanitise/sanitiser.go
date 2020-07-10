@@ -30,6 +30,13 @@ func (san *sanitiser) empty() bool {
 	return san.buff == nil
 }
 
+func (san *sanitiser) bufferFirst() {
+	san.buff = san.ts.Next()
+	for san.buff != nil && san.buff.GenType() == GEN_TERMINATOR {
+		san.buff = san.ts.Next()
+	}
+}
+
 func (san *sanitiser) bufferNext() token.Token {
 
 	prev := san.buff

@@ -16,24 +16,29 @@ func invokeSpell(env *environment, in inst.Instruction) {
 	switch strings.ToLower(val) {
 	case "exit":
 		spell_exit(env, popArgs(env, argCount))
+
 	case "print":
 		spell_print(env, popArgs(env, argCount))
+
 	case "println":
 		spell_println(env, popArgs(env, argCount))
+
 	case "set":
 		spell_set(env, popArgs(env, argCount))
+
 	case "del":
 		spell_del(env, popArgs(env, argCount))
-	}
 
-	perror.Panic("Unknown spell %q", val)
+	default:
+		perror.Panic("Unknown spell %q", val)
+	}
 }
 
 func popArgs(env *environment, size int) []result {
 
 	rs := make([]result, size)
 
-	for i := 0; i < size; i++ {
+	for i := size - 1; i >= 0; i-- {
 		rs[i] = env.pop()
 		size--
 	}
