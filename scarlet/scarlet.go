@@ -75,8 +75,6 @@ func todo() {
 	println("[Next] Check an identifier is valid when using @set")
 	println("[Next] Put spells in their own pkg & create spell register")
 	println()
-	println("[Think] About how to abstract test utilities")
-	println()
 	println("[Plan]")
 	println("- a_scan:     scans in tokens including redundant ones")
 	println("- b_sanitise: removes redundant tokens")

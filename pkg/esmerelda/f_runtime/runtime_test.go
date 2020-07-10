@@ -2,21 +2,31 @@ package runtime
 
 import (
 	"testing"
-	//	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst"
-	//"github.com/PaulioRandall/scarlet-go/pkg/rincewind/number"
-	//. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token"
-	//ist "github.com/PaulioRandall/scarlet-go/pkg/rincewind/inst/insttest"
-	//pet "github.com/PaulioRandall/scarlet-go/pkg/rincewind/perror/perrortest"
-	//tkt "github.com/PaulioRandall/scarlet-go/pkg/rincewind/token/tokentest"
-	//"github.com/stretchr/testify/require"
+
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
+
+	"github.com/stretchr/testify/require"
 )
 
+func ins(code Code, data interface{}) inst.Instruction {
+	return inst.Inst{
+		InstCode: code,
+		InstData: data,
+	}
+}
+
 func Test1_1(t *testing.T) {
-	/*
-		given := []Instruction{
-			Instruction{
-				code: IN_VAL_PUSH
-			}
-		}
-	*/
+
+	data := true
+
+	given := []inst.Instruction{
+		ins(IN_VAL_PUSH, data),
+	}
+
+	run := New(given)
+	finished, e := run.Start()
+
+	require.True(t, finished)
+	require.Nil(t, e)
 }
