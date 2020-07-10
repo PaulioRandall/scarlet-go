@@ -1,10 +1,10 @@
-package environment
+package enviro
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
 )
 
-type stack struct {
+type Stack struct {
 	size int
 	top  *node
 }
@@ -14,7 +14,7 @@ type node struct {
 	next *node
 }
 
-func (stk *stack) push(data Result) {
+func (stk *Stack) Push(data Result) {
 
 	stk.top = &node{
 		data: data,
@@ -24,7 +24,7 @@ func (stk *stack) push(data Result) {
 	stk.size++
 }
 
-func (stk *stack) pop() Result {
+func (stk *Stack) Pop() Result {
 
 	if stk.size == 0 {
 		perror.Panic("Nothing to pop, check stack first")
@@ -35,4 +35,10 @@ func (stk *stack) pop() Result {
 	stk.size--
 
 	return data
+}
+
+func (stk *Stack) Descend(f func(data Result)) {
+	for n := stk.top; n != nil; n = n.next {
+		f(n.data)
+	}
 }

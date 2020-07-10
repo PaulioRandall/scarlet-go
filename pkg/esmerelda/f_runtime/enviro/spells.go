@@ -1,4 +1,4 @@
-package runtime
+package enviro
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
 )
 
-func invokeSpell(env *environment, in inst.Instruction) {
+func invokeSpell(env *Environment, in inst.Instruction) {
 
 	data := in.Data().([]interface{})
 	argCount, val := data[0].(int), data[1].(string)
@@ -35,73 +35,73 @@ func invokeSpell(env *environment, in inst.Instruction) {
 	}
 }
 
-func popArgs(env *environment, size int) []result {
+func popArgs(env *Environment, size int) []Result {
 
-	rs := make([]result, size)
+	rs := make([]Result, size)
 
 	for i := size - 1; i >= 0; i-- {
-		rs[i] = env.pop()
+		rs[i] = env.Pop()
 		size--
 	}
 
 	return rs
 }
 
-func spell_exit(env *environment, args []result) {
+func spell_exit(env *Environment, args []Result) {
 
 	if len(args) != 1 {
-		env.err(errors.New("@Exit requires one argument"))
+		env.Fail(errors.New("@Exit requires one argument"))
 		return
 	}
 
 	if c, ok := args[0].Num(); ok {
-		env.exitCode = int(c.Integer())
-		env.halt = true
+		env.ExitCode = int(c.Integer())
+		env.Halted = true
 		return
 	}
 
-	env.err(errors.New("@Exit requires its argument be a number"))
+	env.Fail(errors.New("@Exit requires its argument be a number"))
 }
 
-func spell_print(env *environment, args []result) {
+func spell_print(env *Environment, args []Result) {
 	for _, v := range args {
 		fmt.Print(v.String())
 	}
 }
 
-func spell_println(env *environment, args []result) {
+func spell_println(env *Environment, args []Result) {
 	spell_print(env, args)
 	fmt.Println()
 }
 
-func spell_set(env *environment, args []result) {
+func spell_set(env *Environment, args []Result) {
 
 	if len(args) != 2 {
-		env.err(errors.New("@Set requires one argument"))
+		env.Fail(errors.New("@Set requires one argument"))
 		return
 	}
 
 	id, ok := args[0].Str()
 	if !ok {
-		env.err(errors.New("@Set requires the first argument be an identifier string"))
+		env.Fail(errors.New("@Set requires the first argument be an identifier string"))
 		return
 	}
 
-	env.put(id, args[1])
+	env.Bind(id, args[1])
 }
 
-func spell_del(env *environment, args []result) {
+func spell_del(env *Environment, args []Result) {
 
 	if len(args) != 1 {
-		env.err(errors.New("@Del requires one argument"))
+		env.Fail(errors.New("@Del requires one argument"))
 		return
 	}
 
 	id, ok := args[0].Str()
 	if !ok {
-		env.err(errors.New("@Del requires its argument be an identifier string"))
+		env.Fail(errors.New("@Del requires its argument be an identifier string"))
 		return
 	}
 
-	env.del(id)
+	env.Del(id)
 }

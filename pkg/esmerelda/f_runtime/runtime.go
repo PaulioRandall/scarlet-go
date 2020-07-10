@@ -1,92 +1,62 @@
 package runtime
 
 import (
-	"fmt"
-
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/f_runtime/enviro"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
 )
 
 type Runtime struct {
 	ins []inst.Instruction
-	env *environment
+	env *enviro.Environment
 }
 
-func New(ins []inst.Instruction) Runtime {
-	return Runtime{
+func New(ins []inst.Instruction) *Runtime {
+	return &Runtime{
 		ins: ins,
-		env: newEnv(),
+		env: enviro.New(),
 	}
 }
 
-func (run Runtime) ExitCode() int {
-	return run.env.exitCode
+func (run *Runtime) Environment() *enviro.Environment {
+	return run.env
 }
 
-func (run Runtime) Start() (bool, error) {
+func (run *Runtime) Start() (bool, error) {
 
-	if run.env.e != nil {
+	if run.env.Err != nil {
 		perror.Panic("Runtime previously encountered an error and cannot continue")
 	}
 
-	run.env.halt = false
+	run.env.Halted = false
 	size := len(run.ins)
 
-	for i := run.env.tick(); i < size; i = run.env.tick() {
+	for i := run.env.Tick(); i < size; i = run.env.Tick() {
 
-		run.exe(run.ins[i])
+		run.env.Exe(run.ins[i])
 
-		if run.env.halt {
+		if run.env.Halted {
 			return run.halted(i+1 >= size)
 		}
 	}
 
-	run.env.exitCode = 0
+	run.env.ExitCode = 0
 	return true, nil
 }
 
-func (run Runtime) Stop() {
-	run.env.halt = true
+func (run *Runtime) Stop() {
+	run.env.Halted = true
 }
 
-func (run Runtime) halted(hasMore bool) (bool, error) {
+func (run *Runtime) halted(hasMore bool) (bool, error) {
 
-	if run.env.e != nil {
-		return false, run.env.e
+	if run.env.Err != nil {
+		return false, run.env.Err
 	}
 
-	if run.env.exitCode >= 0 {
+	if run.env.ExitCode >= 0 {
 		return true, nil
 	}
 
 	return hasMore, nil
-}
-
-func (run Runtime) exe(in inst.Instruction) {
-
-	switch in.Code() {
-	case IN_VAL_PUSH:
-		run.env.push(result{
-			ty:  resultTypeOf(in.Data()),
-			val: in.Data(),
-		})
-
-	case IN_CTX_GET:
-		id := in.Data().(string)
-		r, ok := run.env.get(id)
-
-		if ok {
-			run.env.push(r)
-		} else {
-			msg := fmt.Sprintf("Undeclared variable %q", id)
-			run.env.err(perror.NewBySnippet(msg, in))
-		}
-
-	case IN_SPELL:
-		invokeSpell(run.env, in)
-
-	default:
-		run.env.err(perror.NewBySnippet("Unknown instruction code", in))
-	}
 }
