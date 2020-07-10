@@ -6,7 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 )
 
-type CompileFunc func() (inst.Instruction, CompileFunc, error)
+type CompileFunc func() (inst.Inst, CompileFunc, error)
 
 func New(ts token.Stream) CompileFunc {
 

@@ -20,12 +20,11 @@ func main() { // Run it with `./godo run`
 
 	println()
 	println("[Next] Test f_runtime pkg")
+	println("[Next] Create specific Queue implementations")
 	println("[Next] Write functions for all stages to process all tokens at once")
 	println("[Next] Check an identifier is valid when using @set")
 	println("[Next] Put spells in their own pkg & create spell register")
 	println()
-	println("[Think] Move shared code to shared pkg")
-	println("[Think] About how to abstract structs (tokens, instructions)")
 	println("[Think] About how to abstract test utilities")
 	println()
 	println("[Plan]")

@@ -7,8 +7,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 
-	tkt "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/tokentest"
-
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/testutils"
 	"github.com/stretchr/testify/require"
 )
 
@@ -29,7 +28,7 @@ func doTest(t *testing.T, in, exps []token.Token) {
 		acts = append(acts, tk)
 	}
 
-	tkt.RequireSlice(t, exps, acts)
+	testutils.RequireTokenSlice(t, exps, acts)
 }
 
 func tok(gen GenType, sub SubType, raw string) token.Tok {

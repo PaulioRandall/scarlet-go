@@ -10,15 +10,14 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/token/types"
 
-	ist "github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/inst/insttest"
-
+	"github.com/PaulioRandall/scarlet-go/pkg/rincewind/shared/testutils"
 	"github.com/stretchr/testify/require"
 )
 
 func doTest(t *testing.T, rpn []token.Token, exps []inst.Instruction) {
 
 	var (
-		in     inst.Instruction
+		in     inst.Inst
 		e      error
 		stream = token.NewStream(rpn)
 		acts   = []inst.Instruction{}
@@ -32,7 +31,7 @@ func doTest(t *testing.T, rpn []token.Token, exps []inst.Instruction) {
 		acts = append(acts, in)
 	}
 
-	ist.RequireSlice(t, exps, acts)
+	testutils.RequireInstructionSlice(t, exps, acts)
 }
 
 func tok(gen GenType, sub SubType, raw string) token.Tok {
@@ -40,6 +39,15 @@ func tok(gen GenType, sub SubType, raw string) token.Tok {
 		Gen:    gen,
 		Sub:    sub,
 		RawStr: raw,
+	}
+}
+
+func instruction(code inst.Code, data interface{}) inst.Instruction {
+	return inst.Inst{
+		InstCode: code,
+		InstData: data,
+		Opener:   token.Tok{},
+		Closer:   token.Tok{},
 	}
 }
 
@@ -55,7 +63,7 @@ func Test1_1(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		ist.HalfIns(inst.IN_SPELL, []interface{}{0, "Println"}),
+		instruction(inst.IN_SPELL, []interface{}{0, "Println"}),
 	}
 
 	doTest(t, in, exp)
@@ -74,8 +82,8 @@ func Test1_2(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		ist.HalfIns(inst.IN_CTX_GET, "x"),
-		ist.HalfIns(inst.IN_SPELL, []interface{}{1, "Println"}),
+		instruction(inst.IN_CTX_GET, "x"),
+		instruction(inst.IN_SPELL, []interface{}{1, "Println"}),
 	}
 
 	doTest(t, in, exp)
@@ -96,10 +104,10 @@ func Test1_3(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		ist.HalfIns(inst.IN_CTX_GET, "x"),
-		ist.HalfIns(inst.IN_VAL_PUSH, number.New("1")),
-		ist.HalfIns(inst.IN_VAL_PUSH, "abc"),
-		ist.HalfIns(inst.IN_SPELL, []interface{}{3, "Println"}),
+		instruction(inst.IN_CTX_GET, "x"),
+		instruction(inst.IN_VAL_PUSH, number.New("1")),
+		instruction(inst.IN_VAL_PUSH, "abc"),
+		instruction(inst.IN_SPELL, []interface{}{3, "Println"}),
 	}
 
 	doTest(t, in, exp)

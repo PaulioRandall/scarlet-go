@@ -12,7 +12,7 @@ func (com *compiler) println() {
 	println("*************************************")
 
 	com.Queue.Descend(func(data interface{}) {
-		println(data.(inst.Instruction).String())
+		println(data.(inst.Inst).String())
 	})
 }
 
@@ -42,8 +42,12 @@ func call(com *compiler) error {
 	}
 
 	tk := com.next()
-	in := inst.New(inst.IN_SPELL, []interface{}{argCount, tk.Value()}, tk, tk)
-	com.Put(in)
+	com.Put(inst.Inst{
+		InstCode: inst.IN_SPELL,
+		InstData: []interface{}{argCount, tk.Value()},
+		Opener:   tk,
+		Closer:   tk,
+	})
 
 	return nil
 }
@@ -66,8 +70,12 @@ func expression(com *compiler) error {
 
 func identifier(com *compiler) {
 	tk := com.next()
-	in := inst.New(inst.IN_CTX_GET, tk.Value(), tk, tk)
-	com.Put(in)
+	com.Put(inst.Inst{
+		InstCode: inst.IN_CTX_GET,
+		InstData: tk.Value(),
+		Opener:   tk,
+		Closer:   tk,
+	})
 }
 
 func literal(com *compiler) {
@@ -86,6 +94,10 @@ func literal(com *compiler) {
 		val = tk.Value()
 	}
 
-	in := inst.New(inst.IN_VAL_PUSH, val, tk, tk)
-	com.Put(in)
+	com.Put(inst.Inst{
+		InstCode: inst.IN_VAL_PUSH,
+		InstData: val,
+		Opener:   tk,
+		Closer:   tk,
+	})
 }

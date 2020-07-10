@@ -23,23 +23,28 @@ func next(scn *scanner, tk *token.Tok) error {
 		return spell(scn, tk)
 
 	case scn.match('_'):
-		tk.Gen, tk.Sub, tk.RawStr = GE_IDENTIFIER, SU_VOID, string(scn.next())
+		tk.Gen, tk.Sub = GE_IDENTIFIER, SU_VOID
+		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match(';'):
-		tk.Gen, tk.Sub, tk.RawStr = GE_TERMINATOR, SU_TERMINATOR, string(scn.next())
+		tk.Gen, tk.Sub = GE_TERMINATOR, SU_TERMINATOR
+		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match(','):
-		tk.Gen, tk.Sub, tk.RawStr = GE_DELIMITER, SU_VALUE_DELIM, string(scn.next())
+		tk.Gen, tk.Sub = GE_DELIMITER, SU_VALUE_DELIM
+		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match('('):
-		tk.Gen, tk.Sub, tk.RawStr = GE_PARENTHESIS, SU_PAREN_OPEN, string(scn.next())
+		tk.Gen, tk.Sub = GE_PARENTHESIS, SU_PAREN_OPEN
+		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match(')'):
-		tk.Gen, tk.Sub, tk.RawStr = GE_PARENTHESIS, SU_PAREN_CLOSE, string(scn.next())
+		tk.Gen, tk.Sub = GE_PARENTHESIS, SU_PAREN_CLOSE
+		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match('"'):

@@ -7,17 +7,16 @@ import (
 type Instruction interface {
 	Code() Code
 	Data() interface{}
-	Begin() (int, int)
-	End() (int, int)
+	Snippet
 	String() string
 }
 
-type instruction struct {
+type Inst struct {
 	Instruction
-	code   Code
-	data   interface{}
-	opener Snippet
-	closer Snippet
+	InstCode Code
+	InstData interface{}
+	Opener   Snippet
+	Closer   Snippet
 }
 
 type Snippet interface {
@@ -25,40 +24,31 @@ type Snippet interface {
 	End() (int, int)
 }
 
-func New(code Code, data interface{}, opener, closer Snippet) instruction {
-	return instruction{
-		code:   code,
-		data:   data,
-		opener: opener,
-		closer: closer,
-	}
+func (in Inst) Code() Code {
+	return in.InstCode
 }
 
-func (in instruction) Code() Code {
-	return in.code
+func (in Inst) Data() interface{} {
+	return in.InstData
 }
 
-func (in instruction) Data() interface{} {
-	return in.data
+func (in Inst) Begin() (int, int) {
+	return in.Opener.Begin()
 }
 
-func (in instruction) Begin() (int, int) {
-	return in.opener.Begin()
+func (in Inst) End() (int, int) {
+	return in.Closer.End()
 }
 
-func (in instruction) End() (int, int) {
-	return in.closer.End()
-}
+func (in Inst) String() string {
 
-func (in instruction) String() string {
-
-	lineBegin, colBegin := in.opener.Begin()
-	lineEnd, colEnd := in.closer.End()
+	lineBegin, colBegin := in.Opener.Begin()
+	lineEnd, colEnd := in.Closer.End()
 
 	return fmt.Sprintf("%d:%d %d:%d %v %v",
 		lineBegin, colBegin,
 		lineEnd, colEnd,
-		in.code.String(),
-		in.data,
+		in.InstCode.String(),
+		in.InstData,
 	)
 }

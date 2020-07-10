@@ -21,11 +21,11 @@ func (q *Queue) Put(data interface{}) {
 	}
 
 	if q.front == nil {
-		q.front, q.back = n, n
-		return
+		q.front = n
+	} else {
+		q.back.next = n
 	}
 
-	q.back.next = n
 	q.back = n
 }
 

@@ -13,15 +13,15 @@ type compiler struct {
 	buff token.Token
 }
 
-func (com *compiler) compile() (inst.Instruction, CompileFunc, error) {
+func (com *compiler) compile() (inst.Inst, CompileFunc, error) {
 
 	if com.Queue.Empty() {
 		if e := next(com); e != nil {
-			return nil, nil, e
+			return inst.Inst{}, nil, e
 		}
 	}
 
-	in := com.Take().(inst.Instruction)
+	in := com.Take().(inst.Inst)
 	if com.empty() {
 		return in, nil, nil
 	}
