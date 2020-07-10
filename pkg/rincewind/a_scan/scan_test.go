@@ -11,31 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type runeItr struct {
-	runes []rune
-	size  int
-	i     int
-}
-
-func (itr *runeItr) Next() (rune, bool) {
-
-	if itr.i >= itr.size {
-		return rune(0), false
-	}
-
-	ru := itr.runes[itr.i]
-	itr.i++
-	return ru, true
-}
-
 func doTest(t *testing.T, in string, exps []token.Token) {
 
-	itr := &runeItr{
-		runes: []rune(in),
-		size:  len(in),
-	}
-
-	acts, e := ScanAll(itr)
+	acts, e := ScanAll(in)
 	if e != nil {
 		require.Nil(t, fmt.Sprintf("%+v", e))
 	}
@@ -44,13 +22,7 @@ func doTest(t *testing.T, in string, exps []token.Token) {
 }
 
 func doErrorTest(t *testing.T, in string) {
-
-	itr := &runeItr{
-		runes: []rune(in),
-		size:  len(in),
-	}
-
-	_, e := ScanAll(itr)
+	_, e := ScanAll(in)
 	require.NotNil(t, e, "Expected an error")
 }
 

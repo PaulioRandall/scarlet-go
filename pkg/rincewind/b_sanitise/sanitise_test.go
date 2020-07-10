@@ -13,19 +13,9 @@ import (
 
 func doTest(t *testing.T, in, exps []token.Token) {
 
-	var (
-		tk     token.Token
-		e      error
-		stream = token.NewStream(in)
-		acts   = []token.Token{}
-	)
-
-	for f := New(stream); f != nil; {
-		if tk, f, e = f(); e != nil {
-			require.NotNil(t, fmt.Sprintf("%+v", e))
-		}
-
-		acts = append(acts, tk)
+	acts, e := SanitiseAll(in)
+	if e != nil {
+		require.Nil(t, fmt.Sprintf("%+v", e))
 	}
 
 	testutils.RequireTokenSlice(t, exps, acts)

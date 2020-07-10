@@ -8,7 +8,7 @@ import (
 )
 
 type scanner struct {
-	itr  RuneItr
+	rs   RuneStream
 	buff rune
 	line int
 	col  int
@@ -42,7 +42,7 @@ func (scn *scanner) scan() (token.Tok, ScanFunc, error) {
 
 func (scn *scanner) bufferNext() {
 
-	buff, ok := scn.itr.Next()
+	buff, ok := scn.rs.Next()
 
 	if ok || scn.buff != rune(0) {
 		scn.col++
