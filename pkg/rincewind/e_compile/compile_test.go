@@ -16,24 +16,19 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func doTest(t *testing.T, rpn []token.Token, exps []inst.Instruction) {
+func doTest(t *testing.T, in []token.Token, exps []inst.Instruction) {
 
-	var (
-		in     inst.Instruction
-		e      error
-		stream = token.NewStream(rpn)
-		acts   = []inst.Instruction{}
-	)
-
-	for f := New(stream); f != nil; {
-		if in, f, e = f(); e != nil {
-			require.NotNil(t, fmt.Sprintf("%+v", e))
-		}
-
-		acts = append(acts, in)
+	acts, e := CompileAll(in)
+	if e != nil {
+		require.Nil(t, fmt.Sprintf("%+v", e))
 	}
 
 	testutils.RequireInstructionSlice(t, exps, acts)
+}
+
+func doErrorTest(t *testing.T, in []token.Token) {
+	_, e := CompileAll(in)
+	require.NotNil(t, e, "Expected an error")
 }
 
 func tok(gen GenType, sub SubType, raw string) token.Tok {

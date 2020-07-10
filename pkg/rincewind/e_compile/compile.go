@@ -29,3 +29,26 @@ func New(ts TokenStream) CompileFunc {
 
 	return com.compile
 }
+
+func StreamAll(ts TokenStream) ([]inst.Instruction, error) {
+
+	var (
+		e   error
+		in  inst.Instruction
+		ins = []inst.Instruction{}
+	)
+
+	for f := New(ts); f != nil; {
+		if in, f, e = f(); e != nil {
+			return nil, e
+		}
+
+		ins = append(ins, in)
+	}
+
+	return ins, nil
+}
+
+func CompileAll(tks []token.Token) ([]inst.Instruction, error) {
+	return StreamAll(token.NewStream(tks))
+}

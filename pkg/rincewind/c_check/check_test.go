@@ -13,38 +13,17 @@ import (
 
 func doTest(t *testing.T, in []token.Token) {
 
-	var (
-		tk     token.Token
-		e      error
-		stream = token.NewStream(in)
-		acts   = []token.Token{}
-	)
-
-	for f := New(stream); f != nil; {
-		if tk, f, e = f(); e != nil {
-			require.NotNil(t, fmt.Sprintf("%+v", e))
-		}
-
-		acts = append(acts, tk)
+	acts, e := CheckAll(in)
+	if e != nil {
+		require.Nil(t, fmt.Sprintf("%+v", e))
 	}
 
 	testutils.RequireTokenSlice(t, in, acts)
 }
 
 func doErrorTest(t *testing.T, in []token.Token) {
-
-	var (
-		e   error
-		itr = token.NewStream(in)
-	)
-
-	for f := New(itr); f != nil; {
-		if _, f, e = f(); e != nil {
-			return
-		}
-	}
-
-	require.Fail(t, "Expected error")
+	_, e := CheckAll(in)
+	require.NotNil(t, e, "Expected an error")
 }
 
 func tok(gen GenType, sub SubType, raw string) token.Tok {

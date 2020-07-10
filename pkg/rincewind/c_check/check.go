@@ -29,3 +29,26 @@ func New(ts TokenStream) CheckFunc {
 
 	return chk.check
 }
+
+func StreamAll(ts TokenStream) ([]token.Token, error) {
+
+	var (
+		e   error
+		tk  token.Token
+		tks = []token.Token{}
+	)
+
+	for f := New(ts); f != nil; {
+		if tk, f, e = f(); e != nil {
+			return nil, e
+		}
+
+		tks = append(tks, tk)
+	}
+
+	return tks, nil
+}
+
+func CheckAll(tks []token.Token) ([]token.Token, error) {
+	return StreamAll(token.NewStream(tks))
+}
