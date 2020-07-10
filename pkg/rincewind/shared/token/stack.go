@@ -1,13 +1,13 @@
 package token
 
 type Stack struct {
-	top  *node
+	top  *stkNode
 	size int
 }
 
-type node struct {
+type stkNode struct {
 	data Token
-	next *node
+	next *stkNode
 }
 
 func (stk *Stack) Top() Token {
@@ -25,7 +25,7 @@ func (stk *Stack) Push(data Token) bool {
 		return false
 	}
 
-	stk.top = &node{
+	stk.top = &stkNode{
 		data: data,
 		next: stk.top,
 	}
