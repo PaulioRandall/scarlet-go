@@ -1,74 +1,30 @@
 package spells
 
 import (
-	"errors"
-	"fmt"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/spells/registry"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/result"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/spells/std"
 )
 
 func init() {
-	register["exit"] = spell_exit
-	register["print"] = spell_print
-	register["println"] = spell_println
-	register["set"] = spell_set
-	register["del"] = spell_del
+	reg("exit", std.Exit)
+	reg("print", std.Print)
+	reg("println", std.Println)
+	reg("set", std.Set)
+	reg("del", std.Del)
 }
 
-func spell_exit(env Enviro, args []result.Result) {
-
-	if len(args) != 1 {
-		env.Fail(errors.New("@Exit requires one argument"))
-		return
-	}
-
-	if c, ok := args[0].Num(); ok {
-		env.Exit(int(c.Integer()))
-		return
-	}
-
-	env.Fail(errors.New("@Exit requires its argument be a number"))
-}
-
-func spell_print(_ Enviro, args []result.Result) {
-	for _, v := range args {
-		fmt.Print(v.String())
+func reg(name string, sp registry.Spell) {
+	e := registry.Register(name, sp)
+	if e != nil {
+		panic(e)
 	}
 }
 
-func spell_println(_ Enviro, args []result.Result) {
-	spell_print(nil, args)
-	fmt.Println()
+func LookUp(name string) registry.Spell {
+	return registry.LookUp(name)
 }
 
-func spell_set(env Enviro, args []result.Result) {
-
-	if len(args) != 2 {
-		env.Fail(errors.New("@Set requires two arguments"))
-		return
-	}
-
-	id, ok := args[0].Str()
-	if !ok || !isIdentifier(id) {
-		env.Fail(errors.New("@Set requires the first argument be an identifier string"))
-		return
-	}
-
-	env.Bind(id, args[1])
-}
-
-func spell_del(env Enviro, args []result.Result) {
-
-	if len(args) != 1 {
-		env.Fail(errors.New("@Del requires one argument"))
-		return
-	}
-
-	id, ok := args[0].Str()
-	if !ok {
-		env.Fail(errors.New("@Del requires its argument be an identifier string"))
-		return
-	}
-
-	env.Unbind(id)
+func Register(name string, sp registry.Spell) error {
+	return registry.Register(name, sp)
 }

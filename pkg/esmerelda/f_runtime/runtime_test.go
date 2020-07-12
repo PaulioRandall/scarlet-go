@@ -8,6 +8,7 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/number"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/result"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
 
 	"github.com/stretchr/testify/require"
 )
@@ -49,9 +50,9 @@ func requireDoneEnv(
 	expDefs map[string]result.Result,
 	expBindings map[string]result.Result) {
 
+	require.Nil(t, env.Err)
 	require.True(t, env.Halted)
 	require.True(t, env.Done)
-	require.Nil(t, env.Err)
 	require.Equal(t, counter, env.Ctx.Counter)
 	requireStack(t, expStack, env.Ctx.Stack.ToArray())
 	require.Equal(t, expDefs, env.Defs)
@@ -62,6 +63,8 @@ func ins(code Code, data interface{}) inst.Instruction {
 	return inst.Inst{
 		InstCode: code,
 		InstData: data,
+		Opener:   token.Tok{},
+		Closer:   token.Tok{},
 	}
 }
 

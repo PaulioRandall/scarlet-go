@@ -116,10 +116,7 @@ func (env *Environment) Exe(in inst.Instruction) {
 		}
 
 	case IN_SPELL:
-		data := in.Data().([]interface{})
-		argCount, name := data[0].(int), data[1].(string)
-		args := popArgs(env, argCount)
-		spells.Invoke(env, name, args)
+		invokeSpell(env, in)
 
 	default:
 		env.Fail(perror.NewBySnippet("Unknown instruction code", in))
@@ -136,4 +133,20 @@ func popArgs(env *Environment, size int) []result.Result {
 	}
 
 	return rs
+}
+
+func invokeSpell(env *Environment, in inst.Instruction) {
+
+	data := in.Data().([]interface{})
+	argCount, name := data[0].(int), data[1].(string)
+
+	sp := spells.LookUp(name)
+	if sp == nil {
+		msg := fmt.Sprintf("Unknown spell %q", name)
+		env.Fail(perror.NewBySnippet(msg, in))
+		return
+	}
+
+	args := popArgs(env, argCount)
+	sp(env, args)
 }
