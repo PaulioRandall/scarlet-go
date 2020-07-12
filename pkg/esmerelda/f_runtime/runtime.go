@@ -18,7 +18,7 @@ func New(ins []inst.Instruction) *Runtime {
 	}
 }
 
-func (run *Runtime) Environment() *enviro.Environment {
+func (run *Runtime) Env() *enviro.Environment {
 	return run.env
 }
 
@@ -40,7 +40,7 @@ func (run *Runtime) Start() (bool, error) {
 		}
 	}
 
-	run.env.ExitCode = 0
+	run.env.Exit(0)
 	return true, nil
 }
 
@@ -54,5 +54,10 @@ func (run *Runtime) halted(done bool) (bool, error) {
 		return false, run.env.Err
 	}
 
-	return run.env.Done || done, nil
+	if run.env.Done || done {
+		run.env.Exit(0)
+		return true, nil
+	}
+
+	return false, nil
 }
