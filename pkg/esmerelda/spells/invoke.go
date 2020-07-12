@@ -7,6 +7,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/result"
 )
 
+type Spell func(env Enviro, args []result.Result)
+
 type Enviro interface {
 	Exit(code int)
 	Fail(error)
@@ -14,25 +16,16 @@ type Enviro interface {
 	Unbind(id string)
 }
 
+var register = map[string]Spell{}
+
 func Invoke(env Enviro, name string, args []result.Result) {
 
-	switch strings.ToLower(name) {
-	case "exit":
-		spell_exit(env, args)
+	k := strings.ToLower(name)
+	sp := register[k]
 
-	case "print":
-		spell_print(env, args)
-
-	case "println":
-		spell_println(env, args)
-
-	case "set":
-		spell_set(env, args)
-
-	case "del":
-		spell_del(env, args)
-
-	default:
+	if sp == nil {
 		perror.Panic("Unknown spell %q", name)
 	}
+
+	sp(env, args)
 }

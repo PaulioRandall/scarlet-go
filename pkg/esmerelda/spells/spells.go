@@ -7,6 +7,14 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/result"
 )
 
+func init() {
+	register["exit"] = spell_exit
+	register["print"] = spell_print
+	register["println"] = spell_println
+	register["set"] = spell_set
+	register["del"] = spell_del
+}
+
 func spell_exit(env Enviro, args []result.Result) {
 
 	if len(args) != 1 {
