@@ -22,7 +22,7 @@ func (run *Runtime) Env() *enviro.Environment {
 	return run.env
 }
 
-func (run *Runtime) Start() (bool, error) {
+func (run *Runtime) Start() {
 
 	if run.env.Err != nil {
 		perror.Panic("Runtime previously encountered an error and cannot continue")
@@ -36,28 +36,25 @@ func (run *Runtime) Start() (bool, error) {
 		run.env.Exe(run.ins[i])
 
 		if run.env.Halted {
-			return run.halted(i+1 >= size)
+			run.halted(i+1 >= size)
+			return
 		}
 	}
 
-	run.env.Exit(0)
-	return true, nil
+	run.halted(true)
 }
 
 func (run *Runtime) Stop() {
 	run.env.Halted = true
 }
 
-func (run *Runtime) halted(done bool) (bool, error) {
+func (run *Runtime) halted(done bool) {
 
 	if run.env.Err != nil {
-		return false, run.env.Err
+		return
 	}
 
 	if run.env.Done || done {
 		run.env.Exit(0)
-		return true, nil
 	}
-
-	return false, nil
 }

@@ -63,8 +63,8 @@ func esme(file string) (int, error) {
 	}
 
 	rt := runtime.New(ins)
-	_, e = rt.Start()
-	return rt.Env().ExitCode, e
+	rt.Start()
+	return rt.Env().ExitCode, rt.Env().Err
 }
 
 func todo() {

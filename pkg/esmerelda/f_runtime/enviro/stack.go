@@ -43,3 +43,14 @@ func (stk *Stack) Descend(f func(data result.Result)) {
 		f(n.data)
 	}
 }
+
+func (stk *Stack) ToArray() []result.Result {
+
+	rs := []result.Result{}
+
+	stk.Descend(func(r result.Result) {
+		rs = append(rs, r)
+	})
+
+	return rs
+}

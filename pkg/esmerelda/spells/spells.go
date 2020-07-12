@@ -36,7 +36,7 @@ func spell_println(_ Enviro, args []result.Result) {
 func spell_set(env Enviro, args []result.Result) {
 
 	if len(args) != 2 {
-		env.Fail(errors.New("@Set requires one argument"))
+		env.Fail(errors.New("@Set requires two arguments"))
 		return
 	}
 

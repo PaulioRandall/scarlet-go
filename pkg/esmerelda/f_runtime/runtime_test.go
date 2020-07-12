@@ -11,6 +11,52 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func doTest(t *testing.T,
+	given []inst.Instruction,
+	expStack []result.Result,
+	expDefs map[string]result.Result,
+	expBindings map[string]result.Result) {
+
+	run := New(given)
+	run.Start()
+
+	requireDoneEnv(t, run.Env(), len(given)+1, expStack, expDefs, expBindings)
+}
+
+func requireStack(t *testing.T, exps, acts []result.Result) {
+
+	expSize := len(exps)
+	actSize := len(acts)
+
+	for i := 0; i < expSize || i < actSize; i++ {
+
+		require.True(t, i < actSize,
+			"Expected: "+exps[i].String()+"\nBut no actual instructions remain")
+
+		require.True(t, i < expSize,
+			"Did not expect any more instructions\nBut got ("+acts[i].String()+")")
+
+		require.Equal(t, exps[i], acts[i])
+	}
+}
+
+func requireDoneEnv(
+	t *testing.T,
+	env *enviro.Environment,
+	counter int,
+	expStack []result.Result,
+	expDefs map[string]result.Result,
+	expBindings map[string]result.Result) {
+
+	require.True(t, env.Halted)
+	require.True(t, env.Done)
+	require.Nil(t, env.Err)
+	require.Equal(t, counter, env.Ctx.Counter)
+	requireStack(t, expStack, env.Ctx.Stack.ToArray())
+	require.Equal(t, expDefs, env.Defs)
+	require.Equal(t, expBindings, *env.Ctx.Bindings)
+}
+
 func ins(code Code, data interface{}) inst.Instruction {
 	return inst.Inst{
 		InstCode: code,
@@ -18,45 +64,24 @@ func ins(code Code, data interface{}) inst.Instruction {
 	}
 }
 
-func requireStack(t *testing.T, stk *enviro.Stack, exps ...result.Result) {
-
-	i := 0
-
-	stk.Descend(func(act result.Result) {
-		require.True(t, i < len(exps), "Environment stack contains too many bindings")
-		require.Equal(t, exps[i], act)
-		i++
-	})
-}
-
 func Test1_1(t *testing.T) {
 
-	data := true
-
 	given := []inst.Instruction{
-		ins(IN_VAL_PUSH, data),
+		ins(IN_VAL_PUSH, "abc"),
 	}
 
-	run := New(given)
-	finished, e := run.Start()
-
-	require.True(t, finished)
-	require.Nil(t, e)
-
-	require.True(t, run.Env().Halted)
-	require.True(t, run.Env().Done)
-	require.Equal(t, 0, len(run.Env().Defs))
-	require.Nil(t, run.Env().Err)
-
-	require.Equal(t, 2, run.Env().Ctx.Counter)
-	require.Equal(t, 0, len(*run.Env().Ctx.Bindings))
-
-	requireStack(t, run.Env().Ctx.Stack,
+	expStack := []result.Result{
 		result.Result{
-			RType: result.RT_BOOL,
-			Value: data,
+			RType: result.RT_STRING,
+			Value: "abc",
 		},
-	)
+	}
+
+	expDefs := map[string]result.Result{}
+
+	expBindings := map[string]result.Result{}
+
+	doTest(t, given, expStack, expDefs, expBindings)
 }
 
 func Test1_2(t *testing.T) {
@@ -66,21 +91,7 @@ func Test1_2(t *testing.T) {
 		ins(IN_VAL_PUSH, "abc"),
 	}
 
-	run := New(given)
-	finished, e := run.Start()
-
-	require.True(t, finished)
-	require.Nil(t, e)
-
-	require.True(t, run.Env().Halted)
-	require.True(t, run.Env().Done)
-	require.Equal(t, 0, len(run.Env().Defs))
-	require.Nil(t, run.Env().Err)
-
-	require.Equal(t, 3, run.Env().Ctx.Counter)
-	require.Equal(t, 0, len(*run.Env().Ctx.Bindings))
-
-	requireStack(t, run.Env().Ctx.Stack,
+	expStack := []result.Result{
 		result.Result{
 			RType: result.RT_STRING,
 			Value: "abc",
@@ -89,5 +100,33 @@ func Test1_2(t *testing.T) {
 			RType: result.RT_BOOL,
 			Value: true,
 		},
-	)
+	}
+
+	expDefs := map[string]result.Result{}
+
+	expBindings := map[string]result.Result{}
+
+	doTest(t, given, expStack, expDefs, expBindings)
+}
+
+func Test1_3(t *testing.T) {
+
+	given := []inst.Instruction{
+		ins(IN_VAL_PUSH, "x"),
+		ins(IN_VAL_PUSH, "abc"),
+		ins(IN_SPELL, []interface{}{2, "set"}),
+	}
+
+	expStack := []result.Result{}
+
+	expDefs := map[string]result.Result{}
+
+	expBindings := map[string]result.Result{
+		"x": result.Result{
+			RType: result.RT_STRING,
+			Value: "abc",
+		},
+	}
+
+	doTest(t, given, expStack, expDefs, expBindings)
 }
