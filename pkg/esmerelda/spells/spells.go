@@ -41,7 +41,7 @@ func spell_set(env Enviro, args []result.Result) {
 	}
 
 	id, ok := args[0].Str()
-	if !ok {
+	if !ok || !isIdentifier(id) {
 		env.Fail(errors.New("@Set requires the first argument be an identifier string"))
 		return
 	}
