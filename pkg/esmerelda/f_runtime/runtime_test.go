@@ -6,6 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/f_runtime/enviro"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/number"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/result"
 
 	"github.com/stretchr/testify/require"
@@ -66,6 +67,10 @@ func ins(code Code, data interface{}) inst.Instruction {
 
 func Test1_1(t *testing.T) {
 
+	// GIVEN a single value stack push instruction
+	// THEN a single value is pushed to stack
+
+	// "abc"
 	given := []inst.Instruction{
 		ins(IN_VAL_PUSH, "abc"),
 	}
@@ -86,8 +91,13 @@ func Test1_1(t *testing.T) {
 
 func Test1_2(t *testing.T) {
 
+	// GIVEN a multiple value stack push instructions
+	// THEN all values are pushed to stack
+
+	// true, 1, "abc"
 	given := []inst.Instruction{
 		ins(IN_VAL_PUSH, true),
+		ins(IN_VAL_PUSH, number.New("1")),
 		ins(IN_VAL_PUSH, "abc"),
 	}
 
@@ -95,6 +105,10 @@ func Test1_2(t *testing.T) {
 		result.Result{
 			RType: result.RT_STRING,
 			Value: "abc",
+		},
+		result.Result{
+			RType: result.RT_NUMBER,
+			Value: number.New("1"),
 		},
 		result.Result{
 			RType: result.RT_BOOL,
@@ -111,6 +125,11 @@ func Test1_2(t *testing.T) {
 
 func Test1_3(t *testing.T) {
 
+	// GIVEN a set spell with parameters
+	// THEN the spell is invoked with correct parameters
+	// AND the expected variable binding is made
+
+	// @Set("x", "abc")
 	given := []inst.Instruction{
 		ins(IN_VAL_PUSH, "x"),
 		ins(IN_VAL_PUSH, "abc"),
@@ -125,6 +144,43 @@ func Test1_3(t *testing.T) {
 		"x": result.Result{
 			RType: result.RT_STRING,
 			Value: "abc",
+		},
+	}
+
+	doTest(t, given, expStack, expDefs, expBindings)
+}
+
+// GIVEN a several spells
+// THEN each spell is invoked
+// AND the expected variable bindings are made
+
+// @Set("x", "abc")
+func Test1_4(t *testing.T) {
+
+	given := []inst.Instruction{
+		ins(IN_VAL_PUSH, "x"),
+		ins(IN_VAL_PUSH, number.New("1")),
+		ins(IN_SPELL, []interface{}{2, "set"}),
+		ins(IN_VAL_PUSH, "y"),
+		ins(IN_VAL_PUSH, number.New("2")),
+		ins(IN_SPELL, []interface{}{2, "set"}),
+		ins(IN_VAL_PUSH, "x"),
+		ins(IN_VAL_PUSH, "y"),
+		ins(IN_SPELL, []interface{}{2, "println"}),
+	}
+
+	expStack := []result.Result{}
+
+	expDefs := map[string]result.Result{}
+
+	expBindings := map[string]result.Result{
+		"x": result.Result{
+			RType: result.RT_NUMBER,
+			Value: number.New("1"),
+		},
+		"y": result.Result{
+			RType: result.RT_NUMBER,
+			Value: number.New("2"),
 		},
 	}
 
