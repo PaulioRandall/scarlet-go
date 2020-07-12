@@ -8,6 +8,23 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/spells/registry"
 )
 
+func QuickRegister() {
+	RegisterAll(func(name string, sp registry.Spell) {
+		e := registry.Register(""+name, sp)
+		if e != nil {
+			panic(e)
+		}
+	})
+}
+
+func RegisterAll(reg registry.RegFunc) {
+	reg("exit", Exit)
+	reg("print", Print)
+	reg("println", Println)
+	reg("set", Set)
+	reg("del", Del)
+}
+
 func Exit(env registry.Enviro, args []result.Result) {
 
 	if len(args) != 1 {

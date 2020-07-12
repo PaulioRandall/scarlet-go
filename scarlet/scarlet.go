@@ -71,7 +71,6 @@ func todo() {
 	println()
 	println()
 	println("TODO:")
-	println("[Next] Put spells in their own pkg & create spell register")
 	println()
 	println("[Plan]")
 	println("- a_scan:     scans in tokens including redundant ones")

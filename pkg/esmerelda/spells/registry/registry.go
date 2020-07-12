@@ -16,6 +16,7 @@ type Enviro interface {
 }
 
 type Spell func(env Enviro, args []result.Result)
+type RegFunc func(name string, spell Spell)
 
 var registry = map[string]Spell{}
 
@@ -45,11 +46,15 @@ func Register(name string, sp Spell) error {
 	return nil
 }
 
-func reg(name string, sp Spell) {
-	e := Register(name, sp)
-	if e != nil {
-		panic(e)
+func Unregister(name string) error {
+
+	if !isSpellIdentifier(name) {
+		return fmt.Errorf("Attempted to unregister spell with bad name %q", name)
 	}
+
+	k := strings.ToLower(name)
+	delete(registry, k)
+	return nil
 }
 
 func isSpellIdentifier(id string) bool {

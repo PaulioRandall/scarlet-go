@@ -7,17 +7,17 @@ import (
 )
 
 func init() {
-	reg("exit", std.Exit)
-	reg("print", std.Print)
-	reg("println", std.Println)
-	reg("set", std.Set)
-	reg("del", std.Del)
+
+	ns := namespace("")
+	std.RegisterAll(ns)
 }
 
-func reg(name string, sp registry.Spell) {
-	e := registry.Register(name, sp)
-	if e != nil {
-		panic(e)
+func namespace(prefix string) registry.RegFunc {
+	return func(name string, sp registry.Spell) {
+		e := registry.Register(prefix+name, sp)
+		if e != nil {
+			panic(e)
+		}
 	}
 }
 
@@ -27,4 +27,8 @@ func LookUp(name string) registry.Spell {
 
 func Register(name string, sp registry.Spell) error {
 	return registry.Register(name, sp)
+}
+
+func Unregister(name string) error {
+	return registry.Unregister(name)
 }
