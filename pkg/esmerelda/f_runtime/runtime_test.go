@@ -7,17 +7,17 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/number"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/result"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/types"
 
 	"github.com/stretchr/testify/require"
 )
 
 func doTest(t *testing.T,
 	given []inst.Instruction,
-	expStack []result.Result,
-	expDefs map[string]result.Result,
-	expBindings map[string]result.Result) {
+	expStack []types.Value,
+	expDefs map[string]types.Value,
+	expBindings map[string]types.Value) {
 
 	run := New(given)
 	run.Start()
@@ -25,7 +25,7 @@ func doTest(t *testing.T,
 	requireDoneEnv(t, run.Env(), len(given)+1, expStack, expDefs, expBindings)
 }
 
-func requireStack(t *testing.T, exps, acts []result.Result) {
+func requireStack(t *testing.T, exps, acts []types.Value) {
 
 	expSize := len(exps)
 	actSize := len(acts)
@@ -46,9 +46,9 @@ func requireDoneEnv(
 	t *testing.T,
 	env *enviro.Environment,
 	counter int,
-	expStack []result.Result,
-	expDefs map[string]result.Result,
-	expBindings map[string]result.Result) {
+	expStack []types.Value,
+	expDefs map[string]types.Value,
+	expBindings map[string]types.Value) {
 
 	require.Nil(t, env.Err)
 	require.True(t, env.Halted)
@@ -78,16 +78,13 @@ func Test1_1(t *testing.T) {
 		ins(IN_VAL_PUSH, "abc"),
 	}
 
-	expStack := []result.Result{
-		result.Result{
-			RType: result.RT_STRING,
-			Value: "abc",
-		},
+	expStack := []types.Value{
+		types.Str("abc"),
 	}
 
-	expDefs := map[string]result.Result{}
+	expDefs := map[string]types.Value{}
 
-	expBindings := map[string]result.Result{}
+	expBindings := map[string]types.Value{}
 
 	doTest(t, given, expStack, expDefs, expBindings)
 }
@@ -104,24 +101,15 @@ func Test1_2(t *testing.T) {
 		ins(IN_VAL_PUSH, "abc"),
 	}
 
-	expStack := []result.Result{
-		result.Result{
-			RType: result.RT_STRING,
-			Value: "abc",
-		},
-		result.Result{
-			RType: result.RT_NUMBER,
-			Value: number.New("1"),
-		},
-		result.Result{
-			RType: result.RT_BOOL,
-			Value: true,
-		},
+	expStack := []types.Value{
+		types.Str("abc"),
+		types.Num{number.New("1")},
+		types.Bool(true),
 	}
 
-	expDefs := map[string]result.Result{}
+	expDefs := map[string]types.Value{}
 
-	expBindings := map[string]result.Result{}
+	expBindings := map[string]types.Value{}
 
 	doTest(t, given, expStack, expDefs, expBindings)
 }
@@ -139,15 +127,12 @@ func Test1_3(t *testing.T) {
 		ins(IN_SPELL, []interface{}{2, "set"}),
 	}
 
-	expStack := []result.Result{}
+	expStack := []types.Value{}
 
-	expDefs := map[string]result.Result{}
+	expDefs := map[string]types.Value{}
 
-	expBindings := map[string]result.Result{
-		"x": result.Result{
-			RType: result.RT_STRING,
-			Value: "abc",
-		},
+	expBindings := map[string]types.Value{
+		"x": types.Str("abc"),
 	}
 
 	doTest(t, given, expStack, expDefs, expBindings)
@@ -172,19 +157,13 @@ func Test1_4(t *testing.T) {
 		ins(IN_SPELL, []interface{}{2, "println"}),
 	}
 
-	expStack := []result.Result{}
+	expStack := []types.Value{}
 
-	expDefs := map[string]result.Result{}
+	expDefs := map[string]types.Value{}
 
-	expBindings := map[string]result.Result{
-		"x": result.Result{
-			RType: result.RT_NUMBER,
-			Value: number.New("1"),
-		},
-		"y": result.Result{
-			RType: result.RT_NUMBER,
-			Value: number.New("2"),
-		},
+	expBindings := map[string]types.Value{
+		"x": types.Num{number.New("1")},
+		"y": types.Num{number.New("2")},
 	}
 
 	doTest(t, given, expStack, expDefs, expBindings)

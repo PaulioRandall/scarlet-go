@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/result"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/spells/registry"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/types"
 )
 
 func QuickRegister() {
@@ -25,14 +25,14 @@ func RegisterAll(reg registry.RegFunc) {
 	reg("del", Del)
 }
 
-func Exit(env registry.Enviro, args []result.Result) {
+func Exit(env registry.Enviro, args []types.Value) {
 
 	if len(args) != 1 {
 		env.Fail(errors.New("@Exit requires one argument"))
 		return
 	}
 
-	if c, ok := args[0].Num(); ok {
+	if c, ok := args[0].(types.Num); ok {
 		env.Exit(int(c.Integer()))
 		return
 	}
@@ -40,25 +40,27 @@ func Exit(env registry.Enviro, args []result.Result) {
 	env.Fail(errors.New("@Exit requires its argument be a number"))
 }
 
-func Print(_ registry.Enviro, args []result.Result) {
+func Print(_ registry.Enviro, args []types.Value) {
 	for _, v := range args {
 		fmt.Print(v.String())
 	}
 }
 
-func Println(_ registry.Enviro, args []result.Result) {
+func Println(_ registry.Enviro, args []types.Value) {
 	Print(nil, args)
 	fmt.Println()
 }
 
-func Set(env registry.Enviro, args []result.Result) {
+func Set(env registry.Enviro, args []types.Value) {
 
 	if len(args) != 2 {
 		env.Fail(errors.New("@Set requires two arguments"))
 		return
 	}
 
-	id, ok := args[0].Str()
+	idStr, ok := args[0].(types.Str)
+	id := string(idStr)
+
 	if !ok || !isIdentifier(id) {
 		env.Fail(errors.New("@Set requires the first argument be an identifier string"))
 		return
@@ -67,18 +69,18 @@ func Set(env registry.Enviro, args []result.Result) {
 	env.Bind(id, args[1])
 }
 
-func Del(env registry.Enviro, args []result.Result) {
+func Del(env registry.Enviro, args []types.Value) {
 
 	if len(args) != 1 {
 		env.Fail(errors.New("@Del requires one argument"))
 		return
 	}
 
-	id, ok := args[0].Str()
+	id, ok := args[0].(types.Str)
 	if !ok {
 		env.Fail(errors.New("@Del requires its argument be an identifier string"))
 		return
 	}
 
-	env.Unbind(id)
+	env.Unbind(string(id))
 }

@@ -5,17 +5,17 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/result"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/types"
 )
 
 type Enviro interface {
 	Exit(code int)
 	Fail(error)
-	Bind(id string, value result.Result)
+	Bind(id string, value types.Value)
 	Unbind(id string)
 }
 
-type Spell func(env Enviro, args []result.Result)
+type Spell func(env Enviro, args []types.Value)
 type RegFunc func(name string, spell Spell)
 
 var registry = map[string]Spell{}

@@ -6,13 +6,13 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/result"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/spells"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/types"
 )
 
 type Environment struct {
 	Ctx      *Context
-	Defs     map[string]result.Result
+	Defs     map[string]types.Value
 	Halted   bool
 	Err      error
 	Done     bool
@@ -22,19 +22,19 @@ type Environment struct {
 type Context struct {
 	*Stack
 	Counter  int
-	Bindings *map[string]result.Result
+	Bindings *map[string]types.Value
 }
 
 func New() *Environment {
 
 	ctx := &Context{
 		Stack:    &Stack{},
-		Bindings: &map[string]result.Result{},
+		Bindings: &map[string]types.Value{},
 	}
 
 	return &Environment{
 		Ctx:      ctx,
-		Defs:     map[string]result.Result{},
+		Defs:     map[string]types.Value{},
 		Halted:   true,
 		ExitCode: 0,
 	}
@@ -58,15 +58,15 @@ func (env *Environment) Jump(idx int) {
 	env.Ctx.Counter = idx
 }
 
-func (env *Environment) Push(r result.Result) {
-	env.Ctx.Push(r)
+func (env *Environment) Push(v types.Value) {
+	env.Ctx.Push(v)
 }
 
-func (env *Environment) Pop() result.Result {
+func (env *Environment) Pop() types.Value {
 	return env.Ctx.Pop()
 }
 
-func (env *Environment) Get(id string) (result.Result, bool) {
+func (env *Environment) Get(id string) (types.Value, bool) {
 
 	v, ok := (*env.Ctx.Bindings)[id]
 
@@ -77,7 +77,7 @@ func (env *Environment) Get(id string) (result.Result, bool) {
 	return v, ok
 }
 
-func (env *Environment) Bind(id string, v result.Result) {
+func (env *Environment) Bind(id string, v types.Value) {
 	(*env.Ctx.Bindings)[id] = v
 }
 
@@ -85,7 +85,7 @@ func (env *Environment) Unbind(id string) {
 	delete((*env.Ctx.Bindings), id)
 }
 
-func (env *Environment) Def(id string, v result.Result) bool {
+func (env *Environment) Def(id string, v types.Value) bool {
 
 	if _, ok := env.Defs[id]; ok {
 		return false
@@ -99,10 +99,8 @@ func (env *Environment) Exe(in inst.Instruction) {
 
 	switch in.Code() {
 	case IN_VAL_PUSH:
-		env.Push(result.Result{
-			RType: result.ResultTypeOf(in.Data()),
-			Value: in.Data(),
-		})
+		v := types.BuiltinValueOf(in.Data())
+		env.Push(v)
 
 	case IN_CTX_GET:
 		id := in.Data().(string)
@@ -123,16 +121,16 @@ func (env *Environment) Exe(in inst.Instruction) {
 	}
 }
 
-func popArgs(env *Environment, size int) []result.Result {
+func popArgs(env *Environment, size int) []types.Value {
 
-	rs := make([]result.Result, size)
+	vs := make([]types.Value, size)
 
 	for i := size - 1; i >= 0; i-- {
-		rs[i] = env.Pop()
+		vs[i] = env.Pop()
 		size--
 	}
 
-	return rs
+	return vs
 }
 
 func invokeSpell(env *Environment, in inst.Instruction) {

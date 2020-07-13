@@ -6,22 +6,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/number"
 )
 
-func BuiltinValueOf(val interface{}) Value {
-
-	switch v := val.(type) {
-	case bool:
-		return Bool(v)
-
-	case number.Number:
-		return Num{v}
-
-	case string:
-		return Str(v)
-	}
-
-	panic(fmt.Sprintf("No builtin type for value %v", val))
-}
-
 type Bool bool
 
 func (a Bool) Equal(b Value) bool {
@@ -51,7 +35,7 @@ func (a Num) Comparable(b Value) bool {
 }
 
 func (a Num) String() string {
-	return a.String()
+	return a.Number.String()
 }
 
 type Str string
