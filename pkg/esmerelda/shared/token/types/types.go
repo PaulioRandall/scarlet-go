@@ -17,8 +17,9 @@ const (
 	GEN_ANY       GenType = iota
 	SUB_ANY       SubType = iota
 	// ------------------
-	GEN_WHITESPACE GenType = iota
-	GEN_COMMENT
+	GEN_REDUNDANT  GenType = iota
+	SUB_WHITESPACE SubType = iota
+	SUB_COMMENT
 	// ------------------
 	GEN_TERMINATOR GenType = iota
 	SUB_TERMINATOR SubType = iota
@@ -46,7 +47,7 @@ const (
 )
 
 var genTypes = map[GenType]string{
-	GEN_WHITESPACE:  `whitespace`,
+	GEN_REDUNDANT:   `redundant`,
 	GEN_TERMINATOR:  `terminator`,
 	GEN_LITERAL:     `literal`,
 	GEN_IDENTIFIER:  `identifier`,
@@ -59,6 +60,8 @@ var genTypes = map[GenType]string{
 var subTypes = map[SubType]string{
 	SUB_TERMINATOR:  `terminator`,
 	SUB_NEWLINE:     `newline`,
+	SUB_WHITESPACE:  `whitespace`,
+	SUB_COMMENT:     `comment`,
 	SUB_BOOL:        `bool`,
 	SUB_NUMBER:      `number`,
 	SUB_STRING:      `string`,

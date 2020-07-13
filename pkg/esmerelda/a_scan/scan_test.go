@@ -55,7 +55,7 @@ func Test_S1(t *testing.T) {
 		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "(", 0, 4, 5),
 		tok(GEN_IDENTIFIER, SUB_IDENTIFIER, "x", 0, 5, 6),
 		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ",", 0, 6, 7),
-		tok(GEN_WHITESPACE, SUB_UNDEFINED, " ", 0, 7, 8),
+		tok(GEN_REDUNDANT, SUB_WHITESPACE, " ", 0, 7, 8),
 		tok(GEN_LITERAL, SUB_NUMBER, "1", 0, 8, 9),
 		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")", 0, 9, 10),
 	}
@@ -69,7 +69,7 @@ func Test_T0_1(t *testing.T) {
 
 func Test_T1_1(t *testing.T) {
 	doTest(t, " \t\v\f", []token.Token{
-		halfTok(GEN_WHITESPACE, SUB_UNDEFINED, " \t\v\f"),
+		halfTok(GEN_REDUNDANT, SUB_WHITESPACE, " \t\v\f"),
 	})
 }
 
@@ -247,6 +247,6 @@ func Test_T9_1(t *testing.T) {
 
 func Test_T10_1(t *testing.T) {
 	doTest(t, "# abc", []token.Token{
-		halfTok(GEN_COMMENT, SUB_UNDEFINED, "# abc"),
+		halfTok(GEN_REDUNDANT, SUB_COMMENT, "# abc"),
 	})
 }

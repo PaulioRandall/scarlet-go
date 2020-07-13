@@ -68,7 +68,7 @@ func comment(scn *scanner, tk *token.Tok) error {
 		sb.WriteRune(scn.next())
 	}
 
-	tk.Gen, tk.Sub, tk.RawStr = GEN_COMMENT, SUB_UNDEFINED, sb.String()
+	tk.Gen, tk.Sub, tk.RawStr = GEN_REDUNDANT, SUB_COMMENT, sb.String()
 	return nil
 }
 
@@ -97,7 +97,7 @@ func whitespace(scn *scanner, tk *token.Tok) error {
 		sb.WriteRune(scn.next())
 	}
 
-	tk.Gen, tk.Sub, tk.RawStr = GEN_WHITESPACE, SUB_UNDEFINED, sb.String()
+	tk.Gen, tk.Sub, tk.RawStr = GEN_REDUNDANT, SUB_WHITESPACE, sb.String()
 	return nil
 }
 

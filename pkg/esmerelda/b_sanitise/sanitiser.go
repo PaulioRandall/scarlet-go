@@ -41,8 +41,7 @@ BUFFER:
 	case san.buff == nil:
 		return prev
 
-	case san.buff.GenType() == GEN_WHITESPACE,
-		san.buff.GenType() == GEN_COMMENT:
+	case san.buff.GenType() == GEN_REDUNDANT:
 		goto BUFFER
 
 	case prev == nil && san.buff.GenType() == GEN_TERMINATOR:

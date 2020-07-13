@@ -36,11 +36,11 @@ func Test1_1(t *testing.T) {
 	// @Println (  )
 	in := []token.Token{
 		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
-		tok(GEN_WHITESPACE, SUB_UNDEFINED, " "),
+		tok(GEN_REDUNDANT, SUB_WHITESPACE, " "),
 		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
-		tok(GEN_WHITESPACE, SUB_UNDEFINED, "  "),
+		tok(GEN_REDUNDANT, SUB_WHITESPACE, "  "),
 		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
-		tok(GEN_COMMENT, SUB_UNDEFINED, "# abc"),
+		tok(GEN_REDUNDANT, SUB_COMMENT, "# abc"),
 	}
 
 	// THEN the whitespace is removed
