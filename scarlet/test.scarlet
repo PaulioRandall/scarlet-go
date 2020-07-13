@@ -1,4 +1,5 @@
 
+# A comment
 @Println("Hello, Scarlet!")
 
 @Set("a", true)

@@ -30,13 +30,6 @@ func (san *sanitiser) empty() bool {
 	return san.buff == nil
 }
 
-func (san *sanitiser) bufferFirst() {
-	san.buff = san.ts.Next()
-	for san.buff != nil && san.buff.GenType() == GEN_TERMINATOR {
-		san.buff = san.ts.Next()
-	}
-}
-
 func (san *sanitiser) bufferNext() token.Token {
 
 	prev := san.buff
@@ -48,8 +41,15 @@ BUFFER:
 	case san.buff == nil:
 		return prev
 
-	case san.buff.GenType() == GEN_WHITESPACE:
+	case san.buff.GenType() == GEN_WHITESPACE,
+		san.buff.GenType() == GEN_COMMENT:
 		goto BUFFER
+
+	case prev == nil && san.buff.GenType() == GEN_TERMINATOR:
+		goto BUFFER
+
+	case prev == nil:
+		return prev // First buffer only
 
 	case prev.GenType() == GEN_TERMINATOR && san.buff.GenType() == GEN_TERMINATOR:
 		goto BUFFER

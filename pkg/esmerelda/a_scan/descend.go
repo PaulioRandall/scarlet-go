@@ -10,6 +10,9 @@ import (
 func next(scn *scanner, tk *token.Tok) error {
 
 	switch {
+	case scn.match('#'):
+		return comment(scn, tk)
+
 	case scn.match('\r'), scn.match('\n'):
 		return newline(scn, tk)
 
@@ -55,6 +58,18 @@ func next(scn *scanner, tk *token.Tok) error {
 	}
 
 	return errorUnknownSymbol(scn)
+}
+
+func comment(scn *scanner, tk *token.Tok) error {
+
+	sb := strings.Builder{}
+
+	for !scn.empty() && !scn.matchNewline() {
+		sb.WriteRune(scn.next())
+	}
+
+	tk.Gen, tk.Sub, tk.RawStr = GEN_COMMENT, SUB_UNDEFINED, sb.String()
+	return nil
 }
 
 func newline(scn *scanner, tk *token.Tok) error {

@@ -18,6 +18,7 @@ const (
 	SUB_ANY       SubType = iota
 	// ------------------
 	GEN_WHITESPACE GenType = iota
+	GEN_COMMENT
 	// ------------------
 	GEN_TERMINATOR GenType = iota
 	SUB_TERMINATOR SubType = iota

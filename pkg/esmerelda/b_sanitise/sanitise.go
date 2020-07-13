@@ -18,7 +18,7 @@ func New(ts TokenStream) SanitiseFunc {
 	}
 
 	san := &sanitiser{ts: ts}
-	san.bufferFirst()
+	san.bufferNext()
 
 	if san.empty() {
 		return nil

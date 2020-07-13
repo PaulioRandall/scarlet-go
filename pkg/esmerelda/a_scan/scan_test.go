@@ -244,3 +244,9 @@ func Test_T9_1(t *testing.T) {
 		halfTok(GEN_DELIMITER, SUB_VALUE_DELIM, ","),
 	})
 }
+
+func Test_T10_1(t *testing.T) {
+	doTest(t, "# abc", []token.Token{
+		halfTok(GEN_COMMENT, SUB_UNDEFINED, "# abc"),
+	})
+}

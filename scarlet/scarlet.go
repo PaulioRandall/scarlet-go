@@ -71,6 +71,7 @@ func todo() {
 	println()
 	println()
 	println("TODO:")
+	println("[Next] Abstract Result types to be registered as 'Kind's, like Spells are")
 	println()
 	println("[Plan]")
 	println("- a_scan:     scans in tokens including redundant ones")

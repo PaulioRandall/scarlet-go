@@ -32,7 +32,7 @@ func tok(gen GenType, sub SubType, raw string) token.Tok {
 
 func Test1_1(t *testing.T) {
 
-	// WHEN sanitising a statement containing redudant whitespace
+	// WHEN sanitising a statement containing redudant whitespace and comments
 	// @Println (  )
 	in := []token.Token{
 		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
@@ -40,6 +40,7 @@ func Test1_1(t *testing.T) {
 		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
 		tok(GEN_WHITESPACE, SUB_UNDEFINED, "  "),
 		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok(GEN_COMMENT, SUB_UNDEFINED, "# abc"),
 	}
 
 	// THEN the whitespace is removed
