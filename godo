@@ -48,8 +48,8 @@ printUsage() {
   println "Usage:"
   println "\t" "./godo clean   " "\t" "Delete build directory"
   println "\t" "./godo build   " "\t" "Build -> format"
-  println "\t" "./godo test    " "\t" "Build -> format -> test" 
-  println "\t" "./godo run     " "\t" "Build -> format -> test -> run"
+  println "\t" "./godo test    " "\t" "Build -> format -> test"
+  println "\t" "./godo run     " "\t" "Build -> format -> test -> run Scarlet command"
   println "\t" "./godo compress" "\t" "Compress binary if 'upx' is installed"
   println "\t" "./godo help    " "\t" "Show help"
 }
@@ -108,7 +108,7 @@ runExe() {
   println "Running..." "\n"
 
   cd $BUILD_DIR
-  ./"$EXE_NAME"
+  ./"$EXE_NAME" $@
   checkExitCode $? "'./$EXE_FILE' failed"
   cd $ROOT_DIR
 }
@@ -154,7 +154,7 @@ if [[ "$1" == "test" ]]; then
   exit 0
 fi
 
-# If you want to build, test, then run the binary.
+# If you want to run a Scarlet CLI command.
 if [[ "$1" == "run" ]]; then
   begin
   setupBuildDir
@@ -162,7 +162,8 @@ if [[ "$1" == "run" ]]; then
   goFmt
   goTest
   copyBuildResources
-  runExe
+  shift 1
+  runExe $@
   println
   exit 0
 fi
