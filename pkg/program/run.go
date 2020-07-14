@@ -2,38 +2,43 @@ package program
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/f_runtime"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
 )
 
-func run(args []string) error {
+func printRunHelp() {
 
-	ins, e := build(args)
-	if e != nil {
-		const BUILD_ERROR_CODE = 1
-		err(BUILD_ERROR_CODE, e)
-	}
+	s := `'run' compiles, validates, then runs a script.
 
-	exitCode, e := exeInstructions(ins)
-	if e != nil {
-		err(exitCode, e)
-	}
+Usage:
 
-	os.Exit(exitCode)
-	return nil
+	scarlet run [options] <script file>
+
+Options:
+
+	-nofmt
+		Don't format the script.
+	-log 'output folder'
+		Logs the output of each compilation stage as labelled files into the
+		'output folder'.
+`
+
+	fmt.Println(s)
 }
 
-func exeInstructions(ins []inst.Instruction) (int, error) {
+func run(ins []inst.Instruction) error {
+
 	rt := runtime.New(ins)
 	rt.Start()
-	return rt.Env().ExitCode, rt.Env().Err
-}
 
-func err(exitCode int, e error) {
-	fmt.Println()
-	fmt.Printf("[ERROR] %d\n", exitCode)
-	fmt.Printf("%+v\n", e)
-	os.Exit(exitCode)
+	if rt.Env().Err != nil {
+		return NewErr(rt.Env().ExitCode, rt.Env().Err)
+	}
+
+	if rt.Env().ExitCode != 0 {
+		return NewErr(rt.Env().ExitCode, nil)
+	}
+
+	return nil
 }
