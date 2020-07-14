@@ -45,7 +45,8 @@ func processCmd(cmd string, args []string) error {
 		return docs(args)
 
 	case "build":
-		return build(args)
+		_, e := build(args)
+		return e
 
 	case "run":
 		return run(args)

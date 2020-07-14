@@ -8,18 +8,22 @@ import (
 func help(args []string) error {
 
 	size := len(args)
-	if size > 1 {
-		return fmt.Errorf("Unexpected argument %q", args[0])
-	}
 
-	if size == 0 {
+	switch {
+	case size > 1:
+		return fmt.Errorf("Unexpected argument %q", args[1])
+
+	case size == 0:
 		printHelp()
-	} else if args[0] == "docs" {
-		printDocsHelp()
-	} else if args[0] == "build" {
+
+	case args[0] == "build":
 		printBuildHelp()
-	} else if args[0] == "run" {
+
+	case args[0] == "run":
 		printRunHelp()
+
+	default:
+		return fmt.Errorf("Unexpected argument %q", args[0])
 	}
 
 	return nil
@@ -49,14 +53,42 @@ Commands:
 	println(s)
 }
 
-func printDocsHelp() {
-
-}
-
 func printBuildHelp() {
 
+	s := `'build' compiles and validates a script.
+
+Usage:
+
+	scarlet build [options] <script file>
+
+Options:
+
+	-nofmt
+		Don't format the script.
+	-log <output folder>
+		Logs the output of each compilation stage as labelled files into the
+		output folder.
+`
+
+	println(s)
 }
 
 func printRunHelp() {
 
+	s := `'run' compiles, validates, then runs a script.
+
+Usage:
+
+	scarlet run [options] <script file>
+
+Options:
+
+	-nofmt
+		Don't format the script.
+	-log 'output folder'
+		Logs the output of each compilation stage as labelled files into the
+		'output folder'.
+`
+
+	println(s)
 }
