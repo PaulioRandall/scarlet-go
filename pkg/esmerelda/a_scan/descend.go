@@ -207,6 +207,7 @@ func numberLiteral(scn *scanner, tk *token.Tok) error {
 	}
 
 FINALISE:
+	tk.RawProps = []Prop{PR_TERM, PR_LITERAL, PR_NUMBER}
 	tk.Gen, tk.Sub, tk.RawStr = GEN_LITERAL, SUB_NUMBER, sb.String()
 	return nil
 }
