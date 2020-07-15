@@ -3,20 +3,24 @@ package program
 import (
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
 	"strings"
+
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/a_scan"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/b_sanitise"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/c_check"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/d_shunt"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/e_compile"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
 )
 
 type buildConfig struct {
-	script string
-	nofmt  bool
-	log    bool
+	script  string
+	nofmt   bool
+	log     bool
+	logFile string
 }
 
 func printBuildHelp() {
@@ -39,49 +43,79 @@ Options:
 	fmt.Println(s)
 }
 
-func parseBuildArgs(args []string) (buildConfig, error) {
+func build(args Arguments) ([]inst.Instruction, error) {
 
 	bc := buildConfig{}
+	e := parseBuildArgs(&bc, args)
+	if e != nil {
+		return nil, e
+	}
 
-	for ; len(args) > 0; args = args[1:] {
+	ins, e := buildFromConfig(bc)
+	return ins, e
+}
 
-		if !strings.HasPrefix(args[0], "-") {
+func parseBuildArgs(bc *buildConfig, args Arguments) error {
+
+	for args.more() {
+
+		if !strings.HasPrefix(args.peek(), "-") {
 			break
 		}
 
-		e := buildOption(&bc, args[0])
+		e := buildOption(bc, args)
 		if e != nil {
-			return buildConfig{}, e
+			return e
 		}
 	}
 
-	if len(args) == 0 {
+	if args.empty() {
 		e := fmt.Errorf("Expected script filename")
-		return buildConfig{}, NewGenErr(e)
-	}
-
-	if len(args) > 1 {
-		e := fmt.Errorf("Unexpected argument %q", args[1])
-		return buildConfig{}, NewGenErr(e)
-	}
-
-	bc.script = args[0]
-	return bc, nil
-}
-
-func buildOption(bc *buildConfig, arg string) error {
-
-	switch arg {
-	case "-nofmt":
-		bc.nofmt = true
-
-	case "-log":
-		bc.log = true
-
-	default:
-		e := fmt.Errorf("Unexpected option %q", arg)
 		return NewGenErr(e)
 	}
+
+	bc.script = args.take()
+
+	if args.more() {
+		e := fmt.Errorf("Unexpected argument %q", args.peek())
+		return NewGenErr(e)
+	}
+
+	return nil
+}
+
+func buildOption(bc *buildConfig, args Arguments) error {
+
+	switch args.peek() {
+	case "-nofmt":
+		nofmtOption(bc, args)
+
+	case "-log":
+		return logOption(bc, args)
+
+	default:
+		e := fmt.Errorf("Unexpected option %q", args.peek())
+		return NewGenErr(e)
+	}
+
+	return nil
+}
+
+func nofmtOption(bc *buildConfig, args Arguments) {
+	bc.nofmt = true
+	args.take()
+}
+
+func logOption(bc *buildConfig, args Arguments) error {
+
+	if args.count() < 2 {
+		e := fmt.Errorf("Missing %q folder name", args.peek())
+		return NewGenErr(e)
+	}
+
+	bc.log = true
+	args.take()
+	bc.logFile = args.take()
 
 	return nil
 }
@@ -93,9 +127,9 @@ func buildFromConfig(bc buildConfig) ([]inst.Instruction, error) {
 		return nil, NewGenErr(e)
 	}
 
-	tks, e := scan.ScanAll(string(s))
+	tks, e := buildScanAll(bc, string(s))
 	if e != nil {
-		return nil, NewGenErr(e)
+		return nil, e
 	}
 
 	tks, e = sanitise.SanitiseAll(tks)
@@ -121,13 +155,26 @@ func buildFromConfig(bc buildConfig) ([]inst.Instruction, error) {
 	return ins, nil
 }
 
-func build(args []string) ([]inst.Instruction, error) {
+func buildScanAll(bc buildConfig, s string) ([]token.Token, error) {
 
-	bc, e := parseBuildArgs(args)
+	tks, e := scan.ScanAll(s)
 	if e != nil {
-		return nil, e
+		return nil, NewGenErr(e)
 	}
 
-	ins, e := buildFromConfig(bc)
-	return ins, e
+	if !bc.log {
+		return tks, nil
+	}
+
+	script := filepath.Base(bc.script)
+	script = strings.TrimSuffix(script, filepath.Ext(script))
+	script += ".scanned"
+	file := filepath.Join(bc.logFile, script)
+
+	e = writeTokenPhaseFile(file, tks)
+	if e != nil {
+		return nil, NewGenErr(e)
+	}
+
+	return tks, nil
 }

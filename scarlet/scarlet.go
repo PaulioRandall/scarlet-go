@@ -9,24 +9,18 @@ import (
 
 func main() {
 
-	args := os.Args
-
-	if len(args) == 1 {
+	if len(os.Args) == 1 {
 		// Dev run `./godo run`
-		e := program.ProcessCommand("run", []string{"test.scarlet"})
+		args := program.NewArgs([]string{"run", "test.scarlet"})
+		e := program.Execute(args)
 		checkError(e)
 
 		todo()
 		return
 	}
 
-	if len(args) < 2 {
-		e := fmt.Errorf("Missing command!")
-		program.NewGenErr(e)
-		checkError(e)
-	}
-
-	e := program.ProcessCommand(args[1], args[2:])
+	args := program.NewArgs(os.Args[1:])
+	e := program.Execute(args)
 	checkError(e)
 }
 
@@ -49,7 +43,6 @@ func todo() {
 	println()
 	println()
 	println("TODO:")
-	println("[Next] Create a build error")
 	println("[Next] Add compile stage output logging")
 	println("[Next] Create formatting tool")
 	println("[Next] Add scanning for complex expressions")

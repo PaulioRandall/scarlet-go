@@ -4,6 +4,6 @@ package program
 //   docs help						Show the instructions and options for navigating
 //            						the documentation.
 
-func docs(args []string) error {
+func docs(args Arguments) error {
 	return nil
 }

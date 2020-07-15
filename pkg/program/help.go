@@ -5,26 +5,25 @@ import (
 )
 
 // help show the instructions and options for how to use Scarlet CLI.
-func help(args []string) error {
-
-	size := len(args)
+func help(args Arguments) error {
 
 	switch {
-	case size > 1:
-		e := fmt.Errorf("Unexpected argument %q", args[1])
+	case args.count() > 1:
+		args.take()
+		e := fmt.Errorf("Unexpected argument %q", args.peek())
 		return NewGenErr(e)
 
-	case size == 0:
+	case args.empty():
 		printHelp()
 
-	case args[0] == "build":
+	case args.peek() == "build":
 		printBuildHelp()
 
-	case args[0] == "run":
+	case args.peek() == "run":
 		printRunHelp()
 
 	default:
-		e := fmt.Errorf("Unexpected argument %q", args[0])
+		e := fmt.Errorf("Unexpected argument %q", args.peek())
 		return NewGenErr(e)
 	}
 

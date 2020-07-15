@@ -27,9 +27,14 @@ func NewGenErr(e error) error {
 	}
 }
 
-func ProcessCommand(cmd string, args []string) error {
+func Execute(args Arguments) error {
 
-	switch cmd {
+	if args.empty() {
+		e := fmt.Errorf("Missing command!")
+		return NewGenErr(e)
+	}
+
+	switch cmd := args.take(); cmd {
 	case "help":
 		return help(args)
 

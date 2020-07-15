@@ -47,27 +47,46 @@ const (
 )
 
 var genTypes = map[GenType]string{
-	GEN_REDUNDANT:   `redundant`,
-	GEN_TERMINATOR:  `terminator`,
-	GEN_LITERAL:     `literal`,
-	GEN_IDENTIFIER:  `identifier`,
-	GEN_SPELL:       `spell`,
-	GEN_PARAMS:      `parameters`,
-	GEN_DELIMITER:   `delimiter`,
-	GEN_PARENTHESIS: `parenthesis`,
+	GEN_REDUNDANT:   `REDUNDANT`,
+	GEN_TERMINATOR:  `TERMINATOR`,
+	GEN_LITERAL:     `LITERAL`,
+	GEN_IDENTIFIER:  `IDENTIFIER`,
+	GEN_SPELL:       `SPELL`,
+	GEN_PARAMS:      `PARAMETERS`,
+	GEN_DELIMITER:   `DELIMITER`,
+	GEN_PARENTHESIS: `PARENTHESIS`,
 }
 
 var subTypes = map[SubType]string{
-	SUB_TERMINATOR:  `terminator`,
-	SUB_NEWLINE:     `newline`,
-	SUB_WHITESPACE:  `whitespace`,
-	SUB_COMMENT:     `comment`,
-	SUB_BOOL:        `bool`,
-	SUB_NUMBER:      `number`,
-	SUB_STRING:      `string`,
-	SUB_IDENTIFIER:  `identifier`,
-	SUB_VOID:        `void`,
-	SUB_VALUE_DELIM: `value_delim`,
-	SUB_PAREN_OPEN:  `paren_open`,
-	SUB_PAREN_CLOSE: `paren_close`,
+	SUB_TERMINATOR:  `TERMINATOR`,
+	SUB_NEWLINE:     `NEWLINE`,
+	SUB_WHITESPACE:  `WHITESPACE`,
+	SUB_COMMENT:     `COMMENT`,
+	SUB_BOOL:        `BOOL`,
+	SUB_NUMBER:      `NUMBER`,
+	SUB_STRING:      `STRING`,
+	SUB_IDENTIFIER:  `IDENTIFIER`,
+	SUB_VOID:        `VOID`,
+	SUB_VALUE_DELIM: `VALUE_DELIM`,
+	SUB_PAREN_OPEN:  `PAREN_OPEN`,
+	SUB_PAREN_CLOSE: `PAREN_CLOSE`,
+}
+
+func MaxTypeName() int {
+
+	var max int
+
+	for _, v := range genTypes {
+		if len([]rune(v)) > max {
+			max = len([]rune(v))
+		}
+	}
+
+	for _, v := range subTypes {
+		if len([]rune(v)) > max {
+			max = len([]rune(v))
+		}
+	}
+
+	return max
 }
