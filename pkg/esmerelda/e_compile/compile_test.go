@@ -9,6 +9,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 
@@ -31,11 +32,12 @@ func doErrorTest(t *testing.T, in []token.Token) {
 	require.NotNil(t, e, "Expected an error")
 }
 
-func tok(gen GenType, sub SubType, raw string) token.Tok {
+func tok(gen GenType, sub SubType, raw string, props ...Prop) token.Tok {
 	return token.Tok{
-		Gen:    gen,
-		Sub:    sub,
-		RawStr: raw,
+		Gen:      gen,
+		Sub:      sub,
+		RawProps: props,
+		RawStr:   raw,
 	}
 }
 
@@ -54,7 +56,7 @@ func Test1_1(t *testing.T) {
 	// @Println()
 	in := []token.Token{
 		tok(GEN_PARAMS, SUB_UNDEFINED, "("),
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Println"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Println", PR_CALLABLE, PR_SPELL),
 		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 
@@ -73,7 +75,7 @@ func Test1_2(t *testing.T) {
 	in := []token.Token{
 		tok(GEN_PARAMS, SUB_UNDEFINED, "("),
 		tok(GEN_IDENTIFIER, SUB_IDENTIFIER, "x"),
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Println"),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Println", PR_CALLABLE, PR_SPELL),
 		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 
@@ -94,8 +96,8 @@ func Test1_3(t *testing.T) {
 		tok(GEN_PARAMS, SUB_UNDEFINED, "("),
 		tok(GEN_IDENTIFIER, SUB_IDENTIFIER, "x"),
 		tok(GEN_LITERAL, SUB_NUMBER, "1"),
-		tok(GEN_LITERAL, SUB_STRING, `"abc"`),
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Println"),
+		tok(GEN_LITERAL, SUB_STRING, `"abc"`, PR_TERM, PR_LITERAL, PR_STRING),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Println", PR_CALLABLE, PR_SPELL),
 		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
 	}
 

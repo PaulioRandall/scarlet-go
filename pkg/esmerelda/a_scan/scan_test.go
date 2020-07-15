@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 
@@ -26,10 +27,11 @@ func doErrorTest(t *testing.T, in string) {
 	require.NotNil(t, e, "Expected an error")
 }
 
-func tok(gen GenType, sub SubType, raw string, line, begin, end int) token.Tok {
+func tok(gen GenType, sub SubType, raw string, line, begin, end int, props ...Prop) token.Tok {
 	return token.Tok{
 		Gen:      gen,
 		Sub:      sub,
+		RawProps: props,
 		RawStr:   raw,
 		Line:     line,
 		ColBegin: begin,
@@ -37,12 +39,13 @@ func tok(gen GenType, sub SubType, raw string, line, begin, end int) token.Tok {
 	}
 }
 
-func halfTok(gen GenType, sub SubType, raw string) token.Tok {
+func halfTok(gen GenType, sub SubType, raw string, props ...Prop) token.Tok {
 	return token.Tok{
-		Gen:    gen,
-		Sub:    sub,
-		RawStr: raw,
-		ColEnd: len(raw),
+		Gen:      gen,
+		Sub:      sub,
+		RawProps: props,
+		RawStr:   raw,
+		ColEnd:   len(raw),
 	}
 }
 
@@ -51,7 +54,7 @@ func Test_S1(t *testing.T) {
 	in := "@Set(x, 1)"
 
 	exp := []token.Token{
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Set", 0, 0, 4),
+		tok(GEN_SPELL, SUB_UNDEFINED, "@Set", 0, 0, 4, PR_CALLABLE, PR_SPELL),
 		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "(", 0, 4, 5),
 		tok(GEN_IDENTIFIER, SUB_IDENTIFIER, "x", 0, 5, 6),
 		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ",", 0, 6, 7),
@@ -137,13 +140,13 @@ func Test_T4_5(t *testing.T) {
 
 func Test_T5_1(t *testing.T) {
 	doTest(t, `""`, []token.Token{
-		halfTok(GEN_LITERAL, SUB_STRING, `""`),
+		halfTok(GEN_LITERAL, SUB_STRING, `""`, PR_TERM, PR_LITERAL, PR_STRING),
 	})
 }
 
 func Test_T5_2(t *testing.T) {
 	doTest(t, `"abc"`, []token.Token{
-		halfTok(GEN_LITERAL, SUB_STRING, `"abc"`),
+		halfTok(GEN_LITERAL, SUB_STRING, `"abc"`, PR_TERM, PR_LITERAL, PR_STRING),
 	})
 }
 
@@ -207,19 +210,19 @@ func Test_T7_2(t *testing.T) {
 
 func Test_T8_1(t *testing.T) {
 	doTest(t, "@abc", []token.Token{
-		halfTok(GEN_SPELL, SUB_UNDEFINED, "@abc"),
+		halfTok(GEN_SPELL, SUB_UNDEFINED, "@abc", PR_CALLABLE, PR_SPELL),
 	})
 }
 
 func Test_T8_2(t *testing.T) {
 	doTest(t, "@abc.xyz", []token.Token{
-		halfTok(GEN_SPELL, SUB_UNDEFINED, "@abc.xyz"),
+		halfTok(GEN_SPELL, SUB_UNDEFINED, "@abc.xyz", PR_CALLABLE, PR_SPELL),
 	})
 }
 
 func Test_T8_3(t *testing.T) {
 	doTest(t, "@a.b.c.d", []token.Token{
-		halfTok(GEN_SPELL, SUB_UNDEFINED, "@a.b.c.d"),
+		halfTok(GEN_SPELL, SUB_UNDEFINED, "@a.b.c.d", PR_CALLABLE, PR_SPELL),
 	})
 }
 

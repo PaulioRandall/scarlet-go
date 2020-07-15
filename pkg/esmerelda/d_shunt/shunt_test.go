@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 
@@ -26,12 +27,13 @@ func doErrorTest(t *testing.T, in []token.Token) {
 	require.NotNil(t, e, "Expected an error")
 }
 
-func tok(gen GenType, sub SubType, raw string) token.Tok {
+func tok(gen GenType, sub SubType, raw string, props ...Prop) token.Tok {
 	return token.Tok{
-		Gen:    gen,
-		Sub:    sub,
-		RawStr: raw,
-		ColEnd: len(raw),
+		Gen:      gen,
+		Sub:      sub,
+		RawProps: props,
+		RawStr:   raw,
+		ColEnd:   len(raw),
 	}
 }
 

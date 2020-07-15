@@ -3,6 +3,7 @@ package scan
 import (
 	"strings"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
@@ -144,6 +145,7 @@ func spell(scn *scanner, tk *token.Tok) error {
 		sb.WriteRune(scn.next())
 	}
 
+	tk.RawProps = []Prop{PR_CALLABLE, PR_SPELL}
 	tk.Gen, tk.Sub, tk.RawStr = GEN_SPELL, SUB_UNDEFINED, sb.String()
 	return nil
 }
@@ -168,6 +170,7 @@ func stringLiteral(scn *scanner, tk *token.Tok) error {
 
 	sb.WriteRune(scn.next())
 
+	tk.RawProps = []Prop{PR_TERM, PR_LITERAL, PR_STRING}
 	tk.Gen, tk.Sub, tk.RawStr = GEN_LITERAL, SUB_STRING, sb.String()
 	return nil
 }

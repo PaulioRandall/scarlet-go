@@ -3,12 +3,14 @@ package token
 import (
 	"fmt"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
 
 type Token interface {
 	GenType() GenType
 	SubType() SubType
+	Entity
 	Raw() string
 	Value() string
 	Snippet
@@ -23,6 +25,7 @@ type Snippet interface {
 type Tok struct {
 	Gen              GenType
 	Sub              SubType
+	RawProps         []Prop
 	RawStr           string
 	Line             int
 	ColBegin, ColEnd int
@@ -36,17 +39,36 @@ func (tk Tok) SubType() SubType {
 	return tk.Sub
 }
 
+func (tk Tok) Props() []Prop {
+	return tk.RawProps
+}
+
+func (tk Tok) Is(o Prop) bool {
+
+	for _, p := range tk.RawProps {
+		if p == o {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (tk Tok) IsNot(o Prop) bool {
+	return !tk.Is(o)
+}
+
 func (tk Tok) Raw() string {
 	return tk.RawStr
 }
 
 func (tk Tok) Value() string {
 
-	switch {
-	case tk.Gen == GEN_SPELL:
+	if tk.Is(PR_SPELL) {
 		return tk.RawStr[1:]
+	}
 
-	case tk.Sub == SUB_STRING:
+	if tk.Is(PR_STRING) {
 		if len(tk.RawStr) == 2 {
 			return ""
 		}

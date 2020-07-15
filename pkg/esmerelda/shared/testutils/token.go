@@ -32,6 +32,7 @@ func requireToken(t *testing.T, exp, act token.Token) {
 
 	require.Equal(t, exp.GenType(), act.GenType(), msg)
 	require.Equal(t, exp.SubType(), act.SubType(), msg)
+	require.Equal(t, exp.Props(), act.Props(), msg)
 	require.Equal(t, exp.Raw(), act.Raw(), msg)
 	require.Equal(t, exp.Value(), act.Value(), msg)
 	requireSnippet(t, exp, act, msg)
