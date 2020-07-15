@@ -55,12 +55,12 @@ func Test_S1(t *testing.T) {
 
 	exp := []token.Token{
 		tok(GEN_SPELL, SUB_UNDEFINED, "@Set", 0, 0, 4, PR_CALLABLE, PR_SPELL),
-		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "(", 0, 4, 5),
+		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "(", 0, 4, 5, PR_PARENTHESIS, PR_OPENER),
 		tok(GEN_IDENTIFIER, SUB_IDENTIFIER, "x", 0, 5, 6),
-		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ",", 0, 6, 7),
+		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ",", 0, 6, 7, PR_DELIMITER, PR_SEPARATOR),
 		tok(GEN_REDUNDANT, SUB_WHITESPACE, " ", 0, 7, 8),
 		tok(GEN_LITERAL, SUB_NUMBER, "1", 0, 8, 9),
-		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")", 0, 9, 10),
+		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")", 0, 9, 10, PR_PARENTHESIS, PR_CLOSER),
 	}
 
 	doTest(t, in, exp)
@@ -78,7 +78,7 @@ func Test_T1_1(t *testing.T) {
 
 func Test_T2_1(t *testing.T) {
 	doTest(t, ";", []token.Token{
-		halfTok(GEN_TERMINATOR, SUB_TERMINATOR, ";"),
+		halfTok(GEN_TERMINATOR, SUB_TERMINATOR, ";", PR_TERMINATOR),
 	})
 }
 
@@ -192,19 +192,19 @@ func Test_T6_4(t *testing.T) {
 
 func Test_T6_5(t *testing.T) {
 	doTest(t, "_", []token.Token{
-		halfTok(GEN_IDENTIFIER, SUB_VOID, "_"),
+		halfTok(GEN_IDENTIFIER, SUB_VOID, "_", PR_ASSIGNEE, PR_VOID),
 	})
 }
 
 func Test_T7_1(t *testing.T) {
 	doTest(t, "(", []token.Token{
-		halfTok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
+		halfTok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "(", PR_PARENTHESIS, PR_OPENER),
 	})
 }
 
 func Test_T7_2(t *testing.T) {
 	doTest(t, ")", []token.Token{
-		halfTok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		halfTok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")", PR_PARENTHESIS, PR_CLOSER),
 	})
 }
 
@@ -244,7 +244,7 @@ func Test_T8_7(t *testing.T) {
 
 func Test_T9_1(t *testing.T) {
 	doTest(t, ",", []token.Token{
-		halfTok(GEN_DELIMITER, SUB_VALUE_DELIM, ","),
+		halfTok(GEN_DELIMITER, SUB_VALUE_DELIM, ",", PR_DELIMITER, PR_SEPARATOR),
 	})
 }
 

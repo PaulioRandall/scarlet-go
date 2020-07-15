@@ -28,26 +28,31 @@ func next(scn *scanner, tk *token.Tok) error {
 
 	case scn.match('_'):
 		tk.Gen, tk.Sub = GEN_IDENTIFIER, SUB_VOID
+		tk.RawProps = []Prop{PR_ASSIGNEE, PR_VOID}
 		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match(';'):
 		tk.Gen, tk.Sub = GEN_TERMINATOR, SUB_TERMINATOR
+		tk.RawProps = []Prop{PR_TERMINATOR}
 		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match(','):
 		tk.Gen, tk.Sub = GEN_DELIMITER, SUB_VALUE_DELIM
+		tk.RawProps = []Prop{PR_DELIMITER, PR_SEPARATOR}
 		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match('('):
 		tk.Gen, tk.Sub = GEN_PARENTHESIS, SUB_PAREN_OPEN
+		tk.RawProps = []Prop{PR_PARENTHESIS, PR_OPENER}
 		tk.RawStr = string(scn.next())
 		return nil
 
 	case scn.match(')'):
 		tk.Gen, tk.Sub = GEN_PARENTHESIS, SUB_PAREN_CLOSE
+		tk.RawProps = []Prop{PR_PARENTHESIS, PR_CLOSER}
 		tk.RawStr = string(scn.next())
 		return nil
 
