@@ -55,7 +55,14 @@ func (tk Tok) Is(o Prop) bool {
 }
 
 func (tk Tok) IsNot(o Prop) bool {
-	return !tk.Is(o)
+
+	for _, p := range tk.RawProps {
+		if p == o {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (tk Tok) Raw() string {
@@ -90,13 +97,12 @@ func (tk Tok) End() (int, int) {
 func (tk Tok) String() string {
 
 	// +1 converts from line index to number
-	return fmt.Sprintf(`%d:%d %d:%d %s:%s %q`,
+	return fmt.Sprintf(`%d:%d %d:%d %s %q`,
 		tk.Line+1,
 		tk.ColBegin,
 		tk.Line+1,
 		tk.ColEnd,
-		tk.Gen.String(),
-		tk.Sub.String(),
+		JoinProps(tk.RawProps...),
 		tk.Value(),
 	)
 }

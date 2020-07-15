@@ -1,5 +1,9 @@
 package prop
 
+import (
+	"strings"
+)
+
 type Prop int
 
 type Entity interface {
@@ -10,6 +14,21 @@ type Entity interface {
 
 func (p Prop) String() string {
 	return props[p]
+}
+
+func JoinProps(props ...Prop) string {
+
+	sb := strings.Builder{}
+
+	for i, p := range props {
+		if i != 0 {
+			sb.WriteString(" ")
+		}
+
+		sb.WriteString(p.String())
+	}
+
+	return sb.String()
 }
 
 const (
