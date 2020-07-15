@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/testutils"
 	"github.com/stretchr/testify/require"
@@ -21,12 +21,11 @@ func doTest(t *testing.T, in, exps []token.Token) {
 	testutils.RequireTokenSlice(t, exps, acts)
 }
 
-func tok(gen GenType, sub SubType, raw string) token.Tok {
+func tok(raw string, props ...Prop) token.Tok {
 	return token.Tok{
-		Gen:    gen,
-		Sub:    sub,
-		RawStr: raw,
-		ColEnd: len(raw),
+		RawProps: props,
+		RawStr:   raw,
+		ColEnd:   len(raw),
 	}
 }
 
@@ -35,19 +34,19 @@ func Test1_1(t *testing.T) {
 	// WHEN sanitising a statement containing redudant whitespace and comments
 	// @Println (  )
 	in := []token.Token{
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
-		tok(GEN_REDUNDANT, SUB_WHITESPACE, " "),
-		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
-		tok(GEN_REDUNDANT, SUB_WHITESPACE, "  "),
-		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
-		tok(GEN_REDUNDANT, SUB_COMMENT, "# abc"),
+		tok("@Print"),
+		tok(" ", PR_REDUNDANT),
+		tok("(", PR_PARENTHESIS, PR_OPENER),
+		tok("  ", PR_REDUNDANT),
+		tok(")", PR_PARENTHESIS, PR_CLOSER),
+		tok("# abc", PR_REDUNDANT),
 	}
 
 	// THEN the whitespace is removed
 	exp := []token.Token{
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
-		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok("@Print"),
+		tok("(", PR_PARENTHESIS, PR_OPENER),
+		tok(")", PR_PARENTHESIS, PR_CLOSER),
 	}
 
 	doTest(t, in, exp)
@@ -59,17 +58,17 @@ func Test2_1(t *testing.T) {
 	// @Println(
 	// )
 	in := []token.Token{
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
-		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok("@Print"),
+		tok("(", PR_PARENTHESIS, PR_OPENER),
+		tok("\n", PR_NEWLINE),
+		tok(")", PR_PARENTHESIS, PR_CLOSER),
 	}
 
 	// THEN the newline is removed
 	exp := []token.Token{
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
-		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok("@Print"),
+		tok("(", PR_PARENTHESIS, PR_OPENER),
+		tok(")", PR_PARENTHESIS, PR_CLOSER),
 	}
 
 	doTest(t, in, exp)
@@ -81,23 +80,23 @@ func Test3_1(t *testing.T) {
 	// @Println(1,
 	// 1)
 	in := []token.Token{
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
-		tok(GEN_LITERAL, SUB_NUMBER, "1"),
-		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ","),
-		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
-		tok(GEN_LITERAL, SUB_NUMBER, "1"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok("@Print"),
+		tok("(", PR_PARENTHESIS, PR_OPENER),
+		tok("1"),
+		tok(",", PR_SEPARATOR),
+		tok("\n", PR_NEWLINE),
+		tok("1"),
+		tok(")", PR_PARENTHESIS, PR_CLOSER),
 	}
 
 	// THEN the newline is removed
 	exp := []token.Token{
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
-		tok(GEN_LITERAL, SUB_NUMBER, "1"),
-		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ","),
-		tok(GEN_LITERAL, SUB_NUMBER, "1"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok("@Print"),
+		tok("(", PR_PARENTHESIS, PR_OPENER),
+		tok("1"),
+		tok(",", PR_SEPARATOR),
+		tok("1"),
+		tok(")", PR_PARENTHESIS, PR_CLOSER),
 	}
 
 	doTest(t, in, exp)
@@ -110,20 +109,20 @@ func Test3_2(t *testing.T) {
 	// @Println(1,
 	// )
 	in := []token.Token{
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
-		tok(GEN_LITERAL, SUB_NUMBER, "1"),
-		tok(GEN_DELIMITER, SUB_VALUE_DELIM, ","),
-		tok(GEN_TERMINATOR, SUB_NEWLINE, "\n"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok("@Print"),
+		tok("(", PR_PARENTHESIS, PR_OPENER),
+		tok("1"),
+		tok(",", PR_SEPARATOR),
+		tok("\n", PR_NEWLINE),
+		tok(")", PR_PARENTHESIS, PR_CLOSER),
 	}
 
 	// THEN the newline is removed along with the value delimiter
 	exp := []token.Token{
-		tok(GEN_SPELL, SUB_UNDEFINED, "@Print"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_OPEN, "("),
-		tok(GEN_LITERAL, SUB_NUMBER, "1"),
-		tok(GEN_PARENTHESIS, SUB_PAREN_CLOSE, ")"),
+		tok("@Print"),
+		tok("(", PR_PARENTHESIS, PR_OPENER),
+		tok("1"),
+		tok(")", PR_PARENTHESIS, PR_CLOSER),
 	}
 
 	doTest(t, in, exp)

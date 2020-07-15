@@ -2,8 +2,8 @@ package sanitise
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
 
 type sanitiser struct {
@@ -41,25 +41,25 @@ BUFFER:
 	case san.buff == nil:
 		return prev
 
-	case san.buff.GenType() == GEN_REDUNDANT:
+	case san.buff.Is(PR_REDUNDANT):
 		goto BUFFER
 
-	case prev == nil && san.buff.GenType() == GEN_TERMINATOR:
+	case prev == nil && san.buff.Is(PR_TERMINATOR):
 		goto BUFFER
 
 	case prev == nil:
 		return prev // First buffer only
 
-	case prev.GenType() == GEN_TERMINATOR && san.buff.GenType() == GEN_TERMINATOR:
+	case prev.Is(PR_TERMINATOR) && san.buff.Is(PR_TERMINATOR):
 		goto BUFFER
 
-	case prev.SubType() == SUB_PAREN_OPEN && san.buff.SubType() == SUB_NEWLINE:
+	case prev.Is(PR_PARENTHESIS) && prev.Is(PR_OPENER) && san.buff.Is(PR_NEWLINE):
 		goto BUFFER
 
-	case prev.SubType() == SUB_VALUE_DELIM && san.buff.SubType() == SUB_NEWLINE:
+	case prev.Is(PR_SEPARATOR) && san.buff.Is(PR_NEWLINE):
 		goto BUFFER
 
-	case prev.SubType() == SUB_VALUE_DELIM && san.buff.SubType() == SUB_PAREN_CLOSE:
+	case prev.Is(PR_SEPARATOR) && san.buff.Is(PR_PARENTHESIS) && san.buff.Is(PR_CLOSER):
 		prev = san.buff
 		goto BUFFER
 	}
