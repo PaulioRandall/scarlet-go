@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
 
 type checker struct {
@@ -51,27 +51,24 @@ func (chk *checker) empty() bool {
 	return chk.buff == nil && chk.Queue.Empty()
 }
 
-func (chk *checker) match(ty interface{}) bool {
+func (chk *checker) match(props ...Prop) bool {
 
 	if chk.buff == nil {
 		return false
 	}
 
-	switch v := ty.(type) {
-	case GenType:
-		return v == chk.buff.GenType()
-
-	case SubType:
-		return v == chk.buff.SubType()
+	for _, p := range props {
+		if chk.buff.IsNot(p) {
+			return false
+		}
 	}
 
-	perror.Panic("Invalid kind of token type")
-	return false
+	return true
 }
 
-func (chk *checker) accept(ty interface{}) bool {
+func (chk *checker) accept(props ...Prop) bool {
 
-	if chk.match(ty) {
+	if chk.match(props...) {
 		chk.bufferNext()
 		return true
 	}
@@ -79,9 +76,9 @@ func (chk *checker) accept(ty interface{}) bool {
 	return false
 }
 
-func (chk *checker) expect(ty interface{}) error {
+func (chk *checker) expect(props ...Prop) error {
 
-	if chk.match(ty) {
+	if chk.match(props...) {
 		chk.bufferNext()
 		return nil
 	}
@@ -90,17 +87,10 @@ func (chk *checker) expect(ty interface{}) error {
 		return perror.New("Unexpected EOF")
 	}
 
-	var msg string
-
-	switch v := ty.(type) {
-	case GenType:
-		msg = fmt.Sprintf("Want %q, have %q",
-			v.String(), chk.buff.GenType().String())
-
-	case SubType:
-		msg = fmt.Sprintf("Want %q, have %q",
-			v.String(), chk.buff.SubType().String())
-	}
-
+	msg := fmt.Sprintf(
+		"Want %q, have %q",
+		JoinProps(" & ", props...),
+		JoinProps(" & ", chk.buff.Props()...),
+	)
 	return perror.NewBySnippet(msg, chk.buff)
 }

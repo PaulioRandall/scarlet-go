@@ -102,7 +102,7 @@ func (tk Tok) String() string {
 		tk.ColBegin,
 		tk.Line+1,
 		tk.ColEnd,
-		JoinProps(tk.RawProps...),
+		JoinProps(" ", tk.RawProps...),
 		tk.Value(),
 	)
 }

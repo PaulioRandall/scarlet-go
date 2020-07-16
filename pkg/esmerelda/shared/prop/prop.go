@@ -16,13 +16,13 @@ func (p Prop) String() string {
 	return props[p]
 }
 
-func JoinProps(props ...Prop) string {
+func JoinProps(infix string, props ...Prop) string {
 
 	sb := strings.Builder{}
 
 	for i, p := range props {
 		if i != 0 {
-			sb.WriteString(" ")
+			sb.WriteString(infix)
 		}
 
 		sb.WriteString(p.String())
@@ -34,7 +34,7 @@ func JoinProps(props ...Prop) string {
 const (
 	PR_UNDEFINED Prop = iota
 	PR_ANY
-	// ------------------
+	// -----------------
 	PR_REDUNDANT // Whitespace or comment
 	PR_WHITESPACE
 	PR_COMMENT

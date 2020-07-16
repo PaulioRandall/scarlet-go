@@ -2,7 +2,7 @@ package check
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 )
 
 func next(chk *checker) error {
@@ -12,37 +12,36 @@ func next(chk *checker) error {
 		return e
 	}
 
-	return chk.expect(GEN_TERMINATOR)
+	return chk.expect(PR_TERMINATOR)
 }
 
 func spell(chk *checker) error {
 
-	e := chk.expect(GEN_SPELL)
+	e := chk.expect(PR_SPELL)
 	if e != nil {
 		return e
 	}
 
-	e = chk.expect(SUB_PAREN_OPEN)
+	e = chk.expect(PR_PARENTHESIS, PR_OPENER)
 	if e != nil {
 		return e
 	}
 
-	if chk.accept(SUB_PAREN_CLOSE) {
+	if chk.accept(PR_PARENTHESIS, PR_CLOSER) {
 		return nil
 	}
 
 MORE:
 
 	switch {
-	case chk.accept(SUB_IDENTIFIER):
-	case chk.accept(GEN_LITERAL):
+	case chk.accept(PR_TERM):
 	default:
 		return perror.NewBySnippet("Unexpected token", chk.buff)
 	}
 
-	if chk.accept(SUB_VALUE_DELIM) {
+	if chk.accept(PR_SEPARATOR) {
 		goto MORE
 	}
 
-	return chk.expect(SUB_PAREN_CLOSE)
+	return chk.expect(PR_PARENTHESIS, PR_CLOSER)
 }
