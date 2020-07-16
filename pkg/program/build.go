@@ -138,7 +138,7 @@ func buildFromConfig(bc buildConfig) ([]inst.Instruction, error) {
 		return nil, e
 	}
 
-	tks, e = sanitise.SanitiseAll(tks)
+	tks, e = sanitiseAll(bc, tks)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
@@ -148,7 +148,7 @@ func buildFromConfig(bc buildConfig) ([]inst.Instruction, error) {
 		return nil, NewGenErr(e)
 	}
 
-	tks, e = shunt.ShuntAll(tks)
+	tks, e = shuntAll(bc, tks)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
@@ -168,15 +168,52 @@ func scanAll(bc buildConfig, s string) ([]token.Token, error) {
 		return nil, NewGenErr(e)
 	}
 
-	if !bc.log {
-		return tks, nil
-	}
-
-	f := bc.logFilename(".scanned")
-	e = writeTokenPhaseFile(f, tks)
+	e = logPhase(bc, ".scanned", tks)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
 	return tks, nil
+}
+
+func sanitiseAll(bc buildConfig, tks []token.Token) ([]token.Token, error) {
+
+	var e error
+	tks, e = sanitise.SanitiseAll(tks)
+	if e != nil {
+		return nil, NewGenErr(e)
+	}
+
+	e = logPhase(bc, ".sanitised", tks)
+	if e != nil {
+		return nil, NewGenErr(e)
+	}
+
+	return tks, nil
+}
+
+func shuntAll(bc buildConfig, tks []token.Token) ([]token.Token, error) {
+
+	var e error
+	tks, e = shunt.ShuntAll(tks)
+	if e != nil {
+		return nil, NewGenErr(e)
+	}
+
+	e = logPhase(bc, ".shunted", tks)
+	if e != nil {
+		return nil, NewGenErr(e)
+	}
+
+	return tks, nil
+}
+
+func logPhase(bc buildConfig, ext string, tks []token.Token) error {
+
+	if !bc.log {
+		return nil
+	}
+
+	f := bc.logFilename(ext)
+	return writeTokenPhaseFile(f, tks)
 }
