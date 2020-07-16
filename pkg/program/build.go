@@ -3,6 +3,7 @@ package program
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -140,22 +141,22 @@ func buildFromConfig(bc buildConfig) ([]inst.Instruction, error) {
 
 	tks, e = sanitiseAll(bc, tks)
 	if e != nil {
-		return nil, NewGenErr(e)
+		return nil, e
 	}
 
 	tks, e = check.CheckAll(tks)
 	if e != nil {
-		return nil, NewGenErr(e)
+		return nil, e
 	}
 
 	tks, e = shuntAll(bc, tks)
 	if e != nil {
-		return nil, NewGenErr(e)
+		return nil, e
 	}
 
-	ins, e := compile.CompileAll(tks)
+	ins, e := compileAll(bc, tks)
 	if e != nil {
-		return nil, NewGenErr(e)
+		return nil, e
 	}
 
 	return ins, nil
@@ -208,6 +209,26 @@ func shuntAll(bc buildConfig, tks []token.Token) ([]token.Token, error) {
 	return tks, nil
 }
 
+func compileAll(bc buildConfig, tks []token.Token) ([]inst.Instruction, error) {
+
+	ins, e := compile.CompileAll(tks)
+	if e != nil {
+		return nil, NewGenErr(e)
+	}
+
+	if !bc.log {
+		return ins, nil
+	}
+
+	f := bc.logFilename(".compiled")
+	e = writeInstPhaseFile(f, ins)
+	if e != nil {
+		return nil, NewGenErr(e)
+	}
+
+	return ins, nil
+}
+
 func logPhase(bc buildConfig, ext string, tks []token.Token) error {
 
 	if !bc.log {
@@ -216,4 +237,26 @@ func logPhase(bc buildConfig, ext string, tks []token.Token) error {
 
 	f := bc.logFilename(ext)
 	return writeTokenPhaseFile(f, tks)
+}
+
+func writeTokenPhaseFile(filename string, tks []token.Token) error {
+
+	f, e := os.Create(filename)
+	if e != nil {
+		return e
+	}
+
+	defer f.Close()
+	return token.PrintAll(f, tks)
+}
+
+func writeInstPhaseFile(filename string, ins []inst.Instruction) error {
+
+	f, e := os.Create(filename)
+	if e != nil {
+		return e
+	}
+
+	defer f.Close()
+	return inst.PrintAll(f, ins)
 }
