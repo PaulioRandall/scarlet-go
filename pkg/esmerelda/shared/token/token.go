@@ -43,22 +43,33 @@ func (tk Tok) Props() []Prop {
 	return tk.RawProps
 }
 
-func (tk Tok) Is(o Prop) bool {
+func (tk Tok) Is(others ...Prop) bool {
 
-	for _, p := range tk.RawProps {
-		if p == o {
-			return true
+	var found bool
+
+	for _, o := range others {
+		for _, p := range tk.RawProps {
+			if p == o {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			return false
 		}
 	}
 
-	return false
+	return true
 }
 
-func (tk Tok) IsNot(o Prop) bool {
+func (tk Tok) IsNot(others ...Prop) bool {
 
-	for _, p := range tk.RawProps {
-		if p == o {
-			return false
+	for _, o := range others {
+		for _, p := range tk.RawProps {
+			if p == o {
+				return false
+			}
 		}
 	}
 

@@ -57,13 +57,7 @@ func (chk *checker) match(props ...Prop) bool {
 		return false
 	}
 
-	for _, p := range props {
-		if chk.buff.IsNot(p) {
-			return false
-		}
-	}
-
-	return true
+	return chk.buff.Is(props...)
 }
 
 func (chk *checker) accept(props ...Prop) bool {

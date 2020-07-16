@@ -1,6 +1,7 @@
 package shunt
 
 import (
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
@@ -10,35 +11,32 @@ func next(shy *shuntingYard) (token.Token, error) {
 	for !shy.empty() {
 
 		switch {
-		case shy.matchBuff(GEN_IDENTIFIER):
+		case shy.matchBuff(PR_TERM):
 			return shy.next(), nil
 
-		case shy.matchBuff(GEN_LITERAL):
-			return shy.next(), nil
-
-		case shy.matchBuff(SUB_VALUE_DELIM):
-			if shy.matchTop(SUB_PAREN_OPEN) {
+		case shy.matchBuff(PR_SEPARATOR):
+			if shy.matchTop(PR_PARENTHESIS, PR_OPENER) {
 				shy.next()
 				continue
 			}
 
 			return shy.Pop(), nil
 
-		case shy.acceptPush(GEN_SPELL):
-			if e := shy.expectPush(SUB_PAREN_OPEN); e != nil {
+		case shy.acceptPush(PR_SPELL):
+			if e := shy.expectPush(PR_PARENTHESIS, PR_OPENER); e != nil {
 				return nil, e
 			}
 
-			return retypeToken(shy.Top(), GEN_PARAMS, SUB_UNDEFINED), nil
+			return addProp(shy.Top(), PR_PARAMETERS), nil
 
-		case shy.matchBuff(SUB_PAREN_CLOSE):
-			if tk := shy.acceptPop(SUB_PAREN_OPEN); tk != nil {
+		case shy.matchBuff(PR_PARENTHESIS, PR_CLOSER):
+			if tk := shy.acceptPop(PR_PARENTHESIS, PR_OPENER); tk != nil {
 				shy.next()
 			}
 
 			return shy.Pop(), nil
 
-		case shy.matchBuff(GEN_TERMINATOR):
+		case shy.matchBuff(PR_TERMINATOR):
 			if shy.emptyStack() {
 				return shy.next(), nil
 			}
@@ -51,12 +49,13 @@ func next(shy *shuntingYard) (token.Token, error) {
 	return nil, errorUnexpectedEOF(shy.Top())
 }
 
-func retypeToken(tk token.Token, gen GenType, sub SubType) token.Token {
+func addProp(tk token.Token, p Prop) token.Token {
 
 	r := token.Tok{
-		Gen:    gen,
-		Sub:    sub,
-		RawStr: tk.Raw(),
+		Gen:      GEN_PARAMS,
+		Sub:      SUB_UNDEFINED,
+		RawProps: append(tk.Props(), p),
+		RawStr:   tk.Raw(),
 	}
 
 	r.Line, r.ColBegin = tk.Begin()

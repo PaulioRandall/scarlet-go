@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
 )
 
@@ -15,8 +16,10 @@ func errorUnexpectedToken(have token.Token) error {
 	return fail(have, "Token not expected here %q", have.String())
 }
 
-func errorWrongToken(want fmt.Stringer, have token.Token) error {
-	return fail(have, "Want %q, have %q", want.String(), have.String())
+func errorWrongToken(want []Prop, have token.Token) error {
+	w := JoinProps(" & ", want...)
+	h := JoinProps(" & ", have.Props()...)
+	return fail(have, "Want %q, have %q", w, h)
 }
 
 func errorMissingExpression(have token.Token) error {

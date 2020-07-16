@@ -1,11 +1,9 @@
 package shunt
 
 import (
-	"fmt"
-
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
 
 type shuntingYard struct {
@@ -55,13 +53,13 @@ func (shy *shuntingYard) peek() token.Token {
 	return shy.buff
 }
 
-func (shy *shuntingYard) matchBuff(ty interface{}) bool {
-	return matchToken(shy.buff, ty)
+func (shy *shuntingYard) matchBuff(props ...Prop) bool {
+	return matchToken(shy.buff, props...)
 }
 
-func (shy *shuntingYard) acceptPush(ty interface{}) bool {
+func (shy *shuntingYard) acceptPush(props ...Prop) bool {
 
-	if matchToken(shy.buff, ty) {
+	if matchToken(shy.buff, props...) {
 		shy.Push(shy.next())
 		return true
 	}
@@ -69,9 +67,9 @@ func (shy *shuntingYard) acceptPush(ty interface{}) bool {
 	return false
 }
 
-func (shy *shuntingYard) expectPush(ty interface{}) error {
+func (shy *shuntingYard) expectPush(props ...Prop) error {
 
-	e := expectToken(shy.buff, ty)
+	e := expectToken(shy.buff, props...)
 	if e != nil {
 		return e
 	}
@@ -80,26 +78,26 @@ func (shy *shuntingYard) expectPush(ty interface{}) error {
 	return nil
 }
 
-func (shy *shuntingYard) matchTop(ty interface{}) bool {
-	return matchToken(shy.Top(), ty)
+func (shy *shuntingYard) matchTop(props ...Prop) bool {
+	return matchToken(shy.Top(), props...)
 }
 
-func (shy *shuntingYard) acceptPop(ty interface{}) token.Token {
+func (shy *shuntingYard) acceptPop(props ...Prop) token.Token {
 
-	if matchToken(shy.Top(), ty) {
+	if matchToken(shy.Top(), props...) {
 		return shy.Pop()
 	}
 
 	return nil
 }
 
-func (shy *shuntingYard) expectPop(ty interface{}) (token.Token, error) {
+func (shy *shuntingYard) expectPop(props ...Prop) (token.Token, error) {
 
 	if shy.Top() == nil {
-		return nil, expectToken(shy.buff, ty)
+		return nil, expectToken(shy.buff, props...)
 	}
 
-	e := expectToken(shy.Top(), ty)
+	e := expectToken(shy.Top(), props...)
 	if e != nil {
 		return nil, e
 	}
@@ -107,33 +105,24 @@ func (shy *shuntingYard) expectPop(ty interface{}) (token.Token, error) {
 	return shy.Pop(), nil
 }
 
-func matchToken(tk token.Token, ty interface{}) bool {
+func matchToken(tk token.Token, props ...Prop) bool {
 
 	if tk == nil {
 		return false
 	}
 
-	if pat, ok := ty.(GenType); ok {
-		return pat == GEN_ANY || pat == tk.GenType()
-	}
-
-	if pat, ok := ty.(SubType); ok {
-		return pat == SUB_ANY || pat == tk.SubType()
-	}
-
-	failNow("GenType or SubType required")
-	return false
+	return tk.Is(props...)
 }
 
-func expectToken(tk token.Token, ty interface{}) error {
+func expectToken(tk token.Token, props ...Prop) error {
 
 	if tk == nil {
 		return errorUnexpectedEOF(tk)
 	}
 
-	if matchToken(tk, ty) {
+	if matchToken(tk, props...) {
 		return nil
 	}
 
-	return errorWrongToken(ty.(fmt.Stringer), tk)
+	return errorWrongToken(props, tk)
 }
