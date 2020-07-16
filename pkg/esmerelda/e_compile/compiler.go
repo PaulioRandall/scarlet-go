@@ -2,8 +2,8 @@ package compile
 
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
 
 type compiler struct {
@@ -32,6 +32,15 @@ func (com *compiler) empty() bool {
 	return com.buff == nil && com.Queue.Empty()
 }
 
+func (com *compiler) peek() token.Token {
+
+	if com.empty() {
+		failNow("No tokens remaining, call `match` or `empty` first")
+	}
+
+	return com.buff
+}
+
 func (com *compiler) next() token.Token {
 
 	if com.empty() {
@@ -44,20 +53,6 @@ func (com *compiler) next() token.Token {
 	return r
 }
 
-func (com *compiler) discard() {
-	com.next()
-}
-
-func (com *compiler) match(ty interface{}) bool {
-
-	switch v := ty.(type) {
-	case GenType:
-		return v == GEN_ANY || v == com.buff.GenType()
-
-	case SubType:
-		return v == SUB_ANY || v == com.buff.SubType()
-	}
-
-	failNow("com.Match requires a GenType or SubType as an argument")
-	return false
+func (com *compiler) match(props ...Prop) bool {
+	return com.buff.Is(props...)
 }

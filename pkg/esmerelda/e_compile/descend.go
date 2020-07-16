@@ -5,7 +5,7 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 )
 
 func (com *compiler) println() {
@@ -19,9 +19,9 @@ func (com *compiler) println() {
 
 func next(com *compiler) error {
 
-	defer com.discard() // GEN_TERMINATOR, now redundant
+	defer com.next() // GEN_TERMINATOR, now redundant
 
-	if com.match(GEN_PARAMS) {
+	if com.match(PR_PARAMETERS) {
 		return call(com)
 	}
 
@@ -30,10 +30,10 @@ func next(com *compiler) error {
 
 func call(com *compiler) error {
 
-	com.discard() // GEN_PARAMS, now redundant
+	com.next() // GEN_PARAMS, now redundant
 	argCount := 0
 
-	for !com.match(GEN_SPELL) {
+	for !com.match(PR_SPELL) {
 		argCount++
 
 		e := expression(com)
@@ -56,10 +56,10 @@ func call(com *compiler) error {
 func expression(com *compiler) error {
 
 	switch {
-	case com.match(SUB_IDENTIFIER):
+	case com.match(PR_IDENTIFIER):
 		identifier(com)
 
-	case com.match(GEN_LITERAL):
+	case com.match(PR_LITERAL):
 		literal(com)
 
 	default:
@@ -82,19 +82,20 @@ func identifier(com *compiler) {
 func literal(com *compiler) {
 
 	var val interface{}
-	tk := com.next()
+	tk := com.peek()
 
-	switch tk.SubType() {
-	case SUB_BOOL:
+	switch {
+	case tk.Is(PR_BOOL):
 		val = tk.Value() == "true"
 
-	case SUB_NUMBER:
+	case tk.Is(PR_NUMBER):
 		val = number.New(tk.Value())
 
-	case SUB_STRING:
+	case tk.Is(PR_STRING):
 		val = tk.Value()
 	}
 
+	com.next()
 	com.Put(inst.Inst{
 		InstCode: IN_VAL_PUSH,
 		InstData: val,
