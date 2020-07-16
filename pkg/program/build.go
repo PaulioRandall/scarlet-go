@@ -23,6 +23,12 @@ type buildConfig struct {
 	logFile string
 }
 
+func (bc buildConfig) logFilename(ext string) string {
+	f := filepath.Base(bc.script)
+	f = strings.TrimSuffix(f, filepath.Ext(f))
+	return filepath.Join(bc.logFile, f+ext)
+}
+
 func printBuildHelp() {
 
 	s := `'build' compiles and validates a script.
@@ -127,7 +133,7 @@ func buildFromConfig(bc buildConfig) ([]inst.Instruction, error) {
 		return nil, NewGenErr(e)
 	}
 
-	tks, e := buildScanAll(bc, string(s))
+	tks, e := scanAll(bc, string(s))
 	if e != nil {
 		return nil, e
 	}
@@ -155,7 +161,7 @@ func buildFromConfig(bc buildConfig) ([]inst.Instruction, error) {
 	return ins, nil
 }
 
-func buildScanAll(bc buildConfig, s string) ([]token.Token, error) {
+func scanAll(bc buildConfig, s string) ([]token.Token, error) {
 
 	tks, e := scan.ScanAll(s)
 	if e != nil {
@@ -166,12 +172,8 @@ func buildScanAll(bc buildConfig, s string) ([]token.Token, error) {
 		return tks, nil
 	}
 
-	script := filepath.Base(bc.script)
-	script = strings.TrimSuffix(script, filepath.Ext(script))
-	script += ".scanned"
-	file := filepath.Join(bc.logFile, script)
-
-	e = writeTokenPhaseFile(file, tks)
+	f := bc.logFilename(".scanned")
+	e = writeTokenPhaseFile(f, tks)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}

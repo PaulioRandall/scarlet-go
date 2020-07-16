@@ -58,7 +58,7 @@ func findTkFmt(tks []token.Token) tkFmt {
 			tkf.end = size
 		}
 
-		size = len([]rune(JoinProps(",", tk.Props()...)))
+		size = len([]rune(JoinProps(", ", tk.Props()...)))
 		if size > tkf.props {
 			tkf.props = size
 		}
@@ -90,7 +90,7 @@ func writeToken(w io.StringWriter, tk token.Token, tkf tkFmt) error {
 		return e
 	}
 
-	e = writePadStr(w, JoinProps(",", tk.Props()...), tkf.props)
+	e = writePadStr(w, JoinProps(", ", tk.Props()...), tkf.props)
 	if e != nil {
 		return e
 	}

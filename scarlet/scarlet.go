@@ -43,7 +43,6 @@ func todo() {
 	println()
 	println()
 	println("TODO:")
-	println("[Next] Add compile stage output logging")
 	println("[Next] Create formatting tool")
 	println("[Next] Add scanning for complex expressions")
 	println()
