@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
 
 func writeTokenPhaseFile(filename string, tks []token.Token) error {
@@ -34,8 +34,7 @@ func writeTokenPhaseFile(filename string, tks []token.Token) error {
 type tkFmt struct {
 	begin int
 	end   int
-	gen   int
-	sub   int
+	props int
 	gap   int // gap between printed fields
 }
 
@@ -59,14 +58,9 @@ func findTkFmt(tks []token.Token) tkFmt {
 			tkf.end = size
 		}
 
-		size = len([]rune(tk.GenType().String()))
-		if size > tkf.gen {
-			tkf.gen = size
-		}
-
-		size = len([]rune(tk.SubType().String()))
-		if size > tkf.sub {
-			tkf.sub = size
+		size = len([]rune(JoinProps(",", tk.Props()...)))
+		if size > tkf.props {
+			tkf.props = size
 		}
 	}
 
@@ -96,7 +90,7 @@ func writeToken(w io.StringWriter, tk token.Token, tkf tkFmt) error {
 		return e
 	}
 
-	e = writePadStr(w, tk.GenType().String(), tkf.gen)
+	e = writePadStr(w, JoinProps(",", tk.Props()...), tkf.props)
 	if e != nil {
 		return e
 	}
@@ -106,17 +100,7 @@ func writeToken(w io.StringWriter, tk token.Token, tkf tkFmt) error {
 		return e
 	}
 
-	e = writePadStr(w, tk.SubType().String(), tkf.sub)
-	if e != nil {
-		return e
-	}
-
-	e = writeGap(w, tkf.gap)
-	if e != nil {
-		return e
-	}
-
-	if tk.SubType() == SUB_NEWLINE {
+	if tk.Is(PR_NEWLINE) {
 		s := strconv.QuoteToGraphic(tk.Raw())
 		return writeStr(w, s[1:len(s)-1])
 	}

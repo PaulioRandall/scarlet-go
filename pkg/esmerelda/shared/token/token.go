@@ -4,12 +4,9 @@ import (
 	"fmt"
 
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
 
 type Token interface {
-	GenType() GenType
-	SubType() SubType
 	Entity
 	Raw() string
 	Value() string
@@ -23,20 +20,10 @@ type Snippet interface {
 }
 
 type Tok struct {
-	Gen              GenType
-	Sub              SubType
 	RawProps         []Prop
 	RawStr           string
 	Line             int
 	ColBegin, ColEnd int
-}
-
-func (tk Tok) GenType() GenType {
-	return tk.Gen
-}
-
-func (tk Tok) SubType() SubType {
-	return tk.Sub
 }
 
 func (tk Tok) Props() []Prop {
@@ -57,19 +44,6 @@ func (tk Tok) Is(others ...Prop) bool {
 
 		if !found {
 			return false
-		}
-	}
-
-	return true
-}
-
-func (tk Tok) IsNot(others ...Prop) bool {
-
-	for _, o := range others {
-		for _, p := range tk.RawProps {
-			if p == o {
-				return false
-			}
 		}
 	}
 

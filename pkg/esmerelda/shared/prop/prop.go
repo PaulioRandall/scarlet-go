@@ -9,7 +9,6 @@ type Prop int
 type Entity interface {
 	Props() []Prop
 	Is(...Prop) bool
-	IsNot(...Prop) bool
 }
 
 func (p Prop) String() string {

@@ -3,8 +3,8 @@ package scan
 import (
 	"unicode"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
 
 type scanner struct {
@@ -28,7 +28,7 @@ func (scn *scanner) scan() (token.Tok, ScanFunc, error) {
 	tk.ColBegin = col
 	tk.ColEnd = scn.col
 
-	if tk.Sub == SUB_NEWLINE {
+	if tk.Is(PR_NEWLINE) {
 		scn.line++
 		scn.col = 0
 	}

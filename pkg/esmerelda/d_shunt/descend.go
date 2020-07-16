@@ -3,7 +3,6 @@ package shunt
 import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 )
 
 func next(shy *shuntingYard) (token.Token, error) {
@@ -52,8 +51,6 @@ func next(shy *shuntingYard) (token.Token, error) {
 func addProp(tk token.Token, p Prop) token.Token {
 
 	r := token.Tok{
-		Gen:      GEN_PARAMS,
-		Sub:      SUB_UNDEFINED,
 		RawProps: append(tk.Props(), p),
 		RawStr:   tk.Raw(),
 	}

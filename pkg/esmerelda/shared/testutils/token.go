@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token/types"
 
 	"github.com/stretchr/testify/require"
 )
@@ -30,11 +29,6 @@ func requireToken(t *testing.T, exp, act token.Token) {
 
 	require.NotNil(t, act, "Expected token ("+exp.String()+")\nBut got nil")
 	msg := "Expected (" + exp.String() + ")\nActual   (" + act.String() + ")"
-
-	if exp.GenType() != GEN_UNDEFINED {
-		require.Equal(t, exp.GenType(), act.GenType(), msg)
-		require.Equal(t, exp.SubType(), act.SubType(), msg)
-	}
 
 	require.Equal(t, exp.Props(), act.Props(), msg)
 	require.Equal(t, exp.Raw(), act.Raw(), msg)
