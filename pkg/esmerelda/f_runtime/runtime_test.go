@@ -124,7 +124,8 @@ func Test1_3(t *testing.T) {
 	given := []inst.Instruction{
 		ins(IN_VAL_PUSH, "x"),
 		ins(IN_VAL_PUSH, "abc"),
-		ins(IN_SPELL, []interface{}{2, "set"}),
+		ins(IN_VAL_PUSH, 2),
+		ins(IN_SPELL, "set"),
 	}
 
 	expStack := []types.Value{}
@@ -148,13 +149,16 @@ func Test1_4(t *testing.T) {
 	given := []inst.Instruction{
 		ins(IN_VAL_PUSH, "x"),
 		ins(IN_VAL_PUSH, number.New("1")),
-		ins(IN_SPELL, []interface{}{2, "set"}),
+		ins(IN_VAL_PUSH, 2),
+		ins(IN_SPELL, "set"),
 		ins(IN_VAL_PUSH, "y"),
 		ins(IN_VAL_PUSH, number.New("2")),
-		ins(IN_SPELL, []interface{}{2, "set"}),
-		ins(IN_VAL_PUSH, "x"),
+		ins(IN_VAL_PUSH, 2),
+		ins(IN_SPELL, "set"),
 		ins(IN_VAL_PUSH, "y"),
-		ins(IN_SPELL, []interface{}{2, "println"}),
+		ins(IN_CTX_GET, "x"),
+		ins(IN_VAL_PUSH, 2),
+		ins(IN_SPELL, "set"),
 	}
 
 	expStack := []types.Value{}
@@ -163,7 +167,7 @@ func Test1_4(t *testing.T) {
 
 	expBindings := map[string]types.Value{
 		"x": types.Num{number.New("1")},
-		"y": types.Num{number.New("2")},
+		"y": types.Num{number.New("1")},
 	}
 
 	doTest(t, given, expStack, expDefs, expBindings)

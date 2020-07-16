@@ -135,8 +135,8 @@ func popArgs(env *Environment, size int) []types.Value {
 
 func invokeSpell(env *Environment, in inst.Instruction) {
 
-	data := in.Data().([]interface{})
-	argCount, name := data[0].(int), data[1].(string)
+	argCount := int(env.Pop().(types.Int))
+	name := in.Data().(string)
 
 	sp := spells.LookUp(name)
 	if sp == nil {

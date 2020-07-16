@@ -6,6 +6,21 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/number"
 )
 
+type Int int
+
+func (a Int) Equal(b Value) bool {
+	return a.Comparable(b) && a == b.(Int)
+}
+
+func (a Int) Comparable(b Value) bool {
+	_, ok := b.(Int)
+	return ok
+}
+
+func (a Int) String() string {
+	return fmt.Sprintf("%v", int(a))
+}
+
 type Bool bool
 
 func (a Bool) Equal(b Value) bool {

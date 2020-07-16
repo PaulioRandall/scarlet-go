@@ -30,7 +30,7 @@ func next(com *compiler) error {
 
 func call(com *compiler) error {
 
-	com.next() // GEN_PARAMS, now redundant
+	com.next() // PR_PARAMETERS redundant
 	argCount := 0
 
 	for !com.match(PR_SPELL) {
@@ -44,8 +44,15 @@ func call(com *compiler) error {
 
 	tk := com.next()
 	com.Put(inst.Inst{
+		InstCode: IN_VAL_PUSH,
+		InstData: argCount,
+		Opener:   tk,
+		Closer:   tk,
+	})
+
+	com.Put(inst.Inst{
 		InstCode: IN_SPELL,
-		InstData: []interface{}{argCount, tk.Value()},
+		InstData: tk.Value(),
 		Opener:   tk,
 		Closer:   tk,
 	})
@@ -71,6 +78,7 @@ func expression(com *compiler) error {
 
 func identifier(com *compiler) {
 	tk := com.next()
+
 	com.Put(inst.Inst{
 		InstCode: IN_CTX_GET,
 		InstData: tk.Value(),

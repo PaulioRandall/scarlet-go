@@ -59,7 +59,8 @@ func Test1_1(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		instruction(IN_SPELL, []interface{}{0, "Println"}),
+		instruction(IN_VAL_PUSH, 0),
+		instruction(IN_SPELL, "Println"),
 	}
 
 	doTest(t, in, exp)
@@ -79,7 +80,8 @@ func Test1_2(t *testing.T) {
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
 		instruction(IN_CTX_GET, "x"),
-		instruction(IN_SPELL, []interface{}{1, "Println"}),
+		instruction(IN_VAL_PUSH, 1),
+		instruction(IN_SPELL, "Println"),
 	}
 
 	doTest(t, in, exp)
@@ -103,7 +105,8 @@ func Test1_3(t *testing.T) {
 		instruction(IN_CTX_GET, "x"),
 		instruction(IN_VAL_PUSH, number.New("1")),
 		instruction(IN_VAL_PUSH, "abc"),
-		instruction(IN_SPELL, []interface{}{3, "Println"}),
+		instruction(IN_VAL_PUSH, 3),
+		instruction(IN_SPELL, "Println"),
 	}
 
 	doTest(t, in, exp)
