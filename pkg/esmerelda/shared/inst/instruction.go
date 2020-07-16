@@ -3,7 +3,7 @@ package inst
 import (
 	"fmt"
 
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/codes"
 )
 
 type Instruction interface {

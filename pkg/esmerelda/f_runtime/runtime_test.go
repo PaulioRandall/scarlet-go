@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/f_runtime/enviro"
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/number"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/types"

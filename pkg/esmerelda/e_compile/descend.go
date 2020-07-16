@@ -3,8 +3,8 @@ package compile
 import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/number"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 )
 

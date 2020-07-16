@@ -3,8 +3,8 @@ package enviro
 import (
 	"fmt"
 
+	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
-	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst/codes"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/perror"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/spells"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/types"
