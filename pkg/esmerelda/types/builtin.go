@@ -6,7 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/number"
 )
 
-type Int int
+type Int int // Internal use only
 
 func (a Int) Equal(b Value) bool {
 	return a.Comparable(b) && a == b.(Int)
