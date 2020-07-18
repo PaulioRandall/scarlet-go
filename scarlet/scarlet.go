@@ -48,6 +48,7 @@ func todo() {
 	println()
 	println("[Plan]")
 	println("- a_scan:     scans in tokens including redundant ones")
+	println("- b_format:   formats tokens following a common style")
 	println("- b_sanitise: removes redundant tokens")
 	println("- c_check:    checks the token sequence follows language rules")
 	println("- d_shunt:    converts from infix to postfix notation")

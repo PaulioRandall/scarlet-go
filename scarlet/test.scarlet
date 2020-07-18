@@ -1,4 +1,5 @@
 
+   # Comment
 # A comment
 @Println("Hello, Scarlet!")
 
@@ -11,8 +12,11 @@
 @Println()
 @Println("a == ", a)
 @Println("b == ", b)
-@Println("c == ", c)
-@Println("d == ", d)
+          @Println   (   "c == "    ,     c    )         
+@Println    (   
+  "d == "    ,  
+   d,
+       )
 
 @Del("d")
 
