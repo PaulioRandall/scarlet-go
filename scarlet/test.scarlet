@@ -3,10 +3,12 @@
 # A comment
 @Println("Hello, Scarlet!")
 
-@Set("a", true)
-@Set("b", 1)
+@Set("a", true)    # Comment
+@Set("b", 1)  # Comment
 @Set("c", "abc")
 @Set("d", a)
+
+
 
 
 @Println()
