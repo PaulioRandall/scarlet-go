@@ -16,13 +16,20 @@ func RequireTokenSlice(t *testing.T, exps, acts []token.Token) {
 	for i := 0; i < expSize || i < actSize; i++ {
 
 		require.True(t, i < actSize,
-			"Expected ("+exps[i].String()+")\nBut no actual tokens remain")
+			"Expected ("+tkStr(exps, i)+")\nBut no actual tokens remain")
 
 		require.True(t, i < expSize,
-			"Did not expect any more tokens\nBut got ("+acts[i].String()+")")
+			"Did not expect any more tokens\nBut got ("+tkStr(acts, i)+")")
 
 		requireToken(t, exps[i], acts[i])
 	}
+}
+
+func tkStr(tks []token.Token, i int) string {
+	if i < len(tks) {
+		return tks[i].String()
+	}
+	return " ***SANITY CHECK! You should never see this printed *** "
 }
 
 func requireToken(t *testing.T, exp, act token.Token) {

@@ -50,6 +50,19 @@ func (tk Tok) Is(others ...Prop) bool {
 	return true
 }
 
+func (tk Tok) Any(others ...Prop) bool {
+
+	for _, o := range others {
+		for _, p := range tk.RawProps {
+			if p == o {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 func (tk Tok) Raw() string {
 	return tk.RawStr
 }

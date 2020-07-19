@@ -1,13 +1,11 @@
 package format
 
 import (
-	//"strings"
-
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
 )
 
-func FormatAll(tks []token.Token) []token.Token {
+func FormatAll(tks []token.Token, lineEnding string) []token.Token {
 
 	in := make(chan token.Token)
 	out := make(chan token.Token)
@@ -19,25 +17,20 @@ func FormatAll(tks []token.Token) []token.Token {
 		close(in)
 	}()
 
-	Format(in, out)
+	go Format(in, out, lineEnding)
 
-	tks = []token.Token{}
+	r := []token.Token{}
 	for tk := range out {
-		tks = append(tks, tk)
+		r = append(r, tk)
 	}
 
-	return tks
+	return r
 }
 
-func Format(in, out chan token.Token) {
-
-	var lineEnding string
-
-	searched := make(chan token.Token)
-	go detectLineEndings(in, searched, &lineEnding)
+func Format(in, out chan token.Token, lineEnding string) {
 
 	trimmed := make(chan token.Token)
-	go trimSpaces(searched, trimmed)
+	go trimSpaces(in, trimmed)
 
 	reduced := make(chan token.Token)
 	go reduceSpaces(trimmed, reduced)
@@ -45,35 +38,23 @@ func Format(in, out chan token.Token) {
 	aligned := make(chan token.Token)
 	go reduceEmptyLines(reduced, aligned)
 
-	// https://en.wikipedia.org/wiki/Parsing_expression_grammar
+	unified := make(chan token.Token)
+	go unifyLineEndings(aligned, unified, lineEnding)
 
-	// Use a functional approach:
-	// 2: Remove all redundant whitespace
-	// 3: Remove multiple empty lines
-	// 4: Insert single space after value separators if not a newline, i.e. ','
-	// 5: Remove empty lines between list items
-	// 6: Indent for multiline statements (except initiating line and final ')')
-	// 7: Align comments for consecutive lines with comments
-
-}
-
-func detectLineEndings(in, out chan token.Token, ending *string) {
-
-	var found bool
-
-	for tk := range in {
+	for tk := range unified {
 		out <- tk
-
-		if !found && tk.Is(PR_NEWLINE) {
-			found = true
-			*ending = tk.Raw()
-		}
 	}
+	close(out)
+	// Use a functional approach:
+	// 7: Align comments for consecutive lines with comments
 }
 
 func trimSpaces(in, out chan token.Token) {
 
 	a := <-in
+	for a.Is(PR_WHITESPACE) {
+		a = <-in
+	}
 
 	for a != nil {
 		b := <-in
@@ -91,6 +72,10 @@ func trimSpaces(in, out chan token.Token) {
 		case a.Is(PR_OPENER) && b.Is(PR_WHITESPACE):
 		case a.Is(PR_WHITESPACE) && b.Is(PR_SEPARATOR):
 			a = b
+		case a.Is(PR_SEPARATOR) && !b.Any(PR_WHITESPACE, PR_NEWLINE):
+			out <- a
+			out <- newSpaceToken(b)
+			a = b
 		case a.Is(PR_WHITESPACE) && b.Is(PR_CLOSER):
 			a = b
 
@@ -107,7 +92,7 @@ func reduceSpaces(in, out chan token.Token) {
 
 	for tk := range in {
 		if tk.Is(PR_WHITESPACE) && tk.Raw() != " " {
-			tk = newSpace(tk)
+			tk = newSpaceToken(tk)
 		}
 
 		out <- tk
@@ -116,10 +101,10 @@ func reduceSpaces(in, out chan token.Token) {
 	close(out)
 }
 
-func newSpace(curr token.Token) token.Token {
+func newSpaceToken(curr token.Token) token.Token {
 
 	new := token.Tok{
-		RawProps: curr.Props(),
+		RawProps: []Prop{PR_WHITESPACE},
 		RawStr:   " ",
 	}
 
@@ -153,4 +138,30 @@ func reduceEmptyLines(in, out chan token.Token) {
 	}
 
 	close(out)
+}
+
+func unifyLineEndings(in, out chan token.Token, lineEnding string) {
+
+	for tk := range in {
+		if tk.Is(PR_NEWLINE) && tk.Raw() != lineEnding {
+			tk = newlineToken(tk, lineEnding)
+		}
+
+		out <- tk
+	}
+
+	close(out)
+}
+
+func newlineToken(curr token.Token, ending string) token.Token {
+
+	new := token.Tok{
+		RawProps: curr.Props(),
+		RawStr:   ending,
+	}
+
+	new.Line, new.ColBegin = curr.Begin()
+	_, new.ColEnd = curr.End()
+
+	return new
 }
