@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
@@ -16,19 +14,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/d_shunt"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/e_compile"
 )
-
-type buildConfig struct {
-	script  string
-	nofmt   bool
-	log     bool
-	logFile string
-}
-
-func (bc buildConfig) logFilename(ext string) string {
-	f := filepath.Base(bc.script)
-	f = strings.TrimSuffix(f, filepath.Ext(f))
-	return filepath.Join(bc.logFile, f+ext)
-}
 
 func printBuildHelp() {
 
@@ -52,94 +37,29 @@ Options:
 
 func build(args Arguments) ([]inst.Instruction, error) {
 
-	bc := buildConfig{}
-	e := parseBuildArgs(&bc, args)
+	c := config{}
+	e := captureConfig(&c, args)
 	if e != nil {
 		return nil, e
 	}
 
-	ins, e := buildFromConfig(bc)
+	ins, e := buildFromConfig(c)
 	return ins, e
 }
 
-func parseBuildArgs(bc *buildConfig, args Arguments) error {
+func buildFromConfig(c config) ([]inst.Instruction, error) {
 
-	for args.more() {
-
-		if !strings.HasPrefix(args.peek(), "-") {
-			break
-		}
-
-		e := buildOption(bc, args)
-		if e != nil {
-			return e
-		}
-	}
-
-	if args.empty() {
-		e := fmt.Errorf("Expected script filename")
-		return NewGenErr(e)
-	}
-
-	bc.script = args.take()
-
-	if args.more() {
-		e := fmt.Errorf("Unexpected argument %q", args.peek())
-		return NewGenErr(e)
-	}
-
-	return nil
-}
-
-func buildOption(bc *buildConfig, args Arguments) error {
-
-	switch args.peek() {
-	case "-nofmt":
-		nofmtOption(bc, args)
-
-	case "-log":
-		return logOption(bc, args)
-
-	default:
-		e := fmt.Errorf("Unexpected option %q", args.peek())
-		return NewGenErr(e)
-	}
-
-	return nil
-}
-
-func nofmtOption(bc *buildConfig, args Arguments) {
-	bc.nofmt = true
-	args.take()
-}
-
-func logOption(bc *buildConfig, args Arguments) error {
-
-	if args.count() < 2 {
-		e := fmt.Errorf("Missing %q folder name", args.peek())
-		return NewGenErr(e)
-	}
-
-	bc.log = true
-	args.take()
-	bc.logFile = args.take()
-
-	return nil
-}
-
-func buildFromConfig(bc buildConfig) ([]inst.Instruction, error) {
-
-	s, e := ioutil.ReadFile(bc.script)
+	s, e := ioutil.ReadFile(c.script)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	tks, e := scanAll(bc, string(s))
+	tks, e := scanAll(c, string(s))
 	if e != nil {
 		return nil, e
 	}
 
-	tks, e = sanitiseAll(bc, tks)
+	tks, e = sanitiseAll(c, tks)
 	if e != nil {
 		return nil, e
 	}
@@ -149,12 +69,12 @@ func buildFromConfig(bc buildConfig) ([]inst.Instruction, error) {
 		return nil, e
 	}
 
-	tks, e = shuntAll(bc, tks)
+	tks, e = shuntAll(c, tks)
 	if e != nil {
 		return nil, e
 	}
 
-	ins, e := compileAll(bc, tks)
+	ins, e := compileAll(c, tks)
 	if e != nil {
 		return nil, e
 	}
@@ -162,14 +82,14 @@ func buildFromConfig(bc buildConfig) ([]inst.Instruction, error) {
 	return ins, nil
 }
 
-func scanAll(bc buildConfig, s string) ([]token.Token, error) {
+func scanAll(c config, s string) ([]token.Token, error) {
 
 	tks, e := scan.ScanAll(s)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	e = logPhase(bc, ".scanned", tks)
+	e = logPhase(c, ".scanned", tks)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
@@ -177,7 +97,7 @@ func scanAll(bc buildConfig, s string) ([]token.Token, error) {
 	return tks, nil
 }
 
-func sanitiseAll(bc buildConfig, tks []token.Token) ([]token.Token, error) {
+func sanitiseAll(c config, tks []token.Token) ([]token.Token, error) {
 
 	var e error
 	tks, e = sanitise.SanitiseAll(tks)
@@ -185,7 +105,7 @@ func sanitiseAll(bc buildConfig, tks []token.Token) ([]token.Token, error) {
 		return nil, NewGenErr(e)
 	}
 
-	e = logPhase(bc, ".sanitised", tks)
+	e = logPhase(c, ".sanitised", tks)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
@@ -193,7 +113,7 @@ func sanitiseAll(bc buildConfig, tks []token.Token) ([]token.Token, error) {
 	return tks, nil
 }
 
-func shuntAll(bc buildConfig, tks []token.Token) ([]token.Token, error) {
+func shuntAll(c config, tks []token.Token) ([]token.Token, error) {
 
 	var e error
 	tks, e = shunt.ShuntAll(tks)
@@ -201,7 +121,7 @@ func shuntAll(bc buildConfig, tks []token.Token) ([]token.Token, error) {
 		return nil, NewGenErr(e)
 	}
 
-	e = logPhase(bc, ".shunted", tks)
+	e = logPhase(c, ".shunted", tks)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
@@ -209,18 +129,18 @@ func shuntAll(bc buildConfig, tks []token.Token) ([]token.Token, error) {
 	return tks, nil
 }
 
-func compileAll(bc buildConfig, tks []token.Token) ([]inst.Instruction, error) {
+func compileAll(c config, tks []token.Token) ([]inst.Instruction, error) {
 
 	ins, e := compile.CompileAll(tks)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	if !bc.log {
+	if !c.log {
 		return ins, nil
 	}
 
-	f := bc.logFilename(".compiled")
+	f := c.logFilename(".compiled")
 	e = writeInstPhaseFile(f, ins)
 	if e != nil {
 		return nil, NewGenErr(e)
@@ -229,13 +149,13 @@ func compileAll(bc buildConfig, tks []token.Token) ([]inst.Instruction, error) {
 	return ins, nil
 }
 
-func logPhase(bc buildConfig, ext string, tks []token.Token) error {
+func logPhase(c config, ext string, tks []token.Token) error {
 
-	if !bc.log {
+	if !c.log {
 		return nil
 	}
 
-	f := bc.logFilename(ext)
+	f := c.logFilename(ext)
 	return writeTokenPhaseFile(f, tks)
 }
 

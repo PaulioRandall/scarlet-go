@@ -6,7 +6,6 @@ import (
 	. "github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/prop"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/testutils"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
-	//"github.com/stretchr/testify/require"
 )
 
 func tok(raw string, props ...Prop) token.Tok {
