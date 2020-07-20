@@ -15,7 +15,6 @@ type runeReader struct {
 	col   int
 	idx   int
 	flag  bool
-	prev  *lexeme.Lexeme
 }
 
 func (rr *runeReader) empty() bool {
@@ -51,13 +50,20 @@ func (rr *runeReader) expect(ru rune) error {
 		return nil
 	}
 
-	return perror.New("Unexpected rune %d:%d %q", rr.line, rr.idx, ru)
+	if rr.empty() {
+		return perror.New("Unexpected EOF %d:%d, wanted %q", rr.line, rr.idx, ru)
+	}
+
+	return perror.New(
+		"Unexpected terminal symbol %d:%d, want %q, have %q",
+		rr.line, rr.idx, ru, rr.peek(),
+	)
 }
 
 func (rr *runeReader) slice(props ...prop.Prop) *lexeme.Lexeme {
 
 	if !rr.flag {
-		failNow("You haven't accepted any runes yet")
+		failNow("You haven't accepted any terminal symbols yet")
 	}
 
 	lex := &lexeme.Lexeme{
@@ -65,12 +71,6 @@ func (rr *runeReader) slice(props ...prop.Prop) *lexeme.Lexeme {
 		Raw:   string(rr.runes[rr.col:rr.idx]),
 		Line:  rr.line,
 		Col:   rr.col,
-		Prev:  rr.prev,
-	}
-
-	rr.prev = lex
-	if lex.Prev != nil {
-		lex.Prev.Next = lex
 	}
 
 	if lex.Has(prop.PR_NEWLINE) {
