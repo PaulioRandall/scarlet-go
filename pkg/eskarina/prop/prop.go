@@ -1,16 +1,10 @@
-package props
+package prop
 
 import (
 	"strings"
 )
 
 type Prop int
-
-type Entity interface {
-	Has(Prop) bool
-	Is(...Prop) bool
-	Any(...Prop) bool
-}
 
 func (p Prop) String() string {
 	return props[p]
