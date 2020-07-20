@@ -2,6 +2,8 @@ package program
 
 import (
 	"fmt"
+
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
 )
 
 type ScarletError struct {
@@ -58,4 +60,20 @@ func Execute(args Arguments) error {
 	}
 
 	return nil
+}
+
+func build(args Arguments) ([]inst.Instruction, error) {
+
+	c := config{}
+	e := captureConfig(&c, args)
+	if e != nil {
+		return nil, e
+	}
+
+	ins, e := buildFromConfig(c)
+	if e != nil {
+		return nil, e
+	}
+
+	return ins, nil
 }

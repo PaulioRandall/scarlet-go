@@ -2,6 +2,7 @@ package program
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/c_check"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/d_shunt"
 	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/e_compile"
+	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/z_format"
 )
 
 func printBuildHelp() {
@@ -35,18 +37,6 @@ Options:
 	fmt.Println(s)
 }
 
-func build(args Arguments) ([]inst.Instruction, error) {
-
-	c := config{}
-	e := captureConfig(&c, args)
-	if e != nil {
-		return nil, e
-	}
-
-	ins, e := buildFromConfig(c)
-	return ins, e
-}
-
 func buildFromConfig(c config) ([]inst.Instruction, error) {
 
 	s, e := ioutil.ReadFile(c.script)
@@ -55,6 +45,11 @@ func buildFromConfig(c config) ([]inst.Instruction, error) {
 	}
 
 	tks, e := scanAll(c, string(s))
+	if e != nil {
+		return nil, e
+	}
+
+	e = formatAll(c, tks)
 	if e != nil {
 		return nil, e
 	}
@@ -95,6 +90,38 @@ func scanAll(c config, s string) ([]token.Token, error) {
 	}
 
 	return tks, nil
+}
+
+func formatAll(c config, tks []token.Token) error {
+
+	if c.nofmt {
+		return nil
+	}
+
+	tks = format.FormatAll(tks, c.lineEndings)
+
+	f, e := os.Create(c.script)
+	if e != nil {
+		return e
+	}
+	defer f.Close()
+
+	return writeTokens(f, tks)
+}
+
+func writeTokens(w io.Writer, tks []token.Token) error {
+
+	for _, tk := range tks {
+
+		b := []byte(tk.Raw())
+		_, e := w.Write(b)
+
+		if e != nil {
+			return e
+		}
+	}
+
+	return nil
 }
 
 func sanitiseAll(c config, tks []token.Token) ([]token.Token, error) {

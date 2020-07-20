@@ -1,16 +1,19 @@
 package program
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 )
 
 type config struct {
-	script  string
-	nofmt   bool
-	log     bool
-	logFile string
+	script      string
+	lineEndings string
+	nofmt       bool
+	log         bool
+	logFile     string
 }
 
 func (b config) logFilename(ext string) string {
@@ -45,7 +48,7 @@ func captureConfig(c *config, args Arguments) error {
 		return NewGenErr(e)
 	}
 
-	return nil
+	return identifyLineEndings(c)
 }
 
 func optionArg(c *config, args Arguments) error {
@@ -80,6 +83,35 @@ func logOption(c *config, args Arguments) error {
 	c.log = true
 	args.take()
 	c.logFile = args.take()
+
+	return nil
+}
+
+func identifyLineEndings(c *config) error {
+
+	f, e := os.Open(c.script)
+	if e != nil {
+		return e
+	}
+	defer f.Close()
+
+	s := bufio.NewScanner(f)
+	ok := s.Scan()
+
+	if s.Err() != nil {
+		return s.Err()
+	}
+
+	if !ok {
+		return nil
+	}
+
+	t := string(s.Text())
+	if strings.HasSuffix(t, "\r") {
+		c.lineEndings = "\r\n"
+	} else {
+		c.lineEndings = "\n"
+	}
 
 	return nil
 }
