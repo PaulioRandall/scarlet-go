@@ -26,8 +26,8 @@ type Lexeme struct {
 //}
 
 //type LinkNode interface {
-//	Promote()
-//	Demote()
+//	ShiftUp()
+//	ShiftDown()
 //	Prepend(*lexeme.Lexeme)
 //	Append(*lexeme.Lexeme)
 //	Remove()
@@ -70,7 +70,7 @@ func (lex Lexeme) At() (line, start, end int) {
 	return lex.Line, lex.Col, len(lex.Raw)
 }
 
-func (lex *Lexeme) Promote() {
+func (lex *Lexeme) ShiftUp() {
 
 	if lex.Prev == nil {
 		return
@@ -90,13 +90,13 @@ func (lex *Lexeme) Promote() {
 	lex.Next, prev.Prev = prev, lex
 }
 
-func (lex *Lexeme) Demote() {
+func (lex *Lexeme) ShiftDown() {
 
 	if lex.Next == nil {
 		return
 	}
 
-	lex.Next.Promote()
+	lex.Next.ShiftUp()
 }
 
 func (lex *Lexeme) Prepend(new *Lexeme) {
