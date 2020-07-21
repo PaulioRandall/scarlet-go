@@ -16,7 +16,8 @@ func ScanStr(s string) (*lexeme.Lexeme, error) {
 		runeReader: rr,
 	}
 
-	var lex *lexeme.Lexeme
+	var first *lexeme.Lexeme
+	var last *lexeme.Lexeme
 
 	for lr.more() {
 
@@ -25,15 +26,17 @@ func ScanStr(s string) (*lexeme.Lexeme, error) {
 			return nil, e
 		}
 
-		if lex != nil {
-			l.Prev = lex
-			lex.Next = l
+		if first == nil {
+			first = l
+			last = l
+			continue
 		}
 
-		lex = l
+		last.Append(l)
+		last = l
 	}
 
-	return lex, nil
+	return last, nil
 }
 
 func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {

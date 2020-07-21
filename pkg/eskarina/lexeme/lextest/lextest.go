@@ -12,20 +12,22 @@ import (
 
 func Feign(lexs ...*lexeme.Lexeme) *lexeme.Lexeme {
 
-	var lex *lexeme.Lexeme
+	var first *lexeme.Lexeme
+	var last *lexeme.Lexeme
 
 	for _, l := range lexs {
 
-		if lex == nil {
-			lex = l
+		if first == nil {
+			first = l
+			last = l
 			continue
 		}
 
-		lex.Next = l
-		l.Prev = lex
+		last.Append(l)
+		last = l
 	}
 
-	return lex
+	return first
 }
 
 func Lex(line, col int, raw string, props ...prop.Prop) *lexeme.Lexeme {
@@ -48,20 +50,27 @@ func Equal(t *testing.T, exp, act *lexeme.Lexeme) {
 
 	for a, b := exp, act; a != nil && b != nil; a, b = a.Next, b.Next {
 		exp, act = a, b
+
+		msg := fmt.Sprintf(
+			"Unexepected Lexeme.Next\nExpected: %s\nActual:  %s",
+			exp.String(), act.String(),
+		)
+
 		require.True(t, a != nil, "Want: %s\nHave: nil", a.String())
 		require.True(t, b != nil, "Want: EOF\nHave: %s", b.String())
-		EqualValue(t, *a, *b)
+		equalContent(t, *a, *b, msg)
 	}
 
 	for a, b := exp, act; a != nil && b != nil; a, b = a.Prev, b.Prev {
-		EqualValue(t, *a, *b)
+		msg := fmt.Sprintf(
+			"Unexepected Lexeme.Prev\nExpected: %s\nActual:  %s",
+			exp.String(), act.String(),
+		)
+		equalContent(t, *a, *b, msg)
 	}
 }
 
-func EqualValue(t *testing.T, exp, act lexeme.Lexeme) {
-
-	msg := fmt.Sprintf("Expected: %s\nActual:  %s", exp.String(), act.String())
-
+func equalContent(t *testing.T, exp, act lexeme.Lexeme, msg string) {
 	require.Equal(t, exp.Props, act.Props, msg)
 	require.Equal(t, exp.Raw, act.Raw, msg)
 	require.Equal(t, exp.Line, act.Line, msg)
