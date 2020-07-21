@@ -12,14 +12,37 @@ func CheckAll(first *lexeme.Lexeme) error {
 		lex: first,
 	}
 
-	return check(chk)
+	for chk.more() {
+		e := check(chk)
+		if e != nil {
+			return e
+		}
+	}
+
+	return nil
 }
 
 func check(chk *checker) error {
 
-	chk.expect(prop.PR_TERMINATOR)
+	var e error
 
-	return nil
+	switch {
+	case chk.match(prop.PR_SPELL):
+		e = spell(chk)
+
+	default:
+		return perror.New(
+			"Unexpected token\nWant: %s\nHave: %s",
+			prop.Join(" & ", prop.PR_SPELL),
+			prop.Join(" & ", chk.lex.Props...),
+		)
+	}
+
+	if e != nil {
+		return e
+	}
+
+	return chk.expect(prop.PR_TERMINATOR)
 }
 
 func spell(chk *checker) error {
@@ -67,7 +90,7 @@ func parameter(chk *checker) (bool, error) {
 	case chk.accept(prop.PR_TERM):
 	default:
 		return false, perror.New(
-			"Unexpected token:\nWant: %s\nHave: %s",
+			"Unexpected token\nWant: %s\nHave: %s",
 			prop.Join(" & ", prop.PR_TERM),
 			prop.Join(" & ", chk.lex.Props...),
 		)

@@ -10,13 +10,22 @@ type checker struct {
 	lex *lexeme.Lexeme
 }
 
-func (chk *checker) accept(props ...prop.Prop) bool {
+func (chk *checker) more() bool {
+	return chk.lex != nil
+}
+
+func (chk *checker) match(props ...prop.Prop) bool {
 
 	if chk.lex == nil {
 		return false
 	}
 
-	if chk.lex.Is(props...) {
+	return chk.lex.Is(props...)
+}
+
+func (chk *checker) accept(props ...prop.Prop) bool {
+
+	if chk.match(props...) {
 		chk.lex = chk.lex.Next
 		return true
 	}
@@ -28,17 +37,17 @@ func (chk *checker) expect(props ...prop.Prop) error {
 
 	if chk.lex == nil {
 		return perror.New(
-			"Unexpected token:\nWant: %s\nHave: EOF",
+			"Unexpected token\nWant: %s\nHave: EOF",
 			prop.Join(" & ", props...),
 		)
 	}
 
-	if chk.lex.Is(props...) {
+	if chk.accept(props...) {
 		return nil
 	}
 
 	return perror.New(
-		"Unexpected token:\nWant: %s\nHave: %s",
+		"Unexpected token\nWant: %s\nHave: %s",
 		prop.Join(" & ", props...),
 		prop.Join(" & ", chk.lex.Props...),
 	)

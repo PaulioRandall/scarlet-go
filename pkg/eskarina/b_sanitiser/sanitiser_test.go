@@ -6,7 +6,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme/lextest"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
-	//"github.com/stretchr/testify/require"
 )
 
 func doTest(t *testing.T, in, exp *lexeme.Lexeme) {
