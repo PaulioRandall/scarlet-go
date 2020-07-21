@@ -16,6 +16,11 @@ func doTest(t *testing.T, in string, exp *lexeme.Lexeme) {
 	lextest.Equal(t, exp, act)
 }
 
+func doErrTest(t *testing.T, in string) {
+	_, e := ScanStr(in)
+	require.NotNil(t, e, "Expected an error")
+}
+
 func Test1_1(t *testing.T) {
 	doTest(t, "\n", lextest.Feign(
 		lextest.Lex(0, 0, "\n", prop.PR_TERMINATOR, prop.PR_NEWLINE),
@@ -62,4 +67,86 @@ func Test4_4(t *testing.T) {
 	doTest(t, "ab_c", lextest.Feign(
 		lextest.Lex(0, 0, "ab_c", prop.PR_TERM, prop.PR_ASSIGNEE, prop.PR_IDENTIFIER),
 	))
+}
+
+func Test5_1(t *testing.T) {
+	doTest(t, "@abc", lextest.Feign(
+		lextest.Lex(0, 0, "@abc", prop.PR_SPELL),
+	))
+}
+
+func Test5_2(t *testing.T) {
+	doTest(t, "@abc.xyz", lextest.Feign(
+		lextest.Lex(0, 0, "@abc.xyz", prop.PR_SPELL),
+	))
+}
+
+func Test5_3(t *testing.T) {
+	doTest(t, "@a.b.c", lextest.Feign(
+		lextest.Lex(0, 0, "@a.b.c", prop.PR_SPELL),
+	))
+}
+
+func Test5_4(t *testing.T) {
+	doErrTest(t, "@abc.")
+}
+
+func Test5_5(t *testing.T) {
+	doErrTest(t, "@abc._")
+}
+
+func Test6_1(t *testing.T) {
+	doTest(t, `""`, lextest.Feign(
+		lextest.Lex(0, 0, `""`, prop.PR_TERM, prop.PR_LITERAL, prop.PR_STRING),
+	))
+}
+
+func Test6_2(t *testing.T) {
+	doTest(t, `"abc"`, lextest.Feign(
+		lextest.Lex(0, 0, `"abc"`, prop.PR_TERM, prop.PR_LITERAL, prop.PR_STRING),
+	))
+}
+
+func Test6_3(t *testing.T) {
+	doTest(t, `"\"abc\""`, lextest.Feign(
+		lextest.Lex(0, 0, `"\"abc\""`, prop.PR_TERM, prop.PR_LITERAL, prop.PR_STRING),
+	))
+}
+
+func Test6_4(t *testing.T) {
+	doErrTest(t, `"`)
+}
+
+func Test6_5(t *testing.T) {
+	doErrTest(t, `"\"`)
+}
+
+func Test6_6(t *testing.T) {
+	doErrTest(t, `"\"abc`)
+}
+
+func Test7_1(t *testing.T) {
+	doTest(t, "1", lextest.Feign(
+		lextest.Lex(0, 0, "1", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER),
+	))
+}
+
+func Test7_2(t *testing.T) {
+	doTest(t, "123", lextest.Feign(
+		lextest.Lex(0, 0, "123", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER),
+	))
+}
+
+func Test7_3(t *testing.T) {
+	doTest(t, "123.456", lextest.Feign(
+		lextest.Lex(0, 0, "123.456", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER),
+	))
+}
+
+func Test7_4(t *testing.T) {
+	doErrTest(t, "123.")
+}
+
+func Test7_5(t *testing.T) {
+	doErrTest(t, "123.a")
 }

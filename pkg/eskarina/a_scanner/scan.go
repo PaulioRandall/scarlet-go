@@ -50,6 +50,15 @@ func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {
 
 	case lr.isLetter():
 		return word(lr)
+
+	case lr.is('@'):
+		return spell(lr)
+
+	case lr.is('"'):
+		return stringLiteral(lr)
+
+	case lr.isDigit():
+		return numberLiteral(lr)
 	}
 
 	return nil, perror.New(
@@ -105,4 +114,86 @@ func word(lr *lexReader) (*lexeme.Lexeme, error) {
 	}
 
 	return lex, nil
+}
+
+func spell(lr *lexReader) (*lexeme.Lexeme, error) {
+
+	lr.inc()
+
+	for {
+		if lr.empty() {
+			return nil, perror.New(
+				"Bad spell name %d:%d, want: letter, have: EOF",
+				lr.line, lr.idx,
+			)
+		}
+
+		if !lr.isLetter() {
+			return nil, perror.New(
+				"Bad spell name %d:%d, want: letter, have: %q",
+				lr.line, lr.idx, lr.peek(),
+			)
+		}
+
+		for lr.more() && lr.isLetter() {
+			lr.inc()
+		}
+
+		if lr.empty() || !lr.is('.') {
+			break
+		}
+
+		lr.inc()
+	}
+
+	return lr.slice(prop.PR_SPELL), nil
+}
+
+func stringLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
+
+	lr.inc()
+
+	for !lr.accept('"') {
+
+		lr.accept('\\')
+		if lr.empty() || lr.isNewline() {
+			return nil, perror.New("Unterminated string %d:%d", lr.line, lr.idx)
+		}
+
+		lr.inc()
+	}
+
+	return lr.slice(prop.PR_TERM, prop.PR_LITERAL, prop.PR_STRING), nil
+}
+
+func numberLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
+
+	for lr.more() && lr.isDigit() {
+		lr.inc()
+	}
+
+	if !lr.accept('.') {
+		goto FINALISE
+	}
+
+	if lr.empty() {
+		return nil, perror.New(
+			"Unexpected symbol %d:%d, want: [0-9], have: EOF",
+			lr.line, lr.idx,
+		)
+	}
+
+	if !lr.isDigit() {
+		return nil, perror.New(
+			"Unexpected symbol %d:%d, want: [0-9], have: %q",
+			lr.line, lr.idx, lr.peek(),
+		)
+	}
+
+	for lr.more() && lr.isDigit() {
+		lr.inc()
+	}
+
+FINALISE:
+	return lr.slice(prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER), nil
 }
