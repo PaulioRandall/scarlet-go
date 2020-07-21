@@ -12,11 +12,15 @@ func ScanAll(s string) (*lexeme.Lexeme, error) {
 	rr.runes = []rune(s)
 	rr.size = len(rr.runes)
 
+	lr := &lexReader{
+		runeReader: rr,
+	}
+
 	var lex *lexeme.Lexeme
 
-	for rr.more() {
+	for lr.more() {
 
-		l, e := scanLexeme(rr)
+		l, e := scanLexeme(lr)
 		if e != nil {
 			return nil, e
 		}
@@ -32,27 +36,27 @@ func ScanAll(s string) (*lexeme.Lexeme, error) {
 	return lex, nil
 }
 
-func scanLexeme(rr *runeReader) (*lexeme.Lexeme, error) {
+func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {
 
-	switch rr.peek() {
+	switch lr.peek() {
 	case '\r', '\n':
-		return scanNewline(rr)
+		return scanNewline(lr)
 	}
 
 	return nil, perror.New(
 		"Unexpected terminal symbol %d:%d, have %q",
-		rr.line, rr.idx, rr.peek(),
+		lr.line, lr.idx, lr.peek(),
 	)
 }
 
-func scanNewline(rr *runeReader) (*lexeme.Lexeme, error) {
+func scanNewline(lr *lexReader) (*lexeme.Lexeme, error) {
 
-	rr.accept('\r')
+	lr.accept('\r')
 
-	e := rr.expect('\n')
+	e := lr.expect('\n')
 	if e != nil {
 		return nil, e
 	}
 
-	return rr.slice(prop.PR_REDUNDANT, prop.PR_NEWLINE), nil
+	return lr.slice(prop.PR_REDUNDANT, prop.PR_NEWLINE), nil
 }

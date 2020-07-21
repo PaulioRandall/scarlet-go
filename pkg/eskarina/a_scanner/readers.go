@@ -11,10 +11,7 @@ import (
 type runeReader struct {
 	runes []rune
 	size  int
-	line  int
-	col   int
 	idx   int
-	flag  bool
 }
 
 func (rr *runeReader) empty() bool {
@@ -29,58 +26,69 @@ func (rr *runeReader) peek() rune {
 	return rr.runes[rr.idx]
 }
 
-func (rr *runeReader) accept(ru rune) bool {
+type lexReader struct {
+	*runeReader
+	line  int
+	start int
+	end   int
+	read  bool
+}
 
-	if rr.empty() {
+func (lr *lexReader) accept(ru rune) bool {
+
+	if lr.empty() {
 		return false
 	}
 
-	if rr.runes[rr.idx] == ru {
-		rr.idx++
-		rr.flag = true
+	if lr.peek() == ru {
+		lr.idx++
+		lr.read = true
 		return true
 	}
 
 	return false
 }
 
-func (rr *runeReader) expect(ru rune) error {
+func (lr *lexReader) expect(ru rune) error {
 
-	if rr.accept(ru) {
+	if lr.accept(ru) {
 		return nil
 	}
 
-	if rr.empty() {
-		return perror.New("Unexpected EOF %d:%d, wanted %q", rr.line, rr.idx, ru)
+	if lr.empty() {
+		return perror.New("Unexpected EOF %d:%d, wanted %q", lr.line, lr.end, ru)
 	}
 
 	return perror.New(
 		"Unexpected terminal symbol %d:%d, want %q, have %q",
-		rr.line, rr.idx, ru, rr.peek(),
+		lr.line, lr.end, ru, lr.peek(),
 	)
 }
 
-func (rr *runeReader) slice(props ...prop.Prop) *lexeme.Lexeme {
+func (lr *lexReader) slice(props ...prop.Prop) *lexeme.Lexeme {
 
-	if !rr.flag {
+	if !lr.read {
 		failNow("You haven't accepted any terminal symbols yet")
 	}
 
+	begin := lr.idx - (lr.end - lr.start) - 1
+
 	lex := &lexeme.Lexeme{
 		Props: props,
-		Raw:   string(rr.runes[rr.col:rr.idx]),
-		Line:  rr.line,
-		Col:   rr.col,
+		Raw:   string(lr.runes[begin:lr.idx]),
+		Line:  lr.line,
+		Col:   lr.start,
 	}
 
 	if lex.Has(prop.PR_NEWLINE) {
-		rr.line++
-		rr.col = 0
-		rr.idx = 0
+		lr.line++
+		lr.start = 0
+		lr.end = 0
 	} else {
-		rr.col = rr.idx
+		lr.start = lr.end
 	}
 
+	lr.read = false
 	return lex
 }
 

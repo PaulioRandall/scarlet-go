@@ -63,7 +63,7 @@ func (lex Lexeme) At() (line, start, end int) {
 }
 
 func (lex Lexeme) String() string {
-	return fmt.Sprintf("%d:%d %s %s",
+	return fmt.Sprintf("%d:%d %s %q",
 		lex.Line,
 		lex.Col,
 		"["+prop.Join(",", lex.Props...)+"]",
