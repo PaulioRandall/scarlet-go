@@ -55,6 +55,7 @@ func check(t *testing.T, act *Lexeme, exps ...*Lexeme) {
 	act = last
 
 	for i := len(exps) - 1; i >= 0; i-- {
+		//println(exps[i].String())
 		req(exps[i], act)
 		act = act.Prev
 	}
@@ -136,4 +137,54 @@ func Test_ShiftDown(t *testing.T) {
 	b.ShiftDown()
 	b.ShiftDown()
 	check(t, c, c, a, b)
+}
+
+func Test_Prepend(t *testing.T) {
+
+	a := tok("true", prop.PR_BOOL)
+	b := tok("1", prop.PR_NUMBER)
+	c := tok(`"abc"`, prop.PR_STRING)
+
+	b.Prepend(a)
+	check(t, a, a, b)
+
+	c.Prepend(b)
+	check(t, a, a, b, c)
+}
+
+func Test_Append(t *testing.T) {
+
+	a := tok("true", prop.PR_BOOL)
+	b := tok("1", prop.PR_NUMBER)
+	c := tok(`"abc"`, prop.PR_STRING)
+
+	b.Append(c)
+	check(t, b, b, c)
+
+	a.Append(b)
+	check(t, a, a, b, c)
+}
+
+func Test_Remove(t *testing.T) {
+
+	setup := func() (a, b, c *Lexeme) {
+		a = tok("true", prop.PR_BOOL)
+		b = tok("1", prop.PR_NUMBER)
+		c = tok(`"abc"`, prop.PR_STRING)
+		feign(a, b, c)
+		return
+	}
+
+	a, b, c := setup()
+	a.Remove()
+	check(t, a, a)
+	check(t, b, b, c)
+
+	a, b, c = setup()
+	b.Remove()
+	check(t, a, a, c)
+
+	a, b, c = setup()
+	c.Remove()
+	check(t, a, a, b)
 }

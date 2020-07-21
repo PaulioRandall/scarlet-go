@@ -99,26 +99,26 @@ func (lex *Lexeme) ShiftDown() {
 	lex.Next.ShiftUp()
 }
 
-func (lex *Lexeme) Prepend(new *Lexeme) {
+func (lex *Lexeme) Prepend(other *Lexeme) {
 
 	if lex.Prev != nil {
-		lex.Prev.Next = new
+		lex.Prev.Next = other
+		other.Prev = lex.Prev
 	}
 
-	new.Next = lex
-	new.Prev = lex.Prev
-	lex.Prev = new
+	other.Next = lex
+	lex.Prev = other
 }
 
-func (lex *Lexeme) Append(new *Lexeme) {
+func (lex *Lexeme) Append(other *Lexeme) {
 
 	if lex.Next != nil {
-		lex.Next.Prepend(new)
+		lex.Next.Prepend(other)
 		return
 	}
 
-	lex.Next = new
-	new.Prev = lex
+	lex.Next = other
+	other.Prev = lex
 }
 
 func (lex *Lexeme) Remove() {
@@ -130,6 +130,8 @@ func (lex *Lexeme) Remove() {
 	if lex.Prev != nil {
 		lex.Prev.Next = lex.Next
 	}
+
+	lex.Next, lex.Prev = nil, nil
 }
 
 func (lex Lexeme) String() string {

@@ -18,28 +18,29 @@ func SanitiseAll(first *lexeme.Lexeme) *lexeme.Lexeme {
 		lex.Remove()
 	}
 
-	for lex := first; lex != nil; lex = lex.Next {
+	for curr, next := first, first; curr != nil; curr = next {
+		next = next.Next
 
 		switch {
-		case lex.Has(prop.PR_REDUNDANT):
-			remove(lex)
+		case curr.Has(prop.PR_REDUNDANT):
+			remove(curr)
 
-		case lex.Prev == nil && lex.Has(prop.PR_TERMINATOR):
-			remove(lex)
+		case curr.Prev == nil && curr.Has(prop.PR_TERMINATOR):
+			remove(curr)
 
-		case lex.Prev == nil:
+		case curr.Prev == nil:
 
-		case lex.Prev.Has(prop.PR_TERMINATOR) && lex.Has(prop.PR_TERMINATOR):
-			remove(lex)
+		case curr.Prev.Has(prop.PR_TERMINATOR) && curr.Has(prop.PR_TERMINATOR):
+			remove(curr)
 
-		case lex.Prev.Is(prop.PR_PARENTHESIS, prop.PR_OPENER) && lex.Has(prop.PR_NEWLINE):
-			remove(lex)
+		case curr.Prev.Is(prop.PR_PARENTHESIS, prop.PR_OPENER) && curr.Has(prop.PR_NEWLINE):
+			remove(curr)
 
-		case lex.Prev.Has(prop.PR_SEPARATOR) && lex.Has(prop.PR_NEWLINE):
-			remove(lex)
+		case curr.Prev.Has(prop.PR_SEPARATOR) && curr.Has(prop.PR_NEWLINE):
+			remove(curr)
 
-		case lex.Prev.Has(prop.PR_SEPARATOR) && lex.Is(prop.PR_PARENTHESIS, prop.PR_CLOSER):
-			remove(lex.Prev)
+		case curr.Prev.Has(prop.PR_SEPARATOR) && curr.Is(prop.PR_PARENTHESIS, prop.PR_CLOSER):
+			remove(curr.Prev)
 		}
 	}
 
