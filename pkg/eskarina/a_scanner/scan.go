@@ -41,10 +41,15 @@ func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {
 	switch {
 	case lr.isNewline():
 		return newline(lr)
+
 	case lr.is('#'):
 		return comment(lr)
+
 	case lr.isSpace():
 		return whitespace(lr)
+
+	case lr.isLetter():
+		return word(lr)
 	}
 
 	return nil, perror.New(
@@ -81,4 +86,23 @@ func whitespace(lr *lexReader) (*lexeme.Lexeme, error) {
 	}
 
 	return lr.slice(prop.PR_REDUNDANT, prop.PR_WHITESPACE), nil
+}
+
+func word(lr *lexReader) (*lexeme.Lexeme, error) {
+
+	lr.inc()
+
+	for lr.more() && (lr.isLetter() || lr.is('_')) {
+		lr.inc()
+	}
+
+	lex := lr.slice(prop.PR_TERM)
+
+	if lex.Raw == "false" || lex.Raw == "true" {
+		lex.Props = append(lex.Props, prop.PR_LITERAL, prop.PR_BOOL)
+	} else {
+		lex.Props = append(lex.Props, prop.PR_ASSIGNEE, prop.PR_IDENTIFIER)
+	}
+
+	return lex, nil
 }

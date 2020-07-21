@@ -56,7 +56,7 @@ func (lr *lexReader) isLetter() bool {
 	return unicode.IsLetter(lr.peek())
 }
 
-func (lr *lexReader) issDigit() bool {
+func (lr *lexReader) isDigit() bool {
 	return unicode.IsDigit(lr.peek())
 }
 

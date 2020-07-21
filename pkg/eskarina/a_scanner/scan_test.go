@@ -39,3 +39,27 @@ func Test3_1(t *testing.T) {
 		lextest.Lex(0, 0, "   \t\v\f", prop.PR_REDUNDANT, prop.PR_WHITESPACE),
 	))
 }
+
+func Test4_1(t *testing.T) {
+	doTest(t, "false", lextest.Feign(
+		lextest.Lex(0, 0, "false", prop.PR_TERM, prop.PR_LITERAL, prop.PR_BOOL),
+	))
+}
+
+func Test4_2(t *testing.T) {
+	doTest(t, "true", lextest.Feign(
+		lextest.Lex(0, 0, "true", prop.PR_TERM, prop.PR_LITERAL, prop.PR_BOOL),
+	))
+}
+
+func Test4_3(t *testing.T) {
+	doTest(t, "abc", lextest.Feign(
+		lextest.Lex(0, 0, "abc", prop.PR_TERM, prop.PR_ASSIGNEE, prop.PR_IDENTIFIER),
+	))
+}
+
+func Test4_4(t *testing.T) {
+	doTest(t, "ab_c", lextest.Feign(
+		lextest.Lex(0, 0, "ab_c", prop.PR_TERM, prop.PR_ASSIGNEE, prop.PR_IDENTIFIER),
+	))
+}
