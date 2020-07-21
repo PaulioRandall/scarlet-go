@@ -1,74 +1,41 @@
 package scanner
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme/lextest"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 
 	"github.com/stretchr/testify/require"
 )
 
-func feign(lexs ...*lexeme.Lexeme) *lexeme.Lexeme {
-
-	var lex *lexeme.Lexeme
-
-	for _, l := range lexs {
-
-		if lex == nil {
-			lex = l
-			continue
-		}
-
-		lex.Next = l
-		l.Prev = lex
-	}
-
-	return lex
-}
-
-func lex(line, col int, raw string, props ...prop.Prop) *lexeme.Lexeme {
-	return &lexeme.Lexeme{
-		Props: props,
-		Raw:   raw,
-		Line:  line,
-		Col:   col,
-	}
-}
-
-func requireSlice(t *testing.T, exp, act *lexeme.Lexeme) {
-
-	for a, b := exp, act; a != nil && b != nil; a, b = a.Next, b.Next {
-		exp, act = a, b
-		require.True(t, a != nil, "Want: %s\nHave: nil", a.String())
-		require.True(t, b != nil, "Want: EOF\nHave: %s", b.String())
-		requireLexeme(t, *a, *b)
-	}
-
-	for a, b := exp, act; a != nil && b != nil; a, b = a.Prev, b.Prev {
-		requireLexeme(t, *a, *b)
-	}
-}
-
-func requireLexeme(t *testing.T, exp, act lexeme.Lexeme) {
-
-	msg := fmt.Sprintf("Expected: %s\nActual:  %s", exp.String(), act.String())
-
-	require.Equal(t, exp.Props, act.Props, msg)
-	require.Equal(t, exp.Raw, act.Raw, msg)
-	require.Equal(t, exp.Line, act.Line, msg)
-	require.Equal(t, exp.Col, act.Col, msg)
+func doTest(t *testing.T, in string, exp *lexeme.Lexeme) {
+	act, e := ScanStr(in)
+	require.Nil(t, e, "%+v", e)
+	lextest.Equal(t, exp, act)
 }
 
 func Test1_1(t *testing.T) {
+	doTest(t, "\n", lextest.Feign(
+		lextest.Lex(0, 0, "\n", prop.PR_TERMINATOR, prop.PR_NEWLINE),
+	))
+}
 
-	exp := feign(
-		lex(0, 0, "\n", prop.PR_REDUNDANT, prop.PR_NEWLINE),
-	)
+func Test1_2(t *testing.T) {
+	doTest(t, "\r\n", lextest.Feign(
+		lextest.Lex(0, 0, "\r\n", prop.PR_TERMINATOR, prop.PR_NEWLINE),
+	))
+}
 
-	act, e := ScanAll("\n")
-	require.Nil(t, e, "%+v", e)
+func Test2_1(t *testing.T) {
+	doTest(t, "# Comment", lextest.Feign(
+		lextest.Lex(0, 0, "# Comment", prop.PR_REDUNDANT, prop.PR_COMMENT),
+	))
+}
 
-	requireSlice(t, exp, act)
+func Test3_1(t *testing.T) {
+	doTest(t, "   \t\v\f", lextest.Feign(
+		lextest.Lex(0, 0, "   \t\v\f", prop.PR_REDUNDANT, prop.PR_WHITESPACE),
+	))
 }

@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"fmt"
+	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/perror"
@@ -29,9 +30,34 @@ func (rr *runeReader) peek() rune {
 type lexReader struct {
 	*runeReader
 	line  int
+	col   int
 	start int
-	end   int
 	read  bool
+}
+
+func (lr *lexReader) inc() {
+	lr.idx++
+	lr.read = true
+}
+
+func (lr *lexReader) is(ru rune) bool {
+	return lr.peek() == ru
+}
+
+func (lr *lexReader) isNewline() bool {
+	return lr.peek() == '\r' || lr.peek() == '\n'
+}
+
+func (lr *lexReader) isSpace() bool {
+	return unicode.IsSpace(lr.peek())
+}
+
+func (lr *lexReader) isLetter() bool {
+	return unicode.IsLetter(lr.peek())
+}
+
+func (lr *lexReader) issDigit() bool {
+	return unicode.IsDigit(lr.peek())
 }
 
 func (lr *lexReader) accept(ru rune) bool {
@@ -41,8 +67,7 @@ func (lr *lexReader) accept(ru rune) bool {
 	}
 
 	if lr.peek() == ru {
-		lr.idx++
-		lr.read = true
+		lr.inc()
 		return true
 	}
 
@@ -56,12 +81,15 @@ func (lr *lexReader) expect(ru rune) error {
 	}
 
 	if lr.empty() {
-		return perror.New("Unexpected EOF %d:%d, wanted %q", lr.line, lr.end, ru)
+		return perror.New(
+			"Unexpected EOF %d:%d, wanted %q",
+			lr.line, lr.idx-lr.start, ru,
+		)
 	}
 
 	return perror.New(
 		"Unexpected terminal symbol %d:%d, want %q, have %q",
-		lr.line, lr.end, ru, lr.peek(),
+		lr.line, lr.idx-lr.start, ru, lr.peek(),
 	)
 }
 
@@ -71,24 +99,21 @@ func (lr *lexReader) slice(props ...prop.Prop) *lexeme.Lexeme {
 		failNow("You haven't accepted any terminal symbols yet")
 	}
 
-	begin := lr.idx - (lr.end - lr.start) - 1
-
 	lex := &lexeme.Lexeme{
 		Props: props,
-		Raw:   string(lr.runes[begin:lr.idx]),
+		Raw:   string(lr.runes[lr.start:lr.idx]),
 		Line:  lr.line,
 		Col:   lr.start,
 	}
 
 	if lex.Has(prop.PR_NEWLINE) {
 		lr.line++
-		lr.start = 0
-		lr.end = 0
+		lr.col = 0
 	} else {
-		lr.start = lr.end
+		lr.col = lr.idx - lr.start
 	}
 
-	lr.read = false
+	lr.start, lr.read = lr.idx, false
 	return lex
 }
 

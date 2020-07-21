@@ -6,7 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 )
 
-func ScanAll(s string) (*lexeme.Lexeme, error) {
+func ScanStr(s string) (*lexeme.Lexeme, error) {
 
 	rr := &runeReader{}
 	rr.runes = []rune(s)
@@ -38,9 +38,13 @@ func ScanAll(s string) (*lexeme.Lexeme, error) {
 
 func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {
 
-	switch lr.peek() {
-	case '\r', '\n':
-		return scanNewline(lr)
+	switch {
+	case lr.isNewline():
+		return newline(lr)
+	case lr.is('#'):
+		return comment(lr)
+	case lr.isSpace():
+		return whitespace(lr)
 	}
 
 	return nil, perror.New(
@@ -49,7 +53,7 @@ func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {
 	)
 }
 
-func scanNewline(lr *lexReader) (*lexeme.Lexeme, error) {
+func newline(lr *lexReader) (*lexeme.Lexeme, error) {
 
 	lr.accept('\r')
 
@@ -58,5 +62,23 @@ func scanNewline(lr *lexReader) (*lexeme.Lexeme, error) {
 		return nil, e
 	}
 
-	return lr.slice(prop.PR_REDUNDANT, prop.PR_NEWLINE), nil
+	return lr.slice(prop.PR_TERMINATOR, prop.PR_NEWLINE), nil
+}
+
+func comment(lr *lexReader) (*lexeme.Lexeme, error) {
+
+	for lr.more() && !lr.isNewline() {
+		lr.inc()
+	}
+
+	return lr.slice(prop.PR_REDUNDANT, prop.PR_COMMENT), nil
+}
+
+func whitespace(lr *lexReader) (*lexeme.Lexeme, error) {
+
+	for lr.more() && lr.isSpace() && !lr.isNewline() {
+		lr.inc()
+	}
+
+	return lr.slice(prop.PR_REDUNDANT, prop.PR_WHITESPACE), nil
 }
