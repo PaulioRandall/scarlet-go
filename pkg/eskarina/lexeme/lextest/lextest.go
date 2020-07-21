@@ -48,29 +48,38 @@ func Tok(raw string, props ...prop.Prop) *lexeme.Lexeme {
 
 func Equal(t *testing.T, exp, act *lexeme.Lexeme) {
 
-	for a, b := exp, act; a != nil && b != nil; a, b = a.Next, b.Next {
-		exp, act = a, b
+	for exp != nil || act != nil {
 
-		msg := fmt.Sprintf(
-			"Unexepected Lexeme.Next\nExpected: %s\nActual:  %s",
+		if exp == nil && act != nil {
+			require.Nil(t, act, "Want: EOF\nHave: %s", act.String())
+		}
+
+		if exp != nil && act == nil {
+			require.NotNil(t, act, "Want: %s\nHave: nil", exp.String())
+		}
+
+		equalContent(t, exp, act, fmt.Sprintf(
+			"Unexepected Lexeme\nWant: %s\nHave: %s",
 			exp.String(), act.String(),
-		)
+		))
 
-		require.True(t, a != nil, "Want: %s\nHave: nil", a.String())
-		require.True(t, b != nil, "Want: EOF\nHave: %s", b.String())
-		equalContent(t, *a, *b, msg)
-	}
-
-	for a, b := exp, act; a != nil && b != nil; a, b = a.Prev, b.Prev {
-		msg := fmt.Sprintf(
-			"Unexepected Lexeme.Prev\nExpected: %s\nActual:  %s",
+		equalContent(t, exp.Prev, act.Prev, fmt.Sprintf(
+			"Unexepected Lexeme.Prev\nWant: %s\nHave: %s",
 			exp.String(), act.String(),
-		)
-		equalContent(t, *a, *b, msg)
+		))
+
+		exp, act = exp.Next, act.Next
 	}
 }
 
-func equalContent(t *testing.T, exp, act lexeme.Lexeme, msg string) {
+func equalContent(t *testing.T, exp, act *lexeme.Lexeme, msg string) {
+
+	if exp == nil {
+		require.Nil(t, act, msg)
+		return
+	}
+
+	require.NotNil(t, act, msg)
 	require.Equal(t, exp.Props, act.Props, msg)
 	require.Equal(t, exp.Raw, act.Raw, msg)
 	require.Equal(t, exp.Line, act.Line, msg)

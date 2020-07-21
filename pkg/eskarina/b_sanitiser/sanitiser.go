@@ -7,47 +7,41 @@ import (
 
 func SanitiseAll(first *lexeme.Lexeme) *lexeme.Lexeme {
 
+	if first == nil {
+		return nil
+	}
+
+	remove := func(lex *lexeme.Lexeme) {
+		if first == lex {
+			first = lex.Next
+		}
+		lex.Remove()
+	}
+
 	for lex := first; lex != nil; lex = lex.Next {
-		if !sanitise(lex) {
-			first = lex
-			break
+
+		switch {
+		case lex.Has(prop.PR_REDUNDANT):
+			remove(lex)
+
+		case lex.Prev == nil && lex.Has(prop.PR_TERMINATOR):
+			remove(lex)
+
+		case lex.Prev == nil:
+
+		case lex.Prev.Has(prop.PR_TERMINATOR) && lex.Has(prop.PR_TERMINATOR):
+			remove(lex)
+
+		case lex.Prev.Is(prop.PR_PARENTHESIS, prop.PR_OPENER) && lex.Has(prop.PR_NEWLINE):
+			remove(lex)
+
+		case lex.Prev.Has(prop.PR_SEPARATOR) && lex.Has(prop.PR_NEWLINE):
+			remove(lex)
+
+		case lex.Prev.Has(prop.PR_SEPARATOR) && lex.Is(prop.PR_PARENTHESIS, prop.PR_CLOSER):
+			remove(lex.Prev)
 		}
 	}
 
-	for lex := first; lex != nil; lex = lex.Next {
-		sanitise(lex)
-	}
-
 	return first
-}
-
-func sanitise(lex *lexeme.Lexeme) bool {
-
-	switch {
-	case lex.Has(prop.PR_REDUNDANT):
-		lex.Remove()
-
-	case lex.Prev == nil && lex.Has(prop.PR_TERMINATOR):
-		lex.Remove()
-
-	case lex.Prev == nil:
-		return false
-
-	case lex.Prev.Has(prop.PR_TERMINATOR) && lex.Has(prop.PR_TERMINATOR):
-		lex.Remove()
-
-	case lex.Prev.Is(prop.PR_PARENTHESIS, prop.PR_OPENER) && lex.Has(prop.PR_NEWLINE):
-		lex.Remove()
-
-	case lex.Prev.Has(prop.PR_SEPARATOR) && lex.Has(prop.PR_NEWLINE):
-		lex.Remove()
-
-	case lex.Prev.Has(prop.PR_SEPARATOR) && lex.Is(prop.PR_PARENTHESIS, prop.PR_CLOSER):
-		lex.Prev.Remove()
-
-	default:
-		return false
-	}
-
-	return true
 }
