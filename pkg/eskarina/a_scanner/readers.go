@@ -41,32 +41,28 @@ func (lr *lexReader) inc() {
 }
 
 func (lr *lexReader) is(ru rune) bool {
-	return lr.peek() == ru
+	return lr.more() && lr.peek() == ru
 }
 
 func (lr *lexReader) isNewline() bool {
-	return lr.peek() == '\r' || lr.peek() == '\n'
+	return lr.more() && (lr.peek() == '\r' || lr.peek() == '\n')
 }
 
 func (lr *lexReader) isSpace() bool {
-	return unicode.IsSpace(lr.peek())
+	return lr.more() && unicode.IsSpace(lr.peek())
 }
 
 func (lr *lexReader) isLetter() bool {
-	return unicode.IsLetter(lr.peek())
+	return lr.more() && unicode.IsLetter(lr.peek())
 }
 
 func (lr *lexReader) isDigit() bool {
-	return unicode.IsDigit(lr.peek())
+	return lr.more() && unicode.IsDigit(lr.peek())
 }
 
 func (lr *lexReader) accept(ru rune) bool {
 
-	if lr.empty() {
-		return false
-	}
-
-	if lr.peek() == ru {
+	if lr.more() && lr.peek() == ru {
 		lr.inc()
 		return true
 	}

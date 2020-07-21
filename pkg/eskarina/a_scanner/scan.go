@@ -90,7 +90,7 @@ func comment(lr *lexReader) (*lexeme.Lexeme, error) {
 
 func whitespace(lr *lexReader) (*lexeme.Lexeme, error) {
 
-	for lr.more() && lr.isSpace() && !lr.isNewline() {
+	for lr.isSpace() && !lr.isNewline() {
 		lr.inc()
 	}
 
@@ -101,7 +101,7 @@ func word(lr *lexReader) (*lexeme.Lexeme, error) {
 
 	lr.inc()
 
-	for lr.more() && (lr.isLetter() || lr.is('_')) {
+	for lr.isLetter() || lr.is('_') {
 		lr.inc()
 	}
 
@@ -135,11 +135,11 @@ func spell(lr *lexReader) (*lexeme.Lexeme, error) {
 			)
 		}
 
-		for lr.more() && lr.isLetter() {
+		for lr.isLetter() {
 			lr.inc()
 		}
 
-		if lr.empty() || !lr.is('.') {
+		if !lr.is('.') {
 			break
 		}
 
@@ -168,7 +168,7 @@ func stringLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
 
 func numberLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
 
-	for lr.more() && lr.isDigit() {
+	for lr.isDigit() {
 		lr.inc()
 	}
 
@@ -190,7 +190,7 @@ func numberLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
 		)
 	}
 
-	for lr.more() && lr.isDigit() {
+	for lr.isDigit() {
 		lr.inc()
 	}
 
