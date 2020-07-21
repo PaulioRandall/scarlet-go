@@ -103,10 +103,10 @@ func Test_ShiftUp(t *testing.T) {
 	b := tok("1", prop.PR_NUMBER)
 	c := tok(`"abc"`, prop.PR_STRING)
 
-	head := feign(a, b, c)
+	_ = feign(a, b, c)
 
-	head.ShiftUp()
-	check(t, head, a, b, c)
+	a.ShiftUp()
+	check(t, a, a, b, c)
 
 	b.ShiftUp()
 	check(t, b, b, a, c)
@@ -114,4 +114,26 @@ func Test_ShiftUp(t *testing.T) {
 	c.ShiftUp()
 	c.ShiftUp()
 	check(t, c, c, b, a)
+}
+
+func Test_ShiftDown(t *testing.T) {
+
+	a := tok("true", prop.PR_BOOL)
+	b := tok("1", prop.PR_NUMBER)
+	c := tok(`"abc"`, prop.PR_STRING)
+
+	_ = feign(a, b, c)
+
+	a.ShiftDown()
+	check(t, b, b, a, c)
+
+	a.ShiftDown()
+	check(t, b, b, c, a)
+
+	a.ShiftDown()
+	check(t, b, b, c, a)
+
+	b.ShiftDown()
+	b.ShiftDown()
+	check(t, c, c, a, b)
 }
