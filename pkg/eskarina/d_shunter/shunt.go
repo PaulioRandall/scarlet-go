@@ -27,24 +27,24 @@ func shunt(shy *shuntingYard) {
 
 		case shy.inQueue(prop.PR_SEPARATOR):
 			if shy.inStack(prop.PR_PARENTHESIS, prop.PR_OPENER) {
-				shy.output()
+				shy.discard() // ","
 				break
 			}
 
 			shy.pop()
 
 		case shy.inQueue(prop.PR_SPELL):
-			shy.output()
-			shy.push()
+			shy.push() // @Spell
+			shy.push() // "("
 			shy.emit(*shy.stack.Top(), prop.PR_CALLABLE)
 
 		case shy.inQueue(prop.PR_PARENTHESIS, prop.PR_CLOSER):
 			if shy.inStack(prop.PR_PARENTHESIS, prop.PR_OPENER) {
-				shy.discard()
-				shy.eject()
+				shy.discard() // ")"
+				shy.eject()   // "("
 			}
 
-			shy.pop() // Currently this will be a spell, but this will change
+			shy.pop() // @Spell
 
 		case shy.inQueue(prop.PR_TERMINATOR):
 			if shy.stack.Empty() {

@@ -24,7 +24,12 @@ func (shy *shuntingYard) inQueue(props ...prop.Prop) bool {
 }
 
 func (shy *shuntingYard) inStack(props ...prop.Prop) bool {
-	return shy.stack.Top().Is(props...)
+
+	if shy.stack.More() {
+		return shy.stack.Top().Is(props...)
+	}
+
+	return false
 }
 
 func (shy *shuntingYard) push() {
