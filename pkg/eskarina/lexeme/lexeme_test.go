@@ -8,74 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func tok(raw string, props ...prop.Prop) *Lexeme {
-	return &Lexeme{
-		Props: props,
-		Raw:   raw,
-	}
-}
-
-func feign(lexs ...*Lexeme) *Lexeme {
-
-	var first *Lexeme
-	var last *Lexeme
-
-	for _, l := range lexs {
-
-		if first == nil {
-			first = l
-			last = l
-			continue
-		}
-
-		last.Append(l)
-		last = l
-	}
-
-	return first
-}
-
-func halfEqual(t *testing.T, exp, act *Lexeme) {
-
-	if exp == nil {
-		require.Nil(t, act)
-		return
-	}
-
-	require.NotNil(t, act)
-	require.Equal(t, exp.Props, act.Props)
-	require.Equal(t, exp.Raw, act.Raw)
-}
-
-func fullEqual(t *testing.T, exp, prev, next, act *Lexeme) {
-
-	require.NotNil(t, act)
-	require.Equal(t, exp.Props, act.Props)
-	require.Equal(t, exp.Raw, act.Raw)
-
-	halfEqual(t, prev, act.Prev)
-	halfEqual(t, next, act.Next)
-}
-
-func check(t *testing.T, act *Lexeme, exps ...*Lexeme) {
-
-	var last *Lexeme
-
-	for _, exp := range exps {
-		last = act
-		halfEqual(t, exp, act)
-		act = act.Next
-	}
-
-	require.Nil(t, act)
-	act = last
-
-	for i := len(exps) - 1; i >= 0; i-- {
-		halfEqual(t, exps[i], act)
-		act = act.Prev
-	}
-}
-
 func Test_Lexeme_Has(t *testing.T) {
 
 	lex := tok("1", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER)
@@ -122,14 +54,20 @@ func Test_Lexeme_ShiftUp(t *testing.T) {
 	_ = feign(a, b, c)
 
 	a.ShiftUp()
-	check(t, a, a, b, c)
+	fullEqual(t, a, nil, b, a)
+	fullEqual(t, b, a, c, b)
+	fullEqual(t, c, b, nil, c)
 
 	b.ShiftUp()
-	check(t, b, b, a, c)
+	fullEqual(t, b, nil, a, b)
+	fullEqual(t, a, b, c, a)
+	fullEqual(t, c, a, nil, c)
 
 	c.ShiftUp()
 	c.ShiftUp()
-	check(t, c, c, b, a)
+	fullEqual(t, c, nil, b, c)
+	fullEqual(t, b, c, a, b)
+	fullEqual(t, a, b, nil, a)
 }
 
 func Test_Lexeme_ShiftDown(t *testing.T) {
@@ -141,17 +79,25 @@ func Test_Lexeme_ShiftDown(t *testing.T) {
 	_ = feign(a, b, c)
 
 	a.ShiftDown()
-	check(t, b, b, a, c)
+	fullEqual(t, b, nil, a, b)
+	fullEqual(t, a, b, c, a)
+	fullEqual(t, c, a, nil, c)
 
 	a.ShiftDown()
-	check(t, b, b, c, a)
+	fullEqual(t, b, nil, c, b)
+	fullEqual(t, c, b, a, c)
+	fullEqual(t, a, c, nil, a)
 
 	a.ShiftDown()
-	check(t, b, b, c, a)
+	fullEqual(t, b, nil, c, b)
+	fullEqual(t, c, b, a, c)
+	fullEqual(t, a, c, nil, a)
 
 	b.ShiftDown()
 	b.ShiftDown()
-	check(t, c, c, a, b)
+	fullEqual(t, c, nil, a, c)
+	fullEqual(t, a, c, b, a)
+	fullEqual(t, b, a, nil, b)
 }
 
 func Test_Lexeme_Prepend(t *testing.T) {
@@ -161,10 +107,13 @@ func Test_Lexeme_Prepend(t *testing.T) {
 	c := tok(`"abc"`, prop.PR_STRING)
 
 	b.Prepend(a)
-	check(t, a, a, b)
+	fullEqual(t, a, nil, b, a)
+	fullEqual(t, b, a, nil, b)
 
 	c.Prepend(b)
-	check(t, a, a, b, c)
+	fullEqual(t, a, nil, b, a)
+	fullEqual(t, b, a, c, b)
+	fullEqual(t, c, b, nil, c)
 }
 
 func Test_Lexeme_Append(t *testing.T) {
@@ -174,32 +123,29 @@ func Test_Lexeme_Append(t *testing.T) {
 	c := tok(`"abc"`, prop.PR_STRING)
 
 	b.Append(c)
-	check(t, b, b, c)
+	fullEqual(t, b, nil, c, b)
+	fullEqual(t, c, b, nil, c)
 
 	a.Append(b)
-	check(t, a, a, b, c)
+	fullEqual(t, a, nil, b, a)
+	fullEqual(t, b, a, c, b)
+	fullEqual(t, c, b, nil, c)
 }
 
 func Test_Lexeme_Remove(t *testing.T) {
 
-	setup := func() (a, b, c *Lexeme) {
-		a = tok("true", prop.PR_BOOL)
-		b = tok("1", prop.PR_NUMBER)
-		c = tok(`"abc"`, prop.PR_STRING)
-		feign(a, b, c)
-		return
-	}
-
-	a, b, c := setup()
+	a, b, c, _ := setupList()
 	a.Remove()
-	check(t, a, a)
-	check(t, b, b, c)
+	fullEqual(t, b, nil, c, b)
+	fullEqual(t, c, b, nil, c)
 
-	a, b, c = setup()
+	a, b, c, _ = setupList()
 	b.Remove()
-	check(t, a, a, c)
+	fullEqual(t, a, nil, c, a)
+	fullEqual(t, c, a, nil, c)
 
-	a, b, c = setup()
+	a, b, c, _ = setupList()
 	c.Remove()
-	check(t, a, a, b)
+	fullEqual(t, a, nil, b, a)
+	fullEqual(t, b, a, nil, b)
 }
