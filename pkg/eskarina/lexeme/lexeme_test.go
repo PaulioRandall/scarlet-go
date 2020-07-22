@@ -8,6 +8,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func init() {
+
+	lex := &Lexeme{}
+
+	_ = Token(lex)
+	_ = Snippet(lex)
+	_ = Node(lex)
+	var _ string = lex.String()
+}
+
 func Test_Lexeme_Has(t *testing.T) {
 
 	lex := tok("1", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER)

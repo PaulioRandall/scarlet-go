@@ -9,6 +9,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func init() {
+
+	con := &Container{}
+
+	_ = Collection(con)
+	_ = List(con)
+	_ = MutList(con)
+	_ = Stack(con)
+	_ = Queue(con)
+	_ = TokenStream(con)
+}
+
 func Test_NewContainer(t *testing.T) {
 
 	a, b, c, _ := setupList()

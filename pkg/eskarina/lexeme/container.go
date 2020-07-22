@@ -9,15 +9,15 @@ import (
 type Collection interface {
 	Empty() bool
 	More() bool
+	Size() int
 }
 
 type List interface {
 	Collection
-	Size() int
 	Get(int) *Lexeme
 }
 
-type MutableList interface {
+type MutList interface {
 	List
 	Prepend(*Lexeme)
 	Append(*Lexeme)
