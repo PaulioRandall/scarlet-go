@@ -6,6 +6,24 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 )
 
+type Token interface {
+	Has(prop.Prop) bool
+	Is(...prop.Prop) bool
+	Any(...prop.Prop) bool
+}
+
+type Snippet interface {
+	At() (line, start, end int)
+}
+
+type Node interface {
+	ShiftUp()
+	ShiftDown()
+	Prepend(*Lexeme)
+	Append(*Lexeme)
+	Remove()
+}
+
 type Lexeme struct {
 	Props []prop.Prop
 	Raw   string
@@ -14,24 +32,6 @@ type Lexeme struct {
 	Next  *Lexeme
 	Prev  *Lexeme
 }
-
-//type Token interface {
-//	Has(Prop) bool
-//	Is(...Prop) bool
-//	Any(...Prop) bool
-//}
-
-//type Snippet interface {
-//	At() (line, start, end, int)
-//}
-
-//type LinkNode interface {
-//	ShiftUp()
-//	ShiftDown()
-//	Prepend(*lexeme.Lexeme)
-//	Append(*lexeme.Lexeme)
-//	Remove()
-//}
 
 func (lex Lexeme) Has(o prop.Prop) bool {
 

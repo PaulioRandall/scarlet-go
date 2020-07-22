@@ -2,6 +2,8 @@ package lexeme
 
 import (
 	"fmt"
+
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 )
 
 type Collection interface {
@@ -36,6 +38,14 @@ type Queue interface {
 	Front() *Lexeme
 	Put(*Lexeme)
 	Take() *Lexeme
+}
+
+// TODO
+type TokenStream interface {
+	Collection
+	Token
+	Accept(...prop.Prop) *Lexeme
+	Expect(func([]prop.Prop) error, ...prop.Prop) (*Lexeme, error)
 }
 
 type Container struct {

@@ -46,7 +46,7 @@ func check(chk *checker) error {
 }
 
 func spell(chk *checker) error {
-	// @Println(a, 1)
+	// @Println(?, ?, ...)
 
 	e := chk.expect(prop.PR_SPELL)
 	if e != nil {
