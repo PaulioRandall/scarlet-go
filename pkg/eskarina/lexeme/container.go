@@ -44,7 +44,10 @@ type TokenStream interface {
 	Collection
 	Token
 	Accept(...prop.Prop) *Lexeme
-	Expect(func([]prop.Prop) error, ...prop.Prop) (*Lexeme, error)
+	Expect(
+		func(want []prop.Prop, have *Lexeme) error,
+		...prop.Prop,
+	) (*Lexeme, error)
 }
 
 type Container struct {
@@ -258,13 +261,14 @@ func (c *Container) Accept(props ...prop.Prop) *Lexeme {
 }
 
 func (c *Container) Expect(
-	f func([]prop.Prop) error, props ...prop.Prop,
+	f func(want []prop.Prop, have *Lexeme) error,
+	props ...prop.Prop,
 ) (*Lexeme, error) {
 
 	lex := c.Accept(props...)
 
 	if lex == nil {
-		return nil, f(props)
+		return nil, f(props, c.first)
 	}
 
 	return lex, nil

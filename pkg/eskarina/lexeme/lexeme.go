@@ -2,6 +2,7 @@ package lexeme
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 )
@@ -151,4 +152,49 @@ func (lex Lexeme) String() string {
 		"["+prop.Join(",", lex.Props...)+"]",
 		lex.Raw,
 	)
+}
+
+func DiffPrint(left, right *Lexeme) {
+
+	pad := func(s string, n int) string {
+
+		if len(s) >= n {
+			return s
+		}
+
+		p := n - len(s)
+		return s + strings.Repeat(" ", p)
+	}
+
+	const padding = 38
+
+	fmt.Print("\n  ")
+	fmt.Print(pad("Left", padding))
+	fmt.Println("right")
+
+	for left != nil || right != nil {
+
+		var lStr, rStr string
+
+		if left != nil {
+			lStr = pad(left.String(), padding)
+			left = left.Next
+		}
+
+		if right != nil {
+			rStr = pad(right.String(), padding)
+			right = right.Next
+		}
+
+		if lStr != rStr {
+			fmt.Print("- ")
+		} else {
+			fmt.Print("+ ")
+		}
+
+		fmt.Print(lStr)
+		fmt.Println(rStr)
+	}
+
+	fmt.Println()
 }

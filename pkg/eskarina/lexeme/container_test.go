@@ -209,7 +209,7 @@ func Test_Container_Expect(t *testing.T) {
 	a, b, c, _ := setupList()
 	con := NewContainer(a)
 
-	errFunc := func(props []prop.Prop) error {
+	errFunc := func(props []prop.Prop, _ *Lexeme) error {
 		return errors.New("I expected this!")
 	}
 
