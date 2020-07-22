@@ -182,6 +182,10 @@ func (c *Container) Remove(idx int) *Lexeme {
 	node.Remove()
 	c.size--
 
+	if c.size == 0 {
+		c.first, c.last = nil, nil
+	}
+
 	return node
 }
 

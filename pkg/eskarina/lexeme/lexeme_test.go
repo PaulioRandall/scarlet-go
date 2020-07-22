@@ -35,19 +35,35 @@ func feign(lexs ...*Lexeme) *Lexeme {
 	return first
 }
 
-func check(t *testing.T, act *Lexeme, exps ...*Lexeme) {
+func halfEqual(t *testing.T, exp, act *Lexeme) {
 
-	req := func(exp, act *Lexeme) {
-		require.NotNil(t, act)
-		require.Equal(t, exp.Props, act.Props)
-		require.Equal(t, exp.Raw, act.Raw)
+	if exp == nil {
+		require.Nil(t, act)
+		return
 	}
+
+	require.NotNil(t, act)
+	require.Equal(t, exp.Props, act.Props)
+	require.Equal(t, exp.Raw, act.Raw)
+}
+
+func fullEqual(t *testing.T, exp, prev, next, act *Lexeme) {
+
+	require.NotNil(t, act)
+	require.Equal(t, exp.Props, act.Props)
+	require.Equal(t, exp.Raw, act.Raw)
+
+	halfEqual(t, prev, act.Prev)
+	halfEqual(t, next, act.Next)
+}
+
+func check(t *testing.T, act *Lexeme, exps ...*Lexeme) {
 
 	var last *Lexeme
 
 	for _, exp := range exps {
 		last = act
-		req(exp, act)
+		halfEqual(t, exp, act)
 		act = act.Next
 	}
 
@@ -55,8 +71,7 @@ func check(t *testing.T, act *Lexeme, exps ...*Lexeme) {
 	act = last
 
 	for i := len(exps) - 1; i >= 0; i-- {
-		//println(exps[i].String())
-		req(exps[i], act)
+		halfEqual(t, exps[i], act)
 		act = act.Prev
 	}
 }

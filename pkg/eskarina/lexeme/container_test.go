@@ -8,61 +8,41 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func setup() (a *Lexeme, b *Lexeme, c *Lexeme) {
+func setup() (a, b, c, d *Lexeme) {
 	a = tok("true", prop.PR_BOOL)
 	b = tok("1", prop.PR_NUMBER)
 	c = tok(`"abc"`, prop.PR_STRING)
+	d = tok("x", prop.PR_IDENTIFIER)
 	return
 }
 
-func setupList() (a *Lexeme, b *Lexeme, c *Lexeme) {
-	a, b, c = setup()
+func setupList() (a, b, c, d *Lexeme) {
+	a, b, c, d = setup()
 	_ = feign(a, b, c)
 	return
 }
 
-func equal(t *testing.T, exp, act *Lexeme) {
-
-	if exp == nil {
-		require.Nil(t, act)
-		return
-	}
-
-	require.NotNil(t, act)
-	require.Equal(t, exp.Props, act.Props)
-	require.Equal(t, exp.Raw, act.Raw)
-}
-
-func requireEqual(t *testing.T, exp, prev, next, act *Lexeme) {
-
-	require.NotNil(t, act)
-	require.Equal(t, exp.Props, act.Props)
-	require.Equal(t, exp.Raw, act.Raw)
-
-	equal(t, prev, act.Prev)
-	equal(t, next, act.Next)
-}
-
 func Test_NewContainer(t *testing.T) {
 
-	a, b, c := setupList()
+	a, b, c, _ := setupList()
 	con := NewContainer(a)
 
 	require.Equal(t, 3, con.size)
-	requireEqual(t, a, nil, b, con.first)
-	requireEqual(t, b, a, c, con.first.Next)
-	requireEqual(t, b, a, c, con.last.Prev)
-	requireEqual(t, c, b, nil, con.last)
+	fullEqual(t, a, nil, b, con.first)
+	fullEqual(t, b, a, c, con.first.Next)
+	fullEqual(t, b, a, c, con.last.Prev)
+	fullEqual(t, c, b, nil, con.last)
+	require.Equal(t, 3, con.size)
 }
 
 func Test_Container_Get(t *testing.T) {
 
-	a, b, c := setupList()
+	a, b, c, _ := setupList()
 	con := NewContainer(a)
 
-	equal(t, a, con.Get(0))
-	equal(t, b, con.Get(1))
-	equal(t, c, con.Get(2))
+	halfEqual(t, a, con.Get(0))
+	halfEqual(t, b, con.Get(1))
+	halfEqual(t, c, con.Get(2))
 
 	require.Panics(t, func() {
 		con.Get(-1)
@@ -75,40 +55,122 @@ func Test_Container_Get(t *testing.T) {
 
 func Test_Container_Prepend(t *testing.T) {
 
-	a, b, c := setup()
+	a, b, c, _ := setup()
 	con := Container{}
 
-	con.Prepend(a)
-	requireEqual(t, a, nil, nil, con.first)
-	requireEqual(t, a, nil, nil, con.last)
+	con.Prepend(c)
+	fullEqual(t, c, nil, nil, con.first)
+	fullEqual(t, c, nil, nil, con.last)
+	require.Equal(t, 1, con.size)
 
 	con.Prepend(b)
-	requireEqual(t, b, nil, a, con.first)
-	requireEqual(t, a, b, nil, con.last)
+	fullEqual(t, b, nil, c, con.first)
+	fullEqual(t, c, b, nil, con.last)
+	require.Equal(t, 2, con.size)
 
-	con.Prepend(c)
-	requireEqual(t, c, nil, b, con.first)
-	requireEqual(t, b, c, a, con.first.Next)
-	requireEqual(t, b, c, a, con.last.Prev)
-	requireEqual(t, a, b, nil, con.last)
+	con.Prepend(a)
+	fullEqual(t, a, nil, b, con.first)
+	fullEqual(t, b, a, c, con.first.Next)
+	fullEqual(t, b, a, c, con.last.Prev)
+	fullEqual(t, c, b, nil, con.last)
+	require.Equal(t, 3, con.size)
 }
 
 func Test_Container_Append(t *testing.T) {
 
-	a, b, c := setup()
+	a, b, c, _ := setup()
 	con := Container{}
 
 	con.Append(a)
-	requireEqual(t, a, nil, nil, con.first)
-	requireEqual(t, a, nil, nil, con.last)
+	fullEqual(t, a, nil, nil, con.first)
+	fullEqual(t, a, nil, nil, con.last)
+	require.Equal(t, 1, con.size)
 
 	con.Append(b)
-	requireEqual(t, a, nil, b, con.first)
-	requireEqual(t, b, a, nil, con.last)
+	fullEqual(t, a, nil, b, con.first)
+	fullEqual(t, b, a, nil, con.last)
+	require.Equal(t, 2, con.size)
 
 	con.Append(c)
-	requireEqual(t, a, nil, b, con.first)
-	requireEqual(t, b, a, c, con.first.Next)
-	requireEqual(t, b, a, c, con.last.Prev)
-	requireEqual(t, c, b, nil, con.last)
+	fullEqual(t, a, nil, b, con.first)
+	fullEqual(t, b, a, c, con.first.Next)
+	fullEqual(t, b, a, c, con.last.Prev)
+	fullEqual(t, c, b, nil, con.last)
+	require.Equal(t, 3, con.size)
+}
+
+func Test_Container_InsertBefore(t *testing.T) {
+
+	a, b, c, d := setup()
+	con := NewContainer(c)
+
+	con.InsertBefore(0, a)
+	fullEqual(t, a, nil, c, con.first)
+	fullEqual(t, c, a, nil, con.last)
+	require.Equal(t, 2, con.size)
+
+	con.InsertBefore(1, b)
+	fullEqual(t, a, nil, b, con.first)
+	fullEqual(t, b, a, c, con.first.Next)
+	fullEqual(t, b, a, c, con.last.Prev)
+	fullEqual(t, c, b, nil, con.last)
+	require.Equal(t, 3, con.size)
+
+	require.Panics(t, func() {
+		con.InsertBefore(-1, d)
+	})
+
+	require.Panics(t, func() {
+		con.InsertBefore(3, d)
+	})
+}
+
+func Test_Container_InsertAfter(t *testing.T) {
+
+	a, b, c, d := setup()
+	con := NewContainer(a)
+
+	con.InsertAfter(0, b)
+	fullEqual(t, a, nil, b, con.first)
+	fullEqual(t, b, a, nil, con.last)
+	require.Equal(t, 2, con.size)
+
+	con.InsertAfter(1, c)
+	fullEqual(t, a, nil, b, con.first)
+	fullEqual(t, b, a, c, con.first.Next)
+	fullEqual(t, b, a, c, con.last.Prev)
+	fullEqual(t, c, b, nil, con.last)
+	require.Equal(t, 3, con.size)
+
+	require.Panics(t, func() {
+		con.InsertAfter(-1, d)
+	})
+
+	require.Panics(t, func() {
+		con.InsertAfter(3, d)
+	})
+}
+
+func Test_Container_Remove(t *testing.T) {
+
+	a, b, c, _ := setupList()
+	con := NewContainer(a)
+
+	z := con.Remove(1)
+	fullEqual(t, a, nil, c, con.first)
+	fullEqual(t, b, nil, nil, z)
+	fullEqual(t, c, a, nil, con.last)
+	require.Equal(t, 2, con.size)
+
+	z = con.Remove(0)
+	fullEqual(t, c, nil, nil, con.first)
+	fullEqual(t, c, nil, nil, con.last)
+	fullEqual(t, a, nil, nil, z)
+	require.Equal(t, 1, con.size)
+
+	z = con.Remove(0)
+	halfEqual(t, nil, con.first)
+	halfEqual(t, nil, con.last)
+	fullEqual(t, c, nil, nil, z)
+	require.Equal(t, 0, con.size)
 }
