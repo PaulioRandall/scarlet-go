@@ -61,7 +61,7 @@ func check(t *testing.T, act *Lexeme, exps ...*Lexeme) {
 	}
 }
 
-func Test_Has(t *testing.T) {
+func Test_Lexeme_Has(t *testing.T) {
 
 	lex := tok("1", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER)
 
@@ -72,7 +72,7 @@ func Test_Has(t *testing.T) {
 	require.False(t, lex.Has(prop.PR_IDENTIFIER))
 }
 
-func Test_Is(t *testing.T) {
+func Test_Lexeme_Is(t *testing.T) {
 
 	lex := tok("1", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER)
 
@@ -85,7 +85,7 @@ func Test_Is(t *testing.T) {
 	require.False(t, lex.Is(prop.PR_TERM, prop.PR_LITERAL, prop.PR_BOOL))
 }
 
-func Test_Any(t *testing.T) {
+func Test_Lexeme_Any(t *testing.T) {
 
 	lex := tok("1", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER)
 
@@ -98,7 +98,7 @@ func Test_Any(t *testing.T) {
 	require.False(t, lex.Any(prop.PR_SPELL, prop.PR_OPENER, prop.PR_CLOSER))
 }
 
-func Test_ShiftUp(t *testing.T) {
+func Test_Lexeme_ShiftUp(t *testing.T) {
 
 	a := tok("true", prop.PR_BOOL)
 	b := tok("1", prop.PR_NUMBER)
@@ -117,7 +117,7 @@ func Test_ShiftUp(t *testing.T) {
 	check(t, c, c, b, a)
 }
 
-func Test_ShiftDown(t *testing.T) {
+func Test_Lexeme_ShiftDown(t *testing.T) {
 
 	a := tok("true", prop.PR_BOOL)
 	b := tok("1", prop.PR_NUMBER)
@@ -139,7 +139,7 @@ func Test_ShiftDown(t *testing.T) {
 	check(t, c, c, a, b)
 }
 
-func Test_Prepend(t *testing.T) {
+func Test_Lexeme_Prepend(t *testing.T) {
 
 	a := tok("true", prop.PR_BOOL)
 	b := tok("1", prop.PR_NUMBER)
@@ -152,7 +152,7 @@ func Test_Prepend(t *testing.T) {
 	check(t, a, a, b, c)
 }
 
-func Test_Append(t *testing.T) {
+func Test_Lexeme_Append(t *testing.T) {
 
 	a := tok("true", prop.PR_BOOL)
 	b := tok("1", prop.PR_NUMBER)
@@ -165,7 +165,7 @@ func Test_Append(t *testing.T) {
 	check(t, a, a, b, c)
 }
 
-func Test_Remove(t *testing.T) {
+func Test_Lexeme_Remove(t *testing.T) {
 
 	setup := func() (a, b, c *Lexeme) {
 		a = tok("true", prop.PR_BOOL)
