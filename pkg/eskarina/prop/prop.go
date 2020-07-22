@@ -27,7 +27,6 @@ func Join(infix string, props ...Prop) string {
 
 const (
 	PR_UNDEFINED Prop = iota
-	PR_ANY
 	// -----------------
 	PR_REDUNDANT // Whitespace or comment
 	PR_WHITESPACE
@@ -51,8 +50,6 @@ const (
 )
 
 var props = map[Prop]string{
-	PR_ANY: `ANY`,
-	// ------------------
 	PR_REDUNDANT:   `REDUNDANT`,
 	PR_WHITESPACE:  `WHITESPACE`,
 	PR_COMMENT:     `COMMENT`,

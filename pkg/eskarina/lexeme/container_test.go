@@ -27,10 +27,10 @@ func Test_NewContainer(t *testing.T) {
 	con := NewContainer(a)
 
 	require.Equal(t, 3, con.size)
-	fullEqual(t, a, nil, b, con.first)
-	fullEqual(t, b, a, c, con.first.Next)
-	fullEqual(t, b, a, c, con.last.Prev)
-	fullEqual(t, c, b, nil, con.last)
+	fullEqual(t, a, nil, b, con.head)
+	fullEqual(t, b, a, c, con.head.Next)
+	fullEqual(t, b, a, c, con.tail.Prev)
+	fullEqual(t, c, b, nil, con.tail)
 	require.Equal(t, 3, con.size)
 }
 
@@ -58,20 +58,20 @@ func Test_Container_Prepend(t *testing.T) {
 	con := Container{}
 
 	con.Prepend(c)
-	fullEqual(t, c, nil, nil, con.first)
-	fullEqual(t, c, nil, nil, con.last)
+	fullEqual(t, c, nil, nil, con.head)
+	fullEqual(t, c, nil, nil, con.tail)
 	require.Equal(t, 1, con.size)
 
 	con.Prepend(b)
-	fullEqual(t, b, nil, c, con.first)
-	fullEqual(t, c, b, nil, con.last)
+	fullEqual(t, b, nil, c, con.head)
+	fullEqual(t, c, b, nil, con.tail)
 	require.Equal(t, 2, con.size)
 
 	con.Prepend(a)
-	fullEqual(t, a, nil, b, con.first)
-	fullEqual(t, b, a, c, con.first.Next)
-	fullEqual(t, b, a, c, con.last.Prev)
-	fullEqual(t, c, b, nil, con.last)
+	fullEqual(t, a, nil, b, con.head)
+	fullEqual(t, b, a, c, con.head.Next)
+	fullEqual(t, b, a, c, con.tail.Prev)
+	fullEqual(t, c, b, nil, con.tail)
 	require.Equal(t, 3, con.size)
 }
 
@@ -81,20 +81,20 @@ func Test_Container_Append(t *testing.T) {
 	con := Container{}
 
 	con.Append(a)
-	fullEqual(t, a, nil, nil, con.first)
-	fullEqual(t, a, nil, nil, con.last)
+	fullEqual(t, a, nil, nil, con.head)
+	fullEqual(t, a, nil, nil, con.tail)
 	require.Equal(t, 1, con.size)
 
 	con.Append(b)
-	fullEqual(t, a, nil, b, con.first)
-	fullEqual(t, b, a, nil, con.last)
+	fullEqual(t, a, nil, b, con.head)
+	fullEqual(t, b, a, nil, con.tail)
 	require.Equal(t, 2, con.size)
 
 	con.Append(c)
-	fullEqual(t, a, nil, b, con.first)
-	fullEqual(t, b, a, c, con.first.Next)
-	fullEqual(t, b, a, c, con.last.Prev)
-	fullEqual(t, c, b, nil, con.last)
+	fullEqual(t, a, nil, b, con.head)
+	fullEqual(t, b, a, c, con.head.Next)
+	fullEqual(t, b, a, c, con.tail.Prev)
+	fullEqual(t, c, b, nil, con.tail)
 	require.Equal(t, 3, con.size)
 }
 
@@ -104,15 +104,15 @@ func Test_Container_InsertBefore(t *testing.T) {
 	con := NewContainer(c)
 
 	con.InsertBefore(0, a)
-	fullEqual(t, a, nil, c, con.first)
-	fullEqual(t, c, a, nil, con.last)
+	fullEqual(t, a, nil, c, con.head)
+	fullEqual(t, c, a, nil, con.tail)
 	require.Equal(t, 2, con.size)
 
 	con.InsertBefore(1, b)
-	fullEqual(t, a, nil, b, con.first)
-	fullEqual(t, b, a, c, con.first.Next)
-	fullEqual(t, b, a, c, con.last.Prev)
-	fullEqual(t, c, b, nil, con.last)
+	fullEqual(t, a, nil, b, con.head)
+	fullEqual(t, b, a, c, con.head.Next)
+	fullEqual(t, b, a, c, con.tail.Prev)
+	fullEqual(t, c, b, nil, con.tail)
 	require.Equal(t, 3, con.size)
 
 	require.Panics(t, func() {
@@ -130,15 +130,15 @@ func Test_Container_InsertAfter(t *testing.T) {
 	con := NewContainer(a)
 
 	con.InsertAfter(0, b)
-	fullEqual(t, a, nil, b, con.first)
-	fullEqual(t, b, a, nil, con.last)
+	fullEqual(t, a, nil, b, con.head)
+	fullEqual(t, b, a, nil, con.tail)
 	require.Equal(t, 2, con.size)
 
 	con.InsertAfter(1, c)
-	fullEqual(t, a, nil, b, con.first)
-	fullEqual(t, b, a, c, con.first.Next)
-	fullEqual(t, b, a, c, con.last.Prev)
-	fullEqual(t, c, b, nil, con.last)
+	fullEqual(t, a, nil, b, con.head)
+	fullEqual(t, b, a, c, con.head.Next)
+	fullEqual(t, b, a, c, con.tail.Prev)
+	fullEqual(t, c, b, nil, con.tail)
 	require.Equal(t, 3, con.size)
 
 	require.Panics(t, func() {
@@ -156,20 +156,20 @@ func Test_Container_Remove(t *testing.T) {
 	con := NewContainer(a)
 
 	z := con.Remove(1)
-	fullEqual(t, a, nil, c, con.first)
+	fullEqual(t, a, nil, c, con.head)
 	fullEqual(t, b, nil, nil, z)
-	fullEqual(t, c, a, nil, con.last)
+	fullEqual(t, c, a, nil, con.tail)
 	require.Equal(t, 2, con.size)
 
 	z = con.Remove(0)
-	fullEqual(t, c, nil, nil, con.first)
-	fullEqual(t, c, nil, nil, con.last)
+	fullEqual(t, c, nil, nil, con.head)
+	fullEqual(t, c, nil, nil, con.tail)
 	fullEqual(t, a, nil, nil, z)
 	require.Equal(t, 1, con.size)
 
 	z = con.Remove(0)
-	halfEqual(t, nil, con.first)
-	halfEqual(t, nil, con.last)
+	halfEqual(t, nil, con.head)
+	halfEqual(t, nil, con.tail)
 	fullEqual(t, c, nil, nil, z)
 	require.Equal(t, 0, con.size)
 }
@@ -181,20 +181,20 @@ func Test_Container_Accept(t *testing.T) {
 
 	z := con.Accept()
 	fullEqual(t, a, nil, nil, z)
-	fullEqual(t, b, nil, c, con.first)
-	fullEqual(t, c, b, nil, con.last)
+	fullEqual(t, b, nil, c, con.head)
+	fullEqual(t, c, b, nil, con.tail)
 	require.Equal(t, 2, con.size)
 
 	z = con.Accept(prop.PR_SPELL)
 	halfEqual(t, nil, z)
-	fullEqual(t, b, nil, c, con.first)
-	fullEqual(t, c, b, nil, con.last)
+	fullEqual(t, b, nil, c, con.head)
+	fullEqual(t, c, b, nil, con.tail)
 	require.Equal(t, 2, con.size)
 
 	z = con.Accept(prop.PR_LITERAL)
 	fullEqual(t, b, nil, nil, z)
-	fullEqual(t, c, nil, nil, con.first)
-	fullEqual(t, c, nil, nil, con.last)
+	fullEqual(t, c, nil, nil, con.head)
+	fullEqual(t, c, nil, nil, con.tail)
 	require.Equal(t, 1, con.size)
 }
 
@@ -210,22 +210,22 @@ func Test_Container_Expect(t *testing.T) {
 	z, e := con.Expect(errFunc)
 	require.Nil(t, e)
 	fullEqual(t, a, nil, nil, z)
-	fullEqual(t, b, nil, c, con.first)
-	fullEqual(t, c, b, nil, con.last)
+	fullEqual(t, b, nil, c, con.head)
+	fullEqual(t, c, b, nil, con.tail)
 	require.Equal(t, 2, con.size)
 
 	z, e = con.Expect(errFunc, prop.PR_SPELL)
 	require.NotNil(t, e)
 	halfEqual(t, nil, z)
-	fullEqual(t, b, nil, c, con.first)
-	fullEqual(t, c, b, nil, con.last)
+	fullEqual(t, b, nil, c, con.head)
+	fullEqual(t, c, b, nil, con.tail)
 	require.Equal(t, 2, con.size)
 
 	z, e = con.Expect(errFunc, prop.PR_LITERAL)
 	require.Nil(t, e)
 	fullEqual(t, b, nil, nil, z)
-	fullEqual(t, c, nil, nil, con.first)
-	fullEqual(t, c, nil, nil, con.last)
+	fullEqual(t, c, nil, nil, con.head)
+	fullEqual(t, c, nil, nil, con.tail)
 	require.Equal(t, 1, con.size)
 
 	_, e = con.Expect(errFunc)

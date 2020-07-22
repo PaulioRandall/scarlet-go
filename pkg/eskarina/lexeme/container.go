@@ -35,10 +35,19 @@ type Stack interface {
 
 type Queue interface {
 	Collection
-	Front() *Lexeme
+	Head() *Lexeme
 	Put(*Lexeme)
 	Take() *Lexeme
 }
+
+/* // Not Needed + requires Go v1.14+
+type Deque interface {
+	Queue
+	Stack
+	Tail() *Lexeme
+	Eject() *Lexeme
+}
+*/
 
 type TokenStream interface {
 	Collection
@@ -51,29 +60,29 @@ type TokenStream interface {
 }
 
 type Container struct {
-	size  int
-	first *Lexeme
-	last  *Lexeme
+	size int
+	head *Lexeme
+	tail *Lexeme
 }
 
-func NewContainer(first *Lexeme) *Container {
+func NewContainer(head *Lexeme) *Container {
 
-	if first == nil {
+	if head == nil {
 		return &Container{}
 	}
 
-	if first.Prev != nil {
-		panic("Can't use Lexeme as first since it's not the head of its linked list")
+	if head.Prev != nil {
+		panic("Can't use Lexeme as head since it's not the head of its linked list")
 	}
 
 	c := &Container{
-		size:  1,
-		first: first,
-		last:  first,
+		size: 1,
+		head: head,
+		tail: head,
 	}
 
-	for c.last.Next != nil {
-		c.last = c.last.Next
+	for c.tail.Next != nil {
+		c.tail = c.tail.Next
 		c.size++
 	}
 
@@ -100,7 +109,7 @@ func (c *Container) Get(idx int) *Lexeme {
 		goto ERROR
 	}
 
-	node = c.first
+	node = c.head
 	for i := 0; node != nil && i < idx; i++ {
 		node = node.Next
 	}
@@ -120,15 +129,15 @@ func (c *Container) Prepend(lex *Lexeme) {
 
 	lex.Remove()
 
-	if c.first == nil {
-		c.first = lex
-		c.last = lex
+	if c.head == nil {
+		c.head = lex
+		c.tail = lex
 		c.size = 1
 		return
 	}
 
-	c.first.Prepend(lex)
-	c.first = lex
+	c.head.Prepend(lex)
+	c.head = lex
 	c.size++
 }
 
@@ -136,15 +145,15 @@ func (c *Container) Append(lex *Lexeme) {
 
 	lex.Remove()
 
-	if c.last == nil {
-		c.last = lex
-		c.first = lex
+	if c.tail == nil {
+		c.tail = lex
+		c.head = lex
 		c.size = 1
 		return
 	}
 
-	c.last.Append(lex)
-	c.last = lex
+	c.tail.Append(lex)
+	c.tail = lex
 	c.size++
 }
 
@@ -181,16 +190,16 @@ func (c *Container) Remove(idx int) *Lexeme {
 	node := c.Get(idx)
 
 	if idx == 0 {
-		c.first = c.first.Next
+		c.head = c.head.Next
 	} else if idx == c.size-1 {
-		c.last = c.last.Prev
+		c.tail = c.tail.Prev
 	}
 
 	node.Remove()
 	c.size--
 
 	if c.size == 0 {
-		c.first, c.last = nil, nil
+		c.head, c.tail = nil, nil
 	}
 
 	return node
@@ -208,7 +217,7 @@ func (c *Container) Pop() *Lexeme {
 	return c.Remove(0)
 }
 
-func (c *Container) Front() *Lexeme {
+func (c *Container) Head() *Lexeme {
 	return c.Get(0)
 }
 
@@ -222,38 +231,38 @@ func (c *Container) Take() *Lexeme {
 
 func (c *Container) Has(p prop.Prop) bool {
 
-	if c.first == nil {
+	if c.head == nil {
 		return false
 	}
 
-	return c.first.Has(p)
+	return c.head.Has(p)
 }
 
 func (c *Container) Is(props ...prop.Prop) bool {
 
-	if c.first == nil {
+	if c.head == nil {
 		return false
 	}
 
-	return c.first.Is(props...)
+	return c.head.Is(props...)
 }
 
 func (c *Container) Any(props ...prop.Prop) bool {
 
-	if c.first == nil {
+	if c.head == nil {
 		return false
 	}
 
-	return c.first.Any(props...)
+	return c.head.Any(props...)
 }
 
 func (c *Container) Accept(props ...prop.Prop) *Lexeme {
 
-	if c.first == nil {
+	if c.head == nil {
 		return nil
 	}
 
-	if len(props) == 0 || c.first.Is(props...) {
+	if len(props) == 0 || c.head.Is(props...) {
 		return c.Remove(0)
 	}
 
@@ -268,14 +277,14 @@ func (c *Container) Expect(
 	lex := c.Accept(props...)
 
 	if lex == nil {
-		return nil, f(props, c.first)
+		return nil, f(props, c.head)
 	}
 
 	return lex, nil
 }
 
 func (c *Container) Descend(f func(*Lexeme)) {
-	for lex := c.first; lex != nil; lex = lex.Next {
+	for lex := c.head; lex != nil; lex = lex.Next {
 		f(lex)
 	}
 }

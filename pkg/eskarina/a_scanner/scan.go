@@ -28,7 +28,7 @@ func ScanStr(s string) (*lexeme.Lexeme, error) {
 		que.Put(lex)
 	}
 
-	return que.Front(), nil
+	return que.Head(), nil
 }
 
 func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {
