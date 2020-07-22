@@ -1,7 +1,10 @@
 package lexeme
 
 import (
+	"errors"
 	"testing"
+
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 
 	"github.com/stretchr/testify/require"
 )
@@ -157,4 +160,72 @@ func Test_Container_Remove(t *testing.T) {
 	halfEqual(t, nil, con.last)
 	fullEqual(t, c, nil, nil, z)
 	require.Equal(t, 0, con.size)
+}
+
+func Test_Container_Accept(t *testing.T) {
+
+	a, b, c, _ := setupList()
+	con := NewContainer(a)
+
+	z := con.Accept()
+	fullEqual(t, a, nil, nil, z)
+	fullEqual(t, b, nil, c, con.first)
+	fullEqual(t, c, b, nil, con.last)
+	require.Equal(t, 2, con.size)
+
+	z = con.Accept(prop.PR_SPELL)
+	halfEqual(t, nil, z)
+	fullEqual(t, b, nil, c, con.first)
+	fullEqual(t, c, b, nil, con.last)
+	require.Equal(t, 2, con.size)
+
+	z = con.Accept(prop.PR_LITERAL)
+	fullEqual(t, b, nil, nil, z)
+	fullEqual(t, c, nil, nil, con.first)
+	fullEqual(t, c, nil, nil, con.last)
+	require.Equal(t, 1, con.size)
+
+	con.Accept()
+
+	require.Panics(t, func() {
+		con.Accept()
+	})
+}
+
+func Test_Container_Expect(t *testing.T) {
+
+	a, b, c, _ := setupList()
+	con := NewContainer(a)
+
+	errFunc := func(props []prop.Prop) error {
+		return errors.New("I expected this!")
+	}
+
+	z, e := con.Expect(errFunc)
+	require.Nil(t, e)
+	fullEqual(t, a, nil, nil, z)
+	fullEqual(t, b, nil, c, con.first)
+	fullEqual(t, c, b, nil, con.last)
+	require.Equal(t, 2, con.size)
+
+	z, e = con.Expect(errFunc, prop.PR_SPELL)
+	require.NotNil(t, e)
+	halfEqual(t, nil, z)
+	fullEqual(t, b, nil, c, con.first)
+	fullEqual(t, c, b, nil, con.last)
+	require.Equal(t, 2, con.size)
+
+	z, e = con.Expect(errFunc, prop.PR_LITERAL)
+	require.Nil(t, e)
+	fullEqual(t, b, nil, nil, z)
+	fullEqual(t, c, nil, nil, con.first)
+	fullEqual(t, c, nil, nil, con.last)
+	require.Equal(t, 1, con.size)
+
+	_, e = con.Expect(errFunc)
+	require.Nil(t, e)
+
+	require.Panics(t, func() {
+		con.Expect(errFunc)
+	})
 }

@@ -40,7 +40,6 @@ type Queue interface {
 	Take() *Lexeme
 }
 
-// TODO
 type TokenStream interface {
 	Collection
 	Token
@@ -49,11 +48,6 @@ type TokenStream interface {
 }
 
 type Container struct {
-	Collection
-	List
-	MutableList
-	Stack
-	Queue
 	size  int
 	first *Lexeme
 	last  *Lexeme
@@ -66,7 +60,7 @@ func NewContainer(first *Lexeme) *Container {
 	}
 
 	if first.Prev != nil {
-		panic("Can't use Lexeme as container as its not the head of a list")
+		panic("Can't use Lexeme as first since it's not the head of its linked list")
 	}
 
 	c := &Container{
@@ -221,6 +215,59 @@ func (c *Container) Put(lex *Lexeme) {
 
 func (c *Container) Take() *Lexeme {
 	return c.Remove(0)
+}
+
+func (c *Container) Has(p prop.Prop) bool {
+
+	if c.first == nil {
+		return false
+	}
+
+	return c.first.Has(p)
+}
+
+func (c *Container) Is(props ...prop.Prop) bool {
+
+	if c.first == nil {
+		return false
+	}
+
+	return c.first.Is(props...)
+}
+
+func (c *Container) Any(props ...prop.Prop) bool {
+
+	if c.first == nil {
+		return false
+	}
+
+	return c.first.Any(props...)
+}
+
+func (c *Container) Accept(props ...prop.Prop) *Lexeme {
+
+	if c.first == nil {
+		panic("Stream EOF reached")
+	}
+
+	if len(props) == 0 || c.first.Is(props...) {
+		return c.Remove(0)
+	}
+
+	return nil
+}
+
+func (c *Container) Expect(
+	f func([]prop.Prop) error, props ...prop.Prop,
+) (*Lexeme, error) {
+
+	lex := c.Accept(props...)
+
+	if lex == nil {
+		return nil, f(props)
+	}
+
+	return lex, nil
 }
 
 func (c *Container) Descend(f func(*Lexeme)) {

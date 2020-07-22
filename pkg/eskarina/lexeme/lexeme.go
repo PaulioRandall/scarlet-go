@@ -17,6 +17,8 @@ type Snippet interface {
 }
 
 type Node interface {
+	NextNode() *Lexeme
+	PrevNode() *Lexeme
 	ShiftUp()
 	ShiftDown()
 	Prepend(*Lexeme)
@@ -68,6 +70,14 @@ func (lex Lexeme) Any(others ...prop.Prop) bool {
 
 func (lex Lexeme) At() (line, start, end int) {
 	return lex.Line, lex.Col, len(lex.Raw)
+}
+
+func (lex Lexeme) NextNode() *Lexeme {
+	return lex.Next
+}
+
+func (lex Lexeme) PrevNode() *Lexeme {
+	return lex.Prev
 }
 
 func (lex *Lexeme) ShiftUp() {

@@ -36,9 +36,9 @@ func feign(lexs ...*Lexeme) *Lexeme {
 }
 
 func setup() (a, b, c, d *Lexeme) {
-	a = tok("true", prop.PR_BOOL)
-	b = tok("1", prop.PR_NUMBER)
-	c = tok(`"abc"`, prop.PR_STRING)
+	a = tok("true", prop.PR_LITERAL, prop.PR_BOOL)
+	b = tok("1", prop.PR_LITERAL, prop.PR_NUMBER)
+	c = tok(`"abc"`, prop.PR_LITERAL, prop.PR_STRING)
 	d = tok("x", prop.PR_IDENTIFIER)
 	return
 }
