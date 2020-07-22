@@ -196,12 +196,6 @@ func Test_Container_Accept(t *testing.T) {
 	fullEqual(t, c, nil, nil, con.first)
 	fullEqual(t, c, nil, nil, con.last)
 	require.Equal(t, 1, con.size)
-
-	con.Accept()
-
-	require.Panics(t, func() {
-		con.Accept()
-	})
 }
 
 func Test_Container_Expect(t *testing.T) {
@@ -237,7 +231,6 @@ func Test_Container_Expect(t *testing.T) {
 	_, e = con.Expect(errFunc)
 	require.Nil(t, e)
 
-	require.Panics(t, func() {
-		con.Expect(errFunc)
-	})
+	_, e = con.Expect(errFunc)
+	require.NotNil(t, e)
 }

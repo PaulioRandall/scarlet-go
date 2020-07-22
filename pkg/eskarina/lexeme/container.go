@@ -250,7 +250,7 @@ func (c *Container) Any(props ...prop.Prop) bool {
 func (c *Container) Accept(props ...prop.Prop) *Lexeme {
 
 	if c.first == nil {
-		panic("Stream EOF reached")
+		return nil
 	}
 
 	if len(props) == 0 || c.first.Is(props...) {
