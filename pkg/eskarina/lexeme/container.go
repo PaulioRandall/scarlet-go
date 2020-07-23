@@ -2,8 +2,6 @@ package lexeme
 
 import (
 	"fmt"
-
-	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 )
 
 type Collection interface {
@@ -48,16 +46,6 @@ type Deque interface {
 	Eject() *Lexeme
 }
 */
-
-type TokenStream interface {
-	Collection
-	Token
-	Accept(...prop.Prop) *Lexeme
-	Expect(
-		func(want []prop.Prop, have *Lexeme) error,
-		...prop.Prop,
-	) (*Lexeme, error)
-}
 
 type Container struct {
 	size int
@@ -227,60 +215,6 @@ func (c *Container) Put(lex *Lexeme) {
 
 func (c *Container) Take() *Lexeme {
 	return c.Remove(0)
-}
-
-func (c *Container) Has(p prop.Prop) bool {
-
-	if c.head == nil {
-		return false
-	}
-
-	return c.head.Has(p)
-}
-
-func (c *Container) Is(props ...prop.Prop) bool {
-
-	if c.head == nil {
-		return false
-	}
-
-	return c.head.Is(props...)
-}
-
-func (c *Container) Any(props ...prop.Prop) bool {
-
-	if c.head == nil {
-		return false
-	}
-
-	return c.head.Any(props...)
-}
-
-func (c *Container) Accept(props ...prop.Prop) *Lexeme {
-
-	if c.head == nil {
-		return nil
-	}
-
-	if len(props) == 0 || c.head.Is(props...) {
-		return c.Remove(0)
-	}
-
-	return nil
-}
-
-func (c *Container) Expect(
-	f func(want []prop.Prop, have *Lexeme) error,
-	props ...prop.Prop,
-) (*Lexeme, error) {
-
-	lex := c.Accept(props...)
-
-	if lex == nil {
-		return nil, f(props, c.head)
-	}
-
-	return lex, nil
 }
 
 func (c *Container) Descend(f func(*Lexeme)) {
