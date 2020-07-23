@@ -7,13 +7,18 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme"
 )
 
-type Inst struct {
+type Instruction struct {
 	Code    code.Code
 	Data    interface{}
 	Snippet *lexeme.Lexeme
+	Next    *Instruction
 }
 
-func (in Inst) String() string {
+func (in Instruction) NextNode() *Instruction {
+	return in.Next
+}
+
+func (in Instruction) String() string {
 
 	lineBegin, lineEnd, colBegin, colEnd := in.snippet()
 
@@ -25,7 +30,7 @@ func (in Inst) String() string {
 	)
 }
 
-func (in Inst) snippet() (lineBegin, colBegin, lineEnd, colEnd int) {
+func (in Instruction) snippet() (lineBegin, colBegin, lineEnd, colEnd int) {
 
 	const max_int = int(^uint(0) >> 1)
 

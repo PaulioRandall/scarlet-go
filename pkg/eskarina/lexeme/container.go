@@ -38,15 +38,6 @@ type Queue interface {
 	Take() *Lexeme
 }
 
-/* // Not Needed + requires Go v1.14+
-type Deque interface {
-	Queue
-	Stack
-	Tail() *Lexeme
-	Eject() *Lexeme
-}
-*/
-
 type Container struct {
 	size int
 	head *Lexeme
