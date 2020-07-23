@@ -18,28 +18,28 @@ func init() {
 	var _ string = lex.String()
 }
 
-func Test_Lexeme_Has(t *testing.T) {
-
-	lex := tok("1", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER)
-
-	require.True(t, lex.Has(prop.PR_TERM))
-	require.True(t, lex.Has(prop.PR_LITERAL))
-	require.True(t, lex.Has(prop.PR_NUMBER))
-
-	require.False(t, lex.Has(prop.PR_IDENTIFIER))
-}
-
 func Test_Lexeme_Is(t *testing.T) {
 
 	lex := tok("1", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER)
 
 	require.True(t, lex.Is(prop.PR_TERM))
-	require.True(t, lex.Is(prop.PR_TERM, prop.PR_LITERAL))
-	require.True(t, lex.Is(prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER))
-	require.True(t, lex.Is())
+	require.True(t, lex.Is(prop.PR_LITERAL))
+	require.True(t, lex.Is(prop.PR_NUMBER))
 
 	require.False(t, lex.Is(prop.PR_IDENTIFIER))
-	require.False(t, lex.Is(prop.PR_TERM, prop.PR_LITERAL, prop.PR_BOOL))
+}
+
+func Test_Lexeme_Has(t *testing.T) {
+
+	lex := tok("1", prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER)
+
+	require.True(t, lex.Has(prop.PR_TERM))
+	require.True(t, lex.Has(prop.PR_TERM, prop.PR_LITERAL))
+	require.True(t, lex.Has(prop.PR_TERM, prop.PR_LITERAL, prop.PR_NUMBER))
+	require.True(t, lex.Has())
+
+	require.False(t, lex.Has(prop.PR_IDENTIFIER))
+	require.False(t, lex.Has(prop.PR_TERM, prop.PR_LITERAL, prop.PR_BOOL))
 }
 
 func Test_Lexeme_Any(t *testing.T) {

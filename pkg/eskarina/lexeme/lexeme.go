@@ -7,8 +7,8 @@ import (
 )
 
 type Token interface {
-	Has(prop.Prop) bool
-	Is(...prop.Prop) bool
+	Is(prop.Prop) bool
+	Has(...prop.Prop) bool
 	Any(...prop.Prop) bool
 }
 
@@ -36,7 +36,7 @@ type Lexeme struct {
 	Prev  *Lexeme
 }
 
-func (lex Lexeme) Has(o prop.Prop) bool {
+func (lex Lexeme) Is(o prop.Prop) bool {
 
 	for _, p := range lex.Props {
 		if p == o {
@@ -47,10 +47,10 @@ func (lex Lexeme) Has(o prop.Prop) bool {
 	return false
 }
 
-func (lex Lexeme) Is(others ...prop.Prop) bool {
+func (lex Lexeme) Has(others ...prop.Prop) bool {
 
 	for _, o := range others {
-		if !lex.Has(o) {
+		if !lex.Is(o) {
 			return false
 		}
 	}
@@ -61,7 +61,7 @@ func (lex Lexeme) Is(others ...prop.Prop) bool {
 func (lex Lexeme) Any(others ...prop.Prop) bool {
 
 	for _, o := range others {
-		if lex.Has(o) {
+		if lex.Is(o) {
 			return true
 		}
 	}

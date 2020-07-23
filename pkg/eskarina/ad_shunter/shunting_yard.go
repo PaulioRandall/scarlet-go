@@ -20,13 +20,13 @@ func (shy *shuntingYard) more() bool {
 }
 
 func (shy *shuntingYard) inQueue(props ...prop.Prop) bool {
-	return shy.queue.Head().Is(props...)
+	return shy.queue.Head().Has(props...)
 }
 
 func (shy *shuntingYard) inStack(props ...prop.Prop) bool {
 
 	if shy.stack.More() {
-		return shy.stack.Top().Is(props...)
+		return shy.stack.Top().Has(props...)
 	}
 
 	return false

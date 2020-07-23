@@ -102,7 +102,7 @@ func (lr *lexReader) slice(props ...prop.Prop) *lexeme.Lexeme {
 		Col:   lr.start,
 	}
 
-	if lex.Has(prop.PR_NEWLINE) {
+	if lex.Is(prop.PR_NEWLINE) {
 		lr.line++
 		lr.col = 0
 	} else {

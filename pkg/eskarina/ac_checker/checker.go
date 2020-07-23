@@ -20,7 +20,7 @@ func (chk *checker) match(props ...prop.Prop) bool {
 		return false
 	}
 
-	return chk.lex.Is(props...)
+	return chk.lex.Has(props...)
 }
 
 func (chk *checker) accept(props ...prop.Prop) bool {
