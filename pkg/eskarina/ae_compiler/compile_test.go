@@ -1,67 +1,37 @@
 package compiler
 
-/*
 import (
-	"fmt"
 	"testing"
 
-		"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme"
-	//	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/shared/number"
-	//. "github.com/PaulioRandall/scarlet-go/pkg/eskarina/shared/codes"
-	//"github.com/PaulioRandall/scarlet-go/pkg/eskarina/shared/inst"
-	//. "github.com/PaulioRandall/scarlet-go/pkg/eskarina/shared/prop"
-	//"github.com/PaulioRandall/scarlet-go/pkg/eskarina/shared/token"
-	//"github.com/PaulioRandall/scarlet-go/pkg/eskarina/shared/testutils"
-	//"github.com/stretchr/testify/require"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/code"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/inst/insttest"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme/lextest"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/number"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 )
 
 func doTest(t *testing.T, in *lexeme.Lexeme, exps *inst.Instruction) {
-
-	acts, e := CompileAll(in)
-	if e != nil {
-		require.Nil(t, e, fmt.Sprintf("%+v", e))
-	}
-
-	testutils.RequireInstructionSlice(t, exps, acts)
+	acts := CompileAll(in)
+	insttest.Equal(t, exps, acts)
 }
 
-func doErrorTest(t *testing.T, in []token.Token) {
-	_, e := CompileAll(in)
-	require.NotNil(t, e, "Expected an error")
-}
-
-func tok(raw string, props ...Prop) token.Tok {
-	return token.Tok{
-		RawProps: props,
-		RawStr:   raw,
-	}
-}
-
-func instruction(code Code, data interface{}) inst.Instruction {
-	return inst.Inst{
-		InstCode: code,
-		InstData: data,
-		Opener:   token.Tok{},
-		Closer:   token.Tok{},
-	}
-}
-
-/*
 func Test1_1(t *testing.T) {
 
 	// WHEN compiling a spell with no arguments
 	// @Println()
-	in := []token.Token{
-		tok("(", PR_PARAMETERS),
-		tok("@Println", PR_CALLABLE, PR_SPELL),
-		tok("\n"),
-	}
+	in := lextest.Feign(
+		lextest.Tok("", prop.PR_CALLABLE),
+		lextest.Tok("@Println", prop.PR_SPELL),
+		lextest.Tok("\n"),
+	)
 
 	// THEN these are the expected instructions
-	exp := []inst.Instruction{
-		instruction(IN_VAL_PUSH, 0),
-		instruction(IN_SPELL, "Println"),
-	}
+	exp := insttest.Feign(
+		insttest.NewIn(code.CO_VAL_PUSH, 0),
+		insttest.NewIn(code.CO_SPELL, "Println"),
+	)
 
 	doTest(t, in, exp)
 }
@@ -70,19 +40,19 @@ func Test1_2(t *testing.T) {
 
 	// WHEN compiling a spell with an identifier argument
 	// @Println(x)
-	in := []token.Token{
-		tok("(", PR_PARAMETERS),
-		tok("x", PR_IDENTIFIER),
-		tok("@Println", PR_CALLABLE, PR_SPELL),
-		tok("\n"),
-	}
+	in := lextest.Feign(
+		lextest.Tok("", prop.PR_CALLABLE),
+		lextest.Tok("x", prop.PR_IDENTIFIER),
+		lextest.Tok("@Println", prop.PR_SPELL),
+		lextest.Tok("\n"),
+	)
 
 	// THEN these are the expected instructions
-	exp := []inst.Instruction{
-		instruction(IN_CTX_GET, "x"),
-		instruction(IN_VAL_PUSH, 1),
-		instruction(IN_SPELL, "Println"),
-	}
+	exp := insttest.Feign(
+		insttest.NewIn(code.CO_CTX_GET, "x"),
+		insttest.NewIn(code.CO_VAL_PUSH, 1),
+		insttest.NewIn(code.CO_SPELL, "Println"),
+	)
 
 	doTest(t, in, exp)
 }
@@ -91,24 +61,23 @@ func Test1_3(t *testing.T) {
 
 	// WHEN compiling a spell with a multiple arguments of different types
 	// @Println(x, 1, "abc")
-	in := []token.Token{
-		tok("(", PR_PARAMETERS),
-		tok("x", PR_IDENTIFIER),
-		tok("1", PR_LITERAL, PR_NUMBER),
-		tok(`"abc"`, PR_TERM, PR_LITERAL, PR_STRING),
-		tok("@Println", PR_CALLABLE, PR_SPELL),
-		tok("\n"),
-	}
+	in := lextest.Feign(
+		lextest.Tok("", prop.PR_CALLABLE),
+		lextest.Tok("x", prop.PR_IDENTIFIER),
+		lextest.Tok("1", prop.PR_LITERAL, prop.PR_NUMBER),
+		lextest.Tok(`"abc"`, prop.PR_TERM, prop.PR_LITERAL, prop.PR_STRING),
+		lextest.Tok("@Println", prop.PR_SPELL),
+		lextest.Tok("\n"),
+	)
 
 	// THEN these are the expected instructions
-	exp := []inst.Instruction{
-		instruction(IN_CTX_GET, "x"),
-		instruction(IN_VAL_PUSH, number.New("1")),
-		instruction(IN_VAL_PUSH, "abc"),
-		instruction(IN_VAL_PUSH, 3),
-		instruction(IN_SPELL, "Println"),
-	}
+	exp := insttest.Feign(
+		insttest.NewIn(code.CO_CTX_GET, "x"),
+		insttest.NewIn(code.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(code.CO_VAL_PUSH, "abc"),
+		insttest.NewIn(code.CO_VAL_PUSH, 3),
+		insttest.NewIn(code.CO_SPELL, "Println"),
+	)
 
 	doTest(t, in, exp)
 }
-*/

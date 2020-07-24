@@ -30,7 +30,7 @@ func Feign(ins ...*inst.Instruction) *inst.Instruction {
 	return first
 }
 
-func newIn(code code.Code, data interface{}) *inst.Instruction {
+func NewIn(code code.Code, data interface{}) *inst.Instruction {
 	return &inst.Instruction{
 		Code: code,
 		Data: data,

@@ -4,6 +4,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/code"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/inst"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/number"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 )
 
@@ -98,14 +99,24 @@ func literal(com *compiler) {
 		in.Data = lex.Raw == "true"
 
 	case lex.Is(prop.PR_NUMBER):
-		//in.Data = number.New(lex.Raw())
+		in.Data = number.New(lex.Raw)
 
 	case lex.Is(prop.PR_STRING):
-		in.Data = lex.Raw
+		in.Data = unquote(lex.Raw)
 
 	default:
 		com.unexpected()
 	}
 
 	com.output(in)
+}
+
+func unquote(s string) string {
+
+	if s == "" {
+		return s
+	}
+
+	i := len(s) - 1
+	return s[1:i]
 }
