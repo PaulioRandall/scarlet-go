@@ -107,8 +107,6 @@ func (c *Container) Put(in *Instruction) {
 func (c *Container) Take() *Instruction {
 
 	in := c.Get(0)
-	in.Next = nil
-
 	c.head = c.head.Next
 	c.size--
 
@@ -116,6 +114,7 @@ func (c *Container) Take() *Instruction {
 		c.head, c.tail = nil, nil
 	}
 
+	in.Next = nil
 	return in
 }
 

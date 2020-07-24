@@ -44,18 +44,18 @@ func call(com *compiler) {
 		expression(com)
 	}
 
-	lex := com.take()
+	sp := com.take()
 
 	com.output(&inst.Instruction{
 		Code:    code.CO_VAL_PUSH,
 		Data:    argCount,
-		Snippet: lex,
+		Snippet: sp,
 	})
 
 	com.output(&inst.Instruction{
 		Code:    code.CO_SPELL,
-		Data:    lex.Raw[1:],
-		Snippet: lex,
+		Data:    sp.Raw[1:],
+		Snippet: sp,
 	})
 }
 
