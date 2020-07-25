@@ -12,7 +12,7 @@ func FormatAll(first *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 func format(first *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 
 	first = trimLeadingSpace(first)
-	//first = trimSpaces(first)
+	first = trimSpaces(first)
 	first = insertSpaces(first)
 	//	first = reduceSpaces(first)
 	//	first = reduceEmptyLines(first)
@@ -103,22 +103,18 @@ func insertSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
 	return first
 }
 
-/*
-func reduceSpaces(in, out chan token.Token) {
+func reduceSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
 
-	for tk := range in {
-		if tk.Is(PR_WHITESPACE) && tk.Raw() != " " {
-			tk = newSpaceToken(tk)
+	for lex := first; lex != nil; lex = lex.Next {
+		if lex.Is(prop.PR_WHITESPACE) {
+			lex.Raw = " "
 		}
-
-		out <- tk
 	}
 
-	close(out)
+	return first
 }
 
-
-
+/*
 func reduceEmptyLines(in, out chan token.Token) {
 
 	var single, double bool
