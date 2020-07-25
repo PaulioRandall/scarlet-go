@@ -36,6 +36,71 @@ func Test1_2(t *testing.T) {
 	lextest.Equal(t, exp, act)
 }
 
+func Test2_1(t *testing.T) {
+
+	given := lextest.Feign(
+		lextest.Tok(",", prop.PR_SEPARATOR),
+	)
+
+	exp := lextest.Feign(
+		lextest.Tok(",", prop.PR_SEPARATOR),
+	)
+
+	act := insertSpaces(given)
+	lextest.Equal(t, exp, act)
+}
+
+func Test2_2(t *testing.T) {
+
+	given := lextest.Feign(
+		lextest.Tok(",", prop.PR_SEPARATOR),
+		lextest.Tok(" ", prop.PR_WHITESPACE),
+	)
+
+	exp := lextest.Feign(
+		lextest.Tok(",", prop.PR_SEPARATOR),
+		lextest.Tok(" ", prop.PR_WHITESPACE),
+	)
+
+	act := insertSpaces(given)
+	lextest.Equal(t, exp, act)
+}
+
+func Test2_3(t *testing.T) {
+
+	given := lextest.Feign(
+		lextest.Tok(",", prop.PR_SEPARATOR),
+		lextest.Tok(" ", prop.PR_WHITESPACE),
+		lextest.Tok("1", prop.PR_LITERAL),
+	)
+
+	exp := lextest.Feign(
+		lextest.Tok(",", prop.PR_SEPARATOR),
+		lextest.Tok(" ", prop.PR_WHITESPACE),
+		lextest.Tok("1", prop.PR_LITERAL),
+	)
+
+	act := insertSpaces(given)
+	lextest.Equal(t, exp, act)
+}
+
+func Test2_4(t *testing.T) {
+
+	given := lextest.Feign(
+		lextest.Lex(2, 4, ",", prop.PR_SEPARATOR),
+		lextest.Lex(2, 5, "1", prop.PR_LITERAL),
+	)
+
+	exp := lextest.Feign(
+		lextest.Lex(2, 4, ",", prop.PR_SEPARATOR),
+		lextest.Lex(2, 5, " ", prop.PR_REDUNDANT, prop.PR_WHITESPACE),
+		lextest.Lex(2, 5, "1", prop.PR_LITERAL),
+	)
+
+	act := insertSpaces(given)
+	lextest.Equal(t, exp, act)
+}
+
 /*
 func Test1_2(t *testing.T) {
 
@@ -132,42 +197,7 @@ func Test2_5(t *testing.T) {
 	testutils.RequireTokenSlice(t, exps, acts)
 }
 /*
-func Test2_6(t *testing.T) {
 
-	given := lextest.Feign(
-		lextest.Tok("1", prop.PR_LITERAL),
-		lextest.Tok(",", prop.PR_SEPARATOR),
-		lextest.Tok(" ", prop.PR_WHITESPACE),
-		)
-
-	exps := lextest.Feign(
-		lextest.Tok("1", prop.PR_LITERAL),
-		lextest.Tok(",", prop.PR_SEPARATOR),
-		lextest.Tok(" ", prop.PR_WHITESPACE),
-		)
-
-	acts := FormatAll(given, "\n")
-	testutils.RequireTokenSlice(t, exps, acts)
-}
-/*
-func Test2_7(t *testing.T) {
-
-	given := lextest.Feign(
-		lextest.Tok("1", prop.PR_LITERAL),
-		lextest.Tok(",", prop.PR_SEPARATOR),
-		lextest.Tok(" ", prop.PR_WHITESPACE),
-		lextest.Tok("\n", prop.PR_NEWLINE),
-		)
-
-	exps := lextest.Feign(
-		lextest.Tok("1", prop.PR_LITERAL),
-		lextest.Tok(",", prop.PR_SEPARATOR),
-		lextest.Tok("\n", prop.PR_NEWLINE),
-		)
-
-	acts := FormatAll(given, "\n")
-	testutils.RequireTokenSlice(t, exps, acts)
-}
 /*
 func Test2_8(t *testing.T) {
 

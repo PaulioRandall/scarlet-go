@@ -13,6 +13,7 @@ func format(first *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 
 	first = trimLeadingSpace(first)
 	//first = trimSpaces(first)
+	//first = insertSpaces(first)
 	//	first = reduceSpaces(first)
 	//	first = reduceEmptyLines(first)
 	//first = unifyLineEndings(first, lineEnding)
@@ -67,6 +68,32 @@ func trimSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
 
 	close(out)
 }
+
+*/
+func insertSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
+
+	for lex := first; lex != nil; lex = lex.Next {
+
+		if !lex.Is(prop.PR_SEPARATOR) || lex.Next == nil {
+			continue
+		}
+
+		if !lex.Next.Any(prop.PR_WHITESPACE, prop.PR_NEWLINE) {
+			lex.Append(&lexeme.Lexeme{
+				Props: []prop.Prop{
+					prop.PR_REDUNDANT,
+					prop.PR_WHITESPACE,
+				},
+				Raw:  " ",
+				Line: lex.Line,
+				Col:  lex.Col + 1,
+			})
+		}
+	}
+
+	return first
+}
+
 /*
 func reduceSpaces(in, out chan token.Token) {
 
@@ -81,18 +108,7 @@ func reduceSpaces(in, out chan token.Token) {
 	close(out)
 }
 
-func newSpaceToken(curr token.Token) token.Token {
 
-	new := token.Tok{
-		RawProps: []Prop{PR_WHITESPACE},
-		RawStr:   " ",
-	}
-
-	new.Line, new.ColBegin = curr.Begin()
-	_, new.ColEnd = curr.End()
-
-	return new
-}
 
 func reduceEmptyLines(in, out chan token.Token) {
 
