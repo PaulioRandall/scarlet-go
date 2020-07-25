@@ -48,6 +48,7 @@ func Tok(raw string, props ...prop.Prop) *lexeme.Lexeme {
 
 func Equal(t *testing.T, exp, act *lexeme.Lexeme) {
 
+	idx := 0
 	for exp != nil || act != nil {
 
 		if exp == nil && act != nil {
@@ -59,16 +60,17 @@ func Equal(t *testing.T, exp, act *lexeme.Lexeme) {
 		}
 
 		equalContent(t, exp, act, fmt.Sprintf(
-			"Unexepected Lexeme\nWant: %s\nHave: %s",
-			exp.String(), act.String(),
+			"Unexepected Lexeme[%d]\nWant: %s\nHave: %s",
+			idx, exp.String(), act.String(),
 		))
 
 		equalContent(t, exp.Prev, act.Prev, fmt.Sprintf(
-			"Unexepected Lexeme.Prev\nWant: %s\nHave: %s",
-			exp.String(), act.String(),
+			"Unexepected Lexeme[%d].Prev\nWant: %s\nHave: %s",
+			idx, exp.String(), act.String(),
 		))
 
 		exp, act = exp.Next, act.Next
+		idx++
 	}
 }
 

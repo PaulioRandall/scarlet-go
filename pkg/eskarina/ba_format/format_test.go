@@ -268,15 +268,14 @@ func Test6_1(t *testing.T) {
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("\r\n", prop.PR_NEWLINE),
+		lextest.Tok("\n", prop.PR_NEWLINE),
 	)
 
-	act := reduceSpaces(given)
+	act := unifyLineEndings(given, "\n")
 	lextest.Equal(t, exp, act)
 }
 
-/*
-func Test2_9(t *testing.T) {
+func TestAll(t *testing.T) {
 
 	// " @Println ( 1 , 1 , \n 1 ) \n "
 	given := lextest.Feign(
@@ -294,6 +293,8 @@ func Test2_9(t *testing.T) {
 		lextest.Tok(",", prop.PR_SEPARATOR),
 		lextest.Tok(" ", prop.PR_WHITESPACE),
 		lextest.Tok("\n", prop.PR_NEWLINE),
+		lextest.Tok("\n", prop.PR_NEWLINE),
+		lextest.Tok("\n", prop.PR_NEWLINE),
 		lextest.Tok(" ", prop.PR_WHITESPACE),
 		lextest.Tok("1", prop.PR_LITERAL),
 		lextest.Tok(" ", prop.PR_WHITESPACE),
@@ -301,10 +302,10 @@ func Test2_9(t *testing.T) {
 		lextest.Tok(" ", prop.PR_WHITESPACE),
 		lextest.Tok("\n", prop.PR_NEWLINE),
 		lextest.Tok(" ", prop.PR_WHITESPACE),
-		)
+	)
 
 	// "@Println(1, 1,\n1)\n"
-	exps := lextest.Feign(
+	exp := lextest.Feign(
 		lextest.Tok("@Println", prop.PR_SPELL),
 		lextest.Tok("(", prop.PR_OPENER),
 		lextest.Tok("1", prop.PR_LITERAL),
@@ -313,13 +314,12 @@ func Test2_9(t *testing.T) {
 		lextest.Tok("1", prop.PR_LITERAL),
 		lextest.Tok(",", prop.PR_SEPARATOR),
 		lextest.Tok("\n", prop.PR_NEWLINE),
+		lextest.Tok("\n", prop.PR_NEWLINE),
 		lextest.Tok("1", prop.PR_LITERAL),
 		lextest.Tok(")", prop.PR_CLOSER),
 		lextest.Tok("\n", prop.PR_NEWLINE),
-		)
+	)
 
-	acts := FormatAll(given, "\n")
-	testutils.RequireTokenSlice(t, exps, acts)
+	act := FormatAll(given, "\n")
+	lextest.Equal(t, exp, act)
 }
-
-*/

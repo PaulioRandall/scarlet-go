@@ -5,83 +5,88 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 )
 
-func FormatAll(first *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
-	return format(first, lineEnding)
+func FormatAll(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
+	return format(head, lineEnding)
 }
 
-func format(first *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
+func format(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 
-	first = trimLeadingSpace(first)
-	first = trimSpaces(first)
-	first = insertSpaces(first)
-	first = reduceSpaces(first)
-	first = reduceEmpties(first)
-	//first = unifyLineEndings(first, lineEnding)
+	head = trimLeadingSpace(head)
+	head = trimSpaces(head)
+	head = insertSpaces(head)
+	head = reduceSpaces(head)
+	head = reduceEmpties(head)
+	head = unifyLineEndings(head, lineEnding)
 
 	// 7: Align comments for consecutive lines with comments
 
-	return first
+	return head
 }
 
-func trimLeadingSpace(first *lexeme.Lexeme) *lexeme.Lexeme {
+func trimLeadingSpace(head *lexeme.Lexeme) *lexeme.Lexeme {
 
-	for first != nil && first.Is(prop.PR_WHITESPACE) {
-		next := first.Next
-		first.Remove()
-		first = next
+	for head != nil && head.Is(prop.PR_WHITESPACE) {
+		next := head.Next
+		head.Remove()
+		head = next
 	}
 
-	return first
+	return head
 }
 
-func trimSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
+func trimSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
-	remove := func(lex *lexeme.Lexeme) {
+	remove := func(lex *lexeme.Lexeme) *lexeme.Lexeme {
 
-		if lex == first {
-			first = lex.Next
+		if lex == head {
+			head = lex.Next
 		}
 
+		next := lex.Next
 		lex.Remove()
+		return next
 	}
 
 	nextIs := func(curr *lexeme.Lexeme, p prop.Prop) bool {
 		return curr.Next != nil && curr.Next.Is(p)
 	}
 
-	for curr := first; curr != nil; curr = curr.Next {
+	for curr := head; curr != nil && curr.Next != nil; {
 
-		if curr.Next == nil {
-			break
-		}
+		var next *lexeme.Lexeme
 
 		switch {
 		case curr.Is(prop.PR_NEWLINE) && nextIs(curr, prop.PR_WHITESPACE):
-			remove(curr.Next)
+			next = remove(curr.Next)
 
 		case curr.Is(prop.PR_WHITESPACE) && nextIs(curr, prop.PR_NEWLINE):
-			remove(curr)
+			next = remove(curr)
 
 		case curr.Is(prop.PR_SPELL) && nextIs(curr, prop.PR_WHITESPACE):
-			remove(curr.Next)
+			next = remove(curr.Next)
 
 		case curr.Is(prop.PR_OPENER) && nextIs(curr, prop.PR_WHITESPACE):
-			remove(curr.Next)
+			next = remove(curr.Next)
 
 		case curr.Is(prop.PR_WHITESPACE) && nextIs(curr, prop.PR_SEPARATOR):
-			remove(curr)
+			next = remove(curr)
 
 		case curr.Is(prop.PR_WHITESPACE) && nextIs(curr, prop.PR_CLOSER):
-			remove(curr)
+			next = remove(curr)
+
+		default:
+			next = curr.Next
 		}
+
+		curr = next
 	}
 
-	return first
+	return head
 }
 
-func insertSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
+func insertSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
-	for lex := first; lex != nil; lex = lex.Next {
+	for lex := head; lex != nil; lex = lex.Next {
 
 		if !lex.Is(prop.PR_SEPARATOR) || lex.Next == nil {
 			continue
@@ -100,25 +105,25 @@ func insertSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
 		}
 	}
 
-	return first
+	return head
 }
 
-func reduceSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
+func reduceSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
-	for lex := first; lex != nil; lex = lex.Next {
+	for lex := head; lex != nil; lex = lex.Next {
 		if lex.Is(prop.PR_WHITESPACE) {
 			lex.Raw = " "
 		}
 	}
 
-	return first
+	return head
 }
 
-func reduceEmpties(first *lexeme.Lexeme) *lexeme.Lexeme {
+func reduceEmpties(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	var single, double bool
 
-	for lex := first; lex != nil; lex = lex.Next {
+	for lex := head; lex != nil; lex = lex.Next {
 
 		switch {
 		case !lex.Is(prop.PR_NEWLINE):
@@ -131,41 +136,24 @@ func reduceEmpties(first *lexeme.Lexeme) *lexeme.Lexeme {
 			double = true
 
 		default:
-			if lex == first {
-				first = lex.Next
+			if lex == head {
+				head = lex.Next
 			}
 
 			lex.Remove()
 		}
 	}
 
-	return first
+	return head
 }
 
-/*
-func unifyLineEndings(in, out chan token.Token, lineEnding string) {
+func unifyLineEndings(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 
-	for tk := range in {
-		if tk.Is(PR_NEWLINE) && tk.Raw() != lineEnding {
-			tk = newlineToken(tk, lineEnding)
+	for lex := head; lex != nil; lex = lex.Next {
+		if lex.Is(prop.PR_NEWLINE) {
+			lex.Raw = lineEnding
 		}
-
-		out <- tk
 	}
 
-	close(out)
+	return head
 }
-
-func newlineToken(curr token.Token, ending string) token.Token {
-
-	new := token.Tok{
-		RawProps: curr.Props(),
-		RawStr:   ending,
-	}
-
-	new.Line, new.ColBegin = curr.Begin()
-	_, new.ColEnd = curr.End()
-
-	return new
-}
-*/
