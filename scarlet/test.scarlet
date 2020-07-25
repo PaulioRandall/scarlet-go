@@ -1,13 +1,17 @@
 
+
+
+
    # Comment
 # A comment
 @Println("Hello, Scarlet!")
+
+
 
 @Set("a", true)    # Comment
 @Set("b", 1)  # Comment
 @Set("c", "abc")
 @Set("d", a)
-
 
 
 
@@ -20,6 +24,15 @@
    d,
        )
 
+
+
 @Del("d")
 
+
+
 @Exit(0)
+
+
+
+
+

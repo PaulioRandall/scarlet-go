@@ -1,6 +1,8 @@
 package format
 
 import (
+	"strings"
+
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/prop"
 )
@@ -15,10 +17,11 @@ func format(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 	head = trimSpaces(head)
 	head = insertSpaces(head)
 	head = reduceSpaces(head)
-	head = reduceEmpties(head)
+	head = trimEmptyLines(head)
+	head = reduceEmptyLines(head)
 	head = unifyLineEndings(head, lineEnding)
-
-	// 7: Align comments for consecutive lines with comments
+	head = indentNests(head)
+	//head = alignComments(head)
 
 	return head
 }
@@ -119,11 +122,22 @@ func reduceSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 	return head
 }
 
-func reduceEmpties(head *lexeme.Lexeme) *lexeme.Lexeme {
+func trimEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
+
+	for head != nil && head.Is(prop.PR_NEWLINE) {
+		next := head.Next
+		head.Remove()
+		head = next
+	}
+
+	return head
+}
+
+func reduceEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	var single, double bool
 
-	for lex := head; lex != nil; lex = lex.Next {
+	for lex := head; lex != nil; {
 
 		switch {
 		case !lex.Is(prop.PR_NEWLINE):
@@ -136,12 +150,13 @@ func reduceEmpties(head *lexeme.Lexeme) *lexeme.Lexeme {
 			double = true
 
 		default:
-			if lex == head {
-				head = lex.Next
-			}
-
+			next := lex.Next
 			lex.Remove()
+			lex = next
+			continue
 		}
+
+		lex = lex.Next
 	}
 
 	return head
@@ -152,6 +167,38 @@ func unifyLineEndings(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 	for lex := head; lex != nil; lex = lex.Next {
 		if lex.Is(prop.PR_NEWLINE) {
 			lex.Raw = lineEnding
+		}
+	}
+
+	return head
+}
+
+func indentNests(head *lexeme.Lexeme) *lexeme.Lexeme {
+
+	indent := 0
+
+	for lex := head; lex != nil; lex = lex.Next {
+
+		switch {
+		case lex.Is(prop.PR_OPENER):
+			indent++
+
+		case lex.Is(prop.PR_CLOSER):
+			indent--
+
+		case !lex.Is(prop.PR_NEWLINE) || lex.Next == nil:
+
+		case lex.Next.Is(prop.PR_NEWLINE):
+
+		case lex.Next.Is(prop.PR_CLOSER):
+			indent--
+
+		case indent > 0 && lex.Is(prop.PR_NEWLINE):
+			lex.Append(&lexeme.Lexeme{
+				Props: []prop.Prop{prop.PR_REDUNDANT, prop.PR_WHITESPACE},
+				Raw:   strings.Repeat("\t", indent),
+				Line:  lex.Line + 1,
+			})
 		}
 	}
 

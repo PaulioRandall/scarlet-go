@@ -236,7 +236,7 @@ func Test5_1(t *testing.T) {
 		lextest.Tok("1", prop.PR_LITERAL),
 	)
 
-	act := reduceEmpties(given)
+	act := reduceEmptyLines(given)
 	lextest.Equal(t, exp, act)
 }
 
@@ -257,7 +257,7 @@ func Test5_2(t *testing.T) {
 		lextest.Tok("1", prop.PR_LITERAL),
 	)
 
-	act := reduceEmpties(given)
+	act := reduceEmptyLines(given)
 	lextest.Equal(t, exp, act)
 }
 
@@ -315,6 +315,7 @@ func TestAll(t *testing.T) {
 		lextest.Tok(",", prop.PR_SEPARATOR),
 		lextest.Tok("\n", prop.PR_NEWLINE),
 		lextest.Tok("\n", prop.PR_NEWLINE),
+		lextest.Lex(1, 0, "\t", prop.PR_REDUNDANT, prop.PR_WHITESPACE),
 		lextest.Tok("1", prop.PR_LITERAL),
 		lextest.Tok(")", prop.PR_CLOSER),
 		lextest.Tok("\n", prop.PR_NEWLINE),

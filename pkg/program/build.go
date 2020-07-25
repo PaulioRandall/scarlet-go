@@ -14,7 +14,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ac_checker"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ad_shunter"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ae_compiler"
-	//	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/z_format"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ba_format"
 )
 
 func printBuildHelp() {
@@ -44,32 +44,32 @@ func buildFromConfig(c config) (*inst.Instruction, error) {
 		return nil, NewGenErr(e)
 	}
 
-	first, e := scanAll(c, string(s))
-	if e != nil {
-		return nil, e
-	}
-	/*
-		e = formatAll(c, tks)
-		if e != nil {
-			return nil, e
-		}
-	*/
-	first, e = sanitiseAll(c, first)
+	head, e := scanAll(c, string(s))
 	if e != nil {
 		return nil, e
 	}
 
-	e = checker.CheckAll(first)
+	e = formatAll(c, head) // Must be done last
 	if e != nil {
 		return nil, e
 	}
 
-	first, e = shuntAll(c, first)
+	head, e = sanitiseAll(c, head)
 	if e != nil {
 		return nil, e
 	}
 
-	ins, e := compileAll(c, first)
+	e = checker.CheckAll(head)
+	if e != nil {
+		return nil, e
+	}
+
+	head, e = shuntAll(c, head)
+	if e != nil {
+		return nil, e
+	}
+
+	ins, e := compileAll(c, head)
 	if e != nil {
 		return nil, e
 	}
@@ -79,27 +79,27 @@ func buildFromConfig(c config) (*inst.Instruction, error) {
 
 func scanAll(c config, s string) (*lexeme.Lexeme, error) {
 
-	first, e := scanner.ScanStr(s)
+	head, e := scanner.ScanStr(s)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	e = logPhase(c, ".scanned", first)
+	e = logPhase(c, ".scanned", head)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	return first, nil
+	return head, nil
 }
 
-/*
-func formatAll(c config, first *lexeme.Lexeme) error {
+func formatAll(c config, head *lexeme.Lexeme) error {
 
 	if c.nofmt {
 		return nil
 	}
 
-	first = format.FormatAll(first, c.lineEndings)
+	head = lexeme.CopyAll(head)
+	head = format.FormatAll(head, c.lineEndings)
 
 	f, e := os.Create(c.script)
 	if e != nil {
@@ -107,12 +107,12 @@ func formatAll(c config, first *lexeme.Lexeme) error {
 	}
 	defer f.Close()
 
-	return writeTokens(f, tks)
+	return writeLexemes(f, head)
 }
-*/
-func writeTokens(w io.Writer, first *lexeme.Lexeme) error {
 
-	for lex := first; lex != nil; lex = lex.Next {
+func writeLexemes(w io.Writer, head *lexeme.Lexeme) error {
+
+	for lex := head; lex != nil; lex = lex.Next {
 
 		b := []byte(lex.Raw)
 		_, e := w.Write(b)
@@ -125,33 +125,33 @@ func writeTokens(w io.Writer, first *lexeme.Lexeme) error {
 	return nil
 }
 
-func sanitiseAll(c config, first *lexeme.Lexeme) (*lexeme.Lexeme, error) {
+func sanitiseAll(c config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 
-	first = sanitiser.SanitiseAll(first)
+	head = sanitiser.SanitiseAll(head)
 
-	e := logPhase(c, ".sanitised", first)
+	e := logPhase(c, ".sanitised", head)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	return first, nil
+	return head, nil
 }
 
-func shuntAll(c config, first *lexeme.Lexeme) (*lexeme.Lexeme, error) {
+func shuntAll(c config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 
-	first = shunter.ShuntAll(first)
+	head = shunter.ShuntAll(head)
 
-	e := logPhase(c, ".shunted", first)
+	e := logPhase(c, ".shunted", head)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	return first, nil
+	return head, nil
 }
 
-func compileAll(c config, first *lexeme.Lexeme) (*inst.Instruction, error) {
+func compileAll(c config, head *lexeme.Lexeme) (*inst.Instruction, error) {
 
-	ins := compiler.CompileAll(first)
+	ins := compiler.CompileAll(head)
 
 	if !c.log {
 		return ins, nil
@@ -167,17 +167,17 @@ func compileAll(c config, first *lexeme.Lexeme) (*inst.Instruction, error) {
 	return ins, nil
 }
 
-func logPhase(c config, ext string, first *lexeme.Lexeme) error {
+func logPhase(c config, ext string, head *lexeme.Lexeme) error {
 
 	if !c.log {
 		return nil
 	}
 
 	f := c.logFilename(ext)
-	return writeLexemeFile(f, first)
+	return writeLexemeFile(f, head)
 }
 
-func writeLexemeFile(filename string, first *lexeme.Lexeme) error {
+func writeLexemeFile(filename string, head *lexeme.Lexeme) error {
 
 	f, e := os.Create(filename)
 	if e != nil {
@@ -185,7 +185,7 @@ func writeLexemeFile(filename string, first *lexeme.Lexeme) error {
 	}
 
 	defer f.Close()
-	return lexeme.PrintAll(f, first)
+	return lexeme.PrintAll(f, head)
 }
 
 /*
