@@ -72,13 +72,12 @@ func compileAll(c config, head *lexeme.Lexeme) (*inst.Instruction, error) {
 		return ins, nil
 	}
 
-	/*
-		f := c.logFilename(".compiled")
-		e := writeInstPhaseFile(f, ins)
-		if e != nil {
-			return nil, NewGenErr(e)
-		}
-	*/
+	f := c.logFilename(".compiled")
+	e := writeInstPhaseFile(f, ins)
+	if e != nil {
+		return nil, NewGenErr(e)
+	}
+
 	return ins, nil
 }
 
@@ -136,8 +135,7 @@ func writeLexemeFile(filename string, head *lexeme.Lexeme) error {
 	return lexeme.PrintAll(f, head)
 }
 
-/*
-func writeInstPhaseFile(filename string, ins *inst.Instruction) error {
+func writeInstPhaseFile(filename string, head *inst.Instruction) error {
 
 	f, e := os.Create(filename)
 	if e != nil {
@@ -145,6 +143,5 @@ func writeInstPhaseFile(filename string, ins *inst.Instruction) error {
 	}
 
 	defer f.Close()
-	return inst.PrintAll(f, ins)
+	return inst.PrintAll(f, head)
 }
-*/
