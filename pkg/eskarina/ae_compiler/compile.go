@@ -21,17 +21,20 @@ func CompileAll(head *lexeme.Lexeme) *inst.Instruction {
 
 func compile(com *compiler) {
 
-	defer com.reject() // GEN_TERMINATOR, now redundant
+	for com.more() {
 
-	switch {
-	case com.empty():
-		com.unexpected()
+		switch {
+		case com.empty():
+			com.unexpected()
 
-	case com.has(prop.PR_CALLABLE):
-		call(com)
+		case com.has(prop.PR_CALLABLE):
+			call(com)
 
-	default:
-		com.unexpected()
+		default:
+			com.unexpected()
+		}
+
+		com.reject() // GEN_TERMINATOR, now redundant
 	}
 }
 

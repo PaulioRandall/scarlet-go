@@ -6,15 +6,15 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/token"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/a_scan"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/b_sanitise"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/c_check"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/d_shunt"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/e_compile"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/z_format"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/aa_scanner"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ab_sanitiser"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ac_checker"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ad_shunter"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ae_compiler"
+	//	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/z_format"
 )
 
 func printBuildHelp() {
@@ -37,39 +37,39 @@ Options:
 	fmt.Println(s)
 }
 
-func buildFromConfig(c config) ([]inst.Instruction, error) {
+func buildFromConfig(c config) (*inst.Instruction, error) {
 
 	s, e := ioutil.ReadFile(c.script)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	tks, e := scanAll(c, string(s))
+	first, e := scanAll(c, string(s))
+	if e != nil {
+		return nil, e
+	}
+	/*
+		e = formatAll(c, tks)
+		if e != nil {
+			return nil, e
+		}
+	*/
+	first, e = sanitiseAll(c, first)
 	if e != nil {
 		return nil, e
 	}
 
-	e = formatAll(c, tks)
+	e = checker.CheckAll(first)
 	if e != nil {
 		return nil, e
 	}
 
-	tks, e = sanitiseAll(c, tks)
+	first, e = shuntAll(c, first)
 	if e != nil {
 		return nil, e
 	}
 
-	tks, e = check.CheckAll(tks)
-	if e != nil {
-		return nil, e
-	}
-
-	tks, e = shuntAll(c, tks)
-	if e != nil {
-		return nil, e
-	}
-
-	ins, e := compileAll(c, tks)
+	ins, e := compileAll(c, first)
 	if e != nil {
 		return nil, e
 	}
@@ -77,28 +77,29 @@ func buildFromConfig(c config) ([]inst.Instruction, error) {
 	return ins, nil
 }
 
-func scanAll(c config, s string) ([]token.Token, error) {
+func scanAll(c config, s string) (*lexeme.Lexeme, error) {
 
-	tks, e := scan.ScanAll(s)
+	first, e := scanner.ScanStr(s)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	e = logPhase(c, ".scanned", tks)
+	e = logPhase(c, ".scanned", first)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	return tks, nil
+	return first, nil
 }
 
-func formatAll(c config, tks []token.Token) error {
+/*
+func formatAll(c config, first *lexeme.Lexeme) error {
 
 	if c.nofmt {
 		return nil
 	}
 
-	tks = format.FormatAll(tks, c.lineEndings)
+	first = format.FormatAll(first, c.lineEndings)
 
 	f, e := os.Create(c.script)
 	if e != nil {
@@ -108,12 +109,12 @@ func formatAll(c config, tks []token.Token) error {
 
 	return writeTokens(f, tks)
 }
+*/
+func writeTokens(w io.Writer, first *lexeme.Lexeme) error {
 
-func writeTokens(w io.Writer, tks []token.Token) error {
+	for lex := first; lex != nil; lex = lex.Next {
 
-	for _, tk := range tks {
-
-		b := []byte(tk.Raw())
+		b := []byte(lex.Raw)
 		_, e := w.Write(b)
 
 		if e != nil {
@@ -124,69 +125,59 @@ func writeTokens(w io.Writer, tks []token.Token) error {
 	return nil
 }
 
-func sanitiseAll(c config, tks []token.Token) ([]token.Token, error) {
+func sanitiseAll(c config, first *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 
-	var e error
-	tks, e = sanitise.SanitiseAll(tks)
+	first = sanitiser.SanitiseAll(first)
+
+	e := logPhase(c, ".sanitised", first)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	e = logPhase(c, ".sanitised", tks)
-	if e != nil {
-		return nil, NewGenErr(e)
-	}
-
-	return tks, nil
+	return first, nil
 }
 
-func shuntAll(c config, tks []token.Token) ([]token.Token, error) {
+func shuntAll(c config, first *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 
-	var e error
-	tks, e = shunt.ShuntAll(tks)
+	first = shunter.ShuntAll(first)
+
+	e := logPhase(c, ".shunted", first)
 	if e != nil {
 		return nil, NewGenErr(e)
 	}
 
-	e = logPhase(c, ".shunted", tks)
-	if e != nil {
-		return nil, NewGenErr(e)
-	}
-
-	return tks, nil
+	return first, nil
 }
 
-func compileAll(c config, tks []token.Token) ([]inst.Instruction, error) {
+func compileAll(c config, first *lexeme.Lexeme) (*inst.Instruction, error) {
 
-	ins, e := compile.CompileAll(tks)
-	if e != nil {
-		return nil, NewGenErr(e)
-	}
+	ins := compiler.CompileAll(first)
 
 	if !c.log {
 		return ins, nil
 	}
 
-	f := c.logFilename(".compiled")
-	e = writeInstPhaseFile(f, ins)
-	if e != nil {
-		return nil, NewGenErr(e)
-	}
-
+	/*
+		f := c.logFilename(".compiled")
+		e := writeInstPhaseFile(f, ins)
+		if e != nil {
+			return nil, NewGenErr(e)
+		}
+	*/
 	return ins, nil
 }
 
-func logPhase(c config, ext string, tks []token.Token) error {
+func logPhase(c config, ext string, first *lexeme.Lexeme) error {
 
 	if !c.log {
 		return nil
 	}
 
 	f := c.logFilename(ext)
-	return writeTokenPhaseFile(f, tks)
+	return writeLexemeFile(f, first)
 }
 
-func writeTokenPhaseFile(filename string, tks []token.Token) error {
+func writeLexemeFile(filename string, first *lexeme.Lexeme) error {
 
 	f, e := os.Create(filename)
 	if e != nil {
@@ -194,10 +185,11 @@ func writeTokenPhaseFile(filename string, tks []token.Token) error {
 	}
 
 	defer f.Close()
-	return token.PrintAll(f, tks)
+	return lexeme.PrintAll(f, first)
 }
 
-func writeInstPhaseFile(filename string, ins []inst.Instruction) error {
+/*
+func writeInstPhaseFile(filename string, ins *inst.Instruction) error {
 
 	f, e := os.Create(filename)
 	if e != nil {
@@ -207,3 +199,4 @@ func writeInstPhaseFile(filename string, ins []inst.Instruction) error {
 	defer f.Close()
 	return inst.PrintAll(f, ins)
 }
+*/

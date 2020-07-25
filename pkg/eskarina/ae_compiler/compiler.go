@@ -11,6 +11,10 @@ type compiler struct {
 	out   inst.Queue
 }
 
+func (com *compiler) more() bool {
+	return com.input.More()
+}
+
 func (com *compiler) empty() bool {
 	return com.input.Empty()
 }

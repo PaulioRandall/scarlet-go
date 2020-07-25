@@ -3,7 +3,7 @@ package program
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/inst"
 )
 
 type ScarletError struct {
@@ -62,7 +62,7 @@ func Execute(args Arguments) error {
 	return nil
 }
 
-func build(args Arguments) ([]inst.Instruction, error) {
+func build(args Arguments) (*inst.Instruction, error) {
 
 	c := config{}
 	e := captureConfig(&c, args)

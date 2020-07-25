@@ -3,8 +3,8 @@ package program
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/f_runtime"
-	"github.com/PaulioRandall/scarlet-go/pkg/esmerelda/shared/inst"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/af_runtime"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/inst"
 )
 
 func printRunHelp() {
@@ -27,7 +27,7 @@ Options:
 	fmt.Println(s)
 }
 
-func run(ins []inst.Instruction) error {
+func run(ins *inst.Instruction) error {
 
 	rt := runtime.New(ins)
 	rt.Start()

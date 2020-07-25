@@ -54,6 +54,15 @@ func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {
 
 	case lr.isDigit():
 		return numberLiteral(lr)
+
+	case lr.accept('('):
+		return lr.slice(prop.PR_DELIMITER, prop.PR_PARENTHESIS, prop.PR_OPENER), nil
+
+	case lr.accept(')'):
+		return lr.slice(prop.PR_DELIMITER, prop.PR_PARENTHESIS, prop.PR_CLOSER), nil
+
+	case lr.accept(','):
+		return lr.slice(prop.PR_DELIMITER, prop.PR_SEPARATOR), nil
 	}
 
 	return nil, perror.New(
