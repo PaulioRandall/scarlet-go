@@ -124,10 +124,31 @@ func reduceSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 func trimEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 
-	for head != nil && head.Is(prop.PR_NEWLINE) {
-		next := head.Next
-		head.Remove()
-		head = next
+	if head == nil {
+		return nil
+	}
+
+	if head.Is(prop.PR_NEWLINE) {
+		for head.Next != nil && head.Next.Is(prop.PR_NEWLINE) {
+			head.Next.Remove()
+		}
+	}
+
+	if head == nil {
+		return nil
+	}
+
+	tail := head
+	for lex := head; lex != nil; lex = lex.Next {
+		tail = lex
+	}
+
+	if !tail.Is(prop.PR_NEWLINE) {
+		return head
+	}
+
+	for tail.Prev != nil && tail.Prev.Is(prop.PR_NEWLINE) {
+		tail.Prev.Remove()
 	}
 
 	return head
@@ -168,6 +189,22 @@ func unifyLineEndings(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 		if lex.Is(prop.PR_NEWLINE) {
 			lex.Raw = lineEnding
 		}
+	}
+
+	tail := head
+	for lex := head; lex != nil; lex = lex.Next {
+		tail = lex
+	}
+
+	if tail != nil && !tail.Is(prop.PR_NEWLINE) {
+		tail.Append(&lexeme.Lexeme{
+			Props: []prop.Prop{
+				prop.PR_TERMINATOR,
+				prop.PR_NEWLINE,
+			},
+			Raw:  lineEnding,
+			Line: tail.Line,
+		})
 	}
 
 	return head
