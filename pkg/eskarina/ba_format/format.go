@@ -14,8 +14,8 @@ func format(first *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 	first = trimLeadingSpace(first)
 	first = trimSpaces(first)
 	first = insertSpaces(first)
-	//	first = reduceSpaces(first)
-	//	first = reduceEmptyLines(first)
+	first = reduceSpaces(first)
+	first = reduceEmpties(first)
 	//first = unifyLineEndings(first, lineEnding)
 
 	// 7: Align comments for consecutive lines with comments
@@ -114,15 +114,14 @@ func reduceSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
 	return first
 }
 
-/*
-func reduceEmptyLines(in, out chan token.Token) {
+func reduceEmpties(first *lexeme.Lexeme) *lexeme.Lexeme {
 
 	var single, double bool
 
-	for tk := range in {
+	for lex := first; lex != nil; lex = lex.Next {
 
 		switch {
-		case !tk.Is(PR_NEWLINE):
+		case !lex.Is(prop.PR_NEWLINE):
 			single, double = false, false
 
 		case !single:
@@ -132,15 +131,18 @@ func reduceEmptyLines(in, out chan token.Token) {
 			double = true
 
 		default:
-			continue
-		}
+			if lex == first {
+				first = lex.Next
+			}
 
-		out <- tk
+			lex.Remove()
+		}
 	}
 
-	close(out)
+	return first
 }
 
+/*
 func unifyLineEndings(in, out chan token.Token, lineEnding string) {
 
 	for tk := range in {
