@@ -13,7 +13,7 @@ func format(first *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 
 	first = trimLeadingSpace(first)
 	//first = trimSpaces(first)
-	//first = insertSpaces(first)
+	first = insertSpaces(first)
 	//	first = reduceSpaces(first)
 	//	first = reduceEmptyLines(first)
 	//first = unifyLineEndings(first, lineEnding)
@@ -34,42 +34,51 @@ func trimLeadingSpace(first *lexeme.Lexeme) *lexeme.Lexeme {
 	return first
 }
 
-/*
 func trimSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
 
+	remove := func(lex *lexeme.Lexeme) {
 
-	for lex := first; lex != nil; lex = lex.Next {
+		if lex == first {
+			first = lex.Next
+		}
 
-		if b == nil {
-			out <- a
+		lex.Remove()
+	}
+
+	nextIs := func(curr *lexeme.Lexeme, p prop.Prop) bool {
+		return curr.Next != nil && curr.Next.Is(p)
+	}
+
+	for curr := first; curr != nil; curr = curr.Next {
+
+		if curr.Next == nil {
 			break
 		}
 
 		switch {
-		case a.Is(PR_NEWLINE) && b.Is(PR_WHITESPACE):
-		case a.Is(PR_WHITESPACE) && b.Is(PR_NEWLINE):
-			a = b
-		case a.Is(PR_SPELL) && b.Is(PR_WHITESPACE):
-		case a.Is(PR_OPENER) && b.Is(PR_WHITESPACE):
-		case a.Is(PR_WHITESPACE) && b.Is(PR_SEPARATOR):
-			a = b
-		case a.Is(PR_SEPARATOR) && !b.Any(PR_WHITESPACE, PR_NEWLINE):
-			out <- a
-			out <- newSpaceToken(b)
-			a = b
-		case a.Is(PR_WHITESPACE) && b.Is(PR_CLOSER):
-			a = b
+		case curr.Is(prop.PR_NEWLINE) && nextIs(curr, prop.PR_WHITESPACE):
+			remove(curr.Next)
 
-		default:
-			out <- a
-			a = b
+		case curr.Is(prop.PR_WHITESPACE) && nextIs(curr, prop.PR_NEWLINE):
+			remove(curr)
+
+		case curr.Is(prop.PR_SPELL) && nextIs(curr, prop.PR_WHITESPACE):
+			remove(curr.Next)
+
+		case curr.Is(prop.PR_OPENER) && nextIs(curr, prop.PR_WHITESPACE):
+			remove(curr.Next)
+
+		case curr.Is(prop.PR_WHITESPACE) && nextIs(curr, prop.PR_SEPARATOR):
+			remove(curr)
+
+		case curr.Is(prop.PR_WHITESPACE) && nextIs(curr, prop.PR_CLOSER):
+			remove(curr)
 		}
 	}
 
-	close(out)
+	return first
 }
 
-*/
 func insertSpaces(first *lexeme.Lexeme) *lexeme.Lexeme {
 
 	for lex := first; lex != nil; lex = lex.Next {
