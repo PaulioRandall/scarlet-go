@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/cmd"
+	"github.com/PaulioRandall/scarlet-go/eskarina/cmd"
 )
 
 func main() {
