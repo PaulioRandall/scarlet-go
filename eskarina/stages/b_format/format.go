@@ -240,3 +240,8 @@ func indentNests(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	return head
 }
+
+func alignComments(head *lexeme.Lexeme) *lexeme.Lexeme {
+
+	return head
+}
