@@ -1,4 +1,4 @@
-package program
+package cmd
 
 import (
 	"bufio"
@@ -37,15 +37,13 @@ func captureConfig(c *config, args Arguments) error {
 	}
 
 	if args.empty() {
-		e := fmt.Errorf("Expected script filename")
-		return NewGenErr(e)
+		return fmt.Errorf("Expected script filename")
 	}
 
 	c.script = args.take()
 
 	if args.more() {
-		e := fmt.Errorf("Unexpected argument %q", args.peek())
-		return NewGenErr(e)
+		return fmt.Errorf("Unexpected argument %q", args.peek())
 	}
 
 	return identifyLineEndings(c)
@@ -61,8 +59,7 @@ func optionArg(c *config, args Arguments) error {
 		return logOption(c, args)
 
 	default:
-		e := fmt.Errorf("Unexpected option %q", args.peek())
-		return NewGenErr(e)
+		return fmt.Errorf("Unexpected option %q", args.peek())
 	}
 
 	return nil
@@ -76,8 +73,7 @@ func nofmtOption(c *config, args Arguments) {
 func logOption(c *config, args Arguments) error {
 
 	if args.count() < 2 {
-		e := fmt.Errorf("Missing %q folder name", args.peek())
-		return NewGenErr(e)
+		return fmt.Errorf("Missing %q folder name", args.peek())
 	}
 
 	c.log = true

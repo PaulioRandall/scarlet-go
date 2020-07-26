@@ -4,55 +4,28 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/PaulioRandall/scarlet-go/pkg/program"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/cmd"
 )
 
 func main() {
 
 	if len(os.Args) == 1 {
 		// Dev run `./godo run`
-		args := program.NewArgs([]string{"run", "test.scarlet"})
-		e := program.Execute(args)
-		checkError(e)
-
-		todo()
+		args := cmd.NewArgs([]string{"run", "test.scarlet"})
+		eskarina(args)
 		return
 	}
 
-	args := program.NewArgs(os.Args[1:])
-	e := program.Execute(args)
-	checkError(e)
+	args := cmd.NewArgs(os.Args[1:])
+	eskarina(args)
 }
 
-func checkError(e error) {
+func eskarina(args cmd.Arguments) {
 
-	if e == nil {
-		return
+	exitCode, e := cmd.Execute(args)
+	if e != nil {
+		fmt.Printf("[ERROR] %d\n%s\n", 1, e.Error())
 	}
 
-	fmt.Println(e.Error())
-
-	if se, ok := e.(program.ScarletError); ok {
-		os.Exit(se.ExitCode)
-	}
-
-	os.Exit(1)
-}
-
-func todo() {
-	println()
-	println()
-	println("TODO:")
-	println("[Next] Create formatting tool")
-	println("[Next] Add scanning for complex expressions")
-	println()
-	println("[Plan]")
-	println("- a_scan:     scans in tokens including redundant ones")
-	println("- b_format:   formats tokens following a common style")
-	println("- b_sanitise: removes redundant tokens")
-	println("- c_check:    checks the token sequence follows language rules")
-	println("- d_shunt:    converts from infix to postfix notation")
-	println("- e_compile:  converts the tokens into instructions")
-	println("- f_runtime:  executes an instruction list")
-	println("- ...")
+	os.Exit(exitCode)
 }

@@ -1,4 +1,4 @@
-package program
+package cmd
 
 type Arguments struct {
 	list *[]string

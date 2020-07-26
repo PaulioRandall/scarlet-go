@@ -1,4 +1,4 @@
-package program
+package cmd
 
 import (
 	"io"
@@ -12,6 +12,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ac_checker"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ad_shunter"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ae_compiler"
+	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/af_runtime"
 	"github.com/PaulioRandall/scarlet-go/pkg/eskarina/ba_format"
 )
 
@@ -19,12 +20,12 @@ func scanAll(c config, s string) (*lexeme.Lexeme, error) {
 
 	head, e := scanner.ScanStr(s)
 	if e != nil {
-		return nil, NewGenErr(e)
+		return nil, e
 	}
 
 	e = logPhase(c, ".scanned", head)
 	if e != nil {
-		return nil, NewGenErr(e)
+		return nil, e
 	}
 
 	return head, nil
@@ -36,7 +37,7 @@ func sanitiseAll(c config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 
 	e := logPhase(c, ".sanitised", head)
 	if e != nil {
-		return nil, NewGenErr(e)
+		return nil, e
 	}
 
 	return head, nil
@@ -58,7 +59,7 @@ func shuntAll(c config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 
 	e := logPhase(c, ".shunted", head)
 	if e != nil {
-		return nil, NewGenErr(e)
+		return nil, e
 	}
 
 	return head, nil
@@ -75,7 +76,7 @@ func compileAll(c config, head *lexeme.Lexeme) (*inst.Instruction, error) {
 	f := c.logFilename(".compiled")
 	e := writeInstPhaseFile(f, ins)
 	if e != nil {
-		return nil, NewGenErr(e)
+		return nil, e
 	}
 
 	return ins, nil
@@ -144,4 +145,20 @@ func writeInstPhaseFile(filename string, head *inst.Instruction) error {
 
 	defer f.Close()
 	return inst.PrintAll(f, head)
+}
+
+func run(ins *inst.Instruction) (int, error) {
+
+	rt := runtime.New(ins)
+	rt.Start()
+
+	if rt.Env().Err != nil {
+		return rt.Env().ExitCode, rt.Env().Err
+	}
+
+	if rt.Env().ExitCode != 0 {
+		return rt.Env().ExitCode, nil
+	}
+
+	return 0, nil
 }
