@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-type Token interface {
+type PropToken interface {
 	Is(Prop) bool
 	Has(...Prop) bool
 	Any(...Prop) bool
@@ -27,6 +27,7 @@ type Node interface {
 
 type Lexeme struct {
 	Props []Prop
+	Tok   Token
 	Raw   string
 	Line  int
 	Col   int

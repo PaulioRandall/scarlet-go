@@ -10,7 +10,7 @@ func init() {
 
 	lex := &Lexeme{}
 
-	_ = Token(lex)
+	_ = PropToken(lex)
 	_ = Snippet(lex)
 	_ = Node(lex)
 	var _ string = lex.String()

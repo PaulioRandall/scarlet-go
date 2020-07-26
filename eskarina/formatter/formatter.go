@@ -6,10 +6,16 @@ import (
 )
 
 func FormatAll(filename string) error {
-	// Open file
-	// Catch any panics and return them as an error
-	// format()
-	return nil
+
+	f, e := os.OpenFile(filename, os.O_RDWR, os.ModePerm)
+	if e != nil {
+		return e
+	}
+
+	// TODO: Catch any panics and return them as an error
+	defer f.Close()
+
+	return format(f)
 }
 
 func format(file *os.File) error {
