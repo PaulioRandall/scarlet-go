@@ -1,27 +1,28 @@
-package cmd
+package eskarina
 
 import (
 	"fmt"
 
+	"github.com/PaulioRandall/scarlet-go/eskarina/cmd"
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/inst"
 )
 
 const GENERAL_ERROR = 1
 
-func Execute(args Arguments) (int, error) {
+func Run(args cmd.Arguments) (int, error) {
 
-	if args.empty() {
+	if args.Empty() {
 		return GENERAL_ERROR, fmt.Errorf("Missing command!")
 	}
 
-	cmd := args.take()
+	command := args.Shift()
 
-	switch cmd {
+	switch command {
 	case "help":
-		return help(args)
+		return cmd.Help(args)
 
 	case "docs":
-		return docs(args)
+		return cmd.Docs(args)
 
 	case "build":
 		_, code, e := build(args)
@@ -32,21 +33,21 @@ func Execute(args Arguments) (int, error) {
 		if e != nil {
 			return code, e
 		}
-		return run(ins)
+		return cmd.Run(ins)
 	}
 
-	return GENERAL_ERROR, fmt.Errorf("Unknown command %q", cmd)
+	return GENERAL_ERROR, fmt.Errorf("Unknown command %q", command)
 }
 
-func build(args Arguments) (*inst.Instruction, int, error) {
+func build(args cmd.Arguments) (*inst.Instruction, int, error) {
 
-	c := config{}
-	e := captureConfig(&c, args)
+	c := cmd.Config{}
+	e := cmd.CaptureConfig(&c, args)
 	if e != nil {
 		return nil, GENERAL_ERROR, e
 	}
 
-	ins, e := buildFromConfig(c)
+	ins, e := cmd.Build(c)
 	if e != nil {
 		return nil, GENERAL_ERROR, e
 	}

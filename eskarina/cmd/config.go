@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type config struct {
+type Config struct {
 	script      string
 	lineEndings string
 	nofmt       bool
@@ -16,17 +16,17 @@ type config struct {
 	logFile     string
 }
 
-func (b config) logFilename(ext string) string {
+func (b Config) logFilename(ext string) string {
 	f := filepath.Base(b.script)
 	f = strings.TrimSuffix(f, filepath.Ext(f))
 	return filepath.Join(b.logFile, f+ext)
 }
 
-func captureConfig(c *config, args Arguments) error {
+func CaptureConfig(c *Config, args Arguments) error {
 
-	for args.more() {
+	for args.More() {
 
-		if !strings.HasPrefix(args.peek(), "-") {
+		if !strings.HasPrefix(args.Peek(), "-") {
 			break
 		}
 
@@ -36,22 +36,22 @@ func captureConfig(c *config, args Arguments) error {
 		}
 	}
 
-	if args.empty() {
+	if args.Empty() {
 		return fmt.Errorf("Expected script filename")
 	}
 
-	c.script = args.take()
+	c.script = args.Shift()
 
-	if args.more() {
-		return fmt.Errorf("Unexpected argument %q", args.peek())
+	if args.More() {
+		return fmt.Errorf("Unexpected argument %q", args.Peek())
 	}
 
 	return identifyLineEndings(c)
 }
 
-func optionArg(c *config, args Arguments) error {
+func optionArg(c *Config, args Arguments) error {
 
-	switch args.peek() {
+	switch args.Peek() {
 	case "-nofmt":
 		nofmtOption(c, args)
 
@@ -59,31 +59,31 @@ func optionArg(c *config, args Arguments) error {
 		return logOption(c, args)
 
 	default:
-		return fmt.Errorf("Unexpected option %q", args.peek())
+		return fmt.Errorf("Unexpected option %q", args.Peek())
 	}
 
 	return nil
 }
 
-func nofmtOption(c *config, args Arguments) {
+func nofmtOption(c *Config, args Arguments) {
 	c.nofmt = true
-	args.take()
+	args.Shift()
 }
 
-func logOption(c *config, args Arguments) error {
+func logOption(c *Config, args Arguments) error {
 
-	if args.count() < 2 {
-		return fmt.Errorf("Missing %q folder name", args.peek())
+	if args.Count() < 2 {
+		return fmt.Errorf("Missing %q folder name", args.Peek())
 	}
 
 	c.log = true
-	args.take()
-	c.logFile = args.take()
+	args.Shift()
+	c.logFile = args.Shift()
 
 	return nil
 }
 
-func identifyLineEndings(c *config) error {
+func identifyLineEndings(c *Config) error {
 
 	f, e := os.Open(c.script)
 	if e != nil {

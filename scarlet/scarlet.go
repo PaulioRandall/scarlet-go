@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	esk "github.com/PaulioRandall/scarlet-go/eskarina"
 	"github.com/PaulioRandall/scarlet-go/eskarina/cmd"
 )
 
@@ -22,7 +23,7 @@ func main() {
 
 func eskarina(args cmd.Arguments) {
 
-	exitCode, e := cmd.Execute(args)
+	exitCode, e := esk.Run(args)
 	if e != nil {
 		fmt.Printf("[ERROR] %d\n%s\n", 1, e.Error())
 	}

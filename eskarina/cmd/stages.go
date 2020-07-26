@@ -13,10 +13,9 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/stages/c_checker"
 	"github.com/PaulioRandall/scarlet-go/eskarina/stages/d_shunter"
 	"github.com/PaulioRandall/scarlet-go/eskarina/stages/e_compiler"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/f_runtime"
 )
 
-func scanAll(c config, s string) (*lexeme.Lexeme, error) {
+func scanAll(c Config, s string) (*lexeme.Lexeme, error) {
 
 	head, e := scanner.ScanStr(s)
 	if e != nil {
@@ -31,7 +30,7 @@ func scanAll(c config, s string) (*lexeme.Lexeme, error) {
 	return head, nil
 }
 
-func sanitiseAll(c config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
+func sanitiseAll(c Config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 
 	head = sanitiser.SanitiseAll(head)
 
@@ -43,7 +42,7 @@ func sanitiseAll(c config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 	return head, nil
 }
 
-func checkAll(c config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
+func checkAll(c Config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 
 	e := checker.CheckAll(head)
 	if e != nil {
@@ -53,7 +52,7 @@ func checkAll(c config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 	return head, nil
 }
 
-func shuntAll(c config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
+func shuntAll(c Config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 
 	head = shunter.ShuntAll(head)
 
@@ -65,7 +64,7 @@ func shuntAll(c config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
 	return head, nil
 }
 
-func compileAll(c config, head *lexeme.Lexeme) (*inst.Instruction, error) {
+func compileAll(c Config, head *lexeme.Lexeme) (*inst.Instruction, error) {
 
 	ins := compiler.CompileAll(head)
 
@@ -82,7 +81,7 @@ func compileAll(c config, head *lexeme.Lexeme) (*inst.Instruction, error) {
 	return ins, nil
 }
 
-func formatAll(c config, head *lexeme.Lexeme) error {
+func formatAll(c Config, head *lexeme.Lexeme) error {
 
 	if c.nofmt {
 		return nil
@@ -115,7 +114,7 @@ func writeLexemes(w io.Writer, head *lexeme.Lexeme) error {
 	return nil
 }
 
-func logPhase(c config, ext string, head *lexeme.Lexeme) error {
+func logPhase(c Config, ext string, head *lexeme.Lexeme) error {
 
 	if !c.log {
 		return nil
@@ -145,20 +144,4 @@ func writeInstPhaseFile(filename string, head *inst.Instruction) error {
 
 	defer f.Close()
 	return inst.PrintAll(f, head)
-}
-
-func run(ins *inst.Instruction) (int, error) {
-
-	rt := runtime.New(ins)
-	rt.Start()
-
-	if rt.Env().Err != nil {
-		return rt.Env().ExitCode, rt.Env().Err
-	}
-
-	if rt.Env().ExitCode != 0 {
-		return rt.Env().ExitCode, nil
-	}
-
-	return 0, nil
 }

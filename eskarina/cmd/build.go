@@ -6,7 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/inst"
 )
 
-func buildFromConfig(c config) (*inst.Instruction, error) {
+func Build(c Config) (*inst.Instruction, error) {
 
 	s, e := ioutil.ReadFile(c.script)
 	if e != nil {

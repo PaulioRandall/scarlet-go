@@ -4,25 +4,25 @@ import (
 	"fmt"
 )
 
-// help show the instructions and options for how to use Scarlet CLI.
-func help(args Arguments) (int, error) {
+// Help show the instructions and options for how to use Scarlet CLI.
+func Help(args Arguments) (int, error) {
 
 	switch {
-	case args.count() > 1:
-		args.take()
-		return 1, fmt.Errorf("Unexpected argument %q", args.peek())
+	case args.Count() > 1:
+		args.Shift()
+		return 1, fmt.Errorf("Unexpected argument %q", args.Peek())
 
-	case args.empty():
+	case args.Empty():
 		printHelp()
 
-	case args.peek() == "build":
+	case args.Peek() == "build":
 		printBuildHelp()
 
-	case args.peek() == "run":
+	case args.Peek() == "run":
 		printRunHelp()
 
 	default:
-		return 1, fmt.Errorf("Unexpected argument %q", args.peek())
+		return 1, fmt.Errorf("Unexpected argument %q", args.Peek())
 	}
 
 	return 0, nil
