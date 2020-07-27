@@ -88,7 +88,7 @@ func (lr *lexReader) expect(ru rune) error {
 	)
 }
 
-func (lr *lexReader) slice(props ...lexeme.Prop) *lexeme.Lexeme {
+func (lr *lexReader) slice(tk lexeme.Token, props ...lexeme.Prop) *lexeme.Lexeme {
 
 	if !lr.read {
 		failNow("You haven't accepted any terminal symbols yet")
@@ -96,6 +96,7 @@ func (lr *lexReader) slice(props ...lexeme.Prop) *lexeme.Lexeme {
 
 	lex := &lexeme.Lexeme{
 		Props: props,
+		Tok:   tk,
 		Raw:   string(lr.runes[lr.start:lr.idx]),
 		Line:  lr.line,
 		Col:   lr.start,

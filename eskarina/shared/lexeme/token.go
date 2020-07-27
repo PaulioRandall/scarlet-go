@@ -17,7 +17,7 @@ const (
 	SEPARATOR   // ,
 	LEFT_PAREN  // (
 	RIGHT_PAREN // )
-	CALLABLE    // Magic token
+	CALLABLE    // Magic token, tells compiler that spell or func args are coming
 )
 
 var tokens = map[Token]string{

@@ -55,13 +55,13 @@ func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {
 		return numberLiteral(lr)
 
 	case lr.accept('('):
-		return lr.slice(lexeme.PR_DELIMITER, lexeme.PR_PARENTHESIS, lexeme.PR_OPENER), nil
+		return lr.slice(lexeme.LEFT_PAREN, lexeme.PR_DELIMITER, lexeme.PR_PARENTHESIS, lexeme.PR_OPENER), nil
 
 	case lr.accept(')'):
-		return lr.slice(lexeme.PR_DELIMITER, lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER), nil
+		return lr.slice(lexeme.RIGHT_PAREN, lexeme.PR_DELIMITER, lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER), nil
 
 	case lr.accept(','):
-		return lr.slice(lexeme.PR_DELIMITER, lexeme.PR_SEPARATOR), nil
+		return lr.slice(lexeme.SEPARATOR, lexeme.PR_DELIMITER, lexeme.PR_SEPARATOR), nil
 	}
 
 	return nil, perror.New(
@@ -79,7 +79,7 @@ func newline(lr *lexReader) (*lexeme.Lexeme, error) {
 		return nil, e
 	}
 
-	return lr.slice(lexeme.PR_TERMINATOR, lexeme.PR_NEWLINE), nil
+	return lr.slice(lexeme.NEWLINE, lexeme.PR_TERMINATOR, lexeme.PR_NEWLINE), nil
 }
 
 func comment(lr *lexReader) (*lexeme.Lexeme, error) {
@@ -88,7 +88,7 @@ func comment(lr *lexReader) (*lexeme.Lexeme, error) {
 		lr.inc()
 	}
 
-	return lr.slice(lexeme.PR_REDUNDANT, lexeme.PR_COMMENT), nil
+	return lr.slice(lexeme.COMMENT, lexeme.PR_REDUNDANT, lexeme.PR_COMMENT), nil
 }
 
 func whitespace(lr *lexReader) (*lexeme.Lexeme, error) {
@@ -97,7 +97,7 @@ func whitespace(lr *lexReader) (*lexeme.Lexeme, error) {
 		lr.inc()
 	}
 
-	return lr.slice(lexeme.PR_REDUNDANT, lexeme.PR_WHITESPACE), nil
+	return lr.slice(lexeme.WHITESPACE, lexeme.PR_REDUNDANT, lexeme.PR_WHITESPACE), nil
 }
 
 func word(lr *lexReader) (*lexeme.Lexeme, error) {
@@ -108,12 +108,14 @@ func word(lr *lexReader) (*lexeme.Lexeme, error) {
 		lr.inc()
 	}
 
-	lex := lr.slice(lexeme.PR_TERM)
+	lex := lr.slice(lexeme.UNDEFINED)
 
 	if lex.Raw == "false" || lex.Raw == "true" {
-		lex.Props = append(lex.Props, lexeme.PR_LITERAL, lexeme.PR_BOOL)
+		lex.Tok = lexeme.BOOL
+		lex.Props = []lexeme.Prop{lexeme.PR_TERM, lexeme.PR_LITERAL, lexeme.PR_BOOL}
 	} else {
-		lex.Props = append(lex.Props, lexeme.PR_ASSIGNEE, lexeme.PR_IDENTIFIER)
+		lex.Tok = lexeme.IDENTIFIER
+		lex.Props = []lexeme.Prop{lexeme.PR_TERM, lexeme.PR_ASSIGNEE, lexeme.PR_IDENTIFIER}
 	}
 
 	return lex, nil
@@ -149,7 +151,7 @@ func spell(lr *lexReader) (*lexeme.Lexeme, error) {
 		lr.inc()
 	}
 
-	return lr.slice(lexeme.PR_SPELL), nil
+	return lr.slice(lexeme.SPELL, lexeme.PR_SPELL), nil
 }
 
 func stringLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
@@ -166,7 +168,7 @@ func stringLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
 		lr.inc()
 	}
 
-	return lr.slice(lexeme.PR_TERM, lexeme.PR_LITERAL, lexeme.PR_STRING), nil
+	return lr.slice(lexeme.STRING, lexeme.PR_TERM, lexeme.PR_LITERAL, lexeme.PR_STRING), nil
 }
 
 func numberLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
@@ -198,5 +200,5 @@ func numberLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
 	}
 
 FINALISE:
-	return lr.slice(lexeme.PR_TERM, lexeme.PR_LITERAL, lexeme.PR_NUMBER), nil
+	return lr.slice(lexeme.NUMBER, lexeme.PR_TERM, lexeme.PR_LITERAL, lexeme.PR_NUMBER), nil
 }
