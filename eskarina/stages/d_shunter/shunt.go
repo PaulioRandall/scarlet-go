@@ -21,31 +21,31 @@ func shunt(shy *shuntingYard) {
 	for shy.more() {
 
 		switch {
-		case shy.inQueue(lexeme.PR_TERM):
+		case shy.queueTok().IsTerm():
 			shy.output()
 
-		case shy.inQueue(lexeme.PR_SEPARATOR):
-			if shy.inStack(lexeme.PR_PARENTHESIS, lexeme.PR_OPENER) {
+		case shy.inQueue(lexeme.SEPARATOR):
+			if shy.inStack(lexeme.LEFT_PAREN) {
 				shy.discard() // ","
 				break
 			}
 
 			shy.pop()
 
-		case shy.inQueue(lexeme.PR_SPELL):
+		case shy.inQueue(lexeme.SPELL):
 			shy.push() // @Spell
 			shy.push() // "("
-			shy.emit(*shy.stack.Top(), lexeme.PR_CALLABLE)
+			shy.emit(*shy.stack.Top(), lexeme.CALLABLE, lexeme.PR_CALLABLE)
 
-		case shy.inQueue(lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER):
-			if shy.inStack(lexeme.PR_PARENTHESIS, lexeme.PR_OPENER) {
+		case shy.inQueue(lexeme.RIGHT_PAREN):
+			if shy.inStack(lexeme.LEFT_PAREN) {
 				shy.discard() // ")"
 				shy.eject()   // "("
 			}
 
 			shy.pop() // @Spell
 
-		case shy.inQueue(lexeme.PR_TERMINATOR):
+		case shy.queueTok().IsTerminator():
 			if shy.stack.Empty() {
 				shy.output()
 				break

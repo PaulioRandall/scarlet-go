@@ -18,17 +18,35 @@ func (shy *shuntingYard) more() bool {
 	return shy.queue.More() || shy.stack.More()
 }
 
-func (shy *shuntingYard) inQueue(props ...lexeme.Prop) bool {
-	return shy.queue.Head().Has(props...)
+func (shy *shuntingYard) inQueue(tk lexeme.Token) bool {
+	return shy.queue.Head().Tok == tk
 }
 
-func (shy *shuntingYard) inStack(props ...lexeme.Prop) bool {
+func (shy *shuntingYard) inStack(tk lexeme.Token) bool {
 
 	if shy.stack.More() {
-		return shy.stack.Top().Has(props...)
+		return shy.stack.Top().Tok == tk
 	}
 
 	return false
+}
+
+func (shy *shuntingYard) queueTok() lexeme.Token {
+
+	if shy.queue.More() {
+		return shy.queue.Head().Tok
+	}
+
+	return lexeme.UNDEFINED
+}
+
+func (shy *shuntingYard) stackTok() lexeme.Token {
+
+	if shy.stack.More() {
+		return shy.stack.Top().Tok
+	}
+
+	return lexeme.UNDEFINED
 }
 
 func (shy *shuntingYard) push() {
@@ -51,10 +69,11 @@ func (shy *shuntingYard) output() {
 	shy.out.Put(shy.queue.Take())
 }
 
-func (shy *shuntingYard) emit(ref lexeme.Lexeme, props ...lexeme.Prop) {
+func (shy *shuntingYard) emit(ref lexeme.Lexeme, tk lexeme.Token, props ...lexeme.Prop) {
 
 	lex := &lexeme.Lexeme{
 		Props: props,
+		Tok:   tk,
 		Line:  ref.Line,
 		Col:   ref.Col,
 	}

@@ -17,16 +17,16 @@ func Test1_1(t *testing.T) {
 	// WHEN refixing a spell with no arguments
 	// @Println()
 	in := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.PR_CALLABLE),
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("", lexeme.CALLABLE, lexeme.PR_CALLABLE),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -37,18 +37,18 @@ func Test1_2(t *testing.T) {
 	// WHEN refixing a spell with one argument
 	// @Println(x)
 	in := lextest.Feign(
-		lextest.Tok("@Print", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok("x", lexeme.PR_TERM),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.PR_CALLABLE),
-		lextest.Tok("x", lexeme.PR_TERM),
-		lextest.Tok("@Print", lexeme.PR_SPELL),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("", lexeme.CALLABLE, lexeme.PR_CALLABLE),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -59,24 +59,24 @@ func Test1_3(t *testing.T) {
 	// WHEN refixing a spell with multiple arguments
 	// @Println(x, y, z)
 	in := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok("x", lexeme.PR_TERM),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok("y", lexeme.PR_TERM),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok("z", lexeme.PR_TERM),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.PR_CALLABLE),
-		lextest.Tok("x", lexeme.PR_TERM),
-		lextest.Tok("y", lexeme.PR_TERM),
-		lextest.Tok("z", lexeme.PR_TERM),
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("", lexeme.CALLABLE, lexeme.PR_CALLABLE),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
