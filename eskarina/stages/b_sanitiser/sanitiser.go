@@ -21,24 +21,24 @@ func SanitiseAll(first *lexeme.Lexeme) *lexeme.Lexeme {
 		next = next.Next
 
 		switch {
-		case curr.Is(lexeme.PR_REDUNDANT):
+		case curr.Tok.IsRedundant():
 			remove(curr)
 
-		case curr.Prev == nil && curr.Is(lexeme.PR_TERMINATOR):
+		case curr.Prev == nil && curr.Tok.IsTerminator():
 			remove(curr)
 
 		case curr.Prev == nil:
 
-		case curr.Prev.Is(lexeme.PR_TERMINATOR) && curr.Is(lexeme.PR_TERMINATOR):
+		case curr.Prev.Tok.IsTerminator() && curr.Tok.IsTerminator():
 			remove(curr)
 
-		case curr.Prev.Has(lexeme.PR_PARENTHESIS, lexeme.PR_OPENER) && curr.Is(lexeme.PR_NEWLINE):
+		case curr.Prev.Tok == lexeme.LEFT_PAREN && curr.Tok == lexeme.NEWLINE:
 			remove(curr)
 
-		case curr.Prev.Is(lexeme.PR_SEPARATOR) && curr.Is(lexeme.PR_NEWLINE):
+		case curr.Prev.Tok == lexeme.SEPARATOR && curr.Tok == lexeme.NEWLINE:
 			remove(curr)
 
-		case curr.Prev.Is(lexeme.PR_SEPARATOR) && curr.Has(lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER):
+		case curr.Prev.Tok == lexeme.SEPARATOR && curr.Tok == lexeme.RIGHT_PAREN:
 			remove(curr.Prev)
 		}
 	}
