@@ -25,10 +25,10 @@ func Test1_1(t *testing.T) {
 	// THEN no errors should be returned
 	// @Println()
 	in := lextest.Feign(
-		lextest.Tok("@Print", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Print", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in)
@@ -40,11 +40,11 @@ func Test1_2(t *testing.T) {
 	// THEN no errors should be returned
 	// @Println(x)
 	in := lextest.Feign(
-		lextest.Tok("@Print", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok("x", lexeme.PR_TERM),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Print", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in)
@@ -56,15 +56,15 @@ func Test1_3(t *testing.T) {
 	// THEN no errors should be returned
 	// @Println(x, 1, true)
 	in := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok("x", lexeme.PR_TERM),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok("1", lexeme.PR_TERM),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok("true", lexeme.PR_TERM),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Print", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2("true", lexeme.BOOL),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in)
@@ -76,9 +76,9 @@ func Test2_1(t *testing.T) {
 	// THEN an error should be returned
 	// @Println)
 	in := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Print", lexeme.SPELL),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doErrorTest(t, in)
@@ -90,9 +90,9 @@ func Test2_2(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Print", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doErrorTest(t, in)
@@ -104,11 +104,11 @@ func Test2_3(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Print", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doErrorTest(t, in)
@@ -120,12 +120,12 @@ func Test2_4(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok("x", lexeme.PR_TERM),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Print", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doErrorTest(t, in)
@@ -137,12 +137,12 @@ func Test2_5(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok("x", lexeme.PR_TERM),
-		lextest.Tok("y", lexeme.PR_TERM),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_TERMINATOR),
+		lextest.Tok2("@Print", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2("x", lexeme.IDENTIFIER),
+		lextest.Tok2("y", lexeme.IDENTIFIER),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	doErrorTest(t, in)
@@ -154,9 +154,9 @@ func Test2_6(t *testing.T) {
 	// THEN an error should be returned
 	// @Println(
 	in := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_PARENTHESIS, lexeme.PR_OPENER),
-		lextest.Tok(")", lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER),
+		lextest.Tok2("@Print", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
 	)
 
 	doErrorTest(t, in)

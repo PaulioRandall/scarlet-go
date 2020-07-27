@@ -1,5 +1,9 @@
 package lexeme
 
+import (
+	"strings"
+)
+
 type Token int
 
 const (
@@ -36,6 +40,17 @@ var tokens = map[Token]string{
 	CALLABLE:    `CALLABLE`,
 }
 
+func (tk Token) IsAny(others ...Token) bool {
+
+	for _, o := range others {
+		if tk == o {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (tk Token) IsRedundant() bool {
 	return tk == WHITESPACE || tk == COMMENT
 }
@@ -66,4 +81,19 @@ func (tk Token) IsCloser() bool {
 
 func (tk Token) String() string {
 	return tokens[tk]
+}
+
+func JoinTokens(infix string, tks ...Token) string {
+
+	sb := strings.Builder{}
+
+	for i, tk := range tks {
+		if i != 0 {
+			sb.WriteString(infix)
+		}
+
+		sb.WriteString(tk.String())
+	}
+
+	return sb.String()
 }

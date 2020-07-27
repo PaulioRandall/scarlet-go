@@ -2,7 +2,6 @@ package checker
 
 import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
-	"github.com/PaulioRandall/scarlet-go/eskarina/shared/perror"
 )
 
 func CheckAll(first *lexeme.Lexeme) error {
@@ -26,38 +25,34 @@ func check(chk *checker) error {
 	var e error
 
 	switch {
-	case chk.match(lexeme.PR_SPELL):
+	case chk.matchAny(lexeme.SPELL):
 		e = spell(chk)
 
 	default:
-		return perror.New(
-			"Unexpected token\nWant: %s\nHave: %s",
-			lexeme.JoinProps(" & ", lexeme.PR_SPELL),
-			lexeme.JoinProps(" & ", chk.lex.Props...),
-		)
+		return chk.unexpected(lexeme.SPELL.String())
 	}
 
 	if e != nil {
 		return e
 	}
 
-	return chk.expect(lexeme.PR_TERMINATOR)
+	return chk.expect("<TERMINATOR>", chk.terminatorPredicate())
 }
 
 func spell(chk *checker) error {
 	// @Println(?, ?, ...)
 
-	e := chk.expect(lexeme.PR_SPELL)
+	e := chk.expectAny(lexeme.SPELL)
 	if e != nil {
 		return e
 	}
 
-	e = chk.expect(lexeme.PR_PARENTHESIS, lexeme.PR_OPENER)
+	e = chk.expectAny(lexeme.LEFT_PAREN)
 	if e != nil {
 		return e
 	}
 
-	if chk.accept(lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER) {
+	if chk.acceptAny(lexeme.RIGHT_PAREN) {
 		return nil
 	}
 
@@ -66,34 +61,21 @@ func spell(chk *checker) error {
 		return e
 	}
 
-	return chk.expect(lexeme.PR_PARENTHESIS, lexeme.PR_CLOSER)
+	return chk.expectAny(lexeme.RIGHT_PAREN)
 }
 
 func parameters(chk *checker) error {
 
-	var e error
-
 	for more := true; more; {
-		more, e = parameter(chk)
-		if e != nil {
-			return e
+
+		switch {
+		case chk.accept(chk.termPredicate()):
+		default:
+			return chk.unexpected("parameter")
 		}
+
+		more = chk.acceptAny(lexeme.SEPARATOR)
 	}
 
 	return nil
-}
-
-func parameter(chk *checker) (bool, error) {
-
-	switch {
-	case chk.accept(lexeme.PR_TERM):
-	default:
-		return false, perror.New(
-			"Unexpected token\nWant: %s\nHave: %s",
-			lexeme.JoinProps(" & ", lexeme.PR_TERM),
-			lexeme.JoinProps(" & ", chk.lex.Props...),
-		)
-	}
-
-	return chk.accept(lexeme.PR_SEPARATOR), nil
 }
