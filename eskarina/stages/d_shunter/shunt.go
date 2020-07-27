@@ -35,7 +35,7 @@ func shunt(shy *shuntingYard) {
 		case shy.inQueue(lexeme.SPELL):
 			shy.push() // @Spell
 			shy.push() // "("
-			shy.emit(*shy.stack.Top(), lexeme.CALLABLE, lexeme.PR_CALLABLE)
+			shy.emit(*shy.stack.Top(), lexeme.CALLABLE)
 
 		case shy.inQueue(lexeme.RIGHT_PAREN):
 			if shy.inStack(lexeme.LEFT_PAREN) {

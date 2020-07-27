@@ -36,7 +36,7 @@ func check(chk *checker) error {
 		return e
 	}
 
-	return chk.expect("<TERMINATOR>", chk.terminatorPredicate())
+	return chk.expect("<TERMINATOR>", chk.tok().IsTerminator())
 }
 
 func spell(chk *checker) error {
@@ -69,9 +69,9 @@ func parameters(chk *checker) error {
 	for more := true; more; {
 
 		switch {
-		case chk.accept(chk.termPredicate()):
+		case chk.accept(chk.tok().IsTerm()):
 		default:
-			return chk.unexpected("parameter")
+			return chk.unexpected("<PARAMETER>")
 		}
 
 		more = chk.acceptAny(lexeme.SEPARATOR)

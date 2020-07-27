@@ -56,9 +56,18 @@ func (chk *checker) expectAny(tks ...lexeme.Token) error {
 	return chk.unexpected(lexeme.JoinTokens(" & ", tks...))
 }
 
-func (chk *checker) accept(f func() bool) bool {
+func (chk *checker) tok() lexeme.Token {
 
-	if f != nil && f() {
+	if chk.lex != nil {
+		return chk.lex.Tok
+	}
+
+	return lexeme.UNDEFINED
+}
+
+func (chk *checker) accept(ok bool) bool {
+
+	if chk.lex != nil && ok {
 		chk.lex = chk.lex.Next
 		return true
 	}
@@ -66,33 +75,15 @@ func (chk *checker) accept(f func() bool) bool {
 	return false
 }
 
-func (chk *checker) expect(want string, f func() bool) error {
+func (chk *checker) expect(want string, ok bool) error {
 
-	if f == nil {
+	if chk.lex == nil {
 		return perror.New("Unexpected token\nHave: EOF\nWant: %s", want)
 	}
 
-	if chk.accept(f) {
+	if chk.accept(ok) {
 		return nil
 	}
 
 	return chk.unexpected(want)
-}
-
-func (chk *checker) terminatorPredicate() func() bool {
-
-	if chk.lex == nil {
-		return nil
-	}
-
-	return chk.lex.Tok.IsTerminator
-}
-
-func (chk *checker) termPredicate() func() bool {
-
-	if chk.lex == nil {
-		return nil
-	}
-
-	return chk.lex.Tok.IsTerm
 }

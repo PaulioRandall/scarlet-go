@@ -18,15 +18,24 @@ func (com *compiler) empty() bool {
 	return com.input.Empty()
 }
 
-func (com *compiler) has(props ...lexeme.Prop) bool {
-	return com.input.More() && com.input.Head().Has(props...)
+func (com *compiler) is(tk lexeme.Token) bool {
+	return com.input.More() && com.input.Head().Tok == tk
+}
+
+func (com *compiler) tok() lexeme.Token {
+
+	if com.input.More() {
+		return com.input.Head().Tok
+	}
+
+	return lexeme.UNDEFINED
 }
 
 func (com *compiler) take() *lexeme.Lexeme {
 	return com.input.Take()
 }
 
-func (com *compiler) reject(props ...lexeme.Prop) {
+func (com *compiler) reject() {
 	if com.input.More() {
 		com.input.Take()
 	}

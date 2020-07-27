@@ -69,13 +69,12 @@ func (shy *shuntingYard) output() {
 	shy.out.Put(shy.queue.Take())
 }
 
-func (shy *shuntingYard) emit(ref lexeme.Lexeme, tk lexeme.Token, props ...lexeme.Prop) {
+func (shy *shuntingYard) emit(ref lexeme.Lexeme, tk lexeme.Token) {
 
 	lex := &lexeme.Lexeme{
-		Props: props,
-		Tok:   tk,
-		Line:  ref.Line,
-		Col:   ref.Col,
+		Tok:  tk,
+		Line: ref.Line,
+		Col:  ref.Col,
 	}
 
 	shy.out.Put(lex)

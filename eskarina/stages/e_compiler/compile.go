@@ -25,7 +25,7 @@ func compile(com *compiler) {
 		case com.empty():
 			com.unexpected()
 
-		case com.has(lexeme.PR_CALLABLE):
+		case com.is(lexeme.CALLABLE):
 			call(com)
 
 		default:
@@ -41,7 +41,7 @@ func call(com *compiler) {
 	com.take() // PR_PARAMETERS redundant
 	argCount := 0
 
-	for !com.has(lexeme.PR_SPELL) {
+	for !com.is(lexeme.SPELL) {
 		argCount++
 		expression(com)
 	}
@@ -64,10 +64,10 @@ func call(com *compiler) {
 func expression(com *compiler) {
 
 	switch {
-	case com.has(lexeme.PR_IDENTIFIER):
+	case com.is(lexeme.IDENTIFIER):
 		identifier(com)
 
-	case com.has(lexeme.PR_LITERAL):
+	case com.tok().IsLiteral():
 		literal(com)
 
 	default:
@@ -96,13 +96,13 @@ func literal(com *compiler) {
 	}
 
 	switch {
-	case lex.Is(lexeme.PR_BOOL):
+	case lex.Tok == lexeme.BOOL:
 		in.Data = lex.Raw == "true"
 
-	case lex.Is(lexeme.PR_NUMBER):
+	case lex.Tok == lexeme.NUMBER:
 		in.Data = number.New(lex.Raw)
 
-	case lex.Is(lexeme.PR_STRING):
+	case lex.Tok == lexeme.STRING:
 		in.Data = unquote(lex.Raw)
 
 	default:
