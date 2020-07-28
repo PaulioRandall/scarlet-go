@@ -104,6 +104,16 @@ func (lex *Lexeme) Remove() {
 	lex.Next, lex.Prev = nil, nil
 }
 
+func (lex *Lexeme) SplitBelow() {
+
+	if lex.Next == nil {
+		return
+	}
+
+	lex.Next.Prev = nil
+	lex.Next = nil
+}
+
 func (lex Lexeme) String() string {
 	return fmt.Sprintf("%d:%d %s %q",
 		lex.Line,

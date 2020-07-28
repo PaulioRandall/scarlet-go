@@ -23,6 +23,33 @@ func Copy(lex *Lexeme) *Lexeme {
 	}
 }
 
+func Split(head *Lexeme, delim Token) []*Lexeme {
+
+	r := []*Lexeme{}
+
+	if head == nil {
+		return r
+	}
+
+	findNextDelim := func(head *Lexeme) *Lexeme {
+		for next := head; next != nil; next = next.Next {
+			if next.Tok == delim {
+				return next
+			}
+		}
+		return nil
+	}
+
+	for head != nil {
+		r = append(r, head)
+		delim := findNextDelim(head)
+		head = delim.Next
+		delim.SplitBelow()
+	}
+
+	return r
+}
+
 type lexFmt struct {
 	begin int
 	end   int
