@@ -9,6 +9,7 @@ type Collection2 interface {
 	Empty() bool
 	More() bool
 	Size() int
+	ToItinerant() *Itinerant2
 	AsContainer() *Container2
 }
 
@@ -42,6 +43,26 @@ func checkIsSingle(lex *Lexeme) {
 	}
 }
 
+func toContainer(head *Lexeme) *Container2 {
+
+	if head == nil {
+		return &Container2{}
+	}
+
+	c := &Container2{
+		head: head,
+		tail: head,
+		size: 1,
+	}
+
+	for lex := c.head; lex != nil; lex = lex.next {
+		c.tail = lex
+		c.size++
+	}
+
+	return c
+}
+
 func (c *Container2) Empty() bool {
 	return c.size == 0
 }
@@ -52,6 +73,10 @@ func (c *Container2) More() bool {
 
 func (c *Container2) Size() int {
 	return c.size
+}
+
+func (c *Container2) ToItinerant() *Itinerant2 {
+	return toItinerant(c)
 }
 
 func (c *Container2) AsContainer() *Container2 {
