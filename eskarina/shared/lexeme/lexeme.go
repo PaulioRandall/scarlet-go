@@ -30,10 +30,6 @@ type Lexeme struct {
 	prev *Lexeme
 }
 
-func (lex *Lexeme) vacate() *Lexeme {
-	return lex
-}
-
 func (lex Lexeme) IsSingle() bool {
 	return lex.Next == nil && lex.Prev == nil
 }

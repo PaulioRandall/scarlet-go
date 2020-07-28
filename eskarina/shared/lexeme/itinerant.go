@@ -100,6 +100,7 @@ func (it *Itinerant2) Next() bool {
 	it.curr = it.ahead
 	it.behind = it.curr.prev
 	it.ahead = it.curr.next
+
 	return true
 }
 

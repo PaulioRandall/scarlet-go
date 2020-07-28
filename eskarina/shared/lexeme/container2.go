@@ -115,7 +115,6 @@ func (c *Container2) pop(fromBack bool) *Lexeme {
 	}
 
 	var r *Lexeme
-
 	if fromBack {
 		r = c.tail
 		c.tail = c.tail.prev

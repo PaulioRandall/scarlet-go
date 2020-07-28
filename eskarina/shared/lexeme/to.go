@@ -14,6 +14,30 @@ func NewTo(b box) *To {
 	}
 }
 
+func (to *To) Slice() []Lexeme {
+
+	r := []Lexeme{}
+
+	for lex := to.b.vacate(); lex != nil; lex = lex.next {
+		lex.remove()
+		r = append(r, *lex)
+	}
+
+	return r
+}
+
+func (to *To) SlicePtr() []*Lexeme {
+
+	r := []*Lexeme{}
+
+	for lex := to.b.vacate(); lex != nil; lex = lex.next {
+		lex.remove()
+		r = append(r, lex)
+	}
+
+	return r
+}
+
 func (to *To) Container() *Container2 {
 
 	if c, ok := to.b.(*Container2); ok {
@@ -43,6 +67,7 @@ func (to *To) Itinerant() *Itinerant2 {
 	head := to.b.vacate()
 	it := newItinerant(head)
 	to.b = nil
+
 	return it
 }
 
