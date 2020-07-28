@@ -17,12 +17,12 @@ func Build(c Config) (*inst.Instruction, error) {
 	if e != nil {
 		return nil, e
 	}
-
-	e = formatAll(c, head)
-	if e != nil {
-		return nil, e
-	}
-
+	/*
+		e = formatAll(c, head)
+		if e != nil {
+			return nil, e
+		}
+	*/
 	head, e = sanitiseAll(c, head)
 	if e != nil {
 		return nil, e

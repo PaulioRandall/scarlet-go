@@ -7,66 +7,67 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/inst"
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/a_scanner"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/b_format"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/b_sanitiser"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/c_checker"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/d_shunter"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/e_compiler"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/a_scanner2"
+	//"github.com/PaulioRandall/scarlet-go/eskarina/stages/b_format"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/b_sanitiser2"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/c_checker2"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/d_shunter2"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/e_compiler2"
 )
 
-func scanAll(c Config, s string) (*lexeme.Lexeme, error) {
+func scanAll(c Config, s string) (*lexeme.Container2, error) {
 
-	head, e := scanner.ScanStr(s)
+	con, e := scanner.ScanStr(s)
 	if e != nil {
 		return nil, e
 	}
 
-	e = logPhase(c, ".scanned", head)
+	e = logPhase(c, ".scanned", con.Head())
 	if e != nil {
 		return nil, e
 	}
 
-	return head, nil
+	return con, nil
 }
 
-func sanitiseAll(c Config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
+func sanitiseAll(c Config, con *lexeme.Container2) (*lexeme.Container2, error) {
 
-	head = sanitiser.SanitiseAll(head)
+	con = sanitiser.SanitiseAll(con)
 
-	e := logPhase(c, ".sanitised", head)
+	e := logPhase(c, ".sanitised", con.Head())
 	if e != nil {
 		return nil, e
 	}
 
-	return head, nil
+	return con, nil
 }
 
-func checkAll(c Config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
+func checkAll(c Config, con *lexeme.Container2) (*lexeme.Container2, error) {
 
-	e := checker.CheckAll(head)
+	var e error
+	con, e = checker.CheckAll(con)
 	if e != nil {
 		return nil, e
 	}
 
-	return head, nil
+	return con, nil
 }
 
-func shuntAll(c Config, head *lexeme.Lexeme) (*lexeme.Lexeme, error) {
+func shuntAll(c Config, con *lexeme.Container2) (*lexeme.Container2, error) {
 
-	head = shunter.ShuntAll(head)
+	con = shunter.ShuntAll(con)
 
-	e := logPhase(c, ".shunted", head)
+	e := logPhase(c, ".shunted", con.Head())
 	if e != nil {
 		return nil, e
 	}
 
-	return head, nil
+	return con, nil
 }
 
-func compileAll(c Config, head *lexeme.Lexeme) (*inst.Instruction, error) {
+func compileAll(c Config, con *lexeme.Container2) (*inst.Instruction, error) {
 
-	ins := compiler.CompileAll(head)
+	ins := compiler.CompileAll(con)
 
 	if !c.log {
 		return ins, nil
@@ -81,7 +82,8 @@ func compileAll(c Config, head *lexeme.Lexeme) (*inst.Instruction, error) {
 	return ins, nil
 }
 
-func formatAll(c Config, head *lexeme.Lexeme) error {
+/*
+func formatAll(c Config, con *lexeme.Container2) (con *lexeme.Container2, error) {
 
 	if c.nofmt {
 		return nil
@@ -98,7 +100,7 @@ func formatAll(c Config, head *lexeme.Lexeme) error {
 
 	return writeLexemes(f, head)
 }
-
+*/
 func writeLexemes(w io.Writer, head *lexeme.Lexeme) error {
 
 	for lex := head; lex != nil; lex = lex.Next {
