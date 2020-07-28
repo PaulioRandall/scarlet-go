@@ -58,7 +58,9 @@ func (it *Itinerant2) vacate() *Lexeme {
 }
 
 func (it *Itinerant2) To() *To {
-	return NewTo(it)
+	return &To{
+		b: it,
+	}
 }
 
 func (it *Itinerant2) HasPrev() bool {

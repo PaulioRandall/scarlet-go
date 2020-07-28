@@ -54,7 +54,7 @@ func newContainer(head *Lexeme) *Container2 {
 		size: 1,
 	}
 
-	for lex := c.head; lex != nil; lex = lex.next {
+	for lex := c.head.next; lex != nil; lex = lex.next {
 		c.tail = lex
 		c.size++
 	}
@@ -69,7 +69,9 @@ func (c *Container2) vacate() *Lexeme {
 }
 
 func (c *Container2) To() *To {
-	return NewTo(c)
+	return &To{
+		b: c,
+	}
 }
 
 func (c *Container2) Empty() bool {

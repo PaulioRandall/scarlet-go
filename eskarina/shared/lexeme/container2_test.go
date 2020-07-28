@@ -6,7 +6,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_Container2_Pop(t *testing.T) {
+func Test_Container2_1_1(t *testing.T) {
+
+	a, b, c, _ := setup2()
+	feign2(a, b, c)
+	con := newContainer(a)
+
+	fullEqual2(t, a, nil, b, con.head)
+	fullEqual2(t, b, a, c, con.head.next)
+	fullEqual2(t, b, a, c, con.tail.prev)
+	fullEqual2(t, c, b, nil, con.tail)
+	require.Equal(t, 3, con.size)
+}
+
+func Test_Container2_2_1(t *testing.T) {
 
 	con, a, b, c, _ := setupContainer2()
 
@@ -32,7 +45,7 @@ func Test_Container2_Pop(t *testing.T) {
 	require.Nil(t, z)
 }
 
-func Test_Container2_push(t *testing.T) {
+func Test_Container2_3_1(t *testing.T) {
 
 	a, b, c, _ := setup2()
 	con := &Container2{}

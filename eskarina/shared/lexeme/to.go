@@ -8,12 +8,6 @@ type To struct {
 	b box
 }
 
-func NewTo(b box) *To {
-	return &To{
-		b: b,
-	}
-}
-
 func (to *To) Slice() []Lexeme {
 
 	r := []Lexeme{}
