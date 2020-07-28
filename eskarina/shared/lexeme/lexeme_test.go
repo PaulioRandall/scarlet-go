@@ -13,6 +13,7 @@ func init() {
 	var _ string = lex.String()
 }
 
+// @Deprecated
 func Test_Lexeme_ShiftUp(t *testing.T) {
 
 	a := tok("true", BOOL)
@@ -38,6 +39,7 @@ func Test_Lexeme_ShiftUp(t *testing.T) {
 	fullEqual(t, a, b, nil, a)
 }
 
+// @Deprecated
 func Test_Lexeme_ShiftDown(t *testing.T) {
 
 	a := tok("true", BOOL)
@@ -68,6 +70,7 @@ func Test_Lexeme_ShiftDown(t *testing.T) {
 	fullEqual(t, b, a, nil, b)
 }
 
+// @Deprecated
 func Test_Lexeme_Prepend(t *testing.T) {
 
 	a := tok("true", BOOL)
@@ -84,6 +87,7 @@ func Test_Lexeme_Prepend(t *testing.T) {
 	fullEqual(t, c, b, nil, c)
 }
 
+// @Deprecated
 func Test_Lexeme_Append(t *testing.T) {
 
 	a := tok("true", BOOL)
@@ -100,6 +104,7 @@ func Test_Lexeme_Append(t *testing.T) {
 	fullEqual(t, c, b, nil, c)
 }
 
+// @Deprecated
 func Test_Lexeme_Remove(t *testing.T) {
 
 	a, b, c, _ := setupList()
@@ -116,4 +121,53 @@ func Test_Lexeme_Remove(t *testing.T) {
 	c.Remove()
 	fullEqual(t, a, nil, b, a)
 	fullEqual(t, b, a, nil, b)
+}
+
+func Test_Lexeme_prepend(t *testing.T) {
+
+	a, b, c, _ := setup2()
+
+	b.prepend(a)
+	fullEqual2(t, a, nil, b, a)
+	fullEqual2(t, b, a, nil, b)
+
+	c.prepend(b)
+	fullEqual2(t, a, nil, b, a)
+	fullEqual2(t, b, a, c, b)
+	fullEqual2(t, c, b, nil, c)
+}
+
+func Test_Lexeme_append(t *testing.T) {
+
+	a, b, c, _ := setup2()
+
+	b.append(c)
+	fullEqual2(t, b, nil, c, b)
+	fullEqual2(t, c, b, nil, c)
+
+	a.append(b)
+	fullEqual2(t, a, nil, b, a)
+	fullEqual2(t, b, a, c, b)
+	fullEqual2(t, c, b, nil, c)
+}
+
+func Test_Lexeme_remove(t *testing.T) {
+
+	a, b, c, _ := setup2()
+	feign2(a, b, c)
+	a.remove()
+	fullEqual2(t, b, nil, c, b)
+	fullEqual2(t, c, b, nil, c)
+
+	a, b, c, _ = setup2()
+	feign2(a, b, c)
+	b.remove()
+	fullEqual2(t, a, nil, c, a)
+	fullEqual2(t, c, a, nil, c)
+
+	a, b, c, _ = setup2()
+	feign2(a, b, c)
+	c.remove()
+	fullEqual2(t, a, nil, b, a)
+	fullEqual2(t, b, a, nil, b)
 }
