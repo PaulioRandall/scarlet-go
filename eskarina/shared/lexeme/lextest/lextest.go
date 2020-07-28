@@ -29,37 +29,19 @@ func Feign(lexs ...*lexeme.Lexeme) *lexeme.Lexeme {
 	return first
 }
 
-func Lex(line, col int, raw string, props ...lexeme.Prop) *lexeme.Lexeme {
+func Lex2(line, col int, raw string, tk lexeme.Token) *lexeme.Lexeme {
 	return &lexeme.Lexeme{
-		Props: props,
-		Raw:   raw,
-		Line:  line,
-		Col:   col,
+		Tok:  tk,
+		Raw:  raw,
+		Line: line,
+		Col:  col,
 	}
 }
 
-func Lex2(line, col int, raw string, tk lexeme.Token, props ...lexeme.Prop) *lexeme.Lexeme {
+func Tok2(raw string, tk lexeme.Token) *lexeme.Lexeme {
 	return &lexeme.Lexeme{
-		Props: props,
-		Tok:   tk,
-		Raw:   raw,
-		Line:  line,
-		Col:   col,
-	}
-}
-
-func Tok(raw string, props ...lexeme.Prop) *lexeme.Lexeme {
-	return &lexeme.Lexeme{
-		Props: props,
-		Raw:   raw,
-	}
-}
-
-func Tok2(raw string, tk lexeme.Token, props ...lexeme.Prop) *lexeme.Lexeme {
-	return &lexeme.Lexeme{
-		Props: props,
-		Tok:   tk,
-		Raw:   raw,
+		Tok: tk,
+		Raw: raw,
 	}
 }
 
@@ -99,7 +81,6 @@ func equalContent(t *testing.T, exp, act *lexeme.Lexeme, msg string) {
 	}
 
 	require.NotNil(t, act, msg)
-	require.Equal(t, exp.Props, act.Props, msg)
 	require.Equal(t, exp.Tok, act.Tok, msg)
 	require.Equal(t, exp.Raw, act.Raw, msg)
 	require.Equal(t, exp.Line, act.Line, msg)

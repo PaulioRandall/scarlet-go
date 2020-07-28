@@ -9,7 +9,7 @@ import (
 type lexFmt struct {
 	begin int
 	end   int
-	props int
+	tok   int
 	gap   int // gap between printed fields
 }
 
@@ -51,9 +51,9 @@ func findLexFmt(first *Lexeme) lexFmt {
 			lxf.end = size
 		}
 
-		size = len([]rune(JoinProps(", ", lex.Props...)))
-		if size > lxf.props {
-			lxf.props = size
+		size = len(lex.Tok.String())
+		if size > lxf.tok {
+			lxf.tok = size
 		}
 	}
 
@@ -83,7 +83,7 @@ func writeToken(w io.StringWriter, lex *Lexeme, lxf lexFmt) error {
 		return e
 	}
 
-	e = writePadStr(w, JoinProps(", ", lex.Props...), lxf.props)
+	e = writePadStr(w, lex.Tok.String(), lxf.tok)
 	if e != nil {
 		return e
 	}
@@ -93,7 +93,7 @@ func writeToken(w io.StringWriter, lex *Lexeme, lxf lexFmt) error {
 		return e
 	}
 
-	if lex.Is(PR_NEWLINE) {
+	if lex.Tok == NEWLINE {
 		s := strconv.QuoteToGraphic(lex.Raw)
 		return writeStr(w, s[1:len(s)-1])
 	}

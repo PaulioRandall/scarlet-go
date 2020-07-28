@@ -4,12 +4,6 @@ import (
 	"fmt"
 )
 
-type PropToken interface {
-	Is(Prop) bool
-	Has(...Prop) bool
-	Any(...Prop) bool
-}
-
 type Snippet interface {
 	At() (line, start, end int)
 }
@@ -26,46 +20,12 @@ type Node interface {
 }
 
 type Lexeme struct {
-	Props []Prop
-	Tok   Token
-	Raw   string
-	Line  int
-	Col   int
-	Next  *Lexeme
-	Prev  *Lexeme
-}
-
-func (lex Lexeme) Is(o Prop) bool {
-
-	for _, p := range lex.Props {
-		if p == o {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (lex Lexeme) Has(others ...Prop) bool {
-
-	for _, o := range others {
-		if !lex.Is(o) {
-			return false
-		}
-	}
-
-	return true
-}
-
-func (lex Lexeme) Any(others ...Prop) bool {
-
-	for _, o := range others {
-		if lex.Is(o) {
-			return true
-		}
-	}
-
-	return false
+	Tok  Token
+	Raw  string
+	Line int
+	Col  int
+	Next *Lexeme
+	Prev *Lexeme
 }
 
 func (lex Lexeme) At() (line, start, end int) {
@@ -145,11 +105,10 @@ func (lex *Lexeme) Remove() {
 }
 
 func (lex Lexeme) String() string {
-	return fmt.Sprintf("%d:%d %s %s %q",
+	return fmt.Sprintf("%d:%d %s %q",
 		lex.Line,
 		lex.Col,
 		lex.Tok.String(),
-		"["+JoinProps(",", lex.Props...)+"]",
 		lex.Raw,
 	)
 }

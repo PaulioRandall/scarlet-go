@@ -2,62 +2,22 @@ package lexeme
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 func init() {
 
 	lex := &Lexeme{}
 
-	_ = PropToken(lex)
 	_ = Snippet(lex)
 	_ = Node(lex)
 	var _ string = lex.String()
 }
 
-func Test_Lexeme_Is(t *testing.T) {
-
-	lex := tok("1", PR_TERM, PR_LITERAL, PR_NUMBER)
-
-	require.True(t, lex.Is(PR_TERM))
-	require.True(t, lex.Is(PR_LITERAL))
-	require.True(t, lex.Is(PR_NUMBER))
-
-	require.False(t, lex.Is(PR_IDENTIFIER))
-}
-
-func Test_Lexeme_Has(t *testing.T) {
-
-	lex := tok("1", PR_TERM, PR_LITERAL, PR_NUMBER)
-
-	require.True(t, lex.Has(PR_TERM))
-	require.True(t, lex.Has(PR_TERM, PR_LITERAL))
-	require.True(t, lex.Has(PR_TERM, PR_LITERAL, PR_NUMBER))
-	require.True(t, lex.Has())
-
-	require.False(t, lex.Has(PR_IDENTIFIER))
-	require.False(t, lex.Has(PR_TERM, PR_LITERAL, PR_BOOL))
-}
-
-func Test_Lexeme_Any(t *testing.T) {
-
-	lex := tok("1", PR_TERM, PR_LITERAL, PR_NUMBER)
-
-	require.True(t, lex.Any(PR_TERM))
-	require.True(t, lex.Any(PR_LITERAL, PR_IDENTIFIER))
-	require.True(t, lex.Any(PR_SPELL, PR_OPENER, PR_NUMBER))
-
-	require.False(t, lex.Any())
-	require.False(t, lex.Any(PR_IDENTIFIER))
-	require.False(t, lex.Any(PR_SPELL, PR_OPENER, PR_CLOSER))
-}
-
 func Test_Lexeme_ShiftUp(t *testing.T) {
 
-	a := tok("true", PR_BOOL)
-	b := tok("1", PR_NUMBER)
-	c := tok(`"abc"`, PR_STRING)
+	a := tok("true", BOOL)
+	b := tok("1", NUMBER)
+	c := tok(`"abc"`, STRING)
 
 	_ = feign(a, b, c)
 
@@ -80,9 +40,9 @@ func Test_Lexeme_ShiftUp(t *testing.T) {
 
 func Test_Lexeme_ShiftDown(t *testing.T) {
 
-	a := tok("true", PR_BOOL)
-	b := tok("1", PR_NUMBER)
-	c := tok(`"abc"`, PR_STRING)
+	a := tok("true", BOOL)
+	b := tok("1", NUMBER)
+	c := tok(`"abc"`, STRING)
 
 	_ = feign(a, b, c)
 
@@ -110,9 +70,9 @@ func Test_Lexeme_ShiftDown(t *testing.T) {
 
 func Test_Lexeme_Prepend(t *testing.T) {
 
-	a := tok("true", PR_BOOL)
-	b := tok("1", PR_NUMBER)
-	c := tok(`"abc"`, PR_STRING)
+	a := tok("true", BOOL)
+	b := tok("1", NUMBER)
+	c := tok(`"abc"`, STRING)
 
 	b.Prepend(a)
 	fullEqual(t, a, nil, b, a)
@@ -126,9 +86,9 @@ func Test_Lexeme_Prepend(t *testing.T) {
 
 func Test_Lexeme_Append(t *testing.T) {
 
-	a := tok("true", PR_BOOL)
-	b := tok("1", PR_NUMBER)
-	c := tok(`"abc"`, PR_STRING)
+	a := tok("true", BOOL)
+	b := tok("1", NUMBER)
+	c := tok(`"abc"`, STRING)
 
 	b.Append(c)
 	fullEqual(t, b, nil, c, b)

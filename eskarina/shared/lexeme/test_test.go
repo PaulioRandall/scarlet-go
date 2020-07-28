@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func tok(raw string, props ...Prop) *Lexeme {
+func tok(raw string, tk Token) *Lexeme {
 	return &Lexeme{
-		Props: props,
-		Raw:   raw,
+		Tok: tk,
+		Raw: raw,
 	}
 }
 
@@ -34,10 +34,10 @@ func feign(lexs ...*Lexeme) *Lexeme {
 }
 
 func setup() (a, b, c, d *Lexeme) {
-	a = tok("true", PR_LITERAL, PR_BOOL)
-	b = tok("1", PR_LITERAL, PR_NUMBER)
-	c = tok(`"abc"`, PR_LITERAL, PR_STRING)
-	d = tok("x", PR_IDENTIFIER)
+	a = tok("true", BOOL)
+	b = tok("1", NUMBER)
+	c = tok(`"abc"`, STRING)
+	d = tok("x", IDENTIFIER)
 	return
 }
 
@@ -55,14 +55,14 @@ func halfEqual(t *testing.T, exp, act *Lexeme) {
 	}
 
 	require.NotNil(t, act)
-	require.Equal(t, exp.Props, act.Props)
+	require.Equal(t, exp.Tok, act.Tok)
 	require.Equal(t, exp.Raw, act.Raw)
 }
 
 func fullEqual(t *testing.T, exp, prev, next, act *Lexeme) {
 
 	require.NotNil(t, act)
-	require.Equal(t, exp.Props, act.Props)
+	require.Equal(t, exp.Tok, act.Tok)
 	require.Equal(t, exp.Raw, act.Raw)
 
 	halfEqual(t, prev, act.Prev)

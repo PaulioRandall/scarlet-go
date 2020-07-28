@@ -13,7 +13,6 @@ func CopyAll(head *Lexeme) *Lexeme {
 
 func Copy(lex *Lexeme) *Lexeme {
 	return &Lexeme{
-		Props: lex.Props,
-		Raw:   lex.Raw,
+		Raw: lex.Raw,
 	}
 }
