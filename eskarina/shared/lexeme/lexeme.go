@@ -26,6 +26,12 @@ type Lexeme struct {
 	Col  int
 	Next *Lexeme
 	Prev *Lexeme
+	next *Lexeme
+	prev *Lexeme
+}
+
+func (lex Lexeme) IsSingle() bool {
+	return lex.Next == nil && lex.Prev == nil
 }
 
 func (lex Lexeme) At() (line, start, end int) {
@@ -69,6 +75,7 @@ func (lex *Lexeme) ShiftDown() {
 	lex.Next.ShiftUp()
 }
 
+// @Deprecated
 func (lex *Lexeme) Prepend(other *Lexeme) {
 
 	if lex.Prev != nil {
@@ -80,6 +87,18 @@ func (lex *Lexeme) Prepend(other *Lexeme) {
 	lex.Prev = other
 }
 
+func (lex *Lexeme) prepend(other *Lexeme) {
+
+	if lex.prev != nil {
+		lex.prev.next = other
+		other.prev = lex.prev
+	}
+
+	other.next = lex
+	lex.prev = other
+}
+
+// @Deprecated
 func (lex *Lexeme) Append(other *Lexeme) {
 
 	if lex.Next != nil {
@@ -91,6 +110,18 @@ func (lex *Lexeme) Append(other *Lexeme) {
 	other.Prev = lex
 }
 
+func (lex *Lexeme) append(other *Lexeme) {
+
+	if lex.next != nil {
+		lex.next.append(other)
+		return
+	}
+
+	lex.next = other
+	other.prev = lex
+}
+
+// @Deprecated
 func (lex *Lexeme) Remove() {
 
 	if lex.Next != nil {
@@ -102,6 +133,19 @@ func (lex *Lexeme) Remove() {
 	}
 
 	lex.Next, lex.Prev = nil, nil
+}
+
+func (lex *Lexeme) remove() {
+
+	if lex.next != nil {
+		lex.next.prev = lex.prev
+	}
+
+	if lex.prev != nil {
+		lex.prev.next = lex.next
+	}
+
+	lex.next, lex.prev = nil, nil
 }
 
 func (lex *Lexeme) SplitBelow() {
