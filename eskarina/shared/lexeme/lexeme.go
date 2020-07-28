@@ -129,8 +129,8 @@ func (lex *Lexeme) Append(other *Lexeme) {
 func (lex *Lexeme) append(other *Lexeme) {
 
 	if lex.next != nil {
-		lex.next.append(other)
-		return
+		lex.next.prev = other
+		other.next = lex.next
 	}
 
 	lex.next = other

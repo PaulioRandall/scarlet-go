@@ -30,12 +30,13 @@ type lexReader struct {
 	*runeReader
 	line  int
 	col   int
-	start int
+	count int
 	read  bool
 }
 
 func (lr *lexReader) inc() {
 	lr.idx++
+	lr.count++
 	lr.read = true
 }
 
@@ -78,13 +79,13 @@ func (lr *lexReader) expect(ru rune) error {
 	if lr.empty() {
 		return perror.New(
 			"Unexpected EOF %d:%d, wanted %q",
-			lr.line, lr.idx-lr.start, ru,
+			lr.line, lr.idx-lr.count, ru,
 		)
 	}
 
 	return perror.New(
 		"Unexpected terminal symbol %d:%d, want %q, have %q",
-		lr.line, lr.idx-lr.start, ru, lr.peek(),
+		lr.line, lr.idx-lr.count, ru, lr.peek(),
 	)
 }
 
@@ -96,19 +97,19 @@ func (lr *lexReader) slice(tk lexeme.Token) *lexeme.Lexeme {
 
 	lex := &lexeme.Lexeme{
 		Tok:  tk,
-		Raw:  string(lr.runes[lr.start:lr.idx]),
+		Raw:  string(lr.runes[lr.idx-lr.count : lr.idx]),
 		Line: lr.line,
-		Col:  lr.start,
+		Col:  lr.col,
 	}
 
 	if lex.Tok == lexeme.NEWLINE {
 		lr.line++
 		lr.col = 0
 	} else {
-		lr.col = lr.idx - lr.start
+		lr.col = lr.col + lr.count
 	}
 
-	lr.start, lr.read = lr.idx, false
+	lr.count, lr.read = 0, false
 	return lex
 }
 

@@ -29,6 +29,17 @@ func Feign(lexs ...*lexeme.Lexeme) *lexeme.Lexeme {
 	return first
 }
 
+func Feign2(lexs ...*lexeme.Lexeme) *lexeme.Container2 {
+
+	que := &lexeme.Container2{}
+
+	for _, l := range lexs {
+		que.Put(l)
+	}
+
+	return que
+}
+
 func Lex2(line, col int, raw string, tk lexeme.Token) *lexeme.Lexeme {
 	return &lexeme.Lexeme{
 		Tok:  tk,
