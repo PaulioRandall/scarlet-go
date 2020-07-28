@@ -38,14 +38,17 @@ func (lex Lexeme) At() (line, start, end int) {
 	return lex.Line, lex.Col, len(lex.Raw)
 }
 
+// @Deprecated
 func (lex Lexeme) NextNode() *Lexeme {
 	return lex.Next
 }
 
+// @Deprecated
 func (lex Lexeme) PrevNode() *Lexeme {
 	return lex.Prev
 }
 
+// @Deprecated
 func (lex *Lexeme) ShiftUp() {
 
 	if lex.Prev == nil {
@@ -66,6 +69,7 @@ func (lex *Lexeme) ShiftUp() {
 	lex.Next, prev.Prev = prev, lex
 }
 
+// @Deprecated
 func (lex *Lexeme) ShiftDown() {
 
 	if lex.Next == nil {
@@ -148,6 +152,7 @@ func (lex *Lexeme) remove() {
 	lex.next, lex.prev = nil, nil
 }
 
+// @Deprecated
 func (lex *Lexeme) SplitBelow() {
 
 	if lex.Next == nil {
@@ -156,6 +161,30 @@ func (lex *Lexeme) SplitBelow() {
 
 	lex.Next.Prev = nil
 	lex.Next = nil
+}
+
+func (lex *Lexeme) splitNext() (*Lexeme, *Lexeme) {
+
+	next := lex.next
+
+	if next != nil {
+		next.prev = nil
+		lex.next = nil
+	}
+
+	return lex, next
+}
+
+func (lex *Lexeme) splitPrev() (*Lexeme, *Lexeme) {
+
+	prev := lex.prev
+
+	if prev != nil {
+		prev.next = nil
+		lex.prev = nil
+	}
+
+	return lex, prev
 }
 
 func (lex Lexeme) String() string {
