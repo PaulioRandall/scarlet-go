@@ -20,14 +20,14 @@ type Iterator2 interface {
 
 type Window2 interface {
 	Iterator2
-	Prior() *Lexeme
+	Behind() *Lexeme
 	Ahead() *Lexeme
 }
 
 type Itinerant2 struct {
-	prior *Lexeme
-	curr  *Lexeme
-	ahead *Lexeme
+	behind *Lexeme
+	curr   *Lexeme
+	ahead  *Lexeme
 }
 
 func newItinerant(head *Lexeme) *Itinerant2 {
@@ -41,8 +41,8 @@ func (it *Itinerant2) vacate() *Lexeme {
 	var head *Lexeme
 
 	switch {
-	case it.prior != nil:
-		for lex := it.prior; lex != nil; lex = lex.prev {
+	case it.behind != nil:
+		for lex := it.behind; lex != nil; lex = lex.prev {
 			head = lex
 		}
 
@@ -53,7 +53,7 @@ func (it *Itinerant2) vacate() *Lexeme {
 		head = it.ahead
 	}
 
-	it.curr, it.prior, it.ahead = nil, nil, nil
+	it.curr, it.behind, it.ahead = nil, nil, nil
 	return head
 }
 
@@ -64,7 +64,7 @@ func (it *Itinerant2) To() *To {
 }
 
 func (it *Itinerant2) HasPrev() bool {
-	return it.prior != nil
+	return it.behind != nil
 }
 
 func (it *Itinerant2) HasNext() bool {
@@ -73,18 +73,18 @@ func (it *Itinerant2) HasNext() bool {
 
 func (it *Itinerant2) Prev() bool {
 
-	if it.curr == nil && it.prior == nil {
+	if it.curr == nil && it.behind == nil {
 		return false
 	}
 
-	if it.prior == nil {
+	if it.behind == nil {
 		it.ahead, it.curr = it.curr, nil
 		return false
 	}
 
-	it.curr = it.prior
+	it.curr = it.behind
 	it.ahead = it.curr.next
-	it.prior = it.curr.prev
+	it.behind = it.curr.prev
 	return true
 }
 
@@ -95,12 +95,12 @@ func (it *Itinerant2) Next() bool {
 	}
 
 	if it.ahead == nil {
-		it.prior, it.curr = it.curr, nil
+		it.behind, it.curr = it.curr, nil
 		return false
 	}
 
 	it.curr = it.ahead
-	it.prior = it.curr.prev
+	it.behind = it.curr.prev
 	it.ahead = it.curr.next
 
 	return true
@@ -110,8 +110,8 @@ func (it *Itinerant2) Curr() *Lexeme {
 	return it.curr
 }
 
-func (it *Itinerant2) Prior() *Lexeme {
-	return it.prior
+func (it *Itinerant2) Behind() *Lexeme {
+	return it.behind
 }
 
 func (it *Itinerant2) Ahead() *Lexeme {
@@ -146,9 +146,9 @@ func (it *Itinerant2) String() string {
 		sb.WriteRune('\n')
 	}
 
-	write("Prior: ", it.prior)
-	write("Curr : ", it.curr)
-	write("Ahead: ", it.ahead)
+	write("Behind: ", it.behind)
+	write("Curr  : ", it.curr)
+	write("Ahead : ", it.ahead)
 
 	return sb.String()
 }
