@@ -1,10 +1,13 @@
 package lexeme
 
+import (
+	"strings"
+)
+
 type Range2 interface {
+	To() *To
 	HasPrev() bool
 	HasNext() bool
-	ToContainer() *Container2
-	AsItinerant() *Itinerant2
 }
 
 type Iterator2 interface {
@@ -27,25 +30,13 @@ type Itinerant2 struct {
 	ahead  *Lexeme
 }
 
-func toItinerant(c *Container2) *Itinerant2 {
-
-	it := &Itinerant2{
-		ahead: c.head,
+func newItinerant(head *Lexeme) *Itinerant2 {
+	return &Itinerant2{
+		ahead: head,
 	}
-
-	c.head, c.tail, c.size = nil, nil, 0
-	return it
 }
 
-func (it *Itinerant2) HasPrev() bool {
-	return it.behind != nil
-}
-
-func (it *Itinerant2) HasNext() bool {
-	return it.ahead != nil
-}
-
-func (it *Itinerant2) ToContainer() *Container2 {
+func (it *Itinerant2) vacate() *Lexeme {
 
 	var head *Lexeme
 
@@ -63,19 +54,19 @@ func (it *Itinerant2) ToContainer() *Container2 {
 	}
 
 	it.curr, it.behind, it.ahead = nil, nil, nil
-	return toContainer(head)
+	return head
 }
 
-func (it *Itinerant2) AsItinerant() *Itinerant2 {
-	return it
+func (it *Itinerant2) To() *To {
+	return NewTo(it)
 }
 
-func (it *Itinerant2) AsIterator() Iterator2 {
-	return it
+func (it *Itinerant2) HasPrev() bool {
+	return it.behind != nil
 }
 
-func (it *Itinerant2) AsWindow() Window2 {
-	return it
+func (it *Itinerant2) HasNext() bool {
+	return it.ahead != nil
 }
 
 func (it *Itinerant2) Prev() bool {
@@ -135,4 +126,26 @@ func (it *Itinerant2) Remove() *Lexeme {
 	r.remove()
 
 	return r
+}
+
+func (it *Itinerant2) String() string {
+
+	sb := strings.Builder{}
+	write := func(pre string, lex *Lexeme) {
+		sb.WriteString(pre)
+
+		if lex == nil {
+			sb.WriteString("---")
+		} else {
+			sb.WriteString(lex.String())
+		}
+
+		sb.WriteRune('\n')
+	}
+
+	write("Behind: ", it.behind)
+	write("Curr  : ", it.curr)
+	write("Ahead : ", it.ahead)
+
+	return sb.String()
 }

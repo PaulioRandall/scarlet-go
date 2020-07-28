@@ -6,11 +6,10 @@ import (
 )
 
 type Collection2 interface {
+	To() *To
 	Empty() bool
 	More() bool
 	Size() int
-	ToItinerant() *Itinerant2
-	AsContainer() *Container2
 }
 
 type Stack2 interface {
@@ -43,7 +42,7 @@ func checkIsSingle(lex *Lexeme) {
 	}
 }
 
-func toContainer(head *Lexeme) *Container2 {
+func newContainer(head *Lexeme) *Container2 {
 
 	if head == nil {
 		return &Container2{}
@@ -63,6 +62,16 @@ func toContainer(head *Lexeme) *Container2 {
 	return c
 }
 
+func (c *Container2) vacate() *Lexeme {
+	head := c.head
+	c.head, c.tail, c.size = nil, nil, 0
+	return head
+}
+
+func (c *Container2) To() *To {
+	return NewTo(c)
+}
+
 func (c *Container2) Empty() bool {
 	return c.size == 0
 }
@@ -73,22 +82,6 @@ func (c *Container2) More() bool {
 
 func (c *Container2) Size() int {
 	return c.size
-}
-
-func (c *Container2) ToItinerant() *Itinerant2 {
-	return toItinerant(c)
-}
-
-func (c *Container2) AsContainer() *Container2 {
-	return c
-}
-
-func (c *Container2) AsStack() Stack2 {
-	return c
-}
-
-func (c *Container2) AsQueue() Queue2 {
-	return c
 }
 
 func (c *Container2) Top() *Lexeme {
