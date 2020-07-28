@@ -145,9 +145,10 @@ func (lex *Lexeme) Remove() {
 }
 
 func (lex Lexeme) String() string {
-	return fmt.Sprintf("%d:%d %s %q",
+	return fmt.Sprintf("%d:%d %s %s %q",
 		lex.Line,
 		lex.Col,
+		lex.Tok.String(),
 		"["+JoinProps(",", lex.Props...)+"]",
 		lex.Raw,
 	)

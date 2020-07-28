@@ -27,7 +27,7 @@ func format(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 
 func trimLeadingSpace(head *lexeme.Lexeme) *lexeme.Lexeme {
 
-	for head != nil && head.Is(lexeme.PR_WHITESPACE) {
+	for head != nil && head.Tok == lexeme.WHITESPACE {
 		next := head.Next
 		head.Remove()
 		head = next
@@ -49,8 +49,11 @@ func trimSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 		return next
 	}
 
-	nextIs := func(curr *lexeme.Lexeme, p lexeme.Prop) bool {
-		return curr.Next != nil && curr.Next.Is(p)
+	nextTok := func(curr *lexeme.Lexeme) lexeme.Token {
+		if curr.Next == nil {
+			return lexeme.UNDEFINED
+		}
+		return curr.Next.Tok
 	}
 
 	for curr := head; curr != nil && curr.Next != nil; {
@@ -58,22 +61,22 @@ func trimSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 		var next *lexeme.Lexeme
 
 		switch {
-		case curr.Is(lexeme.PR_NEWLINE) && nextIs(curr, lexeme.PR_WHITESPACE):
+		case curr.Tok == lexeme.NEWLINE && nextTok(curr) == lexeme.WHITESPACE:
 			next = remove(curr.Next)
 
-		case curr.Is(lexeme.PR_WHITESPACE) && nextIs(curr, lexeme.PR_NEWLINE):
+		case curr.Tok == lexeme.WHITESPACE && nextTok(curr) == lexeme.NEWLINE:
 			next = remove(curr)
 
-		case curr.Is(lexeme.PR_SPELL) && nextIs(curr, lexeme.PR_WHITESPACE):
+		case curr.Tok == lexeme.SPELL && nextTok(curr) == lexeme.WHITESPACE:
 			next = remove(curr.Next)
 
-		case curr.Is(lexeme.PR_OPENER) && nextIs(curr, lexeme.PR_WHITESPACE):
+		case curr.Tok.IsOpener() && nextTok(curr) == lexeme.WHITESPACE:
 			next = remove(curr.Next)
 
-		case curr.Is(lexeme.PR_WHITESPACE) && nextIs(curr, lexeme.PR_SEPARATOR):
+		case curr.Tok == lexeme.WHITESPACE && nextTok(curr) == lexeme.SEPARATOR:
 			next = remove(curr)
 
-		case curr.Is(lexeme.PR_WHITESPACE) && nextIs(curr, lexeme.PR_CLOSER):
+		case curr.Tok == lexeme.WHITESPACE && nextTok(curr).IsCloser():
 			next = remove(curr)
 
 		default:
@@ -90,16 +93,13 @@ func insertSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	for lex := head; lex != nil; lex = lex.Next {
 
-		if !lex.Is(lexeme.PR_SEPARATOR) || lex.Next == nil {
+		if lex.Tok != lexeme.SEPARATOR || lex.Next == nil {
 			continue
 		}
 
-		if !lex.Next.Any(lexeme.PR_WHITESPACE, lexeme.PR_NEWLINE) {
+		if !lex.Next.Tok.IsAny(lexeme.WHITESPACE, lexeme.NEWLINE) {
 			lex.Append(&lexeme.Lexeme{
-				Props: []lexeme.Prop{
-					lexeme.PR_REDUNDANT,
-					lexeme.PR_WHITESPACE,
-				},
+				Tok:  lexeme.WHITESPACE,
 				Raw:  " ",
 				Line: lex.Line,
 				Col:  lex.Col + 1,
@@ -113,7 +113,7 @@ func insertSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 func reduceSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	for lex := head; lex != nil; lex = lex.Next {
-		if lex.Is(lexeme.PR_WHITESPACE) {
+		if lex.Tok == lexeme.WHITESPACE {
 			lex.Raw = " "
 		}
 	}
@@ -127,8 +127,8 @@ func trimEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 		return nil
 	}
 
-	if head.Is(lexeme.PR_NEWLINE) {
-		for head.Next != nil && head.Next.Is(lexeme.PR_NEWLINE) {
+	if head.Tok == lexeme.NEWLINE {
+		for head.Next != nil && head.Next.Tok == lexeme.NEWLINE {
 			head.Next.Remove()
 		}
 	}
@@ -142,11 +142,11 @@ func trimEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 		tail = lex
 	}
 
-	if !tail.Is(lexeme.PR_NEWLINE) {
+	if tail.Tok != lexeme.NEWLINE {
 		return head
 	}
 
-	for tail.Prev != nil && tail.Prev.Is(lexeme.PR_NEWLINE) {
+	for tail.Prev != nil && tail.Prev.Tok == lexeme.NEWLINE {
 		tail.Prev.Remove()
 	}
 
@@ -160,7 +160,7 @@ func reduceEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 	for lex := head; lex != nil; {
 
 		switch {
-		case !lex.Is(lexeme.PR_NEWLINE):
+		case lex.Tok != lexeme.NEWLINE:
 			single, double = false, false
 
 		case !single:
@@ -185,7 +185,7 @@ func reduceEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 func unifyLineEndings(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 
 	for lex := head; lex != nil; lex = lex.Next {
-		if lex.Is(lexeme.PR_NEWLINE) {
+		if lex.Tok == lexeme.NEWLINE {
 			lex.Raw = lineEnding
 		}
 	}
@@ -195,12 +195,8 @@ func unifyLineEndings(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 		tail = lex
 	}
 
-	if tail != nil && !tail.Is(lexeme.PR_NEWLINE) {
+	if tail != nil && tail.Tok != lexeme.NEWLINE {
 		tail.Append(&lexeme.Lexeme{
-			Props: []lexeme.Prop{
-				lexeme.PR_TERMINATOR,
-				lexeme.PR_NEWLINE,
-			},
 			Raw:  lineEnding,
 			Line: tail.Line,
 		})
@@ -216,24 +212,24 @@ func indentNests(head *lexeme.Lexeme) *lexeme.Lexeme {
 	for lex := head; lex != nil; lex = lex.Next {
 
 		switch {
-		case lex.Is(lexeme.PR_OPENER):
+		case lex.Tok.IsOpener():
 			indent++
 
-		case lex.Is(lexeme.PR_CLOSER):
+		case lex.Tok.IsCloser():
 			indent--
 
-		case !lex.Is(lexeme.PR_NEWLINE) || lex.Next == nil:
+		case lex.Tok != lexeme.NEWLINE || lex.Next == nil:
 
-		case lex.Next.Is(lexeme.PR_NEWLINE):
+		case lex.Next.Tok == lexeme.NEWLINE:
 
-		case lex.Next.Is(lexeme.PR_CLOSER):
+		case lex.Next.Tok.IsCloser():
 			indent--
 
-		case indent > 0 && lex.Is(lexeme.PR_NEWLINE):
+		case indent > 0 && lex.Tok == lexeme.NEWLINE:
 			lex.Append(&lexeme.Lexeme{
-				Props: []lexeme.Prop{lexeme.PR_REDUNDANT, lexeme.PR_WHITESPACE},
-				Raw:   strings.Repeat("\t", indent),
-				Line:  lex.Line + 1,
+				Tok:  lexeme.WHITESPACE,
+				Raw:  strings.Repeat("\t", indent),
+				Line: lex.Line + 1,
 			})
 		}
 	}

@@ -10,7 +10,7 @@ import (
 func Test1_1(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
 	)
 
 	exp := lextest.Feign()
@@ -22,13 +22,13 @@ func Test1_1(t *testing.T) {
 func Test1_2(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	act := trimLeadingSpace(given)
@@ -38,11 +38,11 @@ func Test1_2(t *testing.T) {
 func Test2_1(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
+		lextest.Tok2(",", lexeme.SEPARATOR),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
+		lextest.Tok2(",", lexeme.SEPARATOR),
 	)
 
 	act := insertSpaces(given)
@@ -52,13 +52,13 @@ func Test2_1(t *testing.T) {
 func Test2_2(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
 	)
 
 	act := insertSpaces(given)
@@ -68,15 +68,15 @@ func Test2_2(t *testing.T) {
 func Test2_3(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
 	)
 
 	act := insertSpaces(given)
@@ -86,14 +86,14 @@ func Test2_3(t *testing.T) {
 func Test2_4(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Lex(2, 4, ",", lexeme.PR_SEPARATOR),
-		lextest.Lex(2, 5, "1", lexeme.PR_LITERAL),
+		lextest.Lex2(2, 4, ",", lexeme.SEPARATOR),
+		lextest.Lex2(2, 5, "1", lexeme.NUMBER),
 	)
 
 	exp := lextest.Feign(
-		lextest.Lex(2, 4, ",", lexeme.PR_SEPARATOR),
-		lextest.Lex(2, 5, " ", lexeme.PR_REDUNDANT, lexeme.PR_WHITESPACE),
-		lextest.Lex(2, 5, "1", lexeme.PR_LITERAL),
+		lextest.Lex2(2, 4, ",", lexeme.SEPARATOR),
+		lextest.Lex2(2, 5, " ", lexeme.WHITESPACE),
+		lextest.Lex2(2, 5, "1", lexeme.NUMBER),
 	)
 
 	act := insertSpaces(given)
@@ -103,12 +103,12 @@ func Test2_4(t *testing.T) {
 func Test3_1(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	act := trimSpaces(given)
@@ -118,12 +118,12 @@ func Test3_1(t *testing.T) {
 func Test3_2(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	act := trimSpaces(given)
@@ -133,14 +133,14 @@ func Test3_2(t *testing.T) {
 func Test3_3(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("(", lexeme.PR_OPENER),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_OPENER),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
 	)
 
 	act := trimSpaces(given)
@@ -150,14 +150,14 @@ func Test3_3(t *testing.T) {
 func Test3_4(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_OPENER),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_OPENER),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
 	)
 
 	act := trimSpaces(given)
@@ -167,12 +167,12 @@ func Test3_4(t *testing.T) {
 func Test3_5(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok(")", lexeme.PR_CLOSER),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok(")", lexeme.PR_CLOSER),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
 	)
 
 	act := trimSpaces(given)
@@ -182,17 +182,17 @@ func Test3_5(t *testing.T) {
 func Test4_1(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok("   ", lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
 	)
 
 	act := reduceSpaces(given)
@@ -202,17 +202,17 @@ func Test4_1(t *testing.T) {
 func Test4_2(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok("\t", lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2("\t", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
 	)
 
 	act := reduceSpaces(given)
@@ -222,17 +222,17 @@ func Test4_2(t *testing.T) {
 func Test5_1(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("1", lexeme.NUMBER),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("1", lexeme.NUMBER),
 	)
 
 	act := reduceEmptyLines(given)
@@ -242,18 +242,18 @@ func Test5_1(t *testing.T) {
 func Test5_2(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("1", lexeme.NUMBER),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("1", lexeme.NUMBER),
 	)
 
 	act := reduceEmptyLines(given)
@@ -263,61 +263,61 @@ func Test5_2(t *testing.T) {
 func Test6_1(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("\r\n", lexeme.PR_NEWLINE),
+		lextest.Tok2("\r\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	act := unifyLineEndings(given, "\n")
 	lextest.Equal(t, exp, act)
 }
 
-func TestAll(t *testing.T) {
+func Test7_1(t *testing.T) {
 
 	// " @Println ( 1 , 1 , \n 1 ) \n "
 	given := lextest.Feign(
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("(", lexeme.PR_OPENER),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok(")", lexeme.PR_CLOSER),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
 	)
 
 	// "@Println(1, 1,\n1)\n"
 	exp := lextest.Feign(
-		lextest.Tok("@Println", lexeme.PR_SPELL),
-		lextest.Tok("(", lexeme.PR_OPENER),
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok(" ", lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok(",", lexeme.PR_SEPARATOR),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
-		lextest.Lex(1, 0, "\t", lexeme.PR_REDUNDANT, lexeme.PR_WHITESPACE),
-		lextest.Tok("1", lexeme.PR_LITERAL),
-		lextest.Tok(")", lexeme.PR_CLOSER),
-		lextest.Tok("\n", lexeme.PR_NEWLINE),
+		lextest.Tok2("@Println", lexeme.SPELL),
+		lextest.Tok2("(", lexeme.LEFT_PAREN),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2(" ", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(",", lexeme.SEPARATOR),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Tok2("\n", lexeme.NEWLINE),
+		lextest.Lex2(1, 0, "\t", lexeme.WHITESPACE),
+		lextest.Tok2("1", lexeme.NUMBER),
+		lextest.Tok2(")", lexeme.RIGHT_PAREN),
+		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
 	act := FormatAll(given, "\n")
