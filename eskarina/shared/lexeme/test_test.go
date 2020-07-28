@@ -89,11 +89,28 @@ func feign2(lexs ...*Lexeme) {
 }
 
 func setup2() (a, b, c, d *Lexeme) {
-	a = tok("true", BOOL)
-	b = tok("1", NUMBER)
-	c = tok(`"abc"`, STRING)
-	d = tok("x", IDENTIFIER)
+	a = tok("1st", BOOL)
+	b = tok("2nd", NUMBER)
+	c = tok("3rd", STRING)
+	d = tok("4th", IDENTIFIER)
 	return
+}
+
+func setupContainer2() (_ *Container2, a, b, c, d *Lexeme) {
+
+	a, b, c, d = setup2()
+
+	a.prev, a.next = nil, b
+	b.prev, b.next = a, c
+	c.prev, c.next = b, nil
+
+	con := &Container2{
+		size: 3,
+		head: a,
+		tail: c,
+	}
+
+	return con, a, b, c, d
 }
 
 func fullEqual2(t *testing.T, exp, prev, next, act *Lexeme) {

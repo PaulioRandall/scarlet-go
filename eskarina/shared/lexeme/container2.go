@@ -2,12 +2,14 @@ package lexeme
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Collection2 interface {
 	Empty() bool
 	More() bool
 	Size() int
+	Container() *Container2
 }
 
 type Stack2 interface {
@@ -40,19 +42,16 @@ func checkIsSingle(lex *Lexeme) {
 	}
 }
 
-func NewContainer2(head *Lexeme) *Container2 {
+func NewContainer2() *Container2 {
+	return &Container2{}
+}
 
-	if head == nil {
-		return &Container2{}
-	}
+func (c *Container2) AsStack() Stack2 {
+	return c
+}
 
-	checkIsSingle(head)
-
-	return &Container2{
-		size: 1,
-		head: head,
-		tail: head,
-	}
+func (c *Container2) AsQueue() Queue2 {
+	return c
 }
 
 func (c *Container2) Empty() bool {
@@ -65,6 +64,10 @@ func (c *Container2) More() bool {
 
 func (c *Container2) Size() int {
 	return c.size
+}
+
+func (c *Container2) Container() *Container2 {
+	return c
 }
 
 func (c *Container2) Top() *Lexeme {
@@ -101,10 +104,10 @@ func (c *Container2) pop(fromBack bool) *Lexeme {
 
 	if fromBack {
 		r = c.tail
-		c.tail = c.tail.Next
+		c.tail = c.tail.prev
 	} else {
 		r = c.head
-		c.head = c.head.Next
+		c.head = c.head.next
 	}
 
 	r.remove()
@@ -139,8 +142,18 @@ func (c *Container2) push(lex *Lexeme, toBack bool) {
 	c.size++
 }
 
-func (c *Container2) Descend(f func(*Lexeme)) {
+func (c *Container2) String() string {
+
+	sb := strings.Builder{}
+
 	for lex := c.head; lex != nil; lex = lex.Next {
-		f(lex)
+
+		if lex != c.head {
+			sb.WriteRune('\n')
+		}
+
+		sb.WriteString(lex.String())
 	}
+
+	return sb.String()
 }
