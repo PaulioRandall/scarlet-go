@@ -9,7 +9,7 @@ type Collection2 interface {
 	Empty() bool
 	More() bool
 	Size() int
-	Container() *Container2
+	AsContainer() *Container2
 }
 
 type Stack2 interface {
@@ -33,25 +33,13 @@ type Container2 struct {
 }
 
 func checkIsSingle(lex *Lexeme) {
-	if !lex.IsSingle() {
+	if !lex.IsSingle2() {
 		m := fmt.Sprintf(
 			"Lexeme `%s` is already part of another collection, remove first",
 			lex.String(),
 		)
 		panic(m)
 	}
-}
-
-func NewContainer2() *Container2 {
-	return &Container2{}
-}
-
-func (c *Container2) AsStack() Stack2 {
-	return c
-}
-
-func (c *Container2) AsQueue() Queue2 {
-	return c
 }
 
 func (c *Container2) Empty() bool {
@@ -66,7 +54,15 @@ func (c *Container2) Size() int {
 	return c.size
 }
 
-func (c *Container2) Container() *Container2 {
+func (c *Container2) AsContainer() *Container2 {
+	return c
+}
+
+func (c *Container2) AsStack() Stack2 {
+	return c
+}
+
+func (c *Container2) AsQueue() Queue2 {
 	return c
 }
 

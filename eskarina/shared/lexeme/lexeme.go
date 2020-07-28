@@ -34,8 +34,20 @@ func (lex Lexeme) IsSingle() bool {
 	return lex.Next == nil && lex.Prev == nil
 }
 
+func (lex Lexeme) IsSingle2() bool {
+	return lex.next == nil && lex.prev == nil
+}
+
 func (lex Lexeme) At() (line, start, end int) {
 	return lex.Line, lex.Col, len(lex.Raw)
+}
+
+func (lex Lexeme) Next2() *Lexeme {
+	return lex.next
+}
+
+func (lex Lexeme) Prev2() *Lexeme {
+	return lex.prev
 }
 
 // @Deprecated
