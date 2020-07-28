@@ -5,9 +5,9 @@ import (
 )
 
 type shuntingYard struct {
-	queue lexeme.Queue
-	stack lexeme.Stack
-	out   lexeme.Queue
+	queue lexeme.Queue2
+	stack lexeme.Stack2
+	out   lexeme.Queue2
 }
 
 func (shy *shuntingYard) empty() bool {

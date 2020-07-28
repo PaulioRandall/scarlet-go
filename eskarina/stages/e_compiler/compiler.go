@@ -6,7 +6,7 @@ import (
 )
 
 type compiler struct {
-	input lexeme.Queue
+	input lexeme.Queue2
 	out   inst.Queue
 }
 

@@ -7,12 +7,12 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/inst"
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/a_scanner2"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/a_scanner"
 	//"github.com/PaulioRandall/scarlet-go/eskarina/stages/b_format"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/b_sanitiser2"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/c_checker2"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/d_shunter2"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/e_compiler2"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/b_sanitiser"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/c_checker"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/d_shunter"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/e_compiler"
 )
 
 func scanAll(c Config, s string) (*lexeme.Container2, error) {

@@ -7,23 +7,23 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme/lextest"
 )
 
-func doTest(t *testing.T, in, exp *lexeme.Lexeme) {
+func doTest(t *testing.T, in, exp *lexeme.Container2) {
 	act := ShuntAll(in)
-	lextest.Equal(t, exp, act)
+	lextest.Equal2(t, exp.Head(), act.Head())
 }
 
 func Test1_1(t *testing.T) {
 
 	// WHEN refixing a spell with no arguments
 	// @Println()
-	in := lextest.Feign(
+	in := lextest.Feign2(
 		lextest.Tok2("@Println", lexeme.SPELL),
 		lextest.Tok2("(", lexeme.LEFT_PAREN),
 		lextest.Tok2(")", lexeme.RIGHT_PAREN),
 		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
-	exp := lextest.Feign(
+	exp := lextest.Feign2(
 		lextest.Tok2("", lexeme.CALLABLE),
 		lextest.Tok2("@Println", lexeme.SPELL),
 		lextest.Tok2("\n", lexeme.NEWLINE),
@@ -36,7 +36,7 @@ func Test1_2(t *testing.T) {
 
 	// WHEN refixing a spell with one argument
 	// @Println(x)
-	in := lextest.Feign(
+	in := lextest.Feign2(
 		lextest.Tok2("@Println", lexeme.SPELL),
 		lextest.Tok2("(", lexeme.LEFT_PAREN),
 		lextest.Tok2("x", lexeme.IDENTIFIER),
@@ -44,7 +44,7 @@ func Test1_2(t *testing.T) {
 		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
-	exp := lextest.Feign(
+	exp := lextest.Feign2(
 		lextest.Tok2("", lexeme.CALLABLE),
 		lextest.Tok2("x", lexeme.IDENTIFIER),
 		lextest.Tok2("@Println", lexeme.SPELL),
@@ -58,7 +58,7 @@ func Test1_3(t *testing.T) {
 
 	// WHEN refixing a spell with multiple arguments
 	// @Println(x, y, z)
-	in := lextest.Feign(
+	in := lextest.Feign2(
 		lextest.Tok2("@Println", lexeme.SPELL),
 		lextest.Tok2("(", lexeme.LEFT_PAREN),
 		lextest.Tok2("x", lexeme.IDENTIFIER),
@@ -70,7 +70,7 @@ func Test1_3(t *testing.T) {
 		lextest.Tok2("\n", lexeme.NEWLINE),
 	)
 
-	exp := lextest.Feign(
+	exp := lextest.Feign2(
 		lextest.Tok2("", lexeme.CALLABLE),
 		lextest.Tok2("x", lexeme.IDENTIFIER),
 		lextest.Tok2("x", lexeme.IDENTIFIER),

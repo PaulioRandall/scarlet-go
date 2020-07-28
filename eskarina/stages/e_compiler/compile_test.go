@@ -10,7 +10,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/number"
 )
 
-func doTest(t *testing.T, in *lexeme.Lexeme, exps *inst.Instruction) {
+func doTest(t *testing.T, in *lexeme.Container2, exps *inst.Instruction) {
 	acts := CompileAll(in)
 	insttest.Equal(t, exps, acts)
 }
@@ -19,7 +19,7 @@ func Test1_1(t *testing.T) {
 
 	// WHEN compiling a spell with no arguments
 	// @Println()
-	in := lextest.Feign(
+	in := lextest.Feign2(
 		lextest.Tok2("", lexeme.CALLABLE),
 		lextest.Tok2("@Println", lexeme.SPELL),
 		lextest.Tok2("\n", lexeme.NEWLINE),
@@ -38,7 +38,7 @@ func Test1_2(t *testing.T) {
 
 	// WHEN compiling a spell with an identifier argument
 	// @Println(x)
-	in := lextest.Feign(
+	in := lextest.Feign2(
 		lextest.Tok2("", lexeme.CALLABLE),
 		lextest.Tok2("x", lexeme.IDENTIFIER),
 		lextest.Tok2("@Println", lexeme.SPELL),
@@ -59,7 +59,7 @@ func Test1_3(t *testing.T) {
 
 	// WHEN compiling a spell with a multiple arguments of different types
 	// @Println(x, 1, "abc")
-	in := lextest.Feign(
+	in := lextest.Feign2(
 		lextest.Tok2("", lexeme.CALLABLE),
 		lextest.Tok2("x", lexeme.IDENTIFIER),
 		lextest.Tok2("1", lexeme.NUMBER),

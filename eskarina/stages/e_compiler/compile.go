@@ -6,10 +6,10 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/number"
 )
 
-func CompileAll(head *lexeme.Lexeme) *inst.Instruction {
+func CompileAll(con *lexeme.Container2) *inst.Instruction {
 
 	com := &compiler{
-		input: lexeme.NewContainer(head),
+		input: con.To().Queue(),
 		out:   &inst.Container{},
 	}
 

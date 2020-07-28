@@ -4,16 +4,16 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
-func ShuntAll(head *lexeme.Lexeme) *lexeme.Lexeme {
+func ShuntAll(con *lexeme.Container2) *lexeme.Container2 {
 
 	shy := &shuntingYard{
-		queue: lexeme.NewContainer(head),
-		stack: &lexeme.Container{},
-		out:   &lexeme.Container{},
+		queue: con.To().Queue(),
+		stack: &lexeme.Container2{},
+		out:   &lexeme.Container2{},
 	}
 
 	shunt(shy)
-	return shy.out.Head()
+	return shy.out.To().Container()
 }
 
 func shunt(shy *shuntingYard) {

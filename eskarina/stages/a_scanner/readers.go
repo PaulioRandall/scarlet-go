@@ -106,7 +106,7 @@ func (lr *lexReader) slice(tk lexeme.Token) *lexeme.Lexeme {
 		lr.line++
 		lr.col = 0
 	} else {
-		lr.col = lr.col + lr.count
+		lr.col += lr.count
 	}
 
 	lr.count, lr.read = 0, false

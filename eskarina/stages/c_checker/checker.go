@@ -6,34 +6,25 @@ import (
 )
 
 type checker struct {
-	lex *lexeme.Lexeme
-}
-
-func (chk *checker) more() bool {
-	return chk.lex != nil
+	it lexeme.Iterator2
 }
 
 func (chk *checker) unexpected(want string) error {
 	return perror.New(
 		"Unexpected token\nHave: %s\nWant: %s",
-		chk.lex.Tok.String(),
+		chk.it.Curr().Tok.String(),
 		want,
 	)
 }
 
 func (chk *checker) matchAny(tks ...lexeme.Token) bool {
-
-	if chk.lex == nil {
-		return false
-	}
-
-	return chk.lex.Tok.IsAny(tks...)
+	return chk.it.Curr() != nil && chk.it.Curr().Tok.IsAny(tks...)
 }
 
 func (chk *checker) acceptAny(tks ...lexeme.Token) bool {
 
 	if chk.matchAny(tks...) {
-		chk.lex = chk.lex.Next
+		chk.it.Next()
 		return true
 	}
 
@@ -42,7 +33,7 @@ func (chk *checker) acceptAny(tks ...lexeme.Token) bool {
 
 func (chk *checker) expectAny(tks ...lexeme.Token) error {
 
-	if chk.lex == nil {
+	if chk.it.Curr() == nil {
 		return perror.New(
 			"Unexpected token\nHave: EOF\nWant: %s",
 			lexeme.JoinTokens(" & ", tks...),
@@ -58,8 +49,8 @@ func (chk *checker) expectAny(tks ...lexeme.Token) error {
 
 func (chk *checker) tok() lexeme.Token {
 
-	if chk.lex != nil {
-		return chk.lex.Tok
+	if chk.it.Curr() != nil {
+		return chk.it.Curr().Tok
 	}
 
 	return lexeme.UNDEFINED
@@ -67,8 +58,8 @@ func (chk *checker) tok() lexeme.Token {
 
 func (chk *checker) accept(ok bool) bool {
 
-	if chk.lex != nil && ok {
-		chk.lex = chk.lex.Next
+	if chk.it.Curr() != nil && ok {
+		chk.it.Next()
 		return true
 	}
 
@@ -77,7 +68,7 @@ func (chk *checker) accept(ok bool) bool {
 
 func (chk *checker) expect(want string, ok bool) error {
 
-	if chk.lex == nil {
+	if chk.it.Curr() == nil {
 		return perror.New("Unexpected token\nHave: EOF\nWant: %s", want)
 	}
 
