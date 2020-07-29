@@ -60,7 +60,6 @@ func Test1_2(t *testing.T) {
 	lextest.Equal(t, exp.Head(), act.Head())
 }
 
-/*
 func Test2_1(t *testing.T) {
 
 	given := lextest.Feign(
@@ -71,61 +70,44 @@ func Test2_1(t *testing.T) {
 		lextest.Tok(",", lexeme.SEPARATOR),
 	)
 
-	act := insertSpaces(given)
-	lextest.Equal(t, exp, act)
+	act := insertWhiteSpace(given)
+	lextest.Equal(t, exp.Head(), act.Head())
 }
 
 func Test2_2(t *testing.T) {
 
 	given := lextest.Feign(
 		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
 		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	act := insertSpaces(given)
-	lextest.Equal(t, exp, act)
+	act := insertWhiteSpace(given)
+	lextest.Equal(t, exp.Head(), act.Head())
 }
 
 func Test2_3(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok(" ", lexeme.WHITESPACE),
-		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Lex(2, 4, ",", lexeme.SEPARATOR),
+		lextest.Lex(2, 5, "1", lexeme.NUMBER),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok(" ", lexeme.WHITESPACE),
-		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Lex(2, 4, ",", lexeme.SEPARATOR),
+		lextest.Lex(2, 5, " ", lexeme.WHITESPACE),
+		lextest.Lex(2, 5, "1", lexeme.NUMBER),
 	)
 
-	act := insertSpaces(given)
-	lextest.Equal(t, exp, act)
+	act := insertWhiteSpace(given)
+	lextest.Equal(t, exp.Head(), act.Head())
 }
 
-func Test2_4(t *testing.T) {
-
-	given := lextest.Feign(
-		lextest.Lex2(2, 4, ",", lexeme.SEPARATOR),
-		lextest.Lex2(2, 5, "1", lexeme.NUMBER),
-	)
-
-	exp := lextest.Feign(
-		lextest.Lex2(2, 4, ",", lexeme.SEPARATOR),
-		lextest.Lex2(2, 5, " ", lexeme.WHITESPACE),
-		lextest.Lex2(2, 5, "1", lexeme.NUMBER),
-	)
-
-	act := insertSpaces(given)
-	lextest.Equal(t, exp, act)
-}
-
+/*
 func Test3_1(t *testing.T) {
 
 	given := lextest.Feign(
@@ -340,7 +322,7 @@ func Test7_1(t *testing.T) {
 		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("\n", lexeme.NEWLINE),
 		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Lex2(1, 0, "\t", lexeme.WHITESPACE),
+		lextest.Lex(1, 0, "\t", lexeme.WHITESPACE),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok(")", lexeme.RIGHT_PAREN),
 		lextest.Tok("\n", lexeme.NEWLINE),

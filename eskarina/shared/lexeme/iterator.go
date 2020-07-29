@@ -13,6 +13,8 @@ type Range interface {
 	Next() bool
 	Curr() *Lexeme
 	Remove() *Lexeme
+	Prepend(*Lexeme)
+	Append(*Lexeme)
 	Before() *Lexeme
 	After() *Lexeme
 	String() string
@@ -125,6 +127,26 @@ func (it *Iterator) Remove() *Lexeme {
 	remove(r)
 
 	return r
+}
+
+func (it *Iterator) Prepend(lex *Lexeme) {
+
+	if it.curr == nil {
+		panic("Can't prepend to nil, curr is nil")
+	}
+
+	prepend(it.curr, lex)
+	it.before = lex
+}
+
+func (it *Iterator) Append(lex *Lexeme) {
+
+	if it.curr == nil {
+		panic("Can't append to nil, curr is nil")
+	}
+
+	append(it.curr, lex)
+	it.after = lex
 }
 
 func (it *Iterator) String() string {

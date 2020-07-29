@@ -6,6 +6,22 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
+type Iterator interface {
+	//AsIterator() *Iterator
+	ToContainer() *lexeme.Container
+	//HasPrev() bool
+	//HasNext() bool
+	//Prev() bool
+	Next() bool
+	Curr() *lexeme.Lexeme
+	Remove() *lexeme.Lexeme
+	//Prepend(*Lexeme)
+	Append(*lexeme.Lexeme)
+	//Before() *Lexeme
+	After() *lexeme.Lexeme
+	//String() string
+}
+
 func FormatAll(con *lexeme.Container, lineEnding string) *lexeme.Container {
 	return format(con, lineEnding)
 }
@@ -13,7 +29,7 @@ func FormatAll(con *lexeme.Container, lineEnding string) *lexeme.Container {
 func format(con *lexeme.Container, lineEnding string) *lexeme.Container {
 
 	con = trimWhiteSpace(con)
-	//head = insertSpaces(head)
+	con = insertWhiteSpace(con)
 	//head = reduceSpaces(head)
 	//head = trimEmptyLines(head)
 	//head = reduceEmptyLines(head)
@@ -26,7 +42,7 @@ func format(con *lexeme.Container, lineEnding string) *lexeme.Container {
 
 func trimWhiteSpace(con *lexeme.Container) *lexeme.Container {
 
-	itr := con.ToIterator()
+	itr := Iterator(con.ToIterator())
 
 	for itr.Next() {
 		if itr.Curr().Tok == lexeme.WHITESPACE {
@@ -37,27 +53,29 @@ func trimWhiteSpace(con *lexeme.Container) *lexeme.Container {
 	return itr.ToContainer()
 }
 
-/*
-func insertSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
+func insertWhiteSpace(con *lexeme.Container) *lexeme.Container {
 
-	for lex := head; lex != nil; lex = lex.Next {
+	itr := Iterator(con.ToIterator())
 
-		if lex.Tok != lexeme.SEPARATOR || lex.Next == nil {
-			continue
-		}
+	for itr.Next() {
 
-		if !lex.Next.Tok.IsAny(lexeme.WHITESPACE, lexeme.NEWLINE) {
-			lex.Append(&lexeme.Lexeme{
+		switch {
+		case itr.After() == nil:
+		case itr.After().Tok == lexeme.NEWLINE:
+
+		case itr.Curr().Tok == lexeme.SEPARATOR:
+			itr.Append(&lexeme.Lexeme{
 				Tok:  lexeme.WHITESPACE,
 				Raw:  " ",
-				Line: lex.Line,
-				Col:  lex.Col + 1,
+				Line: itr.Curr().Line,
+				Col:  itr.Curr().Col + 1,
 			})
 		}
 	}
 
-	return head
+	return itr.ToContainer()
 }
+
 /*
 func reduceSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
