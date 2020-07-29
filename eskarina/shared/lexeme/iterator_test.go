@@ -6,121 +6,121 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_Itinerant_1_1(t *testing.T) {
+func Test_Iterator_1_1(t *testing.T) {
 
 	a, b, c, _ := setup()
 	feign(a, b, c)
-	it := NewItinerant(a)
+	it := NewIterator(a)
 
-	halfEqual(t, nil, it.Behind())
+	halfEqual(t, nil, it.Before())
 	halfEqual(t, nil, it.Curr())
-	halfEqual(t, a, it.Ahead())
+	halfEqual(t, a, it.After())
 }
 
-func Test_Itinerant_2_1(t *testing.T) {
+func Test_Iterator_2_1(t *testing.T) {
 
 	a, b, c, _ := setup()
 	feign(a, b, c)
-	it := NewItinerant(a)
+	it := NewIterator(a)
 
 	require.True(t, it.HasNext())
 	require.True(t, it.Next())
-	halfEqual(t, nil, it.Behind())
+	halfEqual(t, nil, it.Before())
 	halfEqual(t, a, it.Curr())
-	halfEqual(t, b, it.Ahead())
+	halfEqual(t, b, it.After())
 
 	require.True(t, it.HasNext())
 	require.True(t, it.Next())
-	halfEqual(t, a, it.Behind())
+	halfEqual(t, a, it.Before())
 	halfEqual(t, b, it.Curr())
-	halfEqual(t, c, it.Ahead())
+	halfEqual(t, c, it.After())
 
 	require.True(t, it.HasNext())
 	require.True(t, it.Next())
-	halfEqual(t, b, it.Behind())
+	halfEqual(t, b, it.Before())
 	halfEqual(t, c, it.Curr())
-	halfEqual(t, nil, it.Ahead())
+	halfEqual(t, nil, it.After())
 
 	require.False(t, it.HasNext())
 	require.False(t, it.Next())
-	halfEqual(t, c, it.Behind())
+	halfEqual(t, c, it.Before())
 	halfEqual(t, nil, it.Curr())
-	halfEqual(t, nil, it.Ahead())
+	halfEqual(t, nil, it.After())
 
 	require.False(t, it.HasNext())
 	require.False(t, it.Next())
-	halfEqual(t, c, it.Behind())
+	halfEqual(t, c, it.Before())
 	halfEqual(t, nil, it.Curr())
-	halfEqual(t, nil, it.Ahead())
+	halfEqual(t, nil, it.After())
 }
 
-func Test_Itinerant_2_2(t *testing.T) {
+func Test_Iterator_2_2(t *testing.T) {
 
 	a, b, c, _ := setup()
 	feign(a, b, c)
-	it := Itinerant{
-		behind: c,
+	it := Iterator{
+		before: c,
 	}
 
-	halfEqual(t, c, it.Behind())
+	halfEqual(t, c, it.Before())
 	halfEqual(t, nil, it.Curr())
-	halfEqual(t, nil, it.Ahead())
+	halfEqual(t, nil, it.After())
 
 	require.True(t, it.HasPrev())
 	require.True(t, it.Prev())
-	halfEqual(t, b, it.Behind())
+	halfEqual(t, b, it.Before())
 	halfEqual(t, c, it.Curr())
-	halfEqual(t, nil, it.Ahead())
+	halfEqual(t, nil, it.After())
 
 	require.True(t, it.HasPrev())
 	require.True(t, it.Prev())
-	halfEqual(t, a, it.Behind())
+	halfEqual(t, a, it.Before())
 	halfEqual(t, b, it.Curr())
-	halfEqual(t, c, it.Ahead())
+	halfEqual(t, c, it.After())
 
 	require.True(t, it.HasPrev())
 	require.True(t, it.Prev())
-	halfEqual(t, nil, it.Behind())
+	halfEqual(t, nil, it.Before())
 	halfEqual(t, a, it.Curr())
-	halfEqual(t, b, it.Ahead())
+	halfEqual(t, b, it.After())
 
 	require.False(t, it.HasPrev())
 	require.False(t, it.Prev())
-	halfEqual(t, nil, it.Behind())
+	halfEqual(t, nil, it.Before())
 	halfEqual(t, nil, it.Curr())
-	halfEqual(t, a, it.Ahead())
+	halfEqual(t, a, it.After())
 
 	require.False(t, it.HasPrev())
 	require.False(t, it.Prev())
-	halfEqual(t, nil, it.Behind())
+	halfEqual(t, nil, it.Before())
 	halfEqual(t, nil, it.Curr())
-	halfEqual(t, a, it.Ahead())
+	halfEqual(t, a, it.After())
 }
 
-func Test_Itinerant_3_1(t *testing.T) {
+func Test_Iterator_3_1(t *testing.T) {
 
 	a, b, c, _ := setup()
 	feign(a, b, c)
-	it := Itinerant{
-		behind: a,
+	it := Iterator{
+		before: a,
 		curr:   b,
-		ahead:  c,
+		after:  c,
 	}
 
 	z := it.Remove()
 	fullEqual(t, b, nil, nil, z)
-	halfEqual(t, a, it.Behind())
+	halfEqual(t, a, it.Before())
 	halfEqual(t, nil, it.Curr())
-	halfEqual(t, c, it.Ahead())
+	halfEqual(t, c, it.After())
 
 	it.Next()
-	halfEqual(t, a, it.Behind())
+	halfEqual(t, a, it.Before())
 	halfEqual(t, c, it.Curr())
-	halfEqual(t, nil, it.Ahead())
+	halfEqual(t, nil, it.After())
 
 	z = it.Remove()
 	fullEqual(t, c, nil, nil, z)
-	halfEqual(t, a, it.Behind())
+	halfEqual(t, a, it.Before())
 	halfEqual(t, nil, it.Curr())
-	halfEqual(t, nil, it.Ahead())
+	halfEqual(t, nil, it.After())
 }

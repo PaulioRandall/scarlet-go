@@ -33,29 +33,38 @@ func (lex Lexeme) Prev() *Lexeme {
 	return lex.prev
 }
 
-func (lex *Lexeme) prepend(other *Lexeme) {
-
-	if lex.prev != nil {
-		lex.prev.next = other
-		other.prev = lex.prev
-	}
-
-	other.next = lex
-	lex.prev = other
+func (lex Lexeme) String() string {
+	return fmt.Sprintf("%d:%d %s %q",
+		lex.Line,
+		lex.Col,
+		lex.Tok.String(),
+		lex.Raw,
+	)
 }
 
-func (lex *Lexeme) append(other *Lexeme) {
+func prepend(base, lex *Lexeme) {
 
-	if lex.next != nil {
-		lex.next.prev = other
-		other.next = lex.next
+	if base.prev != nil {
+		base.prev.next = lex
+		lex.prev = base.prev
 	}
 
-	lex.next = other
-	other.prev = lex
+	lex.next = base
+	base.prev = lex
 }
 
-func (lex *Lexeme) remove() {
+func append(base, lex *Lexeme) {
+
+	if base.next != nil {
+		base.next.prev = lex
+		lex.next = base.next
+	}
+
+	base.next = lex
+	lex.prev = base
+}
+
+func remove(lex *Lexeme) {
 
 	if lex.next != nil {
 		lex.next.prev = lex.prev
@@ -68,7 +77,7 @@ func (lex *Lexeme) remove() {
 	lex.next, lex.prev = nil, nil
 }
 
-func (lex *Lexeme) splitNext() (*Lexeme, *Lexeme) {
+func splitNext(lex *Lexeme) (*Lexeme, *Lexeme) {
 
 	next := lex.next
 
@@ -80,7 +89,7 @@ func (lex *Lexeme) splitNext() (*Lexeme, *Lexeme) {
 	return lex, next
 }
 
-func (lex *Lexeme) splitPrev() (*Lexeme, *Lexeme) {
+func splitPrev(lex *Lexeme) (*Lexeme, *Lexeme) {
 
 	prev := lex.prev
 
@@ -90,13 +99,4 @@ func (lex *Lexeme) splitPrev() (*Lexeme, *Lexeme) {
 	}
 
 	return lex, prev
-}
-
-func (lex Lexeme) String() string {
-	return fmt.Sprintf("%d:%d %s %q",
-		lex.Line,
-		lex.Col,
-		lex.Tok.String(),
-		lex.Raw,
-	)
 }

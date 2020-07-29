@@ -10,8 +10,8 @@ type Iterator interface {
 	Next() bool
 	Curr() *lexeme.Lexeme
 	Remove() *lexeme.Lexeme
-	Behind() *lexeme.Lexeme
-	Ahead() *lexeme.Lexeme
+	Before() *lexeme.Lexeme
+	After() *lexeme.Lexeme
 }
 
 func SanitiseAll(con *lexeme.Container) *lexeme.Container {
@@ -20,29 +20,29 @@ func SanitiseAll(con *lexeme.Container) *lexeme.Container {
 		return con
 	}
 
-	itr := Iterator(con.ToItinerant())
+	itr := Iterator(con.ToIterator())
 
-	for itr.Next() || itr.Ahead() != nil {
+	for itr.Next() || itr.After() != nil {
 
 		switch {
 		case itr.Curr().Tok.IsRedundant():
 			itr.Remove()
 
-		case itr.Behind() == nil && itr.Curr().Tok.IsTerminator():
+		case itr.Before() == nil && itr.Curr().Tok.IsTerminator():
 			itr.Remove()
 
-		case itr.Behind() == nil:
+		case itr.Before() == nil:
 
-		case itr.Behind().Tok.IsTerminator() && itr.Curr().Tok.IsTerminator():
+		case itr.Before().Tok.IsTerminator() && itr.Curr().Tok.IsTerminator():
 			itr.Remove()
 
-		case itr.Behind().Tok == lexeme.LEFT_PAREN && itr.Curr().Tok == lexeme.NEWLINE:
+		case itr.Before().Tok == lexeme.LEFT_PAREN && itr.Curr().Tok == lexeme.NEWLINE:
 			itr.Remove()
 
-		case itr.Behind().Tok == lexeme.SEPARATOR && itr.Curr().Tok == lexeme.NEWLINE:
+		case itr.Before().Tok == lexeme.SEPARATOR && itr.Curr().Tok == lexeme.NEWLINE:
 			itr.Remove()
 
-		case itr.Behind().Tok == lexeme.SEPARATOR && itr.Curr().Tok == lexeme.RIGHT_PAREN:
+		case itr.Before().Tok == lexeme.SEPARATOR && itr.Curr().Tok == lexeme.RIGHT_PAREN:
 			itr.Prev()
 			itr.Remove()
 			itr.Next()

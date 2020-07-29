@@ -4,51 +4,51 @@ import (
 	"testing"
 )
 
-func Test_Lexeme_prepend(t *testing.T) {
+func Test_prepend(t *testing.T) {
 
 	a, b, c, _ := setup()
 
-	b.prepend(a)
+	prepend(b, a)
 	fullEqual(t, a, nil, b, a)
 	fullEqual(t, b, a, nil, b)
 
-	c.prepend(b)
+	prepend(c, b)
 	fullEqual(t, a, nil, b, a)
 	fullEqual(t, b, a, c, b)
 	fullEqual(t, c, b, nil, c)
 }
 
-func Test_Lexeme_append(t *testing.T) {
+func Test_append(t *testing.T) {
 
 	a, b, c, _ := setup()
 
-	b.append(c)
+	append(b, c)
 	fullEqual(t, b, nil, c, b)
 	fullEqual(t, c, b, nil, c)
 
-	a.append(b)
+	append(a, b)
 	fullEqual(t, a, nil, b, a)
 	fullEqual(t, b, a, c, b)
 	fullEqual(t, c, b, nil, c)
 }
 
-func Test_Lexeme_remove(t *testing.T) {
+func Test_remove(t *testing.T) {
 
 	a, b, c, _ := setup()
 	feign(a, b, c)
-	a.remove()
+	remove(a)
 	fullEqual(t, b, nil, c, b)
 	fullEqual(t, c, b, nil, c)
 
 	a, b, c, _ = setup()
 	feign(a, b, c)
-	b.remove()
+	remove(b)
 	fullEqual(t, a, nil, c, a)
 	fullEqual(t, c, a, nil, c)
 
 	a, b, c, _ = setup()
 	feign(a, b, c)
-	c.remove()
+	remove(c)
 	fullEqual(t, a, nil, b, a)
 	fullEqual(t, b, a, nil, b)
 }

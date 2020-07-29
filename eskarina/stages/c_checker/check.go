@@ -7,7 +7,7 @@ import (
 func CheckAll(con *lexeme.Container) (*lexeme.Container, error) {
 
 	chk := &checker{
-		it: con.ToItinerant(),
+		it: con.ToIterator(),
 	}
 
 	chk.it.Next()

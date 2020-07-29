@@ -5,25 +5,28 @@ import (
 	"strings"
 )
 
-type Collection interface {
-	ToItinerant() *Itinerant
+type Stack interface {
+	AsContainer() *Container
+	ToIterator() *Iterator
 	Empty() bool
 	More() bool
 	Size() int
-}
-
-type Stack interface {
-	Collection
 	Top() *Lexeme
 	Push(*Lexeme)
 	Pop() *Lexeme
+	String() string
 }
 
 type Queue interface {
-	Collection
+	AsContainer() *Container
+	ToIterator() *Iterator
+	Empty() bool
+	More() bool
+	Size() int
 	Head() *Lexeme
 	Put(*Lexeme)
 	Take() *Lexeme
+	String() string
 }
 
 type Container struct {
@@ -62,10 +65,10 @@ func NewContainer(head *Lexeme) *Container {
 	return c
 }
 
-func (c *Container) ToItinerant() *Itinerant {
+func (c *Container) ToIterator() *Iterator {
 	head := c.head
 	c.head, c.tail, c.size = nil, nil, 0
-	return NewItinerant(head)
+	return NewIterator(head)
 }
 
 func (c *Container) AsContainer() *Container {
@@ -123,7 +126,7 @@ func (c *Container) pop(fromBack bool) *Lexeme {
 		c.head = c.head.next
 	}
 
-	r.remove()
+	remove(r)
 	c.size--
 
 	if c.size == 0 {
@@ -145,10 +148,10 @@ func (c *Container) push(lex *Lexeme, toBack bool) {
 	}
 
 	if toBack {
-		c.tail.append(lex)
+		append(c.tail, lex)
 		c.tail = lex
 	} else {
-		c.head.prepend(lex)
+		prepend(c.head, lex)
 		c.head = lex
 	}
 

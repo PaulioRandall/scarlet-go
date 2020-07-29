@@ -32,7 +32,7 @@ func feign(lexs ...*Lexeme) {
 	for _, l := range lexs {
 
 		if last != nil {
-			last.append(l)
+			append(last, l)
 		}
 
 		last = l
