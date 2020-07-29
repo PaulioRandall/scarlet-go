@@ -17,7 +17,7 @@ type Iterator interface {
 	Remove() *lexeme.Lexeme
 	//Prepend(*Lexeme)
 	Append(*lexeme.Lexeme)
-	//Before() *Lexeme
+	Before() *lexeme.Lexeme
 	After() *lexeme.Lexeme
 	//String() string
 }
@@ -29,9 +29,8 @@ func FormatAll(con *lexeme.Container, lineEnding string) *lexeme.Container {
 func format(con *lexeme.Container, lineEnding string) *lexeme.Container {
 
 	con = trimWhiteSpace(con)
+	con = stripUselessLines(con)
 	con = insertWhiteSpace(con)
-	//head = reduceSpaces(head)
-	//head = trimEmptyLines(head)
 	//head = reduceEmptyLines(head)
 	//head = unifyLineEndings(head, lineEnding)
 	//head = indentNests(head)
@@ -47,6 +46,26 @@ func trimWhiteSpace(con *lexeme.Container) *lexeme.Container {
 	for itr.Next() {
 		if itr.Curr().Tok == lexeme.WHITESPACE {
 			itr.Remove()
+		}
+	}
+
+	return itr.ToContainer()
+}
+
+func stripUselessLines(con *lexeme.Container) *lexeme.Container {
+
+	itr := Iterator(con.ToIterator())
+
+	for itr.Next() {
+
+		if itr.Curr().Tok != lexeme.NEWLINE {
+			continue
+		}
+
+		if itr.Before() == nil || itr.Before().Tok == lexeme.NEWLINE {
+			if itr.After() == nil || itr.After().Tok == lexeme.NEWLINE {
+				itr.Remove()
+			}
 		}
 	}
 
@@ -76,49 +95,6 @@ func insertWhiteSpace(con *lexeme.Container) *lexeme.Container {
 	return itr.ToContainer()
 }
 
-/*
-func reduceSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
-
-	for lex := head; lex != nil; lex = lex.Next {
-		if lex.Tok == lexeme.WHITESPACE {
-			lex.Raw = " "
-		}
-	}
-
-	return head
-}
-/*
-func trimEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
-
-	if head == nil {
-		return nil
-	}
-
-	if head.Tok == lexeme.NEWLINE {
-		for head.Next != nil && head.Next.Tok == lexeme.NEWLINE {
-			head.Next.Remove()
-		}
-	}
-
-	if head == nil {
-		return nil
-	}
-
-	tail := head
-	for lex := head; lex != nil; lex = lex.Next {
-		tail = lex
-	}
-
-	if tail.Tok != lexeme.NEWLINE {
-		return head
-	}
-
-	for tail.Prev != nil && tail.Prev.Tok == lexeme.NEWLINE {
-		tail.Prev.Remove()
-	}
-
-	return head
-}
 /*
 func reduceEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 
