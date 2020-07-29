@@ -15,6 +15,7 @@ type Range interface {
 	Remove() *Lexeme
 	Prepend(*Lexeme)
 	Append(*Lexeme)
+	Split() *Container
 	Before() *Lexeme
 	After() *Lexeme
 	Restart()
@@ -127,6 +128,25 @@ func (it *Iterator) Append(lex *Lexeme) {
 
 	append(it.curr, lex)
 	it.refresh()
+}
+
+func (it *Iterator) Split() *Container {
+
+	if it.before == nil {
+		return &Container{}
+	}
+
+	it.before.next = nil
+	it.curr.prev = nil
+
+	head := it.before
+	it.refresh()
+
+	for lex := head; lex != nil; lex = lex.prev {
+		head = lex
+	}
+
+	return NewContainer(head)
 }
 
 func (it *Iterator) Restart() {

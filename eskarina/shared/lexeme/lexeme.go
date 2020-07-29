@@ -76,27 +76,3 @@ func remove(lex *Lexeme) {
 
 	lex.next, lex.prev = nil, nil
 }
-
-func splitNext(lex *Lexeme) (*Lexeme, *Lexeme) {
-
-	next := lex.next
-
-	if next != nil {
-		next.prev = nil
-		lex.next = nil
-	}
-
-	return lex, next
-}
-
-func splitPrev(lex *Lexeme) (*Lexeme, *Lexeme) {
-
-	prev := lex.prev
-
-	if prev != nil {
-		prev.next = nil
-		lex.prev = nil
-	}
-
-	return lex, prev
-}

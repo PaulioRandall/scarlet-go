@@ -124,3 +124,20 @@ func Test_Iterator_3_1(t *testing.T) {
 	halfEqual(t, nil, it.Curr())
 	halfEqual(t, nil, it.After())
 }
+
+func Test_Iterator_4_1(t *testing.T) {
+
+	a, b, c, d := setup()
+	feign(a, b, c, d)
+	it := Iterator{
+		before: b,
+		curr:   c,
+		after:  d,
+	}
+
+	con := it.Split()
+	fullEqual(t, a, nil, b, con.head)
+	fullEqual(t, b, a, nil, con.tail)
+	fullEqual(t, c, nil, d, it.Curr())
+	fullEqual(t, d, c, nil, it.After())
+}
