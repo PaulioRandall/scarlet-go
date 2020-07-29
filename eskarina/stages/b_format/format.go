@@ -17,6 +17,7 @@ type Iterator interface {
 	Remove() *lexeme.Lexeme
 	//Prepend(*Lexeme)
 	Append(*lexeme.Lexeme)
+	Split() *lexeme.Container
 	Before() *lexeme.Lexeme
 	After() *lexeme.Lexeme
 	//String() string
@@ -34,7 +35,7 @@ func format(con *lexeme.Container) *lexeme.Container {
 	con = unifyLineEndings(con)
 	con = indentLines(con)
 	con = updatePositions(con)
-	con = alignComments(con)
+	//con = alignComments(con)
 
 	return con
 }
@@ -172,24 +173,6 @@ func updatePositions(con *lexeme.Container) *lexeme.Container {
 		} else {
 			col += len(itr.Curr().Raw)
 		}
-	}
-
-	return itr.ToContainer()
-}
-
-func alignComments(con *lexeme.Container) *lexeme.Container {
-
-	itr := Iterator(con.ToIterator())
-
-	// 1. Split into lines
-	// 2. Mark lines with a comment but not ones that start with the comment
-	// 3. Find consecutive comment lines (comment group)
-	// 		Find the comment with the greatest col index
-	//    Insert whitespace before comments in each line to match the greatest
-	// 4. Join lines back together
-
-	for itr.Next() {
-
 	}
 
 	return itr.ToContainer()

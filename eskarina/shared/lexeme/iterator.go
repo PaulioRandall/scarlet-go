@@ -137,10 +137,12 @@ func (it *Iterator) Split() *Container {
 	}
 
 	it.before.next = nil
-	it.curr.prev = nil
-
 	head := it.before
-	it.refresh()
+
+	if it.curr != nil {
+		it.curr.prev = nil
+		it.refresh()
+	}
 
 	for lex := head; lex != nil; lex = lex.prev {
 		head = lex
