@@ -17,6 +17,7 @@ type Range interface {
 	Append(*Lexeme)
 	Before() *Lexeme
 	After() *Lexeme
+	Restart()
 	String() string
 }
 
@@ -32,29 +33,11 @@ func NewIterator(head *Lexeme) *Iterator {
 	}
 }
 
-func (it *Iterator) vacate() *Lexeme {
-
-	var head *Lexeme
-
-	switch {
-	case it.before != nil:
-		for lex := it.before; lex != nil; lex = lex.prev {
-			head = lex
-		}
-
-	case it.curr != nil:
-		head = it.curr
-
-	default:
-		head = it.after
-	}
-
-	it.curr, it.before, it.after = nil, nil, nil
-	return head
-}
-
 func (it *Iterator) ToContainer() *Container {
-	return NewContainer(it.vacate())
+	it.Restart()
+	head := it.after
+	it.curr, it.before, it.after = nil, nil, nil
+	return NewContainer(head)
 }
 
 func (it *Iterator) AsIterator() *Iterator {
@@ -81,8 +64,7 @@ func (it *Iterator) Prev() bool {
 	}
 
 	it.curr = it.before
-	it.after = it.curr.next
-	it.before = it.curr.prev
+	it.refresh()
 	return true
 }
 
@@ -98,9 +80,7 @@ func (it *Iterator) Next() bool {
 	}
 
 	it.curr = it.after
-	it.before = it.curr.prev
-	it.after = it.curr.next
-
+	it.refresh()
 	return true
 }
 
@@ -136,7 +116,7 @@ func (it *Iterator) Prepend(lex *Lexeme) {
 	}
 
 	prepend(it.curr, lex)
-	it.before = lex
+	it.refresh()
 }
 
 func (it *Iterator) Append(lex *Lexeme) {
@@ -146,7 +126,31 @@ func (it *Iterator) Append(lex *Lexeme) {
 	}
 
 	append(it.curr, lex)
-	it.after = lex
+	it.refresh()
+}
+
+func (it *Iterator) Restart() {
+
+	var head *Lexeme
+
+	switch {
+	case it.before != nil:
+		head = it.before
+	case it.curr != nil:
+		head = it.curr
+	case it.after != nil:
+		head = it.after
+	default:
+		return
+	}
+
+	for lex := head; lex != nil; lex = lex.prev {
+		head = lex
+	}
+
+	it.before = nil
+	it.curr = nil
+	it.after = head
 }
 
 func (it *Iterator) String() string {
@@ -169,4 +173,11 @@ func (it *Iterator) String() string {
 	write("After : ", it.after)
 
 	return sb.String()
+}
+
+func (it *Iterator) refresh() {
+	if it.curr != nil {
+		it.before = it.curr.prev
+		it.after = it.curr.next
+	}
 }

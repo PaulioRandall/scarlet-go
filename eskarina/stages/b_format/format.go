@@ -31,7 +31,6 @@ func format(con *lexeme.Container, lineEnding string) *lexeme.Container {
 	con = trimWhiteSpace(con)
 	con = stripUselessLines(con)
 	con = insertWhiteSpace(con)
-	//head = reduceEmptyLines(head)
 	//head = unifyLineEndings(head, lineEnding)
 	//head = indentNests(head)
 	//head = alignComments(head)
@@ -95,35 +94,6 @@ func insertWhiteSpace(con *lexeme.Container) *lexeme.Container {
 	return itr.ToContainer()
 }
 
-/*
-func reduceEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
-
-	var single, double bool
-
-	for lex := head; lex != nil; {
-
-		switch {
-		case lex.Tok != lexeme.NEWLINE:
-			single, double = false, false
-
-		case !single:
-			single = true
-
-		case !double:
-			double = true
-
-		default:
-			next := lex.Next
-			lex.Remove()
-			lex = next
-			continue
-		}
-
-		lex = lex.Next
-	}
-
-	return head
-}
 /*
 func unifyLineEndings(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 
