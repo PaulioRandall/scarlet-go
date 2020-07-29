@@ -11,7 +11,7 @@ type Iterator interface {
 	ToContainer() *lexeme.Container
 	//HasPrev() bool
 	//HasNext() bool
-	//Prev() bool
+	Prev() bool
 	Next() bool
 	Curr() *lexeme.Lexeme
 	Remove() *lexeme.Lexeme
@@ -22,16 +22,16 @@ type Iterator interface {
 	//String() string
 }
 
-func FormatAll(con *lexeme.Container, lineEnding string) *lexeme.Container {
-	return format(con, lineEnding)
+func FormatAll(con *lexeme.Container) *lexeme.Container {
+	return format(con)
 }
 
-func format(con *lexeme.Container, lineEnding string) *lexeme.Container {
+func format(con *lexeme.Container) *lexeme.Container {
 
 	con = trimWhiteSpace(con)
 	con = stripUselessLines(con)
 	con = insertWhiteSpace(con)
-	//head = unifyLineEndings(head, lineEnding)
+	con = unifyLineEndings(con)
 	//head = indentNests(head)
 	//head = alignComments(head)
 
@@ -94,29 +94,36 @@ func insertWhiteSpace(con *lexeme.Container) *lexeme.Container {
 	return itr.ToContainer()
 }
 
-/*
-func unifyLineEndings(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
+func unifyLineEndings(con *lexeme.Container) *lexeme.Container {
 
-	for lex := head; lex != nil; lex = lex.Next {
-		if lex.Tok == lexeme.NEWLINE {
-			lex.Raw = lineEnding
+	lineEnding := "\n"
+	itr := Iterator(con.ToIterator())
+
+	for itr.Next() {
+		if itr.Curr().Tok == lexeme.NEWLINE {
+			lineEnding = itr.Curr().Raw
+			break
 		}
 	}
 
-	tail := head
-	for lex := head; lex != nil; lex = lex.Next {
-		tail = lex
+	for itr.Next() {
+		if itr.Curr().Tok == lexeme.NEWLINE {
+			itr.Curr().Raw = lineEnding
+		}
 	}
 
-	if tail != nil && tail.Tok != lexeme.NEWLINE {
-		tail.Append(&lexeme.Lexeme{
+	if itr.Prev() && itr.Curr().Tok != lexeme.NEWLINE {
+		itr.Append(&lexeme.Lexeme{
+			Tok:  lexeme.NEWLINE,
 			Raw:  lineEnding,
-			Line: tail.Line,
+			Line: itr.Curr().Line,
+			Col:  itr.Curr().Col + len(itr.Curr().Raw),
 		})
 	}
 
-	return head
+	return itr.ToContainer()
 }
+
 /*
 func indentNests(head *lexeme.Lexeme) *lexeme.Lexeme {
 

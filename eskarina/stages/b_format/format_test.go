@@ -168,20 +168,41 @@ func Test5_3(t *testing.T) {
 	lextest.Equal(t, exp.Head(), act.Head())
 }
 
-/*
 func Test6_1(t *testing.T) {
 
 	given := lextest.Feign(
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("\r\n", lexeme.NEWLINE),
 		lextest.Tok("\r\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
 		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	act := unifyLineEndings(given, "\n")
-	lextest.Equal(t, exp, act)
+	act := unifyLineEndings(given)
+	lextest.Equal(t, exp.Head(), act.Head())
 }
+
+func Test6_2(t *testing.T) {
+
+	given := lextest.Feign(
+		lextest.Lex(2, 3, "\r\n", lexeme.NEWLINE),
+		lextest.Lex(2, 5, "123", lexeme.NUMBER),
+	)
+
+	exp := lextest.Feign(
+		lextest.Lex(2, 3, "\r\n", lexeme.NEWLINE),
+		lextest.Lex(2, 5, "123", lexeme.NUMBER),
+		lextest.Lex(2, 8, "\r\n", lexeme.NEWLINE),
+	)
+
+	act := unifyLineEndings(given)
+	lextest.Equal(t, exp.Head(), act.Head())
+}
+
 /*
 func Test7_1(t *testing.T) {
 
@@ -208,8 +229,6 @@ func Test7_1(t *testing.T) {
 		lextest.Tok(" ", lexeme.WHITESPACE),
 		lextest.Tok(")", lexeme.RIGHT_PAREN),
 		lextest.Tok(" ", lexeme.WHITESPACE),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok(" ", lexeme.WHITESPACE),
 	)
 
 	// "@Println(1, 1,\n1)\n"
@@ -226,10 +245,10 @@ func Test7_1(t *testing.T) {
 		lextest.Lex(1, 0, "\t", lexeme.WHITESPACE),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok(")", lexeme.RIGHT_PAREN),
-		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Lex(0, 1, "\n", lexeme.NEWLINE),
 	)
 
 	act := FormatAll(given, "\n")
-	lextest.Equal(t, exp, act)
+	lextest.Equal(t, exp.Head(), act.Head())
 }
 */
