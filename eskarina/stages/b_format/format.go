@@ -12,8 +12,7 @@ func FormatAll(con *lexeme.Container, lineEnding string) *lexeme.Container {
 
 func format(con *lexeme.Container, lineEnding string) *lexeme.Container {
 
-	con = trimLeadingSpace(con)
-	//head = trimSpaces(head)
+	con = trimWhiteSpace(con)
 	//head = insertSpaces(head)
 	//head = reduceSpaces(head)
 	//head = trimEmptyLines(head)
@@ -25,70 +24,19 @@ func format(con *lexeme.Container, lineEnding string) *lexeme.Container {
 	return con
 }
 
-func trimLeadingSpace(con *lexeme.Container) *lexeme.Container {
+func trimWhiteSpace(con *lexeme.Container) *lexeme.Container {
 
 	itr := con.ToIterator()
 
-	for itr.Next() && itr.Curr().Tok == lexeme.WHITESPACE {
-		itr.Remove()
+	for itr.Next() {
+		if itr.Curr().Tok == lexeme.WHITESPACE {
+			itr.Remove()
+		}
 	}
 
 	return itr.ToContainer()
 }
 
-/*
-func trimSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
-
-	remove := func(lex *lexeme.Lexeme) *lexeme.Lexeme {
-
-		if lex == head {
-			head = lex.Next
-		}
-
-		next := lex.Next
-		lex.Remove()
-		return next
-	}
-
-	nextTok := func(curr *lexeme.Lexeme) lexeme.Token {
-		if curr.Next == nil {
-			return lexeme.UNDEFINED
-		}
-		return curr.Next.Tok
-	}
-
-	for curr := head; curr != nil && curr.Next != nil; {
-
-		var next *lexeme.Lexeme
-
-		switch {
-		case curr.Tok == lexeme.NEWLINE && nextTok(curr) == lexeme.WHITESPACE:
-			next = remove(curr.Next)
-
-		case curr.Tok == lexeme.WHITESPACE && nextTok(curr) == lexeme.NEWLINE:
-			next = remove(curr)
-
-		case curr.Tok == lexeme.SPELL && nextTok(curr) == lexeme.WHITESPACE:
-			next = remove(curr.Next)
-
-		case curr.Tok.IsOpener() && nextTok(curr) == lexeme.WHITESPACE:
-			next = remove(curr.Next)
-
-		case curr.Tok == lexeme.WHITESPACE && nextTok(curr) == lexeme.SEPARATOR:
-			next = remove(curr)
-
-		case curr.Tok == lexeme.WHITESPACE && nextTok(curr).IsCloser():
-			next = remove(curr)
-
-		default:
-			next = curr.Next
-		}
-
-		curr = next
-	}
-
-	return head
-}
 /*
 func insertSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
