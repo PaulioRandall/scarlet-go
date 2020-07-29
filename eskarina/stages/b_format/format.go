@@ -1,7 +1,7 @@
 package format
 
 import (
-	//"strings"
+	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
@@ -32,7 +32,7 @@ func format(con *lexeme.Container) *lexeme.Container {
 	con = stripUselessLines(con)
 	con = insertWhiteSpace(con)
 	con = unifyLineEndings(con)
-	//head = indentNests(head)
+	con = indentLines(con)
 	//head = alignComments(head)
 
 	return con
@@ -124,38 +124,38 @@ func unifyLineEndings(con *lexeme.Container) *lexeme.Container {
 	return itr.ToContainer()
 }
 
-/*
-func indentNests(head *lexeme.Lexeme) *lexeme.Lexeme {
+func indentLines(con *lexeme.Container) *lexeme.Container {
 
+	itr := Iterator(con.ToIterator())
 	indent := 0
 
-	for lex := head; lex != nil; lex = lex.Next {
-
+	for itr.Next() {
 		switch {
-		case lex.Tok.IsOpener():
+		case itr.Curr().Tok.IsOpener():
 			indent++
 
-		case lex.Tok.IsCloser():
+		case itr.Curr().Tok.IsCloser():
 			indent--
 
-		case lex.Tok != lexeme.NEWLINE || lex.Next == nil:
+		case itr.Curr().Tok != lexeme.NEWLINE:
+		case itr.After() == nil:
+		case itr.After().Tok == lexeme.NEWLINE:
 
-		case lex.Next.Tok == lexeme.NEWLINE:
-
-		case lex.Next.Tok.IsCloser():
+		case itr.After().Tok.IsCloser():
 			indent--
 
-		case indent > 0 && lex.Tok == lexeme.NEWLINE:
-			lex.Append(&lexeme.Lexeme{
+		case indent > 0:
+			itr.Append(&lexeme.Lexeme{
 				Tok:  lexeme.WHITESPACE,
 				Raw:  strings.Repeat("\t", indent),
-				Line: lex.Line + 1,
+				Line: itr.Curr().Line + 1,
 			})
 		}
 	}
 
-	return head
+	return itr.ToContainer()
 }
+
 /*
 func alignComments(head *lexeme.Lexeme) *lexeme.Lexeme {
 
