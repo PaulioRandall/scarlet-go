@@ -10,7 +10,7 @@ func Test_Container2_1_1(t *testing.T) {
 
 	a, b, c, _ := setup2()
 	feign2(a, b, c)
-	con := newContainer(a)
+	con := NewContainer(a)
 
 	fullEqual2(t, a, nil, b, con.head)
 	fullEqual2(t, b, a, c, con.head.next)

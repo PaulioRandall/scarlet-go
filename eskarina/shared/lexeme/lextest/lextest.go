@@ -9,26 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Feign(lexs ...*lexeme.Lexeme) *lexeme.Lexeme {
-
-	var first *lexeme.Lexeme
-	var last *lexeme.Lexeme
-
-	for _, l := range lexs {
-
-		if first == nil {
-			first = l
-			last = l
-			continue
-		}
-
-		last.Append(l)
-		last = l
-	}
-
-	return first
-}
-
 func Feign2(lexs ...*lexeme.Lexeme) *lexeme.Container2 {
 
 	que := &lexeme.Container2{}
@@ -53,34 +33,6 @@ func Tok2(raw string, tk lexeme.Token) *lexeme.Lexeme {
 	return &lexeme.Lexeme{
 		Tok: tk,
 		Raw: raw,
-	}
-}
-
-func Equal(t *testing.T, exp, act *lexeme.Lexeme) {
-
-	idx := 0
-	for exp != nil || act != nil {
-
-		if exp == nil && act != nil {
-			require.Nil(t, act, "Want: EOF\nHave: %s", act.String())
-		}
-
-		if exp != nil && act == nil {
-			require.NotNil(t, act, "Want: %s\nHave: nil", exp.String())
-		}
-
-		equalContent(t, exp, act, fmt.Sprintf(
-			"Unexepected Lexeme[%d]\nWant: %s\nHave: %s",
-			idx, exp.String(), act.String(),
-		))
-
-		equalContent(t, exp.Prev, act.Prev, fmt.Sprintf(
-			"Unexepected Lexeme[%d].Prev\nWant: %s\nHave: %s",
-			idx, exp.String(), act.String(),
-		))
-
-		exp, act = exp.Next, act.Next
-		idx++
 	}
 }
 

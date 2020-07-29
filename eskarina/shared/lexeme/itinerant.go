@@ -30,7 +30,7 @@ type Itinerant2 struct {
 	ahead  *Lexeme
 }
 
-func newItinerant(head *Lexeme) *Itinerant2 {
+func NewItinerant(head *Lexeme) *Itinerant2 {
 	return &Itinerant2{
 		ahead: head,
 	}

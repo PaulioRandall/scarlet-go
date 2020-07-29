@@ -39,7 +39,7 @@ func (to *To) Container() *Container2 {
 	}
 
 	head := to.b.vacate()
-	c := newContainer(head)
+	c := NewContainer(head)
 	to.b = nil
 	return c
 }
@@ -59,7 +59,7 @@ func (to *To) Itinerant() *Itinerant2 {
 	}
 
 	head := to.b.vacate()
-	it := newItinerant(head)
+	it := NewItinerant(head)
 	to.b = nil
 
 	return it

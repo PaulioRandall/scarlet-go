@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"io"
+	//"io"
 	"os"
 
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/inst"
@@ -100,7 +100,7 @@ func formatAll(c Config, con *lexeme.Container2) (con *lexeme.Container2, error)
 
 	return writeLexemes(f, head)
 }
-*/
+
 func writeLexemes(w io.Writer, head *lexeme.Lexeme) error {
 
 	for lex := head; lex != nil; lex = lex.Next {
@@ -115,7 +115,7 @@ func writeLexemes(w io.Writer, head *lexeme.Lexeme) error {
 
 	return nil
 }
-
+*/
 func logPhase(c Config, ext string, head *lexeme.Lexeme) error {
 
 	if !c.log {

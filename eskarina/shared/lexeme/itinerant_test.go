@@ -10,7 +10,7 @@ func Test_Itinerant2_1_1(t *testing.T) {
 
 	a, b, c, _ := setup2()
 	feign2(a, b, c)
-	it := newItinerant(a)
+	it := NewItinerant(a)
 
 	halfEqual(t, nil, it.Behind())
 	halfEqual(t, nil, it.Curr())
@@ -21,7 +21,7 @@ func Test_Itinerant2_2_1(t *testing.T) {
 
 	a, b, c, _ := setup2()
 	feign2(a, b, c)
-	it := newItinerant(a)
+	it := NewItinerant(a)
 
 	require.True(t, it.HasNext())
 	require.True(t, it.Next())

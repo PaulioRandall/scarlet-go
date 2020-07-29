@@ -38,7 +38,9 @@ func (in Instruction) snippet() (lineBegin, colBegin, lineEnd, colEnd int) {
 	colBegin = max_int
 	colEnd = 0
 
-	for lex := in.Snippet; lex != nil; lex = lex.Next {
+	it := lexeme.NewItinerant(in.Snippet).To().Iterator()
+	for it.Next() {
+		lex := it.Curr()
 
 		switch {
 		case lex.Line < lineBegin:

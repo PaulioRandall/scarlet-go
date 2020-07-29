@@ -13,44 +13,6 @@ func tok(raw string, tk Token) *Lexeme {
 	}
 }
 
-// @Deprecated
-func feign(lexs ...*Lexeme) *Lexeme {
-
-	var first *Lexeme
-	var last *Lexeme
-
-	for _, l := range lexs {
-
-		if first == nil {
-			first = l
-			last = l
-			continue
-		}
-
-		last.Append(l)
-		last = l
-	}
-
-	return first
-}
-
-// @Deprecated
-func setup() (a, b, c, d *Lexeme) {
-	a = tok("true", BOOL)
-	b = tok("1", NUMBER)
-	c = tok(`"abc"`, STRING)
-	d = tok("x", IDENTIFIER)
-	return
-}
-
-// @Deprecated
-func setupList() (a, b, c, d *Lexeme) {
-	a, b, c, d = setup()
-	_ = feign(a, b, c)
-	return
-}
-
-// @Deprecated
 func halfEqual(t *testing.T, exp, act *Lexeme) {
 
 	if exp == nil {
@@ -61,17 +23,6 @@ func halfEqual(t *testing.T, exp, act *Lexeme) {
 	require.NotNil(t, act)
 	require.Equal(t, exp.Tok, act.Tok)
 	require.Equal(t, exp.Raw, act.Raw)
-}
-
-// @Deprecated
-func fullEqual(t *testing.T, exp, prev, next, act *Lexeme) {
-
-	require.NotNil(t, act)
-	require.Equal(t, exp.Tok, act.Tok)
-	require.Equal(t, exp.Raw, act.Raw)
-
-	halfEqual(t, prev, act.Prev)
-	halfEqual(t, next, act.Next)
 }
 
 func feign2(lexs ...*Lexeme) {

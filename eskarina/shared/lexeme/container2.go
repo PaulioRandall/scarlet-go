@@ -42,7 +42,7 @@ func checkIsSingle(lex *Lexeme) {
 	}
 }
 
-func newContainer(head *Lexeme) *Container2 {
+func NewContainer(head *Lexeme) *Container2 {
 
 	if head == nil {
 		return &Container2{}
@@ -161,7 +161,7 @@ func (c *Container2) String() string {
 
 	sb := strings.Builder{}
 
-	for lex := c.head; lex != nil; lex = lex.Next {
+	for lex := c.head; lex != nil; lex = lex.next {
 
 		if lex != c.head {
 			sb.WriteRune('\n')

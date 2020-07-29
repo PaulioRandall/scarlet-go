@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+/*
 func CopyAll(head *Lexeme) *Lexeme {
 
 	var que Queue = &Container{}
@@ -49,6 +50,7 @@ func Split(head *Lexeme, delim Token) []*Lexeme {
 
 	return r
 }
+*/
 
 type lexFmt struct {
 	begin int
@@ -61,7 +63,7 @@ func PrintAll(w io.StringWriter, first *Lexeme) error {
 
 	lxf := findLexFmt(first)
 
-	for lex := first; lex != nil; lex = lex.Next {
+	for lex := first; lex != nil; lex = lex.next {
 		e := writeLine(w, lex, lxf)
 		if e != nil {
 			return e
@@ -77,7 +79,7 @@ func findLexFmt(first *Lexeme) lexFmt {
 		gap: 4,
 	}
 
-	for lex := first; lex != nil; lex = lex.Next {
+	for lex := first; lex != nil; lex = lex.next {
 
 		line, col, colEnd := lex.At()
 

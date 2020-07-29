@@ -8,30 +8,13 @@ type Snippet interface {
 	At() (line, start, end int)
 }
 
-type Node interface {
-	NextNode() *Lexeme
-	PrevNode() *Lexeme
-	ShiftUp()
-	ShiftDown()
-	Prepend(*Lexeme)
-	Append(*Lexeme)
-	Remove()
-	String() string
-}
-
 type Lexeme struct {
 	Tok  Token
 	Raw  string
 	Line int
 	Col  int
-	Next *Lexeme
-	Prev *Lexeme
 	next *Lexeme
 	prev *Lexeme
-}
-
-func (lex Lexeme) IsSingle() bool {
-	return lex.Next == nil && lex.Prev == nil
 }
 
 func (lex Lexeme) IsSingle2() bool {
@@ -50,59 +33,6 @@ func (lex Lexeme) Prev2() *Lexeme {
 	return lex.prev
 }
 
-// @Deprecated
-func (lex Lexeme) NextNode() *Lexeme {
-	return lex.Next
-}
-
-// @Deprecated
-func (lex Lexeme) PrevNode() *Lexeme {
-	return lex.Prev
-}
-
-// @Deprecated
-func (lex *Lexeme) ShiftUp() {
-
-	if lex.Prev == nil {
-		return
-	}
-
-	prev := lex.Prev
-
-	if prev.Prev != nil {
-		prev.Prev.Next = lex
-	}
-
-	if lex.Next != nil {
-		lex.Next.Prev = prev
-	}
-
-	lex.Prev, prev.Next = prev.Prev, lex.Next
-	lex.Next, prev.Prev = prev, lex
-}
-
-// @Deprecated
-func (lex *Lexeme) ShiftDown() {
-
-	if lex.Next == nil {
-		return
-	}
-
-	lex.Next.ShiftUp()
-}
-
-// @Deprecated
-func (lex *Lexeme) Prepend(other *Lexeme) {
-
-	if lex.Prev != nil {
-		lex.Prev.Next = other
-		other.Prev = lex.Prev
-	}
-
-	other.Next = lex
-	lex.Prev = other
-}
-
 func (lex *Lexeme) prepend(other *Lexeme) {
 
 	if lex.prev != nil {
@@ -112,18 +42,6 @@ func (lex *Lexeme) prepend(other *Lexeme) {
 
 	other.next = lex
 	lex.prev = other
-}
-
-// @Deprecated
-func (lex *Lexeme) Append(other *Lexeme) {
-
-	if lex.Next != nil {
-		lex.Next.Prepend(other)
-		return
-	}
-
-	lex.Next = other
-	other.Prev = lex
 }
 
 func (lex *Lexeme) append(other *Lexeme) {
@@ -137,20 +55,6 @@ func (lex *Lexeme) append(other *Lexeme) {
 	other.prev = lex
 }
 
-// @Deprecated
-func (lex *Lexeme) Remove() {
-
-	if lex.Next != nil {
-		lex.Next.Prev = lex.Prev
-	}
-
-	if lex.Prev != nil {
-		lex.Prev.Next = lex.Next
-	}
-
-	lex.Next, lex.Prev = nil, nil
-}
-
 func (lex *Lexeme) remove() {
 
 	if lex.next != nil {
@@ -162,17 +66,6 @@ func (lex *Lexeme) remove() {
 	}
 
 	lex.next, lex.prev = nil, nil
-}
-
-// @Deprecated
-func (lex *Lexeme) SplitBelow() {
-
-	if lex.Next == nil {
-		return
-	}
-
-	lex.Next.Prev = nil
-	lex.Next = nil
 }
 
 func (lex *Lexeme) splitNext() (*Lexeme, *Lexeme) {

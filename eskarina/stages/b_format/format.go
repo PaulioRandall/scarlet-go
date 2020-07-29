@@ -1,5 +1,6 @@
 package format
 
+/*
 import (
 	"strings"
 
@@ -241,3 +242,4 @@ func alignComments(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	return head
 }
+*/
