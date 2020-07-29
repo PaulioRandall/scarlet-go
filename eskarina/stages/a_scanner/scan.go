@@ -5,6 +5,11 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/perror"
 )
 
+type Queue interface {
+	AsContainer() *lexeme.Container
+	Put(*lexeme.Lexeme)
+}
+
 func ScanStr(s string) (*lexeme.Container, error) {
 
 	rr := &runeReader{}
@@ -15,7 +20,7 @@ func ScanStr(s string) (*lexeme.Container, error) {
 		runeReader: rr,
 	}
 
-	que := &lexeme.Container{}
+	que := Queue(&lexeme.Container{})
 
 	for lr.more() {
 
@@ -27,7 +32,7 @@ func ScanStr(s string) (*lexeme.Container, error) {
 		que.Put(lex)
 	}
 
-	return que, nil
+	return que.AsContainer(), nil
 }
 
 func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {

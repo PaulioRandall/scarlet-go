@@ -6,7 +6,7 @@ import (
 )
 
 type Collection interface {
-	To() *To
+	ToItinerant() *Itinerant
 	Empty() bool
 	More() bool
 	Size() int
@@ -62,16 +62,14 @@ func NewContainer(head *Lexeme) *Container {
 	return c
 }
 
-func (c *Container) vacate() *Lexeme {
+func (c *Container) ToItinerant() *Itinerant {
 	head := c.head
 	c.head, c.tail, c.size = nil, nil, 0
-	return head
+	return NewItinerant(head)
 }
 
-func (c *Container) To() *To {
-	return &To{
-		b: c,
-	}
+func (c *Container) AsContainer() *Container {
+	return c
 }
 
 func (c *Container) Empty() bool {

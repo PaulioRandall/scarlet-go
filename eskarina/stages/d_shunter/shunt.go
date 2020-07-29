@@ -7,13 +7,13 @@ import (
 func ShuntAll(con *lexeme.Container) *lexeme.Container {
 
 	shy := &shuntingYard{
-		queue: con.To().Queue(),
+		queue: con,
 		stack: &lexeme.Container{},
 		out:   &lexeme.Container{},
 	}
 
 	shunt(shy)
-	return shy.out.To().Container()
+	return shy.out.AsContainer()
 }
 
 func shunt(shy *shuntingYard) {

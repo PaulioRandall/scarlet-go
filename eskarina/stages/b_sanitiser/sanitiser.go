@@ -4,40 +4,50 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
+type Iterator interface {
+	ToContainer() *lexeme.Container
+	Prev() bool
+	Next() bool
+	Curr() *lexeme.Lexeme
+	Remove() *lexeme.Lexeme
+	Behind() *lexeme.Lexeme
+	Ahead() *lexeme.Lexeme
+}
+
 func SanitiseAll(con *lexeme.Container) *lexeme.Container {
 
 	if con.Empty() {
 		return con
 	}
 
-	w := con.To().Window()
+	itr := Iterator(con.ToItinerant())
 
-	for w.Next() || w.Ahead() != nil {
+	for itr.Next() || itr.Ahead() != nil {
 
 		switch {
-		case w.Curr().Tok.IsRedundant():
-			w.Remove()
+		case itr.Curr().Tok.IsRedundant():
+			itr.Remove()
 
-		case w.Behind() == nil && w.Curr().Tok.IsTerminator():
-			w.Remove()
+		case itr.Behind() == nil && itr.Curr().Tok.IsTerminator():
+			itr.Remove()
 
-		case w.Behind() == nil:
+		case itr.Behind() == nil:
 
-		case w.Behind().Tok.IsTerminator() && w.Curr().Tok.IsTerminator():
-			w.Remove()
+		case itr.Behind().Tok.IsTerminator() && itr.Curr().Tok.IsTerminator():
+			itr.Remove()
 
-		case w.Behind().Tok == lexeme.LEFT_PAREN && w.Curr().Tok == lexeme.NEWLINE:
-			w.Remove()
+		case itr.Behind().Tok == lexeme.LEFT_PAREN && itr.Curr().Tok == lexeme.NEWLINE:
+			itr.Remove()
 
-		case w.Behind().Tok == lexeme.SEPARATOR && w.Curr().Tok == lexeme.NEWLINE:
-			w.Remove()
+		case itr.Behind().Tok == lexeme.SEPARATOR && itr.Curr().Tok == lexeme.NEWLINE:
+			itr.Remove()
 
-		case w.Behind().Tok == lexeme.SEPARATOR && w.Curr().Tok == lexeme.RIGHT_PAREN:
-			w.Prev()
-			w.Remove()
-			w.Next()
+		case itr.Behind().Tok == lexeme.SEPARATOR && itr.Curr().Tok == lexeme.RIGHT_PAREN:
+			itr.Prev()
+			itr.Remove()
+			itr.Next()
 		}
 	}
 
-	return w.To().Container()
+	return itr.ToContainer()
 }

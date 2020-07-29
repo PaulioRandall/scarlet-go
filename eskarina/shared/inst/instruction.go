@@ -38,7 +38,7 @@ func (in Instruction) snippet() (lineBegin, colBegin, lineEnd, colEnd int) {
 	colBegin = max_int
 	colEnd = 0
 
-	it := lexeme.NewItinerant(in.Snippet).To().Iterator()
+	it := lexeme.NewItinerant(in.Snippet)
 	for it.Next() {
 		lex := it.Curr()
 

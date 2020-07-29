@@ -9,7 +9,7 @@ import (
 func CompileAll(con *lexeme.Container) *inst.Instruction {
 
 	com := &compiler{
-		input: con.To().Queue(),
+		input: con,
 		out:   &inst.Container{},
 	}
 

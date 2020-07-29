@@ -5,7 +5,7 @@ import (
 )
 
 type Range interface {
-	To() *To
+	ToContainer() *Container
 	HasPrev() bool
 	HasNext() bool
 }
@@ -57,10 +57,8 @@ func (it *Itinerant) vacate() *Lexeme {
 	return head
 }
 
-func (it *Itinerant) To() *To {
-	return &To{
-		b: it,
-	}
+func (it *Itinerant) ToContainer() *Container {
+	return NewContainer(it.vacate())
 }
 
 func (it *Itinerant) HasPrev() bool {

@@ -4,10 +4,27 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
+type Stack interface {
+	Empty() bool
+	More() bool
+	Top() *lexeme.Lexeme
+	Push(*lexeme.Lexeme)
+	Pop() *lexeme.Lexeme
+}
+
+type Queue interface {
+	AsContainer() *lexeme.Container
+	Empty() bool
+	More() bool
+	Head() *lexeme.Lexeme
+	Put(*lexeme.Lexeme)
+	Take() *lexeme.Lexeme
+}
+
 type shuntingYard struct {
-	queue lexeme.Queue
-	stack lexeme.Stack
-	out   lexeme.Queue
+	queue Queue
+	stack Stack
+	out   Queue
 }
 
 func (shy *shuntingYard) empty() bool {
