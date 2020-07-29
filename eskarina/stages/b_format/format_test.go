@@ -247,6 +247,48 @@ func Test7_1(t *testing.T) {
 
 func Test8_1(t *testing.T) {
 
+	// @Println(
+	// 	1,
+	// 	1,
+	// )
+	given := lextest.Feign(
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.LEFT_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("\t", lexeme.WHITESPACE),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("\t", lexeme.WHITESPACE),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok(")", lexeme.RIGHT_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	exp := lextest.Feign(
+		lextest.Lex(0, 0, "@Println", lexeme.SPELL),
+		lextest.Lex(0, 8, "(", lexeme.LEFT_PAREN),
+		lextest.Lex(0, 9, "\n", lexeme.NEWLINE),
+		lextest.Lex(1, 0, "\t", lexeme.WHITESPACE),
+		lextest.Lex(1, 1, "1", lexeme.NUMBER),
+		lextest.Lex(1, 2, ",", lexeme.SEPARATOR),
+		lextest.Lex(1, 3, "\n", lexeme.NEWLINE),
+		lextest.Lex(2, 0, "\t", lexeme.WHITESPACE),
+		lextest.Lex(2, 1, "1", lexeme.NUMBER),
+		lextest.Lex(2, 2, ",", lexeme.SEPARATOR),
+		lextest.Lex(2, 3, "\n", lexeme.NEWLINE),
+		lextest.Lex(3, 0, ")", lexeme.RIGHT_PAREN),
+		lextest.Lex(3, 1, "\n", lexeme.NEWLINE),
+	)
+
+	act := updatePositions(given)
+	lextest.Equal(t, exp.Head(), act.Head())
+}
+
+func Test10_1(t *testing.T) {
+
 	// " @Println ( \n1 , 1 , \n 1 ) \n "
 	given := lextest.Feign(
 		lextest.Tok(" ", lexeme.WHITESPACE),
@@ -278,21 +320,21 @@ func Test8_1(t *testing.T) {
 	//
 	//   1)
 	exp := lextest.Feign(
-		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("(", lexeme.LEFT_PAREN),
-		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Lex(0, 0, "@Println", lexeme.SPELL),
+		lextest.Lex(0, 8, "(", lexeme.LEFT_PAREN),
+		lextest.Lex(0, 9, "\n", lexeme.NEWLINE),
 		lextest.Lex(1, 0, "\t", lexeme.WHITESPACE),
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Lex(0, 1, " ", lexeme.WHITESPACE),
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Lex(1, 0, "\t", lexeme.WHITESPACE),
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(")", lexeme.RIGHT_PAREN),
-		lextest.Lex(0, 1, "\n", lexeme.NEWLINE),
+		lextest.Lex(1, 1, "1", lexeme.NUMBER),
+		lextest.Lex(1, 2, ",", lexeme.SEPARATOR),
+		lextest.Lex(1, 3, " ", lexeme.WHITESPACE),
+		lextest.Lex(1, 4, "1", lexeme.NUMBER),
+		lextest.Lex(1, 5, ",", lexeme.SEPARATOR),
+		lextest.Lex(1, 6, "\n", lexeme.NEWLINE),
+		lextest.Lex(2, 0, "\n", lexeme.NEWLINE),
+		lextest.Lex(3, 0, "\t", lexeme.WHITESPACE),
+		lextest.Lex(3, 1, "1", lexeme.NUMBER),
+		lextest.Lex(3, 2, ")", lexeme.RIGHT_PAREN),
+		lextest.Lex(3, 3, "\n", lexeme.NEWLINE),
 	)
 
 	act := FormatAll(given)

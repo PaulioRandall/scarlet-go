@@ -33,7 +33,8 @@ func format(con *lexeme.Container) *lexeme.Container {
 	con = insertWhiteSpace(con)
 	con = unifyLineEndings(con)
 	con = indentLines(con)
-	//head = alignComments(head)
+	con = updatePositions(con)
+	con = alignComments(con)
 
 	return con
 }
@@ -156,9 +157,40 @@ func indentLines(con *lexeme.Container) *lexeme.Container {
 	return itr.ToContainer()
 }
 
-/*
-func alignComments(head *lexeme.Lexeme) *lexeme.Lexeme {
+func updatePositions(con *lexeme.Container) *lexeme.Container {
 
-	return head
+	itr := Iterator(con.ToIterator())
+	line, col := 0, 0
+
+	for itr.Next() {
+		itr.Curr().Line = line
+		itr.Curr().Col = col
+
+		if itr.Curr().Tok == lexeme.NEWLINE {
+			line++
+			col = 0
+		} else {
+			col += len(itr.Curr().Raw)
+		}
+	}
+
+	return itr.ToContainer()
 }
-*/
+
+func alignComments(con *lexeme.Container) *lexeme.Container {
+
+	itr := Iterator(con.ToIterator())
+
+	// 1. Split into lines
+	// 2. Mark lines with a comment but not ones that start with the comment
+	// 3. Find consecutive comment lines (comment group)
+	// 		Find the comment with the greatest col index
+	//    Insert whitespace before comments in each line to match the greatest
+	// 4. Join lines back together
+
+	for itr.Next() {
+
+	}
+
+	return itr.ToContainer()
+}
