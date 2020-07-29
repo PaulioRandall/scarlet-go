@@ -1,42 +1,42 @@
 package format
 
-/*
 import (
-	"strings"
+	//"strings"
 
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
-func FormatAll(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
-	return format(head, lineEnding)
+func FormatAll(con *lexeme.Container, lineEnding string) *lexeme.Container {
+	return format(con, lineEnding)
 }
 
-func format(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
+func format(con *lexeme.Container, lineEnding string) *lexeme.Container {
 
-	head = trimLeadingSpace(head)
-	head = trimSpaces(head)
-	head = insertSpaces(head)
-	head = reduceSpaces(head)
-	head = trimEmptyLines(head)
-	head = reduceEmptyLines(head)
-	head = unifyLineEndings(head, lineEnding)
-	head = indentNests(head)
+	con = trimLeadingSpace(con)
+	//head = trimSpaces(head)
+	//head = insertSpaces(head)
+	//head = reduceSpaces(head)
+	//head = trimEmptyLines(head)
+	//head = reduceEmptyLines(head)
+	//head = unifyLineEndings(head, lineEnding)
+	//head = indentNests(head)
 	//head = alignComments(head)
 
-	return head
+	return con
 }
 
-func trimLeadingSpace(head *lexeme.Lexeme) *lexeme.Lexeme {
+func trimLeadingSpace(con *lexeme.Container) *lexeme.Container {
 
-	for head != nil && head.Tok == lexeme.WHITESPACE {
-		next := head.Next
-		head.Remove()
-		head = next
+	itr := con.ToIterator()
+
+	for itr.Next() && itr.Curr().Tok == lexeme.WHITESPACE {
+		itr.Remove()
 	}
 
-	return head
+	return itr.ToContainer()
 }
 
+/*
 func trimSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	remove := func(lex *lexeme.Lexeme) *lexeme.Lexeme {
@@ -89,7 +89,7 @@ func trimSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	return head
 }
-
+/*
 func insertSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	for lex := head; lex != nil; lex = lex.Next {
@@ -110,7 +110,7 @@ func insertSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	return head
 }
-
+/*
 func reduceSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	for lex := head; lex != nil; lex = lex.Next {
@@ -121,7 +121,7 @@ func reduceSpaces(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	return head
 }
-
+/*
 func trimEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	if head == nil {
@@ -153,7 +153,7 @@ func trimEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	return head
 }
-
+/*
 func reduceEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	var single, double bool
@@ -182,7 +182,7 @@ func reduceEmptyLines(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	return head
 }
-
+/*
 func unifyLineEndings(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 
 	for lex := head; lex != nil; lex = lex.Next {
@@ -205,7 +205,7 @@ func unifyLineEndings(head *lexeme.Lexeme, lineEnding string) *lexeme.Lexeme {
 
 	return head
 }
-
+/*
 func indentNests(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	indent := 0
@@ -237,7 +237,7 @@ func indentNests(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	return head
 }
-
+/*
 func alignComments(head *lexeme.Lexeme) *lexeme.Lexeme {
 
 	return head
