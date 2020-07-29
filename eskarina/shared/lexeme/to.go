@@ -32,9 +32,9 @@ func (to *To) SlicePtr() []*Lexeme {
 	return r
 }
 
-func (to *To) Container() *Container2 {
+func (to *To) Container() *Container {
 
-	if c, ok := to.b.(*Container2); ok {
+	if c, ok := to.b.(*Container); ok {
 		return c
 	}
 
@@ -44,17 +44,17 @@ func (to *To) Container() *Container2 {
 	return c
 }
 
-func (to *To) Queue() Queue2 {
+func (to *To) Queue() Queue {
 	return to.Container()
 }
 
-func (to *To) Stack() Stack2 {
+func (to *To) Stack() Stack {
 	return to.Container()
 }
 
-func (to *To) Itinerant() *Itinerant2 {
+func (to *To) Itinerant() *Itinerant {
 
-	if it, ok := to.b.(*Itinerant2); ok {
+	if it, ok := to.b.(*Itinerant); ok {
 		return it
 	}
 
@@ -65,10 +65,10 @@ func (to *To) Itinerant() *Itinerant2 {
 	return it
 }
 
-func (to *To) Iterator() Iterator2 {
+func (to *To) Iterator() Iterator {
 	return to.Itinerant()
 }
 
-func (to *To) Window() Window2 {
+func (to *To) Window() Window {
 	return to.Itinerant()
 }

@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Feign2(lexs ...*lexeme.Lexeme) *lexeme.Container2 {
+func Feign(lexs ...*lexeme.Lexeme) *lexeme.Container {
 
-	que := &lexeme.Container2{}
+	que := &lexeme.Container{}
 
 	for _, l := range lexs {
 		que.Put(l)
@@ -20,7 +20,7 @@ func Feign2(lexs ...*lexeme.Lexeme) *lexeme.Container2 {
 	return que
 }
 
-func Lex2(line, col int, raw string, tk lexeme.Token) *lexeme.Lexeme {
+func Lex(line, col int, raw string, tk lexeme.Token) *lexeme.Lexeme {
 	return &lexeme.Lexeme{
 		Tok:  tk,
 		Raw:  raw,
@@ -29,14 +29,14 @@ func Lex2(line, col int, raw string, tk lexeme.Token) *lexeme.Lexeme {
 	}
 }
 
-func Tok2(raw string, tk lexeme.Token) *lexeme.Lexeme {
+func Tok(raw string, tk lexeme.Token) *lexeme.Lexeme {
 	return &lexeme.Lexeme{
 		Tok: tk,
 		Raw: raw,
 	}
 }
 
-func Equal2(t *testing.T, exp, act *lexeme.Lexeme) {
+func Equal(t *testing.T, exp, act *lexeme.Lexeme) {
 
 	idx := 0
 	for exp != nil || act != nil {
@@ -54,12 +54,12 @@ func Equal2(t *testing.T, exp, act *lexeme.Lexeme) {
 			idx, exp.String(), act.String(),
 		))
 
-		equalContent(t, exp.Prev2(), act.Prev2(), fmt.Sprintf(
+		equalContent(t, exp.Prev(), act.Prev(), fmt.Sprintf(
 			"Unexepected Lexeme[%d].prev\nWant: %s\nHave: %s",
 			idx, exp.String(), act.String(),
 		))
 
-		exp, act = exp.Next2(), act.Next2()
+		exp, act = exp.Next(), act.Next()
 		idx++
 	}
 }

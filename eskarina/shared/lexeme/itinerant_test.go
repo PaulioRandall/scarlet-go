@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_Itinerant2_1_1(t *testing.T) {
+func Test_Itinerant_1_1(t *testing.T) {
 
-	a, b, c, _ := setup2()
-	feign2(a, b, c)
+	a, b, c, _ := setup()
+	feign(a, b, c)
 	it := NewItinerant(a)
 
 	halfEqual(t, nil, it.Behind())
@@ -17,10 +17,10 @@ func Test_Itinerant2_1_1(t *testing.T) {
 	halfEqual(t, a, it.Ahead())
 }
 
-func Test_Itinerant2_2_1(t *testing.T) {
+func Test_Itinerant_2_1(t *testing.T) {
 
-	a, b, c, _ := setup2()
-	feign2(a, b, c)
+	a, b, c, _ := setup()
+	feign(a, b, c)
 	it := NewItinerant(a)
 
 	require.True(t, it.HasNext())
@@ -54,11 +54,11 @@ func Test_Itinerant2_2_1(t *testing.T) {
 	halfEqual(t, nil, it.Ahead())
 }
 
-func Test_Itinerant2_2_2(t *testing.T) {
+func Test_Itinerant_2_2(t *testing.T) {
 
-	a, b, c, _ := setup2()
-	feign2(a, b, c)
-	it := Itinerant2{
+	a, b, c, _ := setup()
+	feign(a, b, c)
+	it := Itinerant{
 		behind: c,
 	}
 
@@ -97,18 +97,18 @@ func Test_Itinerant2_2_2(t *testing.T) {
 	halfEqual(t, a, it.Ahead())
 }
 
-func Test_Itinerant2_3_1(t *testing.T) {
+func Test_Itinerant_3_1(t *testing.T) {
 
-	a, b, c, _ := setup2()
-	feign2(a, b, c)
-	it := Itinerant2{
+	a, b, c, _ := setup()
+	feign(a, b, c)
+	it := Itinerant{
 		behind: a,
 		curr:   b,
 		ahead:  c,
 	}
 
 	z := it.Remove()
-	fullEqual2(t, b, nil, nil, z)
+	fullEqual(t, b, nil, nil, z)
 	halfEqual(t, a, it.Behind())
 	halfEqual(t, nil, it.Curr())
 	halfEqual(t, c, it.Ahead())
@@ -119,7 +119,7 @@ func Test_Itinerant2_3_1(t *testing.T) {
 	halfEqual(t, nil, it.Ahead())
 
 	z = it.Remove()
-	fullEqual2(t, c, nil, nil, z)
+	fullEqual(t, c, nil, nil, z)
 	halfEqual(t, a, it.Behind())
 	halfEqual(t, nil, it.Curr())
 	halfEqual(t, nil, it.Ahead())

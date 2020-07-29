@@ -6,7 +6,7 @@ import (
 )
 
 type checker struct {
-	it lexeme.Iterator2
+	it lexeme.Iterator
 }
 
 func (chk *checker) unexpected(want string) error {

@@ -10,7 +10,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/number"
 )
 
-func doTest(t *testing.T, in *lexeme.Container2, exps *inst.Instruction) {
+func doTest(t *testing.T, in *lexeme.Container, exps *inst.Instruction) {
 	acts := CompileAll(in)
 	insttest.Equal(t, exps, acts)
 }
@@ -19,10 +19,10 @@ func Test1_1(t *testing.T) {
 
 	// WHEN compiling a spell with no arguments
 	// @Println()
-	in := lextest.Feign2(
-		lextest.Tok2("", lexeme.CALLABLE),
-		lextest.Tok2("@Println", lexeme.SPELL),
-		lextest.Tok2("\n", lexeme.NEWLINE),
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -38,11 +38,11 @@ func Test1_2(t *testing.T) {
 
 	// WHEN compiling a spell with an identifier argument
 	// @Println(x)
-	in := lextest.Feign2(
-		lextest.Tok2("", lexeme.CALLABLE),
-		lextest.Tok2("x", lexeme.IDENTIFIER),
-		lextest.Tok2("@Println", lexeme.SPELL),
-		lextest.Tok2("\n", lexeme.NEWLINE),
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -59,13 +59,13 @@ func Test1_3(t *testing.T) {
 
 	// WHEN compiling a spell with a multiple arguments of different types
 	// @Println(x, 1, "abc")
-	in := lextest.Feign2(
-		lextest.Tok2("", lexeme.CALLABLE),
-		lextest.Tok2("x", lexeme.IDENTIFIER),
-		lextest.Tok2("1", lexeme.NUMBER),
-		lextest.Tok2(`"abc"`, lexeme.STRING),
-		lextest.Tok2("@Println", lexeme.SPELL),
-		lextest.Tok2("\n", lexeme.NEWLINE),
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(`"abc"`, lexeme.STRING),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions

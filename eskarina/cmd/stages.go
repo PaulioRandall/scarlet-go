@@ -15,7 +15,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/stages/e_compiler"
 )
 
-func scanAll(c Config, s string) (*lexeme.Container2, error) {
+func scanAll(c Config, s string) (*lexeme.Container, error) {
 
 	con, e := scanner.ScanStr(s)
 	if e != nil {
@@ -30,7 +30,7 @@ func scanAll(c Config, s string) (*lexeme.Container2, error) {
 	return con, nil
 }
 
-func sanitiseAll(c Config, con *lexeme.Container2) (*lexeme.Container2, error) {
+func sanitiseAll(c Config, con *lexeme.Container) (*lexeme.Container, error) {
 
 	con = sanitiser.SanitiseAll(con)
 
@@ -42,7 +42,7 @@ func sanitiseAll(c Config, con *lexeme.Container2) (*lexeme.Container2, error) {
 	return con, nil
 }
 
-func checkAll(c Config, con *lexeme.Container2) (*lexeme.Container2, error) {
+func checkAll(c Config, con *lexeme.Container) (*lexeme.Container, error) {
 
 	var e error
 	con, e = checker.CheckAll(con)
@@ -53,7 +53,7 @@ func checkAll(c Config, con *lexeme.Container2) (*lexeme.Container2, error) {
 	return con, nil
 }
 
-func shuntAll(c Config, con *lexeme.Container2) (*lexeme.Container2, error) {
+func shuntAll(c Config, con *lexeme.Container) (*lexeme.Container, error) {
 
 	con = shunter.ShuntAll(con)
 
@@ -65,7 +65,7 @@ func shuntAll(c Config, con *lexeme.Container2) (*lexeme.Container2, error) {
 	return con, nil
 }
 
-func compileAll(c Config, con *lexeme.Container2) (*inst.Instruction, error) {
+func compileAll(c Config, con *lexeme.Container) (*inst.Instruction, error) {
 
 	ins := compiler.CompileAll(con)
 
@@ -83,7 +83,7 @@ func compileAll(c Config, con *lexeme.Container2) (*inst.Instruction, error) {
 }
 
 /*
-func formatAll(c Config, con *lexeme.Container2) (con *lexeme.Container2, error) {
+func formatAll(c Config, con *lexeme.Container) (con *lexeme.Container, error) {
 
 	if c.nofmt {
 		return nil

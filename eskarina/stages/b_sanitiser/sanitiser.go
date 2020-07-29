@@ -4,7 +4,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
-func SanitiseAll(con *lexeme.Container2) *lexeme.Container2 {
+func SanitiseAll(con *lexeme.Container) *lexeme.Container {
 
 	if con.Empty() {
 		return con

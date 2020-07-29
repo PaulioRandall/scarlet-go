@@ -17,7 +17,7 @@ type Lexeme struct {
 	prev *Lexeme
 }
 
-func (lex Lexeme) IsSingle2() bool {
+func (lex Lexeme) IsSingle() bool {
 	return lex.next == nil && lex.prev == nil
 }
 
@@ -25,11 +25,11 @@ func (lex Lexeme) At() (line, start, end int) {
 	return lex.Line, lex.Col, len(lex.Raw)
 }
 
-func (lex Lexeme) Next2() *Lexeme {
+func (lex Lexeme) Next() *Lexeme {
 	return lex.next
 }
 
-func (lex Lexeme) Prev2() *Lexeme {
+func (lex Lexeme) Prev() *Lexeme {
 	return lex.prev
 }
 

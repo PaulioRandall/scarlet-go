@@ -5,35 +5,35 @@ import (
 	"strings"
 )
 
-type Collection2 interface {
+type Collection interface {
 	To() *To
 	Empty() bool
 	More() bool
 	Size() int
 }
 
-type Stack2 interface {
-	Collection2
+type Stack interface {
+	Collection
 	Top() *Lexeme
 	Push(*Lexeme)
 	Pop() *Lexeme
 }
 
-type Queue2 interface {
-	Collection2
+type Queue interface {
+	Collection
 	Head() *Lexeme
 	Put(*Lexeme)
 	Take() *Lexeme
 }
 
-type Container2 struct {
+type Container struct {
 	size int
 	head *Lexeme
 	tail *Lexeme
 }
 
 func checkIsSingle(lex *Lexeme) {
-	if !lex.IsSingle2() {
+	if !lex.IsSingle() {
 		m := fmt.Sprintf(
 			"Lexeme `%s` is already part of another collection, remove first",
 			lex.String(),
@@ -42,13 +42,13 @@ func checkIsSingle(lex *Lexeme) {
 	}
 }
 
-func NewContainer(head *Lexeme) *Container2 {
+func NewContainer(head *Lexeme) *Container {
 
 	if head == nil {
-		return &Container2{}
+		return &Container{}
 	}
 
-	c := &Container2{
+	c := &Container{
 		head: head,
 		tail: head,
 		size: 1,
@@ -62,55 +62,55 @@ func NewContainer(head *Lexeme) *Container2 {
 	return c
 }
 
-func (c *Container2) vacate() *Lexeme {
+func (c *Container) vacate() *Lexeme {
 	head := c.head
 	c.head, c.tail, c.size = nil, nil, 0
 	return head
 }
 
-func (c *Container2) To() *To {
+func (c *Container) To() *To {
 	return &To{
 		b: c,
 	}
 }
 
-func (c *Container2) Empty() bool {
+func (c *Container) Empty() bool {
 	return c.size == 0
 }
 
-func (c *Container2) More() bool {
+func (c *Container) More() bool {
 	return c.size > 0
 }
 
-func (c *Container2) Size() int {
+func (c *Container) Size() int {
 	return c.size
 }
 
-func (c *Container2) Top() *Lexeme {
+func (c *Container) Top() *Lexeme {
 	return c.head
 }
 
-func (c *Container2) Push(lex *Lexeme) {
+func (c *Container) Push(lex *Lexeme) {
 	c.push(lex, false)
 }
 
-func (c *Container2) Pop() *Lexeme {
+func (c *Container) Pop() *Lexeme {
 	return c.pop(false)
 }
 
-func (c *Container2) Head() *Lexeme {
+func (c *Container) Head() *Lexeme {
 	return c.head
 }
 
-func (c *Container2) Put(lex *Lexeme) {
+func (c *Container) Put(lex *Lexeme) {
 	c.push(lex, true)
 }
 
-func (c *Container2) Take() *Lexeme {
+func (c *Container) Take() *Lexeme {
 	return c.pop(false)
 }
 
-func (c *Container2) pop(fromBack bool) *Lexeme {
+func (c *Container) pop(fromBack bool) *Lexeme {
 
 	if c.size == 0 {
 		return nil
@@ -135,7 +135,7 @@ func (c *Container2) pop(fromBack bool) *Lexeme {
 	return r
 }
 
-func (c *Container2) push(lex *Lexeme, toBack bool) {
+func (c *Container) push(lex *Lexeme, toBack bool) {
 
 	checkIsSingle(lex)
 
@@ -157,7 +157,7 @@ func (c *Container2) push(lex *Lexeme, toBack bool) {
 	c.size++
 }
 
-func (c *Container2) String() string {
+func (c *Container) String() string {
 
 	sb := strings.Builder{}
 

@@ -5,7 +5,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/perror"
 )
 
-func ScanStr(s string) (*lexeme.Container2, error) {
+func ScanStr(s string) (*lexeme.Container, error) {
 
 	rr := &runeReader{}
 	rr.runes = []rune(s)
@@ -15,7 +15,7 @@ func ScanStr(s string) (*lexeme.Container2, error) {
 		runeReader: rr,
 	}
 
-	que := &lexeme.Container2{}
+	que := &lexeme.Container{}
 
 	for lr.more() {
 

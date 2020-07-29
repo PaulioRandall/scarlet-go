@@ -4,39 +4,39 @@ import (
 	"strings"
 )
 
-type Range2 interface {
+type Range interface {
 	To() *To
 	HasPrev() bool
 	HasNext() bool
 }
 
-type Iterator2 interface {
-	Range2
+type Iterator interface {
+	Range
 	Prev() bool
 	Next() bool
 	Curr() *Lexeme
 	Remove() *Lexeme
 }
 
-type Window2 interface {
-	Iterator2
+type Window interface {
+	Iterator
 	Behind() *Lexeme
 	Ahead() *Lexeme
 }
 
-type Itinerant2 struct {
+type Itinerant struct {
 	behind *Lexeme
 	curr   *Lexeme
 	ahead  *Lexeme
 }
 
-func NewItinerant(head *Lexeme) *Itinerant2 {
-	return &Itinerant2{
+func NewItinerant(head *Lexeme) *Itinerant {
+	return &Itinerant{
 		ahead: head,
 	}
 }
 
-func (it *Itinerant2) vacate() *Lexeme {
+func (it *Itinerant) vacate() *Lexeme {
 
 	var head *Lexeme
 
@@ -57,21 +57,21 @@ func (it *Itinerant2) vacate() *Lexeme {
 	return head
 }
 
-func (it *Itinerant2) To() *To {
+func (it *Itinerant) To() *To {
 	return &To{
 		b: it,
 	}
 }
 
-func (it *Itinerant2) HasPrev() bool {
+func (it *Itinerant) HasPrev() bool {
 	return it.behind != nil
 }
 
-func (it *Itinerant2) HasNext() bool {
+func (it *Itinerant) HasNext() bool {
 	return it.ahead != nil
 }
 
-func (it *Itinerant2) Prev() bool {
+func (it *Itinerant) Prev() bool {
 
 	if it.curr == nil && it.behind == nil {
 		return false
@@ -88,7 +88,7 @@ func (it *Itinerant2) Prev() bool {
 	return true
 }
 
-func (it *Itinerant2) Next() bool {
+func (it *Itinerant) Next() bool {
 
 	if it.curr == nil && it.ahead == nil {
 		return false
@@ -106,19 +106,19 @@ func (it *Itinerant2) Next() bool {
 	return true
 }
 
-func (it *Itinerant2) Curr() *Lexeme {
+func (it *Itinerant) Curr() *Lexeme {
 	return it.curr
 }
 
-func (it *Itinerant2) Behind() *Lexeme {
+func (it *Itinerant) Behind() *Lexeme {
 	return it.behind
 }
 
-func (it *Itinerant2) Ahead() *Lexeme {
+func (it *Itinerant) Ahead() *Lexeme {
 	return it.ahead
 }
 
-func (it *Itinerant2) Remove() *Lexeme {
+func (it *Itinerant) Remove() *Lexeme {
 
 	if it.curr == nil {
 		return nil
@@ -131,7 +131,7 @@ func (it *Itinerant2) Remove() *Lexeme {
 	return r
 }
 
-func (it *Itinerant2) String() string {
+func (it *Itinerant) String() string {
 
 	sb := strings.Builder{}
 	write := func(pre string, lex *Lexeme) {
