@@ -7,18 +7,17 @@ import (
 func CheckAll(con *lexeme.Container) (*lexeme.Container, error) {
 
 	chk := &checker{
-		it: con.ToIterator(),
+		it: con.Iterator(),
 	}
 
-	chk.it.Next()
-	for chk.it.HasNext() {
+	for chk.it.Next(); chk.it.HasNext(); {
 		e := check(chk)
 		if e != nil {
 			return nil, e
 		}
 	}
 
-	return chk.it.ToContainer(), nil
+	return con, nil
 }
 
 func check(chk *checker) error {

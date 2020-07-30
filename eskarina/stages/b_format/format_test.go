@@ -8,9 +8,9 @@ import (
 )
 
 func doTest(t *testing.T, f func(*lexeme.Iterator), given, exp *lexeme.Container) {
-	itr := given.ToIterator()
+	itr := given.Iterator()
 	f(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	lextest.Equal(t, exp.Head(), given.Head())
 }
 
 func Test1_1(t *testing.T) {
@@ -95,14 +95,14 @@ func Test2_2(t *testing.T) {
 func Test2_3(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Lex(2, 4, ",", lexeme.SEPARATOR),
-		lextest.Lex(2, 5, "1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("1", lexeme.NUMBER),
 	)
 
 	exp := lextest.Feign(
-		lextest.Lex(2, 4, ",", lexeme.SEPARATOR),
-		lextest.Lex(2, 5, " ", lexeme.WHITESPACE),
-		lextest.Lex(2, 5, "1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok("1", lexeme.NUMBER),
 	)
 
 	doTest(t, insertSeparatorSpaces, given, exp)
@@ -331,6 +331,6 @@ func Test10_1(t *testing.T) {
 		lextest.Lex(3, 3, "\n", lexeme.NEWLINE),
 	)
 
-	act := FormatAll(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	FormatAll(given)
+	lextest.Equal(t, exp.Head(), given.Head())
 }

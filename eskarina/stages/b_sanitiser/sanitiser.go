@@ -4,23 +4,13 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
-type Iterator interface {
-	ToContainer() *lexeme.Container
-	Prev() bool
-	Next() bool
-	Curr() *lexeme.Lexeme
-	Remove() *lexeme.Lexeme
-	Before() *lexeme.Lexeme
-	After() *lexeme.Lexeme
-}
-
 func SanitiseAll(con *lexeme.Container) *lexeme.Container {
 
 	if con.Empty() {
 		return con
 	}
 
-	itr := Iterator(con.ToIterator())
+	itr := con.Iterator()
 
 	for itr.Next() || itr.After() != nil {
 
@@ -49,5 +39,5 @@ func SanitiseAll(con *lexeme.Container) *lexeme.Container {
 		}
 	}
 
-	return itr.ToContainer()
+	return con
 }

@@ -6,38 +6,35 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
-func FormatAll(con *lexeme.Container) *lexeme.Container {
-	return format(con)
+func FormatAll(con *lexeme.Container) {
+	format(con.Iterator())
 }
 
-func format(con *lexeme.Container) *lexeme.Container {
+func format(itr *lexeme.Iterator) {
 
-	itr := con.ToIterator()
 	trimWhiteSpace(itr)
-
 	itr.Restart()
+
 	stripUselessLines(itr)
-
 	itr.Restart()
+
 	insertSeparatorSpaces(itr)
-
 	itr.Restart()
+
 	unifyLineEndings(itr)
-
 	itr.Restart()
+
 	indentLines(itr)
-
 	itr.Restart()
+
 	updatePositions(itr)
 
 	//con = alignComments(con)
-
-	return itr.ToContainer()
 }
 
 func trimWhiteSpace(itr *lexeme.Iterator) {
 
-	whitespace := func(it lexeme.Iterator) bool {
+	whitespace := func(it *lexeme.Iterator) bool {
 		return it.Curr().Tok == lexeme.WHITESPACE
 	}
 
@@ -48,7 +45,7 @@ func trimWhiteSpace(itr *lexeme.Iterator) {
 
 func stripUselessLines(itr *lexeme.Iterator) {
 
-	newline := func(it lexeme.Iterator) bool {
+	newline := func(it *lexeme.Iterator) bool {
 		return it.Curr().Tok == lexeme.NEWLINE
 	}
 
@@ -68,7 +65,7 @@ func stripUselessLines(itr *lexeme.Iterator) {
 
 func insertSeparatorSpaces(itr *lexeme.Iterator) {
 
-	separator := func(it lexeme.Iterator) bool {
+	separator := func(it *lexeme.Iterator) bool {
 		return it.Curr().Tok == lexeme.SEPARATOR
 	}
 
@@ -76,10 +73,8 @@ func insertSeparatorSpaces(itr *lexeme.Iterator) {
 		if itr.After() != nil && itr.After().Tok != lexeme.NEWLINE {
 
 			itr.Append(&lexeme.Lexeme{
-				Tok:  lexeme.WHITESPACE,
-				Raw:  " ",
-				Line: itr.Curr().Line,
-				Col:  itr.Curr().Col + 1,
+				Tok: lexeme.WHITESPACE,
+				Raw: " ",
 			})
 		}
 	}
@@ -87,7 +82,7 @@ func insertSeparatorSpaces(itr *lexeme.Iterator) {
 
 func unifyLineEndings(itr *lexeme.Iterator) {
 
-	newline := func(it lexeme.Iterator) bool {
+	newline := func(it *lexeme.Iterator) bool {
 		return it.Curr().Tok == lexeme.NEWLINE
 	}
 

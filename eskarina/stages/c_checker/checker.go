@@ -5,15 +5,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/perror"
 )
 
-type Iterator interface {
-	ToContainer() *lexeme.Container
-	HasNext() bool
-	Next() bool
-	Curr() *lexeme.Lexeme
-}
-
 type checker struct {
-	it Iterator
+	it *lexeme.Iterator
 }
 
 func (chk *checker) unexpected(want string) error {

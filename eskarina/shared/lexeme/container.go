@@ -7,7 +7,6 @@ import (
 
 type Stack interface {
 	AsContainer() *Container
-	ToIterator() *Iterator
 	Empty() bool
 	More() bool
 	Size() int
@@ -19,7 +18,6 @@ type Stack interface {
 
 type Queue interface {
 	AsContainer() *Container
-	ToIterator() *Iterator
 	Empty() bool
 	More() bool
 	Size() int
@@ -65,15 +63,9 @@ func NewContainer(head *Lexeme) *Container {
 	return c
 }
 
-// @Retired
-func (c *Container) ToIterator() *Iterator {
-	head := c.head
-	c.head, c.tail, c.size = nil, nil, 0
-	return NewIterator(head)
-}
-
-func (c *Container) Iterator() *Iterator2 {
-	return &Iterator2{
+func (c *Container) Iterator() *Iterator {
+	return &Iterator{
+		con:   c,
 		after: c.head,
 	}
 }
@@ -200,12 +192,8 @@ func (c *Container) insertBefore(base *Lexeme, add *Lexeme) {
 	prepend(base, add)
 	c.size++
 
-	if base == c.head {
+	if c.head == base {
 		c.head = add
-	}
-
-	if base == c.tail {
-		c.tail = add
 	}
 }
 
@@ -213,10 +201,6 @@ func (c *Container) insertAfter(base *Lexeme, add *Lexeme) {
 
 	append(base, add)
 	c.size++
-
-	if base == c.head {
-		c.head = add
-	}
 
 	if base == c.tail {
 		c.tail = add

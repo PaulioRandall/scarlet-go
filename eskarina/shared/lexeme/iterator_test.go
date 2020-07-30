@@ -8,9 +8,8 @@ import (
 
 func Test_Iterator_1_1(t *testing.T) {
 
-	a, b, c, _ := setup()
-	feign(a, b, c)
-	it := NewIterator(a)
+	con, a, _, _, _ := setupContainer()
+	it := con.Iterator()
 
 	halfEqual(t, nil, it.Before())
 	halfEqual(t, nil, it.Curr())
@@ -19,9 +18,8 @@ func Test_Iterator_1_1(t *testing.T) {
 
 func Test_Iterator_2_1(t *testing.T) {
 
-	a, b, c, _ := setup()
-	feign(a, b, c)
-	it := NewIterator(a)
+	con, a, b, c, _ := setupContainer()
+	it := con.Iterator()
 
 	require.True(t, it.HasNext())
 	require.True(t, it.Next())
@@ -56,9 +54,9 @@ func Test_Iterator_2_1(t *testing.T) {
 
 func Test_Iterator_2_2(t *testing.T) {
 
-	a, b, c, _ := setup()
-	feign(a, b, c)
+	con, a, b, c, _ := setupContainer()
 	it := Iterator{
+		con:    con,
 		before: c,
 	}
 
@@ -99,9 +97,9 @@ func Test_Iterator_2_2(t *testing.T) {
 
 func Test_Iterator_3_1(t *testing.T) {
 
-	a, b, c, _ := setup()
-	feign(a, b, c)
+	con, a, b, c, _ := setupContainer()
 	it := Iterator{
+		con:    con,
 		before: a,
 		curr:   b,
 		after:  c,
@@ -123,21 +121,4 @@ func Test_Iterator_3_1(t *testing.T) {
 	halfEqual(t, a, it.Before())
 	halfEqual(t, nil, it.Curr())
 	halfEqual(t, nil, it.After())
-}
-
-func Test_Iterator_4_1(t *testing.T) {
-
-	a, b, c, d := setup()
-	feign(a, b, c, d)
-	it := Iterator{
-		before: b,
-		curr:   c,
-		after:  d,
-	}
-
-	con := it.Split()
-	fullEqual(t, a, nil, b, con.head)
-	fullEqual(t, b, a, nil, con.tail)
-	fullEqual(t, c, nil, d, it.Curr())
-	fullEqual(t, d, c, nil, it.After())
 }

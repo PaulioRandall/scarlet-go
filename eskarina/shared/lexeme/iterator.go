@@ -4,48 +4,15 @@ import (
 	"strings"
 )
 
-type Range interface {
-	AsIterator() *Iterator
-	ToContainer() *Container
-	EOF() bool
-	HasPrev() bool
-	HasNext() bool
-	Prev() bool
-	Next() bool
-	Curr() *Lexeme
-	Remove() *Lexeme
-	Prepend(*Lexeme)
-	Append(*Lexeme)
-	Split() *Container
-	JumpToPrev(f func(Iterator) bool) bool
-	JumpToNext(f func(Iterator) bool) bool
-	Before() *Lexeme
-	After() *Lexeme
-	Restart()
-	String() string
-}
-
 type Iterator struct {
+	con    *Container
 	before *Lexeme
 	curr   *Lexeme
 	after  *Lexeme
 }
 
-func NewIterator(head *Lexeme) *Iterator {
-	return &Iterator{
-		after: head,
-	}
-}
-
-func (it *Iterator) ToContainer() *Container {
-	it.Restart()
-	head := it.after
-	it.curr, it.before, it.after = nil, nil, nil
-	return NewContainer(head)
-}
-
-func (it *Iterator) AsIterator() *Iterator {
-	return it
+func (it *Iterator) SOF() bool {
+	return it.curr == nil && it.before == nil
 }
 
 func (it *Iterator) EOF() bool {
@@ -112,7 +79,7 @@ func (it *Iterator) Remove() *Lexeme {
 
 	r := it.curr
 	it.curr = nil
-	remove(r)
+	it.con.remove(r)
 
 	return r
 }
@@ -123,7 +90,7 @@ func (it *Iterator) Prepend(lex *Lexeme) {
 		panic("Can't prepend to nil, curr is nil")
 	}
 
-	prepend(it.curr, lex)
+	it.con.insertBefore(it.curr, lex)
 	it.refresh()
 }
 
@@ -133,67 +100,28 @@ func (it *Iterator) Append(lex *Lexeme) {
 		panic("Can't append to nil, curr is nil")
 	}
 
-	append(it.curr, lex)
+	it.con.insertAfter(it.curr, lex)
 	it.refresh()
 }
 
-func (it *Iterator) Split() *Container {
-
-	if it.before == nil {
-		return &Container{}
+func (it *Iterator) JumpToPrev(f func(*Iterator) bool) bool {
+	for it.Prev() && !f(it) {
 	}
 
-	it.before.next = nil
-	head := it.before
-
-	if it.curr != nil {
-		it.curr.prev = nil
-		it.refresh()
-	}
-
-	for lex := head; lex != nil; lex = lex.prev {
-		head = lex
-	}
-
-	return NewContainer(head)
+	return !it.SOF()
 }
 
-func (it *Iterator) JumpToPrev(f func(Iterator) bool) bool {
-	for it.Prev() && !f(*it) {
-	}
-
-	return !it.EOF()
-}
-
-func (it *Iterator) JumpToNext(f func(Iterator) bool) bool {
-	for it.Next() && !f(*it) {
+func (it *Iterator) JumpToNext(f func(*Iterator) bool) bool {
+	for it.Next() && !f(it) {
 	}
 
 	return !it.EOF()
 }
 
 func (it *Iterator) Restart() {
-
-	var head *Lexeme
-
-	switch {
-	case it.before != nil:
-		head = it.before
-	case it.curr != nil:
-		head = it.curr
-	case it.after != nil:
-		head = it.after
-	default:
-		return
-	}
-
-	for lex := head; lex != nil; lex = lex.prev {
-		head = lex
-	}
-
 	it.before = nil
 	it.curr = nil
-	it.after = head
+	it.after = it.con.head
 }
 
 func (it *Iterator) String() string {
