@@ -7,6 +7,12 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme/lextest"
 )
 
+func doTest(t *testing.T, f func(*lexeme.Iterator), given, exp *lexeme.Container) {
+	itr := given.ToIterator()
+	f(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+}
+
 func Test1_1(t *testing.T) {
 
 	given := lextest.Feign(
@@ -15,9 +21,7 @@ func Test1_1(t *testing.T) {
 
 	exp := lextest.Feign()
 
-	itr := given.ToIterator()
-	trimWhiteSpace(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	doTest(t, trimWhiteSpace, given, exp)
 }
 
 func Test1_2(t *testing.T) {
@@ -57,9 +61,7 @@ func Test1_2(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	itr := given.ToIterator()
-	trimWhiteSpace(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	doTest(t, trimWhiteSpace, given, exp)
 }
 
 func Test2_1(t *testing.T) {
@@ -72,9 +74,7 @@ func Test2_1(t *testing.T) {
 		lextest.Tok(",", lexeme.SEPARATOR),
 	)
 
-	itr := given.ToIterator()
-	insertSeparatorSpaces(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	doTest(t, insertSeparatorSpaces, given, exp)
 }
 
 func Test2_2(t *testing.T) {
@@ -89,9 +89,7 @@ func Test2_2(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	itr := given.ToIterator()
-	insertSeparatorSpaces(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	doTest(t, insertSeparatorSpaces, given, exp)
 }
 
 func Test2_3(t *testing.T) {
@@ -107,9 +105,7 @@ func Test2_3(t *testing.T) {
 		lextest.Lex(2, 5, "1", lexeme.NUMBER),
 	)
 
-	itr := given.ToIterator()
-	insertSeparatorSpaces(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	doTest(t, insertSeparatorSpaces, given, exp)
 }
 
 func Test5_1(t *testing.T) {
@@ -128,9 +124,7 @@ func Test5_1(t *testing.T) {
 		lextest.Tok("1", lexeme.NUMBER),
 	)
 
-	itr := given.ToIterator()
-	stripUselessLines(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	doTest(t, stripUselessLines, given, exp)
 }
 
 func Test5_2(t *testing.T) {
@@ -150,9 +144,7 @@ func Test5_2(t *testing.T) {
 		lextest.Tok("1", lexeme.NUMBER),
 	)
 
-	itr := given.ToIterator()
-	stripUselessLines(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	doTest(t, stripUselessLines, given, exp)
 }
 
 func Test5_3(t *testing.T) {
@@ -171,9 +163,7 @@ func Test5_3(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	itr := given.ToIterator()
-	stripUselessLines(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	doTest(t, stripUselessLines, given, exp)
 }
 
 func Test6_1(t *testing.T) {
@@ -190,9 +180,7 @@ func Test6_1(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	itr := given.ToIterator()
-	unifyLineEndings(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	doTest(t, unifyLineEndings, given, exp)
 }
 
 func Test6_2(t *testing.T) {
@@ -208,9 +196,7 @@ func Test6_2(t *testing.T) {
 		lextest.Tok("\r\n", lexeme.NEWLINE),
 	)
 
-	itr := given.ToIterator()
-	unifyLineEndings(itr)
-	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
+	doTest(t, unifyLineEndings, given, exp)
 }
 
 func Test7_1(t *testing.T) {
@@ -251,8 +237,7 @@ func Test7_1(t *testing.T) {
 		lextest.Tok(")", lexeme.RIGHT_PAREN),
 	)
 
-	act := indentLines(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	doTest(t, indentLines, given, exp)
 }
 
 func Test8_1(t *testing.T) {
@@ -293,8 +278,7 @@ func Test8_1(t *testing.T) {
 		lextest.Lex(3, 1, "\n", lexeme.NEWLINE),
 	)
 
-	act := updatePositions(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	doTest(t, updatePositions, given, exp)
 }
 
 func Test10_1(t *testing.T) {

@@ -13,7 +13,6 @@ func FormatAll(con *lexeme.Container) *lexeme.Container {
 func format(con *lexeme.Container) *lexeme.Container {
 
 	itr := con.ToIterator()
-
 	trimWhiteSpace(itr)
 
 	itr.Restart()
@@ -25,13 +24,15 @@ func format(con *lexeme.Container) *lexeme.Container {
 	itr.Restart()
 	unifyLineEndings(itr)
 
-	con = itr.ToContainer()
+	itr.Restart()
+	indentLines(itr)
 
-	con = indentLines(con)
-	con = updatePositions(con)
+	itr.Restart()
+	updatePositions(itr)
+
 	//con = alignComments(con)
 
-	return con
+	return itr.ToContainer()
 }
 
 func trimWhiteSpace(itr *lexeme.Iterator) {
@@ -108,10 +109,10 @@ func unifyLineEndings(itr *lexeme.Iterator) {
 	}
 }
 
-func indentLines(con *lexeme.Container) *lexeme.Container {
+func indentLines(itr *lexeme.Iterator) {
 
-	itr := con.ToIterator()
 	indent := 0
+	preUndented := false
 
 	for itr.Next() {
 		switch {
@@ -119,7 +120,10 @@ func indentLines(con *lexeme.Container) *lexeme.Container {
 			indent++
 
 		case itr.Curr().Tok.IsCloser():
-			indent--
+			if !preUndented {
+				indent--
+			}
+			preUndented = false
 
 		case itr.Curr().Tok != lexeme.NEWLINE:
 		case itr.After() == nil:
@@ -127,6 +131,7 @@ func indentLines(con *lexeme.Container) *lexeme.Container {
 
 		case itr.After().Tok.IsCloser():
 			indent--
+			preUndented = true
 
 		case indent > 0:
 			itr.Append(&lexeme.Lexeme{
@@ -136,13 +141,10 @@ func indentLines(con *lexeme.Container) *lexeme.Container {
 			})
 		}
 	}
-
-	return itr.ToContainer()
 }
 
-func updatePositions(con *lexeme.Container) *lexeme.Container {
+func updatePositions(itr *lexeme.Iterator) {
 
-	itr := con.ToIterator()
 	line, col := 0, 0
 
 	for itr.Next() {
@@ -156,6 +158,4 @@ func updatePositions(con *lexeme.Container) *lexeme.Container {
 			col += len(itr.Curr().Raw)
 		}
 	}
-
-	return itr.ToContainer()
 }
