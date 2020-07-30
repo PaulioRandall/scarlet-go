@@ -10,12 +10,12 @@ import (
 )
 
 func doTest(t *testing.T, in *lexeme.Container) {
-	_, e := CheckAll(in)
+	e := CheckAll(in)
 	require.Nil(t, e, "unexpected error: %+v", e)
 }
 
 func doErrorTest(t *testing.T, in *lexeme.Container) {
-	_, e := CheckAll(in)
+	e := CheckAll(in)
 	require.NotNil(t, e, "Expected error")
 }
 

@@ -4,10 +4,10 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
-func SanitiseAll(con *lexeme.Container) *lexeme.Container {
+func SanitiseAll(con *lexeme.Container) {
 
 	if con.Empty() {
-		return con
+		return
 	}
 
 	itr := con.Iterator()
@@ -38,6 +38,4 @@ func SanitiseAll(con *lexeme.Container) *lexeme.Container {
 			itr.Next()
 		}
 	}
-
-	return con
 }

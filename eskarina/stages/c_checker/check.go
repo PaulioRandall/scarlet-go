@@ -4,7 +4,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
-func CheckAll(con *lexeme.Container) (*lexeme.Container, error) {
+func CheckAll(con *lexeme.Container) error {
 
 	chk := &checker{
 		it: con.Iterator(),
@@ -13,11 +13,11 @@ func CheckAll(con *lexeme.Container) (*lexeme.Container, error) {
 	for chk.it.Next(); chk.it.HasNext(); {
 		e := check(chk)
 		if e != nil {
-			return nil, e
+			return e
 		}
 	}
 
-	return con, nil
+	return nil
 }
 
 func check(chk *checker) error {

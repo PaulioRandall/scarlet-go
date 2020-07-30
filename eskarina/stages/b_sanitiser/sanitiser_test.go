@@ -8,8 +8,8 @@ import (
 )
 
 func doTest(t *testing.T, in, exp *lexeme.Container) {
-	act := SanitiseAll(in)
-	lextest.Equal(t, exp.Head(), act.Head())
+	SanitiseAll(in)
+	lextest.Equal(t, exp.Head(), in.Head())
 }
 
 func Test1_1(t *testing.T) {

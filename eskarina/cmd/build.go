@@ -23,12 +23,12 @@ func Build(c Config) (*inst.Instruction, error) {
 			return nil, e
 		}
 	*/
-	head, e = sanitiseAll(c, head)
+	e = sanitiseAll(c, head)
 	if e != nil {
 		return nil, e
 	}
 
-	head, e = checkAll(c, head)
+	e = checkAll(c, head)
 	if e != nil {
 		return nil, e
 	}

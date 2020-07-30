@@ -30,27 +30,26 @@ func scanAll(c Config, s string) (*lexeme.Container, error) {
 	return con, nil
 }
 
-func sanitiseAll(c Config, con *lexeme.Container) (*lexeme.Container, error) {
+func sanitiseAll(c Config, con *lexeme.Container) error {
 
-	con = sanitiser.SanitiseAll(con)
+	sanitiser.SanitiseAll(con)
 
 	e := logPhase(c, ".sanitised", con.Head())
 	if e != nil {
-		return nil, e
+		return e
 	}
 
-	return con, nil
+	return nil
 }
 
-func checkAll(c Config, con *lexeme.Container) (*lexeme.Container, error) {
+func checkAll(c Config, con *lexeme.Container) error {
 
-	var e error
-	con, e = checker.CheckAll(con)
+	e := checker.CheckAll(con)
 	if e != nil {
-		return nil, e
+		return e
 	}
 
-	return con, nil
+	return nil
 }
 
 func shuntAll(c Config, con *lexeme.Container) (*lexeme.Container, error) {
