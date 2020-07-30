@@ -16,104 +16,111 @@ func ScanStr(s string) (*lexeme.Container, error) {
 	rr.runes = []rune(s)
 	rr.size = len(rr.runes)
 
-	lr := &lexReader{
-		runeReader: rr,
-	}
-
 	que := Queue(&lexeme.Container{})
+	//	line, col := 0, 0
 
-	for lr.more() {
+	for rr.more() {
 
-		lex, e := scanLexeme(lr)
+		lex, e := scanLexeme(rr)
 		if e != nil {
 			return nil, e
 		}
+		/*
+			lex.Line = line
+			lex.Col = col
 
+			if lex.Tok == lexeme.NEWLINE {
+				line++
+				col = 0
+			} else {
+				col += len(lex.Raw)
+			}
+		*/
 		que.Put(lex)
 	}
 
 	return que.AsContainer(), nil
 }
 
-func scanLexeme(lr *lexReader) (*lexeme.Lexeme, error) {
+func scanLexeme(rr *runeReader) (*lexeme.Lexeme, error) {
 
 	switch {
-	case lr.isNewline():
-		return newline(lr)
+	case rr.isNewline():
+		return newline(rr)
 
-	case lr.is('#'):
-		return comment(lr)
+	case rr.is('#'):
+		return comment(rr)
 
-	case lr.isSpace():
-		return whitespace(lr)
+	case rr.isSpace():
+		return whitespace(rr)
 
-	case lr.isLetter():
-		return word(lr)
+	case rr.isLetter():
+		return word(rr)
 
-	case lr.is('@'):
-		return spell(lr)
+	case rr.is('@'):
+		return spell(rr)
 
-	case lr.is('"'):
-		return stringLiteral(lr)
+	case rr.is('"'):
+		return stringLiteral(rr)
 
-	case lr.isDigit():
-		return numberLiteral(lr)
+	case rr.isDigit():
+		return numberLiteral(rr)
 
-	case lr.accept('('):
-		return lr.slice(lexeme.LEFT_PAREN), nil
+	case rr.accept('('):
+		return rr.slice(lexeme.LEFT_PAREN), nil
 
-	case lr.accept(')'):
-		return lr.slice(lexeme.RIGHT_PAREN), nil
+	case rr.accept(')'):
+		return rr.slice(lexeme.RIGHT_PAREN), nil
 
-	case lr.accept(','):
-		return lr.slice(lexeme.SEPARATOR), nil
+	case rr.accept(','):
+		return rr.slice(lexeme.SEPARATOR), nil
 	}
 
 	return nil, perror.New(
 		"Unexpected terminal symbol %d:%d, have %q",
-		lr.line, lr.idx, lr.peek(),
+		rr.line, rr.idx, rr.peek(),
 	)
 }
 
-func newline(lr *lexReader) (*lexeme.Lexeme, error) {
+func newline(rr *runeReader) (*lexeme.Lexeme, error) {
 
-	lr.accept('\r')
+	rr.accept('\r')
 
-	e := lr.expect('\n')
+	e := rr.expect('\n')
 	if e != nil {
 		return nil, e
 	}
 
-	return lr.slice(lexeme.NEWLINE), nil
+	return rr.slice(lexeme.NEWLINE), nil
 }
 
-func comment(lr *lexReader) (*lexeme.Lexeme, error) {
+func comment(rr *runeReader) (*lexeme.Lexeme, error) {
 
-	for lr.more() && !lr.isNewline() {
-		lr.inc()
+	for rr.more() && !rr.isNewline() {
+		rr.inc()
 	}
 
-	return lr.slice(lexeme.COMMENT), nil
+	return rr.slice(lexeme.COMMENT), nil
 }
 
-func whitespace(lr *lexReader) (*lexeme.Lexeme, error) {
+func whitespace(rr *runeReader) (*lexeme.Lexeme, error) {
 
-	for lr.isSpace() && !lr.isNewline() {
-		lr.inc()
+	for rr.isSpace() && !rr.isNewline() {
+		rr.inc()
 	}
 
-	return lr.slice(lexeme.WHITESPACE), nil
+	return rr.slice(lexeme.WHITESPACE), nil
 }
 
-func word(lr *lexReader) (*lexeme.Lexeme, error) {
+func word(rr *runeReader) (*lexeme.Lexeme, error) {
 
-	lr.inc()
+	rr.inc()
 
-	for lr.isLetter() || lr.is('_') {
-		lr.inc()
+	for rr.isLetter() || rr.is('_') {
+		rr.inc()
 	}
 
-	lex := lr.slice(lexeme.UNDEFINED)
+	lex := rr.slice(lexeme.UNDEFINED)
 
 	if lex.Raw == "false" || lex.Raw == "true" {
 		lex.Tok = lexeme.BOOL
@@ -124,84 +131,84 @@ func word(lr *lexReader) (*lexeme.Lexeme, error) {
 	return lex, nil
 }
 
-func spell(lr *lexReader) (*lexeme.Lexeme, error) {
+func spell(rr *runeReader) (*lexeme.Lexeme, error) {
 
-	lr.inc()
+	rr.inc()
 
 	for {
-		if lr.empty() {
+		if rr.empty() {
 			return nil, perror.New(
 				"Bad spell name %d:%d, want: letter, have: EOF",
-				lr.line, lr.idx,
+				rr.line, rr.idx,
 			)
 		}
 
-		if !lr.isLetter() {
+		if !rr.isLetter() {
 			return nil, perror.New(
 				"Bad spell name %d:%d, want: letter, have: %q",
-				lr.line, lr.idx, lr.peek(),
+				rr.line, rr.idx, rr.peek(),
 			)
 		}
 
-		for lr.isLetter() {
-			lr.inc()
+		for rr.isLetter() {
+			rr.inc()
 		}
 
-		if !lr.is('.') {
+		if !rr.is('.') {
 			break
 		}
 
-		lr.inc()
+		rr.inc()
 	}
 
-	return lr.slice(lexeme.SPELL), nil
+	return rr.slice(lexeme.SPELL), nil
 }
 
-func stringLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
+func stringLiteral(rr *runeReader) (*lexeme.Lexeme, error) {
 
-	lr.inc()
+	rr.inc()
 
-	for !lr.accept('"') {
+	for !rr.accept('"') {
 
-		lr.accept('\\')
-		if lr.empty() || lr.isNewline() {
-			return nil, perror.New("Unterminated string %d:%d", lr.line, lr.idx)
+		rr.accept('\\')
+		if rr.empty() || rr.isNewline() {
+			return nil, perror.New("Unterminated string %d:%d", rr.line, rr.idx)
 		}
 
-		lr.inc()
+		rr.inc()
 	}
 
-	return lr.slice(lexeme.STRING), nil
+	return rr.slice(lexeme.STRING), nil
 }
 
-func numberLiteral(lr *lexReader) (*lexeme.Lexeme, error) {
+func numberLiteral(rr *runeReader) (*lexeme.Lexeme, error) {
 
-	for lr.isDigit() {
-		lr.inc()
+	for rr.isDigit() {
+		rr.inc()
 	}
 
-	if !lr.accept('.') {
+	if !rr.accept('.') {
 		goto FINALISE
 	}
 
-	if lr.empty() {
+	if rr.empty() {
 		return nil, perror.New(
 			"Unexpected symbol %d:%d, want: [0-9], have: EOF",
-			lr.line, lr.idx,
+			rr.line, rr.idx,
 		)
 	}
 
-	if !lr.isDigit() {
+	if !rr.isDigit() {
 		return nil, perror.New(
 			"Unexpected symbol %d:%d, want: [0-9], have: %q",
-			lr.line, lr.idx, lr.peek(),
+			rr.line, rr.idx, rr.peek(),
 		)
 	}
 
-	for lr.isDigit() {
-		lr.inc()
+	for rr.isDigit() {
+		rr.inc()
 	}
 
 FINALISE:
-	return lr.slice(lexeme.NUMBER), nil
+	return rr.slice(lexeme.NUMBER), nil
 }

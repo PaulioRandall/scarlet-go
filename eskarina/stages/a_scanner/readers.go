@@ -12,6 +12,9 @@ type runeReader struct {
 	runes []rune
 	size  int
 	idx   int
+	line  int
+	col   int
+	count int
 }
 
 func (rr *runeReader) empty() bool {
@@ -26,91 +29,88 @@ func (rr *runeReader) peek() rune {
 	return rr.runes[rr.idx]
 }
 
-type lexReader struct {
-	*runeReader
-	line  int
-	col   int
-	count int
-	read  bool
+func (rr *runeReader) inc() {
+	rr.idx++
+	rr.count++
 }
 
-func (lr *lexReader) inc() {
-	lr.idx++
-	lr.count++
-	lr.read = true
+func (rr *runeReader) is(ru rune) bool {
+	return rr.more() && rr.peek() == ru
 }
 
-func (lr *lexReader) is(ru rune) bool {
-	return lr.more() && lr.peek() == ru
+func (rr *runeReader) isNewline() bool {
+	return rr.more() && (rr.peek() == '\r' || rr.peek() == '\n')
 }
 
-func (lr *lexReader) isNewline() bool {
-	return lr.more() && (lr.peek() == '\r' || lr.peek() == '\n')
+func (rr *runeReader) isSpace() bool {
+	return rr.more() && unicode.IsSpace(rr.peek())
 }
 
-func (lr *lexReader) isSpace() bool {
-	return lr.more() && unicode.IsSpace(lr.peek())
+func (rr *runeReader) isLetter() bool {
+	return rr.more() && unicode.IsLetter(rr.peek())
 }
 
-func (lr *lexReader) isLetter() bool {
-	return lr.more() && unicode.IsLetter(lr.peek())
+func (rr *runeReader) isDigit() bool {
+	return rr.more() && unicode.IsDigit(rr.peek())
 }
 
-func (lr *lexReader) isDigit() bool {
-	return lr.more() && unicode.IsDigit(lr.peek())
-}
+func (rr *runeReader) accept(ru rune) bool {
 
-func (lr *lexReader) accept(ru rune) bool {
-
-	if lr.more() && lr.peek() == ru {
-		lr.inc()
+	if rr.more() && rr.peek() == ru {
+		rr.inc()
 		return true
 	}
 
 	return false
 }
 
-func (lr *lexReader) expect(ru rune) error {
+func (rr *runeReader) expect(ru rune) error {
 
-	if lr.accept(ru) {
+	if rr.accept(ru) {
 		return nil
 	}
 
-	if lr.empty() {
+	if rr.empty() {
 		return perror.New(
 			"Unexpected EOF %d:%d, wanted %q",
-			lr.line, lr.idx-lr.count, ru,
+			rr.line, rr.idx-rr.count, ru,
 		)
 	}
 
 	return perror.New(
 		"Unexpected terminal symbol %d:%d, want %q, have %q",
-		lr.line, lr.idx-lr.count, ru, lr.peek(),
+		rr.line, rr.idx-rr.count, ru, rr.peek(),
 	)
 }
 
-func (lr *lexReader) slice(tk lexeme.Token) *lexeme.Lexeme {
+func (rr *runeReader) slice(tk lexeme.Token) *lexeme.Lexeme {
 
-	if !lr.read {
+	if rr.count == 0 {
 		failNow("You haven't accepted any terminal symbols yet")
 	}
 
 	lex := &lexeme.Lexeme{
-		Tok:  tk,
-		Raw:  string(lr.runes[lr.idx-lr.count : lr.idx]),
-		Line: lr.line,
-		Col:  lr.col,
+		Tok: tk,
+		Raw: string(rr.runes[rr.idx-rr.count : rr.idx]),
 	}
+
+	rr.update(lex)
+	return lex
+}
+
+func (rr *runeReader) update(lex *lexeme.Lexeme) {
+
+	lex.Line = rr.line
+	lex.Col = rr.col
 
 	if lex.Tok == lexeme.NEWLINE {
-		lr.line++
-		lr.col = 0
+		rr.line++
+		rr.col = 0
 	} else {
-		lr.col += lr.count
+		rr.col += len(lex.Raw)
 	}
 
-	lr.count, lr.read = 0, false
-	return lex
+	rr.count = 0
 }
 
 func failNow(msg string, args ...interface{}) {
