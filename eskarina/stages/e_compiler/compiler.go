@@ -5,8 +5,15 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
+type Queue interface {
+	More() bool
+	Empty() bool
+	Head() *lexeme.Lexeme
+	Take() *lexeme.Lexeme
+}
+
 type compiler struct {
-	input lexeme.Queue
+	input Queue
 	out   inst.Queue
 }
 

@@ -5,28 +5,6 @@ import (
 	"strings"
 )
 
-type Stack interface {
-	AsContainer() *Container
-	Empty() bool
-	More() bool
-	Size() int
-	Top() *Lexeme
-	Push(*Lexeme)
-	Pop() *Lexeme
-	String() string
-}
-
-type Queue interface {
-	AsContainer() *Container
-	Empty() bool
-	More() bool
-	Size() int
-	Head() *Lexeme
-	Put(*Lexeme)
-	Take() *Lexeme
-	String() string
-}
-
 type Container struct {
 	size int
 	head *Lexeme

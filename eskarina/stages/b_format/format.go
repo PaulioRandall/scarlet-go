@@ -34,8 +34,8 @@ func format(itr *lexeme.Iterator) {
 
 func trimWhiteSpace(itr *lexeme.Iterator) {
 
-	whitespace := func(it *lexeme.Iterator) bool {
-		return it.Curr().Tok == lexeme.WHITESPACE
+	whitespace := func(v lexeme.View) bool {
+		return v.Curr().Tok == lexeme.WHITESPACE
 	}
 
 	for itr.JumpToNext(whitespace) {
@@ -45,8 +45,8 @@ func trimWhiteSpace(itr *lexeme.Iterator) {
 
 func stripUselessLines(itr *lexeme.Iterator) {
 
-	newline := func(it *lexeme.Iterator) bool {
-		return it.Curr().Tok == lexeme.NEWLINE
+	newline := func(v lexeme.View) bool {
+		return v.Curr().Tok == lexeme.NEWLINE
 	}
 
 	for itr.JumpToNext(newline) {
@@ -65,8 +65,8 @@ func stripUselessLines(itr *lexeme.Iterator) {
 
 func insertSeparatorSpaces(itr *lexeme.Iterator) {
 
-	separator := func(it *lexeme.Iterator) bool {
-		return it.Curr().Tok == lexeme.SEPARATOR
+	separator := func(v lexeme.View) bool {
+		return v.Curr().Tok == lexeme.SEPARATOR
 	}
 
 	for itr.JumpToNext(separator) {
@@ -82,8 +82,8 @@ func insertSeparatorSpaces(itr *lexeme.Iterator) {
 
 func unifyLineEndings(itr *lexeme.Iterator) {
 
-	newline := func(it *lexeme.Iterator) bool {
-		return it.Curr().Tok == lexeme.NEWLINE
+	newline := func(v lexeme.View) bool {
+		return v.Curr().Tok == lexeme.NEWLINE
 	}
 
 	lineEnding := "\n"

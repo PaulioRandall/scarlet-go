@@ -4,6 +4,17 @@ import (
 	"strings"
 )
 
+type View interface {
+	SOF() bool
+	EOF() bool
+	HasPrev() bool
+	HasNext() bool
+	Curr() *Lexeme
+	Before() *Lexeme
+	After() *Lexeme
+	String() string
+}
+
 type Iterator struct {
 	con    *Container
 	before *Lexeme
@@ -104,14 +115,14 @@ func (it *Iterator) Append(lex *Lexeme) {
 	it.refresh()
 }
 
-func (it *Iterator) JumpToPrev(f func(*Iterator) bool) bool {
+func (it *Iterator) JumpToPrev(f func(View) bool) bool {
 	for it.Prev() && !f(it) {
 	}
 
 	return !it.SOF()
 }
 
-func (it *Iterator) JumpToNext(f func(*Iterator) bool) bool {
+func (it *Iterator) JumpToNext(f func(View) bool) bool {
 	for it.Next() && !f(it) {
 	}
 
