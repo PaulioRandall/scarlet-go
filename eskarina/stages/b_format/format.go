@@ -6,35 +6,27 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
-type Iterator interface {
-	//AsIterator() *Iterator
-	ToContainer() *lexeme.Container
-	//HasPrev() bool
-	//HasNext() bool
-	Prev() bool
-	Next() bool
-	Curr() *lexeme.Lexeme
-	Remove() *lexeme.Lexeme
-	Prepend(*lexeme.Lexeme)
-	Append(*lexeme.Lexeme)
-	Split() *lexeme.Container
-	JumpToPrev(f func() bool)
-	JumpToNext(f func() bool)
-	Before() *lexeme.Lexeme
-	After() *lexeme.Lexeme
-	//String() string
-}
-
 func FormatAll(con *lexeme.Container) *lexeme.Container {
 	return format(con)
 }
 
 func format(con *lexeme.Container) *lexeme.Container {
 
-	con = trimWhiteSpace(con)
-	con = stripUselessLines(con)
-	con = insertWhiteSpace(con)
-	con = unifyLineEndings(con)
+	itr := con.ToIterator()
+
+	trimWhiteSpace(itr)
+
+	itr.Restart()
+	stripUselessLines(itr)
+
+	itr.Restart()
+	insertSeparatorSpaces(itr)
+
+	itr.Restart()
+	unifyLineEndings(itr)
+
+	con = itr.ToContainer()
+
 	con = indentLines(con)
 	con = updatePositions(con)
 	//con = alignComments(con)
@@ -42,50 +34,46 @@ func format(con *lexeme.Container) *lexeme.Container {
 	return con
 }
 
-func trimWhiteSpace(con *lexeme.Container) *lexeme.Container {
+func trimWhiteSpace(itr *lexeme.Iterator) {
 
-	itr := Iterator(con.ToIterator())
-
-	for itr.Next() {
-		if itr.Curr().Tok == lexeme.WHITESPACE {
-			itr.Remove()
-		}
+	whitespace := func(it lexeme.Iterator) bool {
+		return it.Curr().Tok == lexeme.WHITESPACE
 	}
 
-	return itr.ToContainer()
+	for itr.JumpToNext(whitespace) {
+		itr.Remove()
+	}
 }
 
-func stripUselessLines(con *lexeme.Container) *lexeme.Container {
+func stripUselessLines(itr *lexeme.Iterator) {
 
-	itr := Iterator(con.ToIterator())
+	newline := func(it lexeme.Iterator) bool {
+		return it.Curr().Tok == lexeme.NEWLINE
+	}
 
-	for itr.Next() {
+	for itr.JumpToNext(newline) {
 
-		if itr.Curr().Tok != lexeme.NEWLINE {
+		if itr.Before() != nil && itr.Before().Tok != lexeme.NEWLINE {
 			continue
 		}
 
-		if itr.Before() == nil || itr.Before().Tok == lexeme.NEWLINE {
-			if itr.After() == nil || itr.After().Tok == lexeme.NEWLINE {
-				itr.Remove()
-			}
+		if itr.After() != nil && itr.After().Tok != lexeme.NEWLINE {
+			continue
 		}
-	}
 
-	return itr.ToContainer()
+		itr.Remove()
+	}
 }
 
-func insertWhiteSpace(con *lexeme.Container) *lexeme.Container {
+func insertSeparatorSpaces(itr *lexeme.Iterator) {
 
-	itr := Iterator(con.ToIterator())
+	separator := func(it lexeme.Iterator) bool {
+		return it.Curr().Tok == lexeme.SEPARATOR
+	}
 
-	for itr.Next() {
+	for itr.JumpToNext(separator) {
+		if itr.After() != nil && itr.After().Tok != lexeme.NEWLINE {
 
-		switch {
-		case itr.After() == nil:
-		case itr.After().Tok == lexeme.NEWLINE:
-
-		case itr.Curr().Tok == lexeme.SEPARATOR:
 			itr.Append(&lexeme.Lexeme{
 				Tok:  lexeme.WHITESPACE,
 				Raw:  " ",
@@ -94,43 +82,35 @@ func insertWhiteSpace(con *lexeme.Container) *lexeme.Container {
 			})
 		}
 	}
-
-	return itr.ToContainer()
 }
 
-func unifyLineEndings(con *lexeme.Container) *lexeme.Container {
+func unifyLineEndings(itr *lexeme.Iterator) {
 
-	lineEnding := "\n"
-	itr := Iterator(con.ToIterator())
-
-	for itr.Next() {
-		if itr.Curr().Tok == lexeme.NEWLINE {
-			lineEnding = itr.Curr().Raw
-			break
-		}
+	newline := func(it lexeme.Iterator) bool {
+		return it.Curr().Tok == lexeme.NEWLINE
 	}
 
-	for itr.Next() {
-		if itr.Curr().Tok == lexeme.NEWLINE {
-			itr.Curr().Raw = lineEnding
-		}
+	lineEnding := "\n"
+
+	if itr.JumpToNext(newline) {
+		lineEnding = itr.Curr().Raw
+	}
+
+	for itr.JumpToNext(newline) {
+		itr.Curr().Raw = lineEnding
 	}
 
 	if itr.Prev() && itr.Curr().Tok != lexeme.NEWLINE {
 		itr.Append(&lexeme.Lexeme{
-			Tok:  lexeme.NEWLINE,
-			Raw:  lineEnding,
-			Line: itr.Curr().Line,
-			Col:  itr.Curr().Col + len(itr.Curr().Raw),
+			Tok: lexeme.NEWLINE,
+			Raw: lineEnding,
 		})
 	}
-
-	return itr.ToContainer()
 }
 
 func indentLines(con *lexeme.Container) *lexeme.Container {
 
-	itr := Iterator(con.ToIterator())
+	itr := con.ToIterator()
 	indent := 0
 
 	for itr.Next() {
@@ -162,7 +142,7 @@ func indentLines(con *lexeme.Container) *lexeme.Container {
 
 func updatePositions(con *lexeme.Container) *lexeme.Container {
 
-	itr := Iterator(con.ToIterator())
+	itr := con.ToIterator()
 	line, col := 0, 0
 
 	for itr.Next() {

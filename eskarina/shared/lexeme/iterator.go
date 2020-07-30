@@ -17,8 +17,8 @@ type Range interface {
 	Prepend(*Lexeme)
 	Append(*Lexeme)
 	Split() *Container
-	JumpToPrev(f func() bool)
-	JumpToNext(f func() bool)
+	JumpToPrev(f func(Iterator) bool) bool
+	JumpToNext(f func(Iterator) bool) bool
 	Before() *Lexeme
 	After() *Lexeme
 	Restart()
@@ -158,14 +158,18 @@ func (it *Iterator) Split() *Container {
 	return NewContainer(head)
 }
 
-func (it *Iterator) JumpToPrev(f func() bool) {
-	for it.Prev() && !f() {
+func (it *Iterator) JumpToPrev(f func(Iterator) bool) bool {
+	for it.Prev() && !f(*it) {
 	}
+
+	return !it.EOF()
 }
 
-func (it *Iterator) JumpToNext(f func() bool) {
-	for it.Next() && !f() {
+func (it *Iterator) JumpToNext(f func(Iterator) bool) bool {
+	for it.Next() && !f(*it) {
 	}
+
+	return !it.EOF()
 }
 
 func (it *Iterator) Restart() {

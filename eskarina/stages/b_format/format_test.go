@@ -15,8 +15,9 @@ func Test1_1(t *testing.T) {
 
 	exp := lextest.Feign()
 
-	act := trimWhiteSpace(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	itr := given.ToIterator()
+	trimWhiteSpace(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
 }
 
 func Test1_2(t *testing.T) {
@@ -56,8 +57,9 @@ func Test1_2(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	act := trimWhiteSpace(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	itr := given.ToIterator()
+	trimWhiteSpace(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
 }
 
 func Test2_1(t *testing.T) {
@@ -70,8 +72,9 @@ func Test2_1(t *testing.T) {
 		lextest.Tok(",", lexeme.SEPARATOR),
 	)
 
-	act := insertWhiteSpace(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	itr := given.ToIterator()
+	insertSeparatorSpaces(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
 }
 
 func Test2_2(t *testing.T) {
@@ -86,8 +89,9 @@ func Test2_2(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	act := insertWhiteSpace(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	itr := given.ToIterator()
+	insertSeparatorSpaces(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
 }
 
 func Test2_3(t *testing.T) {
@@ -103,8 +107,9 @@ func Test2_3(t *testing.T) {
 		lextest.Lex(2, 5, "1", lexeme.NUMBER),
 	)
 
-	act := insertWhiteSpace(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	itr := given.ToIterator()
+	insertSeparatorSpaces(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
 }
 
 func Test5_1(t *testing.T) {
@@ -123,8 +128,9 @@ func Test5_1(t *testing.T) {
 		lextest.Tok("1", lexeme.NUMBER),
 	)
 
-	act := stripUselessLines(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	itr := given.ToIterator()
+	stripUselessLines(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
 }
 
 func Test5_2(t *testing.T) {
@@ -144,8 +150,9 @@ func Test5_2(t *testing.T) {
 		lextest.Tok("1", lexeme.NUMBER),
 	)
 
-	act := stripUselessLines(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	itr := given.ToIterator()
+	stripUselessLines(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
 }
 
 func Test5_3(t *testing.T) {
@@ -164,8 +171,9 @@ func Test5_3(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	act := stripUselessLines(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	itr := given.ToIterator()
+	stripUselessLines(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
 }
 
 func Test6_1(t *testing.T) {
@@ -182,25 +190,27 @@ func Test6_1(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	act := unifyLineEndings(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	itr := given.ToIterator()
+	unifyLineEndings(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
 }
 
 func Test6_2(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Lex(2, 3, "\r\n", lexeme.NEWLINE),
-		lextest.Lex(2, 5, "123", lexeme.NUMBER),
+		lextest.Tok("\r\n", lexeme.NEWLINE),
+		lextest.Tok("123", lexeme.NUMBER),
 	)
 
 	exp := lextest.Feign(
-		lextest.Lex(2, 3, "\r\n", lexeme.NEWLINE),
-		lextest.Lex(2, 5, "123", lexeme.NUMBER),
-		lextest.Lex(2, 8, "\r\n", lexeme.NEWLINE),
+		lextest.Tok("\r\n", lexeme.NEWLINE),
+		lextest.Tok("123", lexeme.NUMBER),
+		lextest.Tok("\r\n", lexeme.NEWLINE),
 	)
 
-	act := unifyLineEndings(given)
-	lextest.Equal(t, exp.Head(), act.Head())
+	itr := given.ToIterator()
+	unifyLineEndings(itr)
+	lextest.Equal(t, exp.Head(), itr.ToContainer().Head())
 }
 
 func Test7_1(t *testing.T) {
