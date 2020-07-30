@@ -7,6 +7,7 @@ import (
 type Range interface {
 	AsIterator() *Iterator
 	ToContainer() *Container
+	EOF() bool
 	HasPrev() bool
 	HasNext() bool
 	Prev() bool
@@ -16,6 +17,8 @@ type Range interface {
 	Prepend(*Lexeme)
 	Append(*Lexeme)
 	Split() *Container
+	JumpToPrev(f func() bool)
+	JumpToNext(f func() bool)
 	Before() *Lexeme
 	After() *Lexeme
 	Restart()
@@ -43,6 +46,10 @@ func (it *Iterator) ToContainer() *Container {
 
 func (it *Iterator) AsIterator() *Iterator {
 	return it
+}
+
+func (it *Iterator) EOF() bool {
+	return it.curr == nil && it.after == nil
 }
 
 func (it *Iterator) HasPrev() bool {
@@ -149,6 +156,16 @@ func (it *Iterator) Split() *Container {
 	}
 
 	return NewContainer(head)
+}
+
+func (it *Iterator) JumpToPrev(f func() bool) {
+	for it.Prev() && !f() {
+	}
+}
+
+func (it *Iterator) JumpToNext(f func() bool) {
+	for it.Next() && !f() {
+	}
 }
 
 func (it *Iterator) Restart() {

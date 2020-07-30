@@ -15,9 +15,11 @@ type Iterator interface {
 	Next() bool
 	Curr() *lexeme.Lexeme
 	Remove() *lexeme.Lexeme
-	//Prepend(*Lexeme)
+	Prepend(*lexeme.Lexeme)
 	Append(*lexeme.Lexeme)
 	Split() *lexeme.Container
+	JumpToPrev(f func() bool)
+	JumpToNext(f func() bool)
 	Before() *lexeme.Lexeme
 	After() *lexeme.Lexeme
 	//String() string
