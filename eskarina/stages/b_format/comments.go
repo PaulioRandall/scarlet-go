@@ -6,7 +6,7 @@ import (
 
 type line struct {
 	con     *lexeme.Container
-	comment bool
+	comment int
 }
 
 func alignComments(con *lexeme.Container) *lexeme.Container {
@@ -26,9 +26,7 @@ func alignComments(con *lexeme.Container) *lexeme.Container {
 		}
 	}
 
-	// 4. Join lines back together
-
-	return itr.ToContainer()
+	return joinLines(lines)
 }
 
 func splitLines(itr Iterator) []line {
@@ -36,7 +34,6 @@ func splitLines(itr Iterator) []line {
 	var r []line
 
 	for itr.Next() {
-
 		if itr.Curr().Tok == lexeme.NEWLINE {
 			itr.Next()
 
@@ -55,9 +52,10 @@ func markCommentLines(lines []line) {
 	for _, l := range lines {
 		itr := l.con.ToIterator()
 
-		for itr.Next() {
-			if itr.Before() != nil && itr.Curr().Tok == lexeme.COMMENT {
-				l.comment = true
+		for i := 0; itr.Next(); i++ {
+			if itr.Curr().Tok == lexeme.COMMENT {
+				l.comment = i
+				break
 			}
 		}
 
@@ -66,11 +64,43 @@ func markCommentLines(lines []line) {
 }
 
 func nextCommentGroup(lines []line, start int) (begin, end int, found bool) {
-	// TODO
+
+	// Find the group beginning line
+	for i := start; i < len(lines); i++ {
+		if lines[i].comment > 0 {
+			found = true
+			begin = i
+			break
+		}
+	}
+
+	if !found {
+		return
+	}
+
+	// Find the group ending line
+	for i := begin + 1; i < len(lines); i++ {
+		if lines[i].comment < 1 {
+			end = i
+			break
+		}
+	}
+
+	// If no end found, then all remain lines have comments
+	// SANITY CHECK, should never heappen?
+	if end == 0 {
+		end = len(lines)
+	}
+
 	return
 }
 
 func alignCommentLexemes(lines []line, begin, end int) {
 	// 		Find the comment with the greatest col index
 	//    Insert whitespace before comments in each line to match the greatest
+}
+
+func joinLines(lines []line) *lexeme.Container {
+	// TODO
+	return nil
 }
