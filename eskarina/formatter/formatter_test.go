@@ -8,8 +8,7 @@ import (
 )
 
 func doTest(t *testing.T, f func(*lexeme.Iterator), given, exp *lexeme.Container) {
-	itr := given.Iterator()
-	f(itr)
+	f(given.Iterator())
 	lextest.Equal(t, exp.Head(), given.Head())
 }
 
@@ -279,6 +278,44 @@ func Test8_1(t *testing.T) {
 	)
 
 	doTest(t, updatePositions, given, exp)
+}
+
+func Test9_1(t *testing.T) {
+
+	// 1# First
+	// 2 # Second
+	// 3  # Third
+	given := lextest.Feign(
+		lextest.Lex(0, 0, "1", lexeme.NUMBER),
+		lextest.Lex(0, 1, "# First", lexeme.COMMENT),
+		lextest.Lex(0, 8, "\n", lexeme.NEWLINE),
+		lextest.Lex(1, 0, "2", lexeme.NUMBER),
+		lextest.Lex(1, 1, " ", lexeme.WHITESPACE),
+		lextest.Lex(1, 2, "# Second", lexeme.COMMENT),
+		lextest.Lex(1, 10, "\n", lexeme.NEWLINE),
+		lextest.Lex(2, 0, "3", lexeme.NUMBER),
+		lextest.Lex(2, 1, "  ", lexeme.WHITESPACE),
+		lextest.Lex(2, 3, "# Third", lexeme.COMMENT),
+		lextest.Lex(2, 10, "\n", lexeme.NEWLINE),
+	)
+
+	exp := lextest.Feign(
+		lextest.Lex(0, 0, "1", lexeme.NUMBER),
+		lextest.Lex(0, 0, "  ", lexeme.WHITESPACE),
+		lextest.Lex(0, 1, "# First", lexeme.COMMENT),
+		lextest.Lex(0, 8, "\n", lexeme.NEWLINE),
+		lextest.Lex(1, 0, "2", lexeme.NUMBER),
+		lextest.Lex(1, 1, " ", lexeme.WHITESPACE),
+		lextest.Lex(0, 0, " ", lexeme.WHITESPACE),
+		lextest.Lex(1, 2, "# Second", lexeme.COMMENT),
+		lextest.Lex(1, 10, "\n", lexeme.NEWLINE),
+		lextest.Lex(2, 0, "3", lexeme.NUMBER),
+		lextest.Lex(2, 1, "  ", lexeme.WHITESPACE),
+		lextest.Lex(2, 3, "# Third", lexeme.COMMENT),
+		lextest.Lex(2, 10, "\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, alignComments, given, exp)
 }
 
 func Test10_1(t *testing.T) {

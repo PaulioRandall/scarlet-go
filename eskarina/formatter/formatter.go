@@ -47,7 +47,9 @@ func format(itr *lexeme.Iterator) error {
 	itr.Restart()
 
 	updatePositions(itr)
-	//con = alignComments(con)
+	itr.Restart()
+
+	alignComments(itr)
 
 	return nil
 }
