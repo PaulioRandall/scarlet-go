@@ -36,22 +36,27 @@ func alignCommentGroup(itr *lexeme.Iterator) {
 		return
 	}
 
-	maxCol := findMaxCol(itr, n)
+	maxCol := findMaxCommentCol(itr, n)
 	levelComments(itr, n, maxCol)
 }
 
-func findMaxCol(itr *lexeme.Iterator, groupSize int) (maxCol int) {
-	for i := 0; i < groupSize; i++ {
+func findMaxCommentCol(itr *lexeme.Iterator, groupSize int) (maxCol int) {
+	for i := 0; i <= groupSize; i++ {
+
 		if itr.Curr().Col > maxCol {
 			maxCol = itr.Curr().Col
 		}
-		itr.JumpToPrev(comment)
+
+		if i != groupSize {
+			itr.JumpToPrev(comment)
+		}
 	}
 	return
 }
 
 func levelComments(itr *lexeme.Iterator, groupSize, maxCol int) {
-	for i := 0; i < groupSize; i++ {
+
+	for i := 0; i <= groupSize; i++ {
 
 		col := itr.Curr().Col
 		if col < maxCol {
@@ -61,6 +66,8 @@ func levelComments(itr *lexeme.Iterator, groupSize, maxCol int) {
 			})
 		}
 
-		itr.JumpToNext(comment)
+		if i != groupSize {
+			itr.JumpToNext(comment)
+		}
 	}
 }

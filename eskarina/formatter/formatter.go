@@ -20,16 +20,13 @@ func FormatFile(filename string) error {
 		return e
 	}
 
-	e = format(c.Iterator())
-	if e != nil {
-		return e
-	}
+	format(c.Iterator())
 
 	// Write container to file
 	return nil
 }
 
-func format(itr *lexeme.Iterator) error {
+func format(itr *lexeme.Iterator) {
 
 	trimWhiteSpace(itr)
 	itr.Restart()
@@ -50,8 +47,7 @@ func format(itr *lexeme.Iterator) error {
 	itr.Restart()
 
 	alignComments(itr)
-
-	return nil
+	itr.Restart()
 }
 
 func trimWhiteSpace(itr *lexeme.Iterator) {
@@ -175,4 +171,8 @@ func updatePositions(itr *lexeme.Iterator) {
 			col += len(itr.Curr().Raw)
 		}
 	}
+}
+
+func writeFile(itr *lexeme.Iterator) {
+
 }
