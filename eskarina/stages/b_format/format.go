@@ -6,10 +6,12 @@ import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
 )
 
+// @Retired
 func FormatAll(con *lexeme.Container) {
 	format(con.Iterator())
 }
 
+// @Retired
 func format(itr *lexeme.Iterator) {
 
 	trimWhiteSpace(itr)
@@ -32,6 +34,7 @@ func format(itr *lexeme.Iterator) {
 	//con = alignComments(con)
 }
 
+// @Retired
 func trimWhiteSpace(itr *lexeme.Iterator) {
 
 	whitespace := func(v lexeme.View) bool {
@@ -43,6 +46,7 @@ func trimWhiteSpace(itr *lexeme.Iterator) {
 	}
 }
 
+// @Retired
 func stripUselessLines(itr *lexeme.Iterator) {
 
 	newline := func(v lexeme.View) bool {
@@ -63,6 +67,7 @@ func stripUselessLines(itr *lexeme.Iterator) {
 	}
 }
 
+// @Retired
 func insertSeparatorSpaces(itr *lexeme.Iterator) {
 
 	separator := func(v lexeme.View) bool {
@@ -80,6 +85,7 @@ func insertSeparatorSpaces(itr *lexeme.Iterator) {
 	}
 }
 
+// @Retired
 func unifyLineEndings(itr *lexeme.Iterator) {
 
 	newline := func(v lexeme.View) bool {
@@ -104,6 +110,7 @@ func unifyLineEndings(itr *lexeme.Iterator) {
 	}
 }
 
+// @Retired
 func indentLines(itr *lexeme.Iterator) {
 
 	indent := 0
@@ -138,6 +145,7 @@ func indentLines(itr *lexeme.Iterator) {
 	}
 }
 
+// @Retired
 func updatePositions(itr *lexeme.Iterator) {
 
 	line, col := 0, 0

@@ -1,96 +1,176 @@
 package formatter
 
 import (
-	"os"
-	//		"github.com/PaulioRandall/scarlet-go/eskarina/stages/a_scanner"
+	"io/ioutil"
+	"strings"
+
+	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
+	"github.com/PaulioRandall/scarlet-go/eskarina/stages/a_scanner"
 )
 
-func FormatAll(filename string) error {
+func FormatFile(filename string) error {
 
-	f, e := os.OpenFile(filename, os.O_RDWR, os.ModePerm)
+	b, e := ioutil.ReadFile(filename)
 	if e != nil {
 		return e
 	}
 
-	// TODO: Catch any panics and return them as an error
-	defer f.Close()
-
-	return format(f)
-}
-
-func format(file *os.File) error {
-
-	head, e := scanLines(file)
+	c, e := scanner.ScanStr(string(b))
 	if e != nil {
 		return e
 	}
 
-	head = trimLines(head)
-	head = removeUselessSpace(head)
-	head = removeUselessLines(head)
-	head = formaliseLineEndings(head)
-	head = insertSpaces(head)
-	head = insertIndentation(head)
-	head = updateTokenPositions(head)
-	head = alignComments(head)
+	e = format(c.Iterator())
+	if e != nil {
+		return e
+	}
 
-	return updateFile(file, head)
-}
-
-func scanLines(file *os.File) (*line, error) {
-	// Scan each line including the line ending
-	// Put the line into the scanner
-	// Return a new *line
-	return nil, nil
-}
-
-func trimLines(head *line) *line {
-	//  Remove leading and trailing whitespace from the line
-	return head
-}
-
-func removeUselessSpace(head *line) *line {
-	//  Remove whitespace where it's not needed
-	return head
-}
-
-func removeUselessLines(head *line) *line {
-	// Remove successive empty lines
-	return head
-}
-
-func formaliseLineEndings(head *line) *line {
-	// Identify the line ending of the first line
-	//	Update all line endings that do not conform with the first
-	return head
-}
-
-func insertSpaces(head *line) *line {
-	// Insert whitespace in each line
-	//  After a comma etc
-	return head
-}
-
-func insertIndentation(head *line) *line {
-	//  Add nesting indentation to the begining of each line
-	return head
-}
-
-func updateTokenPositions(head *line) *line {
-	// Update all line and column numbers
-	return head
-}
-
-func alignComments(head *line) *line {
-	// Identify code chunks (chunks of lines between empty lines)
-	// Align all comments within a chunk
+	// Write container to file
 	return nil
 }
 
-func updateFile(file *os.File, head *line) error {
-	// Stringify each line
-	// Compare it to the relevant line in the file
-	// If ANY line does not match
-	//	Rewrite the whole file
+func format(itr *lexeme.Iterator) error {
+
+	trimWhiteSpace(itr)
+	itr.Restart()
+
+	stripUselessLines(itr)
+	itr.Restart()
+
+	insertSeparatorSpaces(itr)
+	itr.Restart()
+
+	unifyLineEndings(itr)
+	itr.Restart()
+
+	indentLines(itr)
+	itr.Restart()
+
+	updatePositions(itr)
+	//con = alignComments(con)
+
 	return nil
+}
+
+func trimWhiteSpace(itr *lexeme.Iterator) {
+
+	whitespace := func(v lexeme.View) bool {
+		return v.Curr().Tok == lexeme.WHITESPACE
+	}
+
+	for itr.JumpToNext(whitespace) {
+		itr.Remove()
+	}
+}
+
+func stripUselessLines(itr *lexeme.Iterator) {
+
+	newline := func(v lexeme.View) bool {
+		return v.Curr().Tok == lexeme.NEWLINE
+	}
+
+	for itr.JumpToNext(newline) {
+
+		if itr.Before() != nil && itr.Before().Tok != lexeme.NEWLINE {
+			continue
+		}
+
+		if itr.After() != nil && itr.After().Tok != lexeme.NEWLINE {
+			continue
+		}
+
+		itr.Remove()
+	}
+}
+
+func insertSeparatorSpaces(itr *lexeme.Iterator) {
+
+	separator := func(v lexeme.View) bool {
+		return v.Curr().Tok == lexeme.SEPARATOR
+	}
+
+	for itr.JumpToNext(separator) {
+		if itr.After() != nil && itr.After().Tok != lexeme.NEWLINE {
+
+			itr.Append(&lexeme.Lexeme{
+				Tok: lexeme.WHITESPACE,
+				Raw: " ",
+			})
+		}
+	}
+}
+
+func unifyLineEndings(itr *lexeme.Iterator) {
+
+	newline := func(v lexeme.View) bool {
+		return v.Curr().Tok == lexeme.NEWLINE
+	}
+
+	lineEnding := "\n"
+
+	if itr.JumpToNext(newline) {
+		lineEnding = itr.Curr().Raw
+	}
+
+	for itr.JumpToNext(newline) {
+		itr.Curr().Raw = lineEnding
+	}
+
+	if itr.Prev() && itr.Curr().Tok != lexeme.NEWLINE {
+		itr.Append(&lexeme.Lexeme{
+			Tok: lexeme.NEWLINE,
+			Raw: lineEnding,
+		})
+	}
+}
+
+func indentLines(itr *lexeme.Iterator) {
+
+	indent := 0
+	preUndented := false
+
+	for itr.Next() {
+		switch {
+		case itr.Curr().Tok.IsOpener():
+			indent++
+
+		case itr.Curr().Tok.IsCloser():
+			if !preUndented {
+				indent--
+			}
+			preUndented = false
+
+		case itr.Curr().Tok != lexeme.NEWLINE:
+		case itr.After() == nil:
+		case itr.After().Tok == lexeme.NEWLINE:
+
+		case itr.After().Tok.IsCloser():
+			indent--
+			preUndented = true
+
+		case indent > 0:
+			itr.Append(&lexeme.Lexeme{
+				Tok:  lexeme.WHITESPACE,
+				Raw:  strings.Repeat("\t", indent),
+				Line: itr.Curr().Line + 1,
+			})
+		}
+	}
+}
+
+func updatePositions(itr *lexeme.Iterator) {
+
+	line, col := 0, 0
+
+	for itr.Next() {
+		itr.Curr().Line = line
+		itr.Curr().Col = col
+
+		if itr.Curr().Tok == lexeme.NEWLINE {
+			line++
+			col = 0
+		} else {
+			col += len(itr.Curr().Raw)
+		}
+	}
 }

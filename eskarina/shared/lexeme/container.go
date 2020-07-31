@@ -11,16 +11,6 @@ type Container struct {
 	tail *Lexeme
 }
 
-func checkIsSingle(lex *Lexeme) {
-	if lex.next != nil || lex.prev != nil {
-		m := fmt.Sprintf(
-			"Lexeme `%s` is already part of another collection, remove first",
-			lex.String(),
-		)
-		panic(m)
-	}
-}
-
 func NewContainer(head *Lexeme) *Container {
 
 	if head == nil {
@@ -182,5 +172,15 @@ func (c *Container) insertAfter(base *Lexeme, add *Lexeme) {
 
 	if base == c.tail {
 		c.tail = add
+	}
+}
+
+func checkIsSingle(lex *Lexeme) {
+	if lex.next != nil || lex.prev != nil {
+		m := fmt.Sprintf(
+			"Lexeme `%s` is already part of another collection, remove first",
+			lex.String(),
+		)
+		panic(m)
 	}
 }
