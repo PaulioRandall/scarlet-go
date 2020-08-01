@@ -6,15 +6,15 @@ import (
 	"github.com/PaulioRandall/scarlet-go/shared/number"
 )
 
-func CompileAll(con *lexeme.Container) *inst.Instruction {
+func CompileAll(con *lexeme.Container) []inst.Instruction {
 
 	com := &compiler{
 		input: con,
-		out:   &inst.Container{},
+		out:   []inst.Instruction{},
 	}
 
 	compile(com)
-	return com.out.Head()
+	return com.out
 }
 
 func compile(com *compiler) {
@@ -48,13 +48,13 @@ func call(com *compiler) {
 
 	sp := com.take()
 
-	com.output(&inst.Instruction{
+	com.output(inst.Instruction{
 		Code:    inst.CO_VAL_PUSH,
 		Data:    argCount,
 		Snippet: sp,
 	})
 
-	com.output(&inst.Instruction{
+	com.output(inst.Instruction{
 		Code:    inst.CO_SPELL,
 		Data:    sp.Raw[1:],
 		Snippet: sp,
@@ -79,7 +79,7 @@ func identifier(com *compiler) {
 
 	lex := com.take()
 
-	com.output(&inst.Instruction{
+	com.output(inst.Instruction{
 		Code:    inst.CO_CTX_GET,
 		Data:    lex.Raw,
 		Snippet: lex,
@@ -90,7 +90,7 @@ func literal(com *compiler) {
 
 	lex := com.take()
 
-	in := &inst.Instruction{
+	in := inst.Instruction{
 		Code:    inst.CO_VAL_PUSH,
 		Snippet: lex,
 	}

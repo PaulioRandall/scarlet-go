@@ -39,7 +39,7 @@ func Run(args Arguments) (int, error) {
 	return GENERAL_ERROR, fmt.Errorf("Unknown command %q", command)
 }
 
-func run(ins *inst.Instruction) (int, error) {
+func run(ins []inst.Instruction) (int, error) {
 
 	rt := runtime.New(ins)
 	rt.Start()
@@ -55,7 +55,7 @@ func run(ins *inst.Instruction) (int, error) {
 	return 0, nil
 }
 
-func buildFromArgs(args Arguments) (*inst.Instruction, int, error) {
+func buildFromArgs(args Arguments) ([]inst.Instruction, int, error) {
 
 	c := config{}
 	e := captureConfig(&c, args)

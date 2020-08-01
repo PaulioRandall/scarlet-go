@@ -3,6 +3,7 @@ package std
 import (
 	"errors"
 	"fmt"
+	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
@@ -83,4 +84,24 @@ func Del(env spellbook.Enviro, args []types.Value) {
 	}
 
 	env.Unbind(string(id))
+}
+
+func isIdentifier(id string) bool {
+
+	for i, ru := range id {
+
+		if i == 0 {
+			if !unicode.IsLetter(ru) {
+				return false
+			}
+
+			continue
+		}
+
+		if !unicode.IsLetter(ru) || ru != '_' {
+			return false
+		}
+	}
+
+	return true
 }

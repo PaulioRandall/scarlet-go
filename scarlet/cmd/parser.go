@@ -63,7 +63,7 @@ func shuntAll(c config, con *lexeme.Container) (*lexeme.Container, error) {
 	return con, nil
 }
 
-func compileAll(c config, con *lexeme.Container) (*inst.Instruction, error) {
+func compileAll(c config, con *lexeme.Container) ([]inst.Instruction, error) {
 
 	ins := compiler.CompileAll(con)
 
@@ -135,7 +135,7 @@ func writeLexemeFile(filename string, head *lexeme.Lexeme) error {
 	return lexeme.PrintAll(f, head)
 }
 
-func writeInstPhaseFile(filename string, head *inst.Instruction) error {
+func writeInstPhaseFile(filename string, ins []inst.Instruction) error {
 
 	f, e := os.Create(filename)
 	if e != nil {
@@ -143,5 +143,5 @@ func writeInstPhaseFile(filename string, head *inst.Instruction) error {
 	}
 
 	defer f.Close()
-	return inst.PrintAll(f, head)
+	return inst.PrintAll(f, ins)
 }

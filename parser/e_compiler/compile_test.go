@@ -10,7 +10,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/shared/number"
 )
 
-func doTest(t *testing.T, in *lexeme.Container, exps *inst.Instruction) {
+func doTest(t *testing.T, in *lexeme.Container, exps []inst.Instruction) {
 	acts := CompileAll(in)
 	insttest.Equal(t, exps, acts)
 }
@@ -26,10 +26,10 @@ func Test1_1(t *testing.T) {
 	)
 
 	// THEN these are the expected instructions
-	exp := insttest.Feign(
+	exp := []inst.Instruction{
 		insttest.NewIn(inst.CO_VAL_PUSH, 0),
 		insttest.NewIn(inst.CO_SPELL, "Println"),
-	)
+	}
 
 	doTest(t, in, exp)
 }
@@ -46,11 +46,11 @@ func Test1_2(t *testing.T) {
 	)
 
 	// THEN these are the expected instructions
-	exp := insttest.Feign(
+	exp := []inst.Instruction{
 		insttest.NewIn(inst.CO_CTX_GET, "x"),
 		insttest.NewIn(inst.CO_VAL_PUSH, 1),
 		insttest.NewIn(inst.CO_SPELL, "Println"),
-	)
+	}
 
 	doTest(t, in, exp)
 }
@@ -69,13 +69,13 @@ func Test1_3(t *testing.T) {
 	)
 
 	// THEN these are the expected instructions
-	exp := insttest.Feign(
+	exp := []inst.Instruction{
 		insttest.NewIn(inst.CO_CTX_GET, "x"),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
 		insttest.NewIn(inst.CO_VAL_PUSH, "abc"),
 		insttest.NewIn(inst.CO_VAL_PUSH, 3),
 		insttest.NewIn(inst.CO_SPELL, "Println"),
-	)
+	}
 
 	doTest(t, in, exp)
 }

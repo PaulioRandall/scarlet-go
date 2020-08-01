@@ -10,11 +10,6 @@ type Instruction struct {
 	Code    Code
 	Data    interface{}
 	Snippet *lexeme.Lexeme
-	Next    *Instruction
-}
-
-func (in Instruction) NextNode() *Instruction {
-	return in.Next
 }
 
 func (in Instruction) String() string {
@@ -62,15 +57,4 @@ func (in Instruction) snippet() (lineBegin, colBegin, lineEnd, colEnd int) {
 	}
 
 	return
-}
-
-func (in *Instruction) ToSlice() []Instruction {
-
-	var ins []Instruction
-
-	for next := in; next != nil; next = next.Next {
-		ins = append(ins, *next)
-	}
-
-	return ins
 }

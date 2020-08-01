@@ -14,7 +14,7 @@ type Queue interface {
 
 type compiler struct {
 	input Queue
-	out   inst.Queue
+	out   []inst.Instruction
 }
 
 func (com *compiler) more() bool {
@@ -48,8 +48,8 @@ func (com *compiler) reject() {
 	}
 }
 
-func (com *compiler) output(in *inst.Instruction) {
-	com.out.Put(in)
+func (com *compiler) output(in inst.Instruction) {
+	com.out = append(com.out, in)
 }
 
 func (com *compiler) unexpected() {

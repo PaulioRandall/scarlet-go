@@ -11,9 +11,9 @@ type Runtime struct {
 	env *enviro.Environment
 }
 
-func New(ins *inst.Instruction) *Runtime {
+func New(ins []inst.Instruction) *Runtime {
 	return &Runtime{
-		ins: ins.ToSlice(),
+		ins: ins,
 		env: enviro.New(),
 	}
 }

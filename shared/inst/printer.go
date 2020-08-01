@@ -13,12 +13,12 @@ type inFmt struct {
 	gap   int // gap between printed fields
 }
 
-func PrintAll(w io.StringWriter, head *Instruction) error {
+func PrintAll(w io.StringWriter, ins []Instruction) error {
 
-	inf := findInFmt(head)
+	inf := findInFmt(ins)
 
-	for in := head; in != nil; in = in.Next {
-		e := writeLine(w, in, inf)
+	for _, in := range ins {
+		e := writeLine(w, &in, inf)
 		if e != nil {
 			return e
 		}
@@ -27,13 +27,13 @@ func PrintAll(w io.StringWriter, head *Instruction) error {
 	return nil
 }
 
-func findInFmt(head *Instruction) inFmt {
+func findInFmt(ins []Instruction) inFmt {
 
 	inf := inFmt{
 		gap: 4,
 	}
 
-	for in := head; in != nil; in = in.Next {
+	for _, in := range ins {
 
 		line, col, _ := in.Snippet.At()
 		size := len(strconv.Itoa(line) + ":" + strconv.Itoa(col))
