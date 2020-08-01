@@ -1,8 +1,20 @@
 # scarlet-go
 
-Scarlet is my second attempt at creating an interpreter and is the name of the interpreted language
+Scarlet is my second attempt at creating an interpreter and is the name of the interpreted language.
 
 ## 1. Essential Features
+
+#### Documentation
+
+- Need to write documentation for explaining spells
+- Need to write documentation for explaining variables
+- Need to write documentation for builtin types
+- Need to write documentation for the spells:
+  - @Set
+  - @Del
+  - @Print
+  - @Println
+  - @Exit
 
 #### Arithmetic Operations
 
@@ -75,11 +87,14 @@ _, y := 1, 2
 x := _
 ``` 
 
-#### Exit Script
+#### Functions
 
-Exit the script with a specific exit code:
 ```
-exit exitCode
+f := F(a, b -> x, y) {
+  ...
+}
+
+x, y := f(1, 2)
 ```
 
 #### String Spells
@@ -165,6 +180,13 @@ Determine if an index is within a lists range:
 x := @list.InRange(list, idx)
 ```
 
+Iterate a list:
+```
+x := @list.Foreach(list, F(i, value, more) {
+  ...
+})
+```
+
 #### Map Spells (Requires the list type)
 
 Create a new map:
@@ -191,7 +213,7 @@ Get the value of map entry using its key:
 x := @map.Get(map, key)
 ```
 
-Remove an map entry:
+Remove a map entry:
 ```
 x := @map.Del(key)
 ```
@@ -206,6 +228,18 @@ Get a list of all values in a map:
 x := @map.Values(map)
 ```
 
+Test if a key exists within a map:
+```
+x := @map.Exists(key)
+```
+
+Iterate a map:
+```
+x := @map.Foreach(map, F(key, value) {
+  ...
+})
+```
+
 #### Program Spells
 
 Get the program arguments:
@@ -218,17 +252,10 @@ Does a variable exist:
 @Exists("y")
 ```
 
-#### Functions
+## 3. Nice-to-haves
 
-```
-f := F(a, b -> x, y) {
-  ...
-}
-
-x, y := f(1, 2)
-```
-
-## 3. Nice-to-have Features
+These are debatable features that are not really required but might make
+programming moderately smoother.
 
 #### Variable Existence
 
@@ -240,17 +267,17 @@ x := y?
 #### When Blocks
 
 A form of match block or switch.
-
 ```
 when x {
-  [x > 0] {
+  1: ...
+  2: {
     ...
   }
-  [x < 0] {
-    ...
+  [x < 0] { // Guard case
+    ... 
   }
-  [true] {
-    ...
+  [true] { // Default case
+    ... 
   }
 }
 ```
@@ -266,7 +293,6 @@ exit F
 
 A block of code that is passed to a spell but is run within the context of the
 calling scope.
-
 ```
 @foreach(list, {
   ...
@@ -337,3 +363,9 @@ watch e {
 }
 ```
 
+#### Exit Script
+
+Exit the script with a specific exit code:
+```
+exit exitCode
+```
