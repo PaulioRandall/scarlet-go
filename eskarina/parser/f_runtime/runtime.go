@@ -1,9 +1,9 @@
 package runtime
 
 import (
+	"github.com/PaulioRandall/scarlet-go/eskarina/parser/f_runtime/enviro"
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/inst"
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/perror"
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/f_runtime/enviro"
 )
 
 type Runtime struct {

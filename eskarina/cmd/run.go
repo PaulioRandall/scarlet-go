@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/inst"
 
-	"github.com/PaulioRandall/scarlet-go/eskarina/stages/f_runtime"
+	"github.com/PaulioRandall/scarlet-go/eskarina/parser/f_runtime"
 )
 
 func Run(ins *inst.Instruction) (int, error) {
