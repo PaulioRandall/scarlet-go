@@ -2,6 +2,7 @@ package formatter
 
 import (
 	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/eskarina/shared/lexeme"
@@ -10,19 +11,41 @@ import (
 
 func FormatFile(filename string) error {
 
-	b, e := ioutil.ReadFile(filename)
-	if e != nil {
-		return e
-	}
-
-	c, e := scanner.ScanStr(string(b))
+	c, e := readFile(filename)
 	if e != nil {
 		return e
 	}
 
 	format(c.Iterator())
+	return writeFile(filename, c.Iterator())
+}
 
-	// Write container to file
+func readFile(filename string) (*lexeme.Container, error) {
+
+	b, e := ioutil.ReadFile(filename)
+	if e != nil {
+		return nil, e
+	}
+
+	return scanner.ScanStr(string(b))
+}
+
+func writeFile(filename string, itr *lexeme.Iterator) error {
+
+	f, e := os.Create(filename)
+	if e != nil {
+		return e
+	}
+
+	defer f.Close()
+
+	for itr.Next() {
+		_, e = f.WriteString(itr.Curr().Raw)
+		if e != nil {
+			return e
+		}
+	}
+
 	return nil
 }
 
@@ -171,8 +194,4 @@ func updatePositions(itr *lexeme.Iterator) {
 			col += len(itr.Curr().Raw)
 		}
 	}
-}
-
-func writeFile(itr *lexeme.Iterator) {
-
 }
