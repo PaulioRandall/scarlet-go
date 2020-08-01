@@ -6,7 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/shared/inst"
 )
 
-func Build(c Config) (*inst.Instruction, error) {
+func build(c config) (*inst.Instruction, error) {
 
 	s, e := ioutil.ReadFile(c.script)
 	if e != nil {

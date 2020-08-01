@@ -15,24 +15,24 @@ func NewArgs(args []string) Arguments {
 	}
 }
 
-func (args *Arguments) Shift() string {
+func (args *Arguments) shift() string {
 	arg := (*args.list)[0]
 	*args.list = (*args.list)[1:]
 	return arg
 }
 
-func (args *Arguments) Peek() string {
+func (args *Arguments) peek() string {
 	return (*args.list)[0]
 }
 
-func (args *Arguments) Count() int {
+func (args *Arguments) count() int {
 	return len(*args.list)
 }
 
-func (args *Arguments) Empty() bool {
+func (args *Arguments) empty() bool {
 	return len(*args.list) == 0
 }
 
-func (args *Arguments) More() bool {
+func (args *Arguments) more() bool {
 	return len(*args.list) > 0
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/parser/e_compiler"
 )
 
-func scanAll(c Config, s string) (*lexeme.Container, error) {
+func scanAll(c config, s string) (*lexeme.Container, error) {
 
 	con, e := scanner.ScanStr(s)
 	if e != nil {
@@ -29,7 +29,7 @@ func scanAll(c Config, s string) (*lexeme.Container, error) {
 	return con, nil
 }
 
-func sanitiseAll(c Config, con *lexeme.Container) error {
+func sanitiseAll(c config, con *lexeme.Container) error {
 
 	sanitiser.SanitiseAll(con)
 
@@ -41,7 +41,7 @@ func sanitiseAll(c Config, con *lexeme.Container) error {
 	return nil
 }
 
-func checkAll(c Config, con *lexeme.Container) error {
+func checkAll(c config, con *lexeme.Container) error {
 
 	e := checker.CheckAll(con)
 	if e != nil {
@@ -51,7 +51,7 @@ func checkAll(c Config, con *lexeme.Container) error {
 	return nil
 }
 
-func shuntAll(c Config, con *lexeme.Container) (*lexeme.Container, error) {
+func shuntAll(c config, con *lexeme.Container) (*lexeme.Container, error) {
 
 	con = shunter.ShuntAll(con)
 
@@ -63,7 +63,7 @@ func shuntAll(c Config, con *lexeme.Container) (*lexeme.Container, error) {
 	return con, nil
 }
 
-func compileAll(c Config, con *lexeme.Container) (*inst.Instruction, error) {
+func compileAll(c config, con *lexeme.Container) (*inst.Instruction, error) {
 
 	ins := compiler.CompileAll(con)
 
@@ -81,7 +81,7 @@ func compileAll(c Config, con *lexeme.Container) (*inst.Instruction, error) {
 }
 
 /*
-func formatAll(c Config, con *lexeme.Container) (con *lexeme.Container, error) {
+func formatAll(c config, con *lexeme.Container) (con *lexeme.Container, error) {
 
 	if c.nofmt {
 		return nil
@@ -114,7 +114,7 @@ func writeLexemes(w io.Writer, head *lexeme.Lexeme) error {
 	return nil
 }
 */
-func logPhase(c Config, ext string, head *lexeme.Lexeme) error {
+func logPhase(c config, ext string, head *lexeme.Lexeme) error {
 
 	if !c.log {
 		return nil

@@ -11,25 +11,25 @@ const GENERAL_ERROR = 1
 
 func Run(args Arguments) (int, error) {
 
-	if args.Empty() {
+	if args.empty() {
 		return GENERAL_ERROR, fmt.Errorf("Missing command!")
 	}
 
-	command := args.Shift()
+	command := args.shift()
 
 	switch command {
 	case "help":
-		return Help(args)
+		return help(args)
 
 	case "docs":
-		return Docs(args)
+		return docs(args)
 
 	case "build":
-		_, code, e := build(args)
+		_, code, e := buildFromArgs(args)
 		return code, e
 
 	case "run":
-		ins, code, e := build(args)
+		ins, code, e := buildFromArgs(args)
 		if e != nil {
 			return code, e
 		}
@@ -55,15 +55,15 @@ func run(ins *inst.Instruction) (int, error) {
 	return 0, nil
 }
 
-func build(args Arguments) (*inst.Instruction, int, error) {
+func buildFromArgs(args Arguments) (*inst.Instruction, int, error) {
 
-	c := Config{}
-	e := CaptureConfig(&c, args)
+	c := config{}
+	e := captureConfig(&c, args)
 	if e != nil {
 		return nil, GENERAL_ERROR, e
 	}
 
-	ins, e := Build(c)
+	ins, e := build(c)
 	if e != nil {
 		return nil, GENERAL_ERROR, e
 	}
