@@ -121,6 +121,20 @@ func insertSeparatorSpaces(itr *lexeme.Iterator) {
 	}
 }
 
+func insertCommentSpaces(itr *lexeme.Iterator) {
+
+	comment := func(itr lexeme.View) bool {
+		return itr.Curr().Tok == lexeme.COMMENT
+	}
+
+	for itr.JumpToNext(comment) && itr.Curr().Col != 0 {
+		itr.Prepend(&lexeme.Lexeme{
+			Tok: lexeme.WHITESPACE,
+			Raw: " ",
+		})
+	}
+}
+
 func unifyLineEndings(itr *lexeme.Iterator) {
 
 	newline := func(v lexeme.View) bool {
