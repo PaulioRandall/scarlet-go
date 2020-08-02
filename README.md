@@ -4,6 +4,12 @@ Scarlet is my second attempt at creating an interpreter and is the name of the i
 
 ## 1. Essential Features
 
+#### Formatting
+
+- Formatter needs to be hooked up
+- Could the formatter become a spell?
+  - Maybe there could be a @FmtScript() spell? (implicit @Args()[0])
+
 #### Documentation
 
 - Need to write documentation for explaining spells
@@ -97,12 +103,39 @@ f := F(a, b -> x, y) {
 x, y := f(1, 2)
 ```
 
-#### String Spells
+#### Program Spells
 
-Find the length of a string:
+Get the program arguments:
 ```
-len := @str.Len(s)
+x := @Args()
 ```
+
+Does a variable exist:
+```
+x := @Exists("variable_name")
+```
+
+Find the length of any value whose type has a length:
+```
+x := @Len(value)
+```
+
+Stringify a value of any type:
+```
+x := @Str(value)
+```
+
+Exit the script:
+```
+@Exit(exitCode)
+```
+
+Exit the script with an error message:
+```
+@Panic(exitCode, message)
+```
+
+#### String Spells
 
 Take a slice of a string:
 ```
@@ -112,6 +145,16 @@ x := @str.Slice(s, startIdx, endIdx)
 Get a specific UTF-8 char from the string, i.e rune:
 ```
 x := @str.Char(s, idx)
+```
+
+Test if a string has a prefix:
+```
+x := @str.StartsWith(s, prefix)
+```
+
+Test if a string has a suffix:
+```
+x := @str.EndsWith(s, suffix)
 ```
 
 Get the index of a specific UTF-8 char within the string:
@@ -124,6 +167,16 @@ Join two strings together:
 x := @str.Join("abc", "xyz")
 ```
 
+Parse a string as a number:
+```
+x, e := @str.ParseNum(number)
+```
+
+Parse a string as a bool:
+```
+x, e := @str.ParseBool(bool)
+```
+
 #### List Spells
 
 Create a new list:
@@ -133,11 +186,6 @@ list := @list.New(
   2,
   3,
 )
-```
-
-Find the length of a list:
-```
-len := @list.Len(list)
 ```
 
 Set the value of a list item:
@@ -155,9 +203,9 @@ Add an item to the front of a list:
 @list.Push(list, val)
 ```
 
-Add an item to the end of a list:
+Add an item (or another list) to the end of a list:
 ```
-@list.Add(list, val)
+@list.Append(list, item)
 ```
 
 Remove an item from the front of a list:
@@ -198,11 +246,6 @@ map := @map.New(
 )
 ```
 
-Find the length of a map:
-```
-len := @map.Len(map)
-```
-
 Map a value to a key:
 ```
 @map.Set(map, key, value)
@@ -238,18 +281,6 @@ Iterate a map:
 x := @map.Foreach(map, F(key, value) {
   ...
 })
-```
-
-#### Program Spells
-
-Get the program arguments:
-```
-x := @Args()
-```
-
-Does a variable exist:
-```
-@Exists("y")
 ```
 
 ## 3. Nice-to-haves
@@ -294,7 +325,7 @@ exit F
 A block of code that is passed to a spell but is run within the context of the
 calling scope.
 ```
-@foreach(list, {
+@if(condition, {
   ...
 })
 ```
@@ -363,9 +394,50 @@ watch e {
 }
 ```
 
-#### Exit Script
+#### Native Exit Script
 
 Exit the script with a specific exit code:
 ```
 exit exitCode
+```
+
+#### Template Strings & Spells
+
+```
+a, op, b, eql, c := 1, "+", 2, "=", 3
+x := @Fmt("{a} {op} {b} {eql} {c}") // 1 + 2 = 3
+x := @fmt.Fmt("{a} {op} {b} {eql} {c}")
+```
+
+```
+a, b, c := 1.1, 2.22, 3.333
+x := @Fmt("{a, .2} + {b, .2} = {c, .2}")
+```
+
+#### Native List Accessors
+
+```
+x := list[0]
+```
+
+#### Function Receivers for Types
+
+```
+list := @list.New(1, 2, 3)
+list::Len()
+```
+
+Or maybe:
+```
+list := @list.New(1, 2, 3)
+list.Len()
+```
+
+#### Catch Spell
+
+Executes the code in the block and returns the error if there is a panic.
+```
+e := @Catch({
+  ...
+})
 ```
