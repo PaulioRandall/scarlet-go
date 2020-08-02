@@ -131,7 +131,10 @@ func insertCommentSpaces(itr *lexeme.Iterator) {
 	}
 
 	for itr.JumpToNext(comment) {
-		if itr.Before() != nil && itr.Before().Tok != lexeme.NEWLINE {
+		if itr.Before() != nil &&
+			itr.Before().Tok != lexeme.NEWLINE &&
+			itr.Before().Tok != lexeme.WHITESPACE {
+
 			itr.Prepend(&lexeme.Lexeme{
 				Tok: lexeme.WHITESPACE,
 				Raw: " ",

@@ -8,10 +8,10 @@
 
 
 
-@Set("a", true)    # Comment
-@Set("b", 1)  # Comment
-@Set("c", "abc")
-@Set("d", a)
+@Set("a", true)    # Assigns a bool
+@Set("b", 1)  # Assigns a number
+@Set("c", "abc") # Assigns a string
+@Set("d", a) # Assigns the value of one variable to another
 
 
 
@@ -20,8 +20,8 @@
 @Println("b == ", b)
           @Println   (   "c == "    ,     c    )         
 @Println    (   
-  "d == "    ,  
-   d,
+  "d == "    ,  # 1st argument
+   d, # 2nd argument
        )
 
 
