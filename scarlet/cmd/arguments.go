@@ -1,5 +1,9 @@
 package cmd
 
+import (
+	"strings"
+)
+
 type Arguments struct {
 	list *[]string
 }
@@ -35,4 +39,8 @@ func (args *Arguments) empty() bool {
 
 func (args *Arguments) more() bool {
 	return len(*args.list) > 0
+}
+
+func (args *Arguments) isOption() bool {
+	return strings.HasPrefix(args.peek(), "-")
 }

@@ -58,10 +58,7 @@ Usage:
 Options:
 
 	-nofmt
-		Don't format the script.
-	-log <output folder>
-		Logs the output of each compilation stage as labelled files into the
-		output folder.
+		Don't format the script after building.
 `
 
 	fmt.Println(s)
@@ -79,9 +76,6 @@ Options:
 
 	-nofmt
 		Don't format the script.
-	-log 'output folder'
-		Logs the output of each compilation stage as labelled files into the
-		'output folder'.
 `
 
 	fmt.Println(s)
