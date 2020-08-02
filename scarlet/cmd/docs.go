@@ -34,44 +34,55 @@ Search terms:
 	variable           How to use variables
 	comments           Writing comments
 	types              Variable types and their uses
-	<spell-name>       Documentation for a specific spell
+	<spell-name>       Documentation for a specific spell, e.g. '@Set'
 
 Scarlet:
 
-	Scarlet is a template for building domain specific scripting tools such as
-	a replacement for bash. First I will present the principles that guide
-	development as this should provide a good feel for why Scarlet was built and
-	were its intended uses are:
+	Scarlet is a template for building domain or environment specific scripting
+	tools such as bash replacements. First I will present the principles that
+	guide development then a number of envisioned use cases as this should provide
+	a good feel for why Scarlet was built	and	its intended purpose:
 
 	1. No script dependencies
 
 		Scarlett scripts have no intrinsic way to import other Scarlett scripts to
 		avoid the	many considerations and issues associated with the practice.
-		Scarlet can get away with this as its designed specifcally to solve small
-		problems such as those too big for bash but too small to be done nicely in
-		more comprehensive languages, i.e C, Go, Rust, Java, etc.
+		Scarlet is designed specifcally for small problems and networkless
+		environments.
 
 	2. Build your own
 
-		Scarlet emphasises the creation of spells (inbuilt functions) and
-		recompilation rather than	importing libraries with the tool being designed
-		to make this as easy as possible. Spells can be developed for your
-		particular domain using the patterns you see fit rather than forcing a
-		certain standard. The potential drawback is the lack of uniformity across
-		domain specific tools and scripts derived from Scarlet, however, I would
-		argue uniformaity is not an essential characteristic in this instance.
+		Scarlet emphasises the creation of spells (inbuilt functions) rather than
+		importing libraries. Spells are written in Go so external Go libraries can
+		be used. Simple register the spell and recompile Scarlet.	I envisioned the
+		tool will be copied and then populated with domain or	environment specific
+		spells using any patterns the authors see fit.
 
-	3. Platform specific scripts
+	3. Context specific
 
-		TODO
+		Unlike other modern scripting languages, Scarlett scripts are designed to be
+		platform and situation specific, that is, scripts are written for a single
+		purpose and against a specific version of the tool. This may seem rather
+		restrictive but its to encourage context driven solutions and surpress the
+		compelling urge to abstract everything.
 
-	4. Minimalism, favour spells over native syntax
+	4. Minimalism
 
-		TODO
+		Scarlet favours spells over native syntax, vis if a feature is not used
+		constantly or is niche then its better of as a spell that can more easily
+		be modified. Fewer default native features allows others to be added
+		quickly when desired.  
 
 	5. Don't like it, change it
 
-		TODO
+		If you don't like the names of spells, change them.
+		If you don't like the language keywords, change them.
+		If you don't like parenthesis on functions, change them.
+
+		"What don’t die can’t live.
+			What don’t live can’t change.
+				What don’t change can’t learn."
+					- Lords and Ladies, Terry Pratchett
 
 	6. Embed in your repository
 
