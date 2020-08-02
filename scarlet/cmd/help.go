@@ -15,10 +15,10 @@ func help(args Arguments) (int, error) {
 	case args.empty():
 		printHelp()
 
-	case args.peek() == "build":
+	case args.accept("build"):
 		printBuildHelp()
 
-	case args.peek() == "run":
+	case args.accept("run"):
 		printRunHelp()
 
 	default:
@@ -75,7 +75,7 @@ Usage:
 Options:
 
 	-nofmt
-		Don't format the script.
+		Don't format the script after building.
 `
 
 	fmt.Println(s)

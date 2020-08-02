@@ -25,6 +25,16 @@ func (args *Arguments) shift() string {
 	return arg
 }
 
+func (args *Arguments) accept(s string) bool {
+
+	if args.peek() == s {
+		args.shift()
+		return true
+	}
+
+	return false
+}
+
 func (args *Arguments) peek() string {
 	return (*args.list)[0]
 }

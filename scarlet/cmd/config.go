@@ -17,8 +17,8 @@ func captureConfig(c *config, args Arguments) error {
 func captureOptions(c *config, args Arguments) error {
 	for args.more() && args.isOption() {
 
-		switch args.shift() {
-		case "-nofmt":
+		switch {
+		case args.accept("-nofmt"):
 			c.nofmt = true
 
 		default:
