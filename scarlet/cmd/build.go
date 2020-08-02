@@ -3,6 +3,8 @@ package cmd
 import (
 	"io/ioutil"
 
+	"github.com/PaulioRandall/scarlet-go/formatter"
+
 	"github.com/PaulioRandall/scarlet-go/shared/inst"
 	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
 
@@ -20,27 +22,32 @@ func build(c config) ([]inst.Instruction, error) {
 		return nil, e
 	}
 
-	head, e := scanAll(c, string(s))
+	con, e := scanAll(c, string(s))
 	if e != nil {
 		return nil, e
 	}
 
-	e = sanitiseAll(c, head)
+	e = sanitiseAll(c, con)
 	if e != nil {
 		return nil, e
 	}
 
-	e = checkAll(c, head)
+	e = checkAll(c, con)
 	if e != nil {
 		return nil, e
 	}
 
-	head, e = shuntAll(c, head)
+	e = formatAll(c)
 	if e != nil {
 		return nil, e
 	}
 
-	ins, e := compileAll(c, head)
+	con, e = shuntAll(c, con)
+	if e != nil {
+		return nil, e
+	}
+
+	ins, e := compileAll(c, con)
 	if e != nil {
 		return nil, e
 	}
@@ -75,4 +82,13 @@ func shuntAll(c config, con *lexeme.Container) (*lexeme.Container, error) {
 func compileAll(c config, con *lexeme.Container) ([]inst.Instruction, error) {
 	ins := compiler.CompileAll(con)
 	return ins, nil
+}
+
+func formatAll(c config) error {
+
+	if c.nofmt {
+		return nil
+	}
+
+	return formatter.FormatFile(c.script)
 }

@@ -31,6 +31,20 @@ func NewContainer(head *Lexeme) *Container {
 	return c
 }
 
+func (c *Container) Copy() *Container {
+
+	cp := &Container{}
+
+	for lex := c.head; lex != nil; lex = lex.next {
+		var l Lexeme = (*lex)
+		l.prev = nil
+		l.next = nil
+		cp.Put(&l)
+	}
+
+	return cp
+}
+
 func (c *Container) Iterator() *Iterator {
 	return &Iterator{
 		con:   c,

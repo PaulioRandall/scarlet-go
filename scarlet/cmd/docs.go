@@ -13,10 +13,6 @@ func docs(args Arguments) (int, error) {
 		printDocs()
 		return 0, nil
 
-	case args.peek() == "help":
-		printDocs()
-		return 0, nil
-
 	default:
 		return 1, fmt.Errorf("Unexpected argument %q", args.peek())
 	}
