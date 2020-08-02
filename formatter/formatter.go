@@ -60,6 +60,9 @@ func format(itr *lexeme.Iterator) {
 	insertSeparatorSpaces(itr)
 	itr.Restart()
 
+	insertCommentSpaces(itr)
+	itr.Restart()
+
 	unifyLineEndings(itr)
 	itr.Restart()
 
@@ -67,9 +70,6 @@ func format(itr *lexeme.Iterator) {
 	itr.Restart()
 
 	updatePositions(itr)
-	itr.Restart()
-
-	insertCommentSpaces(itr)
 	itr.Restart()
 
 	alignComments(itr)
@@ -117,6 +117,22 @@ func insertSeparatorSpaces(itr *lexeme.Iterator) {
 		if itr.After() != nil && itr.After().Tok != lexeme.NEWLINE {
 
 			itr.Append(&lexeme.Lexeme{
+				Tok: lexeme.WHITESPACE,
+				Raw: " ",
+			})
+		}
+	}
+}
+
+func insertCommentSpaces(itr *lexeme.Iterator) {
+
+	comment := func(itr lexeme.View) bool {
+		return itr.Curr().Tok == lexeme.COMMENT
+	}
+
+	for itr.JumpToNext(comment) {
+		if itr.Curr().Col != 0 {
+			itr.Prepend(&lexeme.Lexeme{
 				Tok: lexeme.WHITESPACE,
 				Raw: " ",
 			})
@@ -195,22 +211,6 @@ func updatePositions(itr *lexeme.Iterator) {
 			col = 0
 		} else {
 			col += len(itr.Curr().Raw)
-		}
-	}
-}
-
-func insertCommentSpaces(itr *lexeme.Iterator) {
-
-	comment := func(itr lexeme.View) bool {
-		return itr.Curr().Tok == lexeme.COMMENT
-	}
-
-	for itr.JumpToNext(comment) {
-		if itr.Curr().Col != 0 {
-			itr.Prepend(&lexeme.Lexeme{
-				Tok: lexeme.WHITESPACE,
-				Raw: " ",
-			})
 		}
 	}
 }
