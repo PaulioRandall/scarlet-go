@@ -38,11 +38,15 @@ Search terms:
 
 Scarlet:
 
+	"Sometimes it's better to light a flamethrower than curse the darkness."
+		- 'Men at Arms' by Terry Pratchett
+
 	Scarlet is a template for building domain or environment specific
-	scripting	tools such as bash replacements. First I will present the
-	desirable characteristics that guide development then a number of
-	envisioned use cases. This should provide a good feel for why Scarlet
-	was built	and	its intended purposes.
+	scripting	tools. Think of it as a bash replacement and a Lua alternative
+	but the source code is easy to modify and compile almost anywhere. First
+	I will present the desirable characteristics that guide development, then
+	a number of envisioned use cases. This should provide a good feel for why
+	Scarlet	is being built and its intended purposes.
 
 	1. No dependencies
 
@@ -56,8 +60,8 @@ Scarlet:
 
 	2. Easy integration
 
-		Scarlet emphasises the creation of spells (inbuilt functions) rather
-		than importing libraries. Spells are written in Go so external Go
+		Scarlet emphasises the creation of spells (inbuilt functions) for
+		generic functionality. Spells are written in Go so external Go
 		libraries can be used. Simply register the spell and recompile Scarlet.
 		I envisioned the tool will be copied and then populated with domain or
 		environment specific spells using any patterns the authors see fit.
@@ -82,10 +86,10 @@ Scarlet:
 
 	4. Minimalist
 
-		Scarlet favours spells over native syntax, vis if a feature is not used
-		constantly or is niche then its better of as a spell that can more
-		easily be modified. Fewer default native features allows others to be
-		added quickly when desired.
+		Scarlet favours spells over native syntax vis, if a feature is not used
+		constantly or is niche then its better off as a spell that can more
+		easily be modified. Fewer default native features allows uselful ones
+		to be added quickly when desired.
 
 		"Take it from me, there's nothing more terrible than someone out to do
 		the world a favour."
@@ -117,25 +121,65 @@ Scarlet:
 
 		Scarlet is a discworld themed tool, because the logical domain that is
 		programming is filled with things that don't make sense unless you were
-		in the right place, at the right time, inside the right head. There's
-		also a servere lack of true magic, probably why ladies arn't that
-		interested.
+		in the right place, at the right time, and inside the right head.
+		There's also a servere lack of true magic, probably why ladies arn't
+		that interested.
 
 		"The Turtle Moves"
 			- 'Small Gods' by Terry Pratchett
 
-	Use cases driving development:
+	Use cases:
 
-		TODO: Embed in repository to perform language independent API testing
-		      without heavy testing tools
+		I intended for a very small binary so I could include it within	code
+		repositories. Rust would have been a better choice for this
+		optimisation but I decided to build an easier Go version first to	try
+		out the idea and learn how to parse code. Once embedded within a
+		repository it could be used to build and run applications both within
+		pipelines and workstations without additional tools; the tools usually
+		involve some god awful installation process.
 
-		TODO: Embed in repository to perform general configuration and deployment
-		      activities
+		With this I could create language independent Web API testing scripts
+		so I can more easily switch a web server's implementation language
+		and avoid self inflicted vendor lock in. Current tools were either
+		too heavy weight or painfully complex. Project building,
+		configuration, and deployment was another activity I wanted more
+		control over.
 
-		TODO: Building programs for other languages
+		I also wanted do general purpose scripting. There are plenty of
+		languages that can assist with this but I really craved specific tools
+		free of dependencies. I wanted to be able to change the langauge
+		each time I noticed it was woefully incapable of satisfying me.
 
-		TODO: General scripting of small problems such as iterating files and
-		      data file transformations
+	Bad use cases:
+
+		I'm strongly for fitting the tool to the job and not the other way
+		around so here are a few use cases that I recommend Scarlet not be
+		used for.
+
+		Scarlet is not intended, nor designed, for backend web programming.
+		That's best left to more rigorous and much better supported tools such
+		as Go, Java, and C#. However, I do intend to create spells for quickly
+		serving static content and file storage on local networks.
+
+		Anything that needs to scale or use concurrency. Again Go, Rust, and
+		many JVM languages are good choices.
+
+		It is not intended for maths, science, or running numeric algorithms.
+		That's best left to tools like R or library rich glue languages like
+		Python.
+
+		Avoid using it for critical systems! I wrote the code for me and don't
+		want innocent bystanders (if such people exist) getting hurt.
+
+	"A catastrophe curve, Mr. Bucket, is what Software runs along. Software
+	happens because a large number of things amazingly fail without quite
+	collapsing their project,	Mr. Bucket. It works because of hatred and love
+	and nerves. All the	time. This isn't cheese. This is Software. If you
+	wanted a quiet retirement, Mr. Bucket, you shouldn't have bought the
+	Software House.	You should have done something peaceful, like alligator
+	dentistry."
+		- (Original version) 'Maskerade' by Terry Pratchett
+		- (This adapted version) by Paulio
 `
 
 	fmt.Println(s)
