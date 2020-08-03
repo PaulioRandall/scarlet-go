@@ -125,9 +125,6 @@ Scarlet:
 		There's also a servere lack of true magic, probably why ladies arn't
 		that interested.
 
-		"The Turtle Moves"
-			- 'Small Gods' by Terry Pratchett
-
 	Use cases:
 
 		I intended for a very small binary so I could include it within	code
