@@ -124,11 +124,6 @@ Stringify a value of any type:
 x := @Str(value)
 ```
 
-Exit the script:
-```
-@Exit(exitCode)
-```
-
 Exit the script with an error message:
 ```
 @Panic(exitCode, message)

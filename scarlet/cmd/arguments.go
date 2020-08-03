@@ -25,6 +25,17 @@ func (args *Arguments) shift() string {
 	return arg
 }
 
+func (args *Arguments) shiftDefault(def string) string {
+
+	if args.empty() {
+		return def
+	}
+
+	arg := (*args.list)[0]
+	*args.list = (*args.list)[1:]
+	return arg
+}
+
 func (args *Arguments) accept(s string) bool {
 
 	if args.peek() == s {

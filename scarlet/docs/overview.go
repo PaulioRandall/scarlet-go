@@ -1,26 +1,10 @@
-package cmd
+package docs
 
 import (
 	"fmt"
 )
 
-//   docs [search term]		Show documentation.
-
-func docs(args Arguments) (int, error) {
-
-	switch {
-	case args.empty():
-		printDocs()
-		return 0, nil
-
-	default:
-		return 1, fmt.Errorf("Unexpected argument %q", args.peek())
-	}
-
-	return 0, nil
-}
-
-func printDocs() {
+func printOverview() {
 
 	s := `Scarlet's language documentation.
 
@@ -30,8 +14,8 @@ Usage:
 
 Search terms:
 
-	spell              Spells and how to use them
-	variable           How to use variables
+	spells             Spells and how to use them
+	variables          How to use variables
 	comments           Writing comments
 	types              Variable types and their uses
 	<spell-name>       Documentation for a specific spell, e.g. '@Set'
@@ -53,8 +37,8 @@ Scarlet:
 		Scarlet is a discworld themed tool, because the logical domain that is
 		programming is filled with things that don't make sense unless you were
 		in the right place, at the right time, and inside the right head.
-		There's also a servere lack of true magic, probably why ladies arn't
-		that interested.
+		There's also a servere lack of true magic, probably why the ladies
+		arn't that interested.
 
 	2. No dependencies
 
@@ -170,7 +154,7 @@ Scarlet:
 
 	"A catastrophe curve, Mr. Bucket, is what Software runs along. Software
 	happens because a large number of things amazingly fail without quite
-	collapsing their project,	Mr. Bucket. It works because of hatred and love
+	sinking their project,	Mr. Bucket. It works because of hatred and love
 	and nerves. All the	time. This isn't cheese. This is Software. If you
 	wanted a quiet retirement, Mr. Bucket, you shouldn't have bought the
 	Software House.	You should have done something peaceful, like alligator

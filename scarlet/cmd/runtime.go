@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/runtime"
+	"github.com/PaulioRandall/scarlet-go/scarlet/docs"
 	"github.com/PaulioRandall/scarlet-go/shared/inst"
 )
 
@@ -22,7 +23,7 @@ func Run(args Arguments) (int, error) {
 		return help(args)
 
 	case "docs":
-		return docs(args)
+		return docs.Docs(args.shiftDefault(""))
 
 	case "build":
 		_, code, e := buildFromArgs(args)
