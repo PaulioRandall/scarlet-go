@@ -6,7 +6,6 @@ Scarlet is my second attempt at creating an interpreter and is the name of the i
 
 #### Formatting
 
-- Formatter needs to be hooked up
 - Could the formatter become a spell?
   - Maybe there could be a @FmtScript() spell? (implicit @Args()[0])
 

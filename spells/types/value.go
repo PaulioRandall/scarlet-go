@@ -7,6 +7,7 @@ import (
 )
 
 type Value interface {
+	Name() string
 	Equal(other Value) bool
 	Comparable(other Value) bool
 	String() string

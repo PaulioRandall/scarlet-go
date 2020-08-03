@@ -8,6 +8,10 @@ import (
 
 type Int int // Internal use only
 
+func (Int) Name() string {
+	return "int"
+}
+
 func (a Int) Equal(b Value) bool {
 	return a.Comparable(b) && a == b.(Int)
 }
@@ -22,6 +26,10 @@ func (a Int) String() string {
 }
 
 type Bool bool
+
+func (Bool) Name() string {
+	return "bool"
+}
 
 func (a Bool) Equal(b Value) bool {
 	return a.Comparable(b) && a == b.(Bool)
@@ -40,6 +48,10 @@ type Num struct {
 	number.Number
 }
 
+func (Num) Name() string {
+	return "number"
+}
+
 func (a Num) Equal(b Value) bool {
 	return a.Comparable(b) && a.Equal(b.(Num))
 }
@@ -54,6 +66,10 @@ func (a Num) String() string {
 }
 
 type Str string
+
+func (Str) Name() string {
+	return "string"
+}
 
 func (a Str) Equal(b Value) bool {
 	return a.Comparable(b) && a == b.(Str)

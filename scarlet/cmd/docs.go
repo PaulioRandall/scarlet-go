@@ -48,7 +48,15 @@ Scarlet:
 	a number of envisioned use cases. This should provide a good feel for why
 	Scarlet	is being built and its intended purposes.
 
-	1. No dependencies
+	1. Discworld Themed
+
+		Scarlet is a discworld themed tool, because the logical domain that is
+		programming is filled with things that don't make sense unless you were
+		in the right place, at the right time, and inside the right head.
+		There's also a servere lack of true magic, probably why ladies arn't
+		that interested.
+
+	2. No dependencies
 
 		Scarlett scripts have no native way to import other Scarlett scripts.
 		This avoids the	many considerations and issues associated with the
@@ -58,7 +66,7 @@ Scarlet:
 		"Darkness isn't the opposite of light, it is simply its absence."
 			- 'The Light Fantastic' by Terry Pratchett
 
-	2. Easy integration
+	3. Easy integration
 
 		Scarlet emphasises the creation of spells (inbuilt functions) for
 		generic functionality. Spells are written in Go so external Go
@@ -72,7 +80,7 @@ Scarlet:
 		3) Do not interfere with the nature of causality."
 			- 'Guards! Guards!' by Terry Pratchett
 
-	3. Context specific
+	4. Context specific
 
 		Unlike some modern scripting languages, Scarlett scripts are designed
 		to be platform and situation specific, that is, scripts are written for
@@ -84,7 +92,7 @@ Scarlet:
 		THEY SPEND THEM ALL IN MAKING THINGS COMPLICATED FOR THEMSELVES."
 			- 'Mort' by Terry Pratchett
 
-	4. Minimalist
+	5. Minimalist
 
 		Scarlet favours spells over native syntax vis, if a feature is not used
 		constantly or is niche then its better off as a spell that can more
@@ -95,7 +103,7 @@ Scarlet:
 		the world a favour."
 			- 'Sourcery' by Terry Pratchett
 
-	5. Customisable
+	6. Customisable
 
 		If you don't like the names of spells, change them.
 		If you don't like the language keywords, change them.
@@ -106,7 +114,7 @@ Scarlet:
 		What don’t change can’t learn."
 			- 'Lords and Ladies' by Terry Pratchett
 
-	6. Light and portable
+	7. Light and portable
 
 		The Scarlet executable is light, portable, and does not require an
 		installation process; much like Lua. With time and hope a Rust
@@ -116,14 +124,6 @@ Scarlet:
 		"'What's a philosopher?' said Brutha. 'Someone who's bright enough to
 		find a job with no heavy lifting,' said a voice in his head."
 			- 'Small Gods' by Terry Pratchett
-
-	7. Discworld Themed
-
-		Scarlet is a discworld themed tool, because the logical domain that is
-		programming is filled with things that don't make sense unless you were
-		in the right place, at the right time, and inside the right head.
-		There's also a servere lack of true magic, probably why ladies arn't
-		that interested.
 
 	Use cases:
 
