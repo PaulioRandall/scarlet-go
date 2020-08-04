@@ -27,6 +27,9 @@ func Docs(searchTerm string) (int, error) {
 		printVariablesOverview()
 
 	case "type", "types":
+		printTypesOverview()
+
+	case "-":
 		return 0, fmt.Errorf("%q documentation is not yet supported", searchTerm)
 
 	default:
