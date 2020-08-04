@@ -113,6 +113,11 @@ func (rr *runeReader) update(lex *lexeme.Lexeme) {
 	rr.count = 0
 }
 
+func (rr *runeReader) syntaxError(msg string, args interface{}) error {
+	msg = fmt.Sprintf(msg, args)
+	return perror.New("At %d:%d, %s", rr.line+1, rr.col, msg)
+}
+
 func failNow(msg string, args ...interface{}) {
 	msg = fmt.Sprintf(msg, args...)
 	panic(fmt.Errorf("SANITY CHECK! %s", msg))

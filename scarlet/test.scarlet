@@ -1,38 +1,10 @@
 
 
-
-
-   # Comment
-# A comment
-@Println("Hello, Scarlet!")
-
-
-
-@Set("a", true)    # Assigns a bool
-@Set("b", 1)  # Assigns a number
-@Set("c", "abc") # Assigns a string
-@Set("d", a) # Assigns the value of one variable to another
-
-
-
-@Println()
-@Println("a == ", a)
-@Println("b == ", b)
-          @Println   (   "c == "    ,     c    )         
-@Println    (   
-  "d == "    ,  # 1st argument
-   d, # 2nd argument
-       )
-
-
-
-@Del("d")
-
-
-
-@Exit(0)
-
-
-
-
-
+@Println("- Write documentation for explaining variables")
+@Println("- Write documentation for builtin types")
+@Println("- Write documentation for individual spells")
+@Println("  - @Set")
+@Println("  - @Del")
+@Println("  - @Print")
+@Println("  - @Println")
+@Println("  - @Exit")

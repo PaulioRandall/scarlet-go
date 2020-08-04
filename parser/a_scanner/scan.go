@@ -17,7 +17,6 @@ func ScanStr(s string) (*lexeme.Container, error) {
 	rr.size = len(rr.runes)
 
 	que := Queue(&lexeme.Container{})
-	//	line, col := 0, 0
 
 	for rr.more() {
 
@@ -25,17 +24,7 @@ func ScanStr(s string) (*lexeme.Container, error) {
 		if e != nil {
 			return nil, e
 		}
-		/*
-			lex.Line = line
-			lex.Col = col
 
-			if lex.Tok == lexeme.NEWLINE {
-				line++
-				col = 0
-			} else {
-				col += len(lex.Raw)
-			}
-		*/
 		que.Put(lex)
 	}
 
