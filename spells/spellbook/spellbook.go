@@ -16,8 +16,7 @@ type Enviro interface {
 }
 
 type Spell interface {
-	Summary() string // TODO: Could take the first paragraph of docs instead?
-	Docs() string
+	Summary() string
 	Invoke(env Enviro, args []types.Value)
 }
 

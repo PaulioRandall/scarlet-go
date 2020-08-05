@@ -38,10 +38,10 @@ Usage:
 
 Commands:
 
-	help [<command>]      Show CLI instructions.
-	docs [<search term>]  Show language documentation.
-	build                 Parses, compiles, and formats the script.
-	run                   Parses, compiles, formats, then executes the script.
+	help [command]         Show CLI instructions.
+	docs|man [search term] Show language documentation.
+	build                  Parses, compiles, and formats the script.
+	run                    Parses, compiles, formats, then executes the script.
 `
 
 	fmt.Println(s)

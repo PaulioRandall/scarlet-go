@@ -1,15 +1,8 @@
-package docs
-
-import (
-	"fmt"
-)
+package manual
 
 func init() {
+	Register("", genOverview)
 	Register("overview", genOverview)
-}
-
-func printOverview() {
-	fmt.Println(genOverview())
 }
 
 func genOverview() string {

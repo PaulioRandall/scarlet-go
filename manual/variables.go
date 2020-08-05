@@ -1,17 +1,9 @@
-package docs
-
-import (
-	"fmt"
-)
+package manual
 
 func init() {
 	Register("vars", genVarOverview)
 	Register("variable", genVarOverview)
 	Register("variables", genVarOverview)
-}
-
-func printVariablesOverview() {
-	fmt.Println(genVarOverview())
 }
 
 func genVarOverview() string {

@@ -1,20 +1,38 @@
-package docs
+package std
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 
+	"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 )
 
 func init() {
-	Register("spell", genSpellOverview)
-	Register("spells", genSpellDocs)
+	manual.Register("@", genSpellOverview)
+	manual.Register("spell", genSpellOverview)
+	manual.Register("spells", genSpellDocs)
 }
 
-func printSpellOverview() {
-	fmt.Println(genSpellOverview())
+func genSpellDocs() string {
+
+	names := spellbook.SpellNames()
+	sort.Strings(names)
+
+	sb := strings.Builder{}
+
+	for i, v := range names {
+
+		sp := spellbook.LookUp(v)
+
+		if i != 0 {
+			sb.WriteString("\n\n")
+		}
+
+		sb.WriteString(sp.Summary())
+	}
+
+	return sb.String()
 }
 
 func genSpellOverview() string {
@@ -88,29 +106,4 @@ Future changes:
 		@map.                           'Map' type & spells
 		@fmt.                           'Template' type & spells
 		@io.                            Basic input and output spells`
-}
-
-func printSpells() {
-	fmt.Println(genSpellDocs())
-}
-
-func genSpellDocs() string {
-
-	names := spellbook.SpellNames()
-	sort.Strings(names)
-
-	sb := strings.Builder{}
-
-	for i, v := range names {
-
-		sp := spellbook.LookUp(v)
-
-		if i != 0 {
-			sb.WriteString("\n\n")
-		}
-
-		sb.WriteString(sp.Summary())
-	}
-
-	return sb.String()
 }

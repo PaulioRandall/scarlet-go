@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/runtime"
-	"github.com/PaulioRandall/scarlet-go/scarlet/docs"
 	"github.com/PaulioRandall/scarlet-go/shared/inst"
 )
 
@@ -22,8 +22,8 @@ func Run(args Arguments) (int, error) {
 	case "help":
 		return help(args)
 
-	case "docs":
-		return docs.Docs(args.shiftDefault(""))
+	case "docs", "man":
+		return docs(args)
 
 	case "build":
 		_, code, e := buildFromArgs(args)
@@ -70,4 +70,17 @@ func buildFromArgs(args Arguments) ([]inst.Instruction, int, error) {
 	}
 
 	return ins, 0, nil
+}
+
+func docs(args Arguments) (int, error) {
+
+	searchTerm := args.shiftDefault("")
+	text, found := manual.Search(searchTerm)
+
+	if !found {
+		return 1, fmt.Errorf("No documentation for %q", searchTerm)
+	}
+
+	fmt.Println(text)
+	return 0, nil
 }
