@@ -5,13 +5,14 @@ import (
 	"strings"
 )
 
-//   docs [search term]		Show documentation.
-
 func Docs(searchTerm string) (int, error) {
 
 	if strings.HasPrefix(searchTerm, "@") {
 		return searchSpellDocs(searchTerm)
 	}
+
+	// TODO: Convert documentation to a map so new items can be added from
+	//       within other packages.
 
 	switch strings.ToLower(searchTerm) {
 	case "":
@@ -30,7 +31,7 @@ func Docs(searchTerm string) (int, error) {
 		printSpellOverview()
 
 	case "spells":
-		return 0, fmt.Errorf("%q documentation is not yet supported", searchTerm)
+		printSpells()
 
 	case "-":
 		return 0, fmt.Errorf("%q documentation is not yet supported", searchTerm)

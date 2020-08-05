@@ -2,6 +2,9 @@ package docs
 
 import (
 	"fmt"
+	"sort"
+
+	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 )
 
 func printSpellOverview() {
@@ -79,4 +82,21 @@ Future changes:
 `
 
 	fmt.Println(s)
+}
+
+func printSpells() {
+
+	names := spellbook.SpellNames()
+	sort.Strings(names)
+
+	for i, v := range names {
+
+		sp := spellbook.LookUp(v)
+
+		if i != 0 {
+			fmt.Println()
+		}
+
+		fmt.Println(sp.Summary())
+	}
 }

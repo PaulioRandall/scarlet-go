@@ -1,8 +1,8 @@
 
-@Println("- Write documentation for individual types")
-@Println("- Write documentation for individual spells")
-@Println("  - @Set")
-@Println("  - @Del")
-@Println("  - @Print")
-@Println("  - @Println")
-@Println("  - @Exit")
+@Println("Hello, Scarlet!")
+
+@Set("a", 6)
+@Set("b", 7)
+@Set("c", 42)
+
+@Println(a, " * ", b, " = ", c)

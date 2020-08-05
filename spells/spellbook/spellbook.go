@@ -16,7 +16,9 @@ type Enviro interface {
 }
 
 type Spell interface {
+	Summary() string // TODO: Could take the first paragraph of docs instead?
 	Docs() string
+	Examples() []string
 	Invoke(env Enviro, args []types.Value)
 }
 
@@ -27,6 +29,19 @@ var spellBook = map[string]Spell{}
 func LookUp(name string) Spell {
 	k := strings.ToLower(name)
 	return spellBook[k]
+}
+
+func SpellNames() []string {
+
+	keys := make([]string, len(spellBook))
+	var i int
+
+	for k := range spellBook {
+		keys[i] = k
+		i++
+	}
+
+	return keys
 }
 
 func Inscribe(name string, sp Spell) error {

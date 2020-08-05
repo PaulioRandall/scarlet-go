@@ -28,8 +28,13 @@ func InscribeAll(inscribe spellbook.Inscriber) {
 
 type Exit struct{}
 
-func (Exit) Docs() string {
-	return "Exit terminates the current script with a specific exit code."
+func (Exit) Summary() string {
+	return `@Exit(exitcode)
+	Exit terminates the current script with a specific exit code.`
+}
+
+func (sp Exit) Docs() string {
+	return sp.Summary()
 }
 
 func (Exit) Examples() []string {
@@ -56,8 +61,13 @@ func (Exit) Invoke(env spellbook.Enviro, args []types.Value) {
 
 type Print struct{}
 
-func (Print) Docs() string {
-	return "Prints all arguments to standard output in the order provided."
+func (Print) Summary() string {
+	return `@Print(value...)
+	Prints all arguments to standard output in the order provided.`
+}
+
+func (sp Print) Docs() string {
+	return sp.Summary()
 }
 
 func (Print) Examples() []string {
@@ -75,9 +85,13 @@ func (Print) Invoke(_ spellbook.Enviro, args []types.Value) {
 
 type Println struct{}
 
-func (Println) Docs() string {
-	return "Prints all arguments to standard output in the order provided" +
-		" then appends a linefeed."
+func (Println) Summary() string {
+	return `@Println(value...)
+	Prints all arguments to standard output in the order provided then appends a linefeed.`
+}
+
+func (sp Println) Docs() string {
+	return sp.Summary()
 }
 
 func (Println) Examples() []string {
@@ -96,9 +110,13 @@ func (Println) Invoke(_ spellbook.Enviro, args []types.Value) {
 
 type Set struct{}
 
-func (Set) Docs() string {
-	return "Sets the value of variable represented by the first argument as" +
-		" the second argument."
+func (Set) Summary() string {
+	return `@Set("identifier", value)
+	Sets the value of variable represented by the first argument as the second argument.`
+}
+
+func (sp Set) Docs() string {
+	return sp.Summary()
 }
 
 func (Set) Examples() []string {
@@ -130,8 +148,13 @@ func (Set) Invoke(env spellbook.Enviro, args []types.Value) {
 
 type Del struct{}
 
-func (Del) Docs() string {
-	return "Deletes the variable represented by the first argument"
+func (Del) Summary() string {
+	return `@Del("identifier")
+	Deletes the variable represented by the first argument`
+}
+
+func (sp Del) Docs() string {
+	return sp.Summary()
 }
 
 func (Del) Examples() []string {
