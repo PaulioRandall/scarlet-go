@@ -15,7 +15,11 @@ type Enviro interface {
 	Unbind(id string)
 }
 
-type Spell func(env Enviro, args []types.Value)
+type Spell interface {
+	Docs() string
+	Invoke(env Enviro, args []types.Value)
+}
+
 type Inscriber func(name string, spell Spell)
 
 var spellBook = map[string]Spell{}

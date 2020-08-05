@@ -1,8 +1,5 @@
 
-@Println("- Write documentation for builtin types")
-@Println("  - bool")
-@Println("  - number")
-@Println("  - string")
+@Println("- Write documentation for individual types")
 @Println("- Write documentation for individual spells")
 @Println("  - @Set")
 @Println("  - @Del")

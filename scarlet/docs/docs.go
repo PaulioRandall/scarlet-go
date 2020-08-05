@@ -17,9 +17,6 @@ func Docs(searchTerm string) (int, error) {
 	case "":
 		printOverview()
 
-	case "spell", "spells":
-		printSpellOverview()
-
 	case "comment", "comments":
 		return 0, fmt.Errorf("%q documentation is not yet supported", searchTerm)
 
@@ -28,6 +25,12 @@ func Docs(searchTerm string) (int, error) {
 
 	case "type", "types":
 		printTypesOverview()
+
+	case "spell":
+		printSpellOverview()
+
+	case "spells":
+		return 0, fmt.Errorf("%q documentation is not yet supported", searchTerm)
 
 	case "-":
 		return 0, fmt.Errorf("%q documentation is not yet supported", searchTerm)

@@ -19,14 +19,27 @@ func Default() {
 }
 
 func InscribeAll(inscribe spellbook.Inscriber) {
-	inscribe("exit", Exit)
-	inscribe("print", Print)
-	inscribe("println", Println)
-	inscribe("set", Set)
-	inscribe("del", Del)
+	inscribe("exit", Exit{})
+	inscribe("print", Print{})
+	inscribe("println", Println{})
+	inscribe("set", Set{})
+	inscribe("del", Del{})
 }
 
-func Exit(env spellbook.Enviro, args []types.Value) {
+type Exit struct{}
+
+func (Exit) Docs() string {
+	return "Exit terminates the current script with a specific exit code."
+}
+
+func (Exit) Examples() []string {
+	return []string{
+		"@Exit(0)",
+		"@Exit(1)",
+	}
+}
+
+func (Exit) Invoke(env spellbook.Enviro, args []types.Value) {
 
 	if len(args) != 1 {
 		env.Fail(errors.New("@Exit requires one argument"))
@@ -41,18 +54,63 @@ func Exit(env spellbook.Enviro, args []types.Value) {
 	env.Fail(errors.New("@Exit requires its argument be a number"))
 }
 
-func Print(_ spellbook.Enviro, args []types.Value) {
+type Print struct{}
+
+func (Print) Docs() string {
+	return "Prints all arguments to standard output in the order provided."
+}
+
+func (Print) Examples() []string {
+	return []string{
+		`@Print("Hello, Scarlet!")      # Outputs: "Hello, Scarlet!"`,
+		`@Print(a, "*", b, " = ", c)    # Outputs: "a*b = c"`,
+	}
+}
+
+func (Print) Invoke(_ spellbook.Enviro, args []types.Value) {
 	for _, v := range args {
 		fmt.Print(v.String())
 	}
 }
 
-func Println(_ spellbook.Enviro, args []types.Value) {
-	Print(nil, args)
+type Println struct{}
+
+func (Println) Docs() string {
+	return "Prints all arguments to standard output in the order provided" +
+		" then appends a linefeed."
+}
+
+func (Println) Examples() []string {
+	return []string{
+		`# Outputs: "Hello, Scarlet!"
+@Println("Hello, Scarlet!")`,
+		`# Outputs: "a*b = c"
+@Println(a, "*", b, " = ", c)`,
+	}
+}
+
+func (Println) Invoke(_ spellbook.Enviro, args []types.Value) {
+	Print{}.Invoke(nil, args)
 	fmt.Println()
 }
 
-func Set(env spellbook.Enviro, args []types.Value) {
+type Set struct{}
+
+func (Set) Docs() string {
+	return "Sets the value of variable represented by the first argument as" +
+		" the second argument."
+}
+
+func (Set) Examples() []string {
+	return []string{
+		`# x := 1
+@Set("x", 1)`,
+		`# name := "Scarlet"
+@Set("name", "Scarlet")`,
+	}
+}
+
+func (Set) Invoke(env spellbook.Enviro, args []types.Value) {
 
 	if len(args) != 2 {
 		env.Fail(errors.New("@Set requires two arguments"))
@@ -70,7 +128,22 @@ func Set(env spellbook.Enviro, args []types.Value) {
 	env.Bind(id, args[1])
 }
 
-func Del(env spellbook.Enviro, args []types.Value) {
+type Del struct{}
+
+func (Del) Docs() string {
+	return "Deletes the variable represented by the first argument"
+}
+
+func (Del) Examples() []string {
+	return []string{
+		`# Deletes variable 'x'
+@Del("x")`,
+		`# Deletes varaibel 'name'
+@Set("name")`,
+	}
+}
+
+func (Del) Invoke(env spellbook.Enviro, args []types.Value) {
 
 	if len(args) != 1 {
 		env.Fail(errors.New("@Del requires one argument"))

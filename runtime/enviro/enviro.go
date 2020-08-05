@@ -141,5 +141,5 @@ func invokeSpell(env *Environment, in inst.Instruction) {
 	}
 
 	args := popArgs(env, argCount)
-	sp(env, args)
+	sp.Invoke(env, args)
 }

@@ -11,10 +11,6 @@ Scarlet is my second attempt at creating an interpreter and is the name of the i
 
 #### Documentation
 
-- Write documentation for builtin types
-  - bool
-  - number
-  - string
 - Write documentation for spells:
   - @Set
   - @Del
