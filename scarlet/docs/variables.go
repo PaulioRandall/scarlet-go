@@ -4,9 +4,18 @@ import (
 	"fmt"
 )
 
-func printVariablesOverview() {
+func init() {
+	Register("vars", genVarOverview)
+	Register("variable", genVarOverview)
+	Register("variables", genVarOverview)
+}
 
-	s := `Variables are symbols used to represent a value which can be changed
+func printVariablesOverview() {
+	fmt.Println(genVarOverview())
+}
+
+func genVarOverview() string {
+	return `Variables are symbols used to represent a value which can be changed
 through assignment. A value can be simple or complex entities from numbers and
 strings of characters to lists and even functions. Variables are extremely
 useful as they can hold values we cannot possibly know at the time of coding,
@@ -66,8 +75,5 @@ Future changes:
 	x, y := 6, 7
 	n, e := @ParseNum("42")
 
-	Once these changes are in place the @Set spell will be removed.
-`
-
-	fmt.Println(s)
+	Once these changes are in place the @Set spell will be removed.`
 }

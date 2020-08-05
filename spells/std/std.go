@@ -34,14 +34,9 @@ func (Exit) Summary() string {
 }
 
 func (sp Exit) Docs() string {
-	return sp.Summary()
-}
-
-func (Exit) Examples() []string {
-	return []string{
-		"@Exit(0)",
-		"@Exit(1)",
-	}
+	return sp.Summary() + `
+		@Exit(0)
+		@Exit(1)`
 }
 
 func (Exit) Invoke(env spellbook.Enviro, args []types.Value) {
@@ -59,22 +54,28 @@ func (Exit) Invoke(env spellbook.Enviro, args []types.Value) {
 	env.Fail(errors.New("@Exit requires its argument be a number"))
 }
 
+var printSpellDocs = `@Print(value...)
+@Println(value...)
+	Prints all arguments to standard output in the order provided, if @Println
+	is used then a linefeed is appended after.
+
+	# Outputs: "Hello, Scarlet!"
+	@Print("Hello, Scarlet!")
+	@Println("Hello, Scarlet!")
+
+	# Outputs: "a*b = c"
+	@Print(a, "*", b, " = ", c)
+	@Println(a, "*", b, " = ", c)`
+
 type Print struct{}
 
 func (Print) Summary() string {
 	return `@Print(value...)
-	Prints all arguments to standard output in the order provided.`
+	Prints all arguments to standard output in the order provided`
 }
 
-func (sp Print) Docs() string {
-	return sp.Summary()
-}
-
-func (Print) Examples() []string {
-	return []string{
-		`@Print("Hello, Scarlet!")      # Outputs: "Hello, Scarlet!"`,
-		`@Print(a, "*", b, " = ", c)    # Outputs: "a*b = c"`,
-	}
+func (Print) Docs() string {
+	return printSpellDocs
 }
 
 func (Print) Invoke(_ spellbook.Enviro, args []types.Value) {
@@ -87,20 +88,12 @@ type Println struct{}
 
 func (Println) Summary() string {
 	return `@Println(value...)
-	Prints all arguments to standard output in the order provided then appends a linefeed.`
+	Prints all arguments to standard output in the order provided then appends
+	a linefeed.`
 }
 
-func (sp Println) Docs() string {
-	return sp.Summary()
-}
-
-func (Println) Examples() []string {
-	return []string{
-		`# Outputs: "Hello, Scarlet!"
-@Println("Hello, Scarlet!")`,
-		`# Outputs: "a*b = c"
-@Println(a, "*", b, " = ", c)`,
-	}
+func (Println) Docs() string {
+	return printSpellDocs
 }
 
 func (Println) Invoke(_ spellbook.Enviro, args []types.Value) {
@@ -112,20 +105,18 @@ type Set struct{}
 
 func (Set) Summary() string {
 	return `@Set("identifier", value)
-	Sets the value of variable represented by the first argument as the second argument.`
+	Sets the value of variable represented by the first argument as the second
+	argument.`
 }
 
 func (sp Set) Docs() string {
-	return sp.Summary()
-}
-
-func (Set) Examples() []string {
-	return []string{
-		`# x := 1
-@Set("x", 1)`,
-		`# name := "Scarlet"
-@Set("name", "Scarlet")`,
-	}
+	return sp.Summary() + `
+	
+	# x := 1
+	@Set("x", 1)
+	
+	# name := "Scarlet"
+	@Set("name", "Scarlet")`
 }
 
 func (Set) Invoke(env spellbook.Enviro, args []types.Value) {
@@ -154,16 +145,13 @@ func (Del) Summary() string {
 }
 
 func (sp Del) Docs() string {
-	return sp.Summary()
-}
-
-func (Del) Examples() []string {
-	return []string{
-		`# Deletes variable 'x'
-@Del("x")`,
-		`# Deletes varaibel 'name'
-@Set("name")`,
-	}
+	return sp.Summary() + `
+	
+	# Deletes variable 'x'
+	@Del("x")
+	
+	# Deletes varaibel 'name'
+	@Set("name")`
 }
 
 func (Del) Invoke(env spellbook.Enviro, args []types.Value) {

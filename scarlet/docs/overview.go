@@ -4,9 +4,16 @@ import (
 	"fmt"
 )
 
-func printOverview() {
+func init() {
+	Register("overview", genOverview)
+}
 
-	s := `Scarlet's language documentation.
+func printOverview() {
+	fmt.Println(genOverview())
+}
+
+func genOverview() string {
+	return `Scarlet's language documentation.
 
 Usage:
 
@@ -160,8 +167,5 @@ Scarlet:
 	Software House.	You should have done something peaceful, like alligator
 	dentistry."
 		- (Original version) 'Maskerade' by Terry Pratchett
-		- (This adapted version) by Paulio
-`
-
-	fmt.Println(s)
+		- (This adapted version) by Paulio`
 }

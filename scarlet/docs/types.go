@@ -4,9 +4,18 @@ import (
 	"fmt"
 )
 
+func init() {
+	Register("type", genTypesOverview)
+	Register("types", genTypesOverview)
+}
+
 func printTypesOverview() {
 
-	s := `The format of each value in Scarlet is defined by its data type. There are 
+	fmt.Println(genTypesOverview())
+}
+
+func genTypesOverview() string {
+	return `The format of each value in Scarlet is defined by its data type. There are 
 three intrinsic types but new ones can be added in a similar fashion to spells.  
 
 	"As soon as you saw people as things to be measured, they didn’t measure up."
@@ -61,8 +70,5 @@ Future changes:
 		variable. Upon invocation the file will be opened and the function
 		called with the 'File' as a value which can be used to perform IO.
 		Upon function exit or error the file is automatically closed before
-		the spell finishes.
-`
-
-	fmt.Println(s)
+		the spell finishes.`
 }
