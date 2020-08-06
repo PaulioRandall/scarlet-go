@@ -9,12 +9,12 @@ import (
 )
 
 func init() {
-	manual.Register("@", genSpellOverview)
-	manual.Register("spell", genSpellOverview)
-	manual.Register("spells", genSpellDocs)
+	manual.Register("@", spellsOverview)
+	manual.Register("spell", spellsOverview)
+	manual.Register("spells", spellDocs)
 }
 
-func genSpellDocs() string {
+func spellDocs() string {
 
 	names := spellbook.SpellNames()
 	sort.Strings(names)
@@ -35,8 +35,9 @@ func genSpellDocs() string {
 	return sb.String()
 }
 
-func genSpellOverview() string {
-	return `Spells are the central concept on which Scarlet was built. A less
+func spellsOverview() string {
+	return `
+Spells are the central concept on which Scarlet was built. A less
 glamorous name would be 'inbuilt functions', but since a writer of Scarlett
 scripts only needs to know how to use them, not how they work, I felt 'spells'
 were a more fitting and engaging title.

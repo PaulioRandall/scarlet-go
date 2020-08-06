@@ -1,12 +1,15 @@
 package manual
 
 func init() {
-	Register("", genOverview)
-	Register("overview", genOverview)
+	Register("", overview)
+	Register("overview", overview)
+	Register("comment", comments)
+	Register("comments", comments)
 }
 
-func genOverview() string {
-	return `Scarlet's language documentation.
+func overview() string {
+	return `
+Scarlet's language documentation.
 
 Usage:
 
@@ -109,49 +112,49 @@ Scarlet:
 		find a job with no heavy lifting,' said a voice in his head."
 			- 'Small Gods' by Terry Pratchett
 
-	Use cases:
+Good use cases:
 
-		I intended for a very small binary so I could include it within	code
-		repositories. Rust would have been a better choice for this
-		optimisation but I decided to build an easier Go version first to	try
-		out the idea and learn how to parse code. Once embedded within a
-		repository it could be used to build and run applications both within
-		pipelines and workstations without additional tools; the tools usually
-		involve some god awful installation process.
+	I intended for a very small binary so I could include it within	code
+	repositories. Rust would have been a better choice for this
+	optimisation but I decided to build an easier Go version first to	try
+	out the idea and learn how to parse code. Once embedded within a
+	repository it could be used to build and run applications both within
+	pipelines and workstations without additional tools; the tools usually
+	involve some god awful installation process.
 
-		With this I could create language independent Web API testing scripts
-		so I can more easily switch a web server's implementation language
-		and avoid self inflicted vendor lock in. Current tools were either
-		too heavy weight or painfully complex. Project building,
-		configuration, and deployment was another activity I wanted more
-		control over.
+	With this I could create language independent Web API testing scripts
+	so I can more easily switch a web server's implementation language
+	and avoid self inflicted vendor lock in. Current tools were either
+	too heavy weight or painfully complex. Project building,
+	configuration, and deployment was another activity I wanted more
+	control over.
 
-		I also wanted do general purpose scripting. There are plenty of
-		languages that can assist with this but I really craved specific tools
-		free of dependencies. I wanted to be able to change the langauge
-		each time I noticed it was woefully incapable of satisfying me.
+	I also wanted do general purpose scripting. There are plenty of
+	languages that can assist with this but I really craved specific tools
+	free of dependencies. I wanted to be able to change the langauge
+	each time I noticed it was woefully incapable of satisfying me.
 
-	Bad use cases:
+Bad use cases:
 
-		I'm strongly for fitting the tool to the job and not the other way
-		around so here are a few use cases that I recommend Scarlet not be
-		used for.
+	I'm strongly for fitting the tool to the job and not the other way
+	around so here are a few use cases that I recommend Scarlet not be
+	used for.
 
-		Scarlet is not intended, nor designed, for backend web programming.
-		That's best left to more rigorous and much better supported tools such
-		as Go, Java, and C#. However, I do intend to create spells for quickly
-		serving static content and file storage on local networks.
+	Scarlet is not intended, nor designed, for backend web programming.
+	That's best left to more rigorous and much better supported tools such
+	as Go, Java, and C#. However, I do intend to create spells for quickly
+	serving static content and file storage on local networks.
 
-		Anything that needs to scale or use concurrency. Again Go, Rust, and
-		many JVM languages are good choices.
+	Anything that needs to scale or use concurrency. Again Go, Rust, and
+	many JVM languages are good choices.
 
-		It is not intended for maths, science, or running numeric algorithms.
-		That's best left to tools like R or library rich glue languages like
-		Python.
+	It is not intended for maths, science, or running numeric algorithms.
+	That's best left to tools like R or library rich glue languages like
+	Python.
 
-		Avoid using it for critical systems! I wrote the code for me and don't
-		want innocent bystanders (if such people exist) getting hurt.
-
+	Avoid using it for critical systems! I wrote the code for me and don't
+	want innocent bystanders (if such people exist) getting hurt.
+	
 	"A catastrophe curve, Mr. Bucket, is what Software runs along. Software
 	happens because a large number of things amazingly fail without quite
 	sinking their project,	Mr. Bucket. It works because of hatred and love
@@ -159,6 +162,25 @@ Scarlet:
 	wanted a quiet retirement, Mr. Bucket, you shouldn't have bought the
 	Software House.	You should have done something peaceful, like alligator
 	dentistry."
-		- (Original version) 'Maskerade' by Terry Pratchett
-		- (This adapted version) by Paulio`
+		- (Original) 'Maskerade' by Terry Pratchett
+		- Adapted by Paulio`
+}
+
+func comments() string {
+	return `
+Comments provide a way for programmers to communicate to readers what they
+think their code does in a manner that is easily misinterpretted. It is
+customary to write comments whenever you feel like it and not based on the
+ambiguaity or complexity of the functionality under comment.
+
+Examples:
+
+	# Comments start with the a pound symbol '#', sometimes referred to as hash,
+	# and terminate at the end of the line. What you write in the comment is
+	# entirely up to you.
+
+	# This function adds two numbers
+	add := F(a, b -> c) {
+		c := a + b # The answer is stored in the return variable 'c'
+	}`
 }

@@ -84,7 +84,8 @@ func isIdentifier(id string) bool {
 }
 
 func varSpellDocs() string {
-	return `@Set("identifier", value)
+	return `
+@Set("identifier", value)
 	Sets the value of variable represented by the first argument as the second
 	argument.
 @Del("identifier")
