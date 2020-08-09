@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_prettyPrint_1(t *testing.T) {
+func Test_Print_1(t *testing.T) {
 
 	a := lex(0, 0, "true", BOOL)
 	b := lex(1, 2, "2", NUMBER)

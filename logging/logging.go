@@ -28,6 +28,3 @@ func writeInstructionFile(filename string, ins []inst.Instruction) error {
 	defer f.Close()
 	return inst.Print(f, ins)
 }
-
-/*
- */
