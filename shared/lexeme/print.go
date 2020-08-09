@@ -1,29 +1,22 @@
 package lexeme
 
 import (
-	"fmt"
 	"io"
 	"strconv"
 	"strings"
 )
 
-func checkIsSingle(lex *Lexeme) {
-	if lex.next != nil || lex.prev != nil {
-		m := fmt.Sprintf(
-			"Lexeme `%s` is already part of another collection, remove first",
-			lex.String(),
-		)
-		panic(m)
-	}
+func Print(w io.StringWriter, head *Lexeme) error {
+	return printLexemes(w, head)
 }
 
-func prettyPrint(w io.StringWriter, head *Lexeme) error {
+func printLexemes(w io.StringWriter, head *Lexeme) error {
 
 	if head == nil {
 		return nil
 	}
 
-	lineMax, colMax, tokMax := findPrettyPrintPaddings(head)
+	lineMax, colMax, tokMax := findPrintPaddings(head)
 
 	for lex := head; lex != nil; lex = lex.next {
 
@@ -32,13 +25,16 @@ func prettyPrint(w io.StringWriter, head *Lexeme) error {
 		tok := padBack(tokMax, lex.Tok.String())
 		raw := strconv.QuoteToGraphic(lex.Raw)
 
-		writeLine(w, line, ":", col, ", ", tok, ", ", raw)
+		e := writeLine(w, line, ":", col, ", ", tok, ", ", raw)
+		if e != nil {
+			return e
+		}
 	}
 
 	return nil
 }
 
-func findPrettyPrintPaddings(head *Lexeme) (line, col, tok int) {
+func findPrintPaddings(head *Lexeme) (line, col, tok int) {
 
 	for lex := head; lex != nil; lex = lex.next {
 

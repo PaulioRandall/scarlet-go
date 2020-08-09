@@ -6,11 +6,29 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func setupContainer() (_ *Container, a, b, c, d *Lexeme) {
+
+	a = lex(0, 0, "1st", BOOL)
+	b = lex(0, 4, "2nd", NUMBER)
+	c = lex(0, 5, "3rd", STRING)
+	d = lex(0, 9, "4th", IDENTIFIER)
+
+	a.prev, a.next = nil, b
+	b.prev, b.next = a, c
+	c.prev, c.next = b, nil
+
+	con := &Container{
+		size: 3,
+		head: a,
+		tail: c,
+	}
+
+	return con, a, b, c, d
+}
+
 func Test_Container_1_1(t *testing.T) {
 
-	a, b, c, _ := setup()
-	feign(a, b, c)
-	con := NewContainer(a)
+	con, a, b, c, _ := setupContainer()
 
 	fullEqual(t, a, nil, b, con.head)
 	fullEqual(t, b, a, c, con.head.next)
@@ -47,7 +65,9 @@ func Test_Container_2_1(t *testing.T) {
 
 func Test_Container_3_1(t *testing.T) {
 
-	a, b, c, _ := setup()
+	a := lex(0, 0, "1st", BOOL)
+	b := lex(0, 4, "2nd", NUMBER)
+	c := lex(0, 5, "3rd", STRING)
 	con := &Container{}
 
 	con.push(b, true)

@@ -23,6 +23,6 @@ func Test_prettyPrint_1(t *testing.T) {
 `
 
 	sb := &strings.Builder{}
-	prettyPrint(sb, a)
+	Print(sb, a)
 	require.Equal(t, exp, sb.String())
 }

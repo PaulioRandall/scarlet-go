@@ -1,7 +1,7 @@
 package lexeme
 
 import (
-	"io"
+	"fmt"
 	"strings"
 )
 
@@ -29,20 +29,6 @@ func NewContainer(head *Lexeme) *Container {
 	}
 
 	return c
-}
-
-func (c *Container) Copy() *Container {
-
-	cp := &Container{}
-
-	for lex := c.head; lex != nil; lex = lex.next {
-		var l Lexeme = (*lex)
-		l.prev = nil
-		l.next = nil
-		cp.Put(&l)
-	}
-
-	return cp
 }
 
 func (c *Container) Iterator() *Iterator {
@@ -92,6 +78,22 @@ func (c *Container) Take() *Lexeme {
 	return c.pop(false)
 }
 
+func (c *Container) String() string {
+
+	sb := strings.Builder{}
+
+	for lex := c.head; lex != nil; lex = lex.next {
+
+		if lex != c.head {
+			sb.WriteRune('\n')
+		}
+
+		sb.WriteString(lex.String())
+	}
+
+	return sb.String()
+}
+
 func (c *Container) pop(fromBack bool) *Lexeme {
 
 	if c.size == 0 {
@@ -119,7 +121,7 @@ func (c *Container) pop(fromBack bool) *Lexeme {
 
 func (c *Container) push(lex *Lexeme, toBack bool) {
 
-	checkIsSingle(lex)
+	lex.checkIsSingle()
 
 	if c.size == 0 {
 		c.head = lex
@@ -137,26 +139,6 @@ func (c *Container) push(lex *Lexeme, toBack bool) {
 	}
 
 	c.size++
-}
-
-func (c *Container) PrettyPrint(w io.StringWriter) error {
-	return prettyPrint(w, c.head)
-}
-
-func (c *Container) String() string {
-
-	sb := strings.Builder{}
-
-	for lex := c.head; lex != nil; lex = lex.next {
-
-		if lex != c.head {
-			sb.WriteRune('\n')
-		}
-
-		sb.WriteString(lex.String())
-	}
-
-	return sb.String()
 }
 
 func (c *Container) remove(lex *Lexeme) {
@@ -190,5 +172,15 @@ func (c *Container) insertAfter(base *Lexeme, add *Lexeme) {
 
 	if base == c.tail {
 		c.tail = add
+	}
+}
+
+func (lex *Lexeme) checkIsSingle() {
+	if lex.next != nil || lex.prev != nil {
+		m := fmt.Sprintf(
+			"Lexeme `%s` is already part of another collection, remove first",
+			lex.String(),
+		)
+		panic(m)
 	}
 }
