@@ -2,19 +2,28 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
 )
 
 type config struct {
 	nofmt  bool
 	script string
+	logDir string
 }
 
-func captureConfig(c *config, args Arguments) error {
-	captureOptions(c, args)
-	return captureScriptFile(c, args)
+func (c *config) logFilename(ext string) string {
+	f := filepath.Base(c.script)
+	f = strings.TrimSuffix(f, filepath.Ext(f))
+	return filepath.Join(c.logDir, f+ext)
 }
 
-func captureOptions(c *config, args Arguments) error {
+func (c *config) captureConfig(args Arguments) error {
+	c.captureOptions(args)
+	return c.captureScriptFile(args)
+}
+
+func (c *config) captureOptions(args Arguments) error {
 	for args.more() && args.isOption() {
 
 		switch {
@@ -29,7 +38,7 @@ func captureOptions(c *config, args Arguments) error {
 	return nil
 }
 
-func captureScriptFile(c *config, args Arguments) error {
+func (c *config) captureScriptFile(args Arguments) error {
 
 	if args.empty() {
 		return fmt.Errorf("Expected script filename")

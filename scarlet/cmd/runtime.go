@@ -59,7 +59,7 @@ func run(ins []inst.Instruction) (int, error) {
 func buildFromArgs(args Arguments) ([]inst.Instruction, int, error) {
 
 	c := config{}
-	e := captureConfig(&c, args)
+	e := c.captureConfig(args)
 	if e != nil {
 		return nil, GENERAL_ERROR, e
 	}
