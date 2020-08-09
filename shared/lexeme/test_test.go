@@ -6,6 +6,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func lex(line, col int, raw string, tk Token) *Lexeme {
+	return &Lexeme{
+		Tok:  tk,
+		Raw:  raw,
+		Line: line,
+		Col:  col,
+	}
+}
+
 func tok(raw string, tk Token) *Lexeme {
 	return &Lexeme{
 		Tok: tk,
@@ -40,10 +49,10 @@ func feign(lexs ...*Lexeme) {
 }
 
 func setup() (a, b, c, d *Lexeme) {
-	a = tok("1st", BOOL)
-	b = tok("2nd", NUMBER)
-	c = tok("3rd", STRING)
-	d = tok("4th", IDENTIFIER)
+	a = lex(0, 0, "1st", BOOL)
+	b = lex(0, 4, "2nd", NUMBER)
+	c = lex(0, 5, "3rd", STRING)
+	d = lex(0, 9, "4th", IDENTIFIER)
 	return
 }
 

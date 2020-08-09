@@ -1,7 +1,7 @@
 package lexeme
 
 import (
-	"fmt"
+	"io"
 	"strings"
 )
 
@@ -139,6 +139,10 @@ func (c *Container) push(lex *Lexeme, toBack bool) {
 	c.size++
 }
 
+func (c *Container) PrettyPrint(w io.StringWriter) error {
+	return prettyPrint(w, c.head)
+}
+
 func (c *Container) String() string {
 
 	sb := strings.Builder{}
@@ -186,15 +190,5 @@ func (c *Container) insertAfter(base *Lexeme, add *Lexeme) {
 
 	if base == c.tail {
 		c.tail = add
-	}
-}
-
-func checkIsSingle(lex *Lexeme) {
-	if lex.next != nil || lex.prev != nil {
-		m := fmt.Sprintf(
-			"Lexeme `%s` is already part of another collection, remove first",
-			lex.String(),
-		)
-		panic(m)
 	}
 }

@@ -1,25 +1,6 @@
 package logging
 
 /*
-func formatAll(c config, con *lexeme.Container) (con *lexeme.Container, error) {
-
-	if c.nofmt {
-		return nil
-	}
-
-	head = lexeme.CopyAll(head)
-	head = format.FormatAll(head, c.lineEndings)
-
-	f, e := os.Create(c.script)
-	if e != nil {
-		return e
-	}
-	defer f.Close()
-
-	return writeLexemes(f, head)
-}
-
-/*
 func writeLexemes(w io.Writer, head *lexeme.Lexeme) error {
 
 	for lex := head; lex != nil; lex = lex.Next {

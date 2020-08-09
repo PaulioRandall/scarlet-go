@@ -1,190 +1,84 @@
 package lexeme
 
 import (
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
 )
 
-/*
-func CopyAll(head *Lexeme) *Lexeme {
-
-	var que Queue = &Container{}
-
-	for lex := head; lex != nil; lex = lex.Next {
-		que.Put(Copy(lex))
-	}
-
-	return que.Head()
-}
-
-func Copy(lex *Lexeme) *Lexeme {
-	return &Lexeme{
-		Raw: lex.Raw,
+func checkIsSingle(lex *Lexeme) {
+	if lex.next != nil || lex.prev != nil {
+		m := fmt.Sprintf(
+			"Lexeme `%s` is already part of another collection, remove first",
+			lex.String(),
+		)
+		panic(m)
 	}
 }
 
-func Split(head *Lexeme, delim Token) []*Lexeme {
-
-	r := []*Lexeme{}
+func prettyPrint(w io.StringWriter, head *Lexeme) error {
 
 	if head == nil {
-		return r
-	}
-
-	findNextDelim := func(head *Lexeme) *Lexeme {
-		for next := head; next != nil; next = next.Next {
-			if next.Tok == delim {
-				return next
-			}
-		}
 		return nil
 	}
 
-	for head != nil {
-		r = append(r, head)
-		delim := findNextDelim(head)
-		head = delim.Next
-		delim.SplitBelow()
-	}
+	lineMax, colMax, tokMax := findPrettyPrintPaddings(head)
 
-	return r
-}
-*/
+	for lex := head; lex != nil; lex = lex.next {
 
-type lexFmt struct {
-	begin int
-	end   int
-	tok   int
-	gap   int // gap between printed fields
-}
+		line := padFront(lineMax, strconv.Itoa(lex.Line))
+		col := padBack(colMax, strconv.Itoa(lex.Col))
+		tok := padBack(tokMax, lex.Tok.String())
+		raw := strconv.QuoteToGraphic(lex.Raw)
 
-func PrintAll(w io.StringWriter, first *Lexeme) error {
-
-	lxf := findLexFmt(first)
-
-	for lex := first; lex != nil; lex = lex.next {
-		e := writeLine(w, lex, lxf)
-		if e != nil {
-			return e
-		}
+		writeLine(w, line, ":", col, ", ", tok, ", ", raw)
 	}
 
 	return nil
 }
 
-func findLexFmt(first *Lexeme) lexFmt {
+func findPrettyPrintPaddings(head *Lexeme) (line, col, tok int) {
 
-	lxf := lexFmt{
-		gap: 4,
-	}
+	for lex := head; lex != nil; lex = lex.next {
 
-	for lex := first; lex != nil; lex = lex.next {
-
-		line, col, colEnd := lex.At()
-
-		lineStr := strconv.Itoa(line)
-		colStr := strconv.Itoa(col)
-		colEndStr := strconv.Itoa(colEnd)
-
-		size := len(lineStr + ":" + colStr)
-		if size > lxf.begin {
-			lxf.begin = size
+		if lex.Line > line {
+			line = lex.Line
 		}
 
-		size = len(lineStr + ":" + colEndStr)
-		if size > lxf.end {
-			lxf.end = size
+		if lex.Col > col {
+			col = lex.Col
 		}
 
-		size = len(lex.Tok.String())
-		if size > lxf.tok {
-			lxf.tok = size
+		if tokLen := len(lex.Tok.String()); tokLen > tok {
+			tok = tokLen
 		}
 	}
 
-	return lxf
+	line = len(strconv.Itoa(line))
+	col = len(strconv.Itoa(col))
+	return
 }
 
-func writeLine(w io.StringWriter, lex *Lexeme, lxf lexFmt) error {
-
-	e := writeToken(w, lex, lxf)
-	if e != nil {
-		return e
-	}
-
-	_, e = w.WriteString("\n")
-	return e
+func padFront(min int, s string) string {
+	pad := strings.Repeat(" ", min-len(s))
+	return pad + s
 }
 
-func writeToken(w io.StringWriter, lex *Lexeme, lxf lexFmt) error {
-
-	e := writeSnippet(w, lex, lxf)
-	if e != nil {
-		return e
-	}
-
-	e = writeGap(w, lxf.gap)
-	if e != nil {
-		return e
-	}
-
-	e = writePadStr(w, lex.Tok.String(), lxf.tok)
-	if e != nil {
-		return e
-	}
-
-	e = writeGap(w, lxf.gap)
-	if e != nil {
-		return e
-	}
-
-	if lex.Tok == NEWLINE {
-		s := strconv.QuoteToGraphic(lex.Raw)
-		return writeStr(w, s[1:len(s)-1])
-	}
-
-	return writeStr(w, lex.Raw)
-}
-
-func writeSnippet(w io.StringWriter, snip Snippet, lxf lexFmt) error {
-
-	line, col, colEnd := snip.At()
-
-	e := writePos(w, line, col, lxf.begin)
-	if e != nil {
-		return e
-	}
-
-	e = writeGap(w, lxf.gap)
-	if e != nil {
-		return e
-	}
-
-	return writePos(w, line, colEnd, lxf.end)
-}
-
-func writePos(w io.StringWriter, line, col, minLen int) error {
-	s := strconv.Itoa(line) + ":" + strconv.Itoa(col)
-	s = pad(minLen+1, s)
-	return writeStr(w, s)
-}
-
-func pad(min int, s string) string {
+func padBack(min int, s string) string {
 	pad := strings.Repeat(" ", min-len(s))
 	return s + pad
 }
 
-func writeGap(w io.StringWriter, gap int) error {
-	return writePadStr(w, "", gap)
-}
+func writeLine(w io.StringWriter, strs ...string) error {
 
-func writePadStr(w io.StringWriter, s string, maxLen int) error {
-	s = pad(maxLen, s)
-	return writeStr(w, s)
-}
+	for _, s := range strs {
+		_, e := w.WriteString(s)
+		if e != nil {
+			return e
+		}
+	}
 
-func writeStr(w io.StringWriter, s string) error {
-	_, e := w.WriteString(s)
+	_, e := w.WriteString("\n")
 	return e
 }
