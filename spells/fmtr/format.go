@@ -1,4 +1,4 @@
-package formatter
+package fmtr
 
 import (
 	"io/ioutil"
@@ -9,7 +9,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
 )
 
-func FormatFile(filename string) error {
+func formatFile(filename string) error {
 
 	c, e := readFile(filename)
 	if e != nil {

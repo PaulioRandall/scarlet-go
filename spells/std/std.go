@@ -1,9 +1,6 @@
 package std
 
 import (
-	"sort"
-	"strings"
-
 	"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 )
@@ -11,28 +8,24 @@ import (
 func init() {
 	manual.Register("@", spellsOverview)
 	manual.Register("spell", spellsOverview)
-	manual.Register("spells", spellDocs)
 }
 
-func spellDocs() string {
+func InscribeAll(inscribe spellbook.Inscriber) {
 
-	names := spellbook.SpellNames()
-	sort.Strings(names)
+	inscribe("exit", Exit{})
+	manual.Register("@exit", exitSpellDocs)
 
-	sb := strings.Builder{}
+	inscribe("print", Print{})
+	manual.Register("@print", printSpellDocs)
 
-	for i, v := range names {
+	inscribe("println", Println{})
+	manual.Register("@println", printSpellDocs)
 
-		sp := spellbook.LookUp(v)
+	inscribe("set", Set{})
+	manual.Register("@set", varSpellDocs)
 
-		if i != 0 {
-			sb.WriteString("\n\n")
-		}
-
-		sb.WriteString(sp.Summary())
-	}
-
-	return sb.String()
+	inscribe("del", Del{})
+	manual.Register("@del", varSpellDocs)
 }
 
 func spellsOverview() string {

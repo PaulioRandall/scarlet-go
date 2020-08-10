@@ -19,9 +19,6 @@ func (c *config) captureOptions(args Arguments) error {
 	for args.more() && args.isOption() {
 
 		switch {
-		case args.accept("-nofmt"):
-			c.nofmt = true
-
 		case args.accept("-log"):
 			c.logDir = args.shiftDefault("")
 

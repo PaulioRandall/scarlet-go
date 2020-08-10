@@ -3,21 +3,15 @@ package std
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
-
-func init() {
-	manual.Register("@print", printSpellDocs)
-	manual.Register("@println", printSpellDocs)
-}
 
 type Print struct{}
 
 func (Print) Summary() string {
 	return `@Print(value...)
-	Prints all arguments to standard output in the order provided`
+	Prints all arguments to standard output in the order provided.`
 }
 
 func (Print) Invoke(_ spellbook.Enviro, args []types.Value) {
@@ -42,7 +36,7 @@ func (Println) Invoke(_ spellbook.Enviro, args []types.Value) {
 func printSpellDocs() string {
 	return `@Print(value...)    Prints all arguments to standard output in the order
 	                  provided.
-@Println(value...)  Same as @Print appends a linefeed after the values.
+@Println(value...)  Same as @Print but appends a linefeed after the values.
 
 Examples:
 

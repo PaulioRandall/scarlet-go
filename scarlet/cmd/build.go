@@ -3,8 +3,6 @@ package cmd
 import (
 	"io/ioutil"
 
-	"github.com/PaulioRandall/scarlet-go/formatter"
-
 	"github.com/PaulioRandall/scarlet-go/shared/inst"
 	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
 
@@ -33,11 +31,6 @@ func build(c config) ([]inst.Instruction, error) {
 	}
 
 	e = checkAll(c, con)
-	if e != nil {
-		return nil, e
-	}
-
-	e = formatAll(c)
 	if e != nil {
 		return nil, e
 	}
@@ -101,13 +94,4 @@ func compileAll(c config, con *lexeme.Container) ([]inst.Instruction, error) {
 	}
 
 	return ins, nil
-}
-
-func formatAll(c config) error {
-
-	if c.nofmt {
-		return nil
-	}
-
-	return formatter.FormatFile(c.script)
 }

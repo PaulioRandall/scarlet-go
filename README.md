@@ -1,22 +1,9 @@
 # scarlet-go
 
-Scarlet is my second attempt at creating an interpreter and is the name of the interpreted language.
+Scarlet is my second attempt at creating an interpreter. Scarlett is the name of
+the default language.
 
 ## 1. Essential Features
-
-#### Formatting
-
-- Could the formatter become a spell?
-  - Maybe there could be a @FmtScript() spell? (implicit @Args()[0])
-
-#### Documentation
-
-- Write documentation for spells:
-  - @Set
-  - @Del
-  - @Print
-  - @Println
-  - @Exit
 
 #### Arithmetic Operations
 

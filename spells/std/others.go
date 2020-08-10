@@ -3,31 +3,9 @@ package std
 import (
 	"errors"
 
-	"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
-
-func init() {
-	manual.Register("@exit", exitSpellDocs)
-}
-
-func Default() {
-	InscribeAll(func(name string, spell spellbook.Spell) {
-		e := spellbook.Inscribe(""+name, spell)
-		if e != nil {
-			panic(e)
-		}
-	})
-}
-
-func InscribeAll(inscribe spellbook.Inscriber) {
-	inscribe("exit", Exit{})
-	inscribe("print", Print{})
-	inscribe("println", Println{})
-	inscribe("set", Set{})
-	inscribe("del", Del{})
-}
 
 type Exit struct{}
 

@@ -4,15 +4,9 @@ import (
 	"errors"
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
-
-func init() {
-	manual.Register("@set", varSpellDocs)
-	manual.Register("@del", varSpellDocs)
-}
 
 type Set struct{}
 
@@ -44,7 +38,7 @@ type Del struct{}
 
 func (Del) Summary() string {
 	return `@Del("identifier")
-	Deletes the variable represented by the first argument`
+	Deletes the variable represented by the first argument.`
 }
 
 func (Del) Invoke(env spellbook.Enviro, args []types.Value) {
