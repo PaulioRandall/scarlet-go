@@ -23,10 +23,10 @@ func Test_Print_1(t *testing.T) {
 		newInst(CO_SPELL, "println"),
 	}
 
-	exp := `CO_CTX_GET , "x"
+	exp := `CO_CTX_GET,  "x"
 CO_VAL_PUSH, "Answer = "
 CO_VAL_PUSH, 2
-CO_SPELL   , "println"
+CO_SPELL,    "println"
 `
 
 	sb := &strings.Builder{}

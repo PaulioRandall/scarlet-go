@@ -21,11 +21,11 @@ func printLexemes(w io.StringWriter, head *Lexeme) error {
 	for lex := head; lex != nil; lex = lex.next {
 
 		line := padFront(lineMax, strconv.Itoa(lex.Line))
-		col := padBack(colMax, strconv.Itoa(lex.Col))
-		tok := padBack(tokMax, lex.Tok.String())
+		col := padBack(colMax+1, strconv.Itoa(lex.Col)+",")
+		tok := padBack(tokMax+1, lex.Tok.String()+",")
 		raw := strconv.QuoteToGraphic(lex.Raw)
 
-		e := writeLine(w, line, ":", col, ", ", tok, ", ", raw)
+		e := writeLine(w, line, ":", col, " ", tok, " ", raw)
 		if e != nil {
 			return e
 		}

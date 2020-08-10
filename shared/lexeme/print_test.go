@@ -16,9 +16,9 @@ func Test_Print_1(t *testing.T) {
 
 	feign(a, b, c, d)
 
-	exp := `  0:0  , BOOL      , "true"
-  1:2  , NUMBER    , "2"
- 99:66 , STRING    , "\"three\""
+	exp := `  0:0,   BOOL,       "true"
+  1:2,   NUMBER,     "2"
+ 99:66,  STRING,     "\"three\""
 666:999, IDENTIFIER, "x"
 `
 

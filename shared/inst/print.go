@@ -3,7 +3,6 @@ package inst
 import (
 	"fmt"
 	"io"
-	//"strconv"
 	"strings"
 )
 
@@ -21,10 +20,10 @@ func printInstructions(w io.StringWriter, ins []Instruction) error {
 
 	for _, in := range ins {
 
-		code := padBack(codeMax, in.Code.String())
+		code := padBack(codeMax+1, in.Code.String()+",")
 		data := dataToString(in.Data)
 
-		e := writeLine(w, code, ", ", data)
+		e := writeLine(w, code, " ", data)
 		if e != nil {
 			return e
 		}

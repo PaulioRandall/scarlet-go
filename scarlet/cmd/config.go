@@ -2,20 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"path/filepath"
-	"strings"
 )
 
 type config struct {
 	nofmt  bool
 	script string
 	logDir string
-}
-
-func (c *config) logFilename(ext string) string {
-	f := filepath.Base(c.script)
-	f = strings.TrimSuffix(f, filepath.Ext(f))
-	return filepath.Join(c.logDir, f+ext)
 }
 
 func (c *config) captureConfig(args Arguments) error {
@@ -29,6 +21,9 @@ func (c *config) captureOptions(args Arguments) error {
 		switch {
 		case args.accept("-nofmt"):
 			c.nofmt = true
+
+		case args.accept("-log"):
+			c.logDir = args.shiftDefault("")
 
 		default:
 			return fmt.Errorf("Unexpected option %q", args.peek())

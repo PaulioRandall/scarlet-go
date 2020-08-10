@@ -62,11 +62,20 @@ func scanAll(c config, s string) (*lexeme.Container, error) {
 		return nil, e
 	}
 
+	if c.logDir != "" {
+		return con, logContainer(c, con, "scanned")
+	}
+
 	return con, nil
 }
 
 func sanitiseAll(c config, con *lexeme.Container) error {
+
 	sanitiser.SanitiseAll(con)
+	if c.logDir != "" {
+		return logContainer(c, con, "sanitised")
+	}
+
 	return nil
 }
 
@@ -75,12 +84,22 @@ func checkAll(c config, con *lexeme.Container) error {
 }
 
 func shuntAll(c config, con *lexeme.Container) (*lexeme.Container, error) {
+
 	con = shunter.ShuntAll(con)
+	if c.logDir != "" {
+		return con, logContainer(c, con, "shunted")
+	}
+
 	return con, nil
 }
 
 func compileAll(c config, con *lexeme.Container) ([]inst.Instruction, error) {
+
 	ins := compiler.CompileAll(con)
+	if c.logDir != "" {
+		return ins, logInstructions(c, ins, "compiled")
+	}
+
 	return ins, nil
 }
 
