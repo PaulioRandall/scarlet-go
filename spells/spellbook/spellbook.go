@@ -16,7 +16,7 @@ type Enviro interface {
 }
 
 type Spell interface {
-	Summary() string
+	Docs() SpellDoc
 	Invoke(env Enviro, args []types.Value)
 }
 

@@ -9,8 +9,17 @@ import (
 
 type Print struct{}
 
-func (Print) Summary() string {
-	return `@Print(value...)
+var man_printSpell = spellbook.SpellDoc{
+	Pattern: `@Print(value, value, ...)`,
+	Summary: `Prints all arguments to standard output in the order given.`,
+	Examples: []string{
+		`@Print("Hello, Scarlet!")`,
+		`@Print(a, "*", b, " = ", c)`,
+	},
+}
+
+func (Print) Summary(name string) string {
+	return name + `(value...)
 	Prints all arguments to standard output in the order provided.`
 }
 
@@ -20,12 +29,20 @@ func (Print) Invoke(_ spellbook.Enviro, args []types.Value) {
 	}
 }
 
+func (Print) Docs() spellbook.SpellDoc {
+	return man_printSpell
+}
+
 type Println struct{}
 
-func (Println) Summary() string {
-	return `@Println(value...)
-	Prints all arguments to standard output in the order provided then appends
-	a linefeed.`
+var man_printlnSpell = spellbook.SpellDoc{
+	Pattern: `@Println(value, value, ...)`,
+	Summary: `Prints all arguments to standard output in the order given, then appends
+a linefeed.`,
+	Examples: []string{
+		`@Println("Hello, Scarlet!")`,
+		`@Println(a, "*", b, " = ", c)`,
+	},
 }
 
 func (Println) Invoke(_ spellbook.Enviro, args []types.Value) {
@@ -33,18 +50,6 @@ func (Println) Invoke(_ spellbook.Enviro, args []types.Value) {
 	fmt.Println()
 }
 
-func printSpellDocs() string {
-	return `@Print(value...)    Prints all arguments to standard output in the order
-	                  provided.
-@Println(value...)  Same as @Print but appends a linefeed after the values.
-
-Examples:
-
-	# Outputs: "Hello, Scarlet!"
-	@Print("Hello, Scarlet!")
-	@Println("Hello, Scarlet!")
-
-	# Outputs: "a*b = c"
-	@Print(a, "*", b, " = ", c)
-	@Println(a, "*", b, " = ", c)`
+func (Println) Docs() spellbook.SpellDoc {
+	return man_printlnSpell
 }

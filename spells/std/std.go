@@ -13,19 +13,29 @@ func init() {
 func InscribeAll(inscribe spellbook.Inscriber) {
 
 	inscribe("exit", Exit{})
-	manual.Register("@exit", exitSpellDocs)
+	manual.Register("@exit", func() string {
+		return spellbook.FmtSpellDoc(man_exitSpell)
+	})
 
 	inscribe("print", Print{})
-	manual.Register("@print", printSpellDocs)
+	manual.Register("@print", func() string {
+		return spellbook.FmtSpellDoc(man_printSpell)
+	})
 
 	inscribe("println", Println{})
-	manual.Register("@println", printSpellDocs)
+	manual.Register("@println", func() string {
+		return spellbook.FmtSpellDoc(man_printlnSpell)
+	})
 
 	inscribe("set", Set{})
-	manual.Register("@set", varSpellDocs)
+	manual.Register("@set", func() string {
+		return spellbook.FmtSpellDoc(man_setSpell)
+	})
 
 	inscribe("del", Del{})
-	manual.Register("@del", varSpellDocs)
+	manual.Register("@del", func() string {
+		return spellbook.FmtSpellDoc(man_delSpell)
+	})
 }
 
 func spellsOverview() string {

@@ -10,12 +10,6 @@ import (
 
 type Set struct{}
 
-func (Set) Summary() string {
-	return `@Set("identifier", value)
-	Sets the value of variable represented by the first argument as the second
-	argument.`
-}
-
 func (Set) Invoke(env spellbook.Enviro, args []types.Value) {
 
 	if len(args) != 2 {
@@ -34,12 +28,21 @@ func (Set) Invoke(env spellbook.Enviro, args []types.Value) {
 	env.Bind(id, args[1])
 }
 
-type Del struct{}
-
-func (Del) Summary() string {
-	return `@Del("identifier")
-	Deletes the variable represented by the first argument.`
+func (Set) Docs() spellbook.SpellDoc {
+	return man_setSpell
 }
+
+var man_setSpell = spellbook.SpellDoc{
+	Pattern: `@Set("identifier", value)`,
+	Summary: `Sets the value of variable represented by the first argument as the second
+argument.`,
+	Examples: []string{
+		`@Set("x", 1)`,
+		`@Set("name", "Scarlet")`,
+	},
+}
+
+type Del struct{}
 
 func (Del) Invoke(env spellbook.Enviro, args []types.Value) {
 
@@ -55,6 +58,19 @@ func (Del) Invoke(env spellbook.Enviro, args []types.Value) {
 	}
 
 	env.Unbind(string(id))
+}
+
+func (Del) Docs() spellbook.SpellDoc {
+	return man_delSpell
+}
+
+var man_delSpell = spellbook.SpellDoc{
+	Pattern: `@Del("identifier")`,
+	Summary: `Deletes the variable represented by the first argument.`,
+	Examples: []string{
+		`@Del("x")`,
+		`@Del("name")`,
+	},
 }
 
 func isIdentifier(id string) bool {
@@ -75,21 +91,4 @@ func isIdentifier(id string) bool {
 	}
 
 	return true
-}
-
-func varSpellDocs() string {
-	return `
-@Set("identifier", value)
-	Sets the value of variable represented by the first argument as the second
-	argument.
-@Del("identifier")
-	Deletes the variable represented by the first argument
-
-Examples:
-
-	@Set("x", 1)
-	@Set("name", "Scarlet")
-
-	@Del("x")
-	@Del("name")`
 }
