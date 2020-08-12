@@ -5,19 +5,6 @@ the default language.
 
 ## 1. Essential Features
 
-#### Native Assignments
-
-```
-x := true
-x := 1
-x := "abc"
-x := y
-```
-
-```
-x, y, z := 1, 2, 3
-```
-
 #### Void Assignee
 
 ```

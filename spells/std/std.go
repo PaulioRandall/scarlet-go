@@ -27,11 +27,6 @@ func InscribeAll(inscribe spellbook.Inscriber) {
 		return spellbook.FmtSpellDoc(man_printlnSpell)
 	})
 
-	inscribe("set", Set{})
-	manual.Register("@set", func() string {
-		return spellbook.FmtSpellDoc(man_setSpell)
-	})
-
 	inscribe("del", Del{})
 	manual.Register("@del", func() string {
 		return spellbook.FmtSpellDoc(man_delSpell)
@@ -54,7 +49,6 @@ Usage:
 
 Examples:
 
-	@Set(x, 42)
 	@Println("6 * 7 = ", x)
 	@Exit(0)
 
@@ -86,12 +80,17 @@ Pros & cons:
 
 Future changes:
 
+	Spells will be able to return multiple values soon. The results being
+	assignable to variables.
+
+		x := @Len(s)
+
 	I hope to add blocks as parameters to enable code to be run with the
 	callers scope and variables. Here is an example spell with block parameter:
 
-	@If(true, {
-		@Set(x, 1)
-	})
+		@If(true, {
+			x := 1
+		})
 
 	In future I hope to add some very common but completely removable and
 	modifable spells to get users started. However, many of these depend on

@@ -1,9 +1,7 @@
 
 @Println("Hello, Scarlet!")
 
-@Set("a", 6)
-@Set("b", 7)
-@Set("c", 42)
+a, b, c := 6, 7, 42
 
 @Println(a, " * ", b, " = ", c)
 

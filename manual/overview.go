@@ -17,11 +17,12 @@ Usage:
 
 Search terms:
 
-	spells             Spells and how to use them
-	variables          How to use variables
+	spell              What are spells and how to use them?
+	spells             List spells
+	variables          How to use variables?
 	comments           Writing comments
 	types              Variable types and their uses
-	<spell-name>       Documentation for a specific spell, e.g. '@Set'
+	<spell-name>       Documentation for a specific spell, e.g. '@Println'
 
 Scarlet:
 
