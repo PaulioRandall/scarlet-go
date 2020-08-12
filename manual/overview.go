@@ -17,12 +17,12 @@ Usage:
 
 Search terms:
 
-	spell              What are spells and how to use them?
-	spells             List spells
-	variables          How to use variables?
-	comments           Writing comments
-	types              Variable types and their uses
-	<spell-name>       Documentation for a specific spell, e.g. '@Println'
+	spell                  What are spells and how to use them?
+	spells                 List spells
+	variable, variables    How to use variables?
+	comment, comments      Writing comments
+	type, types            Variable types and their uses
+	@<spell-name>          Documentation for a specific spell
 
 Scarlet:
 
@@ -41,15 +41,15 @@ Scarlet:
 		Scarlet is a discworld themed tool, because the logical domain that is
 		programming is filled with things that don't make sense unless you were
 		in the right place, at the right time, and inside the right head.
-		There's also a servere lack of true magic, probably why the ladies
-		arn't that interested.
+		There's also a servere lack of true magic, probably why ladies arn't
+		interested.
 
 	2. No dependencies
 
-		Scarlett scripts have no native way to import other Scarlett scripts.
-		This avoids the	many considerations and issues associated with the
-		practice. Scarlet is designed specifcally for small problems and
-		networkless environments.
+		Scarlett scripts have no native way to import other Scarlett scripts as
+		Scarlet is designed specifcally for small problems, networkless
+		environments, and strictly minimal dependencies. This also avoids the
+		many considerations and issues associated with the practice.
 
 		"Darkness isn't the opposite of light, it is simply its absence."
 			- 'The Light Fantastic' by Terry Pratchett
@@ -70,7 +70,7 @@ Scarlet:
 
 	4. Context specific
 
-		Unlike some modern scripting languages, Scarlett scripts are designed
+		Contrary to modern scripting tools, Scarlett scripts are designed
 		to be platform and situation specific, that is, scripts are written for
 		a single purpose and against a specific version of the tool. This may
 		seem rather restrictive but its to encourage context driven solutions
@@ -83,8 +83,8 @@ Scarlet:
 	5. Minimalist
 
 		Scarlet favours spells over native syntax vis, if a feature is not used
-		constantly or is niche then its better off as a spell that can more
-		easily be modified. Fewer default native features allows uselful ones
+		everywhere and all the time then its better off as a spell that can more
+		readily be modified. Fewer default native features allows uselful ones
 		to be added quickly when desired.
 
 		"Take it from me, there's nothing more terrible than someone out to do
@@ -93,7 +93,7 @@ Scarlet:
 
 	6. Customisable
 
-		If you don't like the names of spells, change them.
+		If you don't like spell implementations, change them.
 		If you don't like the language keywords, change them.
 		If you don't like function brackets, change them.
 
@@ -120,17 +120,17 @@ Good use cases:
 	optimisation but I decided to build an easier Go version first to	try
 	out the idea and learn how to parse code. Once embedded within a
 	repository it could be used to build and run applications both within
-	pipelines and workstations without additional tools; the tools usually
-	involve some god awful installation process.
+	pipelines and workstations without additional tools; because the tools
+	usually involve some god awful installation process.
 
-	With this I could create language independent Web API testing scripts
+	With this I can create language independent Web API testing scripts
 	so I can more easily switch a web server's implementation language
 	and avoid self inflicted vendor lock in. Current tools were either
 	too heavy weight or painfully complex. Project building,
-	configuration, and deployment was another activity I wanted more
+	configuration, and deployment are another activity I want more
 	control over.
 
-	I also wanted do general purpose scripting. There are plenty of
+	I also wanted to do general purpose scripting. There are plenty of
 	languages that can assist with this but I really craved specific tools
 	free of dependencies. I wanted to be able to change the langauge
 	each time I noticed it was woefully incapable of satisfying me.
