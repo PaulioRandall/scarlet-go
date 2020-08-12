@@ -10,3 +10,6 @@
 @FmtScript(
 "test.scarlet",
 )
+
+x, y, z := 1, 2, 3
+@Println(x, ", ", y, ", ", z)

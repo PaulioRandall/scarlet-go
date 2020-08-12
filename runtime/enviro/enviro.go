@@ -100,17 +100,13 @@ func (env *Environment) Exe(in inst.Instruction) {
 		env.Push(v)
 
 	case inst.CO_CTX_GET:
-		id := in.Data.(string)
-		r, ok := env.Get(id)
+		coCtxGet(env, in)
 
-		if ok {
-			env.Push(r)
-		} else {
-			env.Fail(perror.New("Undeclared variable %q", id))
-		}
+	case inst.CO_CTX_SET:
+		coCtxSet(env, in)
 
 	case inst.CO_SPELL:
-		invokeSpell(env, in)
+		coSpell(env, in)
 
 	default:
 		env.Fail(perror.New("Unknown instruction code: %q", in.Code))
@@ -129,7 +125,33 @@ func popArgs(env *Environment, size int) []types.Value {
 	return vs
 }
 
-func invokeSpell(env *Environment, in inst.Instruction) {
+func coCtxGet(env *Environment, in inst.Instruction) {
+
+	id := in.Data.(string)
+	r, ok := env.Get(id)
+
+	if !ok {
+		env.Fail(perror.New("Undeclared variable %q", id))
+		return
+	}
+
+	env.Push(r)
+}
+
+func coCtxSet(env *Environment, in inst.Instruction) {
+
+	id := in.Data.(string)
+	v := env.Pop()
+
+	if v == nil {
+		env.Fail(perror.New("Assignment fail %q, value stack is empty", id))
+		return
+	}
+
+	env.Bind(id, v)
+}
+
+func coSpell(env *Environment, in inst.Instruction) {
 
 	argCount := int(env.Pop().(types.Int))
 	name := in.Data.(string)
