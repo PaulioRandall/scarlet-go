@@ -24,6 +24,9 @@ func statement(shy *shuntingYard) {
 		case shy.inQueue(lexeme.SPELL):
 			call(shy)
 
+		case shy.inQueue(lexeme.IDENTIFIER):
+			assignment(shy)
+
 		default:
 			panic("Unexpected token: " + shy.queue.Head().String())
 		}
@@ -34,21 +37,6 @@ func statement(shy *shuntingYard) {
 
 		shy.output()
 	}
-}
-
-func call(shy *shuntingYard) {
-
-	shy.push() // @Spell
-	shy.push() // "("
-	shy.emit(*shy.stack.Top(), lexeme.CALLABLE)
-
-	for !shy.inQueue(lexeme.RIGHT_PAREN) {
-		expressions(shy)
-	}
-
-	shy.discard() // ")"
-	shy.eject()   // "("
-	shy.pop()     // @Spell
 }
 
 func expressions(shy *shuntingYard) {
@@ -77,5 +65,42 @@ func expression(shy *shuntingYard) {
 		default:
 			panic("Unexpected token: " + shy.queue.Head().String())
 		}
+	}
+}
+
+func call(shy *shuntingYard) {
+
+	shy.push() // @Spell
+	shy.push() // "("
+	shy.emit(*shy.stack.Top(), lexeme.CALLABLE)
+
+	for !shy.inQueue(lexeme.RIGHT_PAREN) {
+		expressions(shy)
+	}
+
+	shy.discard() // ")"
+	shy.eject()   // "("
+	shy.pop()     // @Spell
+}
+
+func assignment(shy *shuntingYard) {
+
+	shy.push() // First ID
+
+	count := 1
+	for shy.inQueue(lexeme.SEPARATOR) {
+		shy.discard()
+		shy.push() // Other IDs
+		count++
+	}
+
+	shy.push() // :=
+	shy.emit(*shy.stack.Top(), lexeme.CALLABLE)
+
+	expressions(shy)
+	shy.pop() // :=
+
+	for ; count > 0; count-- {
+		shy.pop() // IDs
 	}
 }
