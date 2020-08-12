@@ -95,7 +95,7 @@ func assignment(shy *shuntingYard) {
 	}
 
 	shy.push() // :=
-	shy.emit(*shy.stack.Top(), lexeme.CALLABLE)
+	shy.emit(*shy.stack.Top(), lexeme.ASSIGNMENT)
 
 	expressions(shy)
 	shy.pop() // :=

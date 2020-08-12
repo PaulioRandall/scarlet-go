@@ -79,3 +79,53 @@ func Test1_3(t *testing.T) {
 
 	doTest(t, in, exp)
 }
+
+func Test2_1(t *testing.T) {
+
+	// WHEN compiling an assignment
+	// 1 := a
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGNMENT),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_CTX_SET, "x"),
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test2_2(t *testing.T) {
+
+	// WHEN compiling a multi assignment
+	// 1 2 3 := c b a
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGNMENT),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("c", lexeme.IDENTIFIER),
+		lextest.Tok("b", lexeme.IDENTIFIER),
+		lextest.Tok("a", lexeme.IDENTIFIER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("3")),
+		insttest.NewIn(inst.CO_CTX_SET, "c"),
+		insttest.NewIn(inst.CO_CTX_SET, "b"),
+		insttest.NewIn(inst.CO_CTX_SET, "a"),
+	}
+
+	doTest(t, in, exp)
+}

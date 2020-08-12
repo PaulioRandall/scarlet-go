@@ -94,7 +94,7 @@ func Test2_1(t *testing.T) {
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("", lexeme.ASSIGNMENT),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok(":=", lexeme.ASSIGNMENT),
 		lextest.Tok("x", lexeme.IDENTIFIER),
@@ -124,7 +124,7 @@ func Test2_2(t *testing.T) {
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("", lexeme.ASSIGNMENT),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("2", lexeme.NUMBER),
 		lextest.Tok("3", lexeme.NUMBER),

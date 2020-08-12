@@ -28,6 +28,9 @@ func compile(com *compiler) {
 		case com.is(lexeme.CALLABLE):
 			call(com)
 
+		case com.is(lexeme.ASSIGNMENT):
+			assignment(com)
+
 		default:
 			com.unexpected()
 		}
@@ -38,7 +41,7 @@ func compile(com *compiler) {
 
 func call(com *compiler) {
 
-	com.take() // PR_PARAMETERS redundant
+	com.take() // Now redundant
 	argCount := 0
 
 	for !com.is(lexeme.SPELL) {
@@ -59,6 +62,29 @@ func call(com *compiler) {
 		Data:    sp.Raw[1:],
 		Snippet: sp,
 	})
+}
+
+func assignment(com *compiler) {
+
+	com.take() // Now redundant
+	count := 0
+
+	for !com.is(lexeme.ASSIGNMENT) {
+		count++
+		expression(com)
+	}
+
+	com.take() // :=, not needed
+
+	for ; count > 0; count-- {
+		lex := com.take()
+
+		com.output(inst.Instruction{
+			Code:    inst.CO_CTX_SET,
+			Data:    lex.Raw,
+			Snippet: lex,
+		})
+	}
 }
 
 func expression(com *compiler) {

@@ -29,9 +29,10 @@ const (
 
 	// Pop a value off the value stack and put it into the current context.
 	//
-	// Expected value stack:
-	// top: identifier
-	//IN_CTX_SET
+	// Data: identifier
+	// Stack values consumed: 1
+	// 		1st: value
+	CO_CTX_SET
 
 	// Queries a value from the current context and push it onto the value stack.
 	//
