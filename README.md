@@ -5,6 +5,31 @@ the default language.
 
 ## 1. Essential Features
 
+#### Native Assignments
+
+```
+x := true
+x := 1
+x := "abc"
+x := y
+```
+
+```
+x, y, z := 1, 2, 3
+```
+
+#### Void Assignee
+
+```
+_, y := 1, 2
+```
+
+#### Native Variable Deletions
+
+```
+x := _
+``` 
+
 #### Arithmetic Operations
 
 ```
@@ -50,31 +75,6 @@ true || false
 ```
 
 ## 2. Usability Features
-
-#### Native Assignments
-
-```
-x := true
-x := 1
-x := "abc"
-x := y
-```
-
-```
-x, y, z := 1, 2, 3
-```
-
-#### Void Assignee
-
-```
-_, y := 1, 2
-```
-
-#### Native Variable Deletions
-
-```
-x := _
-``` 
 
 #### Functions
 

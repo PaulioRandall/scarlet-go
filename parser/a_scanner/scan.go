@@ -63,6 +63,15 @@ func scanLexeme(rr *runeReader) (*lexeme.Lexeme, error) {
 
 	case rr.accept(','):
 		return rr.slice(lexeme.SEPARATOR), nil
+
+	case rr.accept(':'):
+		if e := rr.expect('='); e != nil {
+			return nil, e
+		}
+		return rr.slice(lexeme.ASSIGNMENT), nil
+
+	case rr.accept('_'):
+		return rr.slice(lexeme.VOID), nil
 	}
 
 	return nil, perror.New(

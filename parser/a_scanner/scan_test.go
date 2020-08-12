@@ -150,7 +150,23 @@ func Test7_5(t *testing.T) {
 	doErrTest(t, "123.a")
 }
 
-func Test8_0(t *testing.T) {
+func Test8_1(t *testing.T) {
+	doTest(t, ":=", lextest.Feign(
+		lextest.Lex(0, 0, ":=", lexeme.ASSIGNMENT),
+	))
+}
+
+func Test8_2(t *testing.T) {
+	doErrTest(t, ":")
+}
+
+func Test9_1(t *testing.T) {
+	doTest(t, "_", lextest.Feign(
+		lextest.Lex(0, 0, "_", lexeme.VOID),
+	))
+}
+
+func Test99_0(t *testing.T) {
 
 	given := "@Println(1,\n true,\n \"heir\")\n"
 

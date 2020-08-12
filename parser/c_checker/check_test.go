@@ -161,3 +161,63 @@ func Test2_6(t *testing.T) {
 
 	doErrorTest(t, in)
 }
+
+func Test3_1(t *testing.T) {
+
+	// WHEN checking a simple assignment
+	// THEN no errors should be returned
+	// x:=1
+	in := lextest.Feign(
+		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test3_2(t *testing.T) {
+
+	// WHEN checking a multi assignment
+	// THEN no errors should be returned
+	// a,b,c,d:=x,true,1,"abc"
+	in := lextest.Feign(
+		lextest.Tok("a", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("b", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("c", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("d", lexeme.IDENTIFIER),
+		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok(`"abc"`, lexeme.STRING),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test3_3(t *testing.T) {
+
+	// WHEN checking a multi assignment with a missing separator
+	// THEN an error should be returned
+	// a,b:=true1
+	in := lextest.Feign(
+		lextest.Tok("a", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("b", lexeme.IDENTIFIER),
+		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}

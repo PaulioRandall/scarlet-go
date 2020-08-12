@@ -22,6 +22,8 @@ const (
 	LEFT_PAREN  // (
 	RIGHT_PAREN // )
 	CALLABLE    // Magic token, tells compiler that spell or func args are coming
+	ASSIGNMENT  // :=
+	VOID        // _
 )
 
 var tokens = map[Token]string{
@@ -38,6 +40,8 @@ var tokens = map[Token]string{
 	LEFT_PAREN:  `LEFT_PAREN`,
 	RIGHT_PAREN: `RIGHT_PAREN`,
 	CALLABLE:    `CALLABLE`,
+	ASSIGNMENT:  `ASSIGNMENT`,
+	VOID:        `VOID`,
 }
 
 func (tk Token) IsAny(others ...Token) bool {
