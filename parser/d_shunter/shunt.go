@@ -12,11 +12,11 @@ func ShuntAll(con *lexeme.Container) *lexeme.Container {
 		out:   &lexeme.Container{},
 	}
 
-	shunt(shy)
+	statement(shy)
 	return shy.out.AsContainer()
 }
 
-func shunt(shy *shuntingYard) {
+func statement(shy *shuntingYard) {
 
 	for shy.more() {
 
@@ -28,12 +28,11 @@ func shunt(shy *shuntingYard) {
 			panic("Unexpected token: " + shy.queue.Head().String())
 		}
 
-		if shy.queueTok().IsTerminator() {
-			shy.output()
-			continue
+		if !shy.queueTok().IsTerminator() {
+			panic("Unexpected token: " + shy.queue.Head().String())
 		}
 
-		panic("Unexpected token: " + shy.queue.Head().String())
+		shy.output()
 	}
 }
 
@@ -43,8 +42,8 @@ func call(shy *shuntingYard) {
 	shy.push() // "("
 	shy.emit(*shy.stack.Top(), lexeme.CALLABLE)
 
-	if !shy.inQueue(lexeme.RIGHT_PAREN) {
-		arguments(shy)
+	for !shy.inQueue(lexeme.RIGHT_PAREN) {
+		expressions(shy)
 	}
 
 	shy.discard() // ")"
@@ -52,22 +51,24 @@ func call(shy *shuntingYard) {
 	shy.pop()     // @Spell
 }
 
-func arguments(shy *shuntingYard) {
+func expressions(shy *shuntingYard) {
 
-	for !shy.inQueue(lexeme.RIGHT_PAREN) {
+	for first := true; first || shy.inQueue(lexeme.SEPARATOR); first = false {
 
-		if shy.inQueue(lexeme.SEPARATOR) {
+		if !first {
 			//shy.output()
 			shy.discard()
 		}
 
-		argument(shy)
+		expression(shy)
 	}
 }
 
-func argument(shy *shuntingYard) {
+func expression(shy *shuntingYard) {
 
-	for !shy.inQueue(lexeme.SEPARATOR) && !shy.inQueue(lexeme.RIGHT_PAREN) {
+	for !shy.inQueue(lexeme.SEPARATOR) &&
+		!shy.inQueue(lexeme.RIGHT_PAREN) &&
+		!shy.queueTok().IsTerminator() {
 
 		switch {
 		case shy.queueTok().IsTerm():
