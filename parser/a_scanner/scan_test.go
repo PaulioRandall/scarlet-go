@@ -160,6 +160,36 @@ func Test8_2(t *testing.T) {
 	doErrTest(t, ":")
 }
 
+func Test9_1(t *testing.T) {
+	doTest(t, "+", lextest.Feign(
+		lextest.Lex(0, 0, "+", lexeme.ADD),
+	))
+}
+
+func Test9_2(t *testing.T) {
+	doTest(t, "-", lextest.Feign(
+		lextest.Lex(0, 0, "-", lexeme.SUB),
+	))
+}
+
+func Test9_3(t *testing.T) {
+	doTest(t, "*", lextest.Feign(
+		lextest.Lex(0, 0, "*", lexeme.MUL),
+	))
+}
+
+func Test9_4(t *testing.T) {
+	doTest(t, "/", lextest.Feign(
+		lextest.Lex(0, 0, "/", lexeme.DIV),
+	))
+}
+
+func Test9_5(t *testing.T) {
+	doTest(t, "%", lextest.Feign(
+		lextest.Lex(0, 0, "%", lexeme.REM),
+	))
+}
+
 func Test99_0(t *testing.T) {
 
 	given := "@Println(1,\n true,\n \"heir\")\n"

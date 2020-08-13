@@ -23,6 +23,11 @@ const (
 	RIGHT_PAREN // )
 	CALLABLE    // Magic token, tells compiler that spell or func args are coming
 	ASSIGNMENT  // :=
+	ADD         // +
+	SUB         // -
+	MUL         // *
+	DIV         // /
+	REM         // %
 )
 
 var tokens = map[Token]string{
@@ -40,6 +45,11 @@ var tokens = map[Token]string{
 	RIGHT_PAREN: `RIGHT_PAREN`,
 	CALLABLE:    `CALLABLE`,
 	ASSIGNMENT:  `ASSIGNMENT`,
+	ADD:         `ADDITION`,
+	SUB:         `SUBTRACTION`,
+	MUL:         `MULTIPLICATION`,
+	DIV:         `DIVISION`,
+	REM:         `REMAINDER`,
 }
 
 func (tk Token) IsAny(others ...Token) bool {

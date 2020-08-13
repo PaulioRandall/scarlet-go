@@ -69,6 +69,21 @@ func scanLexeme(rr *runeReader) (*lexeme.Lexeme, error) {
 			return nil, e
 		}
 		return rr.slice(lexeme.ASSIGNMENT), nil
+
+	case rr.accept('+'):
+		return rr.slice(lexeme.ADD), nil
+
+	case rr.accept('-'):
+		return rr.slice(lexeme.SUB), nil
+
+	case rr.accept('*'):
+		return rr.slice(lexeme.MUL), nil
+
+	case rr.accept('/'):
+		return rr.slice(lexeme.DIV), nil
+
+	case rr.accept('%'):
+		return rr.slice(lexeme.REM), nil
 	}
 
 	return nil, perror.New(
