@@ -193,3 +193,53 @@ func Test3_2(t *testing.T) {
 
 	doTest(t, in, exp)
 }
+
+func Test3_3(t *testing.T) {
+
+	// WHEN compiling a spell with a simple expression as an argument
+	// 1 2 + @Println
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.SPELL),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
+		insttest.NewIn(inst.CO_ADD, nil),
+		insttest.NewIn(inst.CO_SPELL, "Println"),
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test3_4(t *testing.T) {
+
+	// WHEN compiling an assignment with a simple expression as an argument
+	// 1 2 + x
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGNMENT),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
+		insttest.NewIn(inst.CO_ADD, nil),
+		insttest.NewIn(inst.CO_CTX_SET, "x"),
+	}
+
+	doTest(t, in, exp)
+}
