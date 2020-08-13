@@ -307,3 +307,38 @@ func Test4_5(t *testing.T) {
 
 	doErrorTest(t, in)
 }
+
+func Test4_6(t *testing.T) {
+
+	// WHEN checking a spell with a single simple expression argument
+	// THEN no errors should be returned
+	// @Println(1 + 2)
+	in := lextest.Feign(
+		lextest.Tok("@Print", lexeme.SPELL),
+		lextest.Tok("(", lexeme.LEFT_PAREN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.RIGHT_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test4_7(t *testing.T) {
+
+	// WHEN checking an assignment with a single simple expression argument
+	// THEN no errors should be returned
+	// x := 1 + 2
+	in := lextest.Feign(
+		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}

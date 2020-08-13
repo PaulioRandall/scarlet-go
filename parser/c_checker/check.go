@@ -74,10 +74,8 @@ func parameters(chk *checker) error {
 
 	for more := true; more; {
 
-		switch {
-		case chk.accept(chk.tok().IsTerm()):
-		default:
-			return chk.unexpected("<PARAMETER>")
+		if e := expression(chk); e != nil {
+			return e
 		}
 
 		more = chk.acceptAny(lexeme.SEPARATOR)
@@ -114,7 +112,7 @@ func assignment(chk *checker) error {
 	}
 
 	for count > 0 {
-		if e := term(chk); e != nil {
+		if e := expression(chk); e != nil {
 			return e
 		}
 
@@ -142,6 +140,22 @@ func expressionStatement(chk *checker) error {
 			return e
 		}
 
+		if e = term(chk); e != nil {
+			return e
+		}
+	}
+
+	return nil
+}
+
+func expression(chk *checker) error {
+
+	e := term(chk)
+	if e != nil {
+		return e
+	}
+
+	for chk.accept(chk.tok().IsOperator()) {
 		if e = term(chk); e != nil {
 			return e
 		}

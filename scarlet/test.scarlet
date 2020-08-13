@@ -13,5 +13,5 @@ x, y, z := 1, 2, 3
 @Println(x, ", ", y, ", ", z)
 
 
-# answer := 9 + 9
-# @Println(9 + 9)
+answer := 9 + 9
+@Println(answer)
