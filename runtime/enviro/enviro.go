@@ -3,7 +3,6 @@ package enviro
 import (
 	"github.com/PaulioRandall/scarlet-go/shared/inst"
 	"github.com/PaulioRandall/scarlet-go/shared/perror"
-	"github.com/PaulioRandall/scarlet-go/spells"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
@@ -102,75 +101,31 @@ func (env *Environment) Exe(in inst.Instruction) {
 		v := types.BuiltinValueOf(in.Data)
 		env.Push(v)
 
-	case inst.CO_CTX_GET:
+	case inst.CO_CTX_GET: // co_variables.go
 		coCtxGet(env, in)
 
 	case inst.CO_CTX_SET:
 		coCtxSet(env, in)
 
-	case inst.CO_ADD:
+	case inst.CO_ADD: // co_operation.go
 		coAdd(env, in)
 
-	case inst.CO_SPELL:
+	case inst.CO_SUB:
+		coSub(env, in)
+
+	case inst.CO_MUL:
+		coMul(env, in)
+
+	case inst.CO_DIV:
+		coDiv(env, in)
+
+	case inst.CO_REM:
+		coRem(env, in)
+
+	case inst.CO_SPELL: // co_call.go
 		coSpell(env, in)
 
 	default:
 		env.Fail(perror.New("Unknown instruction code: %q", in.Code))
 	}
-}
-
-func coCtxGet(env *Environment, in inst.Instruction) {
-
-	id := in.Data.(string)
-	r, ok := env.Get(id)
-
-	if !ok {
-		env.Fail(perror.New("Undeclared variable %q", id))
-		return
-	}
-
-	env.Push(r)
-}
-
-func coCtxSet(env *Environment, in inst.Instruction) {
-
-	id := in.Data.(string)
-	v := env.Pop()
-
-	if v == nil {
-		env.Fail(perror.New("Assignment fail %q, value stack is empty", id))
-		return
-	}
-
-	env.Bind(id, v)
-}
-
-func coSpell(env *Environment, in inst.Instruction) {
-
-	name := in.Data.(string)
-
-	sp := spells.LookUp(name)
-	if sp == nil {
-		env.Fail(perror.New("Unknown spell %q", name))
-		return
-	}
-
-	args := popArgs(env)
-	sp.Invoke(env, args)
-}
-
-func popArgs(env *Environment) []types.Value {
-
-	isNotDelim := func(v types.Value) bool {
-		_, is := v.(types.Delim)
-		return !is
-	}
-
-	vs := []types.Value{}
-
-	for v := env.Pop(); isNotDelim(v); v = env.Pop() {
-		vs = append(vs, v)
-	}
-
-	return vs
 }

@@ -32,3 +32,47 @@ func coAdd(env *Environment, in inst.Instruction) {
 	left.Add(right.Number)
 	env.Push(left)
 }
+
+func coSub(env *Environment, in inst.Instruction) {
+
+	left, right, ok := popOperands(env)
+	if !ok {
+		return
+	}
+
+	left.Sub(right.Number)
+	env.Push(left)
+}
+
+func coMul(env *Environment, in inst.Instruction) {
+
+	left, right, ok := popOperands(env)
+	if !ok {
+		return
+	}
+
+	left.Mul(right.Number)
+	env.Push(left)
+}
+
+func coDiv(env *Environment, in inst.Instruction) {
+
+	left, right, ok := popOperands(env)
+	if !ok {
+		return
+	}
+
+	left.Div(right.Number)
+	env.Push(left)
+}
+
+func coRem(env *Environment, in inst.Instruction) {
+
+	left, right, ok := popOperands(env)
+	if !ok {
+		return
+	}
+
+	left.Mod(right.Number)
+	env.Push(left)
+}
