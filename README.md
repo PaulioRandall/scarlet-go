@@ -3,19 +3,7 @@
 Scarlet is my second attempt at creating an interpreter. Scarlett is the name of
 the default language.
 
-## 1. Essential Features
-
-#### Void Assignee
-
-```
-_, y := 1, 2
-```
-
-#### Native Variable Deletions
-
-```
-x := _
-``` 
+## 1.0 (Essential Features)
 
 #### Arithmetic Operations
 
@@ -25,10 +13,11 @@ x := _
 1 * 2
 1 / 2
 1 % 2
+1 * (2 + 3)
 ```
 
 ```
-1 + 2 * 3 - 4 / 5 % 6
+(1 + 2) * 3 - 4 / 5 % 6
 ```
 
 #### Logical Operations
@@ -61,16 +50,32 @@ true || false
 [x > 1] ...
 ```
 
-## 2. Usability Features
-
-#### Functions
+#### While Loops
 
 ```
-f := F(a, b -> x, y) {
+loop [true] {
   ...
 }
+```
 
-x, y := f(1, 2)
+## 1.1
+
+#### Void Assignee
+
+```
+_, y := 1, 2
+```
+
+#### Native Variable Deletions
+
+```
+x := _
+```
+
+#### Spell Returns
+
+```
+sum := @Sum(1, 2, 3)
 ```
 
 #### Program Spells
@@ -100,7 +105,7 @@ Exit the script with an error message:
 @Panic(exitCode, message)
 ```
 
-#### String Spells
+## 1.2 (String Spells)
 
 Take a slice of a string:
 ```
@@ -142,7 +147,19 @@ Parse a string as a bool:
 x, e := @str.ParseBool(bool)
 ```
 
-#### List Spells
+## 2.0 
+
+#### Functions
+
+```
+f := F(a, b -> x, y) {
+  ...
+}
+
+x, y := f(1, 2)
+```
+
+## 3.0 (Lists)
 
 Create a new list:
 ```
@@ -200,7 +217,7 @@ x := @list.Foreach(list, F(i, value, more) {
 })
 ```
 
-#### Map Spells (Requires the list type)
+## 3.1 (Maps)
 
 Create a new map:
 ```
@@ -248,7 +265,7 @@ x := @map.Foreach(map, F(key, value) {
 })
 ```
 
-## 3. Nice-to-haves
+## 4.0+
 
 These are debatable features that are not really required but might make
 programming moderately smoother.

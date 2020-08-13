@@ -3,8 +3,6 @@ package manual
 func init() {
 	Register("", overview)
 	Register("overview", overview)
-	Register("comment", comments)
-	Register("comments", comments)
 }
 
 func overview() string {
@@ -20,7 +18,6 @@ Search terms:
 	spell                  What are spells and how to use them?
 	spells                 List spells
 	variable, variables    How to use variables?
-	comment, comments      Writing comments
 	type, types            Variable types and their uses
 	@<spell-name>          Documentation for a specific spell
 
@@ -165,23 +162,4 @@ Bad use cases:
 	dentistry."
 		- (Original) 'Maskerade' by Terry Pratchett
 		- Adapted by Paulio`
-}
-
-func comments() string {
-	return `
-Comments provide a way for programmers to communicate to readers what they
-think their code does in a manner that is easily misinterpretted. It is
-customary to write comments whenever you feel like it and not based on the
-ambiguaity or complexity of the functionality under comment.
-
-Examples:
-
-	# Comments start with the a pound symbol '#', sometimes referred to as hash,
-	# and terminate at the end of the line. What you write in the comment is
-	# entirely up to you.
-
-	# This function adds two numbers
-	add := F(a, b -> c) {
-		c := a + b # The answer is stored in the return variable 'c'
-	}`
 }
