@@ -83,6 +83,14 @@ func (tk Token) IsAssignee() bool {
 	return tk == IDENTIFIER
 }
 
+func (tk Token) IsOperator() bool {
+	return tk == ADD ||
+		tk == SUB ||
+		tk == MUL ||
+		tk == DIV ||
+		tk == REM
+}
+
 func (tk Token) IsOpener() bool {
 	return tk == LEFT_PAREN
 }

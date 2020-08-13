@@ -221,3 +221,89 @@ func Test3_3(t *testing.T) {
 
 	doErrorTest(t, in)
 }
+
+func Test4_1(t *testing.T) {
+
+	// WHEN checking a simple expression
+	// THEN no errors should be returned
+	// 1 + 2
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test4_2(t *testing.T) {
+
+	// WHEN checking a complex expression
+	// THEN no errors should be returned
+	// 1 + 2 - 3 * 4 / 5 % 6
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("-", lexeme.SUB),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("4", lexeme.NUMBER),
+		lextest.Tok("/", lexeme.DIV),
+		lextest.Tok("5", lexeme.NUMBER),
+		lextest.Tok("%", lexeme.REM),
+		lextest.Tok("6", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test4_3(t *testing.T) {
+
+	// WHEN checking an expression with duplicate operators
+	// THEN an error should be returned
+	// 1 + + 2
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}
+
+func Test4_4(t *testing.T) {
+
+	// WHEN checking an expression with duplicate operands
+	// THEN an error should be returned
+	// 1 1 + 2
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}
+
+func Test4_5(t *testing.T) {
+
+	// WHEN checking an expression with trailing operator
+	// THEN an error should be returned
+	// 1 + 2 -
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("-", lexeme.SUB),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}
