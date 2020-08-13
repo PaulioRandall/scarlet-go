@@ -108,6 +108,9 @@ func (env *Environment) Exe(in inst.Instruction) {
 	case inst.CO_CTX_SET:
 		coCtxSet(env, in)
 
+	case inst.CO_ADD:
+		coAdd(env, in)
+
 	case inst.CO_SPELL:
 		coSpell(env, in)
 

@@ -274,3 +274,55 @@ func Test3_5(t *testing.T) {
 
 	doTest(t, in, exp)
 }
+
+func Test3_6(t *testing.T) {
+
+	// WHEN refixing a spell with a single simple expression argument
+	// @Println(1 + 2)
+	in := lextest.Feign(
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.LEFT_PAREN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.RIGHT_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	exp := lextest.Feign(
+		lextest.Tok("", lexeme.SPELL),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in, exp)
+}
+
+func Test3_7(t *testing.T) {
+
+	// WHEN refixing an assignment with a single simple expression
+	// x := 1 + 2
+	in := lextest.Feign(
+		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	exp := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGNMENT),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in, exp)
+}
