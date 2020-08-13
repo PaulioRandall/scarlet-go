@@ -55,8 +55,7 @@ func expressions(shy *shuntingYard) {
 	for first := true; first || shy.inQueue(lexeme.SEPARATOR); first = false {
 
 		if !first {
-			//shy.output()
-			shy.discard()
+			shy.output()
 		}
 
 		expression(shy)
@@ -113,11 +112,12 @@ func call(shy *shuntingYard) {
 
 func assignment(shy *shuntingYard) {
 
-	count := 1
+	// First has already been pushed
+	mark := shy.stackSize() - 1
+
 	for shy.inQueue(lexeme.SEPARATOR) {
-		shy.discard()
+		shy.push()
 		shy.push() // Other IDs
-		count++
 	}
 
 	shy.push() // :=
@@ -126,7 +126,7 @@ func assignment(shy *shuntingYard) {
 	expressions(shy)
 	shy.pop() // :=
 
-	for ; count > 0; count-- {
+	for mark < shy.stackSize() {
 		shy.pop() // IDs
 	}
 }

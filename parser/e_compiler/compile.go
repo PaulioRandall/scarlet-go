@@ -32,7 +32,7 @@ func compile(com *compiler) {
 			assignment(com)
 
 		default:
-			com.unexpected()
+			expression(com)
 		}
 
 		com.reject() // GEN_TERMINATOR, now redundant
@@ -67,16 +67,19 @@ func call(com *compiler) {
 func assignment(com *compiler) {
 
 	com.take() // Now redundant
-	count := 0
 
 	for !com.is(lexeme.ASSIGNMENT) {
-		count++
 		expression(com)
 	}
 
 	com.take() // :=, not needed
 
-	for ; count > 0; count-- {
+	for first := true; first || com.is(lexeme.SEPARATOR); first = false {
+
+		if !first {
+			com.reject() // separator
+		}
+
 		lex := com.take()
 
 		com.output(inst.Instruction{
@@ -89,15 +92,24 @@ func assignment(com *compiler) {
 
 func expression(com *compiler) {
 
-	switch {
-	case com.is(lexeme.IDENTIFIER):
-		identifier(com)
+	for {
+		switch {
+		case com.is(lexeme.IDENTIFIER):
+			identifier(com)
 
-	case com.tok().IsLiteral():
-		literal(com)
+		case com.tok().IsLiteral():
+			literal(com)
 
-	default:
-		com.unexpected()
+		case com.tok().IsOperator():
+			operator(com)
+
+		case com.is(lexeme.SEPARATOR):
+			com.reject()
+			return
+
+		default:
+			return
+		}
 	}
 }
 
@@ -136,6 +148,11 @@ func literal(com *compiler) {
 	}
 
 	com.output(in)
+}
+
+func operator(com *compiler) {
+	// TODO
+	com.take()
 }
 
 func unquote(s string) string {

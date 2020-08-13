@@ -57,15 +57,15 @@ func Test1_2(t *testing.T) {
 func Test1_3(t *testing.T) {
 
 	// WHEN refixing a spell with multiple arguments
-	// @Println(x, y, z)
+	// @Println(x, 1, true)
 	in := lextest.Feign(
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("(", lexeme.LEFT_PAREN),
 		lextest.Tok("x", lexeme.IDENTIFIER),
 		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok("true", lexeme.BOOL),
 		lextest.Tok(")", lexeme.RIGHT_PAREN),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
@@ -73,8 +73,10 @@ func Test1_3(t *testing.T) {
 	exp := lextest.Feign(
 		lextest.Tok("", lexeme.CALLABLE),
 		lextest.Tok("x", lexeme.IDENTIFIER),
-		lextest.Tok("x", lexeme.IDENTIFIER),
-		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("true", lexeme.BOOL),
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
@@ -126,11 +128,15 @@ func Test2_2(t *testing.T) {
 	exp := lextest.Feign(
 		lextest.Tok("", lexeme.ASSIGNMENT),
 		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok(":=", lexeme.ASSIGNMENT),
 		lextest.Tok("c", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("b", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("a", lexeme.IDENTIFIER),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)

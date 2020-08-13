@@ -60,3 +60,9 @@ func (com *compiler) unexpected() {
 
 	panic("Unexpected token: " + com.input.Head().String())
 }
+
+func (com *compiler) println() {
+	if com.input.More() {
+		println(com.input.Head().String())
+	}
+}

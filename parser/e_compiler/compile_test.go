@@ -62,7 +62,9 @@ func Test1_3(t *testing.T) {
 	in := lextest.Feign(
 		lextest.Tok("", lexeme.CALLABLE),
 		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok(`"abc"`, lexeme.STRING),
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("\n", lexeme.NEWLINE),
@@ -108,11 +110,15 @@ func Test2_2(t *testing.T) {
 	in := lextest.Feign(
 		lextest.Tok("", lexeme.ASSIGNMENT),
 		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok(":=", lexeme.ASSIGNMENT),
 		lextest.Tok("c", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("b", lexeme.IDENTIFIER),
+		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("a", lexeme.IDENTIFIER),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
