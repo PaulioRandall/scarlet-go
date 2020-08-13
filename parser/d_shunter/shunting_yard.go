@@ -7,6 +7,7 @@ import (
 type Stack interface {
 	Empty() bool
 	More() bool
+	Size() int
 	Top() *lexeme.Lexeme
 	Push(*lexeme.Lexeme)
 	Pop() *lexeme.Lexeme
@@ -33,6 +34,10 @@ func (shy *shuntingYard) empty() bool {
 
 func (shy *shuntingYard) more() bool {
 	return shy.queue.More() || shy.stack.More()
+}
+
+func (shy *shuntingYard) stackSize() int {
+	return shy.stack.Size()
 }
 
 func (shy *shuntingYard) inQueue(tk lexeme.Token) bool {

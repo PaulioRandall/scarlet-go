@@ -25,7 +25,18 @@ func statement(shy *shuntingYard) {
 			call(shy)
 
 		case shy.inQueue(lexeme.IDENTIFIER):
-			assignment(shy)
+			shy.push() // First ID
+
+			if shy.inQueue(lexeme.SEPARATOR) || shy.inQueue(lexeme.ASSIGNMENT) {
+				assignment(shy)
+				break
+			}
+
+			shy.pop()
+			fallthrough
+
+		case shy.queueTok().IsTerm():
+			expression(shy)
 
 		default:
 			panic("Unexpected token: " + shy.queue.Head().String())
@@ -54,6 +65,8 @@ func expressions(shy *shuntingYard) {
 
 func expression(shy *shuntingYard) {
 
+	mark := shy.stackSize()
+
 	for !shy.inQueue(lexeme.SEPARATOR) &&
 		!shy.inQueue(lexeme.RIGHT_PAREN) &&
 		!shy.queueTok().IsTerminator() {
@@ -62,9 +75,24 @@ func expression(shy *shuntingYard) {
 		case shy.queueTok().IsTerm():
 			shy.output()
 
+		case shy.queueTok().IsOperator():
+			for shy.stackTok().Precedence() >= shy.queueTok().Precedence() {
+				shy.pop()
+			}
+
+			shy.push()
+
+		// case:
+		// TODO: Incorporate spells calls and assignments once returns from spell
+		// TODO: calls have been implemented.
+
 		default:
 			panic("Unexpected token: " + shy.queue.Head().String())
 		}
+	}
+
+	for mark < shy.stackSize() {
+		shy.pop()
 	}
 }
 
@@ -84,8 +112,6 @@ func call(shy *shuntingYard) {
 }
 
 func assignment(shy *shuntingYard) {
-
-	shy.push() // First ID
 
 	count := 1
 	for shy.inQueue(lexeme.SEPARATOR) {

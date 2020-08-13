@@ -52,6 +52,17 @@ var tokens = map[Token]string{
 	REM:         `REMAINDER`,
 }
 
+func (tk Token) Precedence() int {
+	switch tk {
+	case MUL, DIV, REM:
+		return 2
+	case ADD, SUB:
+		return 1
+	}
+
+	return 0
+}
+
 func (tk Token) IsAny(others ...Token) bool {
 
 	for _, o := range others {
