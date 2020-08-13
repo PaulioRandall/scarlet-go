@@ -49,6 +49,20 @@ const (
 	//    1st: query response value
 	CO_CTX_GET
 
+	// Performs an arithmetic operation on two operands and pushes the result
+	// onto the value stack.
+	//
+	// Stack values consumed: 2
+	//    1st: right operand
+	//    2nd: left operand
+	// Stack values produced: 1
+	//    1st: operation result
+	CO_ADD
+	CO_SUB
+	CO_MUL
+	CO_DIV
+	CO_REM
+
 	// Call a spell with the contents of the value stack.
 	//
 	// Data: spell name

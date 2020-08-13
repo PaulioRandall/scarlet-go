@@ -135,3 +135,61 @@ func Test2_2(t *testing.T) {
 
 	doTest(t, in, exp)
 }
+
+func Test3_1(t *testing.T) {
+
+	// WHEN compiling a simple expression
+	// 1 2 +
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
+		insttest.NewIn(inst.CO_ADD, nil),
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test3_2(t *testing.T) {
+
+	// WHEN compiling a complex expression
+	// 1 2 3 * 4 / + 5 6 % -
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("4", lexeme.NUMBER),
+		lextest.Tok("/", lexeme.DIV),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("5", lexeme.NUMBER),
+		lextest.Tok("6", lexeme.NUMBER),
+		lextest.Tok("%", lexeme.REM),
+		lextest.Tok("-", lexeme.SUB),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("3")),
+		insttest.NewIn(inst.CO_MUL, nil),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("4")),
+		insttest.NewIn(inst.CO_DIV, nil),
+		insttest.NewIn(inst.CO_ADD, nil),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("5")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("6")),
+		insttest.NewIn(inst.CO_REM, nil),
+		insttest.NewIn(inst.CO_SUB, nil),
+	}
+
+	doTest(t, in, exp)
+}

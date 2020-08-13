@@ -145,8 +145,33 @@ func literal(com *compiler) {
 }
 
 func operator(com *compiler) {
-	// TODO: Create instructions for each operator before trying to implement
-	// TODO: Then do the same thing as the 'literal' function above
+
+	lex := com.take()
+	in := inst.Instruction{
+		Snippet: lex,
+	}
+
+	switch {
+	case lex.Tok == lexeme.ADD:
+		in.Code = inst.CO_ADD
+
+	case lex.Tok == lexeme.SUB:
+		in.Code = inst.CO_SUB
+
+	case lex.Tok == lexeme.MUL:
+		in.Code = inst.CO_MUL
+
+	case lex.Tok == lexeme.DIV:
+		in.Code = inst.CO_DIV
+
+	case lex.Tok == lexeme.REM:
+		in.Code = inst.CO_REM
+
+	default:
+		com.unexpected()
+	}
+
+	com.output(in)
 }
 
 func unquote(s string) string {

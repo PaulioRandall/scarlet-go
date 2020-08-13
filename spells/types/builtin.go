@@ -24,26 +24,6 @@ func (Delim) String() string {
 	return ""
 }
 
-// @Retired?
-type Int int // Internal use only
-
-func (Int) Name() string {
-	return "int"
-}
-
-func (a Int) Equal(b Value) bool {
-	return a.Comparable(b) && a == b.(Int)
-}
-
-func (a Int) Comparable(b Value) bool {
-	_, ok := b.(Int)
-	return ok
-}
-
-func (a Int) String() string {
-	return fmt.Sprintf("%v", int(a))
-}
-
 type Bool bool
 
 func (Bool) Name() string {

@@ -224,6 +224,7 @@ func Test3_4(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
+	// 1 2 3 * +
 	exp := lextest.Feign(
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("2", lexeme.NUMBER),
@@ -255,6 +256,7 @@ func Test3_5(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
+	// 1 2 3 * 4 / + 5 6 % -
 	exp := lextest.Feign(
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("2", lexeme.NUMBER),
