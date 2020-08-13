@@ -25,8 +25,8 @@ func compile(com *compiler) {
 		case com.empty():
 			com.unexpected()
 
-		case com.is(lexeme.CALLABLE):
-			call(com)
+		case com.is(lexeme.SPELL):
+			spell(com)
 
 		case com.is(lexeme.ASSIGNMENT):
 			assignment(com)
@@ -39,24 +39,18 @@ func compile(com *compiler) {
 	}
 }
 
-func call(com *compiler) {
+func spell(com *compiler) {
 
-	com.take() // Now redundant
-	argCount := 0
+	com.output(inst.Instruction{
+		Code:    inst.CO_DELIM_PUSH,
+		Snippet: com.take(),
+	})
 
 	for !com.is(lexeme.SPELL) {
-		argCount++
 		expression(com)
 	}
 
 	sp := com.take()
-
-	com.output(inst.Instruction{
-		Code:    inst.CO_VAL_PUSH,
-		Data:    argCount,
-		Snippet: sp,
-	})
-
 	com.output(inst.Instruction{
 		Code:    inst.CO_SPELL,
 		Data:    sp.Raw[1:],
@@ -66,7 +60,7 @@ func call(com *compiler) {
 
 func assignment(com *compiler) {
 
-	com.take() // Now redundant
+	com.take()
 
 	for !com.is(lexeme.ASSIGNMENT) {
 		expression(com)
@@ -151,8 +145,8 @@ func literal(com *compiler) {
 }
 
 func operator(com *compiler) {
-	// TODO
-	com.take()
+	// TODO: Create instructions for each operator before trying to implement
+	// TODO: Then do the same thing as the 'literal' function above
 }
 
 func unquote(s string) string {

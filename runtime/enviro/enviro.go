@@ -95,6 +95,9 @@ func (env *Environment) Def(id string, v types.Value) bool {
 func (env *Environment) Exe(in inst.Instruction) {
 
 	switch in.Code {
+	case inst.CO_DELIM_PUSH:
+		env.Push(types.Delim{})
+
 	case inst.CO_VAL_PUSH:
 		v := types.BuiltinValueOf(in.Data)
 		env.Push(v)
@@ -111,18 +114,6 @@ func (env *Environment) Exe(in inst.Instruction) {
 	default:
 		env.Fail(perror.New("Unknown instruction code: %q", in.Code))
 	}
-}
-
-func popArgs(env *Environment, size int) []types.Value {
-
-	vs := make([]types.Value, size)
-
-	for i := size - 1; i >= 0; i-- {
-		vs[i] = env.Pop()
-		size--
-	}
-
-	return vs
 }
 
 func coCtxGet(env *Environment, in inst.Instruction) {
@@ -153,7 +144,6 @@ func coCtxSet(env *Environment, in inst.Instruction) {
 
 func coSpell(env *Environment, in inst.Instruction) {
 
-	argCount := int(env.Pop().(types.Int))
 	name := in.Data.(string)
 
 	sp := spells.LookUp(name)
@@ -162,6 +152,22 @@ func coSpell(env *Environment, in inst.Instruction) {
 		return
 	}
 
-	args := popArgs(env, argCount)
+	args := popArgs(env)
 	sp.Invoke(env, args)
+}
+
+func popArgs(env *Environment) []types.Value {
+
+	isNotDelim := func(v types.Value) bool {
+		_, is := v.(types.Delim)
+		return !is
+	}
+
+	vs := []types.Value{}
+
+	for v := env.Pop(); isNotDelim(v); v = env.Pop() {
+		vs = append(vs, v)
+	}
+
+	return vs
 }

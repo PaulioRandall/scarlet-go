@@ -24,7 +24,7 @@ func Test1_1(t *testing.T) {
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
@@ -45,7 +45,7 @@ func Test1_2(t *testing.T) {
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("x", lexeme.IDENTIFIER),
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("\n", lexeme.NEWLINE),
@@ -71,7 +71,7 @@ func Test1_3(t *testing.T) {
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("x", lexeme.IDENTIFIER),
 		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("1", lexeme.NUMBER),

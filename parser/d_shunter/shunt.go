@@ -99,7 +99,7 @@ func call(shy *shuntingYard) {
 
 	shy.push() // @Spell
 	shy.push() // "("
-	shy.emit(*shy.stack.Top(), lexeme.CALLABLE)
+	shy.emit(*shy.stack.Top(), lexeme.SPELL)
 
 	for !shy.inQueue(lexeme.RIGHT_PAREN) {
 		expressions(shy)

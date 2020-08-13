@@ -20,6 +20,14 @@ const (
 	// Pop an instruction off the call stack and onto the value stack.
 	//IN_REF_POP
 
+	// Push a delimiter onto the value stack. Delimiters are used to indicate
+	// when to stop popping values of the value stack for instruction that
+	// have variable length arguments, e.g. spell arguments and assignments.
+	//
+	// Stack values produced: 1
+	//    1st: delimiter
+	CO_DELIM_PUSH
+
 	// Push a value onto the value stack.
 	//
 	// Data: value

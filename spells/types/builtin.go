@@ -6,6 +6,25 @@ import (
 	"github.com/PaulioRandall/scarlet-go/shared/number"
 )
 
+type Delim struct{} // Internal use only
+
+func (Delim) Name() string {
+	return "delim"
+}
+
+func (Delim) Equal(Value) bool {
+	return false
+}
+
+func (Delim) Comparable(Value) bool {
+	return false
+}
+
+func (Delim) String() string {
+	return ""
+}
+
+// @Retired?
 type Int int // Internal use only
 
 func (Int) Name() string {

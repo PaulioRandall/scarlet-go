@@ -20,14 +20,14 @@ func Test1_1(t *testing.T) {
 	// WHEN compiling a spell with no arguments
 	// @Println()
 	in := lextest.Feign(
-		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		insttest.NewIn(inst.CO_VAL_PUSH, 0),
+		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
 		insttest.NewIn(inst.CO_SPELL, "Println"),
 	}
 
@@ -39,7 +39,7 @@ func Test1_2(t *testing.T) {
 	// WHEN compiling a spell with an identifier argument
 	// @Println(x)
 	in := lextest.Feign(
-		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("x", lexeme.IDENTIFIER),
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("\n", lexeme.NEWLINE),
@@ -47,8 +47,8 @@ func Test1_2(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
 		insttest.NewIn(inst.CO_CTX_GET, "x"),
-		insttest.NewIn(inst.CO_VAL_PUSH, 1),
 		insttest.NewIn(inst.CO_SPELL, "Println"),
 	}
 
@@ -60,7 +60,7 @@ func Test1_3(t *testing.T) {
 	// WHEN compiling a spell with a multiple arguments of different types
 	// @Println(x, 1, "abc")
 	in := lextest.Feign(
-		lextest.Tok("", lexeme.CALLABLE),
+		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("x", lexeme.IDENTIFIER),
 		lextest.Tok(",", lexeme.SEPARATOR),
 		lextest.Tok("1", lexeme.NUMBER),
@@ -72,10 +72,10 @@ func Test1_3(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
 		insttest.NewIn(inst.CO_CTX_GET, "x"),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
 		insttest.NewIn(inst.CO_VAL_PUSH, "abc"),
-		insttest.NewIn(inst.CO_VAL_PUSH, 3),
 		insttest.NewIn(inst.CO_SPELL, "Println"),
 	}
 
