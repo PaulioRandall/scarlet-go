@@ -160,12 +160,6 @@ func Test8_2(t *testing.T) {
 	doErrTest(t, ":")
 }
 
-func Test9_1(t *testing.T) {
-	doTest(t, "_", lextest.Feign(
-		lextest.Lex(0, 0, "_", lexeme.VOID),
-	))
-}
-
 func Test99_0(t *testing.T) {
 
 	given := "@Println(1,\n true,\n \"heir\")\n"
