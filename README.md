@@ -5,21 +5,6 @@ the default language.
 
 ## 1.0 (Essential Features)
 
-#### Arithmetic Operations
-
-```
-1 + 2
-1 - 2
-1 * 2
-1 / 2
-1 % 2
-1 * (2 + 3)
-```
-
-```
-(1 + 2) * 3 - 4 / 5 % 6
-```
-
 #### Logical Operations
 
 ```
