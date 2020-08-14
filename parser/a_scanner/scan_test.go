@@ -40,7 +40,7 @@ func Test2_1(t *testing.T) {
 
 func Test3_1(t *testing.T) {
 	doTest(t, "   \t\v\f", lextest.Feign(
-		lextest.Lex(0, 0, "   \t\v\f", lexeme.WHITESPACE),
+		lextest.Lex(0, 0, "   \t\v\f", lexeme.SPACE),
 	))
 }
 
@@ -264,11 +264,11 @@ func Test99_0(t *testing.T) {
 		lextest.Lex(0, 9, "1", lexeme.NUMBER),
 		lextest.Lex(0, 10, ",", lexeme.DELIM),
 		lextest.Lex(0, 11, "\n", lexeme.NEWLINE),
-		lextest.Lex(1, 0, " ", lexeme.WHITESPACE),
+		lextest.Lex(1, 0, " ", lexeme.SPACE),
 		lextest.Lex(1, 1, "true", lexeme.BOOL),
 		lextest.Lex(1, 5, ",", lexeme.DELIM),
 		lextest.Lex(1, 6, "\n", lexeme.NEWLINE),
-		lextest.Lex(2, 0, " ", lexeme.WHITESPACE),
+		lextest.Lex(2, 0, " ", lexeme.SPACE),
 		lextest.Lex(2, 1, `"heir"`, lexeme.STRING),
 		lextest.Lex(2, 7, ")", lexeme.R_PAREN),
 		lextest.Lex(2, 8, "\n", lexeme.NEWLINE),

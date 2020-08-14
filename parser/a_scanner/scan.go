@@ -155,7 +155,7 @@ func whitespace(rr *runeReader) (*lexeme.Lexeme, error) {
 		rr.inc()
 	}
 
-	return rr.slice(lexeme.WHITESPACE), nil
+	return rr.slice(lexeme.SPACE), nil
 }
 
 func word(rr *runeReader) (*lexeme.Lexeme, error) {

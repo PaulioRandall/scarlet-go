@@ -61,7 +61,7 @@ func levelComments(itr *lexeme.Iterator, groupSize, maxCol int) {
 		col := itr.Curr().Col
 		if col < maxCol {
 			itr.Prepend(&lexeme.Lexeme{
-				Tok: lexeme.WHITESPACE,
+				Tok: lexeme.SPACE,
 				Raw: strings.Repeat(" ", maxCol-col),
 			})
 		}

@@ -79,7 +79,7 @@ func format(itr *lexeme.Iterator) {
 func trimWhiteSpace(itr *lexeme.Iterator) {
 
 	whitespace := func(v lexeme.View) bool {
-		return v.Curr().Tok == lexeme.WHITESPACE
+		return v.Curr().Tok == lexeme.SPACE
 	}
 
 	for itr.JumpToNext(whitespace) {
@@ -117,7 +117,7 @@ func insertSeparatorSpaces(itr *lexeme.Iterator) {
 		if itr.After() != nil && itr.After().Tok != lexeme.NEWLINE {
 
 			itr.Append(&lexeme.Lexeme{
-				Tok: lexeme.WHITESPACE,
+				Tok: lexeme.SPACE,
 				Raw: " ",
 			})
 		}
@@ -133,10 +133,10 @@ func insertCommentSpaces(itr *lexeme.Iterator) {
 	for itr.JumpToNext(comment) {
 		if itr.Before() != nil &&
 			itr.Before().Tok != lexeme.NEWLINE &&
-			itr.Before().Tok != lexeme.WHITESPACE {
+			itr.Before().Tok != lexeme.SPACE {
 
 			itr.Prepend(&lexeme.Lexeme{
-				Tok: lexeme.WHITESPACE,
+				Tok: lexeme.SPACE,
 				Raw: " ",
 			})
 		}
@@ -193,7 +193,7 @@ func indentLines(itr *lexeme.Iterator) {
 
 		case indent > 0:
 			itr.Append(&lexeme.Lexeme{
-				Tok:  lexeme.WHITESPACE,
+				Tok:  lexeme.SPACE,
 				Raw:  strings.Repeat("\t", indent),
 				Line: itr.Curr().Line + 1,
 			})

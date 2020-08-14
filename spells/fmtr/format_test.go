@@ -15,7 +15,7 @@ func doTest(t *testing.T, f func(*lexeme.Iterator), given, exp *lexeme.Container
 func Test1_1(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 	)
 
 	exp := lextest.Feign()
@@ -26,26 +26,26 @@ func Test1_1(t *testing.T) {
 func Test1_2(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("(", lexeme.L_PAREN),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok(",", lexeme.DELIM),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok(",", lexeme.DELIM),
-		lextest.Tok(" ", lexeme.WHITESPACE),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok(")", lexeme.R_PAREN),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 	)
 
 	exp := lextest.Feign(
@@ -158,7 +158,7 @@ func Test3_3(t *testing.T) {
 
 	exp := lextest.Feign(
 		lextest.Tok(",", lexeme.DELIM),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
 	)
 
@@ -187,7 +187,7 @@ func Test4_2(t *testing.T) {
 
 	exp := lextest.Feign(
 		lextest.Lex(0, 0, "1", lexeme.NUMBER),
-		lextest.Lex(0, 0, " ", lexeme.WHITESPACE),
+		lextest.Lex(0, 0, " ", lexeme.SPACE),
 		lextest.Lex(0, 1, "# Comment", lexeme.COMMENT),
 	)
 
@@ -255,10 +255,10 @@ func Test7_1(t *testing.T) {
 	exp := lextest.Feign(
 		lextest.Tok("(", lexeme.L_PAREN),
 		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Lex(1, 0, "\t", lexeme.WHITESPACE),
+		lextest.Lex(1, 0, "\t", lexeme.SPACE),
 		lextest.Tok("(", lexeme.L_PAREN),
 		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Lex(1, 0, "\t\t", lexeme.WHITESPACE),
+		lextest.Lex(1, 0, "\t\t", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok(")", lexeme.R_PAREN),
 		lextest.Tok("\n", lexeme.NEWLINE),
@@ -278,11 +278,11 @@ func Test8_1(t *testing.T) {
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("(", lexeme.L_PAREN),
 		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("\t", lexeme.WHITESPACE),
+		lextest.Tok("\t", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("\t", lexeme.WHITESPACE),
+		lextest.Tok("\t", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("\n", lexeme.NEWLINE),
@@ -294,11 +294,11 @@ func Test8_1(t *testing.T) {
 		lextest.Lex(0, 0, "@Println", lexeme.SPELL),
 		lextest.Lex(0, 8, "(", lexeme.L_PAREN),
 		lextest.Lex(0, 9, "\n", lexeme.NEWLINE),
-		lextest.Lex(1, 0, "\t", lexeme.WHITESPACE),
+		lextest.Lex(1, 0, "\t", lexeme.SPACE),
 		lextest.Lex(1, 1, "1", lexeme.NUMBER),
 		lextest.Lex(1, 2, ",", lexeme.DELIM),
 		lextest.Lex(1, 3, "\n", lexeme.NEWLINE),
-		lextest.Lex(2, 0, "\t", lexeme.WHITESPACE),
+		lextest.Lex(2, 0, "\t", lexeme.SPACE),
 		lextest.Lex(2, 1, "1", lexeme.NUMBER),
 		lextest.Lex(2, 2, ",", lexeme.DELIM),
 		lextest.Lex(2, 3, "\n", lexeme.NEWLINE),
@@ -319,27 +319,27 @@ func Test9_1(t *testing.T) {
 		lextest.Lex(0, 1, "# First", lexeme.COMMENT),
 		lextest.Lex(0, 8, "\n", lexeme.NEWLINE),
 		lextest.Lex(1, 0, "2", lexeme.NUMBER),
-		lextest.Lex(1, 1, " ", lexeme.WHITESPACE),
+		lextest.Lex(1, 1, " ", lexeme.SPACE),
 		lextest.Lex(1, 2, "# Second", lexeme.COMMENT),
 		lextest.Lex(1, 10, "\n", lexeme.NEWLINE),
 		lextest.Lex(2, 0, "3", lexeme.NUMBER),
-		lextest.Lex(2, 1, "  ", lexeme.WHITESPACE),
+		lextest.Lex(2, 1, "  ", lexeme.SPACE),
 		lextest.Lex(2, 3, "# Third", lexeme.COMMENT),
 		lextest.Lex(2, 10, "\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
 		lextest.Lex(0, 0, "1", lexeme.NUMBER),
-		lextest.Lex(0, 0, "  ", lexeme.WHITESPACE),
+		lextest.Lex(0, 0, "  ", lexeme.SPACE),
 		lextest.Lex(0, 1, "# First", lexeme.COMMENT),
 		lextest.Lex(0, 8, "\n", lexeme.NEWLINE),
 		lextest.Lex(1, 0, "2", lexeme.NUMBER),
-		lextest.Lex(1, 1, " ", lexeme.WHITESPACE),
-		lextest.Lex(0, 0, " ", lexeme.WHITESPACE),
+		lextest.Lex(1, 1, " ", lexeme.SPACE),
+		lextest.Lex(0, 0, " ", lexeme.SPACE),
 		lextest.Lex(1, 2, "# Second", lexeme.COMMENT),
 		lextest.Lex(1, 10, "\n", lexeme.NEWLINE),
 		lextest.Lex(2, 0, "3", lexeme.NUMBER),
-		lextest.Lex(2, 1, "  ", lexeme.WHITESPACE),
+		lextest.Lex(2, 1, "  ", lexeme.SPACE),
 		lextest.Lex(2, 3, "# Third", lexeme.COMMENT),
 		lextest.Lex(2, 10, "\n", lexeme.NEWLINE),
 	)
@@ -360,7 +360,7 @@ func Test9_2(t *testing.T) {
 		lextest.Lex(0, 8, "\n", lexeme.NEWLINE),
 
 		lextest.Lex(1, 0, "2", lexeme.NUMBER),
-		lextest.Lex(1, 1, " ", lexeme.WHITESPACE),
+		lextest.Lex(1, 1, " ", lexeme.SPACE),
 		lextest.Lex(1, 2, "# Second", lexeme.COMMENT),
 		lextest.Lex(1, 10, "\n", lexeme.NEWLINE),
 
@@ -368,7 +368,7 @@ func Test9_2(t *testing.T) {
 		lextest.Lex(2, 1, "\n", lexeme.NEWLINE),
 
 		lextest.Lex(3, 0, "4", lexeme.NUMBER),
-		lextest.Lex(3, 1, "  ", lexeme.WHITESPACE),
+		lextest.Lex(3, 1, "  ", lexeme.SPACE),
 		lextest.Lex(3, 3, "# Fourth", lexeme.COMMENT),
 		lextest.Lex(3, 11, "\n", lexeme.NEWLINE),
 
@@ -379,12 +379,12 @@ func Test9_2(t *testing.T) {
 
 	exp := lextest.Feign(
 		lextest.Lex(0, 0, "1", lexeme.NUMBER),
-		lextest.Lex(0, 0, " ", lexeme.WHITESPACE),
+		lextest.Lex(0, 0, " ", lexeme.SPACE),
 		lextest.Lex(0, 1, "# First", lexeme.COMMENT),
 		lextest.Lex(0, 8, "\n", lexeme.NEWLINE),
 
 		lextest.Lex(1, 0, "2", lexeme.NUMBER),
-		lextest.Lex(1, 1, " ", lexeme.WHITESPACE),
+		lextest.Lex(1, 1, " ", lexeme.SPACE),
 		lextest.Lex(1, 2, "# Second", lexeme.COMMENT),
 		lextest.Lex(1, 10, "\n", lexeme.NEWLINE),
 
@@ -392,12 +392,12 @@ func Test9_2(t *testing.T) {
 		lextest.Lex(2, 1, "\n", lexeme.NEWLINE),
 
 		lextest.Lex(3, 0, "4", lexeme.NUMBER),
-		lextest.Lex(3, 1, "  ", lexeme.WHITESPACE),
+		lextest.Lex(3, 1, "  ", lexeme.SPACE),
 		lextest.Lex(3, 3, "# Fourth", lexeme.COMMENT),
 		lextest.Lex(3, 11, "\n", lexeme.NEWLINE),
 
 		lextest.Lex(4, 0, "5", lexeme.NUMBER),
-		lextest.Lex(0, 0, "  ", lexeme.WHITESPACE),
+		lextest.Lex(0, 0, "  ", lexeme.SPACE),
 		lextest.Lex(4, 1, "# Fifth", lexeme.COMMENT),
 		lextest.Lex(4, 11, "\n", lexeme.NEWLINE),
 	)
@@ -409,28 +409,28 @@ func Test10_1(t *testing.T) {
 
 	// " @Println ( \n1 , 1 , \n 1 ) \n "
 	given := lextest.Feign(
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("(", lexeme.L_PAREN),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("\n", lexeme.NEWLINE),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok(",", lexeme.DELIM),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok(",", lexeme.DELIM),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("\n", lexeme.NEWLINE),
 		lextest.Tok("\n\r", lexeme.NEWLINE),
 		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok(")", lexeme.R_PAREN),
-		lextest.Tok(" ", lexeme.WHITESPACE),
+		lextest.Tok(" ", lexeme.SPACE),
 	)
 
 	// @Println(
@@ -441,15 +441,15 @@ func Test10_1(t *testing.T) {
 		lextest.Lex(0, 0, "@Println", lexeme.SPELL),
 		lextest.Lex(0, 8, "(", lexeme.L_PAREN),
 		lextest.Lex(0, 9, "\n", lexeme.NEWLINE),
-		lextest.Lex(1, 0, "\t", lexeme.WHITESPACE),
+		lextest.Lex(1, 0, "\t", lexeme.SPACE),
 		lextest.Lex(1, 1, "1", lexeme.NUMBER),
 		lextest.Lex(1, 2, ",", lexeme.DELIM),
-		lextest.Lex(1, 3, " ", lexeme.WHITESPACE),
+		lextest.Lex(1, 3, " ", lexeme.SPACE),
 		lextest.Lex(1, 4, "1", lexeme.NUMBER),
 		lextest.Lex(1, 5, ",", lexeme.DELIM),
 		lextest.Lex(1, 6, "\n", lexeme.NEWLINE),
 		lextest.Lex(2, 0, "\n", lexeme.NEWLINE),
-		lextest.Lex(3, 0, "\t", lexeme.WHITESPACE),
+		lextest.Lex(3, 0, "\t", lexeme.SPACE),
 		lextest.Lex(3, 1, "1", lexeme.NUMBER),
 		lextest.Lex(3, 2, ")", lexeme.R_PAREN),
 		lextest.Lex(3, 3, "\n", lexeme.NEWLINE),

@@ -9,7 +9,7 @@ type Token int
 const (
 	UNDEFINED Token = iota
 	// -----------------
-	WHITESPACE
+	SPACE
 	COMMENT    // # comment
 	TERMINATOR // ;
 	NEWLINE    // \n
@@ -38,7 +38,7 @@ const (
 )
 
 var tokens = map[Token]string{
-	WHITESPACE: `WHITESPACE`,
+	SPACE:      `SPACE`,
 	COMMENT:    `COMMENT`,
 	TERMINATOR: `TERMINATOR`,
 	NEWLINE:    `NEWLINE`,
@@ -95,7 +95,7 @@ func (tk Token) IsAny(others ...Token) bool {
 }
 
 func (tk Token) IsRedundant() bool {
-	return tk == WHITESPACE || tk == COMMENT
+	return tk == SPACE || tk == COMMENT
 }
 
 func (tk Token) IsTerminator() bool {
