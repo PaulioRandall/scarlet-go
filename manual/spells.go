@@ -1,36 +1,8 @@
-package std
-
-import (
-	"github.com/PaulioRandall/scarlet-go/manual"
-	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
-)
+package manual
 
 func init() {
-	manual.Register("@", spellsOverview)
-	manual.Register("spell", spellsOverview)
-}
-
-func InscribeAll(inscribe spellbook.Inscriber) {
-
-	inscribe("exit", Exit{})
-	manual.Register("@exit", func() string {
-		return spellbook.FmtSpellDoc(man_exitSpell)
-	})
-
-	inscribe("print", Print{})
-	manual.Register("@print", func() string {
-		return spellbook.FmtSpellDoc(man_printSpell)
-	})
-
-	inscribe("println", Println{})
-	manual.Register("@println", func() string {
-		return spellbook.FmtSpellDoc(man_printlnSpell)
-	})
-
-	inscribe("del", Del{})
-	manual.Register("@del", func() string {
-		return spellbook.FmtSpellDoc(man_delSpell)
-	})
+	Register("@", spellsOverview)
+	Register("spell", spellsOverview)
 }
 
 func spellsOverview() string {

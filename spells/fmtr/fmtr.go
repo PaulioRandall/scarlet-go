@@ -10,19 +10,14 @@ import (
 
 func InscribeAll(inscribe spellbook.Inscriber) {
 	inscribe("FmtScript", Formatter{})
-	manual.Register("@fmtscript", func() string {
-		return spellbook.FmtSpellDoc(docs)
-	})
+	manual.Register("@fmtscript", fmtrSpellDocs)
 }
 
 type Formatter struct{}
 
-var docs = spellbook.SpellDoc{
-	Pattern: `@FmtScript(filename)`,
-	Summary: `Attempts to format the specified Scarlett script.`,
-	Examples: []string{
-		`@FmtScript("./myscript.scar")`,
-	},
+func (Formatter) Summary() string {
+	return `@FmtScript(filename)
+	Attempts to format the specified Scarlett script.`
 }
 
 func (Formatter) Invoke(env spellbook.Enviro, args []types.Value) {
@@ -44,6 +39,12 @@ func (Formatter) Invoke(env spellbook.Enviro, args []types.Value) {
 	}
 }
 
-func (Formatter) Docs() spellbook.SpellDoc {
-	return docs
+func fmtrSpellDocs() string {
+	return `
+@FmtScript(filename)
+	Attempts to format the specified Scarlett script.
+
+Examples
+
+	@FmtScript("./myscript.scar")`
 }

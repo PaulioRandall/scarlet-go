@@ -3,23 +3,24 @@ package std
 import (
 	"fmt"
 
+	"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
-type Print struct{}
+func InscribePrint(inscribe spellbook.Inscriber) {
 
-var man_printSpell = spellbook.SpellDoc{
-	Pattern: `@Print(value, value, ...)`,
-	Summary: `Prints all arguments to standard output in the order given.`,
-	Examples: []string{
-		`@Print("Hello, Scarlet!")`,
-		`@Print(a, "*", b, " = ", c)`,
-	},
+	inscribe("print", Print{})
+	inscribe("println", Println{})
+
+	manual.Register("@print", printSpellDocs)
+	manual.Register("@println", printSpellDocs)
 }
 
-func (Print) Summary(name string) string {
-	return name + `(value...)
+type Print struct{}
+
+func (Print) Summary() string {
+	return `@Print(value...)
 	Prints all arguments to standard output in the order provided.`
 }
 
@@ -29,20 +30,12 @@ func (Print) Invoke(_ spellbook.Enviro, args []types.Value) {
 	}
 }
 
-func (Print) Docs() spellbook.SpellDoc {
-	return man_printSpell
-}
-
 type Println struct{}
 
-var man_printlnSpell = spellbook.SpellDoc{
-	Pattern: `@Println(value, value, ...)`,
-	Summary: `Prints all arguments to standard output in the order given, then appends
-a linefeed.`,
-	Examples: []string{
-		`@Println("Hello, Scarlet!")`,
-		`@Println(a, "*", b, " = ", c)`,
-	},
+func (Println) Summary() string {
+	return `@Println(value...)
+	Prints all arguments to standard output in the order given, then appends
+	a linefeed.`
 }
 
 func (Println) Invoke(_ spellbook.Enviro, args []types.Value) {
@@ -50,6 +43,19 @@ func (Println) Invoke(_ spellbook.Enviro, args []types.Value) {
 	fmt.Println()
 }
 
-func (Println) Docs() spellbook.SpellDoc {
-	return man_printlnSpell
+func printSpellDocs() string {
+	return `
+@Print(value, value, ...)
+	Prints all arguments to standard output in the order given.
+
+@Println(value, value, ...)
+	Same as @Print but appends a linefeed.
+
+Examples
+
+	@Print("Hello, Scarlet!")
+	@Print(a, "*", b, " = ", c)
+
+	@Println("Hello, Scarlet!")
+	@Println(a, "*", b, " = ", c)`
 }

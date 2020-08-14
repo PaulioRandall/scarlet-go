@@ -7,18 +7,21 @@ import (
 )
 
 func init() {
-	ns := namespacer("")
-	std.InscribeAll(ns)
-	fmtr.InscribeAll(ns)
-}
 
-func namespacer(prefix string) spellbook.Inscriber {
-	return func(name string, spell spellbook.Spell) {
-		e := spellbook.Inscribe(prefix+name, spell)
-		if e != nil {
-			panic(e)
+	namespacer := func(prefix string) spellbook.Inscriber {
+		return func(name string, spell spellbook.Spell) {
+			e := spellbook.Inscribe(prefix+name, spell)
+			if e != nil {
+				panic(e)
+			}
 		}
 	}
+
+	ns := namespacer("")
+
+	std.InscribeOS(ns)
+	std.InscribePrint(ns)
+	fmtr.InscribeAll(ns)
 }
 
 func LookUp(name string) spellbook.Spell {

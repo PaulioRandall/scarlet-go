@@ -3,19 +3,22 @@ package std
 import (
 	"errors"
 
+	"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
+func InscribeOS(inscribe spellbook.Inscriber) {
+
+	inscribe("exit", Exit{})
+	manual.Register("@exit", exitSpellDocs)
+}
+
 type Exit struct{}
 
-var man_exitSpell = spellbook.SpellDoc{
-	Pattern: `@Exit(exitCode)`,
-	Summary: `Exit terminates the current script with a specific exit code.`,
-	Examples: []string{
-		"@Exit(0)",
-		"@Exit(1)",
-	},
+func (Exit) Summary() string {
+	return `@Exit(exitCode)
+	Exit terminates the current script with a specific exit code.`
 }
 
 func (Exit) Invoke(env spellbook.Enviro, args []types.Value) {
@@ -33,6 +36,13 @@ func (Exit) Invoke(env spellbook.Enviro, args []types.Value) {
 	env.Fail(errors.New("@Exit requires its argument be a number"))
 }
 
-func (Exit) Docs() spellbook.SpellDoc {
-	return man_exitSpell
+func exitSpellDocs() string {
+	return `
+@Exit(exitCode)
+	Exit terminates the current script with a specific exit code.
+
+Examples
+
+	@Exit(0)
+	@Exit(1)`
 }
