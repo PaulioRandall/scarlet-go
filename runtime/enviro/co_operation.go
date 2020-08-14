@@ -6,6 +6,28 @@ import (
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
+func popOperands(env *Environment) (left, right types.Value) {
+	right = env.Pop()
+	left = env.Pop()
+	return
+}
+
+func popBoolOperands(env *Environment) (left, right types.Bool, ok bool) {
+
+	right, ok = env.Pop().(types.Bool)
+	if !ok {
+		env.Fail(perror.New("Expected bool on right side of operation"))
+		return
+	}
+
+	left, ok = env.Pop().(types.Bool)
+	if !ok {
+		env.Fail(perror.New("Expected bool on left side of operation"))
+	}
+
+	return
+}
+
 func popNumOperands(env *Environment) (left, right types.Num, ok bool) {
 
 	right, ok = env.Pop().(types.Num)
@@ -77,22 +99,6 @@ func coRem(env *Environment, in inst.Instruction) {
 	env.Push(left)
 }
 
-func popBoolOperands(env *Environment) (left, right types.Bool, ok bool) {
-
-	right, ok = env.Pop().(types.Bool)
-	if !ok {
-		env.Fail(perror.New("Expected bool on right side of operation"))
-		return
-	}
-
-	left, ok = env.Pop().(types.Bool)
-	if !ok {
-		env.Fail(perror.New("Expected bool on left side of operation"))
-	}
-
-	return
-}
-
 func coAnd(env *Environment, in inst.Instruction) {
 
 	left, right, ok := popBoolOperands(env)
@@ -154,5 +160,17 @@ func coMoreOrEqual(env *Environment, in inst.Instruction) {
 	}
 
 	answer := left.MoreOrEqual(right.Number)
+	env.Push(types.Bool(answer))
+}
+
+func coEqual(env *Environment, in inst.Instruction) {
+	left, right := popOperands(env)
+	answer := left.Equal(right)
+	env.Push(types.Bool(answer))
+}
+
+func coNotEqual(env *Environment, in inst.Instruction) {
+	left, right := popOperands(env)
+	answer := !left.Equal(right)
 	env.Push(types.Bool(answer))
 }

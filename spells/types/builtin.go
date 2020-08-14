@@ -60,7 +60,7 @@ func (Num) Name() string {
 }
 
 func (a Num) Equal(b Value) bool {
-	return a.Comparable(b) && a.Equal(b.(Num))
+	return a.Comparable(b) && a.Number.Equal(b.(Num).Number)
 }
 
 func (a Num) Comparable(b Value) bool {

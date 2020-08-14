@@ -140,6 +140,12 @@ func (env *Environment) Exe(in inst.Instruction) {
 	case inst.CO_MORE_EQU:
 		coMoreOrEqual(env, in)
 
+	case inst.CO_EQU:
+		coEqual(env, in)
+
+	case inst.CO_NOT_EQU:
+		coNotEqual(env, in)
+
 	case inst.CO_SPELL: // co_call.go
 		coSpell(env, in)
 

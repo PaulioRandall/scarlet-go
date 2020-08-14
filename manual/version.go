@@ -14,6 +14,9 @@ Version 1 (Upcoming)
 		- Intrinsic Types
 	- Assignments
 	- Expressions
+	  - Arithmetic
+	  - Logical
+	  - Relational 
 	- Spells
-	- Documentation`
+	- Manual`
 }

@@ -5,17 +5,6 @@ the default language.
 
 ## 1.0 (Essential Features)
 
-#### Comparison Operations
-
-```
-1 < 2
-1 > 2
-1 <= 2
-1 >= 2
-1 == 2
-1 != 2
-```
-
 #### Guarded Statements
 
 ```
@@ -50,6 +39,8 @@ _, y := 1, 2
 x := _
 ```
 
+## 1.2
+
 #### Spell Returns
 
 ```
@@ -83,7 +74,7 @@ Exit the script with an error message:
 @Panic(exitCode, message)
 ```
 
-## 1.2 (String Spells)
+## 1.3 (String Spells)
 
 Take a slice of a string:
 ```
@@ -195,7 +186,7 @@ x := @list.Foreach(list, F(i, value, more) {
 })
 ```
 
-## 3.1 (Maps)
+## 4.0 (Maps)
 
 Create a new map:
 ```
@@ -243,7 +234,7 @@ x := @map.Foreach(map, F(key, value) {
 })
 ```
 
-## 4.0+
+## 5.0+
 
 These are debatable features that are not really required but might make
 programming moderately smoother.

@@ -69,10 +69,12 @@ var tokens = map[Token]string{
 func (tk Token) Precedence() int {
 	switch tk {
 	case MUL, DIV, REM:
-		return 5
+		return 6
 	case ADD, SUB:
-		return 4
+		return 5
 	case LESS, MORE, LESS_EQUAL, MORE_EQUAL:
+		return 4
+	case EQUAL, NOT_EQUAL:
 		return 3
 	case AND:
 		return 2
@@ -124,6 +126,8 @@ func (tk Token) IsOperator() bool {
 		tk == MORE ||
 		tk == LESS_EQUAL ||
 		tk == MORE_EQUAL ||
+		tk == EQUAL ||
+		tk == NOT_EQUAL ||
 		tk == AND ||
 		tk == OR
 }

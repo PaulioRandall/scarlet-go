@@ -68,6 +68,8 @@ const (
 	CO_MORE
 	CO_LESS_EQU
 	CO_MORE_EQU
+	CO_EQU
+	CO_NOT_EQU
 
 	// Call a spell with the contents of the value stack.
 	//

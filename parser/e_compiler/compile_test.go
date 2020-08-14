@@ -247,7 +247,7 @@ func Test3_4(t *testing.T) {
 func Test3_5(t *testing.T) {
 
 	// WHEN compiling a complex logical expression
-	// false false true && || 1 2 < 3 3 >= && ||
+	// false false true && || 1 2 < 3 3 >= && 4 5 != && ||
 	in := lextest.Feign(
 		lextest.Tok("false", lexeme.BOOL),
 		lextest.Tok("false", lexeme.BOOL),
@@ -260,6 +260,10 @@ func Test3_5(t *testing.T) {
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok(">=", lexeme.MORE_EQUAL),
+		lextest.Tok("&&", lexeme.AND),
+		lextest.Tok("4", lexeme.NUMBER),
+		lextest.Tok("5", lexeme.NUMBER),
+		lextest.Tok("!=", lexeme.NOT_EQUAL),
 		lextest.Tok("&&", lexeme.AND),
 		lextest.Tok("||", lexeme.OR),
 		lextest.Tok("\n", lexeme.NEWLINE),
@@ -278,6 +282,10 @@ func Test3_5(t *testing.T) {
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("3")),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("3")),
 		insttest.NewIn(inst.CO_MORE_EQU, nil),
+		insttest.NewIn(inst.CO_AND, nil),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("4")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("5")),
+		insttest.NewIn(inst.CO_NOT_EQU, nil),
 		insttest.NewIn(inst.CO_AND, nil),
 		insttest.NewIn(inst.CO_OR, nil),
 	}

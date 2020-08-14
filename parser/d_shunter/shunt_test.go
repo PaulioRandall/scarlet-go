@@ -331,7 +331,7 @@ func Test3_8(t *testing.T) {
 
 	// WHEN checking a complex logical and relational expression
 	// THEN no errors should be returned
-	// false || false && true || 1 < 2 && 3 >= 3
+	// false || false && true || 1 < 2 && 3 >= 3 && 4 != 5
 	in := lextest.Feign(
 		lextest.Tok("false", lexeme.BOOL),
 		lextest.Tok("||", lexeme.OR),
@@ -346,10 +346,14 @@ func Test3_8(t *testing.T) {
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok(">=", lexeme.MORE_EQUAL),
 		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("&&", lexeme.AND),
+		lextest.Tok("4", lexeme.NUMBER),
+		lextest.Tok("!=", lexeme.NOT_EQUAL),
+		lextest.Tok("5", lexeme.NUMBER),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	// false false true && || 1 2 < 3 3 >= && ||
+	// false false true && || 1 2 < 3 3 >= && 4 5 != && ||
 	exp := lextest.Feign(
 		lextest.Tok("false", lexeme.BOOL),
 		lextest.Tok("false", lexeme.BOOL),
@@ -362,6 +366,10 @@ func Test3_8(t *testing.T) {
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok(">=", lexeme.MORE_EQUAL),
+		lextest.Tok("&&", lexeme.AND),
+		lextest.Tok("4", lexeme.NUMBER),
+		lextest.Tok("5", lexeme.NUMBER),
+		lextest.Tok("!=", lexeme.NOT_EQUAL),
 		lextest.Tok("&&", lexeme.AND),
 		lextest.Tok("||", lexeme.OR),
 		lextest.Tok("\n", lexeme.NEWLINE),

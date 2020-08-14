@@ -47,11 +47,17 @@ Operations:
 	means greater precedence and those of equal precedence are prioritised by
 	first come first computed.
 	
-	(4) Num  *  Num
-	    Num  /  Num
-	    Num  %  Num
-	(3) Num  +  Num
-	    Num  -  Num
+	(6) Num  *   Num
+	    Num  /   Num
+	    Num  %   Num
+	(5) Num  +   Num
+	    Num  -   Num
+	(4) Num  <   Num
+	    Num  >   Num
+	    Num  <=  Num
+	    Num  >=  Num
+	(3) Any  ==  Any
+	    Any  !=  Any
 	(2) Bool && Bool
 	(1) Bool || Bool
 
