@@ -45,23 +45,23 @@ var tokens = map[Token]string{
 	BOOL:       `BOOL`,
 	NUMBER:     `NUMBER`,
 	STRING:     `STRING`,
-	IDENT:      `IDENTIFIER`,
+	IDENT:      `IDENT`,
 	SPELL:      `SPELL`,
-	DELIM:      `SEPARATOR`,
-	L_PAREN:    `LEFT_PAREN`,
-	R_PAREN:    `RIGHT_PAREN`,
-	ASSIGN:     `ASSIGNMENT`,
-	ADD:        `ADDITION`,
-	SUB:        `SUBTRACTION`,
-	MUL:        `MULTIPLICATION`,
-	DIV:        `DIVISION`,
-	REM:        `REMAINDER`,
+	DELIM:      `DELIM`,
+	L_PAREN:    `L_PAREN`,
+	R_PAREN:    `R_PAREN`,
+	ASSIGN:     `ASSIGN`,
+	ADD:        `ADD`,
+	SUB:        `SUB`,
+	MUL:        `MUL`,
+	DIV:        `DIV`,
+	REM:        `REM`,
 	AND:        `AND`,
 	OR:         `OR`,
-	LESS:       `LESS_THAN`,
-	MORE:       `MORE_THAN`,
-	LESS_EQUAL: `LESS_THAN_OR_EQUAL`,
-	MORE_EQUAL: `MORE_THAN_OR_EQUAL`,
+	LESS:       `LESS`,
+	MORE:       `MORE`,
+	LESS_EQUAL: `LESS_EQUAL`,
+	MORE_EQUAL: `MORE_EQUAL`,
 	EQUAL:      `EQUAL`,
 	NOT_EQUAL:  `NOT_EQUAL`,
 }
@@ -69,8 +69,10 @@ var tokens = map[Token]string{
 func (tk Token) Precedence() int {
 	switch tk {
 	case MUL, DIV, REM:
-		return 4
+		return 5
 	case ADD, SUB:
+		return 4
+	case LESS, MORE, LESS_EQUAL, MORE_EQUAL:
 		return 3
 	case AND:
 		return 2
@@ -118,6 +120,10 @@ func (tk Token) IsOperator() bool {
 		tk == REM ||
 		tk == ADD ||
 		tk == SUB ||
+		tk == LESS ||
+		tk == MORE ||
+		tk == LESS_EQUAL ||
+		tk == MORE_EQUAL ||
 		tk == AND ||
 		tk == OR
 }

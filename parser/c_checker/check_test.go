@@ -345,9 +345,9 @@ func Test4_7(t *testing.T) {
 
 func Test4_8(t *testing.T) {
 
-	// WHEN checking a complex logical expression
+	// WHEN checking a complex logical and comparison expression
 	// THEN no errors should be returned
-	// false || false && true || true && true
+	// false || false && true || 1 < 2 && 3 >= 3
 	in := lextest.Feign(
 		lextest.Tok("false", lexeme.BOOL),
 		lextest.Tok("||", lexeme.OR),
@@ -355,9 +355,13 @@ func Test4_8(t *testing.T) {
 		lextest.Tok("&&", lexeme.AND),
 		lextest.Tok("true", lexeme.BOOL),
 		lextest.Tok("||", lexeme.OR),
-		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("<", lexeme.LESS),
+		lextest.Tok("2", lexeme.NUMBER),
 		lextest.Tok("&&", lexeme.AND),
-		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(">=", lexeme.MORE_EQUAL),
+		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
