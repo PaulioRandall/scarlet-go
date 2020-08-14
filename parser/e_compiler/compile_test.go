@@ -159,7 +159,7 @@ func Test3_1(t *testing.T) {
 
 func Test3_2(t *testing.T) {
 
-	// WHEN compiling a complex expression
+	// WHEN compiling a complex arithmetic expression
 	// 1 2 3 * 4 / + 5 6 % -
 	in := lextest.Feign(
 		lextest.Tok("1", lexeme.NUMBER),
@@ -239,6 +239,39 @@ func Test3_4(t *testing.T) {
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
 		insttest.NewIn(inst.CO_ADD, nil),
 		insttest.NewIn(inst.CO_CTX_SET, "x"),
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test3_5(t *testing.T) {
+
+	// WHEN compiling a complex logical expression
+	// false false true && || true true && ||
+	in := lextest.Feign(
+		lextest.Tok("false", lexeme.BOOL),
+		lextest.Tok("false", lexeme.BOOL),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("&&", lexeme.AND),
+		lextest.Tok("||", lexeme.OR),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("&&", lexeme.AND),
+		lextest.Tok("||", lexeme.OR),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, false),
+		insttest.NewIn(inst.CO_VAL_PUSH, false),
+		insttest.NewIn(inst.CO_VAL_PUSH, true),
+		insttest.NewIn(inst.CO_AND, nil),
+		insttest.NewIn(inst.CO_OR, nil),
+		insttest.NewIn(inst.CO_VAL_PUSH, true),
+		insttest.NewIn(inst.CO_VAL_PUSH, true),
+		insttest.NewIn(inst.CO_AND, nil),
+		insttest.NewIn(inst.CO_OR, nil),
 	}
 
 	doTest(t, in, exp)

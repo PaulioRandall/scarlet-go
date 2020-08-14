@@ -167,6 +167,12 @@ func operator(com *compiler) {
 	case lex.Tok == lexeme.REM:
 		in.Code = inst.CO_REM
 
+	case lex.Tok == lexeme.AND:
+		in.Code = inst.CO_AND
+
+	case lex.Tok == lexeme.OR:
+		in.Code = inst.CO_OR
+
 	default:
 		com.unexpected()
 	}

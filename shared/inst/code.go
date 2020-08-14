@@ -57,11 +57,13 @@ const (
 	//    2nd: left operand
 	// Stack values produced: 1
 	//    1st: operation result
-	CO_ADD
-	CO_SUB
 	CO_MUL
 	CO_DIV
 	CO_REM
+	CO_ADD
+	CO_SUB
+	CO_AND
+	CO_OR
 
 	// Call a spell with the contents of the value stack.
 	//
@@ -96,4 +98,11 @@ var codes = map[Code]string{
 	CO_VAL_PUSH: `CO_VAL_PUSH`,
 	CO_CTX_GET:  `CO_CTX_GET`,
 	CO_SPELL:    `CO_SPELL`,
+	CO_MUL:      `CO_MUL`,
+	CO_DIV:      `CO_DIV`,
+	CO_REM:      `CO_REM`,
+	CO_ADD:      `CO_ADD`,
+	CO_SUB:      `CO_SUB`,
+	CO_AND:      `CO_AND`,
+	CO_OR:       `CO_OR`,
 }
