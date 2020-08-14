@@ -122,6 +122,12 @@ func (env *Environment) Exe(in inst.Instruction) {
 	case inst.CO_REM:
 		coRem(env, in)
 
+	case inst.CO_AND:
+		coAnd(env, in)
+
+	case inst.CO_OR:
+		coOr(env, in)
+
 	case inst.CO_SPELL: // co_call.go
 		coSpell(env, in)
 

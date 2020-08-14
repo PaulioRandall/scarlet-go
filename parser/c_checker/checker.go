@@ -11,7 +11,9 @@ type checker struct {
 
 func (chk *checker) unexpected(want string) error {
 	return perror.New(
-		"Unexpected token\nHave: %s\nWant: %s",
+		"Unexpected token %d:%d\nHave: %s\nWant: %s",
+		chk.it.Curr().Line,
+		chk.it.Curr().Col,
 		chk.it.Curr().Tok.String(),
 		want,
 	)

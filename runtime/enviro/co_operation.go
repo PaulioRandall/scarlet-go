@@ -6,7 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
-func popOperands(env *Environment) (left, right types.Num, ok bool) {
+func popNumOperands(env *Environment) (left, right types.Num, ok bool) {
 
 	right, ok = env.Pop().(types.Num)
 	if !ok {
@@ -24,7 +24,7 @@ func popOperands(env *Environment) (left, right types.Num, ok bool) {
 
 func coAdd(env *Environment, in inst.Instruction) {
 
-	left, right, ok := popOperands(env)
+	left, right, ok := popNumOperands(env)
 	if !ok {
 		return
 	}
@@ -35,7 +35,7 @@ func coAdd(env *Environment, in inst.Instruction) {
 
 func coSub(env *Environment, in inst.Instruction) {
 
-	left, right, ok := popOperands(env)
+	left, right, ok := popNumOperands(env)
 	if !ok {
 		return
 	}
@@ -46,7 +46,7 @@ func coSub(env *Environment, in inst.Instruction) {
 
 func coMul(env *Environment, in inst.Instruction) {
 
-	left, right, ok := popOperands(env)
+	left, right, ok := popNumOperands(env)
 	if !ok {
 		return
 	}
@@ -57,7 +57,7 @@ func coMul(env *Environment, in inst.Instruction) {
 
 func coDiv(env *Environment, in inst.Instruction) {
 
-	left, right, ok := popOperands(env)
+	left, right, ok := popNumOperands(env)
 	if !ok {
 		return
 	}
@@ -68,11 +68,47 @@ func coDiv(env *Environment, in inst.Instruction) {
 
 func coRem(env *Environment, in inst.Instruction) {
 
-	left, right, ok := popOperands(env)
+	left, right, ok := popNumOperands(env)
 	if !ok {
 		return
 	}
 
 	left.Mod(right.Number)
 	env.Push(left)
+}
+
+func popBoolOperands(env *Environment) (left, right types.Bool, ok bool) {
+
+	right, ok = env.Pop().(types.Bool)
+	if !ok {
+		env.Fail(perror.New("Expected bool on right side of operation"))
+		return
+	}
+
+	left, ok = env.Pop().(types.Bool)
+	if !ok {
+		env.Fail(perror.New("Expected bool on left side of operation"))
+	}
+
+	return
+}
+
+func coAnd(env *Environment, in inst.Instruction) {
+
+	left, right, ok := popBoolOperands(env)
+	if !ok {
+		return
+	}
+
+	env.Push(left.And(right))
+}
+
+func coOr(env *Environment, in inst.Instruction) {
+
+	left, right, ok := popBoolOperands(env)
+	if !ok {
+		return
+	}
+
+	env.Push(left.Or(right))
 }

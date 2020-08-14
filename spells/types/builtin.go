@@ -39,6 +39,14 @@ func (a Bool) Comparable(b Value) bool {
 	return ok
 }
 
+func (a Bool) And(b Bool) Bool {
+	return Bool(bool(a) && bool(b))
+}
+
+func (a Bool) Or(b Bool) Bool {
+	return Bool(bool(a) || bool(b))
+}
+
 func (a Bool) String() string {
 	return fmt.Sprintf("%v", bool(a))
 }
