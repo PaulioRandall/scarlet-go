@@ -110,7 +110,7 @@ func stripUselessLines(itr *lexeme.Iterator) {
 func insertSeparatorSpaces(itr *lexeme.Iterator) {
 
 	separator := func(v lexeme.View) bool {
-		return v.Curr().Tok == lexeme.SEPARATOR
+		return v.Curr().Tok == lexeme.DELIM
 	}
 
 	for itr.JumpToNext(separator) {

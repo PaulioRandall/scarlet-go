@@ -58,13 +58,13 @@ func Test4_2(t *testing.T) {
 
 func Test4_3(t *testing.T) {
 	doTest(t, "abc", lextest.Feign(
-		lextest.Lex(0, 0, "abc", lexeme.IDENTIFIER),
+		lextest.Lex(0, 0, "abc", lexeme.IDENT),
 	))
 }
 
 func Test4_4(t *testing.T) {
 	doTest(t, "ab_c", lextest.Feign(
-		lextest.Lex(0, 0, "ab_c", lexeme.IDENTIFIER),
+		lextest.Lex(0, 0, "ab_c", lexeme.IDENT),
 	))
 }
 
@@ -152,7 +152,7 @@ func Test7_5(t *testing.T) {
 
 func Test8_1(t *testing.T) {
 	doTest(t, ":=", lextest.Feign(
-		lextest.Lex(0, 0, ":=", lexeme.ASSIGNMENT),
+		lextest.Lex(0, 0, ":=", lexeme.ASSIGN),
 	))
 }
 
@@ -260,17 +260,17 @@ func Test99_0(t *testing.T) {
 
 	doTest(t, given, lextest.Feign(
 		lextest.Lex(0, 0, "@Println", lexeme.SPELL),
-		lextest.Lex(0, 8, "(", lexeme.LEFT_PAREN),
+		lextest.Lex(0, 8, "(", lexeme.L_PAREN),
 		lextest.Lex(0, 9, "1", lexeme.NUMBER),
-		lextest.Lex(0, 10, ",", lexeme.SEPARATOR),
+		lextest.Lex(0, 10, ",", lexeme.DELIM),
 		lextest.Lex(0, 11, "\n", lexeme.NEWLINE),
 		lextest.Lex(1, 0, " ", lexeme.WHITESPACE),
 		lextest.Lex(1, 1, "true", lexeme.BOOL),
-		lextest.Lex(1, 5, ",", lexeme.SEPARATOR),
+		lextest.Lex(1, 5, ",", lexeme.DELIM),
 		lextest.Lex(1, 6, "\n", lexeme.NEWLINE),
 		lextest.Lex(2, 0, " ", lexeme.WHITESPACE),
 		lextest.Lex(2, 1, `"heir"`, lexeme.STRING),
-		lextest.Lex(2, 7, ")", lexeme.RIGHT_PAREN),
+		lextest.Lex(2, 7, ")", lexeme.R_PAREN),
 		lextest.Lex(2, 8, "\n", lexeme.NEWLINE),
 	))
 }

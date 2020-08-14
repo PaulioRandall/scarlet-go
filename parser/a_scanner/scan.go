@@ -56,19 +56,19 @@ func scanLexeme(rr *runeReader) (*lexeme.Lexeme, error) {
 		return numberLiteral(rr)
 
 	case rr.accept('('):
-		return rr.slice(lexeme.LEFT_PAREN), nil
+		return rr.slice(lexeme.L_PAREN), nil
 
 	case rr.accept(')'):
-		return rr.slice(lexeme.RIGHT_PAREN), nil
+		return rr.slice(lexeme.R_PAREN), nil
 
 	case rr.accept(','):
-		return rr.slice(lexeme.SEPARATOR), nil
+		return rr.slice(lexeme.DELIM), nil
 
 	case rr.accept(':'):
 		if e := rr.expect('='); e != nil {
 			return nil, e
 		}
-		return rr.slice(lexeme.ASSIGNMENT), nil
+		return rr.slice(lexeme.ASSIGN), nil
 
 	case rr.accept('+'):
 		return rr.slice(lexeme.ADD), nil
@@ -171,7 +171,7 @@ func word(rr *runeReader) (*lexeme.Lexeme, error) {
 	if lex.Raw == "false" || lex.Raw == "true" {
 		lex.Tok = lexeme.BOOL
 	} else {
-		lex.Tok = lexeme.IDENTIFIER
+		lex.Tok = lexeme.IDENT
 	}
 
 	return lex, nil

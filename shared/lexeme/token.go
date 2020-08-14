@@ -10,60 +10,60 @@ const (
 	UNDEFINED Token = iota
 	// -----------------
 	WHITESPACE
-	COMMENT     // # comment
-	TERMINATOR  // ;
-	NEWLINE     // \n
-	BOOL        // true | false
-	NUMBER      // 1
-	STRING      // "abc"
-	IDENTIFIER  // abc
-	SPELL       // @abc
-	SEPARATOR   // ,
-	LEFT_PAREN  // (
-	RIGHT_PAREN // )
-	ASSIGNMENT  // :=
-	ADD         // +
-	SUB         // -
-	MUL         // *
-	DIV         // /
-	REM         // %
-	AND         // &&
-	OR          // ||
-	LESS        // <
-	MORE        // >
-	LESS_EQUAL  // <=
-	MORE_EQUAL  // >=
-	EQUAL       // ==
-	NOT_EQUAL   // !=
+	COMMENT    // # comment
+	TERMINATOR // ;
+	NEWLINE    // \n
+	BOOL       // true | false
+	NUMBER     // 1
+	STRING     // "abc"
+	IDENT      // abc
+	SPELL      // @abc
+	DELIM      // ,
+	L_PAREN    // (
+	R_PAREN    // )
+	ASSIGN     // :=
+	ADD        // +
+	SUB        // -
+	MUL        // *
+	DIV        // /
+	REM        // %
+	AND        // &&
+	OR         // ||
+	LESS       // <
+	MORE       // >
+	LESS_EQUAL // <=
+	MORE_EQUAL // >=
+	EQUAL      // ==
+	NOT_EQUAL  // !=
 )
 
 var tokens = map[Token]string{
-	WHITESPACE:  `WHITESPACE`,
-	COMMENT:     `COMMENT`,
-	TERMINATOR:  `TERMINATOR`,
-	NEWLINE:     `NEWLINE`,
-	BOOL:        `BOOL`,
-	NUMBER:      `NUMBER`,
-	STRING:      `STRING`,
-	IDENTIFIER:  `IDENTIFIER`,
-	SPELL:       `SPELL`,
-	SEPARATOR:   `SEPARATOR`,
-	LEFT_PAREN:  `LEFT_PAREN`,
-	RIGHT_PAREN: `RIGHT_PAREN`,
-	ASSIGNMENT:  `ASSIGNMENT`,
-	ADD:         `ADDITION`,
-	SUB:         `SUBTRACTION`,
-	MUL:         `MULTIPLICATION`,
-	DIV:         `DIVISION`,
-	REM:         `REMAINDER`,
-	AND:         `AND`,
-	OR:          `OR`,
-	LESS:        `LESS`,
-	MORE:        `MORE`,
-	LESS_EQUAL:  `LESS_EQUAL`,
-	MORE_EQUAL:  `MORE_EQUAL`,
-	EQUAL:       `EQUAL`,
-	NOT_EQUAL:   `NOT_EQUAL`,
+	WHITESPACE: `WHITESPACE`,
+	COMMENT:    `COMMENT`,
+	TERMINATOR: `TERMINATOR`,
+	NEWLINE:    `NEWLINE`,
+	BOOL:       `BOOL`,
+	NUMBER:     `NUMBER`,
+	STRING:     `STRING`,
+	IDENT:      `IDENTIFIER`,
+	SPELL:      `SPELL`,
+	DELIM:      `SEPARATOR`,
+	L_PAREN:    `LEFT_PAREN`,
+	R_PAREN:    `RIGHT_PAREN`,
+	ASSIGN:     `ASSIGNMENT`,
+	ADD:        `ADDITION`,
+	SUB:        `SUBTRACTION`,
+	MUL:        `MULTIPLICATION`,
+	DIV:        `DIVISION`,
+	REM:        `REMAINDER`,
+	AND:        `AND`,
+	OR:         `OR`,
+	LESS:       `LESS_THAN`,
+	MORE:       `MORE_THAN`,
+	LESS_EQUAL: `LESS_THAN_OR_EQUAL`,
+	MORE_EQUAL: `MORE_THAN_OR_EQUAL`,
+	EQUAL:      `EQUAL`,
+	NOT_EQUAL:  `NOT_EQUAL`,
 }
 
 func (tk Token) Precedence() int {
@@ -105,11 +105,11 @@ func (tk Token) IsLiteral() bool {
 }
 
 func (tk Token) IsTerm() bool {
-	return tk == IDENTIFIER || tk.IsLiteral()
+	return tk == IDENT || tk.IsLiteral()
 }
 
 func (tk Token) IsAssignee() bool {
-	return tk == IDENTIFIER
+	return tk == IDENT
 }
 
 func (tk Token) IsOperator() bool {
@@ -123,11 +123,11 @@ func (tk Token) IsOperator() bool {
 }
 
 func (tk Token) IsOpener() bool {
-	return tk == LEFT_PAREN
+	return tk == L_PAREN
 }
 
 func (tk Token) IsCloser() bool {
-	return tk == RIGHT_PAREN
+	return tk == R_PAREN
 }
 
 func (tk Token) String() string {

@@ -28,7 +28,7 @@ func compile(com *compiler) {
 		case com.is(lexeme.SPELL):
 			spell(com)
 
-		case com.is(lexeme.ASSIGNMENT):
+		case com.is(lexeme.ASSIGN):
 			assignment(com)
 
 		default:
@@ -62,13 +62,13 @@ func assignment(com *compiler) {
 
 	com.take()
 
-	for !com.is(lexeme.ASSIGNMENT) {
+	for !com.is(lexeme.ASSIGN) {
 		expression(com)
 	}
 
 	com.take() // :=, not needed
 
-	for first := true; first || com.is(lexeme.SEPARATOR); first = false {
+	for first := true; first || com.is(lexeme.DELIM); first = false {
 
 		if !first {
 			com.reject() // separator
@@ -88,7 +88,7 @@ func expression(com *compiler) {
 
 	for {
 		switch {
-		case com.is(lexeme.IDENTIFIER):
+		case com.is(lexeme.IDENT):
 			identifier(com)
 
 		case com.tok().IsLiteral():
@@ -97,7 +97,7 @@ func expression(com *compiler) {
 		case com.tok().IsOperator():
 			operator(com)
 
-		case com.is(lexeme.SEPARATOR):
+		case com.is(lexeme.DELIM):
 			com.reject()
 			return
 

@@ -18,8 +18,8 @@ func Test1_1(t *testing.T) {
 	// @Println()
 	in := lextest.Feign(
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("(", lexeme.LEFT_PAREN),
-		lextest.Tok(")", lexeme.RIGHT_PAREN),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok(")", lexeme.R_PAREN),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
@@ -38,15 +38,15 @@ func Test1_2(t *testing.T) {
 	// @Println(x)
 	in := lextest.Feign(
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("(", lexeme.LEFT_PAREN),
-		lextest.Tok("x", lexeme.IDENTIFIER),
-		lextest.Tok(")", lexeme.RIGHT_PAREN),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(")", lexeme.R_PAREN),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
 		lextest.Tok("", lexeme.SPELL),
-		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok("x", lexeme.IDENT),
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
@@ -60,22 +60,22 @@ func Test1_3(t *testing.T) {
 	// @Println(x, 1, true)
 	in := lextest.Feign(
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("(", lexeme.LEFT_PAREN),
-		lextest.Tok("x", lexeme.IDENTIFIER),
-		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("true", lexeme.BOOL),
-		lextest.Tok(")", lexeme.RIGHT_PAREN),
+		lextest.Tok(")", lexeme.R_PAREN),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
 		lextest.Tok("", lexeme.SPELL),
-		lextest.Tok("x", lexeme.IDENTIFIER),
-		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("true", lexeme.BOOL),
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("\n", lexeme.NEWLINE),
@@ -89,17 +89,17 @@ func Test2_1(t *testing.T) {
 	// WHEN refixing an assignment
 	// x := 1
 	in := lextest.Feign(
-		lextest.Tok("x", lexeme.IDENTIFIER),
-		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(":=", lexeme.ASSIGN),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.ASSIGNMENT),
+		lextest.Tok("", lexeme.ASSIGN),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(":=", lexeme.ASSIGNMENT),
-		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("x", lexeme.IDENT),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
@@ -111,33 +111,33 @@ func Test2_2(t *testing.T) {
 	// WHEN refixing a multi assignment
 	// a, b, c := 1, 2, 3
 	in := lextest.Feign(
-		lextest.Tok("a", lexeme.IDENTIFIER),
-		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok("b", lexeme.IDENTIFIER),
-		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok("c", lexeme.IDENTIFIER),
-		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("a", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("b", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("c", lexeme.IDENT),
+		lextest.Tok(":=", lexeme.ASSIGN),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("2", lexeme.NUMBER),
-		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.ASSIGNMENT),
+		lextest.Tok("", lexeme.ASSIGN),
 		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("2", lexeme.NUMBER),
-		lextest.Tok(",", lexeme.SEPARATOR),
+		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("3", lexeme.NUMBER),
-		lextest.Tok(":=", lexeme.ASSIGNMENT),
-		lextest.Tok("c", lexeme.IDENTIFIER),
-		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok("b", lexeme.IDENTIFIER),
-		lextest.Tok(",", lexeme.SEPARATOR),
-		lextest.Tok("a", lexeme.IDENTIFIER),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("c", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("b", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("a", lexeme.IDENT),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
@@ -170,15 +170,15 @@ func Test3_2(t *testing.T) {
 	// WHEN refixing a simple expression containing identifiers
 	// a + b
 	in := lextest.Feign(
-		lextest.Tok("a", lexeme.IDENTIFIER),
+		lextest.Tok("a", lexeme.IDENT),
 		lextest.Tok("+", lexeme.ADD),
-		lextest.Tok("b", lexeme.IDENTIFIER),
+		lextest.Tok("b", lexeme.IDENT),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("a", lexeme.IDENTIFIER),
-		lextest.Tok("b", lexeme.IDENTIFIER),
+		lextest.Tok("a", lexeme.IDENT),
+		lextest.Tok("b", lexeme.IDENT),
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
@@ -281,11 +281,11 @@ func Test3_6(t *testing.T) {
 	// @Println(1 + 2)
 	in := lextest.Feign(
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("(", lexeme.LEFT_PAREN),
+		lextest.Tok("(", lexeme.L_PAREN),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok("2", lexeme.NUMBER),
-		lextest.Tok(")", lexeme.RIGHT_PAREN),
+		lextest.Tok(")", lexeme.R_PAREN),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
@@ -306,8 +306,8 @@ func Test3_7(t *testing.T) {
 	// WHEN refixing an assignment with a single simple expression
 	// x := 1 + 2
 	in := lextest.Feign(
-		lextest.Tok("x", lexeme.IDENTIFIER),
-		lextest.Tok(":=", lexeme.ASSIGNMENT),
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(":=", lexeme.ASSIGN),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok("2", lexeme.NUMBER),
@@ -315,12 +315,12 @@ func Test3_7(t *testing.T) {
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("", lexeme.ASSIGNMENT),
+		lextest.Tok("", lexeme.ASSIGN),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("2", lexeme.NUMBER),
 		lextest.Tok("+", lexeme.ADD),
-		lextest.Tok(":=", lexeme.ASSIGNMENT),
-		lextest.Tok("x", lexeme.IDENTIFIER),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("x", lexeme.IDENT),
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 

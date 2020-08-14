@@ -24,10 +24,10 @@ func statement(shy *shuntingYard) {
 		case shy.inQueue(lexeme.SPELL):
 			call(shy)
 
-		case shy.inQueue(lexeme.IDENTIFIER):
+		case shy.inQueue(lexeme.IDENT):
 			shy.push() // First ID
 
-			if shy.inQueue(lexeme.SEPARATOR) || shy.inQueue(lexeme.ASSIGNMENT) {
+			if shy.inQueue(lexeme.DELIM) || shy.inQueue(lexeme.ASSIGN) {
 				assignment(shy)
 				break
 			}
@@ -52,7 +52,7 @@ func statement(shy *shuntingYard) {
 
 func expressions(shy *shuntingYard) {
 
-	for first := true; first || shy.inQueue(lexeme.SEPARATOR); first = false {
+	for first := true; first || shy.inQueue(lexeme.DELIM); first = false {
 
 		if !first {
 			shy.output()
@@ -66,8 +66,8 @@ func expression(shy *shuntingYard) {
 
 	mark := shy.stackSize()
 
-	for !shy.inQueue(lexeme.SEPARATOR) &&
-		!shy.inQueue(lexeme.RIGHT_PAREN) &&
+	for !shy.inQueue(lexeme.DELIM) &&
+		!shy.inQueue(lexeme.R_PAREN) &&
 		!shy.queueTok().IsTerminator() {
 
 		switch {
@@ -101,7 +101,7 @@ func call(shy *shuntingYard) {
 	shy.push() // "("
 	shy.emit(*shy.stack.Top(), lexeme.SPELL)
 
-	for !shy.inQueue(lexeme.RIGHT_PAREN) {
+	for !shy.inQueue(lexeme.R_PAREN) {
 		expressions(shy)
 	}
 
@@ -115,13 +115,13 @@ func assignment(shy *shuntingYard) {
 	// First has already been pushed
 	mark := shy.stackSize() - 1
 
-	for shy.inQueue(lexeme.SEPARATOR) {
+	for shy.inQueue(lexeme.DELIM) {
 		shy.push()
 		shy.push() // Other IDs
 	}
 
 	shy.push() // :=
-	shy.emit(*shy.stack.Top(), lexeme.ASSIGNMENT)
+	shy.emit(*shy.stack.Top(), lexeme.ASSIGN)
 
 	expressions(shy)
 	shy.pop() // :=

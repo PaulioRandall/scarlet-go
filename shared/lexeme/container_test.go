@@ -11,7 +11,7 @@ func setupContainer() (_ *Container, a, b, c, d *Lexeme) {
 	a = lex(0, 0, "1st", BOOL)
 	b = lex(0, 4, "2nd", NUMBER)
 	c = lex(0, 5, "3rd", STRING)
-	d = lex(0, 9, "4th", IDENTIFIER)
+	d = lex(0, 9, "4th", IDENT)
 
 	a.prev, a.next = nil, b
 	b.prev, b.next = a, c

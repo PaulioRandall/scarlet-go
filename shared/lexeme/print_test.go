@@ -12,7 +12,7 @@ func Test_Print_1(t *testing.T) {
 	a := lex(0, 0, "true", BOOL)
 	b := lex(1, 2, "2", NUMBER)
 	c := lex(99, 66, `"three"`, STRING)
-	d := lex(666, 999, "x", IDENTIFIER)
+	d := lex(666, 999, "x", IDENT)
 
 	feign(a, b, c, d)
 
