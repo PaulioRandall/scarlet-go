@@ -128,6 +128,18 @@ func (env *Environment) Exe(in inst.Instruction) {
 	case inst.CO_OR:
 		coOr(env, in)
 
+	case inst.CO_LESS:
+		coLess(env, in)
+
+	case inst.CO_MORE:
+		coMore(env, in)
+
+	case inst.CO_LESS_EQU:
+		coLessOrEqual(env, in)
+
+	case inst.CO_MORE_EQU:
+		coMoreOrEqual(env, in)
+
 	case inst.CO_SPELL: // co_call.go
 		coSpell(env, in)
 

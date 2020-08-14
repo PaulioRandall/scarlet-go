@@ -112,3 +112,47 @@ func coOr(env *Environment, in inst.Instruction) {
 
 	env.Push(left.Or(right))
 }
+
+func coLess(env *Environment, in inst.Instruction) {
+
+	left, right, ok := popNumOperands(env)
+	if !ok {
+		return
+	}
+
+	answer := left.Less(right.Number)
+	env.Push(types.Bool(answer))
+}
+
+func coMore(env *Environment, in inst.Instruction) {
+
+	left, right, ok := popNumOperands(env)
+	if !ok {
+		return
+	}
+
+	answer := left.More(right.Number)
+	env.Push(types.Bool(answer))
+}
+
+func coLessOrEqual(env *Environment, in inst.Instruction) {
+
+	left, right, ok := popNumOperands(env)
+	if !ok {
+		return
+	}
+
+	answer := left.LessOrEqual(right.Number)
+	env.Push(types.Bool(answer))
+}
+
+func coMoreOrEqual(env *Environment, in inst.Instruction) {
+
+	left, right, ok := popNumOperands(env)
+	if !ok {
+		return
+	}
+
+	answer := left.MoreOrEqual(right.Number)
+	env.Push(types.Bool(answer))
+}

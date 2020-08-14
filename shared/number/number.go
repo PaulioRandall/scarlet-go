@@ -21,10 +21,10 @@ type Number interface {
 
 	Equal(Number) bool
 	NotEqual(Number) bool
-	LessThan(Number) bool
-	LessThanOrEqual(Number) bool
-	MoreThan(Number) bool
-	MoreThanOrEqual(Number) bool
+	Less(Number) bool
+	LessOrEqual(Number) bool
+	More(Number) bool
+	MoreOrEqual(Number) bool
 }
 
 func New(numStr string) Number {

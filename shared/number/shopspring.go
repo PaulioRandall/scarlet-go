@@ -97,22 +97,22 @@ func (n *number) NotEqual(other Number) bool {
 	return !n.Equal(other)
 }
 
-func (n *number) LessThan(other Number) bool {
+func (n *number) Less(other Number) bool {
 	o := cast(other)
 	return n.d.LessThan(o.d)
 }
 
-func (n *number) LessThanOrEqual(other Number) bool {
+func (n *number) LessOrEqual(other Number) bool {
 	o := cast(other)
 	return n.d.LessThanOrEqual(o.d)
 }
 
-func (n *number) MoreThan(other Number) bool {
+func (n *number) More(other Number) bool {
 	o := cast(other)
 	return n.d.GreaterThan(o.d)
 }
 
-func (n *number) MoreThanOrEqual(other Number) bool {
+func (n *number) MoreOrEqual(other Number) bool {
 	o := cast(other)
 	return n.d.GreaterThanOrEqual(o.d)
 }

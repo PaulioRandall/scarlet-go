@@ -153,55 +153,55 @@ func Test_SH10_1(t *testing.T) {
 }
 
 func Test_SH11_1(t *testing.T) {
-	// number.LessThan returns true if receiver is less than the argument
+	// number.Less returns true if receiver is less than the argument
 
-	act := newShopspring("123").LessThan(newShopspring("456"))
+	act := newShopspring("123").Less(newShopspring("456"))
 	require.True(t, act)
 
-	act = newShopspring("123").LessThan(newShopspring("123"))
+	act = newShopspring("123").Less(newShopspring("123"))
 	require.False(t, act)
 
-	act = newShopspring("456").LessThan(newShopspring("123"))
+	act = newShopspring("456").Less(newShopspring("123"))
 	require.False(t, act)
 }
 
 func Test_SH12_1(t *testing.T) {
-	// number.LessThanOrEqual returns true if receiver is less or equal than
+	// number.LessOrEqual returns true if receiver is less or equal than
 	// the argument
 
-	act := newShopspring("123").LessThanOrEqual(newShopspring("456"))
+	act := newShopspring("123").LessOrEqual(newShopspring("456"))
 	require.True(t, act)
 
-	act = newShopspring("123").LessThanOrEqual(newShopspring("123"))
+	act = newShopspring("123").LessOrEqual(newShopspring("123"))
 	require.True(t, act)
 
-	act = newShopspring("456").LessThanOrEqual(newShopspring("123"))
+	act = newShopspring("456").LessOrEqual(newShopspring("123"))
 	require.False(t, act)
 }
 
 func Test_SH13_1(t *testing.T) {
-	// number.MoreThan returns true if receiver is more than the argument
+	// number.More returns true if receiver is more than the argument
 
-	act := newShopspring("123").MoreThan(newShopspring("456"))
+	act := newShopspring("123").More(newShopspring("456"))
 	require.False(t, act)
 
-	act = newShopspring("123").MoreThan(newShopspring("123"))
+	act = newShopspring("123").More(newShopspring("123"))
 	require.False(t, act)
 
-	act = newShopspring("456").MoreThan(newShopspring("123"))
+	act = newShopspring("456").More(newShopspring("123"))
 	require.True(t, act)
 }
 
 func Test_SH14_1(t *testing.T) {
-	// number.MoreThanOrEqual returns true if receiver is more or equal than
+	// number.MoreOrEqual returns true if receiver is more or equal than
 	// the argument
 
-	act := newShopspring("123").MoreThanOrEqual(newShopspring("456"))
+	act := newShopspring("123").MoreOrEqual(newShopspring("456"))
 	require.False(t, act)
 
-	act = newShopspring("123").MoreThanOrEqual(newShopspring("123"))
+	act = newShopspring("123").MoreOrEqual(newShopspring("123"))
 	require.True(t, act)
 
-	act = newShopspring("456").MoreThanOrEqual(newShopspring("123"))
+	act = newShopspring("456").MoreOrEqual(newShopspring("123"))
 	require.True(t, act)
 }
