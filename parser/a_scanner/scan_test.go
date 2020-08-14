@@ -210,6 +210,50 @@ func Test10_4(t *testing.T) {
 	doErrTest(t, "|")
 }
 
+func Test11_1(t *testing.T) {
+	doTest(t, "<", lextest.Feign(
+		lextest.Lex(0, 0, "<", lexeme.LESS),
+	))
+}
+
+func Test11_2(t *testing.T) {
+	doTest(t, ">", lextest.Feign(
+		lextest.Lex(0, 0, ">", lexeme.MORE),
+	))
+}
+
+func Test11_3(t *testing.T) {
+	doTest(t, "<=", lextest.Feign(
+		lextest.Lex(0, 0, "<=", lexeme.LESS_EQUAL),
+	))
+}
+
+func Test11_4(t *testing.T) {
+	doTest(t, ">=", lextest.Feign(
+		lextest.Lex(0, 0, ">=", lexeme.MORE_EQUAL),
+	))
+}
+
+func Test11_5(t *testing.T) {
+	doTest(t, "==", lextest.Feign(
+		lextest.Lex(0, 0, "==", lexeme.EQUAL),
+	))
+}
+
+func Test11_6(t *testing.T) {
+	doTest(t, "!=", lextest.Feign(
+		lextest.Lex(0, 0, "!=", lexeme.NOT_EQUAL),
+	))
+}
+
+func Test11_7(t *testing.T) {
+	doErrTest(t, "=")
+}
+
+func Test11_8(t *testing.T) {
+	doErrTest(t, "!")
+}
+
 func Test99_0(t *testing.T) {
 
 	given := "@Println(1,\n true,\n \"heir\")\n"

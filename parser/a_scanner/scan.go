@@ -96,6 +96,30 @@ func scanLexeme(rr *runeReader) (*lexeme.Lexeme, error) {
 			return nil, e
 		}
 		return rr.slice(lexeme.OR), nil
+
+	case rr.accept('<'):
+		if rr.accept('=') {
+			return rr.slice(lexeme.LESS_EQUAL), nil
+		}
+		return rr.slice(lexeme.LESS), nil
+
+	case rr.accept('>'):
+		if rr.accept('=') {
+			return rr.slice(lexeme.MORE_EQUAL), nil
+		}
+		return rr.slice(lexeme.MORE), nil
+
+	case rr.accept('='):
+		if e := rr.expect('='); e != nil {
+			return nil, e
+		}
+		return rr.slice(lexeme.EQUAL), nil
+
+	case rr.accept('!'):
+		if e := rr.expect('='); e != nil {
+			return nil, e
+		}
+		return rr.slice(lexeme.NOT_EQUAL), nil
 	}
 
 	return nil, perror.New(

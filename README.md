@@ -5,13 +5,6 @@ the default language.
 
 ## 1.0 (Essential Features)
 
-#### Logical Operations
-
-```
-true && false
-true || false
-```
-
 #### Comparison Operations
 
 ```

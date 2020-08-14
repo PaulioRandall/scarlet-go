@@ -21,7 +21,6 @@ const (
 	SEPARATOR   // ,
 	LEFT_PAREN  // (
 	RIGHT_PAREN // )
-	CALLABLE    // Magic token, tells compiler that spell or func args are coming
 	ASSIGNMENT  // :=
 	ADD         // +
 	SUB         // -
@@ -30,6 +29,12 @@ const (
 	REM         // %
 	AND         // &&
 	OR          // ||
+	LESS        // <
+	MORE        // >
+	LESS_EQUAL  // <=
+	MORE_EQUAL  // >=
+	EQUAL       // ==
+	NOT_EQUAL   // !=
 )
 
 var tokens = map[Token]string{
@@ -45,7 +50,6 @@ var tokens = map[Token]string{
 	SEPARATOR:   `SEPARATOR`,
 	LEFT_PAREN:  `LEFT_PAREN`,
 	RIGHT_PAREN: `RIGHT_PAREN`,
-	CALLABLE:    `CALLABLE`,
 	ASSIGNMENT:  `ASSIGNMENT`,
 	ADD:         `ADDITION`,
 	SUB:         `SUBTRACTION`,
@@ -54,6 +58,12 @@ var tokens = map[Token]string{
 	REM:         `REMAINDER`,
 	AND:         `AND`,
 	OR:          `OR`,
+	LESS:        `LESS`,
+	MORE:        `MORE`,
+	LESS_EQUAL:  `LESS_EQUAL`,
+	MORE_EQUAL:  `MORE_EQUAL`,
+	EQUAL:       `EQUAL`,
+	NOT_EQUAL:   `NOT_EQUAL`,
 }
 
 func (tk Token) Precedence() int {
