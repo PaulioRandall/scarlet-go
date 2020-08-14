@@ -103,11 +103,13 @@ func (tk Token) IsAssignee() bool {
 }
 
 func (tk Token) IsOperator() bool {
-	return tk == ADD ||
-		tk == SUB ||
-		tk == MUL ||
+	return tk == MUL ||
 		tk == DIV ||
-		tk == REM
+		tk == REM ||
+		tk == ADD ||
+		tk == SUB ||
+		tk == AND ||
+		tk == OR
 }
 
 func (tk Token) IsOpener() bool {

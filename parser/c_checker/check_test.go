@@ -342,3 +342,24 @@ func Test4_7(t *testing.T) {
 
 	doTest(t, in)
 }
+
+func Test4_8(t *testing.T) {
+
+	// WHEN checking a complex logical expression
+	// THEN no errors should be returned
+	// false || false && true || true && true
+	in := lextest.Feign(
+		lextest.Tok("false", lexeme.BOOL),
+		lextest.Tok("||", lexeme.OR),
+		lextest.Tok("false", lexeme.BOOL),
+		lextest.Tok("&&", lexeme.AND),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("||", lexeme.OR),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("&&", lexeme.AND),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
