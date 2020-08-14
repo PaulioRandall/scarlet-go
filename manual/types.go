@@ -24,22 +24,36 @@ Usage:
 		x := 2 * 3              Valid:   multiplying two numbers
 		x := 2 * "hello"        Invalid: multiplying a string is nonsensical
 
-Intrinsic data types:
+Data types:
 
-	'Bool'
+	'Bool' (Intrinsic)
 		Holds one of two possible values, 'true' or 'false'.
 
-	'Num'
+	'Num' (Intrinsic)
 		Holds an arbitrary length floating point number. The standard numeric
 		operations can be perform on two numbers such as addition and
 		multiplication. When an operation or spell requires an integer, the
 		integer part of the number passed will be used, i.e. no rounding will
 		occur.
 
-	'Str'
+	'Str' (Intrinsic)
 		Holds a sequance of UTF-8 characters. Scarlet is very high level and
 		does not intrinsically deal with byte data so string manipulation is
 		done purely in UTF-8.
+
+Operations:
+
+	These are the operations available with their precedence, a higher number
+	means greater precedence and those of equal precedence are prioritised by
+	first come first computed.
+	
+	(4) Num  *  Num
+	    Num  /  Num
+	    Num  %  Num
+	(3) Num  +  Num
+	    Num  -  Num
+	(2) Bool && Bool
+	(1) Bool || Bool
 
 Future types:
 
