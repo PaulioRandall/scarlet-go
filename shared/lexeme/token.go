@@ -28,6 +28,8 @@ const (
 	MUL         // *
 	DIV         // /
 	REM         // %
+	AND         // &&
+	OR          // ||
 )
 
 var tokens = map[Token]string{
@@ -50,13 +52,19 @@ var tokens = map[Token]string{
 	MUL:         `MULTIPLICATION`,
 	DIV:         `DIVISION`,
 	REM:         `REMAINDER`,
+	AND:         `AND`,
+	OR:          `OR`,
 }
 
 func (tk Token) Precedence() int {
 	switch tk {
 	case MUL, DIV, REM:
-		return 2
+		return 4
 	case ADD, SUB:
+		return 3
+	case AND:
+		return 2
+	case OR:
 		return 1
 	}
 

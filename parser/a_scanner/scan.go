@@ -84,6 +84,18 @@ func scanLexeme(rr *runeReader) (*lexeme.Lexeme, error) {
 
 	case rr.accept('%'):
 		return rr.slice(lexeme.REM), nil
+
+	case rr.accept('&'):
+		if e := rr.expect('&'); e != nil {
+			return nil, e
+		}
+		return rr.slice(lexeme.AND), nil
+
+	case rr.accept('|'):
+		if e := rr.expect('|'); e != nil {
+			return nil, e
+		}
+		return rr.slice(lexeme.OR), nil
 	}
 
 	return nil, perror.New(
