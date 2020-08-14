@@ -173,6 +173,18 @@ func operator(com *compiler) {
 	case lex.Tok == lexeme.OR:
 		in.Code = inst.CO_OR
 
+	case lex.Tok == lexeme.LESS:
+		in.Code = inst.CO_LESS
+
+	case lex.Tok == lexeme.MORE:
+		in.Code = inst.CO_MORE
+
+	case lex.Tok == lexeme.LESS_EQUAL:
+		in.Code = inst.CO_LESS_EQU
+
+	case lex.Tok == lexeme.MORE_EQUAL:
+		in.Code = inst.CO_MORE_EQU
+
 	default:
 		com.unexpected()
 	}

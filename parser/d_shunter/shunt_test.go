@@ -349,7 +349,7 @@ func Test3_8(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	// false false true && 1 2 < 3 3 >= && || ||
+	// false false true && || 1 2 < 3 3 >= && ||
 	exp := lextest.Feign(
 		lextest.Tok("false", lexeme.BOOL),
 		lextest.Tok("false", lexeme.BOOL),

@@ -64,6 +64,10 @@ const (
 	CO_SUB
 	CO_AND
 	CO_OR
+	CO_LESS
+	CO_MORE
+	CO_LESS_EQU
+	CO_MORE_EQU
 
 	// Call a spell with the contents of the value stack.
 	//
@@ -96,6 +100,7 @@ const (
 
 var codes = map[Code]string{
 	CO_VAL_PUSH: `CO_VAL_PUSH`,
+	CO_CTX_SET: `	CO_CTX_SET`,
 	CO_CTX_GET:  `CO_CTX_GET`,
 	CO_SPELL:    `CO_SPELL`,
 	CO_MUL:      `CO_MUL`,
@@ -105,4 +110,8 @@ var codes = map[Code]string{
 	CO_SUB:      `CO_SUB`,
 	CO_AND:      `CO_AND`,
 	CO_OR:       `CO_OR`,
+	CO_LESS:     `CO_LESS`,
+	CO_MORE:     `CO_MORE`,
+	CO_LESS_EQU: `CO_LESS_EQU`,
+	CO_MORE_EQU: `CO_MORE_EQU`,
 }
