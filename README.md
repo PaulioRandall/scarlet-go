@@ -25,6 +25,10 @@ loop [true] {
 }
 ```
 
+#### Format Spell
+
+Just needs updating to format assignments & expressions
+
 ## 1.1
 
 #### Void Assignee

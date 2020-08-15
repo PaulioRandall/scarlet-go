@@ -60,6 +60,12 @@ func format(itr *lexeme.Iterator) {
 	insertSeparatorSpaces(itr)
 	itr.Restart()
 
+	insertAssignmentSpaces(itr)
+	itr.Restart()
+
+	insertOperatorSpaces(itr)
+	itr.Restart()
+
 	insertCommentSpaces(itr)
 	itr.Restart()
 
@@ -136,6 +142,52 @@ func insertCommentSpaces(itr *lexeme.Iterator) {
 			itr.Before().Tok != lexeme.SPACE {
 
 			itr.Prepend(&lexeme.Lexeme{
+				Tok: lexeme.SPACE,
+				Raw: " ",
+			})
+		}
+	}
+}
+
+func insertAssignmentSpaces(itr *lexeme.Iterator) {
+
+	assignment := func(itr lexeme.View) bool {
+		return itr.Curr().Tok == lexeme.ASSIGN
+	}
+
+	for itr.JumpToNext(assignment) {
+		if itr.Before() != nil && itr.Before().Tok != lexeme.SPACE {
+			itr.Prepend(&lexeme.Lexeme{
+				Tok: lexeme.SPACE,
+				Raw: " ",
+			})
+		}
+
+		if itr.After() != nil && itr.After().Tok != lexeme.SPACE {
+			itr.Append(&lexeme.Lexeme{
+				Tok: lexeme.SPACE,
+				Raw: " ",
+			})
+		}
+	}
+}
+
+func insertOperatorSpaces(itr *lexeme.Iterator) {
+
+	operator := func(itr lexeme.View) bool {
+		return itr.Curr().Tok.IsOperator()
+	}
+
+	for itr.JumpToNext(operator) {
+		if itr.Before() != nil && itr.Before().Tok != lexeme.SPACE {
+			itr.Prepend(&lexeme.Lexeme{
+				Tok: lexeme.SPACE,
+				Raw: " ",
+			})
+		}
+
+		if itr.After() != nil && itr.After().Tok != lexeme.SPACE {
+			itr.Append(&lexeme.Lexeme{
 				Tok: lexeme.SPACE,
 				Raw: " ",
 			})
