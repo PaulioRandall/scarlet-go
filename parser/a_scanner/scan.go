@@ -61,6 +61,12 @@ func scanLexeme(rr *runeReader) (*lexeme.Lexeme, error) {
 	case rr.accept(')'):
 		return rr.slice(lexeme.R_PAREN), nil
 
+	case rr.accept('['):
+		return rr.slice(lexeme.L_SQUARE), nil
+
+	case rr.accept(']'):
+		return rr.slice(lexeme.R_SQUARE), nil
+
 	case rr.accept(','):
 		return rr.slice(lexeme.DELIM), nil
 

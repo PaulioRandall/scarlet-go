@@ -151,106 +151,130 @@ func Test7_5(t *testing.T) {
 }
 
 func Test8_1(t *testing.T) {
+	doTest(t, "(", lextest.Feign(
+		lextest.Lex(0, 0, "(", lexeme.L_PAREN),
+	))
+}
+
+func Test8_2(t *testing.T) {
+	doTest(t, ")", lextest.Feign(
+		lextest.Lex(0, 0, ")", lexeme.R_PAREN),
+	))
+}
+
+func Test8_3(t *testing.T) {
+	doTest(t, "[", lextest.Feign(
+		lextest.Lex(0, 0, "[", lexeme.L_SQUARE),
+	))
+}
+
+func Test8_4(t *testing.T) {
+	doTest(t, "]", lextest.Feign(
+		lextest.Lex(0, 0, "]", lexeme.R_SQUARE),
+	))
+}
+
+func Test9_1(t *testing.T) {
 	doTest(t, ":=", lextest.Feign(
 		lextest.Lex(0, 0, ":=", lexeme.ASSIGN),
 	))
 }
 
-func Test8_2(t *testing.T) {
+func Test9_2(t *testing.T) {
 	doErrTest(t, ":")
 }
 
-func Test9_1(t *testing.T) {
+func Test10_1(t *testing.T) {
 	doTest(t, "+", lextest.Feign(
 		lextest.Lex(0, 0, "+", lexeme.ADD),
 	))
 }
 
-func Test9_2(t *testing.T) {
+func Test10_2(t *testing.T) {
 	doTest(t, "-", lextest.Feign(
 		lextest.Lex(0, 0, "-", lexeme.SUB),
 	))
 }
 
-func Test9_3(t *testing.T) {
+func Test10_3(t *testing.T) {
 	doTest(t, "*", lextest.Feign(
 		lextest.Lex(0, 0, "*", lexeme.MUL),
 	))
 }
 
-func Test9_4(t *testing.T) {
+func Test10_4(t *testing.T) {
 	doTest(t, "/", lextest.Feign(
 		lextest.Lex(0, 0, "/", lexeme.DIV),
 	))
 }
 
-func Test9_5(t *testing.T) {
+func Test10_5(t *testing.T) {
 	doTest(t, "%", lextest.Feign(
 		lextest.Lex(0, 0, "%", lexeme.REM),
 	))
 }
 
-func Test10_1(t *testing.T) {
+func Test11_1(t *testing.T) {
 	doTest(t, "&&", lextest.Feign(
 		lextest.Lex(0, 0, "&&", lexeme.AND),
 	))
 }
 
-func Test10_2(t *testing.T) {
+func Test11_2(t *testing.T) {
 	doTest(t, "||", lextest.Feign(
 		lextest.Lex(0, 0, "||", lexeme.OR),
 	))
 }
 
-func Test10_3(t *testing.T) {
+func Test11_3(t *testing.T) {
 	doErrTest(t, "&")
 }
 
-func Test10_4(t *testing.T) {
+func Test11_4(t *testing.T) {
 	doErrTest(t, "|")
 }
 
-func Test11_1(t *testing.T) {
+func Test12_1(t *testing.T) {
 	doTest(t, "<", lextest.Feign(
 		lextest.Lex(0, 0, "<", lexeme.LESS),
 	))
 }
 
-func Test11_2(t *testing.T) {
+func Test12_2(t *testing.T) {
 	doTest(t, ">", lextest.Feign(
 		lextest.Lex(0, 0, ">", lexeme.MORE),
 	))
 }
 
-func Test11_3(t *testing.T) {
+func Test12_3(t *testing.T) {
 	doTest(t, "<=", lextest.Feign(
 		lextest.Lex(0, 0, "<=", lexeme.LESS_EQUAL),
 	))
 }
 
-func Test11_4(t *testing.T) {
+func Test12_4(t *testing.T) {
 	doTest(t, ">=", lextest.Feign(
 		lextest.Lex(0, 0, ">=", lexeme.MORE_EQUAL),
 	))
 }
 
-func Test11_5(t *testing.T) {
+func Test12_5(t *testing.T) {
 	doTest(t, "==", lextest.Feign(
 		lextest.Lex(0, 0, "==", lexeme.EQUAL),
 	))
 }
 
-func Test11_6(t *testing.T) {
+func Test12_6(t *testing.T) {
 	doTest(t, "!=", lextest.Feign(
 		lextest.Lex(0, 0, "!=", lexeme.NOT_EQUAL),
 	))
 }
 
-func Test11_7(t *testing.T) {
+func Test12_7(t *testing.T) {
 	doErrTest(t, "=")
 }
 
-func Test11_8(t *testing.T) {
+func Test12_8(t *testing.T) {
 	doErrTest(t, "!")
 }
 

@@ -21,6 +21,8 @@ const (
 	DELIM      // ,
 	L_PAREN    // (
 	R_PAREN    // )
+	L_SQUARE   // [
+	R_SQUARE   // ]
 	ASSIGN     // :=
 	ADD        // +
 	SUB        // -
@@ -50,6 +52,8 @@ var tokens = map[Token]string{
 	DELIM:      `DELIM`,
 	L_PAREN:    `L_PAREN`,
 	R_PAREN:    `R_PAREN`,
+	L_SQUARE:   `L_SQUARE`,
+	R_SQUARE:   `R_SQUARE`,
 	ASSIGN:     `ASSIGN`,
 	ADD:        `ADD`,
 	SUB:        `SUB`,
@@ -133,11 +137,11 @@ func (tk Token) IsOperator() bool {
 }
 
 func (tk Token) IsOpener() bool {
-	return tk == L_PAREN
+	return tk == L_PAREN || tk == L_SQUARE
 }
 
 func (tk Token) IsCloser() bool {
-	return tk == R_PAREN
+	return tk == R_PAREN || tk == R_SQUARE
 }
 
 func (tk Token) String() string {
