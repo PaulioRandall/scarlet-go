@@ -10,8 +10,13 @@ func CheckAll(con *lexeme.Container) error {
 		it: con.Iterator(),
 	}
 
+	return statements(chk)
+}
+
+func statements(chk *checker) error {
+
 	for chk.it.Next(); chk.it.HasNext(); {
-		e := check(chk)
+		e := statement(chk)
 		if e != nil {
 			return e
 		}
@@ -20,7 +25,7 @@ func CheckAll(con *lexeme.Container) error {
 	return nil
 }
 
-func check(chk *checker) error {
+func statement(chk *checker) error {
 
 	var e error
 
@@ -193,4 +198,20 @@ func guard(chk *checker) error {
 	}
 
 	return nil
+}
+
+func block(chk *checker) error {
+
+	if e := chk.expectAny(lexeme.L_CURLY); e != nil {
+		return e
+	}
+
+	for chk.it.HasNext() && !chk.matchAny(lexeme.R_CURLY) {
+		e := statement(chk)
+		if e != nil {
+			return e
+		}
+	}
+
+	return chk.expectAny(lexeme.R_CURLY)
 }
