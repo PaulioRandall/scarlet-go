@@ -16,7 +16,12 @@ func CheckAll(con *lexeme.Container) error {
 func statements(chk *checker) error {
 
 	for chk.it.Next(); chk.it.HasNext(); {
-		e := statement(chk)
+
+		if e := statement(chk); e != nil {
+			return e
+		}
+
+		e := chk.expect("<TERMINATOR>", chk.tok().IsTerminator())
 		if e != nil {
 			return e
 		}
@@ -27,27 +32,18 @@ func statements(chk *checker) error {
 
 func statement(chk *checker) error {
 
-	var e error
-
 	switch {
 	case chk.matchAny(lexeme.IDENT):
-		e = assignmentOrExpression(chk)
+		return assignmentOrExpression(chk)
 
 	case chk.tok().IsTerm(), chk.matchAny(lexeme.SPELL, lexeme.L_PAREN):
-		e = expression(chk)
+		return expression(chk)
 
 	case chk.matchAny(lexeme.L_SQUARE):
-		e = guard(chk)
-
-	default:
-		return chk.unexpected("<STATEMENT>")
+		return guard(chk)
 	}
 
-	if e != nil {
-		return e
-	}
-
-	return chk.expect("<TERMINATOR>", chk.tok().IsTerminator())
+	return chk.unexpected("<STATEMENT>")
 }
 
 func assignmentOrExpression(chk *checker) error {
@@ -197,7 +193,7 @@ func guard(chk *checker) error {
 		return e
 	}
 
-	return nil
+	return block(chk)
 }
 
 func block(chk *checker) error {
@@ -206,8 +202,21 @@ func block(chk *checker) error {
 		return e
 	}
 
-	for chk.it.HasNext() && !chk.matchAny(lexeme.R_CURLY) {
-		e := statement(chk)
+	if chk.acceptAny(lexeme.R_CURLY) {
+		return nil
+	}
+
+	for chk.it.HasNext() {
+
+		if e := statement(chk); e != nil {
+			return e
+		}
+
+		if chk.matchAny(lexeme.R_CURLY) {
+			break
+		}
+
+		e := chk.expect("<TERMINATOR>", chk.tok().IsTerminator())
 		if e != nil {
 			return e
 		}

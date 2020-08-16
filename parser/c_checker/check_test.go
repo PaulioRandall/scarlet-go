@@ -514,3 +514,147 @@ func Test5_8(t *testing.T) {
 
 	doErrorTest(t, in)
 }
+
+func Test6_1(t *testing.T) {
+
+	// [true] {}
+	in := lextest.Feign(
+		lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test6_2(t *testing.T) {
+
+	// [true] {"abc"}
+	in := lextest.Feign(
+		lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok(`"abc"`, lexeme.STRING),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test6_3(t *testing.T) {
+
+	// [true || false] { @Println(1)
+	// @Println(2)
+	// @Println(3) }
+	in := lextest.Feign(
+		lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("||", lexeme.OR),
+		lextest.Tok("false", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test6_4(t *testing.T) {
+
+	// true] {"abc"}
+	in := lextest.Feign(
+		//lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok(`"abc"`, lexeme.STRING),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}
+
+func Test6_5(t *testing.T) {
+
+	// [] {"abc"}
+	in := lextest.Feign(
+		lextest.Tok("[", lexeme.L_SQUARE),
+		//lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok(`"abc"`, lexeme.STRING),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}
+
+func Test6_6(t *testing.T) {
+
+	// [true {"abc"}
+	in := lextest.Feign(
+		lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		//lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok(`"abc"`, lexeme.STRING),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}
+
+func Test6_7(t *testing.T) {
+
+	// [true] "abc"}
+	in := lextest.Feign(
+		lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		//lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok(`"abc"`, lexeme.STRING),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}
+
+func Test6_8(t *testing.T) {
+
+	// [true] {"abc"
+	in := lextest.Feign(
+		lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok(`"abc"`, lexeme.STRING),
+		//lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}
