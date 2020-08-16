@@ -72,6 +72,8 @@ var tokens = map[Token]string{
 
 func (tk Token) Precedence() int {
 	switch tk {
+	case L_PAREN, R_PAREN:
+		return 7
 	case MUL, DIV, REM:
 		return 6
 	case ADD, SUB:

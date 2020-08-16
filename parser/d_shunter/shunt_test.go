@@ -377,3 +377,127 @@ func Test3_8(t *testing.T) {
 
 	doTest(t, in, exp)
 }
+
+func Test4_1(t *testing.T) {
+
+	// WHEN refixing an expression containing groups
+	// 1 * (2 + 3)
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// 1 2 3 + *
+	exp := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in, exp)
+}
+
+func Test4_2(t *testing.T) {
+
+	// WHEN refixing an expression containing groups
+	// 1 * ((2 + 3))
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// 1 2 3 + *
+	exp := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in, exp)
+}
+
+func Test4_3(t *testing.T) {
+
+	// WHEN refixing an expression containing groups
+	// x := 1 * (2 + 3)
+	in := lextest.Feign(
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// 1 2 3 + *
+	exp := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in, exp)
+}
+
+func Test4_4(t *testing.T) {
+
+	// WHEN refixing an expression containing groups
+	// @Println(1 * (2 + 3))
+	in := lextest.Feign(
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// 1 2 3 + *
+	exp := lextest.Feign(
+		lextest.Tok("", lexeme.SPELL),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in, exp)
+}
