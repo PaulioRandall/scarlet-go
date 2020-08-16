@@ -58,6 +58,10 @@ func (chk *checker) tok() lexeme.Token {
 	return lexeme.UNDEFINED
 }
 
+func (chk *checker) next() {
+	chk.it.Next()
+}
+
 func (chk *checker) accept(ok bool) bool {
 
 	if chk.it.Curr() != nil && ok {

@@ -10,5 +10,3 @@ answer := 1+(2-(3*4))/5%6
 
 @Println(1 + 1 == 8 / 4)
 
-@Println()
-@Println("# TODO: Update script formatting to format assignments & expressions")

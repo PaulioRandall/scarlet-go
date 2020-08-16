@@ -25,14 +25,14 @@ func check(chk *checker) error {
 	var e error
 
 	switch {
-	case chk.matchAny(lexeme.SPELL):
-		e = spell(chk)
-
 	case chk.matchAny(lexeme.IDENT):
 		e = assignmentOrExpression(chk)
 
-	case chk.tok().IsTerm(), chk.matchAny(lexeme.L_PAREN):
+	case chk.tok().IsTerm(), chk.matchAny(lexeme.SPELL, lexeme.L_PAREN):
 		e = expression(chk)
+
+	case chk.matchAny(lexeme.L_SQUARE):
+		e = guard(chk)
 
 	default:
 		return chk.unexpected("<STATEMENT>")
@@ -160,9 +160,10 @@ func group(chk *checker) error {
 }
 
 func term(chk *checker) error {
+
 	switch {
-	//case chk.matchAny(lexeme.SPELL):
-	//return spell(chk)
+	case chk.matchAny(lexeme.SPELL):
+		return spell(chk)
 
 	case chk.matchAny(lexeme.L_PAREN):
 		return group(chk)
@@ -172,6 +173,23 @@ func term(chk *checker) error {
 
 	default:
 		return chk.unexpected("<TERM>")
+	}
+
+	return nil
+}
+
+func guard(chk *checker) error {
+
+	if e := chk.expectAny(lexeme.L_SQUARE); e != nil {
+		return e
+	}
+
+	if e := expression(chk); e != nil {
+		return e
+	}
+
+	if e := chk.expectAny(lexeme.R_SQUARE); e != nil {
+		return e
 	}
 
 	return nil

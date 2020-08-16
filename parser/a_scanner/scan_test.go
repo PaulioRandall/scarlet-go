@@ -174,6 +174,18 @@ func Test8_4(t *testing.T) {
 	))
 }
 
+func Test8_5(t *testing.T) {
+	doTest(t, "{", lextest.Feign(
+		lextest.Lex(0, 0, "{", lexeme.L_CURLY),
+	))
+}
+
+func Test8_6(t *testing.T) {
+	doTest(t, "}", lextest.Feign(
+		lextest.Lex(0, 0, "}", lexeme.R_CURLY),
+	))
+}
+
 func Test9_1(t *testing.T) {
 	doTest(t, ":=", lextest.Feign(
 		lextest.Lex(0, 0, ":=", lexeme.ASSIGN),

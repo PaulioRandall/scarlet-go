@@ -23,6 +23,8 @@ const (
 	R_PAREN    // )
 	L_SQUARE   // [
 	R_SQUARE   // ]
+	L_CURLY    // {
+	R_CURLY    //	}
 	ASSIGN     // :=
 	ADD        // +
 	SUB        // -
@@ -54,6 +56,8 @@ var tokens = map[Token]string{
 	R_PAREN:    `R_PAREN`,
 	L_SQUARE:   `L_SQUARE`,
 	R_SQUARE:   `R_SQUARE`,
+	L_CURLY:    `L_CURLY`,
+	R_CURLY:    `R_CURLY`,
 	ASSIGN:     `ASSIGN`,
 	ADD:        `ADD`,
 	SUB:        `SUB`,
