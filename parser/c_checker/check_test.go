@@ -371,3 +371,146 @@ func Test4_8(t *testing.T) {
 
 	doTest(t, in)
 }
+
+func Test5_1(t *testing.T) {
+
+	// 1 * (2 + 3)
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test5_2(t *testing.T) {
+
+	// (1 * 2) + 3
+	in := lextest.Feign(
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test5_3(t *testing.T) {
+
+	// 1 * ((2 + 3) - 4)
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("-", lexeme.SUB),
+		lextest.Tok("4", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test5_4(t *testing.T) {
+
+	// 1 * ((2 + 3)) - 4
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("-", lexeme.SUB),
+		lextest.Tok("4", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test5_5(t *testing.T) {
+
+	// 1 * (2) + 3
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test5_6(t *testing.T) {
+
+	// 1 * 2) + 3
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}
+
+func Test5_7(t *testing.T) {
+
+	// 1 * (2 + 3
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}
+
+func Test5_8(t *testing.T) {
+
+	// 1 * ((2 + 3)
+	in := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}

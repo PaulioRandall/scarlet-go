@@ -31,8 +31,8 @@ func check(chk *checker) error {
 	case chk.matchAny(lexeme.IDENT):
 		e = assignmentOrExpression(chk)
 
-	case chk.tok().IsTerm():
-		e = expressionStatement(chk)
+	case chk.tok().IsTerm(), chk.matchAny(lexeme.L_PAREN):
+		e = expression(chk)
 
 	default:
 		return chk.unexpected("<STATEMENT>")
@@ -45,6 +45,48 @@ func check(chk *checker) error {
 	return chk.expect("<TERMINATOR>", chk.tok().IsTerminator())
 }
 
+func assignmentOrExpression(chk *checker) error {
+
+	if e := chk.expectAny(lexeme.IDENT); e != nil {
+		return e
+	}
+
+	if chk.matchAny(lexeme.ASSIGN, lexeme.DELIM) {
+		chk.undo()
+		return assignment(chk)
+	}
+
+	return expression(chk)
+}
+
+func assignment(chk *checker) error {
+
+	var count int
+
+	for count == 0 || chk.acceptAny(lexeme.DELIM) {
+		if e := chk.expectAny(lexeme.IDENT); e != nil {
+			return e
+		}
+
+		count++
+	}
+
+	if e := chk.expectAny(lexeme.ASSIGN); e != nil {
+		return e
+	}
+
+	i, e := expressions(chk)
+	if e != nil {
+		return e
+	}
+
+	if i != count {
+		return chk.unexpected(lexeme.DELIM.String())
+	}
+
+	return nil
+}
+
 func spell(chk *checker) error {
 	// @Println(?, ?, ...)
 
@@ -53,8 +95,12 @@ func spell(chk *checker) error {
 		return e
 	}
 
-	e = chk.expectAny(lexeme.L_PAREN)
-	if e != nil {
+	return parameters(chk)
+}
+
+func parameters(chk *checker) error {
+
+	if e := chk.expectAny(lexeme.L_PAREN); e != nil {
 		return e
 	}
 
@@ -62,90 +108,26 @@ func spell(chk *checker) error {
 		return nil
 	}
 
-	e = parameters(chk)
-	if e != nil {
+	if _, e := expressions(chk); e != nil {
 		return e
 	}
 
 	return chk.expectAny(lexeme.R_PAREN)
 }
 
-func parameters(chk *checker) error {
+func expressions(chk *checker) (int, error) {
 
-	for more := true; more; {
+	var i int
 
+	for more := true; more; more = chk.acceptAny(lexeme.DELIM) {
 		if e := expression(chk); e != nil {
-			return e
+			return 0, e
 		}
 
-		more = chk.acceptAny(lexeme.DELIM)
+		i++
 	}
 
-	return nil
-}
-
-func assignmentOrExpression(chk *checker) error {
-
-	if e := chk.expectAny(lexeme.IDENT); e != nil {
-		return e
-	}
-
-	if chk.matchAny(lexeme.ASSIGN, lexeme.DELIM) {
-		return assignment(chk)
-	}
-
-	return expressionStatement(chk)
-}
-
-func assignment(chk *checker) error {
-
-	count := 1
-	for chk.acceptAny(lexeme.DELIM) {
-		if e := chk.expectAny(lexeme.IDENT); e != nil {
-			return e
-		}
-		count++
-	}
-
-	if e := chk.expectAny(lexeme.ASSIGN); e != nil {
-		return e
-	}
-
-	for count > 0 {
-		if e := expression(chk); e != nil {
-			return e
-		}
-
-		count--
-
-		if !chk.acceptAny(lexeme.DELIM) && count != 0 {
-			return chk.unexpected(lexeme.DELIM.String())
-		}
-	}
-
-	return nil
-}
-
-func expressionStatement(chk *checker) error {
-
-	e := term(chk)
-	if e != nil {
-		return e
-	}
-
-	for !chk.tok().IsTerminator() {
-
-		e = chk.expect("<OPERATOR>", chk.tok().IsOperator())
-		if e != nil {
-			return e
-		}
-
-		if e = term(chk); e != nil {
-			return e
-		}
-	}
-
-	return nil
+	return i, nil
 }
 
 func expression(chk *checker) error {
@@ -164,10 +146,26 @@ func expression(chk *checker) error {
 	return nil
 }
 
+func group(chk *checker) error {
+
+	if e := chk.expectAny(lexeme.L_PAREN); e != nil {
+		return e
+	}
+
+	if e := expression(chk); e != nil {
+		return e
+	}
+
+	return chk.expectAny(lexeme.R_PAREN)
+}
+
 func term(chk *checker) error {
 	switch {
 	//case chk.matchAny(lexeme.SPELL):
 	//return spell(chk)
+
+	case chk.matchAny(lexeme.L_PAREN):
+		return group(chk)
 
 	case chk.accept(chk.tok().IsTerm()):
 		return nil

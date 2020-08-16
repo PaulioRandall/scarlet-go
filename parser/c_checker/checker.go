@@ -80,3 +80,7 @@ func (chk *checker) expect(want string, ok bool) error {
 
 	return chk.unexpected(want)
 }
+
+func (chk *checker) undo() {
+	chk.it.Prev()
+}
