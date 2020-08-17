@@ -12,57 +12,64 @@ type Queue interface {
 	Take() *lexeme.Lexeme
 }
 
-type compiler struct {
-	input Queue
-	out   []inst.Instruction
+type output struct {
+	out []inst.Instruction
 }
 
-func (com *compiler) more() bool {
-	return com.input.More()
+func (out *output) emit(in inst.Instruction) {
+	out.out = append(out.out, in)
 }
 
-func (com *compiler) empty() bool {
-	return com.input.Empty()
+func (out *output) emitSet(set *output) {
+	out.out = append(out.out, set.out...)
 }
 
-func (com *compiler) is(tk lexeme.Token) bool {
-	return com.input.More() && com.input.Head().Tok == tk
+type input struct {
+	in Queue
 }
 
-func (com *compiler) tok() lexeme.Token {
+func (in *input) more() bool {
+	return in.in.More()
+}
 
-	if com.input.More() {
-		return com.input.Head().Tok
+func (in *input) empty() bool {
+	return in.in.Empty()
+}
+
+func (in *input) is(tk lexeme.Token) bool {
+	return in.in.More() && in.in.Head().Tok == tk
+}
+
+func (in *input) tok() lexeme.Token {
+
+	if in.in.More() {
+		return in.in.Head().Tok
 	}
 
 	return lexeme.UNDEFINED
 }
 
-func (com *compiler) take() *lexeme.Lexeme {
-	return com.input.Take()
+func (in *input) take() *lexeme.Lexeme {
+	return in.in.Take()
 }
 
-func (com *compiler) reject() {
-	if com.input.More() {
-		com.input.Take()
+func (in *input) discard() {
+	if in.in.More() {
+		in.in.Take()
 	}
 }
 
-func (com *compiler) output(in inst.Instruction) {
-	com.out = append(com.out, in)
-}
+func (in *input) unexpected() {
 
-func (com *compiler) unexpected() {
-
-	if com.input.Empty() {
+	if in.in.Empty() {
 		panic("Unexpected EOF")
 	}
 
-	panic("Unexpected token: " + com.input.Head().String())
+	panic("Unexpected token: " + in.in.Head().String())
 }
 
-func (com *compiler) println() {
-	if com.input.More() {
-		println(com.input.Head().String())
+func (in *input) println() {
+	if in.in.More() {
+		println(in.in.Head().String())
 	}
 }

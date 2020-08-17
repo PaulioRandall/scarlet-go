@@ -8,75 +8,74 @@ import (
 
 func CompileAll(con *lexeme.Container) []inst.Instruction {
 
-	com := &compiler{
-		input: con,
-		out:   []inst.Instruction{},
+	in := &input{
+		in: con,
 	}
 
-	compile(com)
-	return com.out
+	out := &output{
+		out: []inst.Instruction{},
+	}
+
+	for in.more() {
+		statement(in, out)
+	}
+
+	return out.out
 }
 
-func compile(com *compiler) {
+func statement(in *input, out *output) {
+	switch {
+	case in.is(lexeme.SPELL):
+		spell(in, out)
 
-	for com.more() {
+	case in.is(lexeme.ASSIGN):
+		assignment(in, out)
 
-		switch {
-		case com.empty():
-			com.unexpected()
+	case in.is(lexeme.GUARD):
+		guard(in, out)
 
-		case com.is(lexeme.SPELL):
-			spell(com)
-
-		case com.is(lexeme.ASSIGN):
-			assignment(com)
-
-		default:
-			expression(com)
-		}
-
-		//com.reject() // GEN_TERMINATOR, now redundant
+	default:
+		expression(in, out)
 	}
 }
 
-func spell(com *compiler) {
+func spell(in *input, out *output) {
 
-	com.output(inst.Instruction{
+	out.emit(inst.Instruction{
 		Code:    inst.CO_DELIM_PUSH,
-		Snippet: com.take(),
+		Snippet: in.take(),
 	})
 
-	for !com.is(lexeme.SPELL) {
-		expression(com)
+	for !in.is(lexeme.SPELL) {
+		expression(in, out)
 	}
 
-	sp := com.take()
-	com.output(inst.Instruction{
+	sp := in.take()
+	out.emit(inst.Instruction{
 		Code:    inst.CO_SPELL,
 		Data:    sp.Raw[1:],
 		Snippet: sp,
 	})
 }
 
-func assignment(com *compiler) {
+func assignment(in *input, out *output) {
 
-	com.take()
+	in.take()
 
-	for !com.is(lexeme.ASSIGN) {
-		expression(com)
+	for !in.is(lexeme.ASSIGN) {
+		expression(in, out)
 	}
 
-	com.take() // :=, not needed
+	in.take() // :=, not needed
 
-	for first := true; first || com.is(lexeme.DELIM); first = false {
+	for first := true; first || in.is(lexeme.DELIM); first = false {
 
 		if !first {
-			com.reject() // separator
+			in.discard() // separator
 		}
 
-		lex := com.take()
-
-		com.output(inst.Instruction{
+		lex := in.take()
+		out.emit(inst.Instruction{
 			Code:    inst.CO_CTX_SET,
 			Data:    lex.Raw,
 			Snippet: lex,
@@ -84,21 +83,60 @@ func assignment(com *compiler) {
 	}
 }
 
-func expression(com *compiler) {
+func guard(in *input, out *output) {
+
+	// TODO: Create CO_JUMP_FALSE instruction first
+	// TODO: jump n instructions if value stack is false
+
+	in.take() // GUARD
+	// TODO: before := Number of instructions emitted so far
+
+	block := localBlock(in)
+
+	// TODO: after :=  Number of instructions emitted so far
+	// TODO: jump_amount := after - before (- 1)?
+	// TODO: emit instruction: CO_JUMP_FALSE
+
+	out.emitSet(block)
+}
+
+func localBlock(in *input) *output {
+
+	// TODO: Create CO_CTX_PUSH_LOCAL instruction first
+	// TODO: Create CO_CTX_POP_LOCAL instruction first
+
+	in.take() // {
+	// TODO: CO_CTX_PUSH_LOCAL
+
+	block := &output{
+		out: []inst.Instruction{},
+	}
+
+	for in.more() && !in.is(lexeme.R_CURLY) {
+		statement(in, block)
+	}
+
+	in.take() // }
+	// TODO: CO_CTX_POP_LOCAL
+
+	return block
+}
+
+func expression(in *input, out *output) {
 
 	for {
 		switch {
-		case com.is(lexeme.IDENT):
-			identifier(com)
+		case in.is(lexeme.IDENT):
+			identifier(in, out)
 
-		case com.tok().IsLiteral():
-			literal(com)
+		case in.tok().IsLiteral():
+			literal(in, out)
 
-		case com.tok().IsOperator():
-			operator(com)
+		case in.tok().IsOperator():
+			operator(in, out)
 
-		case com.is(lexeme.DELIM):
-			com.reject()
+		case in.is(lexeme.DELIM):
+			in.discard()
 			return
 
 		default:
@@ -107,95 +145,95 @@ func expression(com *compiler) {
 	}
 }
 
-func identifier(com *compiler) {
+func identifier(in *input, out *output) {
 
-	lex := com.take()
+	lex := in.take()
 
-	com.output(inst.Instruction{
+	out.emit(inst.Instruction{
 		Code:    inst.CO_CTX_GET,
 		Data:    lex.Raw,
 		Snippet: lex,
 	})
 }
 
-func literal(com *compiler) {
+func literal(in *input, out *output) {
 
-	lex := com.take()
+	lex := in.take()
 
-	in := inst.Instruction{
+	instruction := inst.Instruction{
 		Code:    inst.CO_VAL_PUSH,
 		Snippet: lex,
 	}
 
 	switch {
 	case lex.Tok == lexeme.BOOL:
-		in.Data = lex.Raw == "true"
+		instruction.Data = lex.Raw == "true"
 
 	case lex.Tok == lexeme.NUMBER:
-		in.Data = number.New(lex.Raw)
+		instruction.Data = number.New(lex.Raw)
 
 	case lex.Tok == lexeme.STRING:
-		in.Data = unquote(lex.Raw)
+		instruction.Data = unquote(lex.Raw)
 
 	default:
-		com.unexpected()
+		in.unexpected()
 	}
 
-	com.output(in)
+	out.emit(instruction)
 }
 
-func operator(com *compiler) {
+func operator(in *input, out *output) {
 
-	lex := com.take()
-	in := inst.Instruction{
+	lex := in.take()
+	instruction := inst.Instruction{
 		Snippet: lex,
 	}
 
 	switch {
 	case lex.Tok == lexeme.ADD:
-		in.Code = inst.CO_ADD
+		instruction.Code = inst.CO_ADD
 
 	case lex.Tok == lexeme.SUB:
-		in.Code = inst.CO_SUB
+		instruction.Code = inst.CO_SUB
 
 	case lex.Tok == lexeme.MUL:
-		in.Code = inst.CO_MUL
+		instruction.Code = inst.CO_MUL
 
 	case lex.Tok == lexeme.DIV:
-		in.Code = inst.CO_DIV
+		instruction.Code = inst.CO_DIV
 
 	case lex.Tok == lexeme.REM:
-		in.Code = inst.CO_REM
+		instruction.Code = inst.CO_REM
 
 	case lex.Tok == lexeme.AND:
-		in.Code = inst.CO_AND
+		instruction.Code = inst.CO_AND
 
 	case lex.Tok == lexeme.OR:
-		in.Code = inst.CO_OR
+		instruction.Code = inst.CO_OR
 
 	case lex.Tok == lexeme.LESS:
-		in.Code = inst.CO_LESS
+		instruction.Code = inst.CO_LESS
 
 	case lex.Tok == lexeme.MORE:
-		in.Code = inst.CO_MORE
+		instruction.Code = inst.CO_MORE
 
 	case lex.Tok == lexeme.LESS_EQUAL:
-		in.Code = inst.CO_LESS_EQU
+		instruction.Code = inst.CO_LESS_EQU
 
 	case lex.Tok == lexeme.MORE_EQUAL:
-		in.Code = inst.CO_MORE_EQU
+		instruction.Code = inst.CO_MORE_EQU
 
 	case lex.Tok == lexeme.EQUAL:
-		in.Code = inst.CO_EQU
+		instruction.Code = inst.CO_EQU
 
 	case lex.Tok == lexeme.NOT_EQUAL:
-		in.Code = inst.CO_NOT_EQU
+		instruction.Code = inst.CO_NOT_EQU
 
 	default:
-		com.unexpected()
+		in.unexpected()
 	}
 
-	com.output(in)
+	out.emit(instruction)
 }
 
 func unquote(s string) string {
