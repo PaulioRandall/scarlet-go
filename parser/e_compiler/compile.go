@@ -85,9 +85,6 @@ func assignment(in *input, out *output) {
 
 func guard(in *input, out *output) {
 
-	// TODO: Create CO_JUMP_FALSE instruction first
-	// TODO: jump n instructions if value stack is false
-
 	in.take() // GUARD
 	// TODO: before := Number of instructions emitted so far
 
@@ -102,22 +99,19 @@ func guard(in *input, out *output) {
 
 func localBlock(in *input) *output {
 
-	// TODO: Create CO_CTX_PUSH_LOCAL instruction first
-	// TODO: Create CO_CTX_POP_LOCAL instruction first
-
 	in.take() // {
-	// TODO: CO_CTX_PUSH_LOCAL
+	// TODO: CO_SUB_CTX_PUSH
 
 	block := &output{
 		out: []inst.Instruction{},
 	}
 
-	for in.more() && !in.is(lexeme.R_CURLY) {
+	for !in.is(lexeme.R_CURLY) {
 		statement(in, block)
 	}
 
 	in.take() // }
-	// TODO: CO_CTX_POP_LOCAL
+	// TODO: CO_SUB_CTX_POP
 
 	return block
 }

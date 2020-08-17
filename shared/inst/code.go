@@ -9,16 +9,13 @@ func (c Code) String() string {
 const (
 	CO_UNDEFINED Code = iota
 
-	// Set the program counter to the instruction number at the top of the value
-	// stack.
-	//IN_JUMP
-
-	// Push the instruction number at the top of the value stack onto the call
-	// stack.
-	//IN_REF_PUSH
-
-	// Pop an instruction off the call stack and onto the value stack.
-	//IN_REF_POP
+	// Pops a value off the stack, which should be a bool value, if it's false
+	// then increment the instruction counter by the amount provided as data.
+	//
+	// Data: integer
+	// Stack values consumed: 1
+	// 		1st: bool
+	CO_JUMP_FALSE
 
 	// Push a delimiter onto the value stack. Delimiters are used to indicate
 	// when to stop popping values of the value stack for instruction that
@@ -48,6 +45,12 @@ const (
 	// Stack values produced: 1
 	//    1st: query response value
 	CO_CTX_GET
+
+	// Pushes a new sub-context into the current context's sub-context call stack.
+	CO_SUB_CTX_PUSH
+
+	// Pops a top sub-context from the current context's sub-context call stack.
+	CO_SUB_CTX_POP
 
 	// Performs an arithmetic operation on two operands and pushes the result
 	// onto the value stack.
@@ -82,38 +85,23 @@ const (
 	CO_SPELL
 )
 
-// Example: @Println("Scarlet")
-// 1: IN_VAL_PUSH   "Scarlet"
-// 2: IN_SPELL      @Println
-
-// Example: @Exit(0)
-// 1: IN_VAL_PUSH   0
-// 2: IN_SPELL      @Exit
-
-// Example: @Set("x", "Scarlet")
-// 1: IN_VAL_PUSH   "x"
-// 2: IN_VAL_PUSH   "Scarlet"
-// 2: IN_SPELL      @Set
-
-// Example: @Set("x", y)
-// 1: IN_VAL_PUSH   "x"
-// 2: IN_CTX_GET    y
-// 2: IN_SPELL      @Set
-
 var codes = map[Code]string{
-	CO_VAL_PUSH: `CO_VAL_PUSH`,
-	CO_CTX_SET: `	CO_CTX_SET`,
-	CO_CTX_GET:  `CO_CTX_GET`,
-	CO_SPELL:    `CO_SPELL`,
-	CO_MUL:      `CO_MUL`,
-	CO_DIV:      `CO_DIV`,
-	CO_REM:      `CO_REM`,
-	CO_ADD:      `CO_ADD`,
-	CO_SUB:      `CO_SUB`,
-	CO_AND:      `CO_AND`,
-	CO_OR:       `CO_OR`,
-	CO_LESS:     `CO_LESS`,
-	CO_MORE:     `CO_MORE`,
-	CO_LESS_EQU: `CO_LESS_EQU`,
-	CO_MORE_EQU: `CO_MORE_EQU`,
+	CO_VAL_PUSH:     `CO_VAL_PUSH`,
+	CO_JUMP_FALSE:   `CO_JUMP_FALSE`,
+	CO_CTX_SET:      `CO_CTX_SET`,
+	CO_CTX_GET:      `CO_CTX_GET`,
+	CO_SPELL:        `CO_SPELL`,
+	CO_MUL:          `CO_MUL`,
+	CO_DIV:          `CO_DIV`,
+	CO_REM:          `CO_REM`,
+	CO_ADD:          `CO_ADD`,
+	CO_SUB:          `CO_SUB`,
+	CO_AND:          `CO_AND`,
+	CO_OR:           `CO_OR`,
+	CO_LESS:         `CO_LESS`,
+	CO_MORE:         `CO_MORE`,
+	CO_LESS_EQU:     `CO_LESS_EQU`,
+	CO_MORE_EQU:     `CO_MORE_EQU`,
+	CO_SUB_CTX_PUSH: `CO_SUB_CTX_PUSH`,
+	CO_SUB_CTX_POP:  `CO_SUB_CTX_POP`,
 }
