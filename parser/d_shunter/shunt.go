@@ -12,38 +12,48 @@ func ShuntAll(con *lexeme.Container) *lexeme.Container {
 		out:   &lexeme.Container{},
 	}
 
-	statement(shy)
+	statements(shy)
 	return shy.out.AsContainer()
 }
 
-func statement(shy *shuntingYard) {
-
+func statements(shy *shuntingYard) {
 	for shy.more() {
-
-		switch {
-		case shy.inQueue(lexeme.IDENT):
-			shy.push() // First ID
-
-			if shy.inQueue(lexeme.DELIM) || shy.inQueue(lexeme.ASSIGN) {
-				assignment(shy)
-				break
-			}
-
-			shy.pop()
-			fallthrough
-
-		case shy.inQueue(lexeme.SPELL), shy.queueTok().IsTerm():
-			expressions(shy)
-
-		default:
-			panic("Unexpected token: " + shy.queue.Head().String())
-		}
+		statement(shy)
 
 		if !shy.queueTok().IsTerminator() {
 			panic("Unexpected token: " + shy.queue.Head().String())
 		}
 
 		shy.output()
+	}
+}
+
+func statement(shy *shuntingYard) {
+
+	switch {
+	case shy.inQueue(lexeme.IDENT):
+		shy.push() // First ID
+
+		if shy.inQueue(lexeme.DELIM) || shy.inQueue(lexeme.ASSIGN) {
+			assignment(shy)
+			break
+		}
+
+		shy.pop()
+		fallthrough
+
+	case shy.inQueue(lexeme.SPELL),
+		shy.inQueue(lexeme.L_PAREN),
+		shy.queueTok().IsTerm():
+
+		expressions(shy)
+
+	case shy.inQueue(lexeme.L_SQUARE):
+		expressions(shy)
+		block(shy)
+
+	default:
+		panic("Unexpected token: " + shy.queue.Head().String())
 	}
 }
 
@@ -68,6 +78,28 @@ func assignment(shy *shuntingYard) {
 	}
 }
 
+func block(shy *shuntingYard) {
+
+	shy.emit(*shy.queue.Head(), lexeme.GUARD)
+	shy.output() // {
+
+	if shy.inQueue(lexeme.R_CURLY) {
+		shy.output() // }
+		return
+	}
+
+	for statement(shy); !shy.inQueue(lexeme.R_CURLY); statement(shy) {
+
+		if !shy.queueTok().IsTerminator() {
+			panic("Unexpected token: " + shy.queue.Head().String())
+		}
+
+		shy.output() // terminator
+	}
+
+	shy.output() // }
+}
+
 func expressions(shy *shuntingYard) {
 
 	mark := shy.stackSize()
@@ -79,7 +111,7 @@ func expressions(shy *shuntingYard) {
 			shy.push()
 			shy.emit(*shy.stack.Top(), lexeme.SPELL)
 
-		case shy.inQueue(lexeme.L_PAREN):
+		case shy.inQueue(lexeme.L_PAREN), shy.inQueue(lexeme.L_SQUARE):
 			shy.push()
 
 		case shy.queueTok().IsTerm():
@@ -102,16 +134,10 @@ func expressions(shy *shuntingYard) {
 			shy.output()
 
 		case shy.inQueue(lexeme.R_PAREN):
-			for !shy.inStack(lexeme.L_PAREN) {
-				shy.pop()
-			}
+			braceClose(shy, lexeme.L_PAREN)
 
-			shy.discard()
-			shy.eject()
-
-			if shy.inStack(lexeme.SPELL) {
-				shy.pop()
-			}
+		case shy.inQueue(lexeme.R_SQUARE):
+			braceClose(shy, lexeme.L_SQUARE)
 
 		default:
 			goto FINISH
@@ -120,6 +146,20 @@ func expressions(shy *shuntingYard) {
 
 FINISH:
 	for mark < shy.stackSize() {
+		shy.pop()
+	}
+}
+
+func braceClose(shy *shuntingYard, opener lexeme.Token) {
+
+	for !shy.inStack(opener) {
+		shy.pop()
+	}
+
+	shy.discard()
+	shy.eject()
+
+	if shy.inStack(lexeme.SPELL) {
 		shy.pop()
 	}
 }

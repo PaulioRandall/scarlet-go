@@ -501,3 +501,91 @@ func Test4_4(t *testing.T) {
 
 	doTest(t, in, exp)
 }
+
+func Test5_1(t *testing.T) {
+
+	// WHEN refixing a guard statement
+	// [true] { @Println(1) }
+	in := lextest.Feign(
+		lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// true GUARD { SPELL 1 @Println }
+	exp := lextest.Feign(
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("", lexeme.GUARD),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("", lexeme.SPELL),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in, exp)
+}
+
+func Test5_2(t *testing.T) {
+
+	// WHEN refixing a guard statement
+	// [1 < 2] { @Println(1)
+	// @Println(2)
+	// @Println(3) }
+	in := lextest.Feign(
+		lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("<", lexeme.LESS),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// 1 2 < GUARD { SPELL 1 @Println SPELL 2 @Println SPELL 3 @Println }
+	exp := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("<", lexeme.LESS),
+		lextest.Tok("", lexeme.GUARD),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("", lexeme.SPELL),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("", lexeme.SPELL),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("\n", lexeme.NEWLINE),
+		lextest.Tok("", lexeme.SPELL),
+		lextest.Tok("3", lexeme.NUMBER),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in, exp)
+}

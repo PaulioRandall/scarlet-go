@@ -39,6 +39,7 @@ const (
 	MORE_EQUAL // >=
 	EQUAL      // ==
 	NOT_EQUAL  // !=
+	GUARD      // Magic: Indicates the subsequent block is conditional
 )
 
 var tokens = map[Token]string{
@@ -72,6 +73,7 @@ var tokens = map[Token]string{
 	MORE_EQUAL: `MORE_EQUAL`,
 	EQUAL:      `EQUAL`,
 	NOT_EQUAL:  `NOT_EQUAL`,
+	GUARD:      `GUARD`,
 }
 
 func (tk Token) Precedence() int {
