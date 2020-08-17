@@ -22,7 +22,6 @@ func Test1_1(t *testing.T) {
 	in := lextest.Feign(
 		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -42,7 +41,6 @@ func Test1_2(t *testing.T) {
 		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("x", lexeme.IDENT),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -67,7 +65,6 @@ func Test1_3(t *testing.T) {
 		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok(`"abc"`, lexeme.STRING),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -91,7 +88,6 @@ func Test2_1(t *testing.T) {
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok(":=", lexeme.ASSIGN),
 		lextest.Tok("x", lexeme.IDENT),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -120,7 +116,6 @@ func Test2_2(t *testing.T) {
 		lextest.Tok("b", lexeme.IDENT),
 		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("a", lexeme.IDENT),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -144,7 +139,6 @@ func Test3_1(t *testing.T) {
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("2", lexeme.NUMBER),
 		lextest.Tok("+", lexeme.ADD),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -173,7 +167,6 @@ func Test3_2(t *testing.T) {
 		lextest.Tok("6", lexeme.NUMBER),
 		lextest.Tok("%", lexeme.REM),
 		lextest.Tok("-", lexeme.SUB),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -204,7 +197,6 @@ func Test3_3(t *testing.T) {
 		lextest.Tok("2", lexeme.NUMBER),
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -230,7 +222,6 @@ func Test3_4(t *testing.T) {
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok(":=", lexeme.ASSIGN),
 		lextest.Tok("x", lexeme.IDENT),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions
@@ -266,7 +257,6 @@ func Test3_5(t *testing.T) {
 		lextest.Tok("!=", lexeme.NOT_EQUAL),
 		lextest.Tok("&&", lexeme.AND),
 		lextest.Tok("||", lexeme.OR),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// THEN these are the expected instructions

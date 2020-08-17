@@ -24,7 +24,7 @@ func statements(shy *shuntingYard) {
 			panic("Unexpected token: " + shy.queue.Head().String())
 		}
 
-		shy.output()
+		shy.discard()
 	}
 }
 
@@ -94,7 +94,7 @@ func block(shy *shuntingYard) {
 			panic("Unexpected token: " + shy.queue.Head().String())
 		}
 
-		shy.output() // terminator
+		shy.discard() // terminator
 	}
 
 	shy.output() // }

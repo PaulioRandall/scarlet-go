@@ -35,7 +35,7 @@ func compile(com *compiler) {
 			expression(com)
 		}
 
-		com.reject() // GEN_TERMINATOR, now redundant
+		//com.reject() // GEN_TERMINATOR, now redundant
 	}
 }
 

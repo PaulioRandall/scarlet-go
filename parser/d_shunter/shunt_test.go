@@ -26,7 +26,6 @@ func Test1_1(t *testing.T) {
 	exp := lextest.Feign(
 		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -48,7 +47,6 @@ func Test1_2(t *testing.T) {
 		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("x", lexeme.IDENT),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -78,7 +76,6 @@ func Test1_3(t *testing.T) {
 		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("true", lexeme.BOOL),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -100,7 +97,6 @@ func Test2_1(t *testing.T) {
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok(":=", lexeme.ASSIGN),
 		lextest.Tok("x", lexeme.IDENT),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -138,7 +134,6 @@ func Test2_2(t *testing.T) {
 		lextest.Tok("b", lexeme.IDENT),
 		lextest.Tok(",", lexeme.DELIM),
 		lextest.Tok("a", lexeme.IDENT),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -159,7 +154,6 @@ func Test3_1(t *testing.T) {
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("2", lexeme.NUMBER),
 		lextest.Tok("+", lexeme.ADD),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -180,7 +174,6 @@ func Test3_2(t *testing.T) {
 		lextest.Tok("a", lexeme.IDENT),
 		lextest.Tok("b", lexeme.IDENT),
 		lextest.Tok("+", lexeme.ADD),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -205,7 +198,6 @@ func Test3_3(t *testing.T) {
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok("-", lexeme.SUB),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -231,7 +223,6 @@ func Test3_4(t *testing.T) {
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok("*", lexeme.MUL),
 		lextest.Tok("+", lexeme.ADD),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -269,7 +260,6 @@ func Test3_5(t *testing.T) {
 		lextest.Tok("6", lexeme.NUMBER),
 		lextest.Tok("%", lexeme.REM),
 		lextest.Tok("-", lexeme.SUB),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -295,7 +285,6 @@ func Test3_6(t *testing.T) {
 		lextest.Tok("2", lexeme.NUMBER),
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -321,7 +310,6 @@ func Test3_7(t *testing.T) {
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok(":=", lexeme.ASSIGN),
 		lextest.Tok("x", lexeme.IDENT),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -372,7 +360,6 @@ func Test3_8(t *testing.T) {
 		lextest.Tok("!=", lexeme.NOT_EQUAL),
 		lextest.Tok("&&", lexeme.AND),
 		lextest.Tok("||", lexeme.OR),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -400,7 +387,6 @@ func Test4_1(t *testing.T) {
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok("*", lexeme.MUL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -430,7 +416,6 @@ func Test4_2(t *testing.T) {
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok("*", lexeme.MUL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -463,7 +448,6 @@ func Test4_3(t *testing.T) {
 		lextest.Tok("*", lexeme.MUL),
 		lextest.Tok(":=", lexeme.ASSIGN),
 		lextest.Tok("x", lexeme.IDENT),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -496,7 +480,6 @@ func Test4_4(t *testing.T) {
 		lextest.Tok("+", lexeme.ADD),
 		lextest.Tok("*", lexeme.MUL),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -528,7 +511,6 @@ func Test5_1(t *testing.T) {
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("}", lexeme.R_CURLY),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
@@ -575,16 +557,13 @@ func Test5_2(t *testing.T) {
 		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("1", lexeme.NUMBER),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("2", lexeme.NUMBER),
 		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("\n", lexeme.NEWLINE),
 		lextest.Tok("", lexeme.SPELL),
 		lextest.Tok("3", lexeme.NUMBER),
 		lextest.Tok("@Println", lexeme.SPELL),
 		lextest.Tok("}", lexeme.R_CURLY),
-		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
