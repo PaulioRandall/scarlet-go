@@ -5,17 +5,13 @@ the default language.
 
 ## 1.0 (Essential Features)
 
-#### While Loops
-
-```
-loop [true] {
-  ...
-}
-```
-
 #### Format Spell
 
-Just needs updating to format guards & loops
+Just needs updating to format guards, loops, & blocks
+
+#### Documentation
+
+Just need to document the guard & loop features
 
 ## 1.1
 

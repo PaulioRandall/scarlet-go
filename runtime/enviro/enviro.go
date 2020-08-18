@@ -144,10 +144,13 @@ func (env *Environment) Exe(in inst.Instruction) {
 	case inst.CO_SPL_CALL: // co_call.go
 		coSpell(env, in)
 
-	case inst.CO_JMP_FALSE: // co_jump.go
-		coJump(env, in, false)
+	case inst.CO_JMP_BACK: // co_jump.go
+		coJumpBack(env, in)
 
-	case inst.CO_SUB_CTX_PUSH:
+	case inst.CO_JMP_FALSE:
+		coJumpIf(env, in, false)
+
+	case inst.CO_SUB_CTX_PUSH: // N/A
 		env.Ctx.PushSub()
 
 	case inst.CO_SUB_CTX_POP:

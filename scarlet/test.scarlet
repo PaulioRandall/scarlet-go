@@ -4,17 +4,12 @@
 )
 
 meh := "¯\_(ツ)_/¯"
-question, answer := meh, meh
 
-[true] {
-	question := "6 * 7"
-
-	[true] {
-		answer := 6 * 7
-	}
+i := 5
+loop [i >= 0] {
+	@Println(i)
+	i := i - 1
 }
 
-@Println(question, " = ", answer)
-
-
-
+@Println()
+@Println(meh)

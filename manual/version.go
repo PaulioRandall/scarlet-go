@@ -14,9 +14,14 @@ Version 1 (Upcoming)
 		- Intrinsic Types
 	- Assignments
 	- Expressions
-	  - Arithmetic
-	  - Logical
-	  - Relational 
+		- Arithmetic
+		- Logical
+		- Relational
+	- Guards
+	- Loops (While)
 	- Spells
+		- @Exit(exitcode)
+		- @Print(values...)
+		- @Println(values...)
 	- Manual`
 }
