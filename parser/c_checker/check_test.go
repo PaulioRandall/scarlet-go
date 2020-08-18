@@ -658,3 +658,35 @@ func Test6_8(t *testing.T) {
 
 	doErrorTest(t, in)
 }
+
+func Test7_1(t *testing.T) {
+
+	// loop [true] {}
+	in := lextest.Feign(
+		lextest.Tok("loop", lexeme.LOOP),
+		lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test7_2(t *testing.T) {
+
+	// loop true] {}
+	in := lextest.Feign(
+		lextest.Tok("loop", lexeme.LOOP),
+		//lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doErrorTest(t, in)
+}

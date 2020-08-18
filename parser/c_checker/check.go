@@ -41,6 +41,9 @@ func statement(chk *checker) error {
 
 	case chk.matchAny(lexeme.L_SQUARE):
 		return guard(chk)
+
+	case chk.acceptAny(lexeme.LOOP):
+		return guard(chk)
 	}
 
 	return chk.unexpected("<STATEMENT>")
