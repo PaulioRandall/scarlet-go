@@ -49,8 +49,10 @@ func statement(shy *shuntingYard) {
 		expressions(shy)
 
 	case shy.inQueue(lexeme.L_SQUARE):
-		expressions(shy)
-		block(shy)
+		guard(shy)
+
+	case shy.inQueue(lexeme.LOOP):
+		loop(shy)
 
 	default:
 		panic("Unexpected token: " + shy.queue.Head().String())
@@ -78,9 +80,20 @@ func assignment(shy *shuntingYard) {
 	}
 }
 
+func guard(shy *shuntingYard) {
+	expressions(shy)
+	shy.emit(*shy.queue.Head(), lexeme.GUARD)
+	block(shy)
+}
+
+func loop(shy *shuntingYard) {
+	shy.emit(*shy.discard(), lexeme.LOOP)
+	expressions(shy)
+	block(shy)
+}
+
 func block(shy *shuntingYard) {
 
-	shy.emit(*shy.queue.Head(), lexeme.GUARD)
 	shy.output() // {
 
 	if shy.inQueue(lexeme.R_CURLY) {

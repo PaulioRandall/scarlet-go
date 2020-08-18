@@ -568,3 +568,35 @@ func Test5_2(t *testing.T) {
 
 	doTest(t, in, exp)
 }
+
+func Test6_1(t *testing.T) {
+
+	// WHEN refixing a loop statement
+	// loop [true] { @Println(1) }
+	in := lextest.Feign(
+		lextest.Tok("loop", lexeme.LOOP),
+		lextest.Tok("[", lexeme.L_SQUARE),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("]", lexeme.R_SQUARE),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("(", lexeme.L_PAREN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(")", lexeme.R_PAREN),
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	// loop true { SPELL 1 @Println }
+	exp := lextest.Feign(
+		lextest.Tok("", lexeme.LOOP),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("", lexeme.SPELL),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("}", lexeme.R_CURLY),
+	)
+
+	doTest(t, in, exp)
+}

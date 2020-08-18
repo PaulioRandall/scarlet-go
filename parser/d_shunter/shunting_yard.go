@@ -75,16 +75,16 @@ func (shy *shuntingYard) push() {
 	shy.stack.Push(shy.queue.Take())
 }
 
-func (shy *shuntingYard) discard() {
-	shy.queue.Take()
+func (shy *shuntingYard) discard() *lexeme.Lexeme {
+	return shy.queue.Take()
 }
 
 func (shy *shuntingYard) pop() {
 	shy.out.Put(shy.stack.Pop())
 }
 
-func (shy *shuntingYard) eject() {
-	shy.stack.Pop()
+func (shy *shuntingYard) eject() *lexeme.Lexeme {
+	return shy.stack.Pop()
 }
 
 func (shy *shuntingYard) output() {
