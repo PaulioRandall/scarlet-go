@@ -282,3 +282,95 @@ func Test3_5(t *testing.T) {
 
 	doTest(t, in, exp)
 }
+
+func Test4_1(t *testing.T) {
+
+	// WHEN compiling a simple guard with an empty body
+	// true GUARD { }
+	in := lextest.Feign(
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("", lexeme.GUARD),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("}", lexeme.R_CURLY),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, true),
+		insttest.NewIn(inst.CO_JUMP_FALSE, 2),
+		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
+		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test4_2(t *testing.T) {
+
+	// WHEN compiling a simple guard with an single statement body
+	// true GUARD { SPELL 1 @Println }
+	in := lextest.Feign(
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("", lexeme.GUARD),
+		lextest.Tok("{", lexeme.L_CURLY),
+		/**/ lextest.Tok("", lexeme.SPELL),
+		/**/ lextest.Tok("1", lexeme.NUMBER),
+		/**/ lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("}", lexeme.R_CURLY),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, true),
+		insttest.NewIn(inst.CO_JUMP_FALSE, 5),
+		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
+		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_SPELL, "Println"),
+		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test4_3(t *testing.T) {
+
+	// WHEN compiling nested guards
+	// true GUARD { true GUARD { SPELL 1 @Println } SPELL 2 @Println }
+	in := lextest.Feign(
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("", lexeme.GUARD),
+		lextest.Tok("{", lexeme.L_CURLY),
+		/**/ lextest.Tok("true", lexeme.BOOL),
+		/**/ lextest.Tok("", lexeme.GUARD),
+		/**/ lextest.Tok("{", lexeme.L_CURLY),
+		/**/ /**/ lextest.Tok("", lexeme.SPELL),
+		/**/ /**/ lextest.Tok("1", lexeme.NUMBER),
+		/**/ /**/ lextest.Tok("@Println", lexeme.SPELL),
+		/**/ lextest.Tok("}", lexeme.R_CURLY),
+		/**/ lextest.Tok("", lexeme.SPELL),
+		/**/ lextest.Tok("2", lexeme.NUMBER),
+		/**/ lextest.Tok("@Println", lexeme.SPELL),
+		lextest.Tok("}", lexeme.R_CURLY),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, true),
+		insttest.NewIn(inst.CO_JUMP_FALSE, 12),
+		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
+		insttest.NewIn(inst.CO_VAL_PUSH, true),
+		insttest.NewIn(inst.CO_JUMP_FALSE, 5),
+		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
+		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_SPELL, "Println"),
+		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
+		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
+		insttest.NewIn(inst.CO_SPELL, "Println"),
+		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
+	}
+
+	doTest(t, in, exp)
+}

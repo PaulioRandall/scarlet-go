@@ -16,6 +16,10 @@ type output struct {
 	out []inst.Instruction
 }
 
+func (out *output) len() int {
+	return len(out.out)
+}
+
 func (out *output) emit(in inst.Instruction) {
 	out.out = append(out.out, in)
 }

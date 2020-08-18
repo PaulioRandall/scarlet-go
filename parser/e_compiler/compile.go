@@ -85,33 +85,39 @@ func assignment(in *input, out *output) {
 
 func guard(in *input, out *output) {
 
-	in.take() // GUARD
-	// TODO: before := Number of instructions emitted so far
+	g := in.take() // GUARD
 
 	block := localBlock(in)
+	jumpSize := block.len()
 
-	// TODO: after :=  Number of instructions emitted so far
-	// TODO: jump_amount := after - before (- 1)?
-	// TODO: emit instruction: CO_JUMP_FALSE
+	out.emit(inst.Instruction{
+		Code:    inst.CO_JUMP_FALSE,
+		Data:    jumpSize,
+		Snippet: g,
+	})
 
 	out.emitSet(block)
 }
 
 func localBlock(in *input) *output {
 
-	in.take() // {
-	// TODO: CO_SUB_CTX_PUSH
-
 	block := &output{
 		out: []inst.Instruction{},
 	}
+
+	block.emit(inst.Instruction{
+		Code:    inst.CO_SUB_CTX_PUSH,
+		Snippet: in.take(), // {
+	})
 
 	for !in.is(lexeme.R_CURLY) {
 		statement(in, block)
 	}
 
-	in.take() // }
-	// TODO: CO_SUB_CTX_POP
+	block.emit(inst.Instruction{
+		Code:    inst.CO_SUB_CTX_POP,
+		Snippet: in.take(), // }
+	})
 
 	return block
 }
