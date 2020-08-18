@@ -10,7 +10,7 @@ question, answer := meh, meh
 	question := "6 * 7"
 
 	[true] {
-	answer := 6 * 7
+		answer := 6 * 7
 	}
 }
 

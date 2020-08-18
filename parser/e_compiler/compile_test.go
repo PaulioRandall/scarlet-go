@@ -374,3 +374,91 @@ func Test4_3(t *testing.T) {
 
 	doTest(t, in, exp)
 }
+
+func Test5_1(t *testing.T) {
+
+	// WHEN compiling a simple loop with an empty body
+	// LOOP true { }
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.LOOP),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("}", lexeme.R_CURLY),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, true),
+		insttest.NewIn(inst.CO_JMP_FALSE, 3),
+		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
+		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
+		insttest.NewIn(inst.CO_JMP_BACK, 5),
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test5_2(t *testing.T) {
+
+	// WHEN compiling a loop with a complex condition
+	// LOOP true { }
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.LOOP),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("<", lexeme.LESS),
+		lextest.Tok("{", lexeme.L_CURLY),
+		lextest.Tok("}", lexeme.R_CURLY),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
+		insttest.NewIn(inst.CO_LESS, nil),
+		insttest.NewIn(inst.CO_JMP_FALSE, 3),
+		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
+		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
+		insttest.NewIn(inst.CO_JMP_BACK, 7),
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test5_3(t *testing.T) {
+
+	// WHEN compiling nested loops
+	// LOOP true { LOOP true { SPELL 1 @Println } }
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.LOOP),
+		lextest.Tok("true", lexeme.BOOL),
+		lextest.Tok("{", lexeme.L_CURLY),
+		/**/ lextest.Tok("", lexeme.LOOP),
+		/**/ lextest.Tok("true", lexeme.BOOL),
+		/**/ lextest.Tok("{", lexeme.L_CURLY),
+		/**/ /**/ lextest.Tok("", lexeme.SPELL),
+		/**/ /**/ lextest.Tok("1", lexeme.NUMBER),
+		/**/ /**/ lextest.Tok("@Println", lexeme.SPELL),
+		/**/ lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("}", lexeme.R_CURLY),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, true),
+		insttest.NewIn(inst.CO_JMP_FALSE, 11),
+		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
+		/**/ insttest.NewIn(inst.CO_VAL_PUSH, true),
+		/**/ insttest.NewIn(inst.CO_JMP_FALSE, 6),
+		/**/ insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
+		/**/ /**/ insttest.NewIn(inst.CO_DLM_PUSH, nil),
+		/**/ /**/ insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		/**/ /**/ insttest.NewIn(inst.CO_SPL_CALL, "Println"),
+		/**/ insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
+		/**/ insttest.NewIn(inst.CO_JMP_BACK, 8),
+		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
+		insttest.NewIn(inst.CO_JMP_BACK, 13),
+	}
+
+	doTest(t, in, exp)
+}

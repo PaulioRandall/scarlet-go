@@ -9,6 +9,11 @@ func (c Code) String() string {
 const (
 	CO_UNDEFINED Code = iota
 
+	// Decrement the instruction counter by the amount provided as data.
+	//
+	// Data: integer
+	CO_JMP_BACK
+
 	// Pops a value off the stack, which should be a bool value, if it's false
 	// then increment the instruction counter by the amount provided as data.
 	//
@@ -86,6 +91,7 @@ const (
 )
 
 var codes = map[Code]string{
+	CO_JMP_BACK:     `CO_JMP_BACK`,
 	CO_JMP_FALSE:    `CO_JMP_FALSE`,
 	CO_DLM_PUSH:     `CO_DLM_PUSH`,
 	CO_VAL_PUSH:     `CO_VAL_PUSH`,

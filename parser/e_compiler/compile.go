@@ -34,6 +34,9 @@ func statement(in *input, out *output) {
 	case in.is(lexeme.GUARD):
 		guard(in, out)
 
+	case in.is(lexeme.LOOP):
+		loop(in, out)
+
 	default:
 		expression(in, out)
 	}
@@ -87,7 +90,7 @@ func guard(in *input, out *output) {
 
 	g := in.take() // GUARD
 
-	block := localBlock(in)
+	block := guardBlock(in)
 	jumpSize := block.len()
 
 	out.emit(inst.Instruction{
@@ -99,27 +102,58 @@ func guard(in *input, out *output) {
 	out.emitSet(block)
 }
 
-func localBlock(in *input) *output {
+func guardBlock(in *input) *output {
 
 	block := &output{
 		out: []inst.Instruction{},
 	}
 
-	block.emit(inst.Instruction{
+	localBlock(in, block)
+	return block
+}
+
+func loop(in *input, out *output) {
+
+	lex := in.take() // loop
+
+	loop := &output{
+		out: []inst.Instruction{},
+	}
+
+	expression(in, loop)
+	block := guardBlock(in)
+
+	loop.emit(inst.Instruction{
+		Code:    inst.CO_JMP_FALSE,
+		Data:    block.len() + 1, // +1 Accounts for the jump back instruction
+		Snippet: lex,
+	})
+
+	loop.emitSet(block)
+	out.emitSet(loop)
+
+	out.emit(inst.Instruction{
+		Code:    inst.CO_JMP_BACK,
+		Data:    loop.len() + 1, // +1 Accounts for the jump back instruction
+		Snippet: lex,
+	})
+}
+
+func localBlock(in *input, out *output) {
+
+	out.emit(inst.Instruction{
 		Code:    inst.CO_SUB_CTX_PUSH,
 		Snippet: in.take(), // {
 	})
 
 	for !in.is(lexeme.R_CURLY) {
-		statement(in, block)
+		statement(in, out)
 	}
 
-	block.emit(inst.Instruction{
+	out.emit(inst.Instruction{
 		Code:    inst.CO_SUB_CTX_POP,
 		Snippet: in.take(), // }
 	})
-
-	return block
 }
 
 func expression(in *input, out *output) {
