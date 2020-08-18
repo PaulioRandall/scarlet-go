@@ -15,17 +15,15 @@ type Environment struct {
 	ExitCode int
 }
 
-type Context struct {
-	*types.Stack
-	Counter  int
-	Bindings *map[string]types.Value
-}
-
 func New() *Environment {
 
-	ctx := &Context{
-		Stack:    &types.Stack{},
+	sub := &SubContext{
 		Bindings: &map[string]types.Value{},
+	}
+
+	ctx := &Context{
+		Stack: &types.Stack{},
+		Sub:   sub,
 	}
 
 	return &Environment{
@@ -64,7 +62,7 @@ func (env *Environment) Pop() types.Value {
 
 func (env *Environment) Get(id string) (types.Value, bool) {
 
-	v, ok := (*env.Ctx.Bindings)[id]
+	v, ok := env.Ctx.Get(id)
 
 	if !ok {
 		v, ok = env.Defs[id]
@@ -74,11 +72,11 @@ func (env *Environment) Get(id string) (types.Value, bool) {
 }
 
 func (env *Environment) Bind(id string, v types.Value) {
-	(*env.Ctx.Bindings)[id] = v
+	env.Ctx.Bind(id, v)
 }
 
 func (env *Environment) Unbind(id string) {
-	delete((*env.Ctx.Bindings), id)
+	env.Ctx.Unbind(id)
 }
 
 func (env *Environment) Def(id string, v types.Value) bool {
