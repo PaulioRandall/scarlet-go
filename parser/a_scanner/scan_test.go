@@ -68,6 +68,12 @@ func Test4_4(t *testing.T) {
 	))
 }
 
+func Test4_5(t *testing.T) {
+	doTest(t, "loop", lextest.Feign(
+		lextest.Lex(0, 0, "loop", lexeme.LOOP),
+	))
+}
+
 func Test5_1(t *testing.T) {
 	doTest(t, "@abc", lextest.Feign(
 		lextest.Lex(0, 0, "@abc", lexeme.SPELL),

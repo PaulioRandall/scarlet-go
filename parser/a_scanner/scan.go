@@ -180,9 +180,14 @@ func word(rr *runeReader) (*lexeme.Lexeme, error) {
 
 	lex := rr.slice(lexeme.UNDEFINED)
 
-	if lex.Raw == "false" || lex.Raw == "true" {
+	switch lex.Raw {
+	case "false", "true":
 		lex.Tok = lexeme.BOOL
-	} else {
+
+	case "loop":
+		lex.Tok = lexeme.LOOP
+
+	default:
 		lex.Tok = lexeme.IDENT
 	}
 

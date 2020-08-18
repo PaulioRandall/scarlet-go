@@ -18,6 +18,8 @@ const (
 	STRING     // "abc"
 	IDENT      // abc
 	SPELL      // @abc
+	GUARD      // Magic: Indicates the subsequent block is conditional
+	LOOP       // loop
 	DELIM      // ,
 	L_PAREN    // (
 	R_PAREN    // )
@@ -39,7 +41,6 @@ const (
 	MORE_EQUAL // >=
 	EQUAL      // ==
 	NOT_EQUAL  // !=
-	GUARD      // Magic: Indicates the subsequent block is conditional
 )
 
 var tokens = map[Token]string{
@@ -52,6 +53,8 @@ var tokens = map[Token]string{
 	STRING:     `STRING`,
 	IDENT:      `IDENT`,
 	SPELL:      `SPELL`,
+	GUARD:      `GUARD`,
+	LOOP:       `LOOP`,
 	DELIM:      `DELIM`,
 	L_PAREN:    `L_PAREN`,
 	R_PAREN:    `R_PAREN`,
@@ -73,7 +76,6 @@ var tokens = map[Token]string{
 	MORE_EQUAL: `MORE_EQUAL`,
 	EQUAL:      `EQUAL`,
 	NOT_EQUAL:  `NOT_EQUAL`,
-	GUARD:      `GUARD`,
 }
 
 func (tk Token) Precedence() int {
