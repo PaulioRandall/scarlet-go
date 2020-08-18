@@ -17,14 +17,11 @@ type Environment struct {
 
 func New() *Environment {
 
-	sub := &SubContext{
-		Bindings: &map[string]types.Value{},
-	}
-
 	ctx := &Context{
 		Stack: &types.Stack{},
-		Sub:   sub,
 	}
+
+	ctx.PushSub()
 
 	return &Environment{
 		Ctx:      ctx,
@@ -48,15 +45,15 @@ func (env *Environment) Tick() int {
 	return c
 }
 
-func (env *Environment) Jump(idx int) {
-	env.Ctx.Counter = idx
+func (env *Environment) JumpBy(amount int) {
+	env.Ctx.Counter += amount
 }
 
-func (env *Environment) Push(v types.Value) {
+func (env *Environment) PushVal(v types.Value) {
 	env.Ctx.Push(v)
 }
 
-func (env *Environment) Pop() types.Value {
+func (env *Environment) PopVal() types.Value {
 	return env.Ctx.Pop()
 }
 
@@ -93,11 +90,11 @@ func (env *Environment) Exe(in inst.Instruction) {
 
 	switch in.Code {
 	case inst.CO_DELIM_PUSH:
-		env.Push(types.Delim{})
+		env.PushVal(types.Delim{})
 
 	case inst.CO_VAL_PUSH:
 		v := types.BuiltinValueOf(in.Data)
-		env.Push(v)
+		env.PushVal(v)
 
 	case inst.CO_CTX_GET: // co_variables.go
 		coCtxGet(env, in)
@@ -146,6 +143,15 @@ func (env *Environment) Exe(in inst.Instruction) {
 
 	case inst.CO_SPELL: // co_call.go
 		coSpell(env, in)
+
+	case inst.CO_JUMP_FALSE: // co_jump.go
+		coJump(env, in, false)
+
+	case inst.CO_SUB_CTX_PUSH:
+		env.Ctx.PushSub()
+
+	case inst.CO_SUB_CTX_POP:
+		env.Ctx.PopSub()
 
 	default:
 		env.Fail(perror.New("Unknown instruction code: %q", in.Code))

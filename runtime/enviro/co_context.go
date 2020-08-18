@@ -15,13 +15,13 @@ func coCtxGet(env *Environment, in inst.Instruction) {
 		return
 	}
 
-	env.Push(r)
+	env.PushVal(r)
 }
 
 func coCtxSet(env *Environment, in inst.Instruction) {
 
 	id := in.Data.(string)
-	v := env.Pop()
+	v := env.PopVal()
 
 	if v == nil {
 		env.Fail(perror.New("Assignment fail %q, value stack is empty", id))

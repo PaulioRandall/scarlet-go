@@ -7,20 +7,20 @@ import (
 )
 
 func popOperands(env *Environment) (left, right types.Value) {
-	right = env.Pop()
-	left = env.Pop()
+	right = env.PopVal()
+	left = env.PopVal()
 	return
 }
 
 func popBoolOperands(env *Environment) (left, right types.Bool, ok bool) {
 
-	right, ok = env.Pop().(types.Bool)
+	right, ok = env.PopVal().(types.Bool)
 	if !ok {
 		env.Fail(perror.New("Expected bool on right side of operation"))
 		return
 	}
 
-	left, ok = env.Pop().(types.Bool)
+	left, ok = env.PopVal().(types.Bool)
 	if !ok {
 		env.Fail(perror.New("Expected bool on left side of operation"))
 	}
@@ -30,13 +30,13 @@ func popBoolOperands(env *Environment) (left, right types.Bool, ok bool) {
 
 func popNumOperands(env *Environment) (left, right types.Num, ok bool) {
 
-	right, ok = env.Pop().(types.Num)
+	right, ok = env.PopVal().(types.Num)
 	if !ok {
 		env.Fail(perror.New("Expected number on right side of operation"))
 		return
 	}
 
-	left, ok = env.Pop().(types.Num)
+	left, ok = env.PopVal().(types.Num)
 	if !ok {
 		env.Fail(perror.New("Expected number on left side of operation"))
 	}
@@ -52,7 +52,7 @@ func coAdd(env *Environment, in inst.Instruction) {
 	}
 
 	left.Add(right.Number)
-	env.Push(left)
+	env.PushVal(left)
 }
 
 func coSub(env *Environment, in inst.Instruction) {
@@ -63,7 +63,7 @@ func coSub(env *Environment, in inst.Instruction) {
 	}
 
 	left.Sub(right.Number)
-	env.Push(left)
+	env.PushVal(left)
 }
 
 func coMul(env *Environment, in inst.Instruction) {
@@ -74,7 +74,7 @@ func coMul(env *Environment, in inst.Instruction) {
 	}
 
 	left.Mul(right.Number)
-	env.Push(left)
+	env.PushVal(left)
 }
 
 func coDiv(env *Environment, in inst.Instruction) {
@@ -85,7 +85,7 @@ func coDiv(env *Environment, in inst.Instruction) {
 	}
 
 	left.Div(right.Number)
-	env.Push(left)
+	env.PushVal(left)
 }
 
 func coRem(env *Environment, in inst.Instruction) {
@@ -96,7 +96,7 @@ func coRem(env *Environment, in inst.Instruction) {
 	}
 
 	left.Mod(right.Number)
-	env.Push(left)
+	env.PushVal(left)
 }
 
 func coAnd(env *Environment, in inst.Instruction) {
@@ -106,7 +106,7 @@ func coAnd(env *Environment, in inst.Instruction) {
 		return
 	}
 
-	env.Push(left.And(right))
+	env.PushVal(left.And(right))
 }
 
 func coOr(env *Environment, in inst.Instruction) {
@@ -116,7 +116,7 @@ func coOr(env *Environment, in inst.Instruction) {
 		return
 	}
 
-	env.Push(left.Or(right))
+	env.PushVal(left.Or(right))
 }
 
 func coLess(env *Environment, in inst.Instruction) {
@@ -127,7 +127,7 @@ func coLess(env *Environment, in inst.Instruction) {
 	}
 
 	answer := left.Less(right.Number)
-	env.Push(types.Bool(answer))
+	env.PushVal(types.Bool(answer))
 }
 
 func coMore(env *Environment, in inst.Instruction) {
@@ -138,7 +138,7 @@ func coMore(env *Environment, in inst.Instruction) {
 	}
 
 	answer := left.More(right.Number)
-	env.Push(types.Bool(answer))
+	env.PushVal(types.Bool(answer))
 }
 
 func coLessOrEqual(env *Environment, in inst.Instruction) {
@@ -149,7 +149,7 @@ func coLessOrEqual(env *Environment, in inst.Instruction) {
 	}
 
 	answer := left.LessOrEqual(right.Number)
-	env.Push(types.Bool(answer))
+	env.PushVal(types.Bool(answer))
 }
 
 func coMoreOrEqual(env *Environment, in inst.Instruction) {
@@ -160,17 +160,17 @@ func coMoreOrEqual(env *Environment, in inst.Instruction) {
 	}
 
 	answer := left.MoreOrEqual(right.Number)
-	env.Push(types.Bool(answer))
+	env.PushVal(types.Bool(answer))
 }
 
 func coEqual(env *Environment, in inst.Instruction) {
 	left, right := popOperands(env)
 	answer := left.Equal(right)
-	env.Push(types.Bool(answer))
+	env.PushVal(types.Bool(answer))
 }
 
 func coNotEqual(env *Environment, in inst.Instruction) {
 	left, right := popOperands(env)
 	answer := !left.Equal(right)
-	env.Push(types.Bool(answer))
+	env.PushVal(types.Bool(answer))
 }

@@ -88,8 +88,11 @@ const (
 var codes = map[Code]string{
 	CO_VAL_PUSH:     `CO_VAL_PUSH`,
 	CO_JUMP_FALSE:   `CO_JUMP_FALSE`,
+	CO_DELIM_PUSH:   `CO_DELIM_PUSH`,
 	CO_CTX_SET:      `CO_CTX_SET`,
 	CO_CTX_GET:      `CO_CTX_GET`,
+	CO_SUB_CTX_PUSH: `CO_SUB_CTX_PUSH`,
+	CO_SUB_CTX_POP:  `CO_SUB_CTX_POP`,
 	CO_SPELL:        `CO_SPELL`,
 	CO_MUL:          `CO_MUL`,
 	CO_DIV:          `CO_DIV`,
@@ -102,6 +105,6 @@ var codes = map[Code]string{
 	CO_MORE:         `CO_MORE`,
 	CO_LESS_EQU:     `CO_LESS_EQU`,
 	CO_MORE_EQU:     `CO_MORE_EQU`,
-	CO_SUB_CTX_PUSH: `CO_SUB_CTX_PUSH`,
-	CO_SUB_CTX_POP:  `CO_SUB_CTX_POP`,
+	CO_EQU:          `CO_EQU`,
+	CO_NOT_EQU:      `CO_NOT_EQU`,
 }

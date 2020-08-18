@@ -30,7 +30,7 @@ func popArgs(env *Environment) []types.Value {
 
 	vs := []types.Value{}
 
-	for v := env.Pop(); isNotDelim(v); v = env.Pop() {
+	for v := env.PopVal(); isNotDelim(v); v = env.PopVal() {
 		vs = append([]types.Value{v}, vs...)
 	}
 
