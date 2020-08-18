@@ -46,7 +46,7 @@ func Test1_2(t *testing.T) {
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
 		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
-		insttest.NewIn(inst.CO_CTX_GET, "x"),
+		insttest.NewIn(inst.CO_VAL_GET, "x"),
 		insttest.NewIn(inst.CO_SPELL, "Println"),
 	}
 
@@ -70,7 +70,7 @@ func Test1_3(t *testing.T) {
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
 		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
-		insttest.NewIn(inst.CO_CTX_GET, "x"),
+		insttest.NewIn(inst.CO_VAL_GET, "x"),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
 		insttest.NewIn(inst.CO_VAL_PUSH, "abc"),
 		insttest.NewIn(inst.CO_SPELL, "Println"),
@@ -93,7 +93,7 @@ func Test2_1(t *testing.T) {
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
-		insttest.NewIn(inst.CO_CTX_SET, "x"),
+		insttest.NewIn(inst.CO_VAL_BIND, "x"),
 	}
 
 	doTest(t, in, exp)
@@ -123,9 +123,9 @@ func Test2_2(t *testing.T) {
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("3")),
-		insttest.NewIn(inst.CO_CTX_SET, "c"),
-		insttest.NewIn(inst.CO_CTX_SET, "b"),
-		insttest.NewIn(inst.CO_CTX_SET, "a"),
+		insttest.NewIn(inst.CO_VAL_BIND, "c"),
+		insttest.NewIn(inst.CO_VAL_BIND, "b"),
+		insttest.NewIn(inst.CO_VAL_BIND, "a"),
 	}
 
 	doTest(t, in, exp)
@@ -229,7 +229,7 @@ func Test3_4(t *testing.T) {
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
 		insttest.NewIn(inst.CO_ADD, nil),
-		insttest.NewIn(inst.CO_CTX_SET, "x"),
+		insttest.NewIn(inst.CO_VAL_BIND, "x"),
 	}
 
 	doTest(t, in, exp)

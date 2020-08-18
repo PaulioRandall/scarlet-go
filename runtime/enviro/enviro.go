@@ -96,10 +96,10 @@ func (env *Environment) Exe(in inst.Instruction) {
 		v := types.BuiltinValueOf(in.Data)
 		env.PushVal(v)
 
-	case inst.CO_CTX_GET: // co_variables.go
+	case inst.CO_VAL_GET: // co_context.go
 		coCtxGet(env, in)
 
-	case inst.CO_CTX_SET:
+	case inst.CO_VAL_BIND:
 		coCtxSet(env, in)
 
 	case inst.CO_ADD: // co_operation.go

@@ -76,7 +76,7 @@ func assignment(in *input, out *output) {
 
 		lex := in.take()
 		out.emit(inst.Instruction{
-			Code:    inst.CO_CTX_SET,
+			Code:    inst.CO_VAL_BIND,
 			Data:    lex.Raw,
 			Snippet: lex,
 		})
@@ -150,7 +150,7 @@ func identifier(in *input, out *output) {
 	lex := in.take()
 
 	out.emit(inst.Instruction{
-		Code:    inst.CO_CTX_GET,
+		Code:    inst.CO_VAL_GET,
 		Data:    lex.Raw,
 		Snippet: lex,
 	})
