@@ -89,7 +89,7 @@ func (env *Environment) Def(id string, v types.Value) bool {
 func (env *Environment) Exe(in inst.Instruction) {
 
 	switch in.Code {
-	case inst.CO_DELIM_PUSH:
+	case inst.CO_DLM_PUSH:
 		env.PushVal(types.Delim{})
 
 	case inst.CO_VAL_PUSH:
@@ -141,10 +141,10 @@ func (env *Environment) Exe(in inst.Instruction) {
 	case inst.CO_NOT_EQU:
 		coNotEqual(env, in)
 
-	case inst.CO_SPELL: // co_call.go
+	case inst.CO_SPL_CALL: // co_call.go
 		coSpell(env, in)
 
-	case inst.CO_JUMP_FALSE: // co_jump.go
+	case inst.CO_JMP_FALSE: // co_jump.go
 		coJump(env, in, false)
 
 	case inst.CO_SUB_CTX_PUSH:

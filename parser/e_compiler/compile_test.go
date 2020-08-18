@@ -26,8 +26,8 @@ func Test1_1(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
-		insttest.NewIn(inst.CO_SPELL, "Println"),
+		insttest.NewIn(inst.CO_DLM_PUSH, nil),
+		insttest.NewIn(inst.CO_SPL_CALL, "Println"),
 	}
 
 	doTest(t, in, exp)
@@ -45,9 +45,9 @@ func Test1_2(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
+		insttest.NewIn(inst.CO_DLM_PUSH, nil),
 		insttest.NewIn(inst.CO_VAL_GET, "x"),
-		insttest.NewIn(inst.CO_SPELL, "Println"),
+		insttest.NewIn(inst.CO_SPL_CALL, "Println"),
 	}
 
 	doTest(t, in, exp)
@@ -69,11 +69,11 @@ func Test1_3(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
+		insttest.NewIn(inst.CO_DLM_PUSH, nil),
 		insttest.NewIn(inst.CO_VAL_GET, "x"),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
 		insttest.NewIn(inst.CO_VAL_PUSH, "abc"),
-		insttest.NewIn(inst.CO_SPELL, "Println"),
+		insttest.NewIn(inst.CO_SPL_CALL, "Println"),
 	}
 
 	doTest(t, in, exp)
@@ -201,11 +201,11 @@ func Test3_3(t *testing.T) {
 
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
-		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
+		insttest.NewIn(inst.CO_DLM_PUSH, nil),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
 		insttest.NewIn(inst.CO_ADD, nil),
-		insttest.NewIn(inst.CO_SPELL, "Println"),
+		insttest.NewIn(inst.CO_SPL_CALL, "Println"),
 	}
 
 	doTest(t, in, exp)
@@ -297,7 +297,7 @@ func Test4_1(t *testing.T) {
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
 		insttest.NewIn(inst.CO_VAL_PUSH, true),
-		insttest.NewIn(inst.CO_JUMP_FALSE, 2),
+		insttest.NewIn(inst.CO_JMP_FALSE, 2),
 		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
 		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
 	}
@@ -322,11 +322,11 @@ func Test4_2(t *testing.T) {
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
 		insttest.NewIn(inst.CO_VAL_PUSH, true),
-		insttest.NewIn(inst.CO_JUMP_FALSE, 5),
+		insttest.NewIn(inst.CO_JMP_FALSE, 5),
 		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
-		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
+		insttest.NewIn(inst.CO_DLM_PUSH, nil),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
-		insttest.NewIn(inst.CO_SPELL, "Println"),
+		insttest.NewIn(inst.CO_SPL_CALL, "Println"),
 		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
 	}
 
@@ -357,18 +357,18 @@ func Test4_3(t *testing.T) {
 	// THEN these are the expected instructions
 	exp := []inst.Instruction{
 		insttest.NewIn(inst.CO_VAL_PUSH, true),
-		insttest.NewIn(inst.CO_JUMP_FALSE, 12),
+		insttest.NewIn(inst.CO_JMP_FALSE, 12),
 		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
 		insttest.NewIn(inst.CO_VAL_PUSH, true),
-		insttest.NewIn(inst.CO_JUMP_FALSE, 5),
+		insttest.NewIn(inst.CO_JMP_FALSE, 5),
 		insttest.NewIn(inst.CO_SUB_CTX_PUSH, nil),
-		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
+		insttest.NewIn(inst.CO_DLM_PUSH, nil),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
-		insttest.NewIn(inst.CO_SPELL, "Println"),
+		insttest.NewIn(inst.CO_SPL_CALL, "Println"),
 		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
-		insttest.NewIn(inst.CO_DELIM_PUSH, nil),
+		insttest.NewIn(inst.CO_DLM_PUSH, nil),
 		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
-		insttest.NewIn(inst.CO_SPELL, "Println"),
+		insttest.NewIn(inst.CO_SPL_CALL, "Println"),
 		insttest.NewIn(inst.CO_SUB_CTX_POP, nil),
 	}
 

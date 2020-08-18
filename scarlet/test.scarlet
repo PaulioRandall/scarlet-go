@@ -1,17 +1,20 @@
 
 @FmtScript(
-"test.scarlet",
+	"test.scarlet",
 )
 
 meh := "¯\_(ツ)_/¯"
 question, answer := meh, meh
 
-[false] {
-  question := "6 * 7"
+[true] {
+	question := "6 * 7"
 
-  [true] {
-    answer := 6 * 7
-  }
+	[true] {
+	answer := 6 * 7
+	}
 }
 
 @Println(question, " = ", answer)
+
+
+

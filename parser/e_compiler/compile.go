@@ -42,7 +42,7 @@ func statement(in *input, out *output) {
 func spell(in *input, out *output) {
 
 	out.emit(inst.Instruction{
-		Code:    inst.CO_DELIM_PUSH,
+		Code:    inst.CO_DLM_PUSH,
 		Snippet: in.take(),
 	})
 
@@ -52,7 +52,7 @@ func spell(in *input, out *output) {
 
 	sp := in.take()
 	out.emit(inst.Instruction{
-		Code:    inst.CO_SPELL,
+		Code:    inst.CO_SPL_CALL,
 		Data:    sp.Raw[1:],
 		Snippet: sp,
 	})
@@ -91,7 +91,7 @@ func guard(in *input, out *output) {
 	jumpSize := block.len()
 
 	out.emit(inst.Instruction{
-		Code:    inst.CO_JUMP_FALSE,
+		Code:    inst.CO_JMP_FALSE,
 		Data:    jumpSize,
 		Snippet: g,
 	})

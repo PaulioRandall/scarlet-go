@@ -5,18 +5,6 @@ the default language.
 
 ## 1.0 (Essential Features)
 
-#### Guarded Statements
-
-```
-[x > 1] {
-  ...
-}
-```
-
-```
-[x > 1] ...
-```
-
 #### While Loops
 
 ```
@@ -27,7 +15,7 @@ loop [true] {
 
 #### Format Spell
 
-Just needs updating to format assignments & expressions
+Just needs updating to format guards & loops
 
 ## 1.1
 

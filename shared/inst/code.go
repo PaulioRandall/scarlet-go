@@ -15,7 +15,7 @@ const (
 	// Data: integer
 	// Stack values consumed: 1
 	// 		1st: bool
-	CO_JUMP_FALSE
+	CO_JMP_FALSE
 
 	// Push a delimiter onto the value stack. Delimiters are used to indicate
 	// when to stop popping values of the value stack for instruction that
@@ -23,7 +23,7 @@ const (
 	//
 	// Stack values produced: 1
 	//    1st: delimiter
-	CO_DELIM_PUSH
+	CO_DLM_PUSH
 
 	// Push a value onto the value stack.
 	//
@@ -82,18 +82,18 @@ const (
 	//    ...: spell input
 	// Stack values produced: 0+
 	//    ...: spell output
-	CO_SPELL
+	CO_SPL_CALL
 )
 
 var codes = map[Code]string{
+	CO_JMP_FALSE:    `CO_JMP_FALSE`,
+	CO_DLM_PUSH:     `CO_DLM_PUSH`,
 	CO_VAL_PUSH:     `CO_VAL_PUSH`,
-	CO_JUMP_FALSE:   `CO_JUMP_FALSE`,
-	CO_DELIM_PUSH:   `CO_DELIM_PUSH`,
 	CO_VAL_BIND:     `CO_VAL_BIND`,
 	CO_VAL_GET:      `CO_VAL_GET`,
 	CO_SUB_CTX_PUSH: `CO_SUB_CTX_PUSH`,
 	CO_SUB_CTX_POP:  `CO_SUB_CTX_POP`,
-	CO_SPELL:        `CO_SPELL`,
+	CO_SPL_CALL:     `CO_SPL_CALL`,
 	CO_MUL:          `CO_MUL`,
 	CO_DIV:          `CO_DIV`,
 	CO_REM:          `CO_REM`,
