@@ -5,10 +5,6 @@ the default language.
 
 ## v1 (Essential Features)
 
-#### Format Spell
-
-Just needs updating to format guards, loops, & blocks
-
 #### Documentation
 
 Just need to document the guard & loop features
