@@ -6,7 +6,7 @@
 meh := "¯\_(ツ)_/¯"
 
 i := 5
-loop [i >= 0]{
+loop [i >= 0] {
 	@Println(i)
 	i := i - 1
 }

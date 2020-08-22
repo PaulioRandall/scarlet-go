@@ -147,11 +147,11 @@ func (tk Token) IsOperator() bool {
 }
 
 func (tk Token) IsOpener() bool {
-	return tk == L_PAREN || tk == L_SQUARE
+	return tk == L_PAREN || tk == L_SQUARE || tk == L_CURLY
 }
 
 func (tk Token) IsCloser() bool {
-	return tk == R_PAREN || tk == R_SQUARE
+	return tk == R_PAREN || tk == R_SQUARE || tk == R_CURLY
 }
 
 func (tk Token) String() string {

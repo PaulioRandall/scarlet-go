@@ -135,7 +135,8 @@ func insertDelimiterSpaces(itr *lexeme.Iterator) {
 func insertBracketSpaces(itr *lexeme.Iterator) {
 
 	l_bracket := func(v lexeme.View) bool {
-		return v.Curr().Tok == lexeme.L_CURLY
+		return v.Curr().Tok == lexeme.L_CURLY ||
+			v.Curr().Tok == lexeme.L_SQUARE
 	}
 
 	for itr.JumpToNext(l_bracket) {
