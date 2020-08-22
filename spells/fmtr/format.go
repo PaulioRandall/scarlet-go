@@ -57,7 +57,10 @@ func format(itr *lexeme.Iterator) {
 	stripUselessLines(itr)
 	itr.Restart()
 
-	insertSeparatorSpaces(itr)
+	insertDelimiterSpaces(itr)
+	itr.Restart()
+
+	insertBracketSpaces(itr)
 	itr.Restart()
 
 	insertAssignmentSpaces(itr)
@@ -113,20 +116,61 @@ func stripUselessLines(itr *lexeme.Iterator) {
 	}
 }
 
-func insertSeparatorSpaces(itr *lexeme.Iterator) {
+func insertDelimiterSpaces(itr *lexeme.Iterator) {
 
 	separator := func(v lexeme.View) bool {
 		return v.Curr().Tok == lexeme.DELIM
 	}
 
-	for itr.JumpToNext(separator) {
-		if itr.After() != nil && itr.After().Tok != lexeme.NEWLINE {
-
+	for itr.JumpToNext(separator) && itr.After() != nil {
+		if itr.After().Tok != lexeme.NEWLINE {
 			itr.Append(&lexeme.Lexeme{
 				Tok: lexeme.SPACE,
 				Raw: " ",
 			})
 		}
+	}
+}
+
+func insertBracketSpaces(itr *lexeme.Iterator) {
+
+	l_bracket := func(v lexeme.View) bool {
+		return v.Curr().Tok == lexeme.L_CURLY
+	}
+
+	for itr.JumpToNext(l_bracket) {
+
+		if itr.Before() == nil ||
+			itr.Before().Tok == lexeme.NEWLINE ||
+			itr.Before().Tok == lexeme.SPACE {
+			continue
+		}
+
+		itr.Prepend(&lexeme.Lexeme{
+			Tok: lexeme.SPACE,
+			Raw: " ",
+		})
+	}
+
+	itr.Restart()
+
+	r_bracket := func(v lexeme.View) bool {
+		return v.Curr().Tok == lexeme.R_CURLY ||
+			v.Curr().Tok == lexeme.R_SQUARE
+	}
+
+	for itr.JumpToNext(r_bracket) {
+
+		if itr.After() == nil ||
+			itr.After().Tok == lexeme.NEWLINE ||
+			itr.After().Tok == lexeme.SPACE {
+			continue
+		}
+
+		itr.Append(&lexeme.Lexeme{
+			Tok: lexeme.SPACE,
+			Raw: " ",
+		})
 	}
 }
 
