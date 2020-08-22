@@ -51,28 +51,13 @@ func writeFile(filename string, itr *lexeme.Iterator) error {
 
 func format(itr *lexeme.Iterator) {
 
-	trimWhiteSpace(itr)
+	trimSpaces(itr)
 	itr.Restart()
 
 	stripUselessLines(itr)
 	itr.Restart()
 
-	//insertReadablilitySpaces(itr)
-	//itr.Restart()
-
-	insertDelimiterSpaces(itr)
-	itr.Restart()
-
-	insertBracketSpaces(itr)
-	itr.Restart()
-
-	insertAssignmentSpaces(itr)
-	itr.Restart()
-
-	insertOperatorSpaces(itr)
-	itr.Restart()
-
-	insertCommentSpaces(itr)
+	insertSpaces(itr)
 	itr.Restart()
 
 	unifyLineEndings(itr)
@@ -88,7 +73,7 @@ func format(itr *lexeme.Iterator) {
 	itr.Restart()
 }
 
-func trimWhiteSpace(itr *lexeme.Iterator) {
+func trimSpaces(itr *lexeme.Iterator) {
 
 	whitespace := func(v lexeme.View) bool {
 		return v.Curr().Tok == lexeme.SPACE
@@ -119,53 +104,37 @@ func stripUselessLines(itr *lexeme.Iterator) {
 	}
 }
 
-func insertDelimiterSpaces(itr *lexeme.Iterator) {
+func insertSpaces(itr *lexeme.Iterator) {
+
 	insertSpacesAfter(itr, func(v lexeme.View) bool {
 		return v.Curr().Tok == lexeme.DELIM
 	})
-}
-
-func insertBracketSpaces(itr *lexeme.Iterator) {
 
 	insertSpacesBefore(itr, func(v lexeme.View) bool {
 		return v.Curr().Tok == lexeme.L_CURLY ||
 			v.Curr().Tok == lexeme.L_SQUARE
 	})
 
-	itr.Restart()
-
 	insertSpacesAfter(itr, func(v lexeme.View) bool {
 		return v.Curr().Tok == lexeme.R_CURLY ||
 			v.Curr().Tok == lexeme.R_SQUARE
 	})
-}
 
-func insertCommentSpaces(itr *lexeme.Iterator) {
 	insertSpacesBefore(itr, func(itr lexeme.View) bool {
 		return itr.Curr().Tok == lexeme.COMMENT
 	})
-}
-
-func insertAssignmentSpaces(itr *lexeme.Iterator) {
 
 	insertSpacesBefore(itr, func(itr lexeme.View) bool {
 		return itr.Curr().Tok == lexeme.ASSIGN
 	})
-
-	itr.Restart()
 
 	insertSpacesAfter(itr, func(itr lexeme.View) bool {
 		return itr.Curr().Tok == lexeme.ASSIGN
 	})
-}
-
-func insertOperatorSpaces(itr *lexeme.Iterator) {
 
 	insertSpacesBefore(itr, func(itr lexeme.View) bool {
 		return itr.Curr().Tok.IsOperator()
 	})
-
-	itr.Restart()
 
 	insertSpacesAfter(itr, func(itr lexeme.View) bool {
 		return itr.Curr().Tok.IsOperator()
@@ -249,6 +218,8 @@ func updatePositions(itr *lexeme.Iterator) {
 
 func insertSpacesAfter(itr *lexeme.Iterator, finder func(lexeme.View) bool) {
 
+	itr.Restart()
+
 	for itr.JumpToNext(finder) && itr.After() != nil {
 
 		if itr.After().Tok == lexeme.NEWLINE ||
@@ -264,6 +235,8 @@ func insertSpacesAfter(itr *lexeme.Iterator, finder func(lexeme.View) bool) {
 }
 
 func insertSpacesBefore(itr *lexeme.Iterator, finder func(lexeme.View) bool) {
+
+	itr.Restart()
 
 	for itr.JumpToNext(finder) {
 

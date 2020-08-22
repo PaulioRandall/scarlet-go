@@ -20,7 +20,7 @@ func Test1_1(t *testing.T) {
 
 	exp := lextest.Feign()
 
-	doTest(t, trimWhiteSpace, given, exp)
+	doTest(t, trimSpaces, given, exp)
 }
 
 func Test1_2(t *testing.T) {
@@ -60,7 +60,7 @@ func Test1_2(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	doTest(t, trimWhiteSpace, given, exp)
+	doTest(t, trimSpaces, given, exp)
 }
 
 func Test2_1(t *testing.T) {
@@ -131,7 +131,7 @@ func Test3_1(t *testing.T) {
 		lextest.Tok(",", lexeme.DELIM),
 	)
 
-	doTest(t, insertDelimiterSpaces, given, exp)
+	doTest(t, insertSpaces, given, exp)
 }
 
 func Test3_2(t *testing.T) {
@@ -146,7 +146,7 @@ func Test3_2(t *testing.T) {
 		lextest.Tok("\n", lexeme.NEWLINE),
 	)
 
-	doTest(t, insertDelimiterSpaces, given, exp)
+	doTest(t, insertSpaces, given, exp)
 }
 
 func Test3_3(t *testing.T) {
@@ -162,60 +162,60 @@ func Test3_3(t *testing.T) {
 		lextest.Tok("1", lexeme.NUMBER),
 	)
 
-	doTest(t, insertDelimiterSpaces, given, exp)
+	doTest(t, insertSpaces, given, exp)
+}
+
+func Test3_4(t *testing.T) {
+
+	given := lextest.Feign(
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("1", lexeme.NUMBER),
+	)
+
+	exp := lextest.Feign(
+		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("1", lexeme.NUMBER),
+	)
+
+	doTest(t, insertSpaces, given, exp)
 }
 
 func Test3_5(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("]", lexeme.R_SQUARE),
 		lextest.Tok("1", lexeme.NUMBER),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("}", lexeme.R_CURLY),
+		lextest.Tok("]", lexeme.R_SQUARE),
 		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
 	)
 
-	doTest(t, insertBracketSpaces, given, exp)
+	doTest(t, insertSpaces, given, exp)
 }
 
 func Test3_6(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("]", lexeme.R_SQUARE),
 		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("{", lexeme.L_CURLY),
 	)
 
 	exp := lextest.Feign(
-		lextest.Tok("]", lexeme.R_SQUARE),
-		lextest.Tok(" ", lexeme.SPACE),
 		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("{", lexeme.L_CURLY),
 	)
 
-	doTest(t, insertBracketSpaces, given, exp)
+	doTest(t, insertSpaces, given, exp)
 }
 
 func Test3_7(t *testing.T) {
 
 	given := lextest.Feign(
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok("{", lexeme.L_CURLY),
-	)
-
-	exp := lextest.Feign(
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("{", lexeme.L_CURLY),
-	)
-
-	doTest(t, insertBracketSpaces, given, exp)
-}
-
-func Test4_1(t *testing.T) {
-
-	given := lextest.Feign(
 		lextest.Tok("# Comment", lexeme.COMMENT),
 	)
 
@@ -223,10 +223,10 @@ func Test4_1(t *testing.T) {
 		lextest.Tok("# Comment", lexeme.COMMENT),
 	)
 
-	doTest(t, insertCommentSpaces, given, exp)
+	doTest(t, insertSpaces, given, exp)
 }
 
-func Test4_2(t *testing.T) {
+func Test3_8(t *testing.T) {
 
 	given := lextest.Feign(
 		lextest.Lex(0, 0, "1", lexeme.NUMBER),
@@ -239,7 +239,106 @@ func Test4_2(t *testing.T) {
 		lextest.Lex(0, 1, "# Comment", lexeme.COMMENT),
 	)
 
-	doTest(t, insertCommentSpaces, given, exp)
+	doTest(t, insertSpaces, given, exp)
+}
+
+func Test3_9(t *testing.T) {
+
+	// x:=1
+	given := lextest.Feign(
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+	)
+
+	// x := 1 + 2
+	exp := lextest.Feign(
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("1", lexeme.NUMBER),
+	)
+
+	doTest(t, insertSpaces, given, exp)
+}
+
+func Test3_10(t *testing.T) {
+
+	// x :=1
+	given := lextest.Feign(
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+	)
+
+	// x := 1
+	exp := lextest.Feign(
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("1", lexeme.NUMBER),
+	)
+
+	doTest(t, insertSpaces, given, exp)
+}
+
+func Test3_11(t *testing.T) {
+
+	// 1+2*3
+	given := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("3", lexeme.NUMBER),
+	)
+
+	// 1 + 2 * 3
+	exp := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("3", lexeme.NUMBER),
+	)
+
+	doTest(t, insertSpaces, given, exp)
+}
+
+func Test3_12(t *testing.T) {
+
+	// 1+ 2 *3
+	given := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok("3", lexeme.NUMBER),
+	)
+
+	// 1 + 2 * 3
+	exp := lextest.Feign(
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("+", lexeme.ADD),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("*", lexeme.MUL),
+		lextest.Tok(" ", lexeme.SPACE),
+		lextest.Tok("3", lexeme.NUMBER),
+	)
+
+	doTest(t, insertSpaces, given, exp)
 }
 
 func Test6_1(t *testing.T) {
@@ -451,105 +550,6 @@ func Test9_2(t *testing.T) {
 	)
 
 	doTest(t, alignComments, given, exp)
-}
-
-func Test10_1(t *testing.T) {
-
-	// x:=1
-	given := lextest.Feign(
-		lextest.Tok("x", lexeme.IDENT),
-		lextest.Tok(":=", lexeme.ASSIGN),
-		lextest.Tok("1", lexeme.NUMBER),
-	)
-
-	// x := 1 + 2
-	exp := lextest.Feign(
-		lextest.Tok("x", lexeme.IDENT),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok(":=", lexeme.ASSIGN),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("1", lexeme.NUMBER),
-	)
-
-	doTest(t, insertAssignmentSpaces, given, exp)
-}
-
-func Test10_2(t *testing.T) {
-
-	// x :=1
-	given := lextest.Feign(
-		lextest.Tok("x", lexeme.IDENT),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok(":=", lexeme.ASSIGN),
-		lextest.Tok("1", lexeme.NUMBER),
-	)
-
-	// x := 1
-	exp := lextest.Feign(
-		lextest.Tok("x", lexeme.IDENT),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok(":=", lexeme.ASSIGN),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("1", lexeme.NUMBER),
-	)
-
-	doTest(t, insertAssignmentSpaces, given, exp)
-}
-
-func Test11_1(t *testing.T) {
-
-	// 1+2*3
-	given := lextest.Feign(
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok("+", lexeme.ADD),
-		lextest.Tok("2", lexeme.NUMBER),
-		lextest.Tok("*", lexeme.MUL),
-		lextest.Tok("3", lexeme.NUMBER),
-	)
-
-	// 1 + 2 * 3
-	exp := lextest.Feign(
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("+", lexeme.ADD),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("2", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("*", lexeme.MUL),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("3", lexeme.NUMBER),
-	)
-
-	doTest(t, insertOperatorSpaces, given, exp)
-}
-
-func Test11_2(t *testing.T) {
-
-	// 1+ 2 *3
-	given := lextest.Feign(
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok("+", lexeme.ADD),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("2", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("*", lexeme.MUL),
-		lextest.Tok("3", lexeme.NUMBER),
-	)
-
-	// 1 + 2 * 3
-	exp := lextest.Feign(
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("+", lexeme.ADD),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("2", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("*", lexeme.MUL),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("3", lexeme.NUMBER),
-	)
-
-	doTest(t, insertOperatorSpaces, given, exp)
 }
 
 func Test99_1(t *testing.T) {
