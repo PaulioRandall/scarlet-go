@@ -1,8 +1,8 @@
 package enviro
 
 import (
-	"github.com/PaulioRandall/scarlet-go/shared/inst"
-	"github.com/PaulioRandall/scarlet-go/shared/perror"
+	"github.com/PaulioRandall/scarlet-go/inst"
+	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/spells"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )

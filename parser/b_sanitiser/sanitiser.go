@@ -1,7 +1,7 @@
 package sanitiser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 func SanitiseAll(con *lexeme.Container) {

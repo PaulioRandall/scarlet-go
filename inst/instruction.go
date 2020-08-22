@@ -3,7 +3,7 @@ package inst
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 type Instruction struct {

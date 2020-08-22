@@ -1,8 +1,8 @@
 package compiler
 
 import (
-	"github.com/PaulioRandall/scarlet-go/shared/inst"
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
+	"github.com/PaulioRandall/scarlet-go/inst"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 type Queue interface {

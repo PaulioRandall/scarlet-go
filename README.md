@@ -3,7 +3,7 @@
 Scarlet is my second attempt at creating an interpreter. Scarlett is the name of
 the default language.
 
-## 1.0 (Essential Features)
+## v1 (Essential Features)
 
 #### Format Spell
 
@@ -13,7 +13,7 @@ Just needs updating to format guards, loops, & blocks
 
 Just need to document the guard & loop features
 
-## 1.1
+## v2
 
 #### Void Assignee
 
@@ -27,7 +27,7 @@ _, y := 1, 2
 x := _
 ```
 
-## 1.2
+## v3
 
 #### Spell Returns
 
@@ -62,7 +62,7 @@ Exit the script with an error message:
 @Panic(exitCode, message)
 ```
 
-## 1.3 (String Spells)
+## v4 (String Spells)
 
 Take a slice of a string:
 ```
@@ -104,7 +104,7 @@ Parse a string as a bool:
 x, e := @str.ParseBool(bool)
 ```
 
-## 2.0 
+## v5 
 
 #### Functions
 
@@ -116,7 +116,7 @@ f := F(a, b -> x, y) {
 x, y := f(1, 2)
 ```
 
-## 3.0 (Lists)
+## v6 (Lists)
 
 Create a new list:
 ```
@@ -174,7 +174,7 @@ x := @list.Foreach(list, F(i, value, more) {
 })
 ```
 
-## 4.0 (Maps)
+## v7 (Maps)
 
 Create a new map:
 ```
@@ -222,7 +222,7 @@ x := @map.Foreach(map, F(key, value) {
 })
 ```
 
-## 5.0+
+## v8+
 
 These are debatable features that are not really required but might make
 programming moderately smoother.
@@ -238,11 +238,7 @@ x := y?
 
 A form of match block or switch.
 ```
-when x {
-  1: ...
-  2: {
-    ...
-  }
+when {
   [x < 0] { // Guard case
     ... 
   }
@@ -287,13 +283,6 @@ def x, y, z := 1, 2, 3
 
 #### Native While & For Loops
 
-Infinite loop:
-```
-loop [true] {
-  ...
-}
-```
-
 While loop:
 ```
 loop more := true [more] {
@@ -331,13 +320,6 @@ watch e {
   e := "error"
   ...
 }
-```
-
-#### Native Exit Script
-
-Exit the script with a specific exit code:
-```
-exit exitCode
 ```
 
 #### Template Strings & Spells

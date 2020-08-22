@@ -3,11 +3,11 @@ package compiler
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/shared/inst"
-	"github.com/PaulioRandall/scarlet-go/shared/inst/insttest"
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme/lextest"
-	"github.com/PaulioRandall/scarlet-go/shared/number"
+	"github.com/PaulioRandall/scarlet-go/inst"
+	"github.com/PaulioRandall/scarlet-go/inst/insttest"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/lexeme/lextest"
+	"github.com/PaulioRandall/scarlet-go/number"
 )
 
 func doTest(t *testing.T, in *lexeme.Container, exps []inst.Instruction) {

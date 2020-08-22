@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/shared/number"
+	"github.com/PaulioRandall/scarlet-go/number"
 )
 
 type Value interface {

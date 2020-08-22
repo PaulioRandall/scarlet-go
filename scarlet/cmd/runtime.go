@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/PaulioRandall/scarlet-go/inst"
 	"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/runtime"
-	"github.com/PaulioRandall/scarlet-go/shared/inst"
 )
 
 const GENERAL_ERROR = 1

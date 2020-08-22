@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/shared/inst"
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
+	"github.com/PaulioRandall/scarlet-go/inst"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 func makeLogFilename(c config, ext string) string {

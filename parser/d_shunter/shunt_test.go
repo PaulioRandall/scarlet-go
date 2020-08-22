@@ -3,8 +3,8 @@ package shunter
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme/lextest"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/lexeme/lextest"
 )
 
 func doTest(t *testing.T, in, exp *lexeme.Container) {

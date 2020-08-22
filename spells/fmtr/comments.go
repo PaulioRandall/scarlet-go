@@ -3,7 +3,7 @@ package fmtr
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 func comment(itr lexeme.View) bool {

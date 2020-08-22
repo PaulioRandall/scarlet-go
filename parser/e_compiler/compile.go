@@ -1,9 +1,9 @@
 package compiler
 
 import (
-	"github.com/PaulioRandall/scarlet-go/shared/inst"
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
-	"github.com/PaulioRandall/scarlet-go/shared/number"
+	"github.com/PaulioRandall/scarlet-go/inst"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/number"
 )
 
 func CompileAll(con *lexeme.Container) []inst.Instruction {

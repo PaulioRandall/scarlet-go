@@ -1,7 +1,7 @@
 package shunter
 
 import (
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 type Stack interface {

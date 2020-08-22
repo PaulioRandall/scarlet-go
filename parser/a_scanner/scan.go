@@ -1,8 +1,8 @@
 package scanner
 
 import (
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
-	"github.com/PaulioRandall/scarlet-go/shared/perror"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/perror"
 )
 
 type Queue interface {

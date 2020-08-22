@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/shared/inst"
+	"github.com/PaulioRandall/scarlet-go/inst"
 
 	"github.com/stretchr/testify/require"
 )

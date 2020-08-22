@@ -1,9 +1,9 @@
 package runtime
 
 import (
+	"github.com/PaulioRandall/scarlet-go/inst"
+	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/runtime/enviro"
-	"github.com/PaulioRandall/scarlet-go/shared/inst"
-	"github.com/PaulioRandall/scarlet-go/shared/perror"
 )
 
 type Runtime struct {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
-	"github.com/PaulioRandall/scarlet-go/shared/perror"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/perror"
 )
 
 type runeReader struct {

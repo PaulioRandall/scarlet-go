@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/parser/a_scanner"
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
 )
 
 func formatFile(filename string) error {

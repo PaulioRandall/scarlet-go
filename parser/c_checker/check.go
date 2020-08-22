@@ -1,7 +1,7 @@
 package checker
 
 import (
-	"github.com/PaulioRandall/scarlet-go/shared/lexeme"
+	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
 func CheckAll(con *lexeme.Container) error {
