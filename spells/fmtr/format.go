@@ -57,6 +57,9 @@ func format(itr *lexeme.Iterator) {
 	stripUselessLines(itr)
 	itr.Restart()
 
+	//insertReadablilitySpaces(itr)
+	//itr.Restart()
+
 	insertDelimiterSpaces(itr)
 	itr.Restart()
 
@@ -117,127 +120,56 @@ func stripUselessLines(itr *lexeme.Iterator) {
 }
 
 func insertDelimiterSpaces(itr *lexeme.Iterator) {
-
-	separator := func(v lexeme.View) bool {
+	insertSpacesAfter(itr, func(v lexeme.View) bool {
 		return v.Curr().Tok == lexeme.DELIM
-	}
-
-	for itr.JumpToNext(separator) && itr.After() != nil {
-		if itr.After().Tok != lexeme.NEWLINE {
-			itr.Append(&lexeme.Lexeme{
-				Tok: lexeme.SPACE,
-				Raw: " ",
-			})
-		}
-	}
+	})
 }
 
 func insertBracketSpaces(itr *lexeme.Iterator) {
 
-	l_bracket := func(v lexeme.View) bool {
+	insertSpacesBefore(itr, func(v lexeme.View) bool {
 		return v.Curr().Tok == lexeme.L_CURLY ||
 			v.Curr().Tok == lexeme.L_SQUARE
-	}
-
-	for itr.JumpToNext(l_bracket) {
-
-		if itr.Before() == nil ||
-			itr.Before().Tok == lexeme.NEWLINE ||
-			itr.Before().Tok == lexeme.SPACE {
-			continue
-		}
-
-		itr.Prepend(&lexeme.Lexeme{
-			Tok: lexeme.SPACE,
-			Raw: " ",
-		})
-	}
+	})
 
 	itr.Restart()
 
-	r_bracket := func(v lexeme.View) bool {
+	insertSpacesAfter(itr, func(v lexeme.View) bool {
 		return v.Curr().Tok == lexeme.R_CURLY ||
 			v.Curr().Tok == lexeme.R_SQUARE
-	}
-
-	for itr.JumpToNext(r_bracket) {
-
-		if itr.After() == nil ||
-			itr.After().Tok == lexeme.NEWLINE ||
-			itr.After().Tok == lexeme.SPACE {
-			continue
-		}
-
-		itr.Append(&lexeme.Lexeme{
-			Tok: lexeme.SPACE,
-			Raw: " ",
-		})
-	}
+	})
 }
 
 func insertCommentSpaces(itr *lexeme.Iterator) {
-
-	comment := func(itr lexeme.View) bool {
+	insertSpacesBefore(itr, func(itr lexeme.View) bool {
 		return itr.Curr().Tok == lexeme.COMMENT
-	}
-
-	for itr.JumpToNext(comment) {
-		if itr.Before() != nil &&
-			itr.Before().Tok != lexeme.NEWLINE &&
-			itr.Before().Tok != lexeme.SPACE {
-
-			itr.Prepend(&lexeme.Lexeme{
-				Tok: lexeme.SPACE,
-				Raw: " ",
-			})
-		}
-	}
+	})
 }
 
 func insertAssignmentSpaces(itr *lexeme.Iterator) {
 
-	assignment := func(itr lexeme.View) bool {
+	insertSpacesBefore(itr, func(itr lexeme.View) bool {
 		return itr.Curr().Tok == lexeme.ASSIGN
-	}
+	})
 
-	for itr.JumpToNext(assignment) {
-		if itr.Before() != nil && itr.Before().Tok != lexeme.SPACE {
-			itr.Prepend(&lexeme.Lexeme{
-				Tok: lexeme.SPACE,
-				Raw: " ",
-			})
-		}
+	itr.Restart()
 
-		if itr.After() != nil && itr.After().Tok != lexeme.SPACE {
-			itr.Append(&lexeme.Lexeme{
-				Tok: lexeme.SPACE,
-				Raw: " ",
-			})
-		}
-	}
+	insertSpacesAfter(itr, func(itr lexeme.View) bool {
+		return itr.Curr().Tok == lexeme.ASSIGN
+	})
 }
 
 func insertOperatorSpaces(itr *lexeme.Iterator) {
 
-	operator := func(itr lexeme.View) bool {
+	insertSpacesBefore(itr, func(itr lexeme.View) bool {
 		return itr.Curr().Tok.IsOperator()
-	}
+	})
 
-	for itr.JumpToNext(operator) {
-		if itr.Before() != nil && itr.Before().Tok != lexeme.SPACE {
-			itr.Prepend(&lexeme.Lexeme{
-				Tok: lexeme.SPACE,
-				Raw: " ",
-			})
-		}
+	itr.Restart()
 
-		if itr.After() != nil && itr.After().Tok != lexeme.SPACE {
-			itr.Append(&lexeme.Lexeme{
-				Tok: lexeme.SPACE,
-				Raw: " ",
-			})
-		}
-	}
+	insertSpacesAfter(itr, func(itr lexeme.View) bool {
+		return itr.Curr().Tok.IsOperator()
+	})
 }
 
 func unifyLineEndings(itr *lexeme.Iterator) {
@@ -312,5 +244,38 @@ func updatePositions(itr *lexeme.Iterator) {
 		} else {
 			col += len(itr.Curr().Raw)
 		}
+	}
+}
+
+func insertSpacesAfter(itr *lexeme.Iterator, finder func(lexeme.View) bool) {
+
+	for itr.JumpToNext(finder) && itr.After() != nil {
+
+		if itr.After().Tok == lexeme.NEWLINE ||
+			itr.After().Tok == lexeme.SPACE {
+			continue
+		}
+
+		itr.Append(&lexeme.Lexeme{
+			Tok: lexeme.SPACE,
+			Raw: " ",
+		})
+	}
+}
+
+func insertSpacesBefore(itr *lexeme.Iterator, finder func(lexeme.View) bool) {
+
+	for itr.JumpToNext(finder) {
+
+		if itr.Before() == nil ||
+			itr.Before().Tok == lexeme.NEWLINE ||
+			itr.Before().Tok == lexeme.SPACE {
+			continue
+		}
+
+		itr.Prepend(&lexeme.Lexeme{
+			Tok: lexeme.SPACE,
+			Raw: " ",
+		})
 	}
 }
