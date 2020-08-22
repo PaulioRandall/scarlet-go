@@ -107,37 +107,19 @@ func stripUselessLines(itr *lexeme.Iterator) {
 func insertSpaces(itr *lexeme.Iterator) {
 
 	insertSpacesAfter(itr, func(v lexeme.View) bool {
-		return v.Curr().Tok == lexeme.DELIM
+		return v.Curr().Tok == lexeme.DELIM ||
+			v.Curr().Tok == lexeme.R_CURLY ||
+			v.Curr().Tok == lexeme.R_SQUARE ||
+			itr.Curr().Tok == lexeme.ASSIGN ||
+			itr.Curr().Tok.IsOperator()
 	})
 
 	insertSpacesBefore(itr, func(v lexeme.View) bool {
 		return v.Curr().Tok == lexeme.L_CURLY ||
-			v.Curr().Tok == lexeme.L_SQUARE
-	})
-
-	insertSpacesAfter(itr, func(v lexeme.View) bool {
-		return v.Curr().Tok == lexeme.R_CURLY ||
-			v.Curr().Tok == lexeme.R_SQUARE
-	})
-
-	insertSpacesBefore(itr, func(itr lexeme.View) bool {
-		return itr.Curr().Tok == lexeme.COMMENT
-	})
-
-	insertSpacesBefore(itr, func(itr lexeme.View) bool {
-		return itr.Curr().Tok == lexeme.ASSIGN
-	})
-
-	insertSpacesAfter(itr, func(itr lexeme.View) bool {
-		return itr.Curr().Tok == lexeme.ASSIGN
-	})
-
-	insertSpacesBefore(itr, func(itr lexeme.View) bool {
-		return itr.Curr().Tok.IsOperator()
-	})
-
-	insertSpacesAfter(itr, func(itr lexeme.View) bool {
-		return itr.Curr().Tok.IsOperator()
+			v.Curr().Tok == lexeme.L_SQUARE ||
+			itr.Curr().Tok == lexeme.ASSIGN ||
+			itr.Curr().Tok == lexeme.COMMENT ||
+			itr.Curr().Tok.IsOperator()
 	})
 }
 
