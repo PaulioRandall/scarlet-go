@@ -5,9 +5,8 @@ the default language.
 
 ## v1 (Essential Features)
 
-#### Documentation
-
-Just need to document the guard & loop features
+1. Quick code review & tidy
+2. Tag v1
 
 ## v2
 

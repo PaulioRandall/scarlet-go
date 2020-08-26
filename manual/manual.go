@@ -5,6 +5,10 @@ import (
 	"strings"
 )
 
+func init() {
+	Register("", overview)
+}
+
 type PageGenerator func() string
 
 var generators = map[string]PageGenerator{}
@@ -39,4 +43,26 @@ func Search(searchTerm string) (string, bool) {
 	}
 
 	return gen(), true
+}
+
+func overview() string {
+	return `
+Scarlet is a template for building domain or team specific scripting tools.
+
+	"Sometimes it's better to light a flamethrower than curse the darkness."
+		- 'Men at Arms' by Terry Pratchett
+
+Usage:
+
+	scarlet docs [search term]
+
+Search terms:
+
+	manifesto              Concepts & principles
+	how                    The base language syntax & rules
+	spells                 Available spells
+	@<spell_name>          Specific spell documentation
+	example                An example scroll
+	versions               List of versions and their changes
+	future                 Expected future changes`
 }

@@ -105,7 +105,7 @@ goTest() {
 
 # runExe runs the built executable.
 runExe() {
-  println "Running..." "\n"
+  println "Running..."
 
   cd $BUILD_DIR
   ./"$EXE_NAME" $@

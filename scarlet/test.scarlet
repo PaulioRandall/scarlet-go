@@ -1,19 +1,12 @@
 
-@FmtScript(
-	"test.scarlet",
-)
-
-meh := "¯\_(ツ)_/¯"
-
-i := 5
-loop [i >= 0] {
-        @Println(i)
-	i := i - 1
-}
-
-[true] {
-  
-}
-
 @Println()
-@Println(meh)
+@FmtScript("test.scarlet")
+
+# 'e' represents an error string, if it's not empty then there is an error
+e := "¯\_(ツ)_/¯"
+[e != ""] {
+  @Println(e)
+  @Exit(1)
+}
+
+@Exit(0)

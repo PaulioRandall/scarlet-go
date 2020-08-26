@@ -51,8 +51,9 @@ func coAdd(env *Environment, in inst.Instruction) {
 		return
 	}
 
-	left.Add(right.Number)
-	env.PushVal(left)
+	answer := left.Copy()
+	answer.Add(right.Number)
+	env.PushVal(types.Num{answer})
 }
 
 func coSub(env *Environment, in inst.Instruction) {
@@ -62,8 +63,9 @@ func coSub(env *Environment, in inst.Instruction) {
 		return
 	}
 
-	left.Sub(right.Number)
-	env.PushVal(left)
+	answer := left.Copy()
+	answer.Sub(right.Number)
+	env.PushVal(types.Num{answer})
 }
 
 func coMul(env *Environment, in inst.Instruction) {
@@ -73,8 +75,9 @@ func coMul(env *Environment, in inst.Instruction) {
 		return
 	}
 
-	left.Mul(right.Number)
-	env.PushVal(left)
+	answer := left.Copy()
+	answer.Mul(right.Number)
+	env.PushVal(types.Num{answer})
 }
 
 func coDiv(env *Environment, in inst.Instruction) {
@@ -84,8 +87,9 @@ func coDiv(env *Environment, in inst.Instruction) {
 		return
 	}
 
-	left.Div(right.Number)
-	env.PushVal(left)
+	answer := left.Copy()
+	answer.Div(right.Number)
+	env.PushVal(types.Num{answer})
 }
 
 func coRem(env *Environment, in inst.Instruction) {
@@ -95,8 +99,9 @@ func coRem(env *Environment, in inst.Instruction) {
 		return
 	}
 
-	left.Mod(right.Number)
-	env.PushVal(left)
+	answer := left.Copy()
+	answer.Mod(right.Number)
+	env.PushVal(types.Num{answer})
 }
 
 func coAnd(env *Environment, in inst.Instruction) {
