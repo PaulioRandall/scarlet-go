@@ -59,10 +59,10 @@ Usage:
 Search terms:
 
 	manifesto              Concepts & principles
-	how                    The base language syntax & rules
+	syntax | rules         The base language syntax & rules
 	spells                 Available spells
-	@<spell_name>          Specific spell documentation
-	example                An example scroll
-	versions               List of versions and their changes
-	future                 Expected future changes`
+	examples               An example scroll
+	chapters               List of chapters and changes introduced
+	future                 Potential future changes
+	@<spell_name>          Specific spell documentation`
 }

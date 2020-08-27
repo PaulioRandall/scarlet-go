@@ -1,7 +1,6 @@
 package manual
 
 func init() {
-	Register("example", example)
 	Register("examples", example)
 }
 

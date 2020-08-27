@@ -1,12 +1,12 @@
 package manual
 
 func init() {
-	Register("version", versionDocs)
+	Register("chapters", chapterDocs)
 }
 
-func versionDocs() string {
+func chapterDocs() string {
 	return `
-Version 1 (Upcoming)
+Chapter 1
 
 	- Comments
 	- Variables
@@ -23,5 +23,6 @@ Version 1 (Upcoming)
 		- @Exit(exitcode)
 		- @Print(values...)
 		- @Println(values...)
+		- @FmtScroll(scroll_file)
 	- Manual`
 }

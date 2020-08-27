@@ -6,6 +6,20 @@ func init() {
 
 func future() string {
 	return `
+
+Expected in next chapter
+
+- Semicolon statement terminator
+- Void assignments
+- Native variable deletion
+- Spell returns
+- Spells
+	- @Args() number
+	- @Exists(identifier) bool
+	- @Len(value) number
+	- @Str(value) string
+	- @Panic(exitcode, message)
+
 Assignments
 
 	Some of the next features will be native variable deletions and void

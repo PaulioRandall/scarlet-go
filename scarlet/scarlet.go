@@ -11,7 +11,7 @@ func main() {
 
 	if len(os.Args) == 1 {
 		// Dev run `./godo run`
-		args := cmd.NewArgs([]string{"run", "test.scarlet"})
+		args := cmd.NewArgs([]string{"run", "test.scroll"})
 		eskarina(args)
 		return
 	}

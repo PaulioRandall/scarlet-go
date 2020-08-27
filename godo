@@ -9,7 +9,7 @@ GO_MAIN="scarlet/scarlet.go"
 
 BUILD_FLAGS=""
 #BUILD_FLAGS=-gcflags -m -ldflags "-s -w"
-RESOURCE_FILES="scarlet/test.scarlet"
+RESOURCE_FILES="scarlet/test.scroll"
 TEST_TIMEOUT="2s"
 
 # println prints the arguments then a line feed.

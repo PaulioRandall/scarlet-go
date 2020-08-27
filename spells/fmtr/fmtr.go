@@ -9,15 +9,15 @@ import (
 )
 
 func InscribeAll(inscribe spellbook.Inscriber) {
-	inscribe("FmtScript", Formatter{})
-	manual.Register("@fmtscript", fmtrSpellDocs)
+	inscribe("FmtScroll", Formatter{})
+	manual.Register("@fmtscroll", fmtrSpellDocs)
 }
 
 type Formatter struct{}
 
 func (Formatter) Summary() string {
-	return `@FmtScript(filename)
-	Attempts to format the specified Scarlett script.`
+	return `@FmtScroll(filename)
+	Attempts to format the specified Scarlet scroll.`
 }
 
 func (Formatter) Invoke(env spellbook.Enviro, args []types.Value) {
@@ -41,10 +41,10 @@ func (Formatter) Invoke(env spellbook.Enviro, args []types.Value) {
 
 func fmtrSpellDocs() string {
 	return `
-@FmtScript(filename)
-	Attempts to format the specified Scarlett script.
+@FmtScroll(filename)
+	Attempts to format the specified Scarlet scroll.
 
 Examples
 
-	@FmtScript("./myscript.scar")`
+	@FmtScroll("./example.scroll")`
 }

@@ -1,10 +1,11 @@
 package manual
 
 func init() {
-	Register("how", how)
+	Register("syntax", rulesDocs)
+	Register("rules", rulesDocs)
 }
 
-func how() string {
+func rulesDocs() string {
 	return `
 Comments
 

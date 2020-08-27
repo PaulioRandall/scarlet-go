@@ -18,7 +18,7 @@ type Exit struct{}
 
 func (Exit) Summary() string {
 	return `@Exit(exitCode)
-	Exit terminates the current script with a specific exit code.`
+	Exit terminates the current scroll with a specific exit code.`
 }
 
 func (Exit) Invoke(env spellbook.Enviro, args []types.Value) {
@@ -39,7 +39,7 @@ func (Exit) Invoke(env spellbook.Enviro, args []types.Value) {
 func exitSpellDocs() string {
 	return `
 @Exit(exitCode)
-	Exit terminates the current script with a specific exit code.
+	Exit terminates the current scroll with a specific exit code.
 
 Examples
 
