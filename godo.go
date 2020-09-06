@@ -9,66 +9,106 @@ import (
 
 const (
 	BUILD_DIR_NAME  = "build"
+	BUILD_FILE_PERM = 0777
 	OUTPUT_EXE_NAME = "scarlet"
 	MAIN_GO_FILE    = "scarlet/scarlet.go"
-	BUILD_FLAGS     = "" // -gcflags -m -ldflags "-s -w
+	BUILD_FLAGS     = "" // "-gcflags -m -ldflags -s -w"
 	TEST_TIMEOUT    = "2s"
 )
 
 var (
 	ROOT_DIR  string
 	BUILD_DIR string
-	OUTPUT    string
-	MAIN_GO   string
 )
-
-func init() {
-
-	ex, e := os.Executable()
-	if e != nil {
-		panic(e)
-	}
-
-	ROOT_DIR = filepath.Dir(ex)
-	BUILD_DIR = filepath.Join(ROOT_DIR, BUILD_DIR_NAME)
-	OUTPUT = filepath.Join(BUILD_DIR, OUTPUT_EXE_NAME)
-	MAIN_GO = filepath.Join(ROOT_DIR, MAIN_GO_FILE)
-}
 
 func main() {
 
-	if !checkArgs() {
+	if len(os.Args) < 2 {
+		fmt.Println("[ERROR] Too few arguments")
+		printUsage()
 		return
 	}
 
-	//args := os.Args
+	ROOT_DIR = pwd()
+	BUILD_DIR = filepath.Join(ROOT_DIR, BUILD_DIR_NAME)
+
+	switch cmd := os.Args[1]; cmd {
+	case "clean":
+		removeDir(BUILD_DIR)
+
+	case "build":
+		setupBuild()
+		goBuild()
+		goFmt()
+
+	case "test":
+		setupBuild()
+		goBuild()
+		goFmt()
+		goTest()
+
+	case "run":
+		setupBuild()
+		goBuild()
+		goFmt()
+		goTest()
+		runTestScroll()
+
+	case "help":
+		printUsage()
+
+	default:
+		fmt.Println("[ERROR] Unknown command: " + cmd)
+		printUsage()
+	}
 }
 
 // *** Commands ***
 
-// *** Script utils ***
-
-func checkArgs() bool {
-
-	if len(os.Args) < 2 {
-		fmt.Println("ERROR: Too few arguments")
-		printUsage()
-		return false
-	}
-
-	return true
+func setupBuild() {
+	removeDir(BUILD_DIR)
+	createDir(BUILD_DIR)
 }
 
-func createBuildDir() {
+func goBuild() {
+	// mainFile = filepath.Join(ROOT_DIR, MAIN_GO_FILE)
+	// 	output := filepath.Join(BUILD_DIR, OUTPUT_EXE_NAME)
+	// TODO
+}
 
-	if fileExists(BUILD_DIR) {
-		if e := os.Remove(BUILD_DIR); e != nil {
-			panik("Failed to clean build directory", e)
+func goFmt() {
+	// TODO
+}
+
+func goTest() {
+	// TODO
+}
+
+func runTestScroll() {
+	// TODO
+}
+
+// *** Script utils ***
+
+func pwd() string {
+	pwd, e := os.Getwd()
+	if e != nil {
+		panik("Failed to identify current directory", e)
+	}
+	return pwd
+}
+
+func removeDir(dir string) {
+	if fileExists(dir) {
+		if e := os.RemoveAll(dir); e != nil {
+			panik("Failed to remove directory", e)
 		}
 	}
+}
 
-	if e := os.MkdirAll(BUILD_DIR, 0644); e != nil {
-		panik("Failed to create build directory", e)
+func createDir(dir string) {
+	if e := os.MkdirAll(dir, BUILD_FILE_PERM); e != nil {
+		panik("Failed to create directory", e)
 	}
 }
 
@@ -77,8 +117,7 @@ func copyTestScroll() {
 	src := filepath.Join(ROOT_DIR, "scarlet/test.scroll")
 	dst := filepath.Join(BUILD_DIR, "test.scroll")
 
-	e := copyFile(src, dst)
-	if e != nil {
+	if e := copyFile(src, dst); e != nil {
 		panik("Failed to copy test scroll", e)
 	}
 }
@@ -96,7 +135,7 @@ func printUsage() {
 
 func fileExists(f string) bool {
 	_, e := os.Stat(f)
-	return os.IsNotExist(e)
+	return !os.IsNotExist(e)
 }
 
 func checkRegFile(f string) error {
