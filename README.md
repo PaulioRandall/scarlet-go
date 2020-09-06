@@ -3,12 +3,11 @@
 Scarlet is my second attempt at creating an interpreter. Scarlett is the name of
 the default language.
 
-## v1 (Essential Features)
+## Chapter 2
 
-1. Quick code review & tidy
-2. Tag v1
+#### TinyGo Compatibility
 
-## v2
+Update so Scarlet can be compiled using TinyGo
 
 #### Void Assignee
 
@@ -22,13 +21,9 @@ _, y := 1, 2
 x := _
 ```
 
-#### Spell Returns
+## Chapter 3 (Spell Returns)
 
-```
-sum := @Sum(1, 2, 3)
-```
-
-#### Program Spells
+Spells will be able to return multiple values and a number of default spells will be added.
 
 Get the program arguments:
 ```
@@ -55,7 +50,11 @@ Exit the script with an error message:
 @Panic(exitCode, message)
 ```
 
-## v4 (String Spells)
+## Chapter 4 (Error Handling)
+
+Improved error handling
+
+## Chapter 5 (String Spells)
 
 Take a slice of a string:
 ```
@@ -97,21 +96,9 @@ Parse a string as a bool:
 x, e := @str.ParseBool(bool)
 ```
 
-## v5 
+## Chapter 6 (Lists)
 
-#### Functions
-
-```
-f := F(a, b -> x, y) {
-  ...
-}
-
-x, y := f(1, 2)
-```
-
-## v6 (Lists)
-
-Create a new list:
+reate a new list:
 ```
 list := @list.New(
   1,
@@ -167,7 +154,7 @@ x := @list.Foreach(list, F(i, value, more) {
 })
 ```
 
-## v7 (Maps)
+## Chapter 7 (Maps)
 
 Create a new map:
 ```
@@ -215,7 +202,17 @@ x := @map.Foreach(map, F(key, value) {
 })
 ```
 
-## v8+
+## Chapter 8 (Functions)
+
+```
+f := F(a, b -> x, y) {
+  ...
+}
+
+x, y := f(1, 2)
+```
+
+## Chapters 9+
 
 These are debatable features that are not really required but might make
 programming moderately smoother.
