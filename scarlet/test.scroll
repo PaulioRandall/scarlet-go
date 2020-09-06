@@ -2,12 +2,7 @@
 @Println()
 @FmtScroll("test.scroll")
 
-# 'e' represents an error string, if it's not empty then there is an error
 e := "¯\_(ツ)_/¯"
-
-[e != ""] {
-  @Println(e)
-  @Exit(1)
-}
+@Println("6 * 7 = ", 6 * 7)
 
 @Exit(0)

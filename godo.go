@@ -35,7 +35,71 @@ func init() {
 	MAIN_GO = filepath.Join(ROOT_DIR, MAIN_GO_FILE)
 }
 
-func checkExists(f string) error {
+func main() {
+
+	if !checkArgs() {
+		return
+	}
+
+	//args := os.Args
+}
+
+// *** Commands ***
+
+// *** Script utils ***
+
+func checkArgs() bool {
+
+	if len(os.Args) < 2 {
+		fmt.Println("ERROR: Too few arguments")
+		printUsage()
+		return false
+	}
+
+	return true
+}
+
+func createBuildDir() {
+
+	if fileExists(BUILD_DIR) {
+		if e := os.Remove(BUILD_DIR); e != nil {
+			panik("Failed to clean build directory", e)
+		}
+	}
+
+	if e := os.MkdirAll(BUILD_DIR, 0644); e != nil {
+		panik("Failed to create build directory", e)
+	}
+}
+
+func copyTestScroll() {
+
+	src := filepath.Join(ROOT_DIR, "scarlet/test.scroll")
+	dst := filepath.Join(BUILD_DIR, "test.scroll")
+
+	e := copyFile(src, dst)
+	if e != nil {
+		panik("Failed to copy test scroll", e)
+	}
+}
+
+func printUsage() {
+	fmt.Println("Usage:")
+	fmt.Println("\t./godo clean    \tDelete build directory")
+	fmt.Println("\t./godo build    \tBuild -> format")
+	fmt.Println("\t./godo test     \tBuild -> format -> test")
+	fmt.Println("\t./godo run      \tBuild -> format -> test -> run test scroll")
+	fmt.Println("\t./godo help     \tShow usage")
+}
+
+// *** General utils ***
+
+func fileExists(f string) bool {
+	_, e := os.Stat(f)
+	return os.IsNotExist(e)
+}
+
+func checkRegFile(f string) error {
 
 	stat, e := os.Stat(f)
 	if e != nil {
@@ -51,7 +115,7 @@ func checkExists(f string) error {
 
 func copyFile(src, dst string) error {
 
-	e := checkExists(src)
+	e := checkRegFile(src)
 	if e != nil {
 		return e
 	}
@@ -76,14 +140,13 @@ func copyFile(src, dst string) error {
 	return nil
 }
 
-func copyTestScroll() {
+func panik(msg string, e error) {
 
-	src := filepath.Join(ROOT_DIR, "scarlet/test.scroll")
-	dst := filepath.Join(BUILD_DIR, "test.scroll")
-
-	e := copyFile(src, dst)
-	if e != nil {
-		e = fmt.Errorf("Failed to copy test scroll: %s", e.Error())
-		panic(e)
+	if e == nil {
+		e = fmt.Errorf(msg)
+	} else {
+		e = fmt.Errorf("%s: %s", msg, e.Error())
 	}
+
+	panic(e)
 }
