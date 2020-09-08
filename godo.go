@@ -13,9 +13,6 @@ var (
 	ROOT_DIR        = "."
 	BUILD_DIR       = filepath.Join(ROOT_DIR, "build")
 	BUILD_FILE_PERM = os.ModePerm
-	BUILD_FLAGS     = "" // "-gcflags -m -ldflags -s -w"
-	MAIN_PKG        = "github.com/PaulioRandall/scarlet-go/scarlet"
-	TEST_TIMEOUT    = "2s"
 	COMMANDS        = map[string]string{
 		"help":  "Show usage",
 		"clean": "Remove build files",
@@ -56,6 +53,7 @@ func main() {
 		goBuild()
 		goFmt()
 		goTest()
+		copyTestScroll()
 		runTestScroll()
 
 	default:
@@ -74,6 +72,11 @@ func setupBuild() {
 func goBuild() {
 	fmt.Println("Building...")
 
+	const (
+		BUILD_FLAGS = "" // "-gcflags -m -ldflags -s -w"
+		MAIN_PKG    = "github.com/PaulioRandall/scarlet-go/scarlet"
+	)
+
 	// GO_PATH build -o OUTPUT_DIR BUILD_FLAGS MAIN_PKG
 	cmd := newGoCmd(
 		"build",
@@ -83,7 +86,7 @@ func goBuild() {
 	)
 
 	if e := cmd.Run(); e != nil {
-		panik("Build failed", e)
+		panik("", e)
 	}
 }
 
@@ -92,18 +95,51 @@ func goFmt() {
 
 	cmd := newGoCmd("fmt", "./...")
 	if e := cmd.Run(); e != nil {
-		panik("Build failed", e)
+		panik("", e)
 	}
 }
 
 func goTest() {
 	fmt.Println("Testing...")
-	// TODO
+
+	cmd := newGoCmd("test", "./...", "-timeout", "2s")
+	if e := cmd.Run(); e != nil {
+		panik("", e)
+	}
+}
+
+func copyTestScroll() {
+
+	src := filepath.Join(ROOT_DIR, "scarlet", "test.scroll")
+	dst := filepath.Join(BUILD_DIR, "test.scroll")
+
+	if e := copyFile(src, dst); e != nil {
+		panik("Failed to copy test scroll", e)
+	}
 }
 
 func runTestScroll() {
-	fmt.Println("Running...")
-	// TODO
+	fmt.Println("Test scroll...")
+
+	cd(BUILD_DIR)
+
+	var e error
+	exePath := filepath.Join(ROOT_DIR, "scarlet")
+	exePath, e = filepath.Abs(exePath)
+	if e != nil {
+		panik("", e)
+	}
+
+	cmd := exec.Command(exePath, "run", "test.scroll")
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if e := cmd.Run(); e != nil {
+		panik("", e)
+	}
+
+	cd("..")
 }
 
 // *** Script utils ***
@@ -140,16 +176,6 @@ func removeDir(dir string) {
 func createDir(dir string, mode os.FileMode) {
 	if e := os.MkdirAll(dir, mode); e != nil {
 		panik("Failed to create directory", e)
-	}
-}
-
-func copyTestScroll() {
-
-	src := filepath.Join(ROOT_DIR, "scarlet", "test.scroll")
-	dst := filepath.Join(BUILD_DIR, "test.scroll")
-
-	if e := copyFile(src, dst); e != nil {
-		panik("Failed to copy test scroll", e)
 	}
 }
 
@@ -250,7 +276,7 @@ func panik(msg string, e error) {
 
 	if e == nil {
 		e = fmt.Errorf(msg)
-	} else {
+	} else if msg != "" {
 		e = fmt.Errorf("%s: %s", msg, e.Error())
 	}
 
