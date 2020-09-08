@@ -4,21 +4,25 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
-)
-
-const (
-	BUILD_DIR_NAME  = "build"
-	BUILD_FILE_PERM = 0777
-	OUTPUT_EXE_NAME = "scarlet"
-	MAIN_GO_FILE    = "scarlet/scarlet.go"
-	BUILD_FLAGS     = "" // "-gcflags -m -ldflags -s -w"
-	TEST_TIMEOUT    = "2s"
+	"strings"
 )
 
 var (
-	ROOT_DIR  string
-	BUILD_DIR string
+	ROOT_DIR        = "."
+	BUILD_DIR       = filepath.Join(ROOT_DIR, "build")
+	BUILD_FILE_PERM = os.ModePerm
+	BUILD_FLAGS     = "" // "-gcflags -m -ldflags -s -w"
+	MAIN_PKG    = "github.com/PaulioRandall/scarlet-go/scarlet"
+	TEST_TIMEOUT    = "2s"
+	COMMANDS        = map[string]string{
+		"help":  "Show usage",
+		"clean": "Remove build files",
+		"build": "Build -> format",
+		"test":  "Build -> format -> test",
+		"run":   "Build -> format -> test -> run (with test scroll)",
+	}
 )
 
 func main() {
@@ -29,10 +33,10 @@ func main() {
 		return
 	}
 
-	ROOT_DIR = pwd()
-	BUILD_DIR = filepath.Join(ROOT_DIR, BUILD_DIR_NAME)
-
 	switch cmd := os.Args[1]; cmd {
+	case "help":
+		printUsage()
+
 	case "clean":
 		removeDir(BUILD_DIR)
 
@@ -54,9 +58,6 @@ func main() {
 		goTest()
 		runTestScroll()
 
-	case "help":
-		printUsage()
-
 	default:
 		fmt.Println("[ERROR] Unknown command: " + cmd)
 		printUsage()
@@ -67,13 +68,24 @@ func main() {
 
 func setupBuild() {
 	removeDir(BUILD_DIR)
-	createDir(BUILD_DIR)
+	createDir(BUILD_DIR, BUILD_FILE_PERM)
 }
 
 func goBuild() {
-	// mainFile = filepath.Join(ROOT_DIR, MAIN_GO_FILE)
-	// 	output := filepath.Join(BUILD_DIR, OUTPUT_EXE_NAME)
-	// TODO
+
+	// GO_PATH build -o OUTPUT_DIR BUILD_FLAGS MAIN_PKG
+	cmd := newGoCmd(
+		"build",
+		"-o", BUILD_DIR,
+		BUILD_FLAGS,
+		MAIN_PKG,
+	)
+
+	println(cmd.String())
+
+	if e := cmd.Run(); e != nil {
+		panik("Build failed", e)
+	}
 }
 
 func goFmt() {
@@ -90,12 +102,25 @@ func runTestScroll() {
 
 // *** Script utils ***
 
-func pwd() string {
-	pwd, e := os.Getwd()
-	if e != nil {
-		panik("Failed to identify current directory", e)
+func cd(dir string) {
+	if e := os.Chdir(dir); e != nil {
+		panik("Failed to change directory", e)
 	}
-	return pwd
+}
+
+func newGoCmd(args ...string) *exec.Cmd {
+
+	goPath, e := exec.LookPath("go")
+	if e != nil {
+		panik("Can't find Go. Is it installed? Environment variables set?", e)
+	}
+
+	cmd := exec.Command(goPath, args...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd
 }
 
 func removeDir(dir string) {
@@ -106,15 +131,15 @@ func removeDir(dir string) {
 	}
 }
 
-func createDir(dir string) {
-	if e := os.MkdirAll(dir, BUILD_FILE_PERM); e != nil {
+func createDir(dir string, mode os.FileMode) {
+	if e := os.MkdirAll(dir, mode); e != nil {
 		panik("Failed to create directory", e)
 	}
 }
 
 func copyTestScroll() {
 
-	src := filepath.Join(ROOT_DIR, "scarlet/test.scroll")
+	src := filepath.Join(ROOT_DIR, "scarlet", "test.scroll")
 	dst := filepath.Join(BUILD_DIR, "test.scroll")
 
 	if e := copyFile(src, dst); e != nil {
@@ -123,12 +148,48 @@ func copyTestScroll() {
 }
 
 func printUsage() {
+
+	cmdWidth := findCmdNameWidth()
+
 	fmt.Println("Usage:")
-	fmt.Println("\t./godo clean    \tDelete build directory")
-	fmt.Println("\t./godo build    \tBuild -> format")
-	fmt.Println("\t./godo test     \tBuild -> format -> test")
-	fmt.Println("\t./godo run      \tBuild -> format -> test -> run test scroll")
-	fmt.Println("\t./godo help     \tShow usage")
+	for cmd, desc := range COMMANDS {
+		fmt.Print("\t")
+		cmd = pad(cmdWidth, string(cmd))
+		fmt.Print(cmd)
+		fmt.Println(desc)
+	}
+}
+
+func findCmdNameWidth() int {
+
+	const PADDING = 4
+	w := 0
+
+	for cmd := range COMMANDS {
+		n := len(cmd)
+		if n > w {
+			w = n
+		}
+	}
+
+	return w + PADDING
+}
+
+	func pad(fixedWidth int, s string) string {
+
+	n := fixedWidth - len(s)
+	if n == 0 {
+		return s
+	}
+
+	if n < 0 {
+		msg := fmt.Sprintf(
+			"Length of '%s' exceeds padding fixed width of %d", s, fixedWidth,
+		)
+		panik(msg, nil)
+	}
+
+	return s + strings.Repeat(" ", n)
 }
 
 // *** General utils ***
