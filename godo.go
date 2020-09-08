@@ -12,17 +12,26 @@ var (
 	ROOT_DIR        = "."
 	BUILD_DIR       = filepath.Join(ROOT_DIR, "build")
 	BUILD_FILE_PERM = os.ModePerm
+	TINY            = false
 )
 
 func main() {
 
 	if len(os.Args) < 2 {
-		fmt.Println("[ERROR] Expected command argument")
+		fmt.Println("[ERROR] Missing command")
 		printUsage()
 		return
 	}
 
-	switch cmd := os.Args[1]; cmd {
+	if len(os.Args) > 2 && os.Args[2] == "-tiny" {
+		TINY = true
+	}
+
+	exeCmd(os.Args[1])
+}
+
+func exeCmd(cmd string) {
+	switch cmd {
 	case "help":
 		printUsage()
 
@@ -80,13 +89,12 @@ func goBuild() {
 		MAIN_PKG    = "github.com/PaulioRandall/scarlet-go/scarlet"
 	)
 
-	// GO_PATH build -o OUTPUT_DIR BUILD_FLAGS MAIN_PKG
-	cmd := newGoCmd(
-		"build",
-		"-o", BUILD_DIR,
-		BUILD_FLAGS,
-		MAIN_PKG,
-	)
+	var cmd *exec.Cmd
+	if TINY {
+		cmd = newGoCmd("tinygo", "build", "-o", BUILD_DIR, MAIN_PKG)
+	} else {
+		cmd = newGoCmd("go", "build", "-o", BUILD_DIR, BUILD_FLAGS, MAIN_PKG)
+	}
 
 	if e := cmd.Run(); e != nil {
 		panik("", e)
@@ -96,7 +104,13 @@ func goBuild() {
 func goFmt() {
 	fmt.Println("Formatting...")
 
-	cmd := newGoCmd("fmt", "./...")
+	var cmd *exec.Cmd
+	if TINY {
+		cmd = newGoCmd("go", "fmt", "./...")
+	} else {
+		cmd = newGoCmd("go", "fmt", "./...")
+	}
+
 	if e := cmd.Run(); e != nil {
 		panik("", e)
 	}
@@ -105,7 +119,13 @@ func goFmt() {
 func goTest() {
 	fmt.Println("Testing...")
 
-	cmd := newGoCmd("test", "./...", "-timeout", "2s")
+	var cmd *exec.Cmd
+	if TINY {
+		cmd = newGoCmd("tinygo", "test", "./...", "-timeout", "2s")
+	} else {
+		cmd = newGoCmd("go", "test", "./...", "-timeout", "2s")
+	}
+
 	if e := cmd.Run(); e != nil {
 		panik("", e)
 	}
@@ -155,11 +175,11 @@ func cd(dir string) {
 	}
 }
 
-func newGoCmd(args ...string) *exec.Cmd {
+func newGoCmd(compiler string, args ...string) *exec.Cmd {
 
-	goPath, e := exec.LookPath("go")
+	goPath, e := exec.LookPath(compiler)
 	if e != nil {
-		panik("Can't find Go. Is it installed? Environment variables set?", e)
+		panik("Can't find compiler. Is it installed? Environment variables set?", e)
 	}
 
 	cmd := exec.Command(goPath, args...)
@@ -185,12 +205,14 @@ func removeDir(dir string) {
 
 func printUsage() {
 	s := `Usage:
-	help     Show usage
-	clean    Remove build files
-	build    Build -> format
-	test     Build -> format -> test
-	run      Build -> format -> test -> exe (test scroll)
-	log      Build -> format -> test -> exe (test scroll + logs)`
+	help              Show usage
+	clean             Remove build files
+	build [-tiny]     Build -> format
+	test  [-tiny]     Build -> format -> test
+	run   [-tiny]     Build -> format -> test -> exe (test scroll)
+	log   [-tiny]     Build -> format -> test -> exe (test scroll + logs)
+
+	-tiny             Use Tinygo compiler`
 
 	fmt.Println(s)
 }
