@@ -54,7 +54,15 @@ func main() {
 		goFmt()
 		goTest()
 		copyTestScroll()
-		runTestScroll()
+		runScroll("run", "test.scroll")
+
+	case "log":
+		setupBuild()
+		goBuild()
+		goFmt()
+		goTest()
+		copyTestScroll()
+		runScroll("run", "-log", ".", "test.scroll")
 
 	default:
 		fmt.Println("[ERROR] Unknown command: " + cmd)
@@ -118,8 +126,8 @@ func copyTestScroll() {
 	}
 }
 
-func runTestScroll() {
-	fmt.Println("Test scroll...")
+func runScroll(args ...string) {
+	fmt.Println("Invoking scroll...")
 
 	cd(BUILD_DIR)
 
@@ -130,10 +138,12 @@ func runTestScroll() {
 		panik("", e)
 	}
 
-	cmd := exec.Command(exePath, "run", "test.scroll")
+	cmd := exec.Command(exePath, args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+
+	fmt.Println(cmd.String())
 
 	if e := cmd.Run(); e != nil {
 		panik("", e)
