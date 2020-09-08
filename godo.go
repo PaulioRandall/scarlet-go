@@ -14,7 +14,7 @@ var (
 	BUILD_DIR       = filepath.Join(ROOT_DIR, "build")
 	BUILD_FILE_PERM = os.ModePerm
 	BUILD_FLAGS     = "" // "-gcflags -m -ldflags -s -w"
-	MAIN_PKG    = "github.com/PaulioRandall/scarlet-go/scarlet"
+	MAIN_PKG        = "github.com/PaulioRandall/scarlet-go/scarlet"
 	TEST_TIMEOUT    = "2s"
 	COMMANDS        = map[string]string{
 		"help":  "Show usage",
@@ -72,6 +72,7 @@ func setupBuild() {
 }
 
 func goBuild() {
+	fmt.Println("Building...")
 
 	// GO_PATH build -o OUTPUT_DIR BUILD_FLAGS MAIN_PKG
 	cmd := newGoCmd(
@@ -81,22 +82,27 @@ func goBuild() {
 		MAIN_PKG,
 	)
 
-	println(cmd.String())
-
 	if e := cmd.Run(); e != nil {
 		panik("Build failed", e)
 	}
 }
 
 func goFmt() {
-	// TODO
+	fmt.Println("Formatting...")
+
+	cmd := newGoCmd("fmt", "./...")
+	if e := cmd.Run(); e != nil {
+		panik("Build failed", e)
+	}
 }
 
 func goTest() {
+	fmt.Println("Testing...")
 	// TODO
 }
 
 func runTestScroll() {
+	fmt.Println("Running...")
 	// TODO
 }
 
@@ -175,7 +181,7 @@ func findCmdNameWidth() int {
 	return w + PADDING
 }
 
-	func pad(fixedWidth int, s string) string {
+func pad(fixedWidth int, s string) string {
 
 	n := fixedWidth - len(s)
 	if n == 0 {
