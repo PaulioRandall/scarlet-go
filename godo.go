@@ -6,26 +6,18 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 )
 
 var (
 	ROOT_DIR        = "."
 	BUILD_DIR       = filepath.Join(ROOT_DIR, "build")
 	BUILD_FILE_PERM = os.ModePerm
-	COMMANDS        = map[string]string{
-		"help":  "Show usage",
-		"clean": "Remove build files",
-		"build": "Build -> format",
-		"test":  "Build -> format -> test",
-		"run":   "Build -> format -> test -> run (with test scroll)",
-	}
 )
 
 func main() {
 
 	if len(os.Args) < 2 {
-		fmt.Println("[ERROR] Too few arguments")
+		fmt.Println("[ERROR] Expected command argument")
 		printUsage()
 		return
 	}
@@ -54,7 +46,7 @@ func main() {
 		goFmt()
 		goTest()
 		copyTestScroll()
-		runScroll("run", "test.scroll")
+		invokeScroll("run", "test.scroll")
 
 	case "log":
 		setupBuild()
@@ -62,7 +54,7 @@ func main() {
 		goFmt()
 		goTest()
 		copyTestScroll()
-		runScroll("run", "-log", ".", "test.scroll")
+		invokeScroll("run", "-log", ".", "test.scroll")
 
 	default:
 		fmt.Println("[ERROR] Unknown command: " + cmd)
@@ -74,7 +66,10 @@ func main() {
 
 func setupBuild() {
 	removeDir(BUILD_DIR)
-	createDir(BUILD_DIR, BUILD_FILE_PERM)
+
+	if e := os.MkdirAll(BUILD_DIR, BUILD_FILE_PERM); e != nil {
+		panik("Failed to create directory", e)
+	}
 }
 
 func goBuild() {
@@ -126,7 +121,7 @@ func copyTestScroll() {
 	}
 }
 
-func runScroll(args ...string) {
+func invokeScroll(args ...string) {
 	fmt.Println("Invoking scroll...")
 
 	cd(BUILD_DIR)
@@ -176,90 +171,41 @@ func newGoCmd(args ...string) *exec.Cmd {
 }
 
 func removeDir(dir string) {
-	if fileExists(dir) {
-		if e := os.RemoveAll(dir); e != nil {
-			panik("Failed to remove directory", e)
-		}
-	}
-}
 
-func createDir(dir string, mode os.FileMode) {
-	if e := os.MkdirAll(dir, mode); e != nil {
-		panik("Failed to create directory", e)
+	if _, e := os.Stat(dir); os.IsNotExist(e) {
+		return
+	} else if e != nil {
+		panik("Failed to analyse directory", e)
+	}
+
+	if e := os.RemoveAll(dir); e != nil {
+		panik("Failed to remove directory", e)
 	}
 }
 
 func printUsage() {
+	s := `Usage:
+	help     Show usage
+	clean    Remove build files
+	build    Build -> format
+	test     Build -> format -> test
+	run      Build -> format -> test -> exe (test scroll)
+	log      Build -> format -> test -> exe (test scroll + logs)`
 
-	cmdWidth := findCmdNameWidth()
-
-	fmt.Println("Usage:")
-	for cmd, desc := range COMMANDS {
-		fmt.Print("\t")
-		cmd = pad(cmdWidth, string(cmd))
-		fmt.Print(cmd)
-		fmt.Println(desc)
-	}
-}
-
-func findCmdNameWidth() int {
-
-	const PADDING = 4
-	w := 0
-
-	for cmd := range COMMANDS {
-		n := len(cmd)
-		if n > w {
-			w = n
-		}
-	}
-
-	return w + PADDING
-}
-
-func pad(fixedWidth int, s string) string {
-
-	n := fixedWidth - len(s)
-	if n == 0 {
-		return s
-	}
-
-	if n < 0 {
-		msg := fmt.Sprintf(
-			"Length of '%s' exceeds padding fixed width of %d", s, fixedWidth,
-		)
-		panik(msg, nil)
-	}
-
-	return s + strings.Repeat(" ", n)
+	fmt.Println(s)
 }
 
 // *** General utils ***
 
-func fileExists(f string) bool {
-	_, e := os.Stat(f)
-	return !os.IsNotExist(e)
-}
+func copyFile(src, dst string) error {
 
-func checkRegFile(f string) error {
-
-	stat, e := os.Stat(f)
+	stat, e := os.Stat(src)
 	if e != nil {
-		return fmt.Errorf("Missing file: %s", f)
+		return fmt.Errorf("Missing file: %s", src)
 	}
 
 	if !stat.Mode().IsRegular() {
-		return fmt.Errorf("Not a regular file: %s", f)
-	}
-
-	return nil
-}
-
-func copyFile(src, dst string) error {
-
-	e := checkRegFile(src)
-	if e != nil {
-		return e
+		return fmt.Errorf("Not a regular file: %s", src)
 	}
 
 	srcFile, e := os.Open(src)

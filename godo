@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Usage:
+#   ./godo help
+#   ./godo clean
+#   ./godo build
+#   ./godo test
+#   ./godo run
+#   ./godo log
+
 tabs -2
 clear
 go run godo.go $1
