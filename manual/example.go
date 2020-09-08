@@ -5,8 +5,7 @@ func init() {
 }
 
 func example() string {
-	return `
-	# Here are a few example code snippets
+	return `	# Here are a few example code snippets
 
 	x := 6 * 7 # The answer to ultimate question
 	@Println("6 * 7 = ", x)

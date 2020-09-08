@@ -9,6 +9,16 @@ import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 )
 
+type StrWriter struct {
+	f *os.File
+}
+
+func (sw StrWriter) WriteString(s string) (int, error) {
+	bs := []byte(s)
+	_, e := sw.f.Write(bs)
+	return 0, e
+}
+
 func makeLogFilename(c config, ext string) string {
 	ext = "." + ext
 	f := filepath.Base(c.script)
@@ -29,7 +39,9 @@ func writeLexemeFile(filename string, head *lexeme.Lexeme) error {
 	}
 
 	defer f.Close()
-	return lexeme.Print(f, head)
+
+	sw := StrWriter{f}
+	return lexeme.Print(sw, head)
 }
 
 func logInstructions(c config, ins []inst.Instruction, ext string) error {
@@ -45,5 +57,7 @@ func writeInstructionFile(filename string, ins []inst.Instruction) error {
 	}
 
 	defer f.Close()
-	return inst.Print(f, ins)
+
+	sw := StrWriter{f}
+	return inst.Print(sw, ins)
 }

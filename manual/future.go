@@ -5,9 +5,7 @@ func init() {
 }
 
 func future() string {
-	return `
-
-Expected in next chapter
+	return `Expected in next chapter
 
 - Semicolon statement terminator
 - Void assignments

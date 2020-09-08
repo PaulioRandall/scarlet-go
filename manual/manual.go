@@ -46,8 +46,7 @@ func Search(searchTerm string) (string, bool) {
 }
 
 func overview() string {
-	return `
-Scarlet is a template for building domain or team specific scripting tools.
+	return `Scarlet is a template for building domain or team specific scripting tools.
 
 	"Sometimes it's better to light a flamethrower than curse the darkness."
 		- 'Men at Arms' by Terry Pratchett

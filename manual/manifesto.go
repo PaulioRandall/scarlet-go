@@ -5,25 +5,23 @@ func init() {
 }
 
 func manifesto() string {
-	return `
-Scarlet was built on the following ideas and principles:
+	return `Scarlet was built on the following ideas and principles:
 
 	1. Soft-Magic Themed
 
 		Scarlet is a soft-magic themed tool. Programming is a kind of hard-magic
 		with an unrelenting vortex of soul sucking rationalism veiled beneath
-		its technoshiny exterior --probably why women aren't that interested--.
-		While it's all for the best, I found the initial enchantment wears off
-		after a few years in the slave pits. Odd thing really, because
-		programming is filled with things that don't make sense unless you were
-		in the right place, at the right time, and inside the right mind; even
-		then, only if you're lucky.
+		its technoshiny exterior --probably why it's devoid of women--.	While
+		it's all for the best, I found the initial enchantment wears off after
+		a few years in the slave pits. Odd thing really, because programming
+		is filled with things that don't make sense unless you were in the
+		right place, at the right time, and inside the right mind. Even then,
+		only if you're lucky.
 
 		I wanted to inject some true magic. Magic that is shaped by the minds
 		of practictioners without compromising derived solutions. Magic that
 		cannot be rationalised yet does not need to be. Magic that wears a
-		pointy hat, carry's a dai-katana, and talks with a feminine irish
-		accent.
+		pointy hat, carry's a katana, and talks with a feminine irish accent.
 
 	2. No dependencies
 
@@ -71,7 +69,7 @@ Scarlet was built on the following ideas and principles:
 	6. Light and portable
 
 		The Scarlet executable will hopefully be light, portable, and require
-		no installation process; much like Lua. With time and hope a Rust
+		no installation process; much like Lua. With time and hope a Tinygo
 		implementation will be built precisely for embedding in other programs
 		and repositories.
 
@@ -81,15 +79,14 @@ Scarlet was built on the following ideas and principles:
 
 Use cases:
 
-	I intended for a very small binary so I could include it within	code
-	repositories. Rust would have been a better choice for this
-	optimisation but I decided to build an easier Go version first to	try
-	out the idea and learn how to parse code. It could then be used to
-	build and run applications both within pipelines and workstations
-	without requiring additional tools be installed into container images
-	and the such like. I want to automate without installation pains.
+	I intended for a very small binary so I can include it within	code
+	repositories; Tinygo is a good choice for this but it's not quite
+	ready. It could then be used to build and run applications both within
+	pipelines and workstations without requiring additional tools be
+	installed into container images and the such like. I want to automate
+	without installation pains.
 
-	With this I can create language independent Web API testing scripts
+	With this I can create language independent Web API testing scrolls
 	so I can more easily switch a web server's implementation language
 	and avoid self inflicted vendor lock in. Current tools were either
 	too heavy weight or painfully complex. Project building,
@@ -99,7 +96,7 @@ Use cases:
 	I also wanted to do general purpose scripting. There are plenty of
 	languages that can assist with this but I really craved specific tools
 	free of dependencies. I wanted to be able to change the langauge
-	each time I noticed it was woefully incapable of satisfying me.
+	upon noticing it was woefully incapable of satisfying me.
 
 No, just no! I'm strongly for fitting the tool to the job and not the
 other way around so here are a few use cases I do not recommend using

@@ -81,6 +81,8 @@ func docs(args Arguments) (int, error) {
 		return 1, fmt.Errorf("No documentation for %q", searchTerm)
 	}
 
+	fmt.Println()
 	fmt.Println(text)
+	fmt.Println()
 	return 0, nil
 }

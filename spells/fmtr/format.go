@@ -40,7 +40,8 @@ func writeFile(filename string, itr *lexeme.Iterator) error {
 	defer f.Close()
 
 	for itr.Next() {
-		_, e = f.WriteString(itr.Curr().Raw)
+		bs := []byte(itr.Curr().Raw)
+		_, e = f.Write(bs)
 		if e != nil {
 			return e
 		}

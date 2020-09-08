@@ -5,8 +5,7 @@ func init() {
 }
 
 func chapterDocs() string {
-	return `
-Chapter 1
+	return `Chapter 1
 
 	- Comments
 	- Variables

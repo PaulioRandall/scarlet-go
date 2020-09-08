@@ -30,7 +30,7 @@ func help(args Arguments) (int, error) {
 
 func printHelp() {
 
-	s := `Scarlet is a tool for parsing and executing Scarlett scripts.
+	s := `Scarlet is a tool for parsing and executing Scarlet scrolls.
 
 Usage:
 
@@ -40,8 +40,8 @@ Commands:
 
 	help [command]         Show CLI instructions.
 	docs|man [search term] Show language documentation.
-	build                  Parses, compiles, and formats the script.
-	run                    Parses, compiles, formats, then executes the script.
+	build                  Parses and compiles a scroll.
+	run                    Parses, compiles, then executes a scroll.
 `
 
 	fmt.Println(s)
@@ -49,16 +49,16 @@ Commands:
 
 func printBuildHelp() {
 
-	s := `'build' compiles and validates a script.
+	s := `'build' compiles and validates a scroll.
 
 Usage:
 
-	scarlet build [options] <script file>
+	scarlet build [options] <scroll file>
 
 Options:
 
-	-nofmt
-		Don't format the script after building.
+	-log <output directory>
+		Log output of each parsing stage to a file.
 `
 
 	fmt.Println(s)
@@ -66,16 +66,16 @@ Options:
 
 func printRunHelp() {
 
-	s := `'run' compiles, validates, then runs a script.
+	s := `'run' compiles, validates, then runs a scroll.
 
 Usage:
 
-	scarlet run [options] <script file>
+	scarlet run [options] <scroll file>
 
 Options:
 
-	-nofmt
-		Don't format the script after building.
+	-log <output directory>
+		Log output of each parsing stage to a file.
 `
 
 	fmt.Println(s)
