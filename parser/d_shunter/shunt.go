@@ -31,8 +31,8 @@ func statements(shy *shuntingYard) {
 func statement(shy *shuntingYard) {
 
 	switch {
-	case shy.inQueue(lexeme.IDENT):
-		shy.push() // First ID
+	case shy.queueTok().IsAssignee():
+		shy.push() // First IDENT or VOID
 
 		if shy.inQueue(lexeme.DELIM) || shy.inQueue(lexeme.ASSIGN) {
 			assignment(shy)
@@ -66,7 +66,7 @@ func assignment(shy *shuntingYard) {
 
 	for shy.inQueue(lexeme.DELIM) {
 		shy.push()
-		shy.push() // Other IDs
+		shy.push() // Other IDENTs or VOIDs
 	}
 
 	shy.push() // :=
