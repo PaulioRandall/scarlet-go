@@ -5,12 +5,6 @@ the default language.
 
 ## Chapter 2
 
-#### Void Assignee
-
-```
-_, y := 1, 2
-```
-
 #### Native Variable Deletions
 
 ```

@@ -5,7 +5,14 @@ func init() {
 }
 
 func chapterDocs() string {
-	return `Chapter 1
+	return `Chapter 2 (Upcoming)
+
+	- Void assignments
+	- Native variable deletions (Not yet implemented)
+	- Explicit terminators      (Not yet implemented)
+	x Tinygo compatibility      (Unlikely to appear in this chapter, will see)
+
+Chapter 1
 
 	- Comments
 	- Variables
