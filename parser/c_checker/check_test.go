@@ -222,6 +222,40 @@ func Test3_3(t *testing.T) {
 	doErrorTest(t, in)
 }
 
+func Test3_4(t *testing.T) {
+
+	// WHEN checking a void assignment
+	// THEN no errors should be returned
+	// _:=1
+	in := lextest.Feign(
+		lextest.Tok("_", lexeme.VOID),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test3_5(t *testing.T) {
+
+	// WHEN checking a multi assignment with both VOID and IDENT assignees
+	// THEN no errors should be returned
+	// _,x:=1,2
+	in := lextest.Feign(
+		lextest.Tok("_", lexeme.VOID),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
 func Test4_1(t *testing.T) {
 
 	// WHEN checking a simple expression

@@ -33,7 +33,7 @@ func statements(chk *checker) error {
 func statement(chk *checker) error {
 
 	switch {
-	case chk.matchAny(lexeme.IDENT):
+	case chk.tok().IsAssignee():
 		return assignmentOrExpression(chk)
 
 	case chk.tok().IsTerm(), chk.matchAny(lexeme.SPELL, lexeme.L_PAREN):
@@ -51,7 +51,7 @@ func statement(chk *checker) error {
 
 func assignmentOrExpression(chk *checker) error {
 
-	if e := chk.expectAny(lexeme.IDENT); e != nil {
+	if e := chk.expect("<ASSIGNEE>", chk.tok().IsAssignee()); e != nil {
 		return e
 	}
 
@@ -68,7 +68,7 @@ func assignment(chk *checker) error {
 	var count int
 
 	for count == 0 || chk.acceptAny(lexeme.DELIM) {
-		if e := chk.expectAny(lexeme.IDENT); e != nil {
+		if e := chk.expect("<ASSIGNEE>", chk.tok().IsAssignee()); e != nil {
 			return e
 		}
 
