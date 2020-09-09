@@ -202,6 +202,12 @@ func Test9_2(t *testing.T) {
 	doErrTest(t, ":")
 }
 
+func Test9_3(t *testing.T) {
+	doTest(t, "_", lextest.Feign(
+		lextest.Lex(0, 0, "_", lexeme.VOID),
+	))
+}
+
 func Test10_1(t *testing.T) {
 	doTest(t, "+", lextest.Feign(
 		lextest.Lex(0, 0, "+", lexeme.ADD),

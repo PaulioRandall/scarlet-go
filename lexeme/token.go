@@ -28,6 +28,7 @@ const (
 	L_CURLY    // {
 	R_CURLY    //	}
 	ASSIGN     // :=
+	VOID       // _
 	ADD        // +
 	SUB        // -
 	MUL        // *
@@ -63,6 +64,7 @@ var tokens = map[Token]string{
 	L_CURLY:    `L_CURLY`,
 	R_CURLY:    `R_CURLY`,
 	ASSIGN:     `ASSIGN`,
+	VOID:       `VOID`,
 	ADD:        `ADD`,
 	SUB:        `SUB`,
 	MUL:        `MUL`,
@@ -127,7 +129,7 @@ func (tk Token) IsTerm() bool {
 }
 
 func (tk Token) IsAssignee() bool {
-	return tk == IDENT
+	return tk == IDENT || tk == VOID
 }
 
 func (tk Token) IsOperator() bool {

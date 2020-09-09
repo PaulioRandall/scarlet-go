@@ -5,10 +5,6 @@ the default language.
 
 ## Chapter 2
 
-#### TinyGo Compatibility
-
-Update so Scarlet can be compiled using TinyGo
-
 #### Void Assignee
 
 ```
@@ -20,6 +16,18 @@ _, y := 1, 2
 ```
 x := _
 ```
+
+#### Explicit terminators
+
+```
+x := 1; y := 2
+```
+
+## Chapter 2.5 (TinyGo Compatibility)
+
+Update so Scarlet can be compiled using TinyGo. This has been done to some
+degree but there seems to be a Tinygo issue with init() functions and maps
+is preventing progress.
 
 ## Chapter 3 (Spell Returns)
 

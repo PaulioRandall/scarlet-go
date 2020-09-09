@@ -21,11 +21,16 @@ func Register(pageName string, gen PageGenerator) {
 
 	name := strings.ToLower(pageName)
 
-	if _, ok := generators[name]; ok {
+	if pgExists(name) {
 		panic(fmt.Errorf("Page generator with name %q already registered", pageName))
 	}
 
 	generators[name] = gen
+}
+
+func pgExists(name string) bool {
+	pg, ok := generators[name]
+	return ok && pg != nil
 }
 
 func LookUp(pageName string) PageGenerator {
