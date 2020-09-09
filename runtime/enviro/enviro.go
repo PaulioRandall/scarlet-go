@@ -102,6 +102,9 @@ func (env *Environment) Exe(in inst.Instruction) {
 	case inst.CO_VAL_BIND:
 		coCtxSet(env, in)
 
+	case inst.CO_VAL_POP:
+		env.PopVal()
+
 	case inst.CO_ADD: // co_operation.go
 		coAdd(env, in)
 

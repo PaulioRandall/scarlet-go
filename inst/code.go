@@ -34,14 +34,14 @@ const (
 	//
 	// Data: value
 	// Stack values produced: 1
-	//    1st: value
+	//    1st: any value type
 	CO_VAL_PUSH
 
 	// Pop a value off the value stack and put it into the current context.
 	//
 	// Data: identifier
 	// Stack values consumed: 1
-	// 		1st: value
+	// 		1st: any type
 	CO_VAL_BIND
 
 	// Queries a value from the current context and push it onto the value stack.
@@ -50,6 +50,12 @@ const (
 	// Stack values produced: 1
 	//    1st: query response value
 	CO_VAL_GET
+
+	// Pop a value off the value stack and throw it away.
+	//
+	// Stack values consumed: 1
+	// 		1st: any type
+	CO_VAL_POP
 
 	// Pushes a new sub-context into the current context's sub-context call stack.
 	CO_SUB_CTX_PUSH
@@ -97,6 +103,7 @@ var codes = map[Code]string{
 	CO_VAL_PUSH:     `CO_VAL_PUSH`,
 	CO_VAL_BIND:     `CO_VAL_BIND`,
 	CO_VAL_GET:      `CO_VAL_GET`,
+	CO_VAL_POP:      `CO_VAL_POP`,
 	CO_SUB_CTX_PUSH: `CO_SUB_CTX_PUSH`,
 	CO_SUB_CTX_POP:  `CO_SUB_CTX_POP`,
 	CO_SPL_CALL:     `CO_SPL_CALL`,

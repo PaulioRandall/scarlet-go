@@ -2,7 +2,9 @@
 @Println()
 @FmtScroll("test.scroll")
 
-e := "¯\_(ツ)_/¯"
 @Println("6 * 7 = ", 6 * 7)
+
+_, e := "meh", "¯\_(ツ)_/¯"
+@Println(e)
 
 @Exit(0)

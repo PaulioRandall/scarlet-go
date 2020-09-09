@@ -78,6 +78,15 @@ func assignment(in *input, out *output) {
 		}
 
 		lex := in.take()
+
+		if lex.Tok == lexeme.VOID {
+			out.emit(inst.Instruction{
+				Code:    inst.CO_VAL_POP,
+				Snippet: lex,
+			})
+			return
+		}
+
 		out.emit(inst.Instruction{
 			Code:    inst.CO_VAL_BIND,
 			Data:    lex.Raw,

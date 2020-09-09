@@ -131,6 +131,52 @@ func Test2_2(t *testing.T) {
 	doTest(t, in, exp)
 }
 
+func Test2_3(t *testing.T) {
+
+	// WHEN compiling a VOID assignment
+	// 1 := a
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("_", lexeme.VOID),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_VAL_POP, nil),
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test2_4(t *testing.T) {
+
+	// WHEN compiling a multi assignment containing a VOID
+	// 1 2 := x _
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("2", lexeme.NUMBER),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("_", lexeme.VOID),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("2")),
+		insttest.NewIn(inst.CO_VAL_BIND, "x"),
+		insttest.NewIn(inst.CO_VAL_POP, nil),
+	}
+
+	doTest(t, in, exp)
+}
+
 func Test3_1(t *testing.T) {
 
 	// WHEN compiling a simple expression
