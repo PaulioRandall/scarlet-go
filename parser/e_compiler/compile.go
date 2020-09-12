@@ -204,7 +204,7 @@ func identifier(in *input, out *output) {
 
 func voidIdentifier(in *input, out *output) {
 	out.emit(inst.Instruction{
-		Code:    inst.CO_VAL_PUSH_NIL,
+		Code:    inst.CO_VAL_PNIL,
 		Snippet: in.take(),
 	})
 }
@@ -214,7 +214,7 @@ func literal(in *input, out *output) {
 	lex := in.take()
 
 	instruction := inst.Instruction{
-		Code:    inst.CO_VAL_PUSH,
+		Code:    inst.CO_VAL_PVAL,
 		Snippet: lex,
 	}
 

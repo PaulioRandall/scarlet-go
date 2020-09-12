@@ -92,11 +92,11 @@ func (env *Environment) Exe(in inst.Instruction) {
 	case inst.CO_DLM_PUSH:
 		env.PushVal(types.Delim{})
 
-	case inst.CO_VAL_PUSH:
+	case inst.CO_VAL_PVAL:
 		v := types.BuiltinValueOf(in.Data)
 		env.PushVal(v)
 
-	case inst.CO_VAL_PUSH_NIL:
+	case inst.CO_VAL_PNIL:
 		env.PushVal(types.Nil{})
 
 	case inst.CO_VAL_GET: // co_context.go

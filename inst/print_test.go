@@ -18,14 +18,14 @@ func Test_Print_1(t *testing.T) {
 
 	ins := []Instruction{
 		newInst(CO_VAL_GET, "x"),
-		newInst(CO_VAL_PUSH, "Answer = "),
-		newInst(CO_VAL_PUSH, 2),
+		newInst(CO_VAL_PVAL, "Answer = "),
+		newInst(CO_VAL_PVAL, 2),
 		newInst(CO_SPL_CALL, "println"),
 	}
 
 	exp := `CO_VAL_GET,  "x"
-CO_VAL_PUSH, "Answer = "
-CO_VAL_PUSH, 2
+CO_VAL_PVAL, "Answer = "
+CO_VAL_PVAL, 2
 CO_SPL_CALL, "println"
 `
 
