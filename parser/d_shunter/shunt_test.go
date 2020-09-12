@@ -189,6 +189,55 @@ func Test2_4(t *testing.T) {
 	doTest(t, in, exp)
 }
 
+func Test2_5(t *testing.T) {
+
+	// x := _
+	in := lextest.Feign(
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("_", lexeme.VOID),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	exp := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGN),
+		lextest.Tok("_", lexeme.VOID),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("x", lexeme.IDENT),
+	)
+
+	doTest(t, in, exp)
+}
+
+func Test2_6(t *testing.T) {
+
+	// WHEN refixing a multi assignment
+	// a, b := 1, _
+	in := lextest.Feign(
+		lextest.Tok("a", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("b", lexeme.IDENT),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("_", lexeme.VOID),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	exp := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("_", lexeme.VOID),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("b", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("a", lexeme.IDENT),
+	)
+
+	doTest(t, in, exp)
+}
+
 func Test3_1(t *testing.T) {
 
 	// WHEN refixing a simple expression

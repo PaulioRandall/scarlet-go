@@ -130,6 +130,9 @@ func expressions(shy *shuntingYard) {
 		case shy.queueTok().IsTerm():
 			shy.output()
 
+		case shy.inQueue(lexeme.VOID):
+			shy.output()
+
 		case shy.queueTok().IsOperator():
 			for !shy.inStack(lexeme.L_PAREN) &&
 				shy.stackTok().Precedence() >= shy.queueTok().Precedence() {
