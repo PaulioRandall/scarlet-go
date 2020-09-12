@@ -177,6 +177,51 @@ func Test2_4(t *testing.T) {
 	doTest(t, in, exp)
 }
 
+func Test2_5(t *testing.T) {
+
+	// WHEN compiling a native deletion
+	// _ := x
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGN),
+		lextest.Tok("_", lexeme.VOID),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("x", lexeme.IDENT),
+	)
+
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH_NIL, nil),
+		insttest.NewIn(inst.CO_VAL_BIND, "x"),
+	}
+
+	doTest(t, in, exp)
+}
+
+func Test2_6(t *testing.T) {
+
+	// WHEN compiling a multi assignment containing a native deletion
+	// 1 _ := b a
+	in := lextest.Feign(
+		lextest.Tok("", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("_", lexeme.VOID),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("b", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("a", lexeme.IDENT),
+	)
+
+	// THEN these are the expected instructions
+	exp := []inst.Instruction{
+		insttest.NewIn(inst.CO_VAL_PUSH, number.New("1")),
+		insttest.NewIn(inst.CO_VAL_PUSH_NIL, nil),
+		insttest.NewIn(inst.CO_VAL_BIND, "b"),
+		insttest.NewIn(inst.CO_VAL_BIND, "a"),
+	}
+
+	doTest(t, in, exp)
+}
+
 func Test3_1(t *testing.T) {
 
 	// WHEN compiling a simple expression

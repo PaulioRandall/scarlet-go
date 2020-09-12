@@ -37,7 +37,15 @@ const (
 	//    1st: any value type
 	CO_VAL_PUSH
 
-	// Pop a value off the value stack and put it into the current context.
+	// Push a nil value onto the value stack.
+	//
+	// Stack values produced: 1
+	//    1st: any value type
+	CO_VAL_PUSH_NIL
+
+	// Pop a value off the value stack and bind it to an identifier within the
+	// the current context. If the value is a nil then an unbinding should
+	// occur instead.
 	//
 	// Data: identifier
 	// Stack values consumed: 1
@@ -101,6 +109,7 @@ var codes = map[Code]string{
 	CO_JMP_FALSE:    `CO_JMP_FALSE`,
 	CO_DLM_PUSH:     `CO_DLM_PUSH`,
 	CO_VAL_PUSH:     `CO_VAL_PUSH`,
+	CO_VAL_PUSH_NIL: `CO_VAL_PUSH_NIL`,
 	CO_VAL_BIND:     `CO_VAL_BIND`,
 	CO_VAL_GET:      `CO_VAL_GET`,
 	CO_VAL_POP:      `CO_VAL_POP`,

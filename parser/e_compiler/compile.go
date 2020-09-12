@@ -172,6 +172,9 @@ func expression(in *input, out *output) {
 		case in.is(lexeme.IDENT):
 			identifier(in, out)
 
+		case in.is(lexeme.VOID):
+			voidIdentifier(in, out)
+
 		case in.tok().IsLiteral():
 			literal(in, out)
 
@@ -196,6 +199,13 @@ func identifier(in *input, out *output) {
 		Code:    inst.CO_VAL_GET,
 		Data:    lex.Raw,
 		Snippet: lex,
+	})
+}
+
+func voidIdentifier(in *input, out *output) {
+	out.emit(inst.Instruction{
+		Code:    inst.CO_VAL_PUSH_NIL,
+		Snippet: in.take(),
 	})
 }
 
