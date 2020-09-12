@@ -5,12 +5,6 @@ the default language.
 
 ## Chapter 2
 
-#### Native Variable Deletions
-
-```
-x := _
-```
-
 #### Explicit terminators
 
 ```

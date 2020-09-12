@@ -6,6 +6,25 @@ import (
 	"github.com/PaulioRandall/scarlet-go/number"
 )
 
+type Nil struct{} // Internal use only
+
+func (Nil) Name() string {
+	return "nil"
+}
+
+func (n Nil) Equal(o Value) bool {
+	return n.Comparable(o)
+}
+
+func (n Nil) Comparable(o Value) bool {
+	_, ok := o.(Nil)
+	return ok
+}
+
+func (Nil) String() string {
+	return ""
+}
+
 type Delim struct{} // Internal use only
 
 func (Delim) Name() string {

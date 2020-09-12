@@ -16,6 +16,7 @@ type Value interface {
 func BuiltinValueOf(val interface{}) Value {
 
 	switch v := val.(type) {
+	case nil:
 	case bool:
 		return Bool(v)
 

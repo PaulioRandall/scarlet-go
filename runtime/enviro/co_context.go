@@ -3,6 +3,7 @@ package enviro
 import (
 	"github.com/PaulioRandall/scarlet-go/inst"
 	"github.com/PaulioRandall/scarlet-go/perror"
+	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
 func coCtxGet(env *Environment, in inst.Instruction) {
@@ -25,6 +26,11 @@ func coCtxSet(env *Environment, in inst.Instruction) {
 
 	if v == nil {
 		env.Fail(perror.New("Assignment fail %q, value stack is empty", id))
+		return
+	}
+
+	if _, ok := v.(types.Nil); ok {
+		env.Unbind(id)
 		return
 	}
 

@@ -51,6 +51,9 @@ func (run *Runtime) Stop() {
 func (run *Runtime) halted(done bool) {
 
 	if run.env.Err != nil {
+		if run.env.ExitCode < 1 {
+			run.env.ExitCode = 1
+		}
 		return
 	}
 

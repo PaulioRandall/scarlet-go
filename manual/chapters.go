@@ -8,7 +8,7 @@ func chapterDocs() string {
 	return `Chapter 2 (Upcoming)
 
 	- Void assignments
-	- Native variable deletions (Not yet implemented)
+	- Native variable deletions
 	- Explicit terminators      (Not yet implemented)
 	x Tinygo compatibility      (Unlikely to appear in this chapter, will see)
 

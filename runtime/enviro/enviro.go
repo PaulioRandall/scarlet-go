@@ -96,6 +96,9 @@ func (env *Environment) Exe(in inst.Instruction) {
 		v := types.BuiltinValueOf(in.Data)
 		env.PushVal(v)
 
+	case inst.CO_VAL_PUSH_NIL:
+		env.PushVal(types.Nil{})
+
 	case inst.CO_VAL_GET: // co_context.go
 		coCtxGet(env, in)
 
