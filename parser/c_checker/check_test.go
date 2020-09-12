@@ -256,6 +256,40 @@ func Test3_5(t *testing.T) {
 	doTest(t, in)
 }
 
+func Test3_6(t *testing.T) {
+
+	// WHEN checking a native deletion
+	// THEN no errors should be returned
+	// x:=_
+	in := lextest.Feign(
+		lextest.Tok("x", lexeme.IDENT),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("_", lexeme.VOID),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
+func Test3_7(t *testing.T) {
+
+	// WHEN checking an multi-assignment containing a native deletion
+	// THEN no errors should be returned
+	// a,b:=1,_
+	in := lextest.Feign(
+		lextest.Tok("a", lexeme.IDENT),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("b", lexeme.IDENT),
+		lextest.Tok(":=", lexeme.ASSIGN),
+		lextest.Tok("1", lexeme.NUMBER),
+		lextest.Tok(",", lexeme.DELIM),
+		lextest.Tok("_", lexeme.VOID),
+		lextest.Tok("\n", lexeme.NEWLINE),
+	)
+
+	doTest(t, in)
+}
+
 func Test4_1(t *testing.T) {
 
 	// WHEN checking a simple expression

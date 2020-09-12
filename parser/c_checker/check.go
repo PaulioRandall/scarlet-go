@@ -121,6 +121,10 @@ func parameters(chk *checker) error {
 
 func expressions(chk *checker) (int, error) {
 
+	// TODO: Will need to differentiate between an expression that is allowed
+	//       a VOID a one that is not. Will probably need to rewrite this
+	//       module at some point.
+
 	var i int
 
 	for more := true; more; more = chk.acceptAny(lexeme.DELIM) {
@@ -171,6 +175,9 @@ func term(chk *checker) error {
 
 	case chk.matchAny(lexeme.L_PAREN):
 		return group(chk)
+
+	case chk.acceptAny(lexeme.VOID):
+		return nil
 
 	case chk.accept(chk.tok().IsTerm()):
 		return nil
