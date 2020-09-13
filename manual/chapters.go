@@ -9,7 +9,7 @@ func chapterDocs() string {
 
 	- Void assignments
 	- Native variable deletions
-	- Explicit terminators      (Not yet implemented)
+	- Explicit terminators
 	x Tinygo compatibility      (Unlikely to appear in this chapter, will see)
 
 Chapter 1

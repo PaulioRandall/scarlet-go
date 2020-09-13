@@ -1,13 +1,46 @@
 package fmtr
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/parser/a_scanner"
+	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
+	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
+
+func RegisterAll() {
+	spellbook.Register(Spell_Format, spellbook.SpellDoc{
+		Name: "FmtScroll",
+		Sig:  "@FmtScroll(filename)",
+		Desc: "Attempts to format the specified Scarlet scroll.",
+		Examples: []string{
+			`@FmtScroll("./example.scroll")`,
+		},
+	})
+}
+
+func Spell_Format(env spellbook.Enviro, args []types.Value) {
+
+	if len(args) != 1 {
+		env.Fail(errors.New("Formatting requires a single filename argument"))
+		return
+	}
+
+	filename, ok := args[0].(types.Str)
+	if !ok {
+		env.Fail(errors.New("Formatting requires its argument be a filename"))
+		return
+	}
+
+	e := formatFile(filename.String())
+	if e != nil {
+		env.Fail(e)
+	}
+}
 
 func formatFile(filename string) error {
 

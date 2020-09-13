@@ -18,7 +18,7 @@ func coSpell(env *Environment, in inst.Instruction) {
 	}
 
 	args := popArgs(env)
-	sp.Invoke(env, args)
+	sp(env, args)
 }
 
 func popArgs(env *Environment) []types.Value {
