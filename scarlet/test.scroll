@@ -4,8 +4,7 @@
 
 @Println("¯\_(ツ)_/¯")
 
-answer := 6 * 7
-@Println("6 * 7 = ", answer)
+answer := 6 * 7; @Println("6 * 7 = ", answer)
 answer := _
 
 @Exit(0)

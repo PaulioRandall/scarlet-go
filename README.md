@@ -3,15 +3,11 @@
 Scarlet is my second attempt at creating an interpreter. Scarlett is the name of
 the default language.
 
-## Chapter 2
+## Chapter 2.1
 
-#### Explicit terminators
+#### Rewrite Checker
 
-```
-x := 1; y := 2
-```
-
-## Chapter 2.5 (TinyGo Compatibility)
+## Chapter 2.2 (TinyGo Compatibility)
 
 Update so Scarlet can be compiled using TinyGo. This has been done to some
 degree but there seems to be a Tinygo issue with init() functions and maps

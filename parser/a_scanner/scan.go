@@ -37,6 +37,9 @@ func scanLexeme(rr *runeReader) (*lexeme.Lexeme, error) {
 	case rr.isNewline():
 		return newline(rr)
 
+	case rr.accept(';'):
+		return rr.slice(lexeme.TERMINATOR), nil
+
 	case rr.is('#'):
 		return comment(rr)
 

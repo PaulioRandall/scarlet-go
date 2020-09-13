@@ -32,6 +32,12 @@ func Test1_2(t *testing.T) {
 	))
 }
 
+func Test1_3(t *testing.T) {
+	doTest(t, ";", lextest.Feign(
+		lextest.Lex(0, 0, ";", lexeme.TERMINATOR),
+	))
+}
+
 func Test2_1(t *testing.T) {
 	doTest(t, "# Comment", lextest.Feign(
 		lextest.Lex(0, 0, "# Comment", lexeme.COMMENT),
