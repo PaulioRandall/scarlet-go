@@ -20,7 +20,7 @@ func init() {
 
 		for i, v := range names {
 
-			sp, _ := LookUpDoc(v)
+			sp, _ := LookUp(v)
 
 			if i != 0 {
 				sb.WriteString("\n\n")
@@ -42,53 +42,45 @@ type Enviro interface {
 	Unbind(id string)
 }
 
-type Spell func(env Enviro, args []types.Value)
-type SpellDoc struct {
+type Spell func(spell Entry, env Enviro, args []types.Value)
+type Entry struct {
 	Name     string
 	Sig      string
 	Desc     string
 	Examples []string
+	Spell    Spell
 }
-type Inscriber func(name string, spell Spell)
 
-var spellBook = map[string]Spell{}
-var spellDocs = map[string]SpellDoc{}
+var spellBook = map[string]Entry{}
 
-func Register(sp Spell, doc SpellDoc) error {
+func Register(sp Entry) error {
 
-	if doc.Name == "" {
+	if sp.Name == "" {
 		panic(fmt.Errorf("Attempted to register a spell with no name"))
 	}
 
-	if !isSpellIdentifier(doc.Name) {
-		return fmt.Errorf("Attempted to register spell with bad name %q", doc.Name)
+	if !isSpellIdentifier(sp.Name) {
+		return fmt.Errorf("Attempted to register spell with bad name %q", sp.Name)
 	}
 
-	if sp == nil {
-		return fmt.Errorf("Attempted to register nil spell with name %q", doc.Name)
+	if sp.Spell == nil {
+		return fmt.Errorf("Attempted to register nil spell with name %q", sp.Name)
 	}
 
-	k := strings.ToLower(doc.Name)
-	curr := spellBook[k]
+	k := strings.ToLower(sp.Name)
 
-	if curr != nil {
-		return fmt.Errorf("Spell with name %q already registered", doc.Name)
+	if _, exists := spellBook[k]; exists {
+		return fmt.Errorf("Spell with name %q already registered", sp.Name)
 	}
 
 	spellBook[k] = sp
-	spellDocs[k] = doc
 	return nil
 }
 
-func LookUp(name string) Spell {
+func LookUp(name string) (Entry, bool) {
 	k := strings.ToLower(name)
-	return spellBook[k]
-}
-
-func LookUpDoc(name string) (SpellDoc, bool) {
-	name = strings.ToLower(name)
-	s, ok := spellDocs[name]
-	return s, ok
+	sp, ok := spellBook[k]
+	return sp, ok
 }
 
 func SpellNames() []string {

@@ -13,17 +13,18 @@ import (
 )
 
 func RegisterAll() {
-	spellbook.Register(Spell_Format, spellbook.SpellDoc{
+	spellbook.Register(spellbook.Entry{
 		Name: "FmtScroll",
 		Sig:  "@FmtScroll(filename)",
 		Desc: "Attempts to format the specified Scarlet scroll.",
 		Examples: []string{
 			`@FmtScroll("./example.scroll")`,
 		},
+		Spell: Spell_Format,
 	})
 }
 
-func Spell_Format(env spellbook.Enviro, args []types.Value) {
+func Spell_Format(_ spellbook.Entry, env spellbook.Enviro, args []types.Value) {
 
 	if len(args) != 1 {
 		env.Fail(errors.New("Formatting requires a single filename argument"))

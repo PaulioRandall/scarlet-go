@@ -11,14 +11,14 @@ func coSpell(env *Environment, in inst.Instruction) {
 
 	name := in.Data.(string)
 
-	sp := spells.LookUp(name)
-	if sp == nil {
+	entry, ok := spells.LookUp(name)
+	if !ok {
 		env.Fail(perror.New("Unknown spell %q", name))
 		return
 	}
 
 	args := popArgs(env)
-	sp(env, args)
+	entry.Spell(entry, env, args)
 }
 
 func popArgs(env *Environment) []types.Value {

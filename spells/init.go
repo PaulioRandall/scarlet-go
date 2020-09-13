@@ -11,6 +11,7 @@ func init() {
 	fmtr.RegisterAll()
 }
 
-func LookUp(name string) spellbook.Spell {
-	return spellbook.LookUp(name)
+func LookUp(name string) (spellbook.Entry, bool) {
+	sp, ok := spellbook.LookUp(name)
+	return sp, ok
 }
