@@ -3,15 +3,18 @@
 Scarlet is my second attempt at creating an interpreter. Scarlett is the name of
 the default language.
 
-## Chapter 2.1
-
-#### Rewrite Checker
-
 ## Chapter 2.2 (TinyGo Compatibility)
 
 Update so Scarlet can be compiled using TinyGo. This has been done to some
 degree but there seems to be a Tinygo issue with init() functions and maps
 is preventing progress.
+
+Instead of waiting. Spellbook can be converted to a type that is populated
+when the runtime is invoked. This will also remove the global variables.
+
+## Chapter 2.3
+
+#### Rewrite Checker
 
 ## Chapter 3 (Spell Returns)
 

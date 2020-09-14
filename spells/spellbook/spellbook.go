@@ -2,38 +2,11 @@ package spellbook
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
-
-func init() {
-	manual.Register("spells", func() string {
-
-		names := SpellNames()
-		sort.Strings(names)
-
-		sb := strings.Builder{}
-
-		for i, v := range names {
-
-			sp, _ := LookUp(v)
-
-			if i != 0 {
-				sb.WriteString("\n\n")
-			}
-
-			sb.WriteString(sp.Sig)
-			sb.WriteString("\n\t")
-			sb.WriteString(sp.Desc)
-		}
-
-		return sb.String()
-	})
-}
 
 type Enviro interface {
 	Exit(code int)
@@ -42,6 +15,7 @@ type Enviro interface {
 	Unbind(id string)
 }
 
+type Spellbook map[string]Entry
 type Spell func(spell Entry, env Enviro, args []types.Value)
 type Entry struct {
 	Name     string
@@ -51,9 +25,7 @@ type Entry struct {
 	Spell    Spell
 }
 
-var spellBook = map[string]Entry{}
-
-func Register(sp Entry) error {
+func (spbk Spellbook) Register(sp Entry) error {
 
 	if sp.Name == "" {
 		panic(fmt.Errorf("Attempted to register a spell with no name"))
@@ -69,31 +41,31 @@ func Register(sp Entry) error {
 
 	k := strings.ToLower(sp.Name)
 
-	if _, exists := spellBook[k]; exists {
+	if _, exists := spbk[k]; exists {
 		return fmt.Errorf("Spell with name %q already registered", sp.Name)
 	}
 
-	spellBook[k] = sp
+	spbk[k] = sp
 	return nil
 }
 
-func LookUp(name string) (Entry, bool) {
-	k := strings.ToLower(name)
-	sp, ok := spellBook[k]
-	return sp, ok
-}
+func (spbk Spellbook) Names() []string {
 
-func SpellNames() []string {
-
-	keys := make([]string, len(spellBook))
+	keys := make([]string, len(spbk))
 
 	var i int
-	for k := range spellBook {
+	for k := range spbk {
 		keys[i] = k
 		i++
 	}
 
 	return keys
+}
+
+func (spbk Spellbook) LookUp(name string) (Entry, bool) {
+	k := strings.ToLower(name)
+	sp, ok := spbk[k]
+	return sp, ok
 }
 
 func isSpellIdentifier(id string) bool {

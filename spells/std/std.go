@@ -4,14 +4,13 @@ import (
 	"errors"
 	"fmt"
 
-	//"github.com/PaulioRandall/scarlet-go/manual"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
-func RegisterAll() {
+func RegisterAll(sb spellbook.Spellbook) {
 
-	spellbook.Register(spellbook.Entry{
+	sb.Register(spellbook.Entry{
 		Name: "Exit",
 		Sig:  "@Exit(exitCode)",
 		Desc: "Exit terminates the current scroll with a specific exit code.",
@@ -22,7 +21,7 @@ func RegisterAll() {
 		Spell: Spell_Exit,
 	})
 
-	spellbook.Register(spellbook.Entry{
+	sb.Register(spellbook.Entry{
 		Name: "Print",
 		Sig:  "@Print(value...)",
 		Desc: "Prints all arguments, in the order provided, to standard output.",
@@ -33,7 +32,7 @@ func RegisterAll() {
 		Spell: Spell_Print,
 	})
 
-	spellbook.Register(spellbook.Entry{
+	sb.Register(spellbook.Entry{
 		Name: "Println",
 		Sig:  "@Println(value...)",
 		Desc: "Same as @Print but appends a linefeed.",

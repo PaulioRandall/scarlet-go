@@ -12,8 +12,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
-func RegisterAll() {
-	spellbook.Register(spellbook.Entry{
+func RegisterAll(sb spellbook.Spellbook) {
+	sb.Register(spellbook.Entry{
 		Name: "FmtScroll",
 		Sig:  "@FmtScroll(filename)",
 		Desc: "Attempts to format the specified Scarlet scroll.",

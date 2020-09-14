@@ -3,12 +3,16 @@ package enviro
 import (
 	"github.com/PaulioRandall/scarlet-go/inst"
 	"github.com/PaulioRandall/scarlet-go/perror"
+
+	"github.com/PaulioRandall/scarlet-go/spells"
+	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
 type Environment struct {
 	Ctx      *Context
 	Defs     map[string]types.Value
+	Spells   spellbook.Spellbook
 	Halted   bool
 	Err      error
 	Done     bool
@@ -26,6 +30,7 @@ func New() *Environment {
 	return &Environment{
 		Ctx:      ctx,
 		Defs:     map[string]types.Value{},
+		Spells:   spells.NewSpellbook(),
 		Halted:   true,
 		ExitCode: 0,
 	}
