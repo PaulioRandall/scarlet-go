@@ -1,9 +1,5 @@
 package manual
 
-func init() {
-	Register("manifesto", manifesto)
-}
-
 func manifesto() string {
 	return `Scarlet was built on the following ideas and principles:
 

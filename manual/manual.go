@@ -2,101 +2,55 @@ package manual
 
 import (
 	"fmt"
-	"sort"
 	"strings"
-
-	"github.com/PaulioRandall/scarlet-go/spells"
-	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 )
 
-func init() {
-	Register("", overview)
-	registerSpellDocs(spells.NewSpellbook())
-}
-
-func registerSpellDocs(spbk spellbook.Spellbook) {
-	Register("spells", func() string {
-
-		names := spbk.Names()
-		sort.Strings(names)
-
-		sb := strings.Builder{}
-
-		for i, v := range names {
-
-			sp, _ := spbk.LookUp(v)
-
-			if i != 0 {
-				sb.WriteString("\n\n")
-			}
-
-			sb.WriteString(sp.Sig)
-			sb.WriteString("\n\t")
-			sb.WriteString(sp.Desc)
-		}
-
-		return sb.String()
-	})
-}
-
 type PageGenerator func() string
+type Manual map[string]PageGenerator
 
-var generators = map[string]PageGenerator{}
+func New() Manual {
 
-func Register(pageName string, gen PageGenerator) {
+	m := Manual{}
+
+	m.Register("", overview)
+	m.Register("manifesto", manifesto)
+	m.Register("syntax", syntax)
+	m.Register("examples", examples)
+	m.Register("future", future)
+	m.Register("chapters", chapters)
+	m.Register("spells", spellsDoc)
+
+	return m
+}
+
+func (m Manual) Register(name string, gen PageGenerator) {
 
 	if gen == nil {
-		panic(fmt.Errorf("Attempted to register nil page generator %q", pageName))
+		panic(fmt.Errorf("Attempted to register nil page generator %q", name))
 	}
 
-	name := strings.ToLower(pageName)
+	regName := strings.ToLower(name)
 
-	if pgExists(name) {
-		panic(fmt.Errorf("Page generator with name %q already registered", pageName))
+	if _, exists := m[regName]; exists {
+		panic(fmt.Errorf("Page generator with name %q already registered", name))
 	}
 
-	generators[name] = gen
+	m[regName] = gen
 }
 
-func pgExists(name string) bool {
-	pg, ok := generators[name]
-	return ok && pg != nil
+func (m Manual) LookUp(name string) PageGenerator {
+	regName := strings.ToLower(name)
+	return m[regName]
 }
 
-func LookUp(pageName string) PageGenerator {
-	name := strings.ToLower(pageName)
-	return generators[name]
-}
-
-func Search(searchTerm string) (string, bool) {
+func (m Manual) Search(searchTerm string) (string, bool) {
 
 	term := strings.ToLower(searchTerm)
-	gen := generators[term]
+	gen := m[term]
 
 	if gen == nil {
 		return "", false
 	}
 
 	return gen(), true
-}
-
-func overview() string {
-	return `Scarlet is a template for building domain or team specific scripting tools.
-
-	"Sometimes it's better to light a flamethrower than curse the darkness."
-		- 'Men at Arms' by Terry Pratchett
-
-Usage:
-
-	scarlet docs [search term]
-
-Search terms:
-
-	manifesto              Concepts & principles
-	syntax | rules         The base language syntax & rules
-	spells                 Available spells
-	examples               An example scroll
-	chapters               List of chapters and changes introduced
-	future                 Potential future changes
-	@<spell_name>          Specific spell documentation`
 }

@@ -1,10 +1,6 @@
 package manual
 
-func init() {
-	Register("examples", example)
-}
-
-func example() string {
+func examples() string {
 	return `	# Here are a few example code snippets
 
 	x := 6 * 7 # The answer to ultimate question

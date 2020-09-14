@@ -5,12 +5,8 @@ the default language.
 
 ## Chapter 2.2 (TinyGo Compatibility)
 
-Update so Scarlet can be compiled using TinyGo. This has been done to some
-degree but there seems to be a Tinygo issue with init() functions and maps
-is preventing progress.
-
-Instead of waiting. Spellbook can be converted to a type that is populated
-when the runtime is invoked. This will also remove the global variables.
+Update so Scarlet can be compiled using TinyGo; this has been done to some
+degree.
 
 ## Chapter 2.3
 

@@ -75,7 +75,9 @@ func buildFromArgs(args Arguments) ([]inst.Instruction, int, error) {
 func docs(args Arguments) (int, error) {
 
 	searchTerm := args.shiftDefault("")
-	text, found := manual.Search(searchTerm)
+
+	m := manual.New()
+	text, found := m.Search(searchTerm)
 
 	if !found {
 		return 1, fmt.Errorf("No documentation for %q", searchTerm)
@@ -84,5 +86,6 @@ func docs(args Arguments) (int, error) {
 	fmt.Println()
 	fmt.Println(text)
 	fmt.Println()
+
 	return 0, nil
 }

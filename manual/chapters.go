@@ -1,10 +1,6 @@
 package manual
 
-func init() {
-	Register("chapters", chapterDocs)
-}
-
-func chapterDocs() string {
+func chapters() string {
 	return `Chapter 2 (Upcoming)
 
 	- Void assignments

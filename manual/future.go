@@ -1,9 +1,5 @@
 package manual
 
-func init() {
-	Register("future", future)
-}
-
 func future() string {
 	return `Expected in next chapter
 

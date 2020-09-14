@@ -1,11 +1,6 @@
 package manual
 
-func init() {
-	Register("syntax", rulesDocs)
-	Register("rules", rulesDocs)
-}
-
-func rulesDocs() string {
+func syntax() string {
 	return `
 Comments
 
