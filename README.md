@@ -1,18 +1,19 @@
 # scarlet-go
 
-Scarlet is my second attempt at creating an interpreter. Scarlett is the name of
-the default language.
+  "Sometimes it's better to light a flamethrower than curse the darkness."
+    - 'Men at Arms' by Terry Pratchett
 
-## Chapter 2.2 (TinyGo Compatibility)
+Scarlet is a template for building domain or team specific scripting tools. I started it as a way to learn Go while trying also attempting to create an extremely light weight API testing tool. The primary objective is an executable
+small enough to be included within VCS repositories while being easily
+modifiable at source.
 
-Update so Scarlet can be compiled using TinyGo; this has been done to some
-degree.
+# Roadmap
 
-## Chapter 2.3
+## Chapter 3 (Error Handling)
 
-#### Rewrite Checker
+Improved error handling and useful error messages
 
-## Chapter 3 (Spell Returns)
+## Chapter 4 (Spell Returns)
 
 Spells will be able to return multiple values and a number of default spells will be added.
 
@@ -40,10 +41,6 @@ Exit the script with an error message:
 ```
 @Panic(exitCode, message)
 ```
-
-## Chapter 4 (Error Handling)
-
-Improved error handling
 
 ## Chapter 5 (String Spells)
 
@@ -87,7 +84,12 @@ Parse a string as a bool:
 x, e := @str.ParseBool(bool)
 ```
 
-## Chapter 6 (Lists)
+## Chapter 6 (TinyGo Compatibility)
+
+Update so Scarlet can be compiled using TinyGo. This has been done to some
+degree but I'm waiting on a versioned resolution to https://github.com/tinygo-org/tinygo/issues/890 which is **probably** preventing https://github.com/shopspring/decimal from compiling.
+
+## Chapter 7 (Lists)
 
 reate a new list:
 ```
