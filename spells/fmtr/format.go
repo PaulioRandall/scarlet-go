@@ -12,16 +12,14 @@ import (
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
-func RegisterAll(sb spellbook.Spellbook) {
-	sb.Register(spellbook.Entry{
-		Name: "FmtScroll",
-		Sig:  "@FmtScroll(filename)",
-		Desc: "Attempts to format the specified Scarlet scroll.",
-		Examples: []string{
-			`@FmtScroll("./example.scroll")`,
-		},
-		Spell: Spell_Format,
-	})
+func RegisterAll(sb spellbook.Spellbook) error {
+	return sb.Register(
+		Spell_Format,
+		"FmtScroll",
+		"@FmtScroll(filename)",
+		"Attempts to format the specified Scarlet scroll.",
+		`@FmtScroll("./example.scroll")`,
+	)
 }
 
 func Spell_Format(_ spellbook.Entry, env spellbook.Enviro, args []types.Value) {

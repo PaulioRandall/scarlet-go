@@ -2,11 +2,41 @@ package manual
 
 import (
 	"fmt"
+	"sort"
 	"strings"
+
+	"github.com/PaulioRandall/scarlet-go/spells"
+	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 )
 
 func init() {
 	Register("", overview)
+	registerSpellDocs(spells.NewSpellbook())
+}
+
+func registerSpellDocs(spbk spellbook.Spellbook) {
+	Register("spells", func() string {
+
+		names := spbk.Names()
+		sort.Strings(names)
+
+		sb := strings.Builder{}
+
+		for i, v := range names {
+
+			sp, _ := spbk.LookUp(v)
+
+			if i != 0 {
+				sb.WriteString("\n\n")
+			}
+
+			sb.WriteString(sp.Sig)
+			sb.WriteString("\n\t")
+			sb.WriteString(sp.Desc)
+		}
+
+		return sb.String()
+	})
 }
 
 type PageGenerator func() string

@@ -18,14 +18,33 @@ type Enviro interface {
 type Spellbook map[string]Entry
 type Spell func(spell Entry, env Enviro, args []types.Value)
 type Entry struct {
+	Spell    Spell
 	Name     string
 	Sig      string
 	Desc     string
 	Examples []string
-	Spell    Spell
 }
 
-func (spbk Spellbook) Register(sp Entry) error {
+func (spbk Spellbook) Register(
+	spell Spell,
+	name string,
+	sig string,
+	desc string,
+	exam ...string,
+) error {
+
+	sp := Entry{
+		Spell:    spell,
+		Name:     name,
+		Sig:      sig,
+		Desc:     desc,
+		Examples: exam,
+	}
+
+	return spbk.RegisterEntry(sp)
+}
+
+func (spbk Spellbook) RegisterEntry(sp Entry) error {
 
 	if sp.Name == "" {
 		panic(fmt.Errorf("Attempted to register a spell with no name"))

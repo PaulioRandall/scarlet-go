@@ -8,40 +8,36 @@ import (
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
-func RegisterAll(sb spellbook.Spellbook) {
+func RegisterAll(sb spellbook.Spellbook) error {
 
-	sb.Register(spellbook.Entry{
-		Name: "Exit",
-		Sig:  "@Exit(exitCode)",
-		Desc: "Exit terminates the current scroll with a specific exit code.",
-		Examples: []string{
-			"@Exit(0)",
-			"@Exit(1)",
-		},
-		Spell: Spell_Exit,
-	})
+	sb.Register(
+		Spell_Exit,
+		"Exit",
+		"@Exit(exitCode)",
+		"Exit terminates the current scroll with a specific exit code.",
+		"@Exit(0)",
+		"@Exit(1)",
+	)
 
-	sb.Register(spellbook.Entry{
-		Name: "Print",
-		Sig:  "@Print(value...)",
-		Desc: "Prints all arguments, in the order provided, to standard output.",
-		Examples: []string{
-			`@Print("Hello, Scarlet!")`,
-			`@Print(a, "*", b, " = ", c)`,
-		},
-		Spell: Spell_Print,
-	})
+	sb.Register(
+		Spell_Print,
+		"Print",
+		"@Print(value...)",
+		"Prints all arguments, in the order provided, to standard output.",
+		`@Print("Hello, Scarlet!")`,
+		`@Print(a, "*", b, " = ", c)`,
+	)
 
-	sb.Register(spellbook.Entry{
-		Name: "Println",
-		Sig:  "@Println(value...)",
-		Desc: "Same as @Print but appends a linefeed.",
-		Examples: []string{
-			`@Println("Hello, Scarlet!")`,
-			`@Println(a, "*", b, " = ", c)`,
-		},
-		Spell: Spell_Println,
-	})
+	sb.Register(
+		Spell_Println,
+		"Println",
+		"@Println(value...)",
+		"Same as @Print but appends a linefeed.",
+		`@Println("Hello, Scarlet!")`,
+		`@Println(a, "*", b, " = ", c)`,
+	)
+
+	return nil
 }
 
 func Spell_Exit(_ spellbook.Entry, env spellbook.Enviro, args []types.Value) {
