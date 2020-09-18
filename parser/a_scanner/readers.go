@@ -5,7 +5,6 @@ import (
 	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/lexeme"
-	"github.com/PaulioRandall/scarlet-go/perror"
 )
 
 type runeReader struct {
@@ -71,16 +70,11 @@ func (rr *runeReader) expect(ru rune) error {
 	}
 
 	if rr.empty() {
-		return perror.New(
-			"Unexpected EOF %d:%d, wanted %q",
-			rr.line, rr.idx-rr.count, ru,
-		)
+		return newErr(rr.line, rr.idx-rr.count, "Unexpected EOF, want %q", ru)
 	}
 
-	return perror.New(
-		"Unexpected terminal symbol %d:%d, want %q, have %q",
-		rr.line, rr.idx-rr.count, ru, rr.peek(),
-	)
+	return newErr(rr.line, rr.idx-rr.count,
+		"Unexpected terminal symbol, want %q, have %q", ru, rr.peek())
 }
 
 func (rr *runeReader) slice(tk lexeme.Token) *lexeme.Lexeme {
@@ -113,9 +107,8 @@ func (rr *runeReader) update(lex *lexeme.Lexeme) {
 	rr.count = 0
 }
 
-func (rr *runeReader) syntaxError(msg string, args interface{}) error {
-	msg = fmt.Sprintf(msg, args)
-	return perror.New("At %d:%d, %s", rr.line+1, rr.col, msg)
+func (rr *runeReader) syntaxError(msg string, args ...interface{}) error {
+	return newErr(rr.line+1, rr.col, msg, args...)
 }
 
 func failNow(msg string, args ...interface{}) {

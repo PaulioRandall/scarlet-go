@@ -2,7 +2,6 @@ package scanner
 
 import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
-	"github.com/PaulioRandall/scarlet-go/perror"
 )
 
 type Queue interface {
@@ -140,10 +139,8 @@ func scanLexeme(rr *runeReader) (*lexeme.Lexeme, error) {
 		return rr.slice(lexeme.NOT_EQUAL), nil
 	}
 
-	return nil, perror.New(
-		"Unexpected terminal symbol %d:%d, have %q",
-		rr.line, rr.idx, rr.peek(),
-	)
+	e := newErr(rr.line, rr.idx, "Unexpected terminal symbol, have %q", rr.peek())
+	return nil, e
 }
 
 func newline(rr *runeReader) (*lexeme.Lexeme, error) {
@@ -206,17 +203,14 @@ func spell(rr *runeReader) (*lexeme.Lexeme, error) {
 
 	for {
 		if rr.empty() {
-			return nil, perror.New(
-				"Bad spell name %d:%d, want: letter, have: EOF",
-				rr.line, rr.idx,
-			)
+			e := newErr(rr.line, rr.idx, "Bad spell name, want letter, have EOF")
+			return nil, e
 		}
 
 		if !rr.isLetter() {
-			return nil, perror.New(
-				"Bad spell name %d:%d, want: letter, have: %q",
-				rr.line, rr.idx, rr.peek(),
-			)
+			e := newErr(rr.line, rr.idx,
+				"Bad spell name, want letter, have %q", rr.peek())
+			return nil, e
 		}
 
 		for rr.isLetter() {
@@ -241,7 +235,7 @@ func stringLiteral(rr *runeReader) (*lexeme.Lexeme, error) {
 
 		rr.accept('\\')
 		if rr.empty() || rr.isNewline() {
-			return nil, perror.New("Unterminated string %d:%d", rr.line, rr.idx)
+			return nil, newErr(rr.line, rr.idx, "Unterminated string")
 		}
 
 		rr.inc()
@@ -261,17 +255,14 @@ func numberLiteral(rr *runeReader) (*lexeme.Lexeme, error) {
 	}
 
 	if rr.empty() {
-		return nil, perror.New(
-			"Unexpected symbol %d:%d, want: [0-9], have: EOF",
-			rr.line, rr.idx,
-		)
+		e := newErr(rr.line, rr.idx, "Unexpected symbol, want [0-9], have EOF")
+		return nil, e
 	}
 
 	if !rr.isDigit() {
-		return nil, perror.New(
-			"Unexpected symbol %d:%d, want: [0-9], have: %q",
-			rr.line, rr.idx, rr.peek(),
-		)
+		e := newErr(rr.line, rr.idx,
+			"Unexpected symbol, want [0-9], have %q", rr.peek())
+		return nil, e
 	}
 
 	for rr.isDigit() {
