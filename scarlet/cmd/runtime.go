@@ -45,12 +45,8 @@ func run(ins []inst.Instruction) (int, error) {
 	rt := runtime.New(ins)
 	rt.Start()
 
-	if rt.Env().Err != nil {
+	if rt.Env().ExitCode != 0 || rt.Env().Err != nil {
 		return rt.Env().ExitCode, rt.Env().Err
-	}
-
-	if rt.Env().ExitCode != 0 {
-		return rt.Env().ExitCode, nil
 	}
 
 	return 0, nil

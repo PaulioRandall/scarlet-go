@@ -47,12 +47,13 @@ func Spell_Exit(_ spellbook.Entry, env spellbook.Enviro, args []types.Value) {
 		return
 	}
 
-	if c, ok := args[0].(types.Num); ok {
-		env.Exit(int(c.Integer()))
-		return
+	c, ok := args[0].(types.Num)
+	if !ok {
+		env.Fail(errors.New("@Exit requires its argument be a number"))
 	}
 
-	env.Fail(errors.New("@Exit requires its argument be a number"))
+	env.Exit(int(c.Integer()))
+	return
 }
 
 func Spell_Print(_ spellbook.Entry, _ spellbook.Enviro, args []types.Value) {

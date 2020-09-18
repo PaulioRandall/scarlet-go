@@ -56,6 +56,10 @@ func (run *Runtime) halted(done bool) {
 		return
 	}
 
+	if run.env.ExitCode > 0 {
+		return
+	}
+
 	if run.env.Done || done {
 		run.env.Exit(0)
 	}

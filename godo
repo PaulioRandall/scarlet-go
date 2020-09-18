@@ -11,4 +11,3 @@
 tabs -2
 clear
 go run godo.go $@
-printf "\nExit code: $?\n"

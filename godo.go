@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"syscall"
 )
 
 var (
@@ -160,8 +161,20 @@ func invokeScroll(args ...string) {
 
 	fmt.Println(cmd.String())
 
-	if e := cmd.Run(); e != nil {
-		panik("", e)
+	if e := cmd.Start(); e != nil {
+		panik("Could not start Scarlet", e)
+	}
+
+	if e := cmd.Wait(); e != nil {
+		if exitErr, ok := e.(*exec.ExitError); ok {
+			if stat, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+				fmt.Printf("\nScarlet exit code: %d\n", stat.ExitStatus())
+			}
+		} else {
+			panik("Failed to run Scarlet or non-zero exit code", e)
+		}
+	} else {
+		fmt.Println("\nScarlet exit code: 0")
 	}
 
 	cd("..")
