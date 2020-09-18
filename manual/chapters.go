@@ -1,12 +1,11 @@
 package manual
 
 func chapters() string {
-	return `Chapter 2 (Upcoming)
+	return `Chapter 2
 
 	- Void assignments
 	- Native variable deletions
 	- Explicit terminators
-	x Tinygo compatibility      (Unlikely to appear in this chapter, will see)
 
 Chapter 1
 
