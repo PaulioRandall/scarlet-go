@@ -1,7 +1,11 @@
 package manual
 
 func chapters() string {
-	return `Chapter 2
+	return `Chapter 3
+
+	- Better error messages (In progress)
+
+Chapter 2
 
 	- Void assignments
 	- Native variable deletions

@@ -2,7 +2,6 @@ package runtime
 
 import (
 	"github.com/PaulioRandall/scarlet-go/inst"
-	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/runtime/enviro"
 )
 
@@ -25,7 +24,7 @@ func (run *Runtime) Env() *enviro.Environment {
 func (run *Runtime) Start() {
 
 	if run.env.Err != nil {
-		perror.Panic("Runtime previously encountered an error and cannot continue")
+		panic("Runtime previously encountered an error and cannot continue")
 	}
 
 	run.env.Halted = false

@@ -2,7 +2,6 @@ package enviro
 
 import (
 	"github.com/PaulioRandall/scarlet-go/inst"
-	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
@@ -12,7 +11,8 @@ func coSpell(env *Environment, in inst.Instruction) {
 
 	entry, ok := env.Spells.LookUp(name)
 	if !ok {
-		env.Fail(perror.New("Unknown spell %q", name))
+		e := newErr("Unknown spell '%q'", name)
+		env.Fail(e)
 		return
 	}
 

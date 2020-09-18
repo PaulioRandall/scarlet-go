@@ -2,7 +2,6 @@ package enviro
 
 import (
 	"github.com/PaulioRandall/scarlet-go/inst"
-	"github.com/PaulioRandall/scarlet-go/perror"
 
 	"github.com/PaulioRandall/scarlet-go/spells"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
@@ -168,6 +167,6 @@ func (env *Environment) Exe(in inst.Instruction) {
 		env.Ctx.PopSub()
 
 	default:
-		env.Fail(perror.New("Unknown instruction code: %q", in.Code))
+		env.Fail(newErr("Unknown instruction code '%q'", in.Code))
 	}
 }

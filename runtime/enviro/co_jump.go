@@ -2,7 +2,6 @@ package enviro
 
 import (
 	"github.com/PaulioRandall/scarlet-go/inst"
-	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
@@ -16,7 +15,8 @@ func coJumpIf(env *Environment, in inst.Instruction, jumpIf bool) {
 
 	condition, ok := env.PopVal().(types.Bool)
 	if !ok {
-		env.Fail(perror.New("Expected bool for jump condition"))
+		e := newErr("Expected bool for jump condition")
+		env.Fail(e)
 		return
 	}
 

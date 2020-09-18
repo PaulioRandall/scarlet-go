@@ -2,7 +2,6 @@ package enviro
 
 import (
 	"github.com/PaulioRandall/scarlet-go/inst"
-	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
@@ -16,13 +15,13 @@ func popBoolOperands(env *Environment) (left, right types.Bool, ok bool) {
 
 	right, ok = env.PopVal().(types.Bool)
 	if !ok {
-		env.Fail(perror.New("Expected bool on right side of operation"))
+		env.Fail(newErr("Expected bool on right side of operation"))
 		return
 	}
 
 	left, ok = env.PopVal().(types.Bool)
 	if !ok {
-		env.Fail(perror.New("Expected bool on left side of operation"))
+		env.Fail(newErr("Expected bool on left side of operation"))
 	}
 
 	return
@@ -32,13 +31,13 @@ func popNumOperands(env *Environment) (left, right types.Num, ok bool) {
 
 	right, ok = env.PopVal().(types.Num)
 	if !ok {
-		env.Fail(perror.New("Expected number on right side of operation"))
+		env.Fail(newErr("Expected number on right side of operation"))
 		return
 	}
 
 	left, ok = env.PopVal().(types.Num)
 	if !ok {
-		env.Fail(perror.New("Expected number on left side of operation"))
+		env.Fail(newErr("Expected number on left side of operation"))
 	}
 
 	return

@@ -2,7 +2,6 @@ package enviro
 
 import (
 	"github.com/PaulioRandall/scarlet-go/inst"
-	"github.com/PaulioRandall/scarlet-go/perror"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 )
 
@@ -12,7 +11,8 @@ func coCtxGet(env *Environment, in inst.Instruction) {
 	r, ok := env.Get(id)
 
 	if !ok {
-		env.Fail(perror.New("Undeclared variable %q", id))
+		e := newErr("Undeclared variable '%q'", id)
+		env.Fail(e)
 		return
 	}
 
@@ -25,7 +25,8 @@ func coCtxSet(env *Environment, in inst.Instruction) {
 	v := env.PopVal()
 
 	if v == nil {
-		env.Fail(perror.New("Assignment fail %q, value stack is empty", id))
+		e := newErr("Assignment fail '%q', value stack is empty", id)
+		env.Fail(e)
 		return
 	}
 
