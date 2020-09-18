@@ -2,7 +2,6 @@ package checker
 
 import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
-	"github.com/PaulioRandall/scarlet-go/perror"
 )
 
 type checker struct {
@@ -10,13 +9,8 @@ type checker struct {
 }
 
 func (chk *checker) unexpected(want string) error {
-	return perror.New(
-		"Unexpected token %d:%d\nHave: %s\nWant: %s",
-		chk.it.Curr().Line,
-		chk.it.Curr().Col,
-		chk.it.Curr().Tok.String(),
-		want,
-	)
+	return newErr(chk.it.Curr(),
+		"Unexpected token, want %s, have %s", want, chk.it.Curr().Tok.String())
 }
 
 func (chk *checker) matchAny(tks ...lexeme.Token) bool {
@@ -36,17 +30,16 @@ func (chk *checker) acceptAny(tks ...lexeme.Token) bool {
 func (chk *checker) expectAny(tks ...lexeme.Token) error {
 
 	if chk.it.Curr() == nil {
-		return perror.New(
-			"Unexpected token\nHave: EOF\nWant: %s",
-			lexeme.JoinTokens(" & ", tks...),
-		)
+		s := lexeme.JoinTokens(" & ", tks...)
+		return newEofErr("Unexpected token, want %s, have EOF", s)
 	}
 
 	if chk.acceptAny(tks...) {
 		return nil
 	}
 
-	return chk.unexpected(lexeme.JoinTokens(" & ", tks...))
+	s := lexeme.JoinTokens(" & ", tks...)
+	return chk.unexpected(s)
 }
 
 func (chk *checker) tok() lexeme.Token {
@@ -75,7 +68,7 @@ func (chk *checker) accept(ok bool) bool {
 func (chk *checker) expect(want string, ok bool) error {
 
 	if chk.it.Curr() == nil {
-		return perror.New("Unexpected token\nHave: EOF\nWant: %s", want)
+		return newEofErr("Unexpected token, want %s, have EOF", want)
 	}
 
 	if chk.accept(ok) {

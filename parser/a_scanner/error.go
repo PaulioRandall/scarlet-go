@@ -5,6 +5,7 @@ import (
 )
 
 type scanErr struct {
+	error
 	lineIdx, colIdx int
 	msg             string
 }

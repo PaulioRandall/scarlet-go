@@ -18,10 +18,14 @@ type Perror interface {
 	error
 }
 
-type PerrorPos interface {
+type Pos interface {
 	Pos() (lineIdx, colIdx int)
 }
 
-type PerrorLen interface {
+type Len interface {
 	Len() int
+}
+
+type Eof interface {
+	Eof() bool
 }
