@@ -4,34 +4,34 @@ import (
 	"fmt"
 )
 
-type lexeme struct {
+type Lexeme struct {
 	TokenType
 	raw  string
 	line int
 	col  int
 }
 
-func (l lexeme) Type() TokenType {
+func (l Lexeme) Type() TokenType {
 	return l.TokenType
 }
 
-func (l lexeme) Raw() string {
+func (l Lexeme) Raw() string {
 	return l.raw
 }
 
-func (l lexeme) Line() int {
+func (l Lexeme) Line() int {
 	return l.line
 }
 
-func (l lexeme) Col() int {
+func (l Lexeme) Col() int {
 	return l.col
 }
 
-func (l lexeme) Len() int {
+func (l Lexeme) Len() int {
 	return len(l.raw)
 }
 
-func (lex lexeme) String() string {
+func (lex Lexeme) String() string {
 	return fmt.Sprintf("%d:%d %s %q",
 		lex.line,
 		lex.col,
