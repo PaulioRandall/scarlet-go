@@ -4,83 +4,47 @@ import (
 	"strings"
 )
 
-type Token int
+type TokenType string
 
 const (
-	UNDEFINED Token = iota
+	UNDEFINED TokenType = ``
 	// -----------------
-	SPACE
-	COMMENT    // # comment
-	TERMINATOR // ;
-	NEWLINE    // \n
-	BOOL       // true | false
-	NUMBER     // 1
-	STRING     // "abc"
-	IDENT      // abc
-	SPELL      // @abc
-	GUARD      // Magic: Indicates the subsequent block is conditional
-	LOOP       // loop
-	DELIM      // ,
-	L_PAREN    // (
-	R_PAREN    // )
-	L_SQUARE   // [
-	R_SQUARE   // ]
-	L_CURLY    // {
-	R_CURLY    //	}
-	ASSIGN     // :=
-	VOID       // _
-	ADD        // +
-	SUB        // -
-	MUL        // *
-	DIV        // /
-	REM        // %
-	AND        // &&
-	OR         // ||
-	LESS       // <
-	MORE       // >
-	LESS_EQUAL // <=
-	MORE_EQUAL // >=
-	EQUAL      // ==
-	NOT_EQUAL  // !=
+	SPACE      TokenType = `SPACE`
+	COMMENT    TokenType = `COMMENT`    // # comment
+	TERMINATOR TokenType = `TERMINATOR` // ;
+	NEWLINE    TokenType = `NEWLINE`    // \n
+	BOOL       TokenType = `BOOL`       // true | false
+	NUMBER     TokenType = `NUMBER`     // 1
+	STRING     TokenType = `STRING`     // "abc"
+	IDENT      TokenType = `IDENT`      // abc
+	SPELL      TokenType = `SPELL`      // @abc
+	GUARD      TokenType = `GUARD`      // Magic: Indicates the subsequent block is conditional
+	LOOP       TokenType = `LOOP`       // loop
+	DELIM      TokenType = `DELIM`      // ,
+	L_PAREN    TokenType = `L_PAREN`    // (
+	R_PAREN    TokenType = `R_PAREN`    // )
+	L_SQUARE   TokenType = `L_SQUARE`   // [
+	R_SQUARE   TokenType = `R_SQUARE`   // ]
+	L_CURLY    TokenType = `L_CURLY`    // {
+	R_CURLY    TokenType = `R_CURLY`    //	}
+	ASSIGN     TokenType = `ASSIGN`     // :=
+	VOID       TokenType = `VOID`       // _
+	ADD        TokenType = `ADD`        // +
+	SUB        TokenType = `SUB`        // -
+	MUL        TokenType = `MUL`        // *
+	DIV        TokenType = `DIV`        // /
+	REM        TokenType = `REM`        // %
+	AND        TokenType = `AND`        // &&
+	OR         TokenType = `OR`         // ||
+	LESS       TokenType = `LESS`       // <
+	MORE       TokenType = `MORE`       // >
+	LESS_EQUAL TokenType = `LESS_EQUAL` // <=
+	MORE_EQUAL TokenType = `MORE_EQUAL` // >=
+	EQUAL      TokenType = `EQUAL`      // ==
+	NOT_EQUAL  TokenType = `NOT_EQUAL`  // !=
 )
 
-var tokens = map[Token]string{
-	SPACE:      `SPACE`,
-	COMMENT:    `COMMENT`,
-	TERMINATOR: `TERMINATOR`,
-	NEWLINE:    `NEWLINE`,
-	BOOL:       `BOOL`,
-	NUMBER:     `NUMBER`,
-	STRING:     `STRING`,
-	IDENT:      `IDENT`,
-	SPELL:      `SPELL`,
-	GUARD:      `GUARD`,
-	LOOP:       `LOOP`,
-	DELIM:      `DELIM`,
-	L_PAREN:    `L_PAREN`,
-	R_PAREN:    `R_PAREN`,
-	L_SQUARE:   `L_SQUARE`,
-	R_SQUARE:   `R_SQUARE`,
-	L_CURLY:    `L_CURLY`,
-	R_CURLY:    `R_CURLY`,
-	ASSIGN:     `ASSIGN`,
-	VOID:       `VOID`,
-	ADD:        `ADD`,
-	SUB:        `SUB`,
-	MUL:        `MUL`,
-	DIV:        `DIV`,
-	REM:        `REM`,
-	AND:        `AND`,
-	OR:         `OR`,
-	LESS:       `LESS`,
-	MORE:       `MORE`,
-	LESS_EQUAL: `LESS_EQUAL`,
-	MORE_EQUAL: `MORE_EQUAL`,
-	EQUAL:      `EQUAL`,
-	NOT_EQUAL:  `NOT_EQUAL`,
-}
-
-func (tk Token) Precedence() int {
+func (tk TokenType) Precedence() int {
 	switch tk {
 	case L_PAREN, R_PAREN:
 		return 7
@@ -101,7 +65,7 @@ func (tk Token) Precedence() int {
 	return 0
 }
 
-func (tk Token) IsAny(others ...Token) bool {
+func (tk TokenType) IsAny(others ...TokenType) bool {
 
 	for _, o := range others {
 		if tk == o {
@@ -112,27 +76,27 @@ func (tk Token) IsAny(others ...Token) bool {
 	return false
 }
 
-func (tk Token) IsRedundant() bool {
+func (tk TokenType) IsRedundant() bool {
 	return tk == SPACE || tk == COMMENT
 }
 
-func (tk Token) IsTerminator() bool {
+func (tk TokenType) IsTerminator() bool {
 	return tk == TERMINATOR || tk == NEWLINE
 }
 
-func (tk Token) IsLiteral() bool {
+func (tk TokenType) IsLiteral() bool {
 	return tk == BOOL || tk == NUMBER || tk == STRING
 }
 
-func (tk Token) IsTerm() bool {
+func (tk TokenType) IsTerm() bool {
 	return tk == IDENT || tk.IsLiteral()
 }
 
-func (tk Token) IsAssignee() bool {
+func (tk TokenType) IsAssignee() bool {
 	return tk == IDENT || tk == VOID
 }
 
-func (tk Token) IsOperator() bool {
+func (tk TokenType) IsOperator() bool {
 	return tk == MUL ||
 		tk == DIV ||
 		tk == REM ||
@@ -148,19 +112,19 @@ func (tk Token) IsOperator() bool {
 		tk == OR
 }
 
-func (tk Token) IsOpener() bool {
+func (tk TokenType) IsOpener() bool {
 	return tk == L_PAREN || tk == L_SQUARE || tk == L_CURLY
 }
 
-func (tk Token) IsCloser() bool {
+func (tk TokenType) IsCloser() bool {
 	return tk == R_PAREN || tk == R_SQUARE || tk == R_CURLY
 }
 
-func (tk Token) String() string {
-	return tokens[tk]
+func (tk TokenType) String() string {
+	return string(tk)
 }
 
-func JoinTokens(infix string, tks ...Token) string {
+func JoinTokens(infix string, tks ...TokenType) string {
 
 	sb := strings.Builder{}
 

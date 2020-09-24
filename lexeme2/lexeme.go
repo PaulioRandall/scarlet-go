@@ -4,26 +4,38 @@ import (
 	"fmt"
 )
 
-type Snippet interface {
-	At() (line, start, end int)
+type lexeme struct {
+	TokenType
+	raw  string
+	line int
+	col  int
 }
 
-type Lexeme struct {
-	Tok  Token
-	Raw  string
-	Line int
-	Col  int
+func (l lexeme) Type() TokenType {
+	return l.TokenType
 }
 
-func (lex Lexeme) At() (line, start, end int) {
-	return lex.Line, lex.Col, len(lex.Raw)
+func (l lexeme) Raw() string {
+	return l.raw
 }
 
-func (lex Lexeme) String() string {
+func (l lexeme) Line() int {
+	return l.line
+}
+
+func (l lexeme) Col() int {
+	return l.col
+}
+
+func (l lexeme) Len() int {
+	return len(l.raw)
+}
+
+func (lex lexeme) String() string {
 	return fmt.Sprintf("%d:%d %s %q",
-		lex.Line,
-		lex.Col,
-		lex.Tok.String(),
-		lex.Raw,
+		lex.line,
+		lex.col,
+		lex.TokenType.String(),
+		lex.raw,
 	)
 }
