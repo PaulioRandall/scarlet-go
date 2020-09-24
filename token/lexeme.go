@@ -1,4 +1,4 @@
-package lexeme2
+package token
 
 import (
 	"fmt"
@@ -9,6 +9,22 @@ type Lexeme struct {
 	raw  string
 	line int
 	col  int
+}
+
+func New(raw string, tt TokenType, line, col int) Lexeme {
+	return Lexeme{
+		TokenType: tt,
+		raw:       raw,
+		line:      line,
+		col:       col,
+	}
+}
+
+func Tok(raw string, tt TokenType) Lexeme {
+	return Lexeme{
+		TokenType: tt,
+		raw:       raw,
+	}
 }
 
 func (l Lexeme) Type() TokenType {

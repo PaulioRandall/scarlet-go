@@ -4,11 +4,11 @@ import (
 	//"fmt"
 	//"strings"
 
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token"
 )
 
 type node struct {
-	data lexeme.Lexeme
+	data token.Lexeme
 	next *node
 	prev *node
 }
@@ -48,14 +48,14 @@ func (c *Container) Size() int {
 	return c.size
 }
 
-func (c *Container) Top() lexeme.Lexeme {
+func (c *Container) Top() token.Lexeme {
 	if c.head == nil {
-		return lexeme.Lexeme{}
+		return token.Lexeme{}
 	}
 	return c.head.data
 }
 
-func (c *Container) Push(l lexeme.Lexeme) {
+func (c *Container) Push(l token.Lexeme) {
 	c.prepend(l)
 }
 
@@ -117,7 +117,7 @@ func (c *Container) pop(fromBack bool) *Lexeme {
 	return r
 }
 */
-func (c *Container) prepend(l lexeme.Lexeme) {
+func (c *Container) prepend(l token.Lexeme) {
 
 	n := &node{
 		data: l,
@@ -136,7 +136,7 @@ func (c *Container) prepend(l lexeme.Lexeme) {
 	c.size++
 }
 
-func (c *Container) append(l lexeme.Lexeme) {
+func (c *Container) append(l token.Lexeme) {
 
 	n := &node{
 		data: l,

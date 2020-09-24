@@ -1,4 +1,4 @@
-package lexeme2
+package token
 
 import (
 	"strings"
