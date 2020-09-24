@@ -49,33 +49,30 @@ func (c *Container) Size() int {
 }
 
 func (c *Container) Top() token.Lexeme {
-	if c.head == nil {
-		return token.Lexeme{}
-	}
-	return c.head.data
+	return c.headNode()
 }
 
 func (c *Container) Push(l token.Lexeme) {
 	c.prepend(l)
 }
 
-/*
-func (c *Container) Pop() *Lexeme {
-	return c.pop(false)
+func (c *Container) Pop() token.Lexeme {
+	return c.pop()
 }
 
-func (c *Container) Head() *Lexeme {
-	return c.head
+func (c *Container) Head() token.Lexeme {
+	return c.headNode()
 }
 
-func (c *Container) Put(lex *Lexeme) {
+func (c *Container) Put(l token.Lexeme) {
 	c.append(l)
 }
 
-func (c *Container) Take() *Lexeme {
-	return c.pop(false)
+func (c *Container) Take() token.Lexeme {
+	return c.pop()
 }
 
+/*
 func (c *Container) String() string {
 
 	var sb strings.Builder
@@ -91,32 +88,36 @@ func (c *Container) String() string {
 
 	return sb.String()
 }
+*/
 
-func (c *Container) pop(fromBack bool) *Lexeme {
+func (c *Container) headNode() token.Lexeme {
+	if c.head == nil {
+		return token.Lexeme{}
+	}
+	return c.head.data
+}
+
+func (c *Container) pop() token.Lexeme {
+
+	var r token.Lexeme
 
 	if c.size == 0 {
-		return nil
+		return r
 	}
 
-	var r *Lexeme
-	if fromBack {
-		r = c.tail
-		c.tail = c.tail.prev
-	} else {
-		r = c.head
-		c.head = c.head.next
-	}
-
-	remove(r)
+	r = c.head.data
+	c.head = c.head.next
 	c.size--
 
 	if c.size == 0 {
-		c.head, c.tail = nil, nil
+		c.tail = nil
+	} else {
+		c.head.prev = nil
 	}
 
 	return r
 }
-*/
+
 func (c *Container) prepend(l token.Lexeme) {
 
 	n := &node{
@@ -154,49 +155,3 @@ func (c *Container) append(l token.Lexeme) {
 	c.tail = n
 	c.size++
 }
-
-/*
-func (c *Container) remove(lex *Lexeme) {
-
-	if c.head == lex {
-		c.head = lex.next
-	}
-
-	if c.tail == lex {
-		c.tail = lex.prev
-	}
-
-	remove(lex)
-	c.size--
-}
-
-func (c *Container) insertBefore(base *Lexeme, add *Lexeme) {
-
-	prepend(base, add)
-	c.size++
-
-	if c.head == base {
-		c.head = add
-	}
-}
-
-func (c *Container) insertAfter(base *Lexeme, add *Lexeme) {
-
-	append(base, add)
-	c.size++
-
-	if base == c.tail {
-		c.tail = add
-	}
-}
-
-func (lex *Lexeme) checkIsSingle() {
-	if lex.next != nil || lex.prev != nil {
-		m := fmt.Sprintf(
-			"Lexeme `%s` is already part of another collection, remove first",
-			lex.String(),
-		)
-		panic(m)
-	}
-}
-*/

@@ -16,6 +16,19 @@ func randomLexemes() (a, b, c, d token.Lexeme) {
 	return
 }
 
+func setup() (con *Container, a, b, c, d token.Lexeme) {
+
+	a, b, c, d = randomLexemes()
+	con = &Container{}
+
+	con.append(a)
+	con.append(b)
+	con.append(c)
+	con.append(d)
+
+	return
+}
+
 func requireNodes(t *testing.T, con *Container, data ...token.Lexeme) {
 
 	var prev *node
@@ -31,6 +44,24 @@ func requireNodes(t *testing.T, con *Container, data ...token.Lexeme) {
 	require.Equal(t, prev, con.tail)
 	require.Nil(t, next)
 	require.Equal(t, len(data), con.size)
+}
+
+func Test_Container_prepend(t *testing.T) {
+
+	a, b, c, d := randomLexemes()
+	con := &Container{}
+
+	con.prepend(d)
+	requireNodes(t, con, d)
+
+	con.prepend(c)
+	requireNodes(t, con, c, d)
+
+	con.prepend(b)
+	requireNodes(t, con, b, c, d)
+
+	con.prepend(a)
+	requireNodes(t, con, a, b, c, d)
 }
 
 func Test_Container_append(t *testing.T) {
@@ -49,4 +80,26 @@ func Test_Container_append(t *testing.T) {
 
 	con.append(d)
 	requireNodes(t, con, a, b, c, d)
+}
+
+func Test_Container_pop(t *testing.T) {
+
+	con, a, b, c, d := setup()
+	var l token.Lexeme
+
+	l = con.pop()
+	require.Equal(t, a, l)
+	requireNodes(t, con, b, c, d)
+
+	l = con.pop()
+	require.Equal(t, b, l)
+	requireNodes(t, con, c, d)
+
+	l = con.pop()
+	require.Equal(t, c, l)
+	requireNodes(t, con, d)
+
+	l = con.pop()
+	require.Equal(t, d, l)
+	requireNodes(t, con)
 }
