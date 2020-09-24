@@ -1,8 +1,7 @@
 package container2
 
 import (
-	//"fmt"
-	//"strings"
+	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/token"
 )
@@ -72,23 +71,20 @@ func (c *Container) Take() token.Lexeme {
 	return c.pop()
 }
 
-/*
 func (c *Container) String() string {
 
 	var sb strings.Builder
 
-	for lex := c.head; lex != nil; lex = lex.next {
-
-		if lex != c.head {
+	for n := c.head; n != nil; n = n.next {
+		if n != c.head {
 			sb.WriteRune('\n')
 		}
 
-		sb.WriteString(lex.String())
+		sb.WriteString(n.data.String())
 	}
 
 	return sb.String()
 }
-*/
 
 func (c *Container) headNode() token.Lexeme {
 	if c.head == nil {
