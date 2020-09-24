@@ -80,7 +80,7 @@ func (c *Container) Take() *Lexeme {
 
 func (c *Container) String() string {
 
-	sb := strings.Builder{}
+	var sb strings.Builder
 
 	for lex := c.head; lex != nil; lex = lex.next {
 
