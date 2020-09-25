@@ -95,6 +95,16 @@ func (it *Iterator) InsertBefore(l token.Lexeme) {
 	it.jumpTo(it.curr)
 }
 
+func (it *Iterator) InsertAfter(l token.Lexeme) {
+
+	n := &node{
+		data: l,
+	}
+
+	it.con.insertAfter(it.curr, n)
+	it.jumpTo(it.curr)
+}
+
 /*
 func (it *Iterator) Append(lex *Lexeme) {
 

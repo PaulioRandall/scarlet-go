@@ -127,18 +127,18 @@ func (c *Container) insertBefore(ref, n *node) {
 	c.inserted(n)
 }
 
-func (c *Container) remove(n *node) {
+func (c *Container) insertAfter(ref, n *node) {
 
-	if n == c.head {
-		c.head = n.next
+	var next *node
+
+	if ref != nil {
+		next = ref.next
+		unlink(ref, next)
 	}
 
-	if n == c.tail {
-		c.tail = n.prev
-	}
-
-	c.size--
-	n.remove()
+	link(ref, n)
+	link(n, next)
+	c.inserted(n)
 }
 
 func (c *Container) inserted(n *node) {
@@ -159,4 +159,18 @@ func (c *Container) inserted(n *node) {
 	}
 
 	c.size++
+}
+
+func (c *Container) remove(n *node) {
+
+	if n == c.head {
+		c.head = n.next
+	}
+
+	if n == c.tail {
+		c.tail = n.prev
+	}
+
+	c.size--
+	n.remove()
 }

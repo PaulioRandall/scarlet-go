@@ -44,6 +44,21 @@ func Test_Iterator_InsertBefore(t *testing.T) {
 	require.Nil(t, itr.next)
 }
 
+func Test_Iterator_InsertAfter(t *testing.T) {
+
+	a, b, c, _ := dummyNodes()
+	itr := setupIterator(a, c)
+	itr.Next()
+
+	itr.InsertAfter(b.data)
+	b.prev = a
+	b.next = c
+
+	require.Nil(t, itr.prev)
+	require.Equal(t, a, itr.curr)
+	require.Equal(t, b, itr.next)
+}
+
 /*
 func Test_Iterator_2_1(t *testing.T) {
 
