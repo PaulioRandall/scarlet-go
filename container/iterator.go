@@ -91,8 +91,17 @@ func (it *Iterator) InsertBefore(l token.Lexeme) {
 		data: l,
 	}
 
-	it.con.insertBefore(it.curr, n)
-	it.jumpTo(it.curr)
+	if it.curr != nil {
+		it.con.insertBefore(it.curr, n)
+		it.jumpTo(it.curr)
+
+	} else if it.prev != nil {
+		it.con.insertAfter(it.prev, n)
+		it.jumpToStart()
+
+	} else {
+		it.con.prepend(n)
+	}
 }
 
 func (it *Iterator) InsertAfter(l token.Lexeme) {
@@ -101,8 +110,17 @@ func (it *Iterator) InsertAfter(l token.Lexeme) {
 		data: l,
 	}
 
-	it.con.insertAfter(it.curr, n)
-	it.jumpTo(it.curr)
+	if it.curr != nil {
+		it.con.insertAfter(it.curr, n)
+		it.jumpTo(it.curr)
+
+	} else if it.next != nil {
+		it.con.insertBefore(it.next, n)
+		it.jumpToEnd()
+
+	} else {
+		it.con.append(n)
+	}
 }
 
 /*
@@ -165,6 +183,18 @@ func (it *Iterator) refresh() {
 	}
 }
 */
+
+func (it *Iterator) jumpToStart() {
+	it.prev = nil
+	it.curr = nil
+	it.next = it.con.head
+}
+
+func (it *Iterator) jumpToEnd() {
+	it.prev = it.con.tail
+	it.curr = nil
+	it.next = nil
+}
 
 func (it *Iterator) jumpTo(n *node) {
 	it.prev = n.prev

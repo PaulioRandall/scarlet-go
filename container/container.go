@@ -122,8 +122,7 @@ func (c *Container) insertBefore(ref, n *node) {
 		unlink(prev, ref)
 	}
 
-	link(prev, n)
-	link(n, ref)
+	chain(prev, n, ref)
 	c.inserted(n)
 }
 
@@ -136,8 +135,7 @@ func (c *Container) insertAfter(ref, n *node) {
 		unlink(ref, next)
 	}
 
-	link(ref, n)
-	link(n, next)
+	chain(ref, n, next)
 	c.inserted(n)
 }
 

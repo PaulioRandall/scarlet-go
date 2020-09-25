@@ -14,14 +14,6 @@ func (n *node) unlink() {
 	unlinkAll(n.prev, n, n.next)
 }
 
-func (n *node) insertAfter(o *node) {
-	chain(n, o, n.next)
-}
-
-func (n *node) insertBefore(o *node) {
-	chain(n.prev, o, n)
-}
-
 func (n *node) remove() {
 	link(n.prev, n.next)
 	n.prev, n.next = nil, nil
