@@ -14,7 +14,6 @@ type View interface {
 	Prev() token.Lexeme
 	PeekPrev() token.Lexeme
 	PeekNext() token.Lexeme
-	Remove() token.Lexeme
 	String() string
 }
 
@@ -90,17 +89,24 @@ func (it *Iterator) Remove() token.Lexeme {
 	return l
 }
 
-/*
-func (it *Iterator) Prepend(lex *Lexeme) {
+func (it *Iterator) InsertBefore(l token.Lexeme) {
 
-	if it.curr == nil {
-		panic("Can't prepend to nil, curr is nil")
+	n := &node{
+		data: l,
 	}
 
-	it.con.insertBefore(it.curr, lex)
-	it.refresh()
+	if it.curr == nil {
+		panic("Can't insert before nothing")
+	}
+
+	if it.curr.prev != nil {
+		it.curr.prev.next = n
+	}
+
+	it.curr.prev = n
 }
 
+/*
 func (it *Iterator) Append(lex *Lexeme) {
 
 	if it.curr == nil {

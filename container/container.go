@@ -6,12 +6,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
-type node struct {
-	data token.Lexeme
-	next *node
-	prev *node
-}
-
 type Container struct {
 	size int
 	head *node

@@ -38,7 +38,7 @@ func dummyItr() (itr *Iterator, a, b, c, d *node) {
 	return
 }
 
-func Test_Iterator_remove(t *testing.T) {
+func Test_Iterator_Remove(t *testing.T) {
 
 	var (
 		l       token.Lexeme
@@ -60,6 +60,10 @@ func Test_Iterator_remove(t *testing.T) {
 	require.Equal(t, b.data, l)
 	require.Equal(t, c, a.next)
 	require.Equal(t, a, c.prev)
+}
+
+func Test_Iterator_InsertBefore(t *testing.T) {
+
 }
 
 /*
