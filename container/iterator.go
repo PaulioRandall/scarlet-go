@@ -1,6 +1,8 @@
 package container
 
 import (
+	"strings"
+
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -124,15 +126,6 @@ func (it *Iterator) InsertAfter(l token.Lexeme) {
 }
 
 /*
-func (it *Iterator) Append(lex *Lexeme) {
-
-	if it.curr == nil {
-		panic("Can't append to nil, curr is nil")
-	}
-
-	it.con.insertAfter(it.curr, lex)
-	it.refresh()
-}
 
 func (it *Iterator) JumpToPrev(f func(View) bool) bool {
 	for it.Prev() && !f(it) {
@@ -147,42 +140,29 @@ func (it *Iterator) JumpToNext(f func(View) bool) bool {
 
 	return !it.EOF()
 }
-
-func (it *Iterator) Restart() {
-	it.before = nil
-	it.curr = nil
-	it.after = it.con.head
-}
+*/
 
 func (it *Iterator) String() string {
 
-	sb := strings.Builder{}
-	write := func(pre string, lex *Lexeme) {
-		sb.WriteString(pre)
+	var sb strings.Builder
+	write := func(pre string, n *node) {
 
-		if lex == nil {
+		sb.WriteString(pre)
+		if n == nil {
 			sb.WriteString("---")
 		} else {
-			sb.WriteString(lex.String())
+			sb.WriteString(n.data.String())
 		}
 
 		sb.WriteRune('\n')
 	}
 
-	write("Behind: ", it.before)
-	write("Curr  : ", it.curr)
-	write("After : ", it.after)
+	write("Prev: ", it.prev)
+	write("Curr: ", it.curr)
+	write("Next: ", it.next)
 
 	return sb.String()
 }
-
-func (it *Iterator) refresh() {
-	if it.curr != nil {
-		it.before = it.curr.prev
-		it.after = it.curr.next
-	}
-}
-*/
 
 func (it *Iterator) jumpToStart() {
 	it.prev = nil
