@@ -106,31 +106,13 @@ func (c *Container) pop() *node {
 }
 
 func (c *Container) prepend(n *node) {
-
-	if c.size == 0 {
-		c.head = n
-		c.tail = n
-		c.size = 1
-		return
-	}
-
 	link(n, c.head)
-	c.head = n
-	c.size++
+	c.inserted(n)
 }
 
 func (c *Container) append(n *node) {
-
-	if c.size == 0 {
-		c.head = n
-		c.tail = n
-		c.size = 1
-		return
-	}
-
 	link(c.tail, n)
-	c.tail = n
-	c.size++
+	c.inserted(n)
 }
 
 func (c *Container) removing(n *node) {
@@ -144,4 +126,24 @@ func (c *Container) removing(n *node) {
 	}
 
 	c.size--
+}
+
+func (c *Container) inserted(n *node) {
+
+	if c.size == 0 {
+		c.head = n
+		c.tail = n
+		c.size = 1
+		return
+	}
+
+	if n.next == c.head {
+		c.head = n
+	}
+
+	if n.prev == c.tail {
+		c.tail = n
+	}
+
+	c.size++
 }

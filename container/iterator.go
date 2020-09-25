@@ -1,8 +1,6 @@
 package container
 
 import (
-	//"strings"
-
 	"github.com/PaulioRandall/scarlet-go/token"
 )
 
@@ -12,12 +10,12 @@ type View interface {
 	Next() token.Lexeme
 	Curr() token.Lexeme
 	Prev() token.Lexeme
-	PeekPrev() token.Lexeme
-	PeekNext() token.Lexeme
+	LookAhead() token.Lexeme
+	LookBehind() token.Lexeme
 	String() string
 }
 
-type Iterator struct {
+type Iterator struct { // TODO: Should be private?
 	con  *Container
 	prev *node
 	curr *node
@@ -42,15 +40,7 @@ func (it *Iterator) Next() token.Lexeme {
 		panic("End of lexeme iterator breached")
 	}
 
-	it.prev = it.curr
-	it.curr = it.next
-
-	if it.curr == nil {
-		it.next = nil
-	} else {
-		it.next = it.next.next
-	}
-
+	it.jumpTo(it.next)
 	return it.curr.data
 }
 
@@ -64,26 +54,18 @@ func (it *Iterator) Prev() token.Lexeme {
 		panic("Start of lexeme iterator breached")
 	}
 
-	it.next = it.curr
-	it.curr = it.prev
-
-	if it.prev == nil {
-		it.prev = nil
-	} else {
-		it.prev = it.prev.prev
-	}
-
+	it.jumpTo(it.prev)
 	return it.curr.data
 }
 
-func (it *Iterator) PeekNext() token.Lexeme {
+func (it *Iterator) LookAhead() token.Lexeme {
 	if it.next == nil {
 		return token.Lexeme{}
 	}
 	return it.curr.next.data
 }
 
-func (it *Iterator) PeekPrev() token.Lexeme {
+func (it *Iterator) LookBehind() token.Lexeme {
 	if it.prev == nil {
 		return token.Lexeme{}
 	}
@@ -105,7 +87,6 @@ func (it *Iterator) Remove() token.Lexeme {
 	return n.data
 }
 
-/*
 func (it *Iterator) InsertBefore(l token.Lexeme) {
 
 	n := &node{
@@ -118,7 +99,9 @@ func (it *Iterator) InsertBefore(l token.Lexeme) {
 
 	link(it.prev, n)
 	link(n, it.curr)
-	refresh(n)
+	it.con.inserted(n)
+
+	it.jumpTo(it.curr)
 }
 
 /*
@@ -181,3 +164,9 @@ func (it *Iterator) refresh() {
 	}
 }
 */
+
+func (it *Iterator) jumpTo(n *node) {
+	it.prev = n.prev
+	it.curr = n
+	it.next = n.next
+}

@@ -3,7 +3,7 @@ package container
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/token"
+	//	"github.com/PaulioRandall/scarlet-go/token"
 
 	"github.com/stretchr/testify/require"
 )
@@ -13,30 +13,27 @@ func setupIterator(nodes ...*node) *Iterator {
 	return con.Iterator()
 }
 
-func Test_Iterator_Remove(t *testing.T) {
+func Test_Iterator_Remove_1(t *testing.T) {
 
-	var (
-		l       token.Lexeme
-		a, b, c *node
-		itr     *Iterator
-	)
-
-	a, b, _, _ = dummyNodes()
-	itr = setupIterator(a, b)
+	a, b, _, _ := dummyNodes()
+	itr := setupIterator(a, b)
 	itr.Next()
 
-	l = itr.Remove()
+	l := itr.Remove()
 	require.Equal(t, a.data, l)
 	require.Nil(t, b.prev)
 	require.Equal(t, b, itr.con.head)
 	require.Equal(t, b, itr.con.tail)
+}
 
-	a, b, c, _ = dummyNodes()
-	itr = setupIterator(a, b, c)
+func Test_Iterator_Remove_2(t *testing.T) {
+
+	a, b, c, _ := dummyNodes()
+	itr := setupIterator(a, b, c)
 	itr.Next()
 	itr.Next()
 
-	l = itr.Remove()
+	l := itr.Remove()
 	require.Equal(t, b.data, l)
 	require.Equal(t, a, c.prev)
 	require.Equal(t, c, a.next)
@@ -44,8 +41,36 @@ func Test_Iterator_Remove(t *testing.T) {
 	require.Equal(t, c, itr.con.tail)
 }
 
-func Test_Iterator_InsertBefore(t *testing.T) {
+func Test_Iterator_InsertBefore_1(t *testing.T) {
 
+	a, b, c, _ := dummyNodes()
+	itr := setupIterator(b, c)
+	itr.Next()
+
+	itr.InsertBefore(a.data)
+	a.next = b
+
+	require.Equal(t, a, itr.prev)
+	require.Equal(t, b, itr.curr)
+	require.Equal(t, c, itr.next)
+	require.Equal(t, a, itr.con.head)
+}
+
+func Test_Iterator_InsertBefore_2(t *testing.T) {
+
+	a, b, c, _ := dummyNodes()
+	itr := setupIterator(a, c)
+	itr.Next()
+	itr.Next()
+
+	itr.InsertBefore(b.data)
+	b.prev = a
+	b.next = c
+
+	require.Equal(t, b, itr.prev)
+	require.Equal(t, c, itr.curr)
+	require.Nil(t, itr.next)
+	require.Equal(t, a, itr.con.head)
 }
 
 /*
