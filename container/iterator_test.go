@@ -8,32 +8,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func dummyNodes() (a, b, c, d *node) {
-
-	a = &node{}
-	b = &node{}
-	c = &node{}
-	d = &node{}
-
-	a.data = token.New("true", token.BOOL, 0, 0)
-	a.next = b
-
-	b.prev = a
-	b.data = token.New("1", token.NUMBER, 0, 4)
-	b.next = c
-
-	c.prev = b
-	c.data = token.New("abc", token.STRING, 0, 5)
-	c.next = d
-
-	d.prev = c
-	d.data = token.New("i", token.IDENT, 0, 8)
-
-	return
-}
-
 func dummyItr() (itr *Iterator, a, b, c, d *node) {
 	a, b, c, d = dummyNodes()
+	linkAll(a, b, c, d)
 	itr = &Iterator{}
 	return
 }

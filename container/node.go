@@ -19,6 +19,9 @@ func (n *node) unlink() {
 	if n.next != nil {
 		n.next.prev = nil
 	}
+
+	n.next = nil
+	n.prev = nil
 }
 
 func (n *node) remove() {
@@ -30,6 +33,9 @@ func (n *node) remove() {
 	if n.next != nil {
 		n.next.prev = n.prev
 	}
+
+	n.next = nil
+	n.prev = nil
 }
 
 func link(a, b *node) {
@@ -52,6 +58,7 @@ func linkAll(nodes ...*node) (head, tail *node) {
 		}
 
 		link(tail, n)
+		tail = n
 	}
 
 	return head, tail

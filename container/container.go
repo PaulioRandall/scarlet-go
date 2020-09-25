@@ -16,19 +16,6 @@ func New() *Container {
 	return &Container{}
 }
 
-/*
-func (c *Container) Iterator() *Iterator {
-	return &Iterator{
-		con:   c,
-		after: c.head,
-	}
-}
-
-func (c *Container) AsContainer() *Container {
-	return c
-}
-*/
-
 func (c *Container) Empty() bool {
 	return c.size == 0
 }
@@ -89,30 +76,26 @@ func (c *Container) headNode() token.Lexeme {
 
 func (c *Container) pop() token.Lexeme {
 
-	var r token.Lexeme
-
 	if c.size == 0 {
-		return r
+		return token.Lexeme{}
 	}
 
-	r = c.head.data
+	n := c.head
 	c.head = c.head.next
+	n.remove()
 	c.size--
 
 	if c.size == 0 {
 		c.tail = nil
-	} else {
-		c.head.prev = nil
 	}
 
-	return r
+	return n.data
 }
 
 func (c *Container) prepend(l token.Lexeme) {
 
 	n := &node{
 		data: l,
-		next: c.head,
 	}
 
 	if c.size == 0 {
@@ -122,7 +105,7 @@ func (c *Container) prepend(l token.Lexeme) {
 		return
 	}
 
-	c.head.prev = n
+	link(n, c.head)
 	c.head = n
 	c.size++
 }
@@ -131,7 +114,6 @@ func (c *Container) append(l token.Lexeme) {
 
 	n := &node{
 		data: l,
-		prev: c.tail,
 	}
 
 	if c.size == 0 {
@@ -141,7 +123,7 @@ func (c *Container) append(l token.Lexeme) {
 		return
 	}
 
-	c.tail.next = n
+	link(c.tail, n)
 	c.tail = n
 	c.size++
 }
