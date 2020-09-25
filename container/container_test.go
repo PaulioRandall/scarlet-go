@@ -1,4 +1,4 @@
-package container2
+package container
 
 import (
 	"testing"
@@ -13,19 +13,6 @@ func randomLexemes() (a, b, c, d token.Lexeme) {
 	b = token.New("1", token.NUMBER, 0, 4)
 	c = token.New("abc", token.STRING, 0, 5)
 	d = token.New("i", token.IDENT, 0, 8)
-	return
-}
-
-func setup() (con *Container, a, b, c, d token.Lexeme) {
-
-	a, b, c, d = randomLexemes()
-	con = &Container{}
-
-	con.append(a)
-	con.append(b)
-	con.append(c)
-	con.append(d)
-
 	return
 }
 
@@ -84,8 +71,14 @@ func Test_Container_append(t *testing.T) {
 
 func Test_Container_pop(t *testing.T) {
 
-	con, a, b, c, d := setup()
 	var l token.Lexeme
+	a, b, c, d := randomLexemes()
+	con := &Container{}
+
+	con.append(a)
+	con.append(b)
+	con.append(c)
+	con.append(d)
 
 	l = con.pop()
 	require.Equal(t, a, l)
