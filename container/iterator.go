@@ -37,7 +37,7 @@ func (it *Iterator) HasPrev() bool {
 func (it *Iterator) Next() token.Lexeme {
 
 	if it.next == nil {
-		panic("End of lexeme iterator breached")
+		panic("Can't move beyond the end of a lexeme iterator")
 	}
 
 	it.jumpTo(it.next)
@@ -51,7 +51,7 @@ func (it *Iterator) Curr() token.Lexeme {
 func (it *Iterator) Prev() token.Lexeme {
 
 	if it.prev == nil {
-		panic("Start of lexeme iterator breached")
+		panic("Can't move beyond the start of a lexeme iterator")
 	}
 
 	it.jumpTo(it.prev)
@@ -80,9 +80,7 @@ func (it *Iterator) Remove() token.Lexeme {
 
 	n := it.curr
 	it.curr = nil
-
-	it.con.removing(n)
-	n.remove()
+	it.con.remove(n)
 
 	return n.data
 }
@@ -93,14 +91,7 @@ func (it *Iterator) InsertBefore(l token.Lexeme) {
 		data: l,
 	}
 
-	if it.curr != nil {
-		unlink(it.prev, it.curr)
-	}
-
-	link(it.prev, n)
-	link(n, it.curr)
-	it.con.inserted(n)
-
+	it.con.insertBefore(it.curr, n)
 	it.jumpTo(it.curr)
 }
 

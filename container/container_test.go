@@ -90,3 +90,64 @@ func Test_Container_pop(t *testing.T) {
 	require.Nil(t, con.tail)
 	require.Equal(t, 0, con.size)
 }
+
+func Test_Container_remove_1(t *testing.T) {
+
+	a, b, _, _ := dummyNodes()
+	con := setupContainer(a, b)
+
+	con.remove(a)
+	require.Nil(t, b.prev)
+	require.Equal(t, b, con.head)
+	require.Equal(t, b, con.tail)
+	require.Equal(t, 1, con.size)
+}
+
+func Test_Container_remove_2(t *testing.T) {
+
+	a, b, _, _ := dummyNodes()
+	con := setupContainer(a, b)
+
+	con.remove(b)
+	require.Nil(t, a.next)
+	require.Equal(t, a, con.head)
+	require.Equal(t, a, con.tail)
+	require.Equal(t, 1, con.size)
+}
+
+func Test_Container_remove_3(t *testing.T) {
+
+	a, b, c, _ := dummyNodes()
+	con := setupContainer(a, b, c)
+
+	con.remove(b)
+	require.Equal(t, a, c.prev)
+	require.Equal(t, c, a.next)
+	require.Equal(t, a, con.head)
+	require.Equal(t, c, con.tail)
+	require.Equal(t, 2, con.size)
+}
+
+func Test_Container_InsertBefore_1(t *testing.T) {
+
+	a, b, _, _ := dummyNodes()
+	con := setupContainer(b)
+
+	con.insertBefore(con.head, a)
+	require.Equal(t, a, con.head)
+	require.Equal(t, b, con.tail)
+}
+
+func Test_Container_InsertBefore_2(t *testing.T) {
+
+	a, b, c, _ := dummyNodes()
+	con := setupContainer(a, c)
+
+	con.insertBefore(c, b)
+	require.Equal(t, a, con.head)
+	require.Equal(t, a, b.prev)
+	require.Equal(t, b, a.next)
+	require.Equal(t, b, c.prev)
+	require.Equal(t, c, b.next)
+	require.Equal(t, c, con.tail)
+}

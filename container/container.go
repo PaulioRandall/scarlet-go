@@ -99,9 +99,7 @@ func (c *Container) pop() *node {
 	}
 
 	n := c.head
-	c.removing(n)
-	n.remove()
-
+	c.remove(n)
 	return n
 }
 
@@ -115,7 +113,21 @@ func (c *Container) append(n *node) {
 	c.inserted(n)
 }
 
-func (c *Container) removing(n *node) {
+func (c *Container) insertBefore(ref, n *node) {
+
+	var prev *node
+
+	if ref != nil {
+		prev = ref.prev
+		unlink(prev, ref)
+	}
+
+	link(prev, n)
+	link(n, ref)
+	c.inserted(n)
+}
+
+func (c *Container) remove(n *node) {
 
 	if n == c.head {
 		c.head = n.next
@@ -126,6 +138,7 @@ func (c *Container) removing(n *node) {
 	}
 
 	c.size--
+	n.remove()
 }
 
 func (c *Container) inserted(n *node) {
