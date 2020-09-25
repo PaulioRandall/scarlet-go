@@ -16,6 +16,12 @@ func New() *Container {
 	return &Container{}
 }
 
+func (c *Container) Iterator() *Iterator {
+	return &Iterator{
+		next: c.head,
+	}
+}
+
 func (c *Container) Empty() bool {
 	return c.size == 0
 }

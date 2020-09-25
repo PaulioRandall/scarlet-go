@@ -11,46 +11,51 @@ type node struct {
 }
 
 func (n *node) unlink() {
+	unlinkAll(n.prev, n, n.next)
+}
 
-	if n.prev != nil {
-		n.prev.next = nil
-	}
+func (n *node) insertAfter(o *node) {
+	chain(n, o, n.next)
+}
 
-	if n.next != nil {
-		n.next.prev = nil
-	}
-
-	n.next = nil
-	n.prev = nil
+func (n *node) insertBefore(o *node) {
+	chain(n.prev, o, n)
 }
 
 func (n *node) remove() {
-
-	if n.prev != nil {
-		n.prev.next = n.next
-	}
-
-	if n.next != nil {
-		n.next.prev = n.prev
-	}
-
-	n.next = nil
-	n.prev = nil
+	link(n.prev, n.next)
+	n.prev, n.next = nil, nil
 }
 
 func link(a, b *node) {
-	a.next = b
-	b.prev = a
+
+	if a != nil {
+		a.next = b
+	}
+
+	if b != nil {
+		b.prev = a
+	}
 }
 
 func unlink(a, b *node) {
-	a.next = nil
-	b.prev = nil
+
+	if a != nil {
+		a.next = nil
+	}
+
+	if b != nil {
+		b.prev = nil
+	}
 }
 
-func linkAll(nodes ...*node) (head, tail *node) {
+func chain(nodes ...*node) (head, tail *node) {
 
 	for _, n := range nodes {
+
+		if n == nil {
+			continue
+		}
 
 		if head == nil {
 			head, tail = n, n
@@ -65,7 +70,21 @@ func linkAll(nodes ...*node) (head, tail *node) {
 }
 
 func unlinkAll(nodes ...*node) {
+
+	var prev *node
+
 	for _, n := range nodes {
-		n.unlink()
+
+		if n == nil {
+			continue
+		}
+
+		if prev == nil {
+			prev = n
+			continue
+		}
+
+		unlink(prev, n)
+		prev = n
 	}
 }

@@ -18,24 +18,34 @@ type View interface {
 }
 
 type Iterator struct {
+	prev *node
 	curr *node
+	next *node
 }
 
 func (it *Iterator) HasNext() bool {
-	return it.curr != nil && it.curr.next != nil
+	return it.next != nil
 }
 
 func (it *Iterator) HasPrev() bool {
-	return it.curr != nil && it.curr.prev != nil
+	return it.prev != nil
 }
 
 func (it *Iterator) Next() token.Lexeme {
 
-	if it.curr == nil || it.curr.next == nil {
-		return token.Lexeme{}
+	if it.next == nil {
+		panic("End of lexeme iterator breached")
 	}
 
-	it.curr = it.curr.next
+	it.prev = it.curr
+	it.curr = it.next
+
+	if it.curr == nil {
+		it.next = nil
+	} else {
+		it.next = it.next.next
+	}
+
 	return it.curr.data
 }
 
@@ -45,24 +55,31 @@ func (it *Iterator) Curr() token.Lexeme {
 
 func (it *Iterator) Prev() token.Lexeme {
 
-	if it.curr == nil || it.curr.prev == nil {
-		return token.Lexeme{}
+	if it.prev == nil {
+		panic("Start of lexeme iterator breached")
 	}
 
-	it.curr = it.curr.prev
+	it.next = it.curr
+	it.curr = it.prev
+
+	if it.prev == nil {
+		it.prev = nil
+	} else {
+		it.prev = it.prev.prev
+	}
+
 	return it.curr.data
 }
 
 func (it *Iterator) PeekNext() token.Lexeme {
-	if it.curr == nil || it.curr.next == nil {
+	if it.next == nil {
 		return token.Lexeme{}
 	}
 	return it.curr.next.data
 }
 
 func (it *Iterator) PeekPrev() token.Lexeme {
-
-	if it.curr == nil || it.curr.prev == nil {
+	if it.prev == nil {
 		return token.Lexeme{}
 	}
 	return it.curr.prev.data
@@ -74,36 +91,27 @@ func (it *Iterator) Remove() token.Lexeme {
 		return token.Lexeme{}
 	}
 
-	l := it.curr.data
-	next := it.curr.next
-	prev := it.curr.prev
+	n := it.curr
+	it.curr.remove()
+	it.curr = nil
 
-	if prev != nil {
-		prev.next = next
-	}
-
-	if next != nil {
-		next.prev = prev
-	}
-
-	return l
+	return n.data
 }
 
+/*
 func (it *Iterator) InsertBefore(l token.Lexeme) {
 
 	n := &node{
 		data: l,
 	}
 
-	if it.curr == nil {
-		panic("Can't insert before nothing")
+	if it.curr != nil {
+		unlink(it.prev, it.curr)
 	}
 
-	if it.curr.prev != nil {
-		it.curr.prev.next = n
-	}
-
-	it.curr.prev = n
+	link(it.prev, n)
+	link(n, it.curr)
+	refresh(n)
 }
 
 /*

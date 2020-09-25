@@ -10,7 +10,7 @@ import (
 
 func dummyItr() (itr *Iterator, a, b, c, d *node) {
 	a, b, c, d = dummyNodes()
-	linkAll(a, b, c, d)
+	chain(a, b, c, d)
 	itr = &Iterator{}
 	return
 }
