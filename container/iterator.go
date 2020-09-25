@@ -9,9 +9,7 @@ import (
 type View interface {
 	HasNext() bool
 	HasPrev() bool
-	Next() token.Lexeme
-	Curr() token.Lexeme
-	Prev() token.Lexeme
+	Item() token.Lexeme
 	LookAhead() token.Lexeme
 	LookBehind() token.Lexeme
 	String() string
@@ -46,7 +44,10 @@ func (it *Iterator) Next() token.Lexeme {
 	return it.curr.data
 }
 
-func (it *Iterator) Curr() token.Lexeme {
+func (it *Iterator) Item() token.Lexeme {
+	if it.curr == nil {
+		return token.Lexeme{}
+	}
 	return it.curr.data
 }
 
@@ -64,14 +65,14 @@ func (it *Iterator) LookAhead() token.Lexeme {
 	if it.next == nil {
 		return token.Lexeme{}
 	}
-	return it.curr.next.data
+	return it.next.data
 }
 
 func (it *Iterator) LookBehind() token.Lexeme {
 	if it.prev == nil {
 		return token.Lexeme{}
 	}
-	return it.curr.prev.data
+	return it.prev.data
 }
 
 func (it *Iterator) Remove() token.Lexeme {
@@ -125,22 +126,31 @@ func (it *Iterator) InsertAfter(l token.Lexeme) {
 	}
 }
 
-/*
-
 func (it *Iterator) JumpToPrev(f func(View) bool) bool {
-	for it.Prev() && !f(it) {
+
+	for n := it.prev; n != nil; n = n.prev {
+		it.jumpTo(n)
+		if f(it) {
+			return true
+		}
 	}
 
-	return !it.SOF()
+	it.jumpToStart()
+	return false
 }
 
 func (it *Iterator) JumpToNext(f func(View) bool) bool {
-	for it.Next() && !f(it) {
+
+	for n := it.next; n != nil; n = n.next {
+		it.jumpTo(n)
+		if f(it) {
+			return true
+		}
 	}
 
-	return !it.EOF()
+	it.jumpToEnd()
+	return false
 }
-*/
 
 func (it *Iterator) String() string {
 
