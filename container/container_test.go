@@ -3,96 +3,85 @@ package container
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/token"
-
 	"github.com/stretchr/testify/require"
 )
 
-func randomLexemes() (a, b, c, d token.Lexeme) {
-	a = token.New("true", token.BOOL, 0, 0)
-	b = token.New("1", token.NUMBER, 0, 4)
-	c = token.New("abc", token.STRING, 0, 5)
-	d = token.New("i", token.IDENT, 0, 8)
-	return
-}
-
-func requireNodes(t *testing.T, con *Container, data ...token.Lexeme) {
-
-	var prev *node
-	var next *node = con.head
-
-	for _, l := range data {
-		require.NotNil(t, next)
-		require.Equal(t, l, next.data)
-		require.Equal(t, prev, next.prev)
-		prev, next = next, next.next
-	}
-
-	require.Equal(t, prev, con.tail)
-	require.Nil(t, next)
-	require.Equal(t, len(data), con.size)
-}
-
 func Test_Container_prepend(t *testing.T) {
 
-	a, b, c, d := randomLexemes()
+	a, b, c, d := dummyNodes()
 	con := &Container{}
 
 	con.prepend(d)
-	requireNodes(t, con, d)
+	require.Equal(t, d, con.head)
+	require.Equal(t, d, con.tail)
 
 	con.prepend(c)
-	requireNodes(t, con, c, d)
+	require.Equal(t, c, con.head)
+	require.Equal(t, d, con.tail)
 
 	con.prepend(b)
-	requireNodes(t, con, b, c, d)
+	require.Equal(t, b, con.head)
+	require.Equal(t, d, con.tail)
 
 	con.prepend(a)
-	requireNodes(t, con, a, b, c, d)
+	require.Equal(t, a, con.head)
+	require.Equal(t, d, con.tail)
 }
 
 func Test_Container_append(t *testing.T) {
 
-	a, b, c, d := randomLexemes()
+	a, b, c, d := dummyNodes()
 	con := &Container{}
 
 	con.append(a)
-	requireNodes(t, con, a)
+	require.Equal(t, a, con.head)
+	require.Equal(t, a, con.tail)
 
 	con.append(b)
-	requireNodes(t, con, a, b)
+	require.Equal(t, a, con.head)
+	require.Equal(t, b, con.tail)
 
 	con.append(c)
-	requireNodes(t, con, a, b, c)
+	require.Equal(t, a, con.head)
+	require.Equal(t, c, con.tail)
 
 	con.append(d)
-	requireNodes(t, con, a, b, c, d)
+	require.Equal(t, a, con.head)
+	require.Equal(t, d, con.tail)
 }
 
 func Test_Container_pop(t *testing.T) {
 
-	var l token.Lexeme
-	a, b, c, d := randomLexemes()
-	con := &Container{}
+	var n *node
+	a, b, c, d := dummyNodes()
+	chain(a, b, c, d)
+	con := &Container{
+		head: a,
+		tail: d,
+		size: 4,
+	}
 
-	con.append(a)
-	con.append(b)
-	con.append(c)
-	con.append(d)
+	n = con.pop()
+	require.Equal(t, a, n)
+	require.Equal(t, b, con.head)
+	require.Equal(t, d, con.tail)
+	require.Equal(t, 3, con.size)
 
-	l = con.pop()
-	require.Equal(t, a, l)
-	requireNodes(t, con, b, c, d)
+	n = con.pop()
+	require.Equal(t, b, n)
+	require.Equal(t, c, con.head)
+	require.Equal(t, d, con.tail)
+	require.Equal(t, 2, con.size)
 
-	l = con.pop()
-	require.Equal(t, b, l)
-	requireNodes(t, con, c, d)
+	n = con.pop()
+	require.Equal(t, c, n)
+	require.Equal(t, d, con.head)
+	require.Equal(t, d, con.tail)
+	require.Equal(t, 1, con.size)
 
-	l = con.pop()
-	require.Equal(t, c, l)
-	requireNodes(t, con, d)
-
-	l = con.pop()
-	require.Equal(t, d, l)
-	requireNodes(t, con)
+	n = con.pop()
+	require.Equal(t, d, n)
+	require.Nil(t, con.head)
+	require.Nil(t, con.tail)
+	require.Equal(t, 0, con.size)
 }

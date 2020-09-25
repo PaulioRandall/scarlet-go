@@ -29,9 +29,28 @@ func dummyNodes() (a, b, c, d *node) {
 	return
 }
 
-func TestLinkAll(t *testing.T) {
+func TestChain(t *testing.T) {
 	a, b, c, d := dummyNodes()
 	head, tail := chain(a, b, c, d)
 	require.Equal(t, a, head)
 	require.Equal(t, d, tail)
+}
+
+func TestUnlinkAll(t *testing.T) {
+
+	a, b, c, d := dummyNodes()
+	a.next = b
+	b.next = c
+	c.next = d
+	b.prev = a
+	c.prev = b
+	d.prev = c
+
+	unlinkAll(a, b, c)
+	require.Nil(t, a.prev)
+	require.Nil(t, a.next)
+	require.Nil(t, b.prev)
+	require.Nil(t, b.next)
+	require.Nil(t, c.prev)
+	require.Equal(t, d, c.next)
 }

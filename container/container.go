@@ -39,11 +39,13 @@ func (c *Container) Top() token.Lexeme {
 }
 
 func (c *Container) Push(l token.Lexeme) {
-	c.prepend(l)
+	c.prepend(&node{
+		data: l,
+	})
 }
 
 func (c *Container) Pop() token.Lexeme {
-	return c.pop()
+	return c.popLex()
 }
 
 func (c *Container) Head() token.Lexeme {
@@ -51,11 +53,13 @@ func (c *Container) Head() token.Lexeme {
 }
 
 func (c *Container) Put(l token.Lexeme) {
-	c.append(l)
+	c.append(&node{
+		data: l,
+	})
 }
 
 func (c *Container) Take() token.Lexeme {
-	return c.pop()
+	return c.popLex()
 }
 
 func (c *Container) String() string {
@@ -80,10 +84,17 @@ func (c *Container) headNode() token.Lexeme {
 	return c.head.data
 }
 
-func (c *Container) pop() token.Lexeme {
+func (c *Container) popLex() token.Lexeme {
+	if n := c.pop(); n != nil {
+		return n.data
+	}
+	return token.Lexeme{}
+}
+
+func (c *Container) pop() *node {
 
 	if c.size == 0 {
-		return token.Lexeme{}
+		return nil
 	}
 
 	n := c.head
@@ -95,14 +106,10 @@ func (c *Container) pop() token.Lexeme {
 		c.tail = nil
 	}
 
-	return n.data
+	return n
 }
 
-func (c *Container) prepend(l token.Lexeme) {
-
-	n := &node{
-		data: l,
-	}
+func (c *Container) prepend(n *node) {
 
 	if c.size == 0 {
 		c.head = n
@@ -116,11 +123,7 @@ func (c *Container) prepend(l token.Lexeme) {
 	c.size++
 }
 
-func (c *Container) append(l token.Lexeme) {
-
-	n := &node{
-		data: l,
-	}
+func (c *Container) append(n *node) {
 
 	if c.size == 0 {
 		c.head = n
