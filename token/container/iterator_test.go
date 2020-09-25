@@ -3,7 +3,7 @@ package container
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 
 	"github.com/stretchr/testify/require"
 )
@@ -61,15 +61,15 @@ func Test_Iterator_InsertAfter(t *testing.T) {
 
 func dummyItrData() (a, b, c *node) {
 	a = &node{
-		data: token.New("true", token.BOOL, 0, 0),
+		data: lexeme.New("true", lexeme.BOOL, 0, 0),
 	}
 
 	b = &node{
-		data: token.New("1", token.NUMBER, 0, 4),
+		data: lexeme.New("1", lexeme.NUMBER, 0, 4),
 	}
 
 	c = &node{
-		data: token.New("abc", token.STRING, 0, 5),
+		data: lexeme.New("abc", lexeme.STRING, 0, 5),
 	}
 
 	return
@@ -81,13 +81,13 @@ func Test_Iterator_JumpToNext(t *testing.T) {
 	it := setupIterator(a, b, c)
 
 	it.JumpToNext(func(v View) bool {
-		return v.Item().Type() == token.NUMBER
+		return v.Item().Type() == lexeme.NUMBER
 	})
 	require.Equal(t, b.data, it.Item())
 	require.True(t, it.HasNext())
 
 	it.JumpToNext(func(v View) bool {
-		return v.Item().Type() == token.NUMBER
+		return v.Item().Type() == lexeme.NUMBER
 	})
 	require.False(t, it.HasNext())
 }
@@ -99,13 +99,13 @@ func Test_Iterator_JumpToPrev(t *testing.T) {
 	it.jumpToEnd()
 
 	it.JumpToPrev(func(v View) bool {
-		return v.Item().Type() == token.NUMBER
+		return v.Item().Type() == lexeme.NUMBER
 	})
 	require.Equal(t, b.data, it.Item())
 	require.True(t, it.HasPrev())
 
 	it.JumpToPrev(func(v View) bool {
-		return v.Item().Type() == token.NUMBER
+		return v.Item().Type() == lexeme.NUMBER
 	})
 	require.False(t, it.HasPrev())
 }

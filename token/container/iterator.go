@@ -3,15 +3,15 @@ package container
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 )
 
 type View interface {
 	HasNext() bool
 	HasPrev() bool
-	Item() token.Lexeme
-	LookAhead() token.Lexeme
-	LookBehind() token.Lexeme
+	Item() lexeme.Lexeme
+	LookAhead() lexeme.Lexeme
+	LookBehind() lexeme.Lexeme
 	String() string
 }
 
@@ -34,7 +34,7 @@ func (it *Iterator) HasPrev() bool {
 	return it.prev != nil
 }
 
-func (it *Iterator) Next() token.Lexeme {
+func (it *Iterator) Next() lexeme.Lexeme {
 
 	if it.next == nil {
 		panic("Can't move beyond the end of a lexeme iterator")
@@ -44,14 +44,14 @@ func (it *Iterator) Next() token.Lexeme {
 	return it.curr.data
 }
 
-func (it *Iterator) Item() token.Lexeme {
+func (it *Iterator) Item() lexeme.Lexeme {
 	if it.curr == nil {
-		return token.Lexeme{}
+		return lexeme.Lexeme{}
 	}
 	return it.curr.data
 }
 
-func (it *Iterator) Prev() token.Lexeme {
+func (it *Iterator) Prev() lexeme.Lexeme {
 
 	if it.prev == nil {
 		panic("Can't move beyond the start of a lexeme iterator")
@@ -61,24 +61,24 @@ func (it *Iterator) Prev() token.Lexeme {
 	return it.curr.data
 }
 
-func (it *Iterator) LookAhead() token.Lexeme {
+func (it *Iterator) LookAhead() lexeme.Lexeme {
 	if it.next == nil {
-		return token.Lexeme{}
+		return lexeme.Lexeme{}
 	}
 	return it.next.data
 }
 
-func (it *Iterator) LookBehind() token.Lexeme {
+func (it *Iterator) LookBehind() lexeme.Lexeme {
 	if it.prev == nil {
-		return token.Lexeme{}
+		return lexeme.Lexeme{}
 	}
 	return it.prev.data
 }
 
-func (it *Iterator) Remove() token.Lexeme {
+func (it *Iterator) Remove() lexeme.Lexeme {
 
 	if it.curr == nil {
-		return token.Lexeme{}
+		return lexeme.Lexeme{}
 	}
 
 	n := it.curr
@@ -88,7 +88,7 @@ func (it *Iterator) Remove() token.Lexeme {
 	return n.data
 }
 
-func (it *Iterator) InsertBefore(l token.Lexeme) {
+func (it *Iterator) InsertBefore(l lexeme.Lexeme) {
 
 	n := &node{
 		data: l,
@@ -107,7 +107,7 @@ func (it *Iterator) InsertBefore(l token.Lexeme) {
 	}
 }
 
-func (it *Iterator) InsertAfter(l token.Lexeme) {
+func (it *Iterator) InsertAfter(l lexeme.Lexeme) {
 
 	n := &node{
 		data: l,

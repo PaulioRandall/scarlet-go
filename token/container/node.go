@@ -1,11 +1,11 @@
 package container
 
 import (
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 )
 
 type node struct {
-	data token.Lexeme
+	data lexeme.Lexeme
 	next *node
 	prev *node
 }

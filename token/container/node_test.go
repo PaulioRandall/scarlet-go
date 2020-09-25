@@ -3,7 +3,7 @@ package container
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 
 	"github.com/stretchr/testify/require"
 )
@@ -11,19 +11,19 @@ import (
 func dummyNodes() (a, b, c, d *node) {
 
 	a = &node{
-		data: token.New("true", token.BOOL, 0, 0),
+		data: lexeme.New("true", lexeme.BOOL, 0, 0),
 	}
 
 	b = &node{
-		data: token.New("1", token.NUMBER, 0, 4),
+		data: lexeme.New("1", lexeme.NUMBER, 0, 4),
 	}
 
 	c = &node{
-		data: token.New("abc", token.STRING, 0, 5),
+		data: lexeme.New("abc", lexeme.STRING, 0, 5),
 	}
 
 	d = &node{
-		data: token.New("i", token.IDENT, 0, 8),
+		data: lexeme.New("i", lexeme.IDENT, 0, 8),
 	}
 
 	return

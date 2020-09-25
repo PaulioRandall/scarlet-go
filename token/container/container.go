@@ -3,7 +3,7 @@ package container
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/token"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 )
 
 type Container struct {
@@ -35,31 +35,31 @@ func (c *Container) Size() int {
 	return c.size
 }
 
-func (c *Container) Top() token.Lexeme {
+func (c *Container) Top() lexeme.Lexeme {
 	return c.headNode()
 }
 
-func (c *Container) Push(l token.Lexeme) {
+func (c *Container) Push(l lexeme.Lexeme) {
 	c.prepend(&node{
 		data: l,
 	})
 }
 
-func (c *Container) Pop() token.Lexeme {
+func (c *Container) Pop() lexeme.Lexeme {
 	return c.popLex()
 }
 
-func (c *Container) Head() token.Lexeme {
+func (c *Container) Head() lexeme.Lexeme {
 	return c.headNode()
 }
 
-func (c *Container) Put(l token.Lexeme) {
+func (c *Container) Put(l lexeme.Lexeme) {
 	c.append(&node{
 		data: l,
 	})
 }
 
-func (c *Container) Take() token.Lexeme {
+func (c *Container) Take() lexeme.Lexeme {
 	return c.popLex()
 }
 
@@ -78,18 +78,18 @@ func (c *Container) String() string {
 	return sb.String()
 }
 
-func (c *Container) headNode() token.Lexeme {
+func (c *Container) headNode() lexeme.Lexeme {
 	if c.head == nil {
-		return token.Lexeme{}
+		return lexeme.Lexeme{}
 	}
 	return c.head.data
 }
 
-func (c *Container) popLex() token.Lexeme {
+func (c *Container) popLex() lexeme.Lexeme {
 	if n := c.pop(); n != nil {
 		return n.data
 	}
-	return token.Lexeme{}
+	return lexeme.Lexeme{}
 }
 
 func (c *Container) pop() *node {
