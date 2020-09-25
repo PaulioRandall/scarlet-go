@@ -18,9 +18,14 @@ type View interface {
 }
 
 type Iterator struct {
+	con  *Container
 	prev *node
 	curr *node
 	next *node
+}
+
+func (it *Iterator) Container() *Container {
+	return it.con
 }
 
 func (it *Iterator) HasNext() bool {
@@ -92,8 +97,10 @@ func (it *Iterator) Remove() token.Lexeme {
 	}
 
 	n := it.curr
-	it.curr.remove()
 	it.curr = nil
+
+	it.con.removing(n)
+	n.remove()
 
 	return n.data
 }

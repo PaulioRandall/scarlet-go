@@ -31,9 +31,10 @@ func dummyNodes() (a, b, c, d *node) {
 
 func TestChain(t *testing.T) {
 	a, b, c, d := dummyNodes()
-	head, tail := chain(a, b, c, d)
+	head, tail, size := chain(a, b, c, d)
 	require.Equal(t, a, head)
 	require.Equal(t, d, tail)
+	require.Equal(t, 4, size)
 }
 
 func TestUnlinkAll(t *testing.T) {

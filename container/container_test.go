@@ -6,6 +6,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func setupContainer(nodes ...*node) *Container {
+	head, tail, size := chain(nodes...)
+	con := &Container{
+		head: head,
+		tail: tail,
+		size: size,
+	}
+	return con
+}
+
 func Test_Container_prepend(t *testing.T) {
 
 	a, b, c, d := dummyNodes()
@@ -54,12 +64,7 @@ func Test_Container_pop(t *testing.T) {
 
 	var n *node
 	a, b, c, d := dummyNodes()
-	chain(a, b, c, d)
-	con := &Container{
-		head: a,
-		tail: d,
-		size: 4,
-	}
+	con := setupContainer(a, b, c, d)
 
 	n = con.pop()
 	require.Equal(t, a, n)

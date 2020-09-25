@@ -49,13 +49,15 @@ func unlink(a, b *node) {
 	}
 }
 
-func chain(nodes ...*node) (head, tail *node) {
+func chain(nodes ...*node) (head, tail *node, size int) {
 
 	for _, n := range nodes {
 
 		if n == nil {
 			continue
 		}
+
+		size++
 
 		if head == nil {
 			head, tail = n, n
@@ -66,7 +68,7 @@ func chain(nodes ...*node) (head, tail *node) {
 		tail = n
 	}
 
-	return head, tail
+	return
 }
 
 func unlinkAll(nodes ...*node) {

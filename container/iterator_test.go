@@ -8,11 +8,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func dummyItr() (itr *Iterator, a, b, c, d *node) {
-	a, b, c, d = dummyNodes()
-	chain(a, b, c, d)
-	itr = &Iterator{}
-	return
+func setupIterator(nodes ...*node) *Iterator {
+	con := setupContainer(nodes...)
+	return con.Iterator()
 }
 
 func Test_Iterator_Remove(t *testing.T) {
@@ -23,20 +21,27 @@ func Test_Iterator_Remove(t *testing.T) {
 		itr     *Iterator
 	)
 
-	itr, a, b, _, _ = dummyItr()
-	itr.curr = a
+	a, b, _, _ = dummyNodes()
+	itr = setupIterator(a, b)
+	itr.Next()
 
 	l = itr.Remove()
 	require.Equal(t, a.data, l)
 	require.Nil(t, b.prev)
+	require.Equal(t, b, itr.con.head)
+	require.Equal(t, b, itr.con.tail)
 
-	itr, a, b, c, _ = dummyItr()
-	itr.curr = b
+	a, b, c, _ = dummyNodes()
+	itr = setupIterator(a, b, c)
+	itr.Next()
+	itr.Next()
 
 	l = itr.Remove()
 	require.Equal(t, b.data, l)
-	require.Equal(t, c, a.next)
 	require.Equal(t, a, c.prev)
+	require.Equal(t, c, a.next)
+	require.Equal(t, a, itr.con.head)
+	require.Equal(t, c, itr.con.tail)
 }
 
 func Test_Iterator_InsertBefore(t *testing.T) {

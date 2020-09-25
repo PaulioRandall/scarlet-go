@@ -18,6 +18,7 @@ func New() *Container {
 
 func (c *Container) Iterator() *Iterator {
 	return &Iterator{
+		con:  c,
 		next: c.head,
 	}
 }
@@ -98,13 +99,8 @@ func (c *Container) pop() *node {
 	}
 
 	n := c.head
-	c.head = c.head.next
+	c.removing(n)
 	n.remove()
-	c.size--
-
-	if c.size == 0 {
-		c.tail = nil
-	}
 
 	return n
 }
@@ -135,4 +131,17 @@ func (c *Container) append(n *node) {
 	link(c.tail, n)
 	c.tail = n
 	c.size++
+}
+
+func (c *Container) removing(n *node) {
+
+	if n == c.head {
+		c.head = n.next
+	}
+
+	if n == c.tail {
+		c.tail = n.prev
+	}
+
+	c.size--
 }
