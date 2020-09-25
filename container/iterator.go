@@ -14,6 +14,7 @@ type View interface {
 	Prev() token.Lexeme
 	PeekPrev() token.Lexeme
 	PeekNext() token.Lexeme
+	Remove() token.Lexeme
 	String() string
 }
 
@@ -68,20 +69,28 @@ func (it *Iterator) PeekPrev() token.Lexeme {
 	return it.curr.prev.data
 }
 
-/*
-func (it *Iterator) Remove() *Lexeme {
+func (it *Iterator) Remove() token.Lexeme {
 
 	if it.curr == nil {
-		return nil
+		return token.Lexeme{}
 	}
 
-	r := it.curr
-	it.curr = nil
-	it.con.remove(r)
+	l := it.curr.data
+	next := it.curr.next
+	prev := it.curr.prev
 
-	return r
+	if prev != nil {
+		prev.next = next
+	}
+
+	if next != nil {
+		next.prev = prev
+	}
+
+	return l
 }
 
+/*
 func (it *Iterator) Prepend(lex *Lexeme) {
 
 	if it.curr == nil {
