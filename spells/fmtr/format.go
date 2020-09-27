@@ -7,9 +7,10 @@ import (
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/lexeme"
-	"github.com/PaulioRandall/scarlet-go/parser/a_scanner"
+	scanner "github.com/PaulioRandall/scarlet-go/parser/a2_scanner"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
+	"github.com/PaulioRandall/scarlet-go/temp"
 )
 
 func RegisterAll(sb spellbook.Spellbook) error {
@@ -59,7 +60,12 @@ func readFile(filename string) (*lexeme.Container, error) {
 		return nil, e
 	}
 
-	return scanner.ScanStr(string(b))
+	con2, e := scanner.ScanString(string(b))
+	if e != nil {
+		return nil, e
+	}
+
+	return temp.ConvertContainer(con2), nil
 }
 
 func writeFile(filename string, itr *lexeme.Iterator) error {

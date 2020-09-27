@@ -5,8 +5,9 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/inst"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/temp"
 
-	"github.com/PaulioRandall/scarlet-go/parser/a_scanner"
+	scanner "github.com/PaulioRandall/scarlet-go/parser/a2_scanner"
 	"github.com/PaulioRandall/scarlet-go/parser/b_sanitiser"
 	"github.com/PaulioRandall/scarlet-go/parser/c_checker"
 	"github.com/PaulioRandall/scarlet-go/parser/d_shunter"
@@ -50,10 +51,12 @@ func build(c config) ([]inst.Instruction, error) {
 
 func scanAll(c config, s string) (*lexeme.Container, error) {
 
-	con, e := scanner.ScanStr(s)
+	con2, e := scanner.ScanString(s)
 	if e != nil {
 		return nil, e
 	}
+
+	con := temp.ConvertContainer(con2)
 
 	if c.logDir != "" {
 		return con, logContainer(c, con, "scanned")
