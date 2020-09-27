@@ -160,6 +160,36 @@ func TestOr_1(t *testing.T) {
 	doTest(t, "||", exp)
 }
 
+func TestLessEqual_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("<=", lexeme.LESS_EQUAL))
+	doTest(t, "<=", exp)
+}
+
+func TestLess_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("<", lexeme.LESS))
+	doTest(t, "<", exp)
+}
+
+func TestMoreEqual_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok(">=", lexeme.MORE_EQUAL))
+	doTest(t, ">=", exp)
+}
+
+func TestMore_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok(">", lexeme.MORE))
+	doTest(t, ">", exp)
+}
+
+func TestEqual_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("==", lexeme.EQUAL))
+	doTest(t, "==", exp)
+}
+
+func TestNotEqual_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("!=", lexeme.NOT_EQUAL))
+	doTest(t, "!=", exp)
+}
+
 func TestSpell_1(t *testing.T) {
 	exp := conttest.Feign(lexeme.Tok("@abc", lexeme.SPELL))
 	doTest(t, "@abc", exp)

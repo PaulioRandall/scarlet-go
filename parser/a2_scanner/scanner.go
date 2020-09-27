@@ -109,6 +109,24 @@ func identifyToken(r *reader, tk *token) error {
 	case r.starts("||"):
 		tk.size, tk.typ = 2, lexeme.OR
 
+	case r.starts("<="):
+		tk.size, tk.typ = 2, lexeme.LESS_EQUAL
+
+	case r.starts("<"):
+		tk.size, tk.typ = 1, lexeme.LESS
+
+	case r.starts(">="):
+		tk.size, tk.typ = 2, lexeme.MORE_EQUAL
+
+	case r.starts(">"):
+		tk.size, tk.typ = 1, lexeme.MORE
+
+	case r.starts("=="):
+		tk.size, tk.typ = 2, lexeme.EQUAL
+
+	case r.starts("!="):
+		tk.size, tk.typ = 2, lexeme.NOT_EQUAL
+
 	case r.starts("@"):
 		if e := spell(r, tk); e != nil {
 			return e
