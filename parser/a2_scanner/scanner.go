@@ -58,6 +58,33 @@ func identifyToken(r *reader, tk *token) error {
 	case unicode.IsLetter(r.at(0)):
 		identifyWord(r, tk)
 
+	case r.starts(";"):
+		tk.size, tk.typ = 1, lexeme.TERMINATOR
+
+	case r.starts(":="):
+		tk.size, tk.typ = 2, lexeme.ASSIGN
+
+	case r.starts(","):
+		tk.size, tk.typ = 1, lexeme.DELIM
+
+	case r.starts("("):
+		tk.size, tk.typ = 1, lexeme.L_PAREN
+
+	case r.starts(")"):
+		tk.size, tk.typ = 1, lexeme.R_PAREN
+
+	case r.starts("["):
+		tk.size, tk.typ = 1, lexeme.L_SQUARE
+
+	case r.starts("]"):
+		tk.size, tk.typ = 1, lexeme.R_SQUARE
+
+	case r.starts("{"):
+		tk.size, tk.typ = 1, lexeme.L_CURLY
+
+	case r.starts("}"):
+		tk.size, tk.typ = 1, lexeme.R_CURLY
+
 	case r.starts("@"):
 		if e := spell(r, tk); e != nil {
 			return e

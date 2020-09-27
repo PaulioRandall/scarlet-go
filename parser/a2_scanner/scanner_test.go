@@ -75,6 +75,51 @@ func TestIdent_2(t *testing.T) {
 	doTest(t, "abc_xyz", exp)
 }
 
+func TestTerminator_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok(";", lexeme.TERMINATOR))
+	doTest(t, ";", exp)
+}
+
+func TestAssign_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok(":=", lexeme.ASSIGN))
+	doTest(t, ":=", exp)
+}
+
+func TestDelim_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok(",", lexeme.DELIM))
+	doTest(t, ",", exp)
+}
+
+func TestLeftParen_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("(", lexeme.L_PAREN))
+	doTest(t, "(", exp)
+}
+
+func TestRightParen_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok(")", lexeme.R_PAREN))
+	doTest(t, ")", exp)
+}
+
+func TestLeftSquare_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("[", lexeme.L_SQUARE))
+	doTest(t, "[", exp)
+}
+
+func TestRightSquare_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("]", lexeme.R_SQUARE))
+	doTest(t, "]", exp)
+}
+
+func TestLeftCurly_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("{", lexeme.L_CURLY))
+	doTest(t, "{", exp)
+}
+
+func TestRightCurly_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("}", lexeme.R_CURLY))
+	doTest(t, "}", exp)
+}
+
 func TestSpell_1(t *testing.T) {
 	exp := conttest.Feign(lexeme.Tok("@abc", lexeme.SPELL))
 	doTest(t, "@abc", exp)
