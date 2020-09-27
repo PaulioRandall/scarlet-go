@@ -123,3 +123,21 @@ func TestString_6(t *testing.T) {
 func TestString_7(t *testing.T) {
 	doErrTest(t, "\"\n\"")
 }
+
+func TestNumber_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("123", lexeme.NUMBER))
+	doTest(t, "123", exp)
+}
+
+func TestNumber_2(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("123.456", lexeme.NUMBER))
+	doTest(t, "123.456", exp)
+}
+
+func TestNumber_3(t *testing.T) {
+	doErrTest(t, "123.")
+}
+
+func TestNumber_4(t *testing.T) {
+	doErrTest(t, "123.abc")
+}

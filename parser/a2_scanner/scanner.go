@@ -68,6 +68,11 @@ func identifyToken(r *reader, tk *token) error {
 			return e
 		}
 
+	case unicode.IsDigit(r.at(0)):
+		if e := numberLiteral(r, tk); e != nil {
+			return e
+		}
+
 	default:
 		return newErr(r.line, r.col, "Unexpected symbol %q", r.at(0))
 	}
@@ -167,4 +172,33 @@ func stringLiteral(r *reader, tk *token) error {
 
 ERROR:
 	return newErr(r.line, r.col+tk.size, "Unterminated string")
+}
+
+func numberLiteral(r *reader, tk *token) error {
+
+	tk.size, tk.typ = 1, lexeme.NUMBER
+	for r.inRange(tk.size) && unicode.IsDigit(r.at(tk.size)) {
+		tk.size++
+	}
+
+	if !r.inRange(tk.size) || r.at(tk.size) != '.' {
+		return nil
+	}
+	tk.size++
+
+	if !r.inRange(tk.size) {
+		return newErr(r.line, r.col+tk.size,
+			"Unexpected symbol, have EOF, want [0-9]")
+	}
+
+	if ru := r.at(tk.size); !unicode.IsDigit(ru) {
+		return newErr(r.line, r.col+tk.size,
+			"Unexpected symbol, have %q want [0-9]", ru)
+	}
+
+	for r.inRange(tk.size) && unicode.IsDigit(r.at(tk.size)) {
+		tk.size++
+	}
+
+	return nil
 }
