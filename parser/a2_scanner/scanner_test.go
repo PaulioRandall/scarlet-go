@@ -41,6 +41,11 @@ func TestSpace_1(t *testing.T) {
 }
 
 func TestSpace_2(t *testing.T) {
-	exp := conttest.Feign(lexeme.Tok("\t\r\v\f", lexeme.SPACE))
-	doTest(t, "\t\r\v\f", exp)
+	exp := conttest.Feign(lexeme.Tok("\t\r\v\f ", lexeme.SPACE))
+	doTest(t, "\t\r\v\f ", exp)
+}
+
+func TestComment_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("# :)", lexeme.COMMENT))
+	doTest(t, "# :)", exp)
 }

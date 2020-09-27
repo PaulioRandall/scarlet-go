@@ -40,10 +40,18 @@ func identifyToken(r *reader, tk *token) error {
 		tk.size, tk.typ = 1, lexeme.NEWLINE
 	case r.starts("\r\n"):
 		tk.size, tk.typ = 2, lexeme.NEWLINE
+	case r.starts("\r"):
+		return newErr(r.line, r.col, "Missing %q after %q", "\n", "\r")
 
 	case unicode.IsSpace(r.at(0)):
 		tk.size, tk.typ = 1, lexeme.SPACE
 		for r.inRange(tk.size) && unicode.IsSpace(r.at(tk.size)) {
+			tk.size++
+		}
+
+	case r.starts("#"):
+		tk.size, tk.typ = 1, lexeme.COMMENT
+		for r.inRange(tk.size) && !r.starts("\n") && !r.starts("\r") {
 			tk.size++
 		}
 
