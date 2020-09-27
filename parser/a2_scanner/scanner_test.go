@@ -120,6 +120,46 @@ func TestRightCurly_1(t *testing.T) {
 	doTest(t, "}", exp)
 }
 
+func TestVoid_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("_", lexeme.VOID))
+	doTest(t, "_", exp)
+}
+
+func TestAdd_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("+", lexeme.ADD))
+	doTest(t, "+", exp)
+}
+
+func TestSub_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("-", lexeme.SUB))
+	doTest(t, "-", exp)
+}
+
+func TestMul_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("*", lexeme.MUL))
+	doTest(t, "*", exp)
+}
+
+func TestDiv_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("/", lexeme.DIV))
+	doTest(t, "/", exp)
+}
+
+func TestRem_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("%", lexeme.REM))
+	doTest(t, "%", exp)
+}
+
+func TestAnd_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("&&", lexeme.AND))
+	doTest(t, "&&", exp)
+}
+
+func TestOr_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("||", lexeme.OR))
+	doTest(t, "||", exp)
+}
+
 func TestSpell_1(t *testing.T) {
 	exp := conttest.Feign(lexeme.Tok("@abc", lexeme.SPELL))
 	doTest(t, "@abc", exp)

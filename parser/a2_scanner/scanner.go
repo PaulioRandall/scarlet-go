@@ -85,6 +85,30 @@ func identifyToken(r *reader, tk *token) error {
 	case r.starts("}"):
 		tk.size, tk.typ = 1, lexeme.R_CURLY
 
+	case r.starts("_"):
+		tk.size, tk.typ = 1, lexeme.VOID
+
+	case r.starts("+"):
+		tk.size, tk.typ = 1, lexeme.ADD
+
+	case r.starts("-"):
+		tk.size, tk.typ = 1, lexeme.SUB
+
+	case r.starts("*"):
+		tk.size, tk.typ = 1, lexeme.MUL
+
+	case r.starts("/"):
+		tk.size, tk.typ = 1, lexeme.DIV
+
+	case r.starts("%"):
+		tk.size, tk.typ = 1, lexeme.REM
+
+	case r.starts("&&"):
+		tk.size, tk.typ = 2, lexeme.AND
+
+	case r.starts("||"):
+		tk.size, tk.typ = 2, lexeme.OR
+
 	case r.starts("@"):
 		if e := spell(r, tk); e != nil {
 			return e
