@@ -49,3 +49,13 @@ func TestComment_1(t *testing.T) {
 	exp := conttest.Feign(lexeme.Tok("# :)", lexeme.COMMENT))
 	doTest(t, "# :)", exp)
 }
+
+func TestIdent_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("abc", lexeme.IDENT))
+	doTest(t, "abc", exp)
+}
+
+func TestIdent_2(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("abc_xyz", lexeme.IDENT))
+	doTest(t, "abc_xyz", exp)
+}

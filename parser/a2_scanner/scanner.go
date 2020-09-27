@@ -55,6 +55,14 @@ func identifyToken(r *reader, tk *token) error {
 			tk.size++
 		}
 
+	case unicode.IsLetter(r.at(0)):
+		tk.size, tk.typ = 1, lexeme.IDENT
+		for ; r.inRange(tk.size); tk.size++ {
+			if ru := r.at(tk.size); !unicode.IsLetter(ru) && ru != '_' {
+				break
+			}
+		}
+
 	default:
 		return newErr(r.line, r.col, "Unexpected symbol %q", r.at(0))
 	}
