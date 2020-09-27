@@ -58,6 +58,11 @@ func identifyToken(r *reader, tk *token) error {
 	case unicode.IsLetter(r.at(0)):
 		identifyWord(r, tk)
 
+	case r.starts("@"):
+		if e := spell(r, tk); e != nil {
+			return e
+		}
+
 	default:
 		return newErr(r.line, r.col, "Unexpected symbol %q", r.at(0))
 	}
@@ -68,10 +73,12 @@ func identifyToken(r *reader, tk *token) error {
 func identifyWord(r *reader, tk *token) {
 
 	tk.size = 1
-	for ; r.inRange(tk.size); tk.size++ {
+	for r.inRange(tk.size) {
 		if ru := r.at(tk.size); !unicode.IsLetter(ru) && ru != '_' {
 			break
 		}
+
+		tk.size++
 	}
 
 	switch r.slice(tk.size) {
@@ -82,4 +89,45 @@ func identifyWord(r *reader, tk *token) {
 	default:
 		tk.typ = lexeme.IDENT
 	}
+}
+
+func spell(r *reader, tk *token) error {
+
+	// Valid:   @abc
+	// Valid:   @abc.efg.xyz
+	// Invalid: @
+	// Invalid: @abc.
+
+	part := func() error {
+		if !r.inRange(tk.size) {
+			return newErr(r.line, r.col+tk.size,
+				"Bad spell name, have EOF, want letter")
+		}
+
+		if ru := r.at(tk.size); !unicode.IsLetter(ru) {
+			return newErr(r.line, r.col+tk.size,
+				"Bad spell name, have %q, want letter", ru)
+		}
+
+		tk.size++
+		for r.inRange(tk.size) && unicode.IsLetter(r.at(tk.size)) {
+			tk.size++
+		}
+
+		return nil
+	}
+
+	tk.size, tk.typ = 1, lexeme.SPELL
+	for {
+		if e := part(); e != nil {
+			return e
+		}
+
+		if !r.inRange(tk.size) || r.at(tk.size) != '.' {
+			break
+		}
+		tk.size++
+	}
+
+	return nil
 }

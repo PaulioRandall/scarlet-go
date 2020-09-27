@@ -74,3 +74,21 @@ func TestIdent_2(t *testing.T) {
 	exp := conttest.Feign(lexeme.Tok("abc_xyz", lexeme.IDENT))
 	doTest(t, "abc_xyz", exp)
 }
+
+func TestSpell_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("@abc", lexeme.SPELL))
+	doTest(t, "@abc", exp)
+}
+
+func TestSpell_2(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("@a.b.c", lexeme.SPELL))
+	doTest(t, "@a.b.c", exp)
+}
+
+func TestSpell_3(t *testing.T) {
+	doErrTest(t, "@")
+}
+
+func TestSpell_4(t *testing.T) {
+	doErrTest(t, "@abc.")
+}
