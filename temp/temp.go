@@ -10,7 +10,6 @@ import (
 func ConvertContainer(in *new.Container) *old.Container {
 
 	out := old.NewContainer(nil)
-
 	for it := in.Iterator(); it.HasNext(); {
 		lexNew := it.Next()
 		lexOld := ConvertLexeme(lexNew)
