@@ -34,3 +34,13 @@ func TestNewline_2(t *testing.T) {
 	exp := conttest.Feign(lexeme.Tok("\r\n", lexeme.NEWLINE))
 	doTest(t, "\r\n", exp)
 }
+
+func TestSpace_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok(" ", lexeme.SPACE))
+	doTest(t, " ", exp)
+}
+
+func TestSpace_2(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("\t\r\v\f", lexeme.SPACE))
+	doTest(t, "\t\r\v\f", exp)
+}

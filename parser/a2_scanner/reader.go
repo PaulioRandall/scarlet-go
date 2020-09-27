@@ -19,6 +19,10 @@ func (r *reader) at(i int) rune {
 	return r.data[i]
 }
 
+func (r *reader) inRange(i int) bool {
+	return i < r.size
+}
+
 func (r *reader) starts(s string) bool {
 	return r.contains(0, s)
 }

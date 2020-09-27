@@ -1,6 +1,8 @@
 package scanner2
 
 import (
+	"unicode"
+
 	"github.com/PaulioRandall/scarlet-go/token/container"
 	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 )
@@ -38,6 +40,12 @@ func identifyToken(r *reader, tk *token) error {
 		tk.size, tk.typ = 1, lexeme.NEWLINE
 	case r.starts("\r\n"):
 		tk.size, tk.typ = 2, lexeme.NEWLINE
+
+	case unicode.IsSpace(r.at(0)):
+		tk.size, tk.typ = 1, lexeme.SPACE
+		for r.inRange(tk.size) && unicode.IsSpace(r.at(tk.size)) {
+			tk.size++
+		}
 
 	default:
 		return newErr(r.line, r.col, "Unexpected symbol %q", r.at(0))
