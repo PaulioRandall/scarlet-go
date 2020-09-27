@@ -63,6 +63,11 @@ func identifyToken(r *reader, tk *token) error {
 			return e
 		}
 
+	case r.starts(`"`):
+		if e := stringLiteral(r, tk); e != nil {
+			return e
+		}
+
 	default:
 		return newErr(r.line, r.col, "Unexpected symbol %q", r.at(0))
 	}
@@ -130,4 +135,36 @@ func spell(r *reader, tk *token) error {
 	}
 
 	return nil
+}
+
+func stringLiteral(r *reader, tk *token) error {
+
+	tk.size, tk.typ = 1, lexeme.STRING
+	for {
+		if !r.inRange(tk.size) {
+			goto ERROR
+		}
+
+		if r.at(tk.size) == '"' {
+			tk.size++
+			return nil
+		}
+
+		if r.at(tk.size) == '\\' {
+			tk.size++
+			if !r.inRange(tk.size) {
+				goto ERROR
+			}
+		}
+
+		if ru := r.at(tk.size); ru == '\r' || ru == '\n' {
+			return newErr(r.line, r.col+tk.size, "Unterminated string")
+		}
+		tk.size++
+	}
+
+	return nil
+
+ERROR:
+	return newErr(r.line, r.col+tk.size, "Unterminated string")
 }

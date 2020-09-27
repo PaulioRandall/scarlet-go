@@ -92,3 +92,34 @@ func TestSpell_3(t *testing.T) {
 func TestSpell_4(t *testing.T) {
 	doErrTest(t, "@abc.")
 }
+
+func TestString_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok(`""`, lexeme.STRING))
+	doTest(t, `""`, exp)
+}
+
+func TestString_2(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok(`"abc"`, lexeme.STRING))
+	doTest(t, `"abc"`, exp)
+}
+
+func TestString_3(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok(`"\""`, lexeme.STRING))
+	doTest(t, `"\""`, exp)
+}
+
+func TestString_4(t *testing.T) {
+	doErrTest(t, `"`)
+}
+
+func TestString_5(t *testing.T) {
+	doErrTest(t, `"abc`)
+}
+
+func TestString_6(t *testing.T) {
+	doErrTest(t, `"\"`)
+}
+
+func TestString_7(t *testing.T) {
+	doErrTest(t, "\"\n\"")
+}
