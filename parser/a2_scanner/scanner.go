@@ -25,7 +25,7 @@ func ScanString(s string) (*container.Container, error) {
 			return nil, e
 		}
 
-		line, col, raw := r.slice(tk.size)
+		line, col, raw := r.read(tk.size)
 		l := lexeme.New(raw, tk.typ, line, col)
 		con.Put(l)
 	}
@@ -56,16 +56,30 @@ func identifyToken(r *reader, tk *token) error {
 		}
 
 	case unicode.IsLetter(r.at(0)):
-		tk.size, tk.typ = 1, lexeme.IDENT
-		for ; r.inRange(tk.size); tk.size++ {
-			if ru := r.at(tk.size); !unicode.IsLetter(ru) && ru != '_' {
-				break
-			}
-		}
+		identifyWord(r, tk)
 
 	default:
 		return newErr(r.line, r.col, "Unexpected symbol %q", r.at(0))
 	}
 
 	return nil
+}
+
+func identifyWord(r *reader, tk *token) {
+
+	tk.size = 1
+	for ; r.inRange(tk.size); tk.size++ {
+		if ru := r.at(tk.size); !unicode.IsLetter(ru) && ru != '_' {
+			break
+		}
+	}
+
+	switch r.slice(tk.size) {
+	case "false", "true":
+		tk.typ = lexeme.BOOL
+	case "loop":
+		tk.typ = lexeme.LOOP
+	default:
+		tk.typ = lexeme.IDENT
+	}
 }

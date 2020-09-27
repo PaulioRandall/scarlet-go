@@ -50,6 +50,21 @@ func TestComment_1(t *testing.T) {
 	doTest(t, "# :)", exp)
 }
 
+func TestBool_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("true", lexeme.BOOL))
+	doTest(t, "true", exp)
+}
+
+func TestBool_2(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("false", lexeme.BOOL))
+	doTest(t, "false", exp)
+}
+
+func TestLoop_1(t *testing.T) {
+	exp := conttest.Feign(lexeme.Tok("loop", lexeme.LOOP))
+	doTest(t, "loop", exp)
+}
+
 func TestIdent_1(t *testing.T) {
 	exp := conttest.Feign(lexeme.Tok("abc", lexeme.IDENT))
 	doTest(t, "abc", exp)

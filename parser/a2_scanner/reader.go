@@ -51,7 +51,11 @@ func (r *reader) contains(start int, s string) bool {
 	return true
 }
 
-func (r *reader) slice(size int) (line, col int, s string) {
+func (r *reader) slice(size int) string {
+	return string(r.data[:size])
+}
+
+func (r *reader) read(size int) (line, col int, s string) {
 	line, col = r.line, r.col
 	s = string(r.data[:size])
 	r.data = r.data[size:]
