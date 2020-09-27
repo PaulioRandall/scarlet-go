@@ -6,8 +6,6 @@ import (
 )
 
 type token struct {
-	line int
-	col  int
 	size int
 	typ  lexeme.TokenType
 }
@@ -20,18 +18,14 @@ func ScanString(s string) (*container.Container, error) {
 	r.size = len(r.data)
 
 	for r.more() {
-		tk := &token{
-			line: r.line,
-			col:  r.col,
-		}
-
+		tk := &token{}
 		if e := identifyToken(r, tk); e != nil {
 			return nil, e
 		}
 
-		if e := scanToken(con, r, tk); e != nil {
-			return nil, e
-		}
+		line, col, raw := r.slice(tk.size)
+		l := lexeme.New(raw, tk.typ, line, col)
+		con.Put(l)
 	}
 
 	return con, nil
@@ -46,16 +40,8 @@ func identifyToken(r *reader, tk *token) error {
 		tk.size, tk.typ = 2, lexeme.NEWLINE
 
 	default:
-		return newErr(r.line, r.idx, "Unexpected symbol %q", r.at(0))
+		return newErr(r.line, r.col, "Unexpected symbol %q", r.at(0))
 	}
 
-	return nil
-}
-
-func isNewline(offset int, r *reader) bool {
-	return false
-}
-
-func scanToken(con *container.Container, r *reader, tk *token) error {
 	return nil
 }
