@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/lexeme"
-	scanner "github.com/PaulioRandall/scarlet-go/parser/a2_scanner"
+	"github.com/PaulioRandall/scarlet-go/parser/a_scanner"
 	"github.com/PaulioRandall/scarlet-go/spells/spellbook"
 	"github.com/PaulioRandall/scarlet-go/spells/types"
 	"github.com/PaulioRandall/scarlet-go/temp"
