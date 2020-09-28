@@ -26,13 +26,13 @@ func RequireEqual(t *testing.T, exp, act LexItr) {
 	for i := 0; exp.HasNext() || act.HasNext(); i++ {
 
 		if !exp.HasNext() {
-			s := act.Next().String()
-			require.Fail(t, "Expected end of lexeme iterator at %d, have %s", i, s)
+			require.True(t, false,
+				"Unexpected lexeme in iterator at %d, have %s", i, act.Next().String())
 		}
 
 		if !act.HasNext() {
-			s := exp.Next().String()
-			require.Fail(t, "Unexpected end of lexeme iterator at %d, want %s", i, s)
+			require.True(t, false,
+				"Unexpected iterator end at %d, want %s", i, exp.Next().String())
 		}
 
 		expLex, actLex := exp.Next(), act.Next()
