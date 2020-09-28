@@ -25,12 +25,47 @@ func TestRedundant_2(t *testing.T) {
 	doTest(t, in, exp)
 }
 
-func TestLeadingTerminators_2(t *testing.T) {
+func TestLeadingTerminators_1(t *testing.T) {
 	in := conttest.Feign(
 		lexeme.Tok("\n", lexeme.TERMINATOR),
 		lexeme.Tok(";", lexeme.TERMINATOR),
 	)
 	exp := conttest.Feign()
+	doTest(t, in, exp)
+}
+
+func TestSuccessiveTerminators_1(t *testing.T) {
+	in := conttest.Feign(
+		lexeme.Tok("x", lexeme.IDENT),
+		lexeme.Tok("\n", lexeme.TERMINATOR),
+		lexeme.Tok(";", lexeme.TERMINATOR),
+	)
+	exp := conttest.Feign(
+		lexeme.Tok("x", lexeme.IDENT),
+		lexeme.Tok("\n", lexeme.TERMINATOR),
+	)
+	doTest(t, in, exp)
+}
+
+func TestNewlineAfterOpener_1(t *testing.T) {
+	in := conttest.Feign(
+		lexeme.Tok("(", lexeme.L_PAREN),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+	)
+	exp := conttest.Feign(
+		lexeme.Tok("(", lexeme.L_PAREN),
+	)
+	doTest(t, in, exp)
+}
+
+func TestNewlineAfterDelim_1(t *testing.T) {
+	in := conttest.Feign(
+		lexeme.Tok(",", lexeme.DELIM),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+	)
+	exp := conttest.Feign(
+		lexeme.Tok(",", lexeme.DELIM),
+	)
 	doTest(t, in, exp)
 }
 

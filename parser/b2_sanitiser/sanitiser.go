@@ -9,46 +9,50 @@ type Iterator interface {
 	HasPrev() bool
 	Next() lexeme.Lexeme
 	Item() lexeme.Lexeme
+	LookBehind() lexeme.Lexeme
 	Remove() lexeme.Lexeme
 }
 
 func SanitiseAll(itr Iterator) {
 	for itr.HasNext() {
-		switch itr.Next(); {
-		case itr.Item().Type().IsRedundant():
+		curr := itr.Next()
+
+		if curr.IsRedundant() {
 			itr.Remove() // Remove tokens redundant to the compiler
-
-		case !itr.HasPrev() && itr.Item().Type().IsTerminator():
-			itr.Remove() // Remove terminators at the start of the scroll
-
-		case !itr.HasPrev():
 			continue
-
-			/*
-				case itr.Before() == nil:
-
-				case itr.Before().Tok.IsTerminator() && itr.Curr().Tok.IsTerminator():
-					itr.Remove()
-
-				case itr.Before().Tok == lexeme.L_PAREN && itr.Curr().Tok == lexeme.NEWLINE:
-					itr.Remove()
-
-				case itr.Before().Tok == lexeme.L_CURLY && itr.Curr().Tok == lexeme.NEWLINE:
-					itr.Remove()
-
-				case itr.Before().Tok == lexeme.DELIM && itr.Curr().Tok == lexeme.NEWLINE:
-					itr.Remove()
-
-				case itr.Before().Tok == lexeme.DELIM && itr.Curr().Tok == lexeme.R_PAREN:
-					itr.Prev()
-					itr.Remove()
-					itr.Next()
-
-				case itr.Before().Tok.IsTerminator() && itr.Curr().Tok == lexeme.R_CURLY:
-					itr.Prev()
-					itr.Remove()
-					itr.Next()
-			*/
 		}
+
+		if !itr.HasPrev() {
+			if curr.IsTerminator() {
+				itr.Remove() // Remove terminators at the start of the scroll
+			}
+			continue // No action for the first valid token
+		}
+
+		switch prev := itr.LookBehind(); {
+		case prev.IsTerminator() && curr.IsTerminator():
+			itr.Remove() // Remove successive terminators
+
+		case prev.IsOpener() && curr.Type() == lexeme.NEWLINE:
+			itr.Remove()
+
+		case prev.Type() == lexeme.DELIM && curr.Type() == lexeme.NEWLINE:
+			itr.Remove()
+		}
+
+		/*
+			case itr.Before().Tok == lexeme.DELIM && itr.Curr().Tok == lexeme.NEWLINE:
+				itr.Remove()
+
+			case itr.Before().Tok == lexeme.DELIM && itr.Curr().Tok == lexeme.R_PAREN:
+				itr.Prev()
+				itr.Remove()
+				itr.Next()
+
+			case itr.Before().Tok.IsTerminator() && itr.Curr().Tok == lexeme.R_CURLY:
+				itr.Prev()
+				itr.Remove()
+				itr.Next()
+		*/
 	}
 }
