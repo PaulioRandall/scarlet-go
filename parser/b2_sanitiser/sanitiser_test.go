@@ -91,90 +91,87 @@ func TestTerminatorBeforeRCurly_1(t *testing.T) {
 	doTest(t, in, exp)
 }
 
-/*
+func TestFull_1(t *testing.T) {
 
-func Test99_1(t *testing.T) {
-
-	in := lextest.Feign(
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("(", lexeme.L_PAREN),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok(",", lexeme.DELIM),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok(",", lexeme.DELIM),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok(")", lexeme.R_PAREN),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("\n", lexeme.NEWLINE),
+	in := conttest.Feign(
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok("@Println", lexeme.SPELL),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok("(", lexeme.L_PAREN),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok("1", lexeme.NUMBER),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok(",", lexeme.DELIM),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok("1", lexeme.NUMBER),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok(",", lexeme.DELIM),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok(")", lexeme.R_PAREN),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok("\n", lexeme.NEWLINE),
 	)
 
 	// @Println(1,1)
-	exp := lextest.Feign(
-		lextest.Tok("@Println", lexeme.SPELL),
-		lextest.Tok("(", lexeme.L_PAREN),
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(",", lexeme.DELIM),
-		lextest.Tok("1", lexeme.NUMBER),
-		lextest.Tok(")", lexeme.R_PAREN),
-		lextest.Tok("\n", lexeme.NEWLINE),
+	exp := conttest.Feign(
+		lexeme.Tok("@Println", lexeme.SPELL),
+		lexeme.Tok("(", lexeme.L_PAREN),
+		lexeme.Tok("1", lexeme.NUMBER),
+		lexeme.Tok(",", lexeme.DELIM),
+		lexeme.Tok("1", lexeme.NUMBER),
+		lexeme.Tok(")", lexeme.R_PAREN),
+		lexeme.Tok("\n", lexeme.NEWLINE),
 	)
 
 	doTest(t, in, exp)
 }
 
-func Test99_2(t *testing.T) {
+func TestFull_2(t *testing.T) {
 
 	// [true] {
 	//   "abc"
 	//   "xyz"
 	// }
-	in := lextest.Feign(
-		lextest.Tok("[", lexeme.L_SQUARE),
-		lextest.Tok("true", lexeme.BOOL),
-		lextest.Tok("]", lexeme.R_SQUARE),
-		lextest.Tok(" ", lexeme.SPACE),
-		lextest.Tok("{", lexeme.L_CURLY),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("\t", lexeme.SPACE),
-		lextest.Tok(`"abc"`, lexeme.STRING),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("\t", lexeme.SPACE),
-		lextest.Tok(`"xyz"`, lexeme.STRING),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("}", lexeme.R_CURLY),
+	in := conttest.Feign(
+		lexeme.Tok("[", lexeme.L_SQUARE),
+		lexeme.Tok("true", lexeme.BOOL),
+		lexeme.Tok("]", lexeme.R_SQUARE),
+		lexeme.Tok(" ", lexeme.SPACE),
+		lexeme.Tok("{", lexeme.L_CURLY),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok("\t", lexeme.SPACE),
+		lexeme.Tok(`"abc"`, lexeme.STRING),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok("\t", lexeme.SPACE),
+		lexeme.Tok(`"xyz"`, lexeme.STRING),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok("}", lexeme.R_CURLY),
 	)
 
 	// [true] {"abc"
 	// "xyz"}
-	exp := lextest.Feign(
-		lextest.Tok("[", lexeme.L_SQUARE),
-		lextest.Tok("true", lexeme.BOOL),
-		lextest.Tok("]", lexeme.R_SQUARE),
-		lextest.Tok("{", lexeme.L_CURLY),
-		lextest.Tok(`"abc"`, lexeme.STRING),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok(`"xyz"`, lexeme.STRING),
-		lextest.Tok("}", lexeme.R_CURLY),
+	exp := conttest.Feign(
+		lexeme.Tok("[", lexeme.L_SQUARE),
+		lexeme.Tok("true", lexeme.BOOL),
+		lexeme.Tok("]", lexeme.R_SQUARE),
+		lexeme.Tok("{", lexeme.L_CURLY),
+		lexeme.Tok(`"abc"`, lexeme.STRING),
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok(`"xyz"`, lexeme.STRING),
+		lexeme.Tok("}", lexeme.R_CURLY),
 	)
 
 	doTest(t, in, exp)
 }
-*/

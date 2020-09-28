@@ -8,8 +8,8 @@ type Iterator interface {
 	HasNext() bool
 	HasPrev() bool
 	Next() lexeme.Lexeme
+	Prev() lexeme.Lexeme
 	LookBehind() lexeme.Lexeme
-	LookAhead() lexeme.Lexeme
 	Remove() lexeme.Lexeme
 }
 
@@ -24,11 +24,16 @@ func SanitiseAll(itr Iterator) {
 		case !itr.HasPrev() && curr.IsTerminator():
 			itr.Remove() // Remove leading terminators
 
-		case itr.HasPrev() && removeAfterPrev(itr.LookBehind().Type(), curr):
+		case !itr.HasPrev():
+			// No action for the first token
+
+		case removeAfterPrev(itr.LookBehind().Type(), curr):
 			itr.Remove()
 
-		case itr.HasNext() && removeBeforeNext(curr, itr.LookAhead().Type()):
+		case removeBeforeNext(itr.LookBehind().Type(), curr):
+			itr.Prev()
 			itr.Remove()
+			itr.Next()
 		}
 	}
 }
@@ -51,7 +56,7 @@ func removeAfterPrev(prev, curr lexeme.TokenType) bool {
 func removeBeforeNext(curr, next lexeme.TokenType) bool {
 	switch {
 	case curr == lexeme.DELIM && next == lexeme.R_PAREN:
-		return true // Remove delimiters ',' before closing paren ')'
+		return true // Remove delimiters ',' before right paren ')'
 
 	case curr.IsTerminator() && next == lexeme.R_CURLY:
 		return true // Remove terminators ',' before closing curly brace '}'
