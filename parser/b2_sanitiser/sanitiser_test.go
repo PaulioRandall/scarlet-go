@@ -9,7 +9,7 @@ import (
 )
 
 func doTest(t *testing.T, in, exp *container.Container) {
-	SanitiseAll(in)
+	SanitiseAll(in.Iterator())
 	conttest.RequireEqual(t, exp.Iterator(), in.Iterator())
 }
 
@@ -21,6 +21,15 @@ func TestRedundant_1(t *testing.T) {
 
 func TestRedundant_2(t *testing.T) {
 	in := conttest.Feign(lexeme.Tok("# Scarlet", lexeme.COMMENT))
+	exp := conttest.Feign()
+	doTest(t, in, exp)
+}
+
+func TestLeadingTerminators_2(t *testing.T) {
+	in := conttest.Feign(
+		lexeme.Tok("\n", lexeme.TERMINATOR),
+		lexeme.Tok(";", lexeme.TERMINATOR),
+	)
 	exp := conttest.Feign()
 	doTest(t, in, exp)
 }

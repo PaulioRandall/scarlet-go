@@ -1,24 +1,30 @@
 package sanitiser2
 
 import (
-	"github.com/PaulioRandall/scarlet-go/token/container"
-	//"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 )
 
-func SanitiseAll(con *container.Container) {
+type Iterator interface {
+	HasNext() bool
+	HasPrev() bool
+	Next() lexeme.Lexeme
+	Item() lexeme.Lexeme
+	Remove() lexeme.Lexeme
+}
 
-	if con.Empty() {
-		return
-	}
-
-	for itr := con.Iterator(); itr.HasNext(); {
+func SanitiseAll(itr Iterator) {
+	for itr.HasNext() {
 		switch itr.Next(); {
 		case itr.Item().Type().IsRedundant():
-			itr.Remove()
-			/*
-				case itr.Before() == nil && itr.Curr().Tok.IsTerminator():
-					itr.Remove()
+			itr.Remove() // Remove tokens redundant to the compiler
 
+		case !itr.HasPrev() && itr.Item().Type().IsTerminator():
+			itr.Remove() // Remove terminators at the start of the scroll
+
+		case !itr.HasPrev():
+			continue
+
+			/*
 				case itr.Before() == nil:
 
 				case itr.Before().Tok.IsTerminator() && itr.Curr().Tok.IsTerminator():
