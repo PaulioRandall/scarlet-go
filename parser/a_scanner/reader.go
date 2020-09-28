@@ -36,7 +36,7 @@ func (r *reader) contains(start int, s string) bool {
 		panic(e)
 	}
 
-	if start+len(s) > dataSize {
+	if start+len([]rune(s)) > dataSize {
 		return false
 	}
 
@@ -55,8 +55,16 @@ func (r *reader) slice(size int) string {
 	return string(r.data[:size])
 }
 
-func (r *reader) read(size int) (line, col int, s string) {
+func (r *reader) read(size int, newline bool) (line, col int, s string) {
+
 	line, col = r.line, r.col
+	if newline {
+		r.line++
+		r.col = 0
+	} else {
+		r.col += size
+	}
+
 	s = string(r.data[:size])
 	r.data = r.data[size:]
 	r.size = len(r.data)

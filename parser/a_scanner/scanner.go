@@ -25,7 +25,7 @@ func ScanString(s string) (*container.Container, error) {
 			return nil, e
 		}
 
-		line, col, raw := r.read(tk.size)
+		line, col, raw := r.read(tk.size, tk.typ == lexeme.NEWLINE)
 		l := lexeme.New(raw, tk.typ, line, col)
 		con.Put(l)
 	}

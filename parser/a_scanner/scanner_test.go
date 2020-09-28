@@ -256,3 +256,31 @@ func TestNumber_3(t *testing.T) {
 func TestNumber_4(t *testing.T) {
 	doErrTest(t, "123.abc")
 }
+
+func TestComprehensive_1(t *testing.T) {
+
+	in := `x := 1 + 2
+@Println("x = ", x)`
+
+	exp := conttest.Feign(
+		lexeme.New("x", lexeme.IDENT, 0, 0),
+		lexeme.New(" ", lexeme.SPACE, 0, 1),
+		lexeme.New(":=", lexeme.ASSIGN, 0, 2),
+		lexeme.New(" ", lexeme.SPACE, 0, 4),
+		lexeme.New("1", lexeme.NUMBER, 0, 5),
+		lexeme.New(" ", lexeme.SPACE, 0, 6),
+		lexeme.New("+", lexeme.ADD, 0, 7),
+		lexeme.New(" ", lexeme.SPACE, 0, 8),
+		lexeme.New("2", lexeme.NUMBER, 0, 9),
+		lexeme.New("\n", lexeme.NEWLINE, 0, 10),
+		lexeme.New("@Println", lexeme.SPELL, 1, 0),
+		lexeme.New("(", lexeme.L_PAREN, 1, 8),
+		lexeme.New(`"x = "`, lexeme.STRING, 1, 9),
+		lexeme.New(",", lexeme.DELIM, 1, 15),
+		lexeme.New(" ", lexeme.SPACE, 1, 16),
+		lexeme.New("x", lexeme.IDENT, 1, 17),
+		lexeme.New(")", lexeme.R_PAREN, 1, 18),
+	)
+
+	doTest(t, in, exp)
+}
