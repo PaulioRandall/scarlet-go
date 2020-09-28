@@ -69,92 +69,29 @@ func TestNewlineAfterDelim_1(t *testing.T) {
 	doTest(t, in, exp)
 }
 
+func TestDelimBeforeRParen_1(t *testing.T) {
+	in := conttest.Feign(
+		lexeme.Tok(",", lexeme.DELIM),
+		lexeme.Tok(")", lexeme.R_PAREN),
+	)
+	exp := conttest.Feign(
+		lexeme.Tok(")", lexeme.R_PAREN),
+	)
+	doTest(t, in, exp)
+}
+
+func TestTerminatorBeforeRCurly_1(t *testing.T) {
+	in := conttest.Feign(
+		lexeme.Tok("\n", lexeme.NEWLINE),
+		lexeme.Tok("}", lexeme.R_CURLY),
+	)
+	exp := conttest.Feign(
+		lexeme.Tok("}", lexeme.R_CURLY),
+	)
+	doTest(t, in, exp)
+}
+
 /*
-func Test1_3(t *testing.T) {
-
-	in := lextest.Feign(
-		lextest.Tok("", lexeme.UNDEFINED),
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("\n", lexeme.NEWLINE),
-	)
-
-	exp := lextest.Feign(
-		lextest.Tok("", lexeme.UNDEFINED),
-		lextest.Tok("\n", lexeme.NEWLINE),
-	)
-
-	doTest(t, in, exp)
-}
-
-func Test1_4(t *testing.T) {
-
-	in := lextest.Feign(
-		lextest.Tok("(", lexeme.L_PAREN),
-		lextest.Tok("\n", lexeme.NEWLINE),
-	)
-
-	exp := lextest.Feign(
-		lextest.Tok("(", lexeme.L_PAREN),
-	)
-
-	doTest(t, in, exp)
-}
-
-func Test1_5(t *testing.T) {
-
-	in := lextest.Feign(
-		lextest.Tok(",", lexeme.DELIM),
-		lextest.Tok("\n", lexeme.NEWLINE),
-	)
-
-	exp := lextest.Feign(
-		lextest.Tok(",", lexeme.DELIM),
-	)
-
-	doTest(t, in, exp)
-}
-
-func Test1_6(t *testing.T) {
-
-	in := lextest.Feign(
-		lextest.Tok(",", lexeme.DELIM),
-		lextest.Tok(")", lexeme.R_PAREN),
-	)
-
-	exp := lextest.Feign(
-		lextest.Tok(")", lexeme.R_PAREN),
-	)
-
-	doTest(t, in, exp)
-}
-
-func Test1_7(t *testing.T) {
-
-	in := lextest.Feign(
-		lextest.Tok("{", lexeme.L_CURLY),
-		lextest.Tok("\n", lexeme.NEWLINE),
-	)
-
-	exp := lextest.Feign(
-		lextest.Tok("{", lexeme.L_CURLY),
-	)
-
-	doTest(t, in, exp)
-}
-
-func Test1_8(t *testing.T) {
-
-	in := lextest.Feign(
-		lextest.Tok("\n", lexeme.NEWLINE),
-		lextest.Tok("}", lexeme.R_CURLY),
-	)
-
-	exp := lextest.Feign(
-		lextest.Tok("}", lexeme.R_CURLY),
-	)
-
-	doTest(t, in, exp)
-}
 
 func Test99_1(t *testing.T) {
 
