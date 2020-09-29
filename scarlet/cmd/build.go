@@ -10,7 +10,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token/container"
 
 	"github.com/PaulioRandall/scarlet-go/parser/a_scanner"
-	sanitiser "github.com/PaulioRandall/scarlet-go/parser/b2_sanitiser"
+	"github.com/PaulioRandall/scarlet-go/parser/b_sanitiser"
+
 	"github.com/PaulioRandall/scarlet-go/parser/c_checker"
 	"github.com/PaulioRandall/scarlet-go/parser/d_shunter"
 	"github.com/PaulioRandall/scarlet-go/parser/e_compiler"

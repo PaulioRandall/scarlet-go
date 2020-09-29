@@ -1,49 +1,66 @@
 package sanitiser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 )
 
-func SanitiseAll(con *lexeme.Container) {
+type Iterator interface {
+	HasNext() bool
+	HasPrev() bool
+	Next() lexeme.Lexeme
+	Prev() lexeme.Lexeme
+	LookBehind() lexeme.Lexeme
+	Remove() lexeme.Lexeme
+}
 
-	if con.Empty() {
-		return
-	}
+// SanitiseAll removes tokens redundant to parsing so it's easier and less
+// error prone.
+func SanitiseAll(itr Iterator) {
+	for itr.HasNext() {
+		switch curr := itr.Next().Type(); {
+		case curr.IsRedundant():
+			itr.Remove() // Remove tokens always redundant to the compiler
 
-	itr := con.Iterator()
+		case !itr.HasPrev() && curr.IsTerminator():
+			itr.Remove() // Remove leading terminators
 
-	for itr.Next() || itr.After() != nil {
+		case !itr.HasPrev():
+			// No action for the first token
 
-		switch {
-		case itr.Curr().Tok.IsRedundant():
+		case removeAfterPrev(itr.LookBehind().Type(), curr):
 			itr.Remove()
 
-		case itr.Before() == nil && itr.Curr().Tok.IsTerminator():
-			itr.Remove()
-
-		case itr.Before() == nil:
-
-		case itr.Before().Tok.IsTerminator() && itr.Curr().Tok.IsTerminator():
-			itr.Remove()
-
-		case itr.Before().Tok == lexeme.L_PAREN && itr.Curr().Tok == lexeme.NEWLINE:
-			itr.Remove()
-
-		case itr.Before().Tok == lexeme.L_CURLY && itr.Curr().Tok == lexeme.NEWLINE:
-			itr.Remove()
-
-		case itr.Before().Tok == lexeme.DELIM && itr.Curr().Tok == lexeme.NEWLINE:
-			itr.Remove()
-
-		case itr.Before().Tok == lexeme.DELIM && itr.Curr().Tok == lexeme.R_PAREN:
-			itr.Prev()
-			itr.Remove()
-			itr.Next()
-
-		case itr.Before().Tok.IsTerminator() && itr.Curr().Tok == lexeme.R_CURLY:
+		case removeBeforeNext(itr.LookBehind().Type(), curr):
 			itr.Prev()
 			itr.Remove()
 			itr.Next()
 		}
 	}
+}
+
+func removeAfterPrev(prev, curr lexeme.TokenType) bool {
+	switch {
+	case prev.IsTerminator() && curr.IsTerminator():
+		return true // Remove successive terminators
+
+	case prev.IsOpener() && curr == lexeme.NEWLINE:
+		return true // Remove newlines after openers '(,[,{'
+
+	case prev == lexeme.DELIM && curr == lexeme.NEWLINE:
+		return true // Remove newlines after delimiters ','
+	}
+
+	return false
+}
+
+func removeBeforeNext(curr, next lexeme.TokenType) bool {
+	switch {
+	case curr == lexeme.DELIM && next == lexeme.R_PAREN:
+		return true // Remove delimiters ',' before right paren ')'
+
+	case curr.IsTerminator() && next == lexeme.R_CURLY:
+		return true // Remove terminators ',' before closing curly brace '}'
+	}
+
+	return false
 }
