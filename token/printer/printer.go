@@ -49,9 +49,9 @@ func printLexemes(w io.StringWriter, cw colWidths, lexs []lexeme.Lexeme) error {
 		line := padFront(cw.line, strconv.Itoa(l.Line()))
 		col := padBack(cw.col+1, strconv.Itoa(l.Col())+",")
 		tok := padBack(cw.typ+1, l.Type().String()+",")
-		raw := strconv.QuoteToGraphic(l.Raw())
+		val := strconv.QuoteToGraphic(l.Val())
 
-		e := writeLine(w, line, ":", col, " ", tok, " ", raw)
+		e := writeLine(w, line, ":", col, " ", tok, " ", val)
 		if e != nil {
 			return e
 		}

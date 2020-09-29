@@ -6,24 +6,24 @@ import (
 
 type Lexeme struct {
 	TokenType
-	raw  string
+	val  string
 	line int
 	col  int
 }
 
-func New(raw string, tt TokenType, line, col int) Lexeme {
+func New(val string, tt TokenType, line, col int) Lexeme {
 	return Lexeme{
 		TokenType: tt,
-		raw:       raw,
+		val:       val,
 		line:      line,
 		col:       col,
 	}
 }
 
-func Tok(raw string, tt TokenType) Lexeme {
+func Tok(val string, tt TokenType) Lexeme {
 	return Lexeme{
 		TokenType: tt,
-		raw:       raw,
+		val:       val,
 	}
 }
 
@@ -31,8 +31,8 @@ func (l Lexeme) Type() TokenType {
 	return l.TokenType
 }
 
-func (l Lexeme) Raw() string {
-	return l.raw
+func (l Lexeme) Val() string {
+	return l.val
 }
 
 func (l Lexeme) Line() int {
@@ -44,7 +44,7 @@ func (l Lexeme) Col() int {
 }
 
 func (l Lexeme) Len() int {
-	return len(l.raw)
+	return len(l.val)
 }
 
 func (lex Lexeme) String() string {
@@ -52,6 +52,6 @@ func (lex Lexeme) String() string {
 		lex.line,
 		lex.col,
 		lex.TokenType.String(),
-		lex.raw,
+		lex.val,
 	)
 }

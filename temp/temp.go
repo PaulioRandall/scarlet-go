@@ -23,7 +23,7 @@ func ConvertContainer(in *new.Container) *old.Container {
 func ConvertLexeme(l lexeme.Lexeme) *old.Lexeme {
 	return &old.Lexeme{
 		Tok:  tokenMapping[l.Type()],
-		Raw:  l.Raw(),
+		Raw:  l.Val(),
 		Line: l.Line(),
 		Col:  l.Col(),
 	}
