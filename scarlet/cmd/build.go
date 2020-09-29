@@ -7,8 +7,10 @@ import (
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/temp"
 
+	"github.com/PaulioRandall/scarlet-go/token/container"
+
 	"github.com/PaulioRandall/scarlet-go/parser/a_scanner"
-	"github.com/PaulioRandall/scarlet-go/parser/b_sanitiser"
+	sanitiser "github.com/PaulioRandall/scarlet-go/parser/b2_sanitiser"
 	"github.com/PaulioRandall/scarlet-go/parser/c_checker"
 	"github.com/PaulioRandall/scarlet-go/parser/d_shunter"
 	"github.com/PaulioRandall/scarlet-go/parser/e_compiler"
@@ -31,17 +33,19 @@ func build(c config) ([]inst.Instruction, error) {
 		return nil, e
 	}
 
-	e = checkAll(c, con)
+	con_old := temp.ConvertContainer(con)
+
+	e = checkAll(c, con_old)
 	if e != nil {
 		return nil, e
 	}
 
-	con, e = shuntAll(c, con)
+	con_old, e = shuntAll(c, con_old)
 	if e != nil {
 		return nil, e
 	}
 
-	ins, e := compileAll(c, con)
+	ins, e := compileAll(c, con_old)
 	if e != nil {
 		return nil, e
 	}
@@ -49,27 +53,28 @@ func build(c config) ([]inst.Instruction, error) {
 	return ins, nil
 }
 
-func scanAll(c config, s string) (*lexeme.Container, error) {
+func scanAll(c config, s string) (*container.Container, error) {
 
-	con2, e := scanner.ScanString(s)
+	con, e := scanner.ScanString(s)
 	if e != nil {
 		return nil, e
 	}
 
-	con := temp.ConvertContainer(con2)
-
 	if c.logDir != "" {
-		return con, logContainer(c, con, "scanned")
+		con_old := temp.ConvertContainer(con)
+		e := logContainer(c, con_old, "scanned")
+		return con, e
 	}
 
 	return con, nil
 }
 
-func sanitiseAll(c config, con *lexeme.Container) error {
+func sanitiseAll(c config, con *container.Container) error {
 
-	sanitiser.SanitiseAll(con)
+	sanitiser.SanitiseAll(con.Iterator())
 	if c.logDir != "" {
-		return logContainer(c, con, "sanitised")
+		con_old := temp.ConvertContainer(con)
+		return logContainer(c, con_old, "sanitised")
 	}
 
 	return nil
