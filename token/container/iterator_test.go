@@ -84,12 +84,12 @@ func Test_Iterator_JumpToNext(t *testing.T) {
 		return v.Item().Type() == lexeme.NUMBER
 	})
 	require.Equal(t, b.data, it.Item())
-	require.True(t, it.HasNext())
+	require.True(t, it.More())
 
 	it.JumpToNext(func(v View) bool {
 		return v.Item().Type() == lexeme.NUMBER
 	})
-	require.False(t, it.HasNext())
+	require.False(t, it.More())
 }
 
 func Test_Iterator_JumpToPrev(t *testing.T) {
@@ -102,10 +102,10 @@ func Test_Iterator_JumpToPrev(t *testing.T) {
 		return v.Item().Type() == lexeme.NUMBER
 	})
 	require.Equal(t, b.data, it.Item())
-	require.True(t, it.HasPrev())
+	require.True(t, !it.IsFirst())
 
 	it.JumpToPrev(func(v View) bool {
 		return v.Item().Type() == lexeme.NUMBER
 	})
-	require.False(t, it.HasPrev())
+	require.False(t, !it.IsFirst())
 }

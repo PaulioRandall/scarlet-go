@@ -3,14 +3,13 @@ package cmd
 import (
 	"io/ioutil"
 
+	"github.com/PaulioRandall/scarlet-go/parser/a_scanner"
+	"github.com/PaulioRandall/scarlet-go/parser/b_sanitiser"
+	"github.com/PaulioRandall/scarlet-go/token/container"
+
 	"github.com/PaulioRandall/scarlet-go/inst"
 	"github.com/PaulioRandall/scarlet-go/lexeme"
 	"github.com/PaulioRandall/scarlet-go/temp"
-
-	"github.com/PaulioRandall/scarlet-go/token/container"
-
-	"github.com/PaulioRandall/scarlet-go/parser/a_scanner"
-	"github.com/PaulioRandall/scarlet-go/parser/b_sanitiser"
 
 	"github.com/PaulioRandall/scarlet-go/parser/c_checker"
 	"github.com/PaulioRandall/scarlet-go/parser/d_shunter"

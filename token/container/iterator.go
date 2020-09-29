@@ -7,11 +7,11 @@ import (
 )
 
 type View interface {
-	HasNext() bool
-	HasPrev() bool
+	More() bool
+	IsFirst() bool
 	Item() lexeme.Lexeme
 	LookAhead() lexeme.Lexeme
-	LookBehind() lexeme.Lexeme
+	LookBack() lexeme.Lexeme
 	String() string
 }
 
@@ -26,12 +26,12 @@ func (it *Iterator) Container() *Container {
 	return it.con
 }
 
-func (it *Iterator) HasNext() bool {
+func (it *Iterator) More() bool {
 	return it.next != nil
 }
 
-func (it *Iterator) HasPrev() bool {
-	return it.prev != nil
+func (it *Iterator) IsFirst() bool {
+	return it.prev == nil
 }
 
 func (it *Iterator) Next() lexeme.Lexeme {
@@ -68,7 +68,7 @@ func (it *Iterator) LookAhead() lexeme.Lexeme {
 	return it.next.data
 }
 
-func (it *Iterator) LookBehind() lexeme.Lexeme {
+func (it *Iterator) LookBack() lexeme.Lexeme {
 	if it.prev == nil {
 		return lexeme.Lexeme{}
 	}

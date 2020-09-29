@@ -10,7 +10,7 @@ import (
 )
 
 type LexItr interface {
-	HasNext() bool
+	More() bool
 	Next() lexeme.Lexeme
 }
 
@@ -23,14 +23,14 @@ func Feign(lexs ...lexeme.Lexeme) *container.Container {
 }
 
 func RequireEqual(t *testing.T, exp, act LexItr) {
-	for i := 0; exp.HasNext() || act.HasNext(); i++ {
+	for i := 0; exp.More() || act.More(); i++ {
 
-		if !exp.HasNext() {
+		if !exp.More() {
 			require.True(t, false,
 				"Unexpected lexeme in iterator at %d, have %s", i, act.Next().String())
 		}
 
-		if !act.HasNext() {
+		if !act.More() {
 			require.True(t, false,
 				"Unexpected iterator end at %d, want %s", i, exp.Next().String())
 		}

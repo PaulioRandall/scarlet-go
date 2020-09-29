@@ -5,32 +5,32 @@ import (
 )
 
 type Iterator interface {
-	HasNext() bool
-	HasPrev() bool
+	More() bool
+	IsFirst() bool
 	Next() lexeme.Lexeme
 	Prev() lexeme.Lexeme
-	LookBehind() lexeme.Lexeme
+	LookBack() lexeme.Lexeme
 	Remove() lexeme.Lexeme
 }
 
 // SanitiseAll removes tokens redundant to parsing so it's easier and less
 // error prone.
 func SanitiseAll(itr Iterator) {
-	for itr.HasNext() {
+	for itr.More() {
 		switch curr := itr.Next().Type(); {
 		case curr.IsRedundant():
 			itr.Remove() // Remove tokens always redundant to the compiler
 
-		case !itr.HasPrev() && curr.IsTerminator():
+		case itr.IsFirst() && curr.IsTerminator():
 			itr.Remove() // Remove leading terminators
 
-		case !itr.HasPrev():
+		case itr.IsFirst():
 			// No action for the first token
 
-		case removeAfterPrev(itr.LookBehind().Type(), curr):
+		case removeAfterPrev(itr.LookBack().Type(), curr):
 			itr.Remove()
 
-		case removeBeforeNext(itr.LookBehind().Type(), curr):
+		case removeBeforeNext(itr.LookBack().Type(), curr):
 			itr.Prev()
 			itr.Remove()
 			itr.Next()
