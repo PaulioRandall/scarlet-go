@@ -3,7 +3,7 @@ package scanner
 import (
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/token/container"
+	"github.com/PaulioRandall/scarlet-go/token2/container"
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
@@ -28,9 +28,7 @@ func ScanString(s string) (*container.Container, error) {
 
 		line, col, val := r.read(l.size, l.tk == token.NEWLINE)
 		lexTk := lexeme.New(val, l.tk, line, col)
-
-		_ = lexTk
-		//con.Put(lexTk)
+		con.Put(lexTk)
 	}
 
 	return con, nil
