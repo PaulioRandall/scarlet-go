@@ -28,6 +28,7 @@ func Tok(val string, tk token.Token) Lexeme {
 	return Lexeme{
 		Token: tk,
 		Val:   val,
+		End:   len(val),
 	}
 }
 
