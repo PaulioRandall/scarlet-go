@@ -13,12 +13,14 @@ const (
 	COMMENT    TokenType = `COMMENT`    // # comment
 	TERMINATOR TokenType = `TERMINATOR` // ;
 	NEWLINE    TokenType = `NEWLINE`    // \n
-	BOOL       TokenType = `BOOL`       // true | false
+	BOOL       TokenType = `BOOL`       /*Retired!*/
+	TRUE       TokenType = `TRUE`       // true
+	FALSE      TokenType = `FALSE`      // false
 	NUMBER     TokenType = `NUMBER`     // 1
 	STRING     TokenType = `STRING`     // "abc"
 	IDENT      TokenType = `IDENT`      // abc
 	SPELL      TokenType = `SPELL`      // @abc
-	GUARD      TokenType = `GUARD`      // Magic: Indicates the subsequent block is conditional
+	GUARD      TokenType = `GUARD`      /*Retired!*/
 	LOOP       TokenType = `LOOP`       // loop
 	DELIM      TokenType = `DELIM`      // ,
 	L_PAREN    TokenType = `L_PAREN`    // (
@@ -43,6 +45,19 @@ const (
 	EQUAL      TokenType = `EQUAL`      // ==
 	NOT_EQUAL  TokenType = `NOT_EQUAL`  // !=
 )
+
+func Identify(s string) TokenType {
+	switch s {
+	case "TRUE":
+		return TRUE
+	case "FALSE":
+		return FALSE
+	case "LOOP":
+		return LOOP
+	}
+
+	return IDENT
+}
 
 func (tk TokenType) Precedence() int {
 	switch tk {
@@ -86,6 +101,10 @@ func (tk TokenType) IsTerminator() bool {
 
 func (tk TokenType) IsLiteral() bool {
 	return tk == BOOL || tk == NUMBER || tk == STRING
+}
+
+func (tk TokenType) IsBool() bool {
+	return tk == TRUE || tk == FALSE
 }
 
 func (tk TokenType) IsTerm() bool {
