@@ -1,11 +1,10 @@
-package printer
+package lexeme
 
 import (
 	"io"
 	"strconv"
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
@@ -15,12 +14,12 @@ type cellWidths struct {
 	tk   int
 }
 
-func Print(w io.StringWriter, lexs []lexeme.Lexeme) error {
+func Print(w io.StringWriter, lexs []Lexeme) error {
 	cw := findCellWidths(lexs)
 	return printLexemes(w, cw, lexs)
 }
 
-func findCellWidths(lexs []lexeme.Lexeme) cellWidths {
+func findCellWidths(lexs []Lexeme) cellWidths {
 
 	var r cellWidths
 	for _, l := range lexs {
@@ -34,7 +33,7 @@ func findCellWidths(lexs []lexeme.Lexeme) cellWidths {
 	return r
 }
 
-func printLexemes(w io.StringWriter, cw cellWidths, lexs []lexeme.Lexeme) error {
+func printLexemes(w io.StringWriter, cw cellWidths, lexs []Lexeme) error {
 	for _, l := range lexs {
 
 		// Examples:
