@@ -6,35 +6,27 @@ import (
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
-type colWidths struct {
+type cellWidths struct {
 	line int
 	col  int
-	typ  int
+	tk   int
 }
 
 func Print(w io.StringWriter, lexs []lexeme.Lexeme) error {
-	cw := findColWidths(lexs)
+	cw := findCellWidths(lexs)
 	return printLexemes(w, cw, lexs)
 }
 
-func findColWidths(lexs []lexeme.Lexeme) colWidths {
+func findCellWidths(lexs []lexeme.Lexeme) cellWidths {
 
-	var r colWidths
-
+	var r cellWidths
 	for _, l := range lexs {
-		if l.Position.LineIdx > r.line {
-			r.line = l.Position.LineIdx
-		}
-
-		if l.Position.ColRune > r.col {
-			r.col = l.Position.ColRune
-		}
-
-		if len(l.Token.String()) > r.typ {
-			r.typ = len(l.Token.String())
-		}
+		r.line = max(r.line, l.Position.LineIdx, l.End.LineIdx)
+		r.col = max(r.col, l.Position.ColRune, l.End.ColRune)
+		r.tk = max(r.tk, len(l.Token.String()))
 	}
 
 	r.line = len(strconv.Itoa(r.line))
@@ -42,22 +34,43 @@ func findColWidths(lexs []lexeme.Lexeme) colWidths {
 	return r
 }
 
-func printLexemes(w io.StringWriter, cw colWidths, lexs []lexeme.Lexeme) error {
-
+func printLexemes(w io.StringWriter, cw cellWidths, lexs []lexeme.Lexeme) error {
 	for _, l := range lexs {
 
-		line := padFront(cw.line, strconv.Itoa(l.Position.LineIdx))
-		col := padBack(cw.col+1, strconv.Itoa(l.Position.ColRune)+",")
-		tok := padBack(cw.typ+1, l.Token.String()+",")
+		// Examples:
+		// `  1:2   ->   1:4   ASSIGN   ":="`
+		// `100:100 -> 100:101 NEWLINE  "\n"`
+		start := positionString(cw, l.Position)
+		end := positionString(cw, l.End)
+		tok := padBack(cw.tk, l.Token.String())
 		val := strconv.QuoteToGraphic(l.Val)
 
-		e := writeLine(w, line, ":", col, " ", tok, " ", val)
+		e := writeLine(w, start, " -> ", end, " ", tok, " ", val)
 		if e != nil {
 			return e
 		}
 	}
 
 	return nil
+}
+
+func positionString(cw cellWidths, p token.Position) string {
+	// Examples:
+	// `  1:2  `
+	// `100:100`
+	line := padFront(cw.line, strconv.Itoa(p.LineIdx))
+	col := padBack(cw.col, strconv.Itoa(p.ColRune))
+	return line + ":" + col
+}
+
+func max(first int, others ...int) int {
+	r := first
+	for _, o := range others {
+		if o > r {
+			r = o
+		}
+	}
+	return r
 }
 
 func padFront(min int, s string) string {

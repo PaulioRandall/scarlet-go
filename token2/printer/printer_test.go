@@ -16,9 +16,9 @@ func makeTestData() ([]lexeme.Lexeme, string) {
 		lexeme.New("x", token.IDENT, 0, 0),
 		lexeme.New(" ", token.SPACE, 0, 1),
 		lexeme.New(":=", token.ASSIGN, 0, 2),
-		lexeme.New(" ", token.SPACE, 0, 3),
-		lexeme.New(`"abc"`, token.STRING, 0, 4),
-		lexeme.New("\n", token.NEWLINE, 0, 8),
+		lexeme.New(" ", token.SPACE, 0, 4),
+		lexeme.New(`"abc"`, token.STRING, 0, 5),
+		lexeme.New("\n", token.NEWLINE, 0, 10),
 		lexeme.New("@Println", token.SPELL, 1, 0),
 		lexeme.New("(", token.L_PAREN, 1, 8),
 		lexeme.New("1", token.NUMBER, 1, 9),
@@ -28,19 +28,19 @@ func makeTestData() ([]lexeme.Lexeme, string) {
 		lexeme.New("\n", token.NEWLINE, 100, 100),
 	}
 
-	exp := `  0:0,   IDENT,   "x"
-  0:1,   SPACE,   " "
-  0:2,   ASSIGN,  ":="
-  0:3,   SPACE,   " "
-  0:4,   STRING,  "\"abc\""
-  0:8,   NEWLINE, "\n"
-  1:0,   SPELL,   "@Println"
-  1:8,   L_PAREN, "("
-  1:9,   NUMBER,  "1"
-  1:10,  R_PAREN, ")"
-  1:11,  NEWLINE, "\n"
- 10:10,  NEWLINE, "\n"
-100:100, NEWLINE, "\n"
+	exp := `  0:0   ->   0:1   IDENT   "x"
+  0:1   ->   0:2   SPACE   " "
+  0:2   ->   0:4   ASSIGN  ":="
+  0:4   ->   0:5   SPACE   " "
+  0:5   ->   0:10  STRING  "\"abc\""
+  0:10  ->   0:11  NEWLINE "\n"
+  1:0   ->   1:8   SPELL   "@Println"
+  1:8   ->   1:9   L_PAREN "("
+  1:9   ->   1:10  NUMBER  "1"
+  1:10  ->   1:11  R_PAREN ")"
+  1:11  ->   1:12  NEWLINE "\n"
+ 10:10  ->  10:11  NEWLINE "\n"
+100:100 -> 100:101 NEWLINE "\n"
 `
 
 	return in, exp
