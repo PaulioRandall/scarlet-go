@@ -12,23 +12,7 @@ type Lexeme struct {
 	Val string
 }
 
-func New(val string, tk token.Token, line, col int) Lexeme {
-
-	snip := token.Snippet{
-		Position: token.Position{
-			SrcOffset: 0, // TODO
-			LineIdx:   line,
-			ColByte:   0, // TODO
-			ColRune:   col,
-		},
-		End: token.Position{
-			SrcOffset: 0, // TODO
-			LineIdx:   line,
-			ColByte:   0, // TODO
-			ColRune:   col + len(val),
-		},
-	}
-
+func New(val string, tk token.Token, snip token.Snippet) Lexeme {
 	return Lexeme{
 		Token:   tk,
 		Snippet: snip,
@@ -37,11 +21,19 @@ func New(val string, tk token.Token, line, col int) Lexeme {
 }
 
 func Tok(val string, tk token.Token) Lexeme {
-	return New(val, tk, 0, 0)
-}
 
-func (l Lexeme) Value() string {
-	return l.Val
+	sizeBytes := len(val)
+	sizeRunes := len([]rune(val))
+
+	snip := token.Snippet{
+		End: token.Position{
+			SrcOffset: sizeBytes,
+			ColByte:   sizeBytes,
+			ColRune:   sizeRunes,
+		},
+	}
+
+	return New(val, tk, snip)
 }
 
 func (l Lexeme) String() string {

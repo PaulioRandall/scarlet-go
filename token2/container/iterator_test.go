@@ -62,15 +62,15 @@ func Test_Iterator_InsertAfter(t *testing.T) {
 
 func dummyItrData() (a, b, c *node) {
 	a = &node{
-		data: lexeme.New("true", token.TRUE, 0, 0),
+		data: lexeme.Tok("true", token.TRUE),
 	}
 
 	b = &node{
-		data: lexeme.New("1", token.NUMBER, 0, 4),
+		data: lexeme.Tok("1", token.NUMBER),
 	}
 
 	c = &node{
-		data: lexeme.New("abc", token.STRING, 0, 5),
+		data: lexeme.Tok("abc", token.STRING),
 	}
 
 	return

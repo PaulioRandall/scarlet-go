@@ -258,29 +258,72 @@ func TestNumber_4(t *testing.T) {
 	doErrTest(t, "123.abc")
 }
 
+type lexGen struct {
+	offset  int
+	line    int
+	colByte int
+	colRune int
+}
+
+func (lg *lexGen) gen(v string, tk token.Token) lexeme.Lexeme {
+
+	byteCount := len(v)
+	runeCount := len([]rune(v))
+
+	snip := token.Snippet{
+		Position: token.Position{
+			SrcOffset: lg.offset,
+			LineIdx:   lg.line,
+			ColByte:   lg.colByte,
+			ColRune:   lg.colRune,
+		},
+		End: token.Position{
+			SrcOffset: lg.offset + byteCount,
+			LineIdx:   lg.line,
+			ColByte:   lg.colByte + byteCount,
+			ColRune:   lg.colRune + runeCount,
+		},
+	}
+
+	lg.offset += byteCount
+
+	if tk == token.NEWLINE {
+		lg.line++
+		lg.colByte = 0
+		lg.colRune = 0
+	} else {
+		lg.colByte += byteCount
+		lg.colRune += runeCount
+	}
+
+	return lexeme.New(v, tk, snip)
+}
+
 func TestComprehensive_1(t *testing.T) {
 
 	in := `x := 1 + 2
 @Println("x = ", x)`
 
+	lg := &lexGen{}
+
 	exp := conttest.Feign(
-		lexeme.New("x", token.IDENT, 0, 0),
-		lexeme.New(" ", token.SPACE, 0, 1),
-		lexeme.New(":=", token.ASSIGN, 0, 2),
-		lexeme.New(" ", token.SPACE, 0, 4),
-		lexeme.New("1", token.NUMBER, 0, 5),
-		lexeme.New(" ", token.SPACE, 0, 6),
-		lexeme.New("+", token.ADD, 0, 7),
-		lexeme.New(" ", token.SPACE, 0, 8),
-		lexeme.New("2", token.NUMBER, 0, 9),
-		lexeme.New("\n", token.NEWLINE, 0, 10),
-		lexeme.New("@Println", token.SPELL, 1, 0),
-		lexeme.New("(", token.L_PAREN, 1, 8),
-		lexeme.New(`"x = "`, token.STRING, 1, 9),
-		lexeme.New(",", token.DELIM, 1, 15),
-		lexeme.New(" ", token.SPACE, 1, 16),
-		lexeme.New("x", token.IDENT, 1, 17),
-		lexeme.New(")", token.R_PAREN, 1, 18),
+		lg.gen("x", token.IDENT),
+		lg.gen(" ", token.SPACE),
+		lg.gen(":=", token.ASSIGN),
+		lg.gen(" ", token.SPACE),
+		lg.gen("1", token.NUMBER),
+		lg.gen(" ", token.SPACE),
+		lg.gen("+", token.ADD),
+		lg.gen(" ", token.SPACE),
+		lg.gen("2", token.NUMBER),
+		lg.gen("\n", token.NEWLINE),
+		lg.gen("@Println", token.SPELL),
+		lg.gen("(", token.L_PAREN),
+		lg.gen(`"x = "`, token.STRING),
+		lg.gen(",", token.DELIM),
+		lg.gen(" ", token.SPACE),
+		lg.gen("x", token.IDENT),
+		lg.gen(")", token.R_PAREN),
 	)
 
 	doTest(t, in, exp)

@@ -8,15 +8,15 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
+func Print(w io.StringWriter, lexs []Lexeme) error {
+	cw := findCellWidths(lexs)
+	return printLexemes(w, cw, lexs)
+}
+
 type cellWidths struct {
 	line int
 	col  int
 	tk   int
-}
-
-func Print(w io.StringWriter, lexs []Lexeme) error {
-	cw := findCellWidths(lexs)
-	return printLexemes(w, cw, lexs)
 }
 
 func findCellWidths(lexs []Lexeme) cellWidths {

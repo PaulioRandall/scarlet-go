@@ -9,16 +9,14 @@ import (
 )
 
 type lex struct {
-	size int
+	size int // In runes
 	tk   token.Token
 }
 
 func ScanString(s string) (*container.Container, error) {
 
 	con := container.New()
-	r := &reader{}
-	r.data = []rune(s)
-	r.size = len(r.data)
+	r := newReader(s)
 
 	for r.more() {
 		l := &lex{}
@@ -26,8 +24,8 @@ func ScanString(s string) (*container.Container, error) {
 			return nil, e
 		}
 
-		line, col, val := r.read(l.size, l.tk == token.NEWLINE)
-		lexTk := lexeme.New(val, l.tk, line, col)
+		snip, val := r.read(l.size, l.tk == token.NEWLINE)
+		lexTk := lexeme.New(val, l.tk, snip)
 		con.Put(lexTk)
 	}
 
@@ -42,7 +40,7 @@ func identifyLexeme(r *reader, l *lex) error {
 	case r.starts("\r\n"):
 		l.size, l.tk = 2, token.NEWLINE
 	case r.starts("\r"):
-		return newErr(r.line, r.col, "Missing %q after %q", "\n", "\r")
+		return newErr(r.line, r.colRune, "Missing %q after %q", "\n", "\r")
 
 	case unicode.IsSpace(r.at(0)):
 		l.size, l.tk = 1, token.SPACE
@@ -144,7 +142,7 @@ func identifyLexeme(r *reader, l *lex) error {
 		}
 
 	default:
-		return newErr(r.line, r.col, "Unexpected symbol %q", r.at(0))
+		return newErr(r.line, r.colRune, "Unexpected symbol %q", r.at(0))
 	}
 
 	return nil
@@ -182,12 +180,12 @@ func spell(r *reader, l *lex) error {
 
 	part := func() error {
 		if !r.inRange(l.size) {
-			return newErr(r.line, r.col+l.size,
+			return newErr(r.line, r.colRune+l.size,
 				"Bad spell name, have EOF, want letter")
 		}
 
 		if ru := r.at(l.size); !unicode.IsLetter(ru) {
-			return newErr(r.line, r.col+l.size,
+			return newErr(r.line, r.colRune+l.size,
 				"Bad spell name, have %q, want letter", ru)
 		}
 
@@ -235,7 +233,7 @@ func stringLiteral(r *reader, l *lex) error {
 		}
 
 		if ru := r.at(l.size); ru == '\r' || ru == '\n' {
-			return newErr(r.line, r.col+l.size, "Unterminated string")
+			return newErr(r.line, r.colRune+l.size, "Unterminated string")
 		}
 		l.size++
 	}
@@ -243,7 +241,7 @@ func stringLiteral(r *reader, l *lex) error {
 	return nil
 
 ERROR:
-	return newErr(r.line, r.col+l.size, "Unterminated string")
+	return newErr(r.line, r.colRune+l.size, "Unterminated string")
 }
 
 func numberLiteral(r *reader, l *lex) error {
@@ -259,12 +257,12 @@ func numberLiteral(r *reader, l *lex) error {
 	l.size++
 
 	if !r.inRange(l.size) {
-		return newErr(r.line, r.col+l.size,
+		return newErr(r.line, r.colRune+l.size,
 			"Unexpected symbol, have EOF, want [0-9]")
 	}
 
 	if ru := r.at(l.size); !unicode.IsDigit(ru) {
-		return newErr(r.line, r.col+l.size,
+		return newErr(r.line, r.colRune+l.size,
 			"Unexpected symbol, have %q want [0-9]", ru)
 	}
 
