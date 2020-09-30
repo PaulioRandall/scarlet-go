@@ -9,18 +9,16 @@ type Token string
 const (
 	UNDEFINED Token = ``
 	// -----------------
-	SPACE      Token = `SPACE`
+	SPACE      Token = `SPACE`      // Whitespace
 	COMMENT    Token = `COMMENT`    // # comment
 	TERMINATOR Token = `TERMINATOR` // ;
 	NEWLINE    Token = `NEWLINE`    // \n
-	BOOL       Token = `BOOL`       /*Retired!*/
 	TRUE       Token = `TRUE`       // true
 	FALSE      Token = `FALSE`      // false
 	NUMBER     Token = `NUMBER`     // 1
 	STRING     Token = `STRING`     // "abc"
 	IDENT      Token = `IDENT`      // abc
 	SPELL      Token = `SPELL`      // @abc
-	GUARD      Token = `GUARD`      /*Retired!*/
 	LOOP       Token = `LOOP`       // loop
 	DELIM      Token = `DELIM`      // ,
 	L_PAREN    Token = `L_PAREN`    // (
