@@ -6,6 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/container"
 	"github.com/PaulioRandall/scarlet-go/token2/container/conttest"
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token2/position"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 
 	"github.com/stretchr/testify/require"
@@ -258,72 +259,36 @@ func TestNumber_4(t *testing.T) {
 	doErrTest(t, "123.abc")
 }
 
-type lexGen struct {
-	offset  int
-	line    int
-	colByte int
-	colRune int
-}
-
-func (lg *lexGen) gen(v string, tk token.Token) lexeme.Lexeme {
-
-	byteCount := len(v)
-	runeCount := len([]rune(v))
-
-	snip := token.Snippet{
-		Position: token.Position{
-			SrcOffset: lg.offset,
-			LineIdx:   lg.line,
-			ColByte:   lg.colByte,
-			ColRune:   lg.colRune,
-		},
-		End: token.Position{
-			SrcOffset: lg.offset + byteCount,
-			LineIdx:   lg.line,
-			ColByte:   lg.colByte + byteCount,
-			ColRune:   lg.colRune + runeCount,
-		},
-	}
-
-	lg.offset += byteCount
-
-	if tk == token.NEWLINE {
-		lg.line++
-		lg.colByte = 0
-		lg.colRune = 0
-	} else {
-		lg.colByte += byteCount
-		lg.colRune += runeCount
-	}
-
-	return lexeme.New(v, tk, snip)
-}
-
 func TestComprehensive_1(t *testing.T) {
 
 	in := `x := 1 + 2
 @Println("x = ", x)`
 
-	lg := &lexGen{}
+	tm := &position.TextMarker{}
+	genLex := func(v string, tk token.Token) lexeme.Lexeme {
+		snip := tm.Snippet(v)
+		tm.Advance(v, v == "\n")
+		return lexeme.New(v, tk, snip)
+	}
 
 	exp := conttest.Feign(
-		lg.gen("x", token.IDENT),
-		lg.gen(" ", token.SPACE),
-		lg.gen(":=", token.ASSIGN),
-		lg.gen(" ", token.SPACE),
-		lg.gen("1", token.NUMBER),
-		lg.gen(" ", token.SPACE),
-		lg.gen("+", token.ADD),
-		lg.gen(" ", token.SPACE),
-		lg.gen("2", token.NUMBER),
-		lg.gen("\n", token.NEWLINE),
-		lg.gen("@Println", token.SPELL),
-		lg.gen("(", token.L_PAREN),
-		lg.gen(`"x = "`, token.STRING),
-		lg.gen(",", token.DELIM),
-		lg.gen(" ", token.SPACE),
-		lg.gen("x", token.IDENT),
-		lg.gen(")", token.R_PAREN),
+		genLex("x", token.IDENT),
+		genLex(" ", token.SPACE),
+		genLex(":=", token.ASSIGN),
+		genLex(" ", token.SPACE),
+		genLex("1", token.NUMBER),
+		genLex(" ", token.SPACE),
+		genLex("+", token.ADD),
+		genLex(" ", token.SPACE),
+		genLex("2", token.NUMBER),
+		genLex("\n", token.NEWLINE),
+		genLex("@Println", token.SPELL),
+		genLex("(", token.L_PAREN),
+		genLex(`"x = "`, token.STRING),
+		genLex(",", token.DELIM),
+		genLex(" ", token.SPACE),
+		genLex("x", token.IDENT),
+		genLex(")", token.R_PAREN),
 	)
 
 	doTest(t, in, exp)

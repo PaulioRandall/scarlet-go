@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/token2/token"
+	"github.com/PaulioRandall/scarlet-go/token2/position"
 )
 
 func Print(w io.StringWriter, lexs []Lexeme) error {
@@ -23,7 +23,7 @@ func findCellWidths(lexs []Lexeme) cellWidths {
 
 	var r cellWidths
 	for _, l := range lexs {
-		r.line = max(r.line, l.Position.LineIdx, l.End.LineIdx)
+		r.line = max(r.line, l.Position.Line, l.End.Line)
 		r.col = max(r.col, l.Position.ColRune, l.End.ColRune)
 		r.tk = max(r.tk, len(l.Token.String()))
 	}
@@ -53,11 +53,11 @@ func printLexemes(w io.StringWriter, cw cellWidths, lexs []Lexeme) error {
 	return nil
 }
 
-func positionString(cw cellWidths, p token.Position) string {
+func positionString(cw cellWidths, p position.Position) string {
 	// Examples:
 	// `  1:2  `
 	// `100:100`
-	line := padFront(cw.line, strconv.Itoa(p.LineIdx))
+	line := padFront(cw.line, strconv.Itoa(p.Line))
 	col := padBack(cw.col, strconv.Itoa(p.ColRune))
 	return line + ":" + col
 }

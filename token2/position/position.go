@@ -1,20 +1,20 @@
-package token
+package position
 
 import (
 	"fmt"
 )
 
 type Position struct {
-	SrcOffset int // Bytes
-	LineIdx   int
-	ColByte   int
-	ColRune   int
+	Offset  int // Bytes
+	Line    int // Index
+	ColByte int // Index
+	ColRune int // Index
 }
 
 func (p Position) String() string {
 	return fmt.Sprintf("[%d]%d/%d/%d",
-		p.LineIdx,
-		p.SrcOffset,
+		p.Line,
+		p.Offset,
 		p.ColByte,
 		p.ColRune,
 	)

@@ -3,16 +3,17 @@ package lexeme
 import (
 	"fmt"
 
+	"github.com/PaulioRandall/scarlet-go/token2/position"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
 type Lexeme struct {
 	token.Token
-	token.Snippet
+	position.Snippet
 	Val string
 }
 
-func New(val string, tk token.Token, snip token.Snippet) Lexeme {
+func New(val string, tk token.Token, snip position.Snippet) Lexeme {
 	return Lexeme{
 		Token:   tk,
 		Snippet: snip,
@@ -25,11 +26,11 @@ func Tok(val string, tk token.Token) Lexeme {
 	sizeBytes := len(val)
 	sizeRunes := len([]rune(val))
 
-	snip := token.Snippet{
-		End: token.Position{
-			SrcOffset: sizeBytes,
-			ColByte:   sizeBytes,
-			ColRune:   sizeRunes,
+	snip := position.Snippet{
+		End: position.Position{
+			Offset:  sizeBytes,
+			ColByte: sizeBytes,
+			ColRune: sizeRunes,
 		},
 	}
 

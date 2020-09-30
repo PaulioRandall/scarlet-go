@@ -3,16 +3,13 @@ package scanner
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/token2/token"
+	"github.com/PaulioRandall/scarlet-go/token2/position"
 )
 
 type reader struct {
-	data    []rune
-	remain  int // Runes remaining
-	offset  int // Byte offset from start of source file
-	line    int // Current line index
-	colByte int // Byte offset from start of the line
-	colRune int // Rune offset from start of line
+	position.TextMarker
+	data   []rune
+	remain int // Runes remaining
 }
 
 func newReader(s string) *reader {
@@ -66,41 +63,14 @@ func (r *reader) slice(runeCount int) string {
 	return string(r.data[:runeCount])
 }
 
-func (r *reader) read(runeCount int, newline bool) (token.Snippet, string) {
+func (r *reader) read(runeCount int, newline bool) (position.Snippet, string) {
 
 	val := r.slice(runeCount)
-	byteCount := len(val)
-	snip := r.snippet(byteCount, runeCount)
+	snip := r.Snippet(val)
 
-	r.offset += byteCount
 	r.data = r.data[runeCount:]
 	r.remain = len(r.data)
-
-	if newline {
-		r.line++
-		r.colByte = 0
-		r.colRune = 0
-	} else {
-		r.colByte += byteCount
-		r.colRune += runeCount
-	}
+	r.Advance(val, newline)
 
 	return snip, val
-}
-
-func (r *reader) snippet(byteCount, runeCount int) token.Snippet {
-	return token.Snippet{
-		Position: token.Position{
-			SrcOffset: r.offset,
-			LineIdx:   r.line,
-			ColByte:   r.colByte,
-			ColRune:   r.colRune,
-		},
-		End: token.Position{
-			SrcOffset: r.offset + byteCount,
-			LineIdx:   r.line,
-			ColByte:   r.colByte + byteCount,
-			ColRune:   r.colRune + runeCount,
-		},
-	}
 }

@@ -4,50 +4,42 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/PaulioRandall/scarlet-go/token2/position"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 
 	"github.com/stretchr/testify/require"
 )
 
-func mockLex(v string, tk token.Token, line, col int) Lexeme {
-
-	runeCount := len([]rune(v))
-
-	snip := token.Snippet{
-		Position: token.Position{
-			SrcOffset: 0,
-			LineIdx:   line,
-			ColByte:   0,
-			ColRune:   col,
-		},
-		End: token.Position{
-			SrcOffset: 0,
-			LineIdx:   line,
-			ColByte:   0,
-			ColRune:   col + runeCount,
-		},
-	}
-
-	return New(v, tk, snip)
-}
-
 func makeTestData() ([]Lexeme, string) {
 
-	in := []Lexeme{
-		mockLex("x", token.IDENT, 0, 0),
-		mockLex(" ", token.SPACE, 0, 1),
-		mockLex(":=", token.ASSIGN, 0, 2),
-		mockLex(" ", token.SPACE, 0, 4),
-		mockLex(`"abc"`, token.STRING, 0, 5),
-		mockLex("\n", token.NEWLINE, 0, 10),
-		mockLex("@Println", token.SPELL, 1, 0),
-		mockLex("(", token.L_PAREN, 1, 8),
-		mockLex("1", token.NUMBER, 1, 9),
-		mockLex(")", token.R_PAREN, 1, 10),
-		mockLex("\n", token.NEWLINE, 1, 11),
-		mockLex("\n", token.NEWLINE, 10, 10),
-		mockLex("\n", token.NEWLINE, 100, 100),
+	tm := &position.TextMarker{}
+	genLex := func(v string, tk token.Token) Lexeme {
+		snip := tm.Snippet(v)
+		tm.Advance(v, v == "\n")
+		return New(v, tk, snip)
 	}
+
+	in := []Lexeme{
+		genLex("x", token.IDENT),
+		genLex(" ", token.SPACE),
+		genLex(":=", token.ASSIGN),
+		genLex(" ", token.SPACE),
+		genLex(`"abc"`, token.STRING),
+		genLex("\n", token.NEWLINE),
+		genLex("@Println", token.SPELL),
+		genLex("(", token.L_PAREN),
+		genLex("1", token.NUMBER),
+		genLex(")", token.R_PAREN),
+		genLex("\n", token.NEWLINE),
+	}
+
+	tm.Offset, tm.Line, tm.ColByte, tm.ColRune = 10, 10, 10, 10
+	doubleDigit := genLex("\n", token.NEWLINE)
+	in = append(in, doubleDigit)
+
+	tm.Offset, tm.Line, tm.ColByte, tm.ColRune = 100, 100, 100, 100
+	tripleDigit := genLex("\n", token.NEWLINE)
+	in = append(in, tripleDigit)
 
 	exp := `  0:0   ->   0:1   IDENT   "x"
   0:1   ->   0:2   SPACE   " "
