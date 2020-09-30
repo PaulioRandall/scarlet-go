@@ -4,8 +4,8 @@ import (
 	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/token/container"
-	"github.com/PaulioRandall/scarlet-go/token/lexeme2"
-	"github.com/PaulioRandall/scarlet-go/token/token"
+	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
 type lex struct {

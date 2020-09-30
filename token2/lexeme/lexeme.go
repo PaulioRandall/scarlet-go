@@ -3,7 +3,7 @@ package lexeme
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/token/token"
+	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
 type Lexeme struct {
