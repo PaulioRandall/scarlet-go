@@ -24,12 +24,12 @@ func findColWidths(lexs []lexeme.Lexeme) colWidths {
 	var r colWidths
 
 	for _, l := range lexs {
-		if l.Line > r.line {
-			r.line = l.Line
+		if l.Position.LineIdx > r.line {
+			r.line = l.Position.LineIdx
 		}
 
-		if l.Col > r.col {
-			r.col = l.Col
+		if l.Position.ColRune > r.col {
+			r.col = l.Position.ColRune
 		}
 
 		if len(l.Token.String()) > r.typ {
@@ -46,8 +46,8 @@ func printLexemes(w io.StringWriter, cw colWidths, lexs []lexeme.Lexeme) error {
 
 	for _, l := range lexs {
 
-		line := padFront(cw.line, strconv.Itoa(l.Line))
-		col := padBack(cw.col+1, strconv.Itoa(l.Col)+",")
+		line := padFront(cw.line, strconv.Itoa(l.Position.LineIdx))
+		col := padBack(cw.col+1, strconv.Itoa(l.Position.ColRune)+",")
 		tok := padBack(cw.typ+1, l.Token.String()+",")
 		val := strconv.QuoteToGraphic(l.Val)
 

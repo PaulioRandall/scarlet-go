@@ -8,55 +8,45 @@ import (
 
 type Lexeme struct {
 	token.Token
-	Val  string
-	Line int
-	Col  int
-	End  int
+	token.Snippet
+	Val string
 }
 
 func New(val string, tk token.Token, line, col int) Lexeme {
+
+	snip := token.Snippet{
+		Position: token.Position{
+			SrcOffset: 0, // TODO
+			LineIdx:   line,
+			ColByte:   0, // TODO
+			ColRune:   col,
+		},
+		End: token.Position{
+			SrcOffset: 0, // TODO
+			LineIdx:   line,
+			ColByte:   0, // TODO
+			ColRune:   col + len(val),
+		},
+	}
+
 	return Lexeme{
-		Token: tk,
-		Val:   val,
-		Line:  line,
-		Col:   col,
-		End:   col + len(val),
+		Token:   tk,
+		Snippet: snip,
+		Val:     val,
 	}
 }
 
 func Tok(val string, tk token.Token) Lexeme {
-	return Lexeme{
-		Token: tk,
-		Val:   val,
-		End:   len(val),
-	}
-}
-
-func (l Lexeme) TokenVal() token.Token {
-	return l.Token
+	return New(val, tk, 0, 0)
 }
 
 func (l Lexeme) Value() string {
 	return l.Val
 }
 
-func (l Lexeme) LineIdx() int {
-	return l.Line
-}
-
-func (l Lexeme) ColIdx() int {
-	return l.Col
-}
-
-func (l Lexeme) EndIdx() int {
-	return l.End
-}
-
 func (l Lexeme) String() string {
-	return fmt.Sprintf("[%d] %d:%d %s %q",
-		l.Line,
-		l.Col,
-		l.End,
+	return fmt.Sprintf("%s %s %q",
+		l.Snippet.String(),
 		l.Token.String(),
 		l.Val,
 	)
