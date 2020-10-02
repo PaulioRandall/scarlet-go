@@ -13,15 +13,15 @@ type lex struct {
 	tk   token.Token
 }
 
-func ScanString(s string) (*series.Series, error) {
+func ScanString(s string) (series.Series, error) {
 
-	se := series.New()
+	se := series.Make()
 	r := newReader(s)
 
 	for r.more() {
 		l := &lex{}
 		if e := identifyLexeme(r, l); e != nil {
-			return nil, e
+			return series.Series{}, e
 		}
 
 		snip, val := r.read(l.size)

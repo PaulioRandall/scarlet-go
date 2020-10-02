@@ -6,16 +6,21 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
 )
 
-type List interface {
+// WritableList documents the functions that may be applicable to any interface
+// that writes to a Series. Subsetting the interface is desirable.
+type WritableList interface {
 	Size() int
 	Empty() bool
-	More() bool
 	Prepend(lexeme.Lexeme)
 	Append(lexeme.Lexeme)
 	String() string
 }
 
+// Iterator documents the functions that may be applicable to any interface
+// that iterates a Series. Subsetting the interface is desirable.
 type Iterator interface {
+	More() bool
+	Empty() bool
 	JumpToStart()
 	JumpToEnd()
 	JumpToPrev(matcher func(ReadOnly) bool) bool
@@ -31,6 +36,8 @@ type Iterator interface {
 	String() string
 }
 
+// ReadOnly is designed for use when iterating a Series to mask state changing
+// functionality.
 type ReadOnly interface {
 	Empty() bool
 	More() bool
@@ -41,53 +48,60 @@ type ReadOnly interface {
 	String() string
 }
 
+// Series represents a double linked list and iterator of Lexemes. The decision
+// to combine the list and iteration functionality was not taken lightly but
+// based on previous use, the separation of concerns appeared to cost more in
+// usage complexity than an amalgamated structure did for implementation
+// complexity. Could be wrong but only time will really tell. Splitting the
+// structures shouldn't be much trouble if it comes to it.
+//
+// A Series always starts with its iterator mark before the first item such
+// that Series.Get will return an empty Lexeme and Series.Next will move to the
+// first item, if it exists.
+//
+// Series is best used through custom interfaces that limit functionality to
+// the situation for readability. The Series is not concurrent friendly.
 type Series struct {
-	size int
-	head *node
-	tail *node
-	prev *node
-	curr *node
-	next *node
+	*list
+	*mark
 }
 
-func New() *Series {
-	return &Series{}
-}
-
-func new(nodes ...*node) *Series {
-	head, tail, size := chain(nodes...)
-	return &Series{
-		size: size,
-		head: head,
-		tail: tail,
-		next: head,
+// Make returns a new empty Series.
+func Make() Series {
+	return Series{
+		list: &list{},
+		mark: &mark{},
 	}
 }
 
-func (s *Series) Size() int {
-	return s.size
+func makeWith(nodes ...*node) Series {
+	head, tail, size := chain(nodes...)
+	return Series{
+		list: &list{
+			size: size,
+			head: head,
+			tail: tail,
+		},
+		mark: &mark{
+			next: head,
+		},
+	}
 }
 
-func (s *Series) Empty() bool {
-	return s.size == 0
-}
-
-func (s *Series) More() bool {
-	return s.next != nil
-}
-
+// JumpToStart resets the iterator mark before the first item in the Series.
 func (s *Series) JumpToStart() {
-	s.prev = nil
-	s.curr = nil
-	s.next = s.head
+	s.jumpToStart(s.head)
 }
 
+// JumpToEnd puts the iterator mark after the last item in the Series.
 func (s *Series) JumpToEnd() {
-	s.prev = s.tail
-	s.curr = nil
-	s.next = nil
+	s.jumpToEnd(s.tail)
 }
 
+// JumpToPrev iterates backwards calling 'matcher' on each item on the way. If
+// 'matcher' returns true then iteration stops and true is returned, if no match
+// is found the iterator mark will end up before the first item in the Series
+// and false is returned.
 func (s *Series) JumpToPrev(matcher func(ReadOnly) bool) bool {
 
 	for n := s.prev; n != nil; n = n.prev {
@@ -101,6 +115,10 @@ func (s *Series) JumpToPrev(matcher func(ReadOnly) bool) bool {
 	return false
 }
 
+// JumpToNext iterates forwards calling 'matcher' on each item on the way. If
+// 'matcher' returns true then iteration stops and true is returned, if no match
+// is found the iterator mark will end up after the last item in the Series
+// and false is returned.
 func (s *Series) JumpToNext(matcher func(ReadOnly) bool) bool {
 
 	for n := s.next; n != nil; n = n.next {
@@ -114,52 +132,9 @@ func (s *Series) JumpToNext(matcher func(ReadOnly) bool) bool {
 	return false
 }
 
-func (s *Series) Next() lexeme.Lexeme {
-	if s.next == nil {
-		panic("Can't move beyond the end of the series")
-	}
-	s.jumpTo(s.next)
-	return s.curr.data
-}
-
-func (s *Series) Get() lexeme.Lexeme {
-	if s.curr == nil {
-		return lexeme.Lexeme{}
-	}
-	return s.curr.data
-}
-
-func (s *Series) Prev() lexeme.Lexeme {
-	if s.prev == nil {
-		panic("Can't move beyond the start of the series")
-	}
-	s.jumpTo(s.prev)
-	return s.curr.data
-}
-
-func (s *Series) LookAhead() lexeme.Lexeme {
-	if s.next == nil {
-		return lexeme.Lexeme{}
-	}
-	return s.next.data
-}
-
-func (s *Series) LookBack() lexeme.Lexeme {
-	if s.prev == nil {
-		return lexeme.Lexeme{}
-	}
-	return s.prev.data
-}
-
+// Prepend inserts a Lexeme at the front of the Series.
 func (s *Series) Prepend(l lexeme.Lexeme) {
-
-	n := &node{
-		data: l,
-	}
-
-	link(n, s.head)
-	s.inserted(n)
-
+	s.prepend(l)
 	if s.curr != nil {
 		s.jumpTo(s.curr)
 	} else {
@@ -167,15 +142,9 @@ func (s *Series) Prepend(l lexeme.Lexeme) {
 	}
 }
 
+// Append inserts a Lexeme at the back of the Series.
 func (s *Series) Append(l lexeme.Lexeme) {
-
-	n := &node{
-		data: l,
-	}
-
-	link(s.tail, n)
-	s.inserted(n)
-
+	s.append(l)
 	if s.curr != nil {
 		s.jumpTo(s.curr)
 	} else {
@@ -183,48 +152,33 @@ func (s *Series) Append(l lexeme.Lexeme) {
 	}
 }
 
+// InsertAfter inserts a Lexeme after the item indicated by the iterator mark.
+// A panic will ensue if the mark isn't pointing to an item.
 func (s *Series) InsertAfter(l lexeme.Lexeme) {
-
-	n := &node{
-		data: l,
-	}
 
 	if s.curr == nil {
 		panic("Current node missing, can't insert after it")
 	}
 
-	var next *node
-	if s.curr != nil {
-		next = s.curr.next
-		unlink(s.curr, next)
-	}
-
-	chain(s.curr, n, next)
+	n := &node{data: l}
+	s.insertAfter(n)
 	s.inserted(n)
-	s.jumpTo(s.curr)
 }
 
+// InsertBefore inserts a Lexeme before the item indicated by the iterator mark.
+// A panic will ensue if the mark isn't pointing to an item.
 func (s *Series) InsertBefore(l lexeme.Lexeme) {
-
-	n := &node{
-		data: l,
-	}
 
 	if s.curr == nil {
 		panic("Current node missing, can't insert before it")
 	}
 
-	var prev *node
-	if s.curr != nil {
-		prev = s.curr.prev
-		unlink(prev, s.curr)
-	}
-
-	chain(prev, n, s.curr)
+	n := &node{data: l}
+	s.insertBefore(n)
 	s.inserted(n)
-	s.jumpTo(s.curr)
 }
 
+// Remove removes a the Lexeme indicated by the iterator mark from the Series.
 func (s *Series) Remove() lexeme.Lexeme {
 
 	if s.curr == nil {
@@ -233,20 +187,12 @@ func (s *Series) Remove() lexeme.Lexeme {
 
 	n := s.curr
 	s.curr = nil
-	s.size--
-
-	if n == s.head {
-		s.head = n.next
-	}
-
-	if n == s.tail {
-		s.tail = n.prev
-	}
-
+	s.list.removing(n)
 	n.remove()
 	return n.data
 }
 
+// String returns a human readable string representation of the Series.
 func (s *Series) String() string {
 
 	var sb strings.Builder
@@ -259,29 +205,4 @@ func (s *Series) String() string {
 	}
 
 	return sb.String()
-}
-
-func (s *Series) jumpTo(n *node) {
-	s.prev = n.prev
-	s.curr = n
-	s.next = n.next
-}
-
-func (s *Series) inserted(n *node) {
-
-	if s.size == 0 {
-		s.head = n
-		s.tail = n
-		s.size = 1
-		return
-	}
-
-	s.size++
-	if n.next == s.head {
-		s.head = n
-	}
-
-	if n.prev == s.tail {
-		s.tail = n
-	}
 }
