@@ -11,10 +11,10 @@ import (
 )
 
 func dummyLexemes() (l1, l2, l3, l4 lexeme.Lexeme) {
-	l1 = lexeme.Tok("true", token.TRUE)
-	l2 = lexeme.Tok("1", token.NUMBER)
-	l3 = lexeme.Tok("abc", token.STRING)
-	l4 = lexeme.Tok("i", token.IDENT)
+	l1 = lexeme.MakeTok("true", token.TRUE)
+	l2 = lexeme.MakeTok("1", token.NUMBER)
+	l3 = lexeme.MakeTok("abc", token.STRING)
+	l4 = lexeme.MakeTok("i", token.IDENT)
 	return
 }
 

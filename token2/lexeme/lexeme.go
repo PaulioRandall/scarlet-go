@@ -7,13 +7,17 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
+// Lexeme represents a token from source code including its position and raw
+// value.
 type Lexeme struct {
 	token.Token
 	position.Snippet
 	Val string
 }
 
-func New(val string, tk token.Token, snip position.Snippet) Lexeme {
+// Make returns a new Lexeme. It's convenience to help avoid construction
+// errors.
+func Make(val string, tk token.Token, snip position.Snippet) Lexeme {
 	return Lexeme{
 		Token:   tk,
 		Snippet: snip,
@@ -21,7 +25,9 @@ func New(val string, tk token.Token, snip position.Snippet) Lexeme {
 	}
 }
 
-func Tok(val string, tk token.Token) Lexeme {
+// Make returns a new Lexeme with a zero start position and calculated end
+// position. It's convenience to help avoid construction errors.
+func MakeTok(val string, tk token.Token) Lexeme {
 
 	sizeBytes := len(val)
 	sizeRunes := len([]rune(val))
@@ -34,7 +40,7 @@ func Tok(val string, tk token.Token) Lexeme {
 		},
 	}
 
-	return New(val, tk, snip)
+	return Make(val, tk, snip)
 }
 
 func (l Lexeme) String() string {

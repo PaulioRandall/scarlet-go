@@ -16,7 +16,7 @@ func makeTestData() ([]Lexeme, string) {
 	genLex := func(v string, tk token.Token) Lexeme {
 		snip := tm.Snippet(v)
 		tm.Advance(v, v == "\n")
-		return New(v, tk, snip)
+		return Make(v, tk, snip)
 	}
 
 	in := []Lexeme{

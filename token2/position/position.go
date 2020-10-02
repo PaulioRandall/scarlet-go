@@ -5,36 +5,39 @@ import (
 )
 
 type Position struct {
-	Offset  int // Bytes
-	Line    int // Index
-	ColByte int // Index
-	ColRune int // Index
+	Offset  int // Byte offset from start of text
+	Line    int // Current line index
+	ColByte int // Byte offset from start of the line
+	ColRune int // Rune offset from start of line
+}
+
+func (p Position) HumanString() string {
+	return fmt.Sprintf("%d:%d",
+		p.Line,
+		p.ColRune,
+	)
 }
 
 func (p Position) String() string {
-	return fmt.Sprintf("[%d]%d/%d/%d",
-		p.Line,
+	// (offset[line:colByte/colRune])
+	return fmt.Sprintf("(%d[%d:%d/%d])",
 		p.Offset,
+		p.Line,
 		p.ColByte,
 		p.ColRune,
 	)
 }
 
 type Snippet struct {
-	Position
-	End Position
+	Position // Start
+	End      Position
 }
 
 func (s Snippet) String() string {
 	return fmt.Sprintf("%s -> %s", s.Position.String(), s.End.String())
 }
 
-type TextMarker struct {
-	Offset  int // Byte offset from start of text
-	Line    int // Current line index
-	ColByte int // Byte offset from start of the line
-	ColRune int // Rune offset from start of line
-}
+type TextMarker Position
 
 func (tm *TextMarker) Advance(v string, newline bool) {
 
