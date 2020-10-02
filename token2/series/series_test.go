@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
+
+	"github.com/stretchr/testify/require"
 )
 
 func requireSeries(t *testing.T, s *Series, lexs ...lexeme.Lexeme) {
@@ -83,4 +85,25 @@ func TestSeries_InsertBefore(t *testing.T) {
 	s.Next()
 	s.InsertBefore(lb)
 	requireSeries(t, s, la, lb, lc)
+}
+
+func TestSeries_Remove(t *testing.T) {
+
+	la, lb, lc, _ := dummyLexemes()
+	na, nb, nc, _ := dummyNodes()
+
+	s := new(na, nb, nc)
+	s.Next()
+	act := s.Remove()
+	require.Equal(t, la, act)
+	requireSeries(t, s, lb, lc)
+
+	unlinkAll(na, nb, nc)
+
+	s = new(na, nb, nc)
+	s.Next()
+	s.Next()
+	act = s.Remove()
+	require.Equal(t, lb, act)
+	requireSeries(t, s, la, lc)
 }
