@@ -63,7 +63,7 @@ func requireChain(t *testing.T, exp *node, act *node) {
 		return fmt.Sprintf("Unexpected node at %d; have %s, want %s", i, act, exp)
 	}
 
-	var expNode, actNode *node
+	var expNode, actNode = exp, act
 	var expTail, actTail *node
 	i := 0
 
