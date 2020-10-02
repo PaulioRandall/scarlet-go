@@ -107,3 +107,50 @@ func TestSeries_Remove(t *testing.T) {
 	require.Equal(t, lb, act)
 	requireSeries(t, s, la, lc)
 }
+
+func TestSeries_JumpToNext(t *testing.T) {
+
+	la, _, lc, _ := dummyLexemes()
+	na, nb, nc, nd := dummyNodes()
+	s := new(na, nb, nc, nd)
+
+	s.JumpToNext(func(ro ReadOnly) bool {
+		return ro.Get() == la
+	})
+	require.Equal(t, la, s.Get())
+
+	s.JumpToNext(func(ro ReadOnly) bool {
+		return ro.Get() == lc
+	})
+	require.Equal(t, lc, s.Get())
+
+	s.JumpToNext(func(ro ReadOnly) bool {
+		return false
+	})
+	require.False(t, s.More())
+	require.Empty(t, s.Get())
+}
+
+func TestSeries_JumpToPrev(t *testing.T) {
+
+	_, lb, _, ld := dummyLexemes()
+	na, nb, nc, nd := dummyNodes()
+	s := new(na, nb, nc, nd)
+	s.JumpToEnd()
+
+	s.JumpToPrev(func(ro ReadOnly) bool {
+		return ro.Get() == ld
+	})
+	require.Equal(t, ld, s.Get())
+
+	s.JumpToPrev(func(ro ReadOnly) bool {
+		return ro.Get() == lb
+	})
+	require.Equal(t, lb, s.Get())
+
+	s.JumpToPrev(func(ro ReadOnly) bool {
+		return false
+	})
+	require.True(t, s.More())
+	require.Empty(t, s.Get())
+}

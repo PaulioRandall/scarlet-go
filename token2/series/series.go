@@ -7,9 +7,9 @@ import (
 )
 
 type List interface {
+	Size() int
 	Empty() bool
 	More() bool
-	Size() int
 	Prepend(lexeme.Lexeme)
 	Append(lexeme.Lexeme)
 	String() string
@@ -64,16 +64,16 @@ func new(nodes ...*node) *Series {
 	}
 }
 
+func (s *Series) Size() int {
+	return s.size
+}
+
 func (s *Series) Empty() bool {
 	return s.size == 0
 }
 
 func (s *Series) More() bool {
-	return s.size > 0
-}
-
-func (s *Series) Size() int {
-	return s.size
+	return s.next != nil
 }
 
 func (s *Series) JumpToStart() {
