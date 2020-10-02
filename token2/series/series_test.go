@@ -2,18 +2,17 @@ package series
 
 /*
 import (
-"testing"
+	"testing"
 
 	"github.com/stretchr/testify/require"
 )
-
 
 func TestSeries_Prepend(t *testing.T) {
 
 	a, b, c, d := dummyNodes()
 	s := New()
 
-	s.Prepend(d)
+	s.Prepend(d.data)
 	require.Equal(t, d, con.head)
 	require.Equal(t, d, con.tail)
 
@@ -29,5 +28,4 @@ func TestSeries_Prepend(t *testing.T) {
 	require.Equal(t, a, con.head)
 	require.Equal(t, d, con.tail)
 }
-
 */

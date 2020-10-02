@@ -19,6 +19,10 @@ func (n *node) remove() {
 	n.prev, n.next = nil, nil
 }
 
+func (n node) String() string {
+	return n.data.String()
+}
+
 func link(a, b *node) {
 
 	if a != nil {
