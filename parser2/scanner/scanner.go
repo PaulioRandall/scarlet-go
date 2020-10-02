@@ -3,8 +3,8 @@ package scanner
 import (
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/token2/container"
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token2/series"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
@@ -13,9 +13,9 @@ type lex struct {
 	tk   token.Token
 }
 
-func ScanString(s string) (*container.Container, error) {
+func ScanString(s string) (*series.Series, error) {
 
-	con := container.New()
+	se := series.New()
 	r := newReader(s)
 
 	for r.more() {
@@ -26,10 +26,10 @@ func ScanString(s string) (*container.Container, error) {
 
 		snip, val := r.read(l.size, l.tk == token.NEWLINE)
 		lexTk := lexeme.New(val, l.tk, snip)
-		con.Put(lexTk)
+		se.Append(lexTk)
 	}
 
-	return con, nil
+	return se, nil
 }
 
 func identifyLexeme(r *reader, l *lex) error {
