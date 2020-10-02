@@ -10,20 +10,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func dummyLexemes() (la, lb, lc, ld lexeme.Lexeme) {
-	la = lexeme.Tok("true", token.TRUE)
-	lb = lexeme.Tok("1", token.NUMBER)
-	lc = lexeme.Tok("abc", token.STRING)
-	ld = lexeme.Tok("i", token.IDENT)
+func dummyLexemes() (l1, l2, l3, l4 lexeme.Lexeme) {
+	l1 = lexeme.Tok("true", token.TRUE)
+	l2 = lexeme.Tok("1", token.NUMBER)
+	l3 = lexeme.Tok("abc", token.STRING)
+	l4 = lexeme.Tok("i", token.IDENT)
 	return
 }
 
-func dummyNodes() (a, b, c, d *node) {
-	la, lb, lc, ld := dummyLexemes()
-	a = &node{data: la}
-	b = &node{data: lb}
-	c = &node{data: lc}
-	d = &node{data: ld}
+func dummyNodes() (n1, n2, n3, n4 *node) {
+	l1, l2, l3, l4 := dummyLexemes()
+	n1 = &node{data: l1}
+	n2 = &node{data: l2}
+	n3 = &node{data: l3}
+	n4 = &node{data: l4}
 	return
 }
 
@@ -95,19 +95,19 @@ func requireChain(t *testing.T, exp *node, act *node) {
 }
 
 func TestChain(t *testing.T) {
-	a, b, c, d := dummyNodes()
-	head, tail, size := chain(a, b, c, d)
+	n1, n2, n3, n4 := dummyNodes()
+	head, tail, size := chain(n1, n2, n3, n4)
 
-	require.Equal(t, a, head)
-	require.Equal(t, b, head.next)
-	require.Equal(t, c, head.next.next)
-	require.Equal(t, d, head.next.next.next)
+	require.Equal(t, n1, head)
+	require.Equal(t, n2, head.next)
+	require.Equal(t, n3, head.next.next)
+	require.Equal(t, n4, head.next.next.next)
 	require.Nil(t, head.next.next.next.next)
 
-	require.Equal(t, d, tail)
-	require.Equal(t, c, tail.prev)
-	require.Equal(t, b, tail.prev.prev)
-	require.Equal(t, a, tail.prev.prev.prev)
+	require.Equal(t, n4, tail)
+	require.Equal(t, n3, tail.prev)
+	require.Equal(t, n2, tail.prev.prev)
+	require.Equal(t, n1, tail.prev.prev.prev)
 	require.Nil(t, tail.prev.prev.prev.prev)
 
 	require.Equal(t, 4, size)
@@ -115,19 +115,19 @@ func TestChain(t *testing.T) {
 
 func TestUnlinkAll(t *testing.T) {
 
-	a, b, c, d := dummyNodes()
-	a.next = b
-	b.next = c
-	c.next = d
-	b.prev = a
-	c.prev = b
-	d.prev = c
+	n1, n2, n3, n4 := dummyNodes()
+	n1.next = n2
+	n2.next = n3
+	n3.next = n4
+	n2.prev = n1
+	n3.prev = n2
+	n4.prev = n3
 
-	unlinkAll(a, b, c)
-	require.Nil(t, a.prev)
-	require.Nil(t, a.next)
-	require.Nil(t, b.prev)
-	require.Nil(t, b.next)
-	require.Nil(t, c.prev)
-	require.Equal(t, d, c.next)
+	unlinkAll(n1, n2, n3)
+	require.Nil(t, n1.prev)
+	require.Nil(t, n1.next)
+	require.Nil(t, n2.prev)
+	require.Nil(t, n2.next)
+	require.Nil(t, n3.prev)
+	require.Equal(t, n4, n3.next)
 }

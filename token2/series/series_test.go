@@ -16,113 +16,113 @@ func requireSeries(t *testing.T, s *Series, lexs ...lexeme.Lexeme) {
 
 func TestSeries_Prepend(t *testing.T) {
 
-	a, b, c, d := dummyLexemes()
+	l1, l2, l3, l4 := dummyLexemes()
 	s := New()
 
-	s.Prepend(d)
-	requireSeries(t, s, d)
+	s.Prepend(l4)
+	requireSeries(t, s, l4)
 
-	s.Prepend(c)
-	requireSeries(t, s, c, d)
+	s.Prepend(l3)
+	requireSeries(t, s, l3, l4)
 
-	s.Prepend(b)
-	requireSeries(t, s, b, c, d)
+	s.Prepend(l2)
+	requireSeries(t, s, l2, l3, l4)
 
-	s.Prepend(a)
-	requireSeries(t, s, a, b, c, d)
+	s.Prepend(l1)
+	requireSeries(t, s, l1, l2, l3, l4)
 }
 
 func TestSeries_Append(t *testing.T) {
 
-	a, b, c, d := dummyLexemes()
+	l1, l2, l3, l4 := dummyLexemes()
 	s := New()
 
-	s.Append(a)
-	requireSeries(t, s, a)
+	s.Append(l1)
+	requireSeries(t, s, l1)
 
-	s.Append(b)
-	requireSeries(t, s, a, b)
+	s.Append(l2)
+	requireSeries(t, s, l1, l2)
 
-	s.Append(c)
-	requireSeries(t, s, a, b, c)
+	s.Append(l3)
+	requireSeries(t, s, l1, l2, l3)
 
-	s.Append(d)
-	requireSeries(t, s, a, b, c, d)
+	s.Append(l4)
+	requireSeries(t, s, l1, l2, l3, l4)
 }
 
 func TestSeries_InsertAfter(t *testing.T) {
 
-	la, lb, lc, _ := dummyLexemes()
-	na, _, nc, _ := dummyNodes()
+	l1, l2, l3, _ := dummyLexemes()
+	n1, _, n3, _ := dummyNodes()
 
-	s := new(na)
+	s := new(n1)
 	s.Next()
-	s.InsertAfter(lb)
-	requireSeries(t, s, la, lb)
+	s.InsertAfter(l2)
+	requireSeries(t, s, l1, l2)
 
-	na.unlink()
+	unlinkAll(n1, n3)
 
-	s = new(na, nc)
+	s = new(n1, n3)
 	s.Next()
-	s.InsertAfter(lb)
-	requireSeries(t, s, la, lb, lc)
+	s.InsertAfter(l2)
+	requireSeries(t, s, l1, l2, l3)
 }
 
 func TestSeries_InsertBefore(t *testing.T) {
 
-	la, lb, lc, _ := dummyLexemes()
-	na, nb, nc, _ := dummyNodes()
+	l1, l2, l3, _ := dummyLexemes()
+	n1, n2, n3, _ := dummyNodes()
 
-	s := new(nb)
+	s := new(n2)
 	s.Next()
-	s.InsertBefore(la)
-	requireSeries(t, s, la, lb)
+	s.InsertBefore(l1)
+	requireSeries(t, s, l1, l2)
 
-	nb.unlink()
+	unlinkAll(n1, n2, n3)
 
-	s = new(na, nc)
+	s = new(n1, n3)
 	s.Next()
 	s.Next()
-	s.InsertBefore(lb)
-	requireSeries(t, s, la, lb, lc)
+	s.InsertBefore(l2)
+	requireSeries(t, s, l1, l2, l3)
 }
 
 func TestSeries_Remove(t *testing.T) {
 
-	la, lb, lc, _ := dummyLexemes()
-	na, nb, nc, _ := dummyNodes()
+	l1, l2, l3, _ := dummyLexemes()
+	n1, n2, n3, _ := dummyNodes()
 
-	s := new(na, nb, nc)
+	s := new(n1, n2, n3)
 	s.Next()
 	act := s.Remove()
-	require.Equal(t, la, act)
-	requireSeries(t, s, lb, lc)
+	require.Equal(t, l1, act)
+	requireSeries(t, s, l2, l3)
 
-	unlinkAll(na, nb, nc)
+	unlinkAll(n1, n2, n3)
 
-	s = new(na, nb, nc)
+	s = new(n1, n2, n3)
 	s.Next()
 	s.Next()
 	act = s.Remove()
-	require.Equal(t, lb, act)
-	requireSeries(t, s, la, lc)
+	require.Equal(t, l2, act)
+	requireSeries(t, s, l1, l3)
 }
 
 func TestSeries_JumpToNext(t *testing.T) {
 
-	la, _, lc, _ := dummyLexemes()
-	na, nb, nc, nd := dummyNodes()
-	s := new(na, nb, nc, nd)
+	l1, _, l3, _ := dummyLexemes()
+	n1, n2, n3, n4 := dummyNodes()
+	s := new(n1, n2, n3, n4)
 
 	s.JumpToNext(func(ro ReadOnly) bool {
-		return ro.Get() == la
+		return ro.Get() == l1
 	})
-	require.Equal(t, la, s.Get())
+	require.Equal(t, l1, s.Get())
 
 	s.JumpToNext(func(ro ReadOnly) bool {
-		return ro.Get() == lc
+		return ro.Get() == l3
 	})
-	require.Equal(t, lc, s.Get())
+	require.Equal(t, l3, s.Get())
 
 	s.JumpToNext(func(ro ReadOnly) bool {
 		return false
@@ -133,20 +133,20 @@ func TestSeries_JumpToNext(t *testing.T) {
 
 func TestSeries_JumpToPrev(t *testing.T) {
 
-	_, lb, _, ld := dummyLexemes()
-	na, nb, nc, nd := dummyNodes()
-	s := new(na, nb, nc, nd)
+	_, l2, _, l4 := dummyLexemes()
+	n1, n2, n3, n4 := dummyNodes()
+	s := new(n1, n2, n3, n4)
 	s.JumpToEnd()
 
 	s.JumpToPrev(func(ro ReadOnly) bool {
-		return ro.Get() == ld
+		return ro.Get() == l4
 	})
-	require.Equal(t, ld, s.Get())
+	require.Equal(t, l4, s.Get())
 
 	s.JumpToPrev(func(ro ReadOnly) bool {
-		return ro.Get() == lb
+		return ro.Get() == l2
 	})
-	require.Equal(t, lb, s.Get())
+	require.Equal(t, l2, s.Get())
 
 	s.JumpToPrev(func(ro ReadOnly) bool {
 		return false
