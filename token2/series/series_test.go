@@ -1,31 +1,32 @@
 package series
 
-/*
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
+	//"github.com/stretchr/testify/require"
 )
 
 func TestSeries_Prepend(t *testing.T) {
 
-	a, b, c, d := dummyNodes()
+	a, b, c, d := dummyLexemes()
 	s := New()
 
-	s.Prepend(d.data)
-	require.Equal(t, d, con.head)
-	require.Equal(t, d, con.tail)
+	doTest := func(lexs ...lexeme.Lexeme) {
+		expHead, expTail, _ := chainLexemes(lexs...)
+		requireChain(t, expHead, s.head)
+		requireChain(t, expTail, s.tail)
+	}
 
-	con.prepend(c)
-	require.Equal(t, c, con.head)
-	require.Equal(t, d, con.tail)
+	s.Prepend(d)
+	doTest(d)
 
-	con.prepend(b)
-	require.Equal(t, b, con.head)
-	require.Equal(t, d, con.tail)
+	s.Prepend(c)
+	doTest(c, d)
 
-	con.prepend(a)
-	require.Equal(t, a, con.head)
-	require.Equal(t, d, con.tail)
+	s.Prepend(b)
+	doTest(b, c, d)
+
+	s.Prepend(a)
+	doTest(a, b, c, d)
 }
-*/

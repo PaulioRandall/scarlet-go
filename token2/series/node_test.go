@@ -39,9 +39,7 @@ func chainLexemes(lexs ...lexeme.Lexeme) (head, tail *node, size int) {
 		nodes[i] = &node{data: l}
 	}
 
-	head = nodes[0]
-	tail = nodes[size-1]
-	return
+	return chain(nodes...)
 }
 
 func requireChain(t *testing.T, exp *node, act *node) {
