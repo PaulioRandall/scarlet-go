@@ -54,6 +54,16 @@ func New() *Series {
 	return &Series{}
 }
 
+func new(nodes ...*node) *Series {
+	head, tail, size := chain(nodes...)
+	return &Series{
+		size: size,
+		head: head,
+		tail: tail,
+		next: head,
+	}
+}
+
 func (s *Series) Empty() bool {
 	return s.size == 0
 }
