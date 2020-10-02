@@ -8,9 +8,21 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/position"
 )
 
-func Print(w io.StringWriter, lexs []Lexeme) error {
-	cw := findCellWidths(lexs)
-	return printLexemes(w, cw, lexs)
+// LexemeIterator provides sequential access to the ordered list of Lexemes
+// that are to be printed when using this packages Print function.
+type LexemeIterator interface {
+	More() bool
+	Next() Lexeme
+	JumpToStart()
+}
+
+// Print writes the string representation of all Lexemes in 'itr', in order, to
+// the writer 'w'.
+func Print(w io.StringWriter, itr LexemeIterator) error {
+	itr.JumpToStart()
+	cw := findCellWidths(itr)
+	itr.JumpToStart()
+	return printLexemes(w, cw, itr)
 }
 
 type cellWidths struct {
@@ -19,10 +31,11 @@ type cellWidths struct {
 	tk   int
 }
 
-func findCellWidths(lexs []Lexeme) cellWidths {
+func findCellWidths(itr LexemeIterator) cellWidths {
 
 	var r cellWidths
-	for _, l := range lexs {
+	for itr.More() {
+		l := itr.Next()
 		r.line = max(r.line, l.Position.Line, l.End.Line)
 		r.col = max(r.col, l.Position.ColRune, l.End.ColRune)
 		r.tk = max(r.tk, len(l.Token.String()))
@@ -33,8 +46,9 @@ func findCellWidths(lexs []Lexeme) cellWidths {
 	return r
 }
 
-func printLexemes(w io.StringWriter, cw cellWidths, lexs []Lexeme) error {
-	for _, l := range lexs {
+func printLexemes(w io.StringWriter, cw cellWidths, itr LexemeIterator) error {
+	for itr.More() {
+		l := itr.Next()
 
 		// Examples:
 		// `  1:2   ->   1:4   ASSIGN   ":="`

@@ -10,7 +10,25 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func makeTestData() ([]Lexeme, string) {
+type iterator struct {
+	i    int
+	lexs []Lexeme
+}
+
+func (itr *iterator) More() bool {
+	return itr.i+1 < len(itr.lexs)
+}
+
+func (itr *iterator) Next() Lexeme {
+	itr.i++
+	return itr.lexs[itr.i]
+}
+
+func (itr *iterator) JumpToStart() {
+	itr.i = -1
+}
+
+func makeTestData() (LexemeIterator, string) {
 
 	tm := &position.TextMarker{}
 	genLex := func(v string, tk token.Token) Lexeme {
@@ -19,27 +37,32 @@ func makeTestData() ([]Lexeme, string) {
 		return Make(v, tk, snip)
 	}
 
-	in := []Lexeme{
-		genLex("x", token.IDENT),
-		genLex(" ", token.SPACE),
-		genLex(":=", token.ASSIGN),
-		genLex(" ", token.SPACE),
-		genLex(`"abc"`, token.STRING),
-		genLex("\n", token.NEWLINE),
-		genLex("@Println", token.SPELL),
-		genLex("(", token.L_PAREN),
-		genLex("1", token.NUMBER),
-		genLex(")", token.R_PAREN),
-		genLex("\n", token.NEWLINE),
+	itr := &iterator{
+		i: -1,
+		lexs: []Lexeme{
+			genLex("x", token.IDENT),
+			genLex(" ", token.SPACE),
+			genLex(":=", token.ASSIGN),
+			genLex(" ", token.SPACE),
+			genLex(`"abc"`, token.STRING),
+			genLex("\n", token.NEWLINE),
+			genLex("@Println", token.SPELL),
+			genLex("(", token.L_PAREN),
+			genLex("1", token.NUMBER),
+			genLex(")", token.R_PAREN),
+			genLex("\n", token.NEWLINE),
+		},
 	}
 
+	// Add lexeme with line and rune column with two digits
 	tm.Offset, tm.Line, tm.ColByte, tm.ColRune = 10, 10, 10, 10
 	doubleDigit := genLex("\n", token.NEWLINE)
-	in = append(in, doubleDigit)
+	itr.lexs = append(itr.lexs, doubleDigit)
 
+	// Add lexeme with line and rune column with three digits
 	tm.Offset, tm.Line, tm.ColByte, tm.ColRune = 100, 100, 100, 100
 	tripleDigit := genLex("\n", token.NEWLINE)
-	in = append(in, tripleDigit)
+	itr.lexs = append(itr.lexs, tripleDigit)
 
 	exp := `  0:0   ->   0:1   IDENT   "x"
   0:1   ->   0:2   SPACE   " "
@@ -56,7 +79,7 @@ func makeTestData() ([]Lexeme, string) {
 100:100 -> 100:101 NEWLINE "\n"
 `
 
-	return in, exp
+	return itr, exp
 }
 
 type sbWriter struct {
@@ -70,12 +93,12 @@ func (sbw sbWriter) WriteString(s string) (int, error) {
 
 func TestPrinter(t *testing.T) {
 
-	in, exp := makeTestData()
+	itr, exp := makeTestData()
 	sbw := sbWriter{
 		sb: &strings.Builder{},
 	}
 
-	Print(sbw, in)
+	Print(sbw, itr)
 	act := sbw.sb.String()
 
 	require.Equal(t, exp, act)
