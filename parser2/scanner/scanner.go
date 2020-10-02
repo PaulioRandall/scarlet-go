@@ -24,7 +24,7 @@ func ScanString(s string) (*series.Series, error) {
 			return nil, e
 		}
 
-		snip, val := r.read(l.size, l.tk == token.NEWLINE)
+		snip, val := r.read(l.size)
 		lexTk := lexeme.Make(val, l.tk, snip)
 		se.Append(lexTk)
 	}

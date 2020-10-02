@@ -267,7 +267,7 @@ func TestComprehensive_1(t *testing.T) {
 	tm := &position.TextMarker{}
 	genLex := func(v string, tk token.Token) lexeme.Lexeme {
 		snip := tm.Snippet(v)
-		tm.Advance(v, v == "\n")
+		tm.Advance(v)
 		return lexeme.Make(v, tk, snip)
 	}
 

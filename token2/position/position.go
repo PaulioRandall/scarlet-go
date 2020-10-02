@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+// Position represents a point in source code but is decoupled from its exact
+// source, i.e. it does not hold a file or pointer to the source code.
 type Position struct {
 	Offset  int // Byte offset from start of text
 	Line    int // Current line index
@@ -11,15 +13,9 @@ type Position struct {
 	ColRune int // Rune offset from start of line
 }
 
-func (p Position) HumanString() string {
-	return fmt.Sprintf("%d:%d",
-		p.Line,
-		p.ColRune,
-	)
-}
-
+// String returns the position as a human readable string in the format:
+//	(offset[line:colByte/colRune])
 func (p Position) String() string {
-	// (offset[line:colByte/colRune])
 	return fmt.Sprintf("(%d[%d:%d/%d])",
 		p.Offset,
 		p.Line,
@@ -28,54 +24,51 @@ func (p Position) String() string {
 	)
 }
 
+// Snippet represents a range between two Positions within source code. The
+// start Position is embedded for convenience.
 type Snippet struct {
 	Position // Start
 	End      Position
 }
 
+// String returns a human readable string representation of the Snippet.
 func (s Snippet) String() string {
 	return fmt.Sprintf("%s -> %s", s.Position.String(), s.End.String())
 }
 
+// TextMarker represents a Position with functionality for advancing through
+// source code.
 type TextMarker Position
 
-func (tm *TextMarker) Advance(v string, newline bool) {
-
-	byteCount := len(v)
-	runeCount := len([]rune(v))
-
-	tm.Offset += byteCount
-	if newline {
-		tm.Line++
-		tm.ColByte = 0
-		tm.ColRune = 0
-	} else {
-		tm.ColByte += byteCount
-		tm.ColRune += runeCount
+// Advance moves forward the number of bytes in 's'. For each linefeed '\n' in
+// the string the line field is incremented and column values zeroed.
+func (tm *TextMarker) Advance(s string) {
+	tm.Offset += len(s)
+	for _, ru := range s {
+		if ru == '\n' {
+			tm.Line++
+			tm.ColByte = 0
+			tm.ColRune = 0
+		} else {
+			tm.ColByte += len(string(ru))
+			tm.ColRune++
+		}
 	}
 }
 
-func (tm *TextMarker) Snippet(v string) Snippet {
-
-	byteCount := len(v)
-	runeCount := len([]rune(v))
-
+// Snippet returns a Snippet representing 's' in source code assuming 's'
+// starts at the TextMarker's current position.
+func (tm *TextMarker) Snippet(s string) Snippet {
+	start := tm.Snapshot()
+	end := TextMarker(tm.Snapshot())
+	end.Advance(s)
 	return Snippet{
-		Position: tm.Position(),
-		End: Position{
-			Offset:  tm.Offset + byteCount,
-			Line:    tm.Line,
-			ColByte: tm.ColByte + byteCount,
-			ColRune: tm.ColRune + runeCount,
-		},
+		Position: start,
+		End:      Position(end),
 	}
 }
 
-func (tm *TextMarker) Position() Position {
-	return Position{
-		Offset:  tm.Offset,
-		Line:    tm.Line,
-		ColByte: tm.ColByte,
-		ColRune: tm.ColRune,
-	}
+// Snapshot returns the current Position of the TextMarker.
+func (tm *TextMarker) Snapshot() Position {
+	return Position(*tm)
 }

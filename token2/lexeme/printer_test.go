@@ -33,7 +33,7 @@ func makeTestData() (LexemeIterator, string) {
 	tm := &position.TextMarker{}
 	genLex := func(v string, tk token.Token) Lexeme {
 		snip := tm.Snippet(v)
-		tm.Advance(v, v == "\n")
+		tm.Advance(v)
 		return Make(v, tk, snip)
 	}
 
@@ -69,14 +69,14 @@ func makeTestData() (LexemeIterator, string) {
   0:2   ->   0:4   ASSIGN  ":="
   0:4   ->   0:5   SPACE   " "
   0:5   ->   0:10  STRING  "\"abc\""
-  0:10  ->   0:11  NEWLINE "\n"
+  0:10  ->   1:0   NEWLINE "\n"
   1:0   ->   1:8   SPELL   "@Println"
   1:8   ->   1:9   L_PAREN "("
   1:9   ->   1:10  NUMBER  "1"
   1:10  ->   1:11  R_PAREN ")"
-  1:11  ->   1:12  NEWLINE "\n"
- 10:10  ->  10:11  NEWLINE "\n"
-100:100 -> 100:101 NEWLINE "\n"
+  1:11  ->   2:0   NEWLINE "\n"
+ 10:10  ->  11:0   NEWLINE "\n"
+100:100 -> 101:0   NEWLINE "\n"
 `
 
 	return itr, exp

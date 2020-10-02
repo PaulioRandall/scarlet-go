@@ -63,14 +63,14 @@ func (r *reader) slice(runeCount int) string {
 	return string(r.data[:runeCount])
 }
 
-func (r *reader) read(runeCount int, newline bool) (position.Snippet, string) {
+func (r *reader) read(runeCount int) (position.Snippet, string) {
 
 	val := r.slice(runeCount)
 	snip := r.Snippet(val)
 
 	r.data = r.data[runeCount:]
 	r.remain = len(r.data)
-	r.Advance(val, newline)
+	r.Advance(val)
 
 	return snip, val
 }
