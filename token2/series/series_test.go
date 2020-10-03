@@ -114,17 +114,17 @@ func TestSeries_JumpToNext(t *testing.T) {
 	n1, n2, n3, n4 := dummyNodes()
 	s := makeWith(n1, n2, n3, n4)
 
-	s.JumpToNext(func(ro ReadOnly) bool {
-		return ro.Get() == l1
+	s.JumpToNext(func(sn Snapshot) bool {
+		return sn.Get() == l1
 	})
 	require.Equal(t, l1, s.Get())
 
-	s.JumpToNext(func(ro ReadOnly) bool {
-		return ro.Get() == l3
+	s.JumpToNext(func(sn Snapshot) bool {
+		return sn.Get() == l3
 	})
 	require.Equal(t, l3, s.Get())
 
-	s.JumpToNext(func(ro ReadOnly) bool {
+	s.JumpToNext(func(sn Snapshot) bool {
 		return false
 	})
 	require.False(t, s.More())
@@ -138,17 +138,17 @@ func TestSeries_JumpToPrev(t *testing.T) {
 	s := makeWith(n1, n2, n3, n4)
 	s.JumpToEnd()
 
-	s.JumpToPrev(func(ro ReadOnly) bool {
-		return ro.Get() == l4
+	s.JumpToPrev(func(sn Snapshot) bool {
+		return sn.Get() == l4
 	})
 	require.Equal(t, l4, s.Get())
 
-	s.JumpToPrev(func(ro ReadOnly) bool {
-		return ro.Get() == l2
+	s.JumpToPrev(func(sn Snapshot) bool {
+		return sn.Get() == l2
 	})
 	require.Equal(t, l2, s.Get())
 
-	s.JumpToPrev(func(ro ReadOnly) bool {
+	s.JumpToPrev(func(sn Snapshot) bool {
 		return false
 	})
 	require.True(t, s.More())

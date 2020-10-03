@@ -6,13 +6,30 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
 )
 
-// WritableList documents the functions that may be applicable to any interface
-// that writes to a Series. Subsetting the interface is desirable.
-type WritableList interface {
+// Matcher function signiture is used by Series search functions such as
+// Series.JumpToNext and Series.JumpToPrev. True is returned if some state in
+// the SnapShot matches the consumers criteria.
+type Matcher func(Snapshot) bool
+
+// Builder documents the functions that may be applicable to any interface
+// that appends or prepends to a Series. Subsetting the interface is desirable.
+type Builder interface {
 	Size() int
 	Empty() bool
 	Prepend(lexeme.Lexeme)
 	Append(lexeme.Lexeme)
+	String() string
+}
+
+// Snapshot is designed for use when iterating a Series to mask state changing
+// functionality.
+type Snapshot interface {
+	Empty() bool
+	More() bool
+	Size() int
+	Get() lexeme.Lexeme
+	LookAhead() lexeme.Lexeme
+	LookBack() lexeme.Lexeme
 	String() string
 }
 
@@ -23,8 +40,8 @@ type Iterator interface {
 	Empty() bool
 	JumpToStart()
 	JumpToEnd()
-	JumpToPrev(matcher func(ReadOnly) bool) bool
-	JumpToNext(matcher func(ReadOnly) bool) bool
+	JumpToPrev(matcher Matcher) bool
+	JumpToNext(matcher Matcher) bool
 	Next() lexeme.Lexeme
 	Get() lexeme.Lexeme
 	Prev() lexeme.Lexeme
@@ -33,18 +50,6 @@ type Iterator interface {
 	InsertAfter()
 	InsertBefore()
 	Remove() lexeme.Lexeme
-	String() string
-}
-
-// ReadOnly is designed for use when iterating a Series to mask state changing
-// functionality.
-type ReadOnly interface {
-	Empty() bool
-	More() bool
-	Size() int
-	Get() lexeme.Lexeme
-	LookAhead() lexeme.Lexeme
-	LookBack() lexeme.Lexeme
 	String() string
 }
 
@@ -102,7 +107,7 @@ func (s *Series) JumpToEnd() {
 // 'matcher' returns true then iteration stops and true is returned, if no match
 // is found the iterator mark will end up before the first item in the Series
 // and false is returned.
-func (s *Series) JumpToPrev(matcher func(ReadOnly) bool) bool {
+func (s *Series) JumpToPrev(matcher Matcher) bool {
 
 	for n := s.prev; n != nil; n = n.prev {
 		s.jumpTo(n)
@@ -119,7 +124,7 @@ func (s *Series) JumpToPrev(matcher func(ReadOnly) bool) bool {
 // 'matcher' returns true then iteration stops and true is returned, if no match
 // is found the iterator mark will end up after the last item in the Series
 // and false is returned.
-func (s *Series) JumpToNext(matcher func(ReadOnly) bool) bool {
+func (s *Series) JumpToNext(matcher Matcher) bool {
 
 	for n := s.next; n != nil; n = n.next {
 		s.jumpTo(n)
