@@ -1,3 +1,7 @@
+// Position package contains structs with receiving functions used to specify
+// positions and snippets in source code without knowledge of the source codes
+// location or format, i.e. structs do not store file paths, web addresses, or
+// pointers to in-memory text strings.
 package position
 
 import (

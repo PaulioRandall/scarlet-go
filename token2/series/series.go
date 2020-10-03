@@ -1,3 +1,5 @@
+// Series package contains the Series struct and useful receiving functions
+// for representing both a double linked list and iterator of Lexemes.
 package series
 
 import (
@@ -57,15 +59,15 @@ type Iterator interface {
 // to combine the list and iteration functionality was not taken lightly but
 // based on previous use, the separation of concerns appeared to cost more in
 // usage complexity than an amalgamated structure did for implementation
-// complexity. Could be wrong but only time will really tell. Splitting the
-// structures shouldn't be much trouble if it comes to it.
+// complexity. Could be wrong, only time will really tell. Splitting the structs
+// shouldn't be much trouble if it comes to it.
 //
 // A Series always starts with its iterator mark before the first item such
 // that Series.Get will return an empty Lexeme and Series.Next will move to the
 // first item, if it exists.
 //
 // Series is best used through custom interfaces that limit functionality to
-// the situation for readability. The Series is not concurrent friendly.
+// the situation for readability. Series is not concurrent friendly.
 type Series struct {
 	*list
 	*mark

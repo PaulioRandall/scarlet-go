@@ -1,12 +1,14 @@
+// Token package defines the finite set of token types with utility functions
+// for determining if a token is in a predefined subset.
 package token
 
 import (
 	"strings"
 )
 
-// Token represents the finite set of symbols used in the parsing process to
-// ensure correct syntax, build a model of the program logic (parse tree etc),
-// and determine how a Lexeme's value should be parsed and used.
+// Token represents one of the finite set of symbols used in the parsing process
+// to ensure correct syntax, build a model of the program logic (parse tree
+// etc), and determine how a Lexeme's value should be parsed and used.
 //
 // Each Lexeme scanned from source code has a corrisponding Token constant from
 // the finite set below; undefined refers to a zero or invalid token. After
@@ -89,6 +91,17 @@ func (tk Token) Precedence() int {
 	}
 
 	return 0
+}
+
+// Match returns true if the receiving Token is equal to any of the argument
+// tokens.
+func (tk Token) Match(tks ...Token) bool {
+	for _, o := range tks {
+		if tk == o {
+			return true
+		}
+	}
+	return false
 }
 
 // IsRedundant returns true if the Token is redundant to the parsing process.

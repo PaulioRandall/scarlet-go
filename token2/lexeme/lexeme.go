@@ -1,3 +1,8 @@
+// Lexeme package defines the Lexeme struct and utility functions. Lexemes tie
+// together text Snippet from source code with a Token. Lexemes are passed along
+// the parsing pipeline instead of Tokens so the text value can be used for
+// non-keywords and grammer while the position is used for logging and error
+// messages.
 package lexeme
 
 import (
