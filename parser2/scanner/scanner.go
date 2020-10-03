@@ -159,16 +159,7 @@ func identifyWord(r *reader, l *lex) {
 		l.size++
 	}
 
-	switch r.slice(l.size) {
-	case "true":
-		l.tk = token.TRUE
-	case "false":
-		l.tk = token.FALSE
-	case "loop":
-		l.tk = token.LOOP
-	default:
-		l.tk = token.IDENT
-	}
+	l.tk = token.IdentifyWord(r.slice(l.size))
 }
 
 func spell(r *reader, l *lex) error {
