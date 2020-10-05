@@ -18,9 +18,9 @@ type Position struct {
 }
 
 // String returns the position as a human readable string in the format:
-//	(offset[line:colByte/colRune])
+//	offset[line:colByte/colRune]
 func (p Position) String() string {
-	return fmt.Sprintf("(%d[%d:%d/%d])",
+	return fmt.Sprintf("%d[%d:%d/%d]",
 		p.Offset,
 		p.Line,
 		p.ColByte,
@@ -40,8 +40,8 @@ func (s Snippet) String() string {
 	return fmt.Sprintf("%s -> %s", s.Position.String(), s.End.String())
 }
 
-// TextMarker represents a Position with functionality for advancing through
-// source code.
+// TextMarker represents a Position within some text with functionality for
+// advancing through the text.
 type TextMarker Position
 
 // Advance moves forward the number of bytes in 's'. For each linefeed '\n' in
