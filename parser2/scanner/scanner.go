@@ -59,7 +59,7 @@ func identifyLexeme(r *reader, l *lex) error {
 
 	case r.starts("#"):
 		l.size, l.tk = 1, token.COMMENT
-		for r.inRange(l.size) && !r.starts("\n") && !r.starts("\r") {
+		for r.inRange(l.size) && !r.starts("\n") && !r.starts("\r\n") {
 			l.size++
 		}
 

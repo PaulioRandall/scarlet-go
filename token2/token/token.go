@@ -17,41 +17,40 @@ import (
 type Token string
 
 const (
-	UNDEFINED Token = ``
-	// -----------------
-	SPACE      Token = `SPACE`      // Whitespace
-	COMMENT    Token = `COMMENT`    // # comment
-	TERMINATOR Token = `TERMINATOR` // ;
-	NEWLINE    Token = `NEWLINE`    // \n
-	TRUE       Token = `TRUE`       // true
-	FALSE      Token = `FALSE`      // false
-	NUMBER     Token = `NUMBER`     // 1
-	STRING     Token = `STRING`     // "string"
-	IDENT      Token = `IDENT`      // identifier
-	SPELL      Token = `SPELL`      // @spell
-	LOOP       Token = `LOOP`       // loop
-	DELIM      Token = `DELIM`      // ,
-	L_PAREN    Token = `L_PAREN`    // (
-	R_PAREN    Token = `R_PAREN`    // )
-	L_SQUARE   Token = `L_SQUARE`   // [
-	R_SQUARE   Token = `R_SQUARE`   // ]
-	L_CURLY    Token = `L_CURLY`    // {
-	R_CURLY    Token = `R_CURLY`    //	}
-	ASSIGN     Token = `ASSIGN`     // :=
-	VOID       Token = `VOID`       // _
-	ADD        Token = `ADD`        // +
-	SUB        Token = `SUB`        // -
-	MUL        Token = `MUL`        // *
-	DIV        Token = `DIV`        // /
-	REM        Token = `REM`        // %
-	AND        Token = `AND`        // &&
-	OR         Token = `OR`         // ||
-	LESS       Token = `LESS`       // <
-	MORE       Token = `MORE`       // >
-	LESS_EQUAL Token = `LESS_EQUAL` // <=
-	MORE_EQUAL Token = `MORE_EQUAL` // >=
-	EQUAL      Token = `EQUAL`      // ==
-	NOT_EQUAL  Token = `NOT_EQUAL`  // !=
+	UNDEFINED  Token = ``
+	SPACE            = `SPACE`      // Whitespace
+	COMMENT          = `COMMENT`    // # comment
+	NEWLINE          = `NEWLINE`    // \n
+	TERMINATOR       = `TERMINATOR` // ;
+	TRUE             = `TRUE`       // true
+	FALSE            = `FALSE`      // false
+	LOOP             = `LOOP`       // loop
+	NUMBER           = `NUMBER`     // 1
+	STRING           = `STRING`     // "string"
+	IDENT            = `IDENT`      // identifier
+	SPELL            = `SPELL`      // @spell
+	DELIM            = `DELIM`      // ,
+	L_PAREN          = `L_PAREN`    // (
+	R_PAREN          = `R_PAREN`    // )
+	L_SQUARE         = `L_SQUARE`   // [
+	R_SQUARE         = `R_SQUARE`   // ]
+	L_CURLY          = `L_CURLY`    // {
+	R_CURLY          = `R_CURLY`    //	}
+	ASSIGN           = `ASSIGN`     // :=
+	VOID             = `VOID`       // _
+	ADD              = `ADD`        // +
+	SUB              = `SUB`        // -
+	MUL              = `MUL`        // *
+	DIV              = `DIV`        // /
+	REM              = `REM`        // %
+	AND              = `AND`        // &&
+	OR               = `OR`         // ||
+	LESS             = `LESS`       // <
+	MORE             = `MORE`       // >
+	LESS_EQUAL       = `LESS_EQUAL` // <=
+	MORE_EQUAL       = `MORE_EQUAL` // >=
+	EQUAL            = `EQUAL`      // ==
+	NOT_EQUAL        = `NOT_EQUAL`  // !=
 )
 
 // IdentifyWord returns the Token represented by the 's'. If 's' does not match
