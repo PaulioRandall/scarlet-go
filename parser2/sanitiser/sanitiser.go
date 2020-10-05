@@ -1,3 +1,7 @@
+// Sanitise package removes tokens redundant or inconvenient to parsing.
+// Traditionally, this process is performed during the scanning process but by
+// decoupling the sanitisation from scanning the scanner can be reused in
+// source code formatting and analysis tools.
 package sanitiser
 
 import (
@@ -5,19 +9,20 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
+// LexemeIterator specifies the iteration functionality required by inputs to
+// the sanitisation process.
 type LexemeIterator interface {
 	JumpToStart()
 	More() bool
 	Next() lexeme.Lexeme
-	Prev() lexeme.Lexeme
-	LookBack() lexeme.Lexeme
+	Prev() lexeme.Lexeme     // Steps back one place in the iterator
+	LookBack() lexeme.Lexeme // Peeks at the previous Lexeme
 	Remove() lexeme.Lexeme
 }
 
-// SanitiseAll removes tokens redundant to parsing. Traditionally, this process
-// is performed during the scanning process but by decoupling the sanitisation
-// process the scanner become more flexible and can be reused in source code
-// formatting or by analysis tools.
+// SanitiseAll removes Tokens redundant to parsing. In addition to whitespace
+// and comments, other elements are removed such as empty statements and
+// inconvenient linefeeds.
 func SanitiseAll(itr LexemeIterator) {
 
 	ZERO := token.UNDEFINED

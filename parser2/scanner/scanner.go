@@ -1,3 +1,9 @@
+// Scanner package is scans in Lexemes (Tokens) from a text source into a
+// Series. The scanner is will not sanitise any text in the process so the
+// resultant Series of Lexemes will be an exact representation of the input
+// source code including whitespace and other redundant Tokens. Pre-parsing
+// should be performed via the sanitiser module if the Tokens are heading for
+// compilation.
 package scanner
 
 import (
@@ -13,6 +19,9 @@ type lex struct {
 	tk   token.Token
 }
 
+// ScanString converts the text 's' into a Series of Lexemes (Tokens).
+// Redundant Tokens are not removed in the process so the result will be a
+// lossless representation of the original input text 's'.
 func ScanString(s string) (series.Series, error) {
 
 	se := series.Make()
