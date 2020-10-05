@@ -36,8 +36,8 @@ func findCellWidths(itr LexemeIterator) cellWidths {
 	var r cellWidths
 	for itr.More() {
 		l := itr.Next()
-		r.line = max(r.line, l.Position.Line, l.End.Line)
-		r.col = max(r.col, l.Position.ColRune, l.End.ColRune)
+		r.line = max(r.line, l.UTF8Pos.Line, l.End.Line)
+		r.col = max(r.col, l.UTF8Pos.ColRune, l.End.ColRune)
 		r.tk = max(r.tk, len(l.Token.String()))
 	}
 
@@ -53,7 +53,7 @@ func printLexemes(w io.StringWriter, cw cellWidths, itr LexemeIterator) error {
 		// Examples:
 		// `  1:2   ->   1:4   ASSIGN   ":="`
 		// `100:100 -> 100:101 NEWLINE  "\n"`
-		start := positionString(cw, l.Position)
+		start := positionString(cw, l.UTF8Pos)
 		end := positionString(cw, l.End)
 		tok := padBack(cw.tk, l.Token.String())
 		val := strconv.QuoteToGraphic(l.Val)
@@ -67,7 +67,7 @@ func printLexemes(w io.StringWriter, cw cellWidths, itr LexemeIterator) error {
 	return nil
 }
 
-func positionString(cw cellWidths, p position.Position) string {
+func positionString(cw cellWidths, p position.UTF8Pos) string {
 	// Examples:
 	// `  1:2  `
 	// `100:100`

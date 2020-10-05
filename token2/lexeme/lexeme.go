@@ -38,7 +38,7 @@ func MakeTok(val string, tk token.Token) Lexeme {
 	sizeRunes := len([]rune(val))
 
 	snip := position.Snippet{
-		End: position.Position{
+		End: position.UTF8Pos{
 			Offset:  sizeBytes,
 			ColByte: sizeBytes,
 			ColRune: sizeRunes,

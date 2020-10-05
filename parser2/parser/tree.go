@@ -22,6 +22,7 @@ type (
 		expr() // Constrains assignment by expression nodes only
 	}
 
+	// TODO: Is this really needed?
 	// Stat (Statement) is a Node that representing a traditional programmers
 	// statement.
 	Stat interface {
@@ -44,6 +45,11 @@ type (
 		Value string // Identifier name as defined in source
 	}
 
+	// Void Node is an Expr representing a void.
+	Void struct {
+		position.Snippet
+	}
+
 	// BoolLit Node is an Expr representing a literal boolean.
 	BoolLit struct {
 		position.Snippet
@@ -64,35 +70,76 @@ type (
 
 	// BinaryOp Node is an Expr representing a binary operation.
 	BinaryOp struct {
-		position.Snippet
 		Left   Expr
 		Op     token.Token
 		OpSnip position.Snippet
 		Right  Expr
 	}
 
-	// MultiAssign Node is an Assign and Stat representing a multiple assignment.
+	// SpellIdent Node is an Expr representing a spell identifier.
+	SpellIdent struct {
+		Prefix    position.Snippet
+		ValueSnip position.Snippet
+		Value     string // Identifier name as defined in source
+	}
+
+	// SpellCall Node is an Expr representing a spell call.
+	SpellCall struct {
+		Ident  SpellIdent
+		LParen position.Snippet
+		Args   []Expr // Ordered left to right
+		RParen position.Snippet
+	}
+
+	// MultiAssign Node is an Assign representing a multiple assignment.
 	MultiAssign struct {
-		position.Snippet
-		Left  []Expr
-		Infix token.Token
-		Right []Expr
+		Left     []Expr // Ordered left to right
+		Infix    token.Token
+		InfixPos position.Snippet
+		Right    []Expr // Ordered left to right
 	}
 )
 
-func (n Ident) expr()    {}
-func (n BoolLit) expr()  {}
-func (n NumLit) expr()   {}
-func (n StrLit) expr()   {}
-func (n BinaryOp) expr() {}
-
-func (n MultiAssign) stat() {}
+func (n Ident) expr()      {}
+func (n Void) expr()       {}
+func (n BoolLit) expr()    {}
+func (n NumLit) expr()     {}
+func (n StrLit) expr()     {}
+func (n BinaryOp) expr()   {}
+func (n SpellIdent) expr() {}
+func (n SpellCall) expr()  {}
 
 func (n MultiAssign) assign() {}
 
-func (n Ident) Snip() position.Snippet       { return n.Snippet }
-func (n BoolLit) Snip() position.Snippet     { return n.Snippet }
-func (n NumLit) Snip() position.Snippet      { return n.Snippet }
-func (n StrLit) Snip() position.Snippet      { return n.Snippet }
-func (n BinaryOp) Snip() position.Snippet    { return n.Snippet }
-func (n MultiAssign) Snip() position.Snippet { return n.Snippet }
+func (n Ident) Snip() position.Snippet   { return n.Snippet }
+func (n Void) Snip() position.Snippet    { return n.Snippet }
+func (n BoolLit) Snip() position.Snippet { return n.Snippet }
+func (n NumLit) Snip() position.Snippet  { return n.Snippet }
+func (n StrLit) Snip() position.Snippet  { return n.Snippet }
+func (n BinaryOp) Snip() position.Snippet {
+	return position.SuperSnippet(n.Left.Snip(), n.Right.Snip())
+}
+func (n SpellIdent) Snip() position.Snippet {
+	return position.SuperSnippet(n.Prefix, n.ValueSnip)
+}
+func (n SpellCall) Snip() position.Snippet {
+	return position.SuperSnippet(n.Ident.Snip(), n.RParen)
+}
+func (n MultiAssign) Snip() position.Snippet {
+	return position.SuperSnippet(
+		exprListSnippet(n.Left),
+		exprListSnippet(n.Right),
+	)
+}
+
+func exprListSnippet(nodes []Expr) position.Snippet {
+	var r position.Snippet
+	for i, s := range nodes {
+		if i == 0 {
+			r = s.Snip()
+		} else {
+			r = position.SuperSnippet(r, s.Snip())
+		}
+	}
+	return r
+}
