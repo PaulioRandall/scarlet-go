@@ -11,7 +11,7 @@ type mark struct {
 }
 
 // More returns true if there are more Lexemes to iterate.
-func (m *mark) More() bool {
+func (m mark) More() bool {
 	return m.next != nil
 }
 
@@ -47,7 +47,7 @@ func (m *mark) Next() lexeme.Lexeme {
 // Get returns the item at the current iterator mark or the Lexeme zero value if
 // there is no item at the mark, Iie. before the first item, after the last
 // item, and immediately after an item has been removed.
-func (m *mark) Get() lexeme.Lexeme {
+func (m mark) Get() lexeme.Lexeme {
 	if m.curr == nil {
 		return lexeme.Lexeme{}
 	}
@@ -66,7 +66,7 @@ func (m *mark) Prev() lexeme.Lexeme {
 
 // LookAhead returns the Lexeme next in the iteration without incrementing the
 // iterator mark. An empty Lexeme is returned if there is no item ahead.
-func (m *mark) LookAhead() lexeme.Lexeme {
+func (m mark) LookAhead() lexeme.Lexeme {
 	if m.next == nil {
 		return lexeme.Lexeme{}
 	}
@@ -75,7 +75,7 @@ func (m *mark) LookAhead() lexeme.Lexeme {
 
 // Lookback returns the Lexeme previous in the iteration without decrementing
 // the iterator mark. An empty Lexeme is returned if there is no item behind.
-func (m *mark) LookBack() lexeme.Lexeme {
+func (m mark) LookBack() lexeme.Lexeme {
 	if m.prev == nil {
 		return lexeme.Lexeme{}
 	}

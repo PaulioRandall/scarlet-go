@@ -11,12 +11,12 @@ type list struct {
 }
 
 // Size returns the length of the Series.
-func (li *list) Size() int {
+func (li list) Size() int {
 	return li.size
 }
 
 // Empty returns true if the size of the Series is 0.
-func (li *list) Empty() bool {
+func (li list) Empty() bool {
 	return li.size == 0
 }
 
