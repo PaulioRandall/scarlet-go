@@ -3,7 +3,6 @@ package parser
 import (
 	"github.com/PaulioRandall/scarlet-go/number"
 	"github.com/PaulioRandall/scarlet-go/token2/position"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
 // TODO: Model on https://github.com/golang/go/blob/a517c3422e808ae51533a0700e05d59e8a799136/src/go/ast/ast.go
@@ -21,7 +20,7 @@ type (
 		expr() // Constrains assignment by expression nodes only
 	}
 
-	// Stat (Statement) is a Node that representing a traditional programmers
+	// Stat (Statement) is a Node representing a traditional programmers
 	// statement.
 	Stat interface {
 		Node
@@ -33,7 +32,7 @@ type (
 	// Ident Node is an Expr representing an identifier.
 	Ident struct {
 		position.Snippet
-		Value string // Identifier name as defined in source
+		Val string // Identifier name as defined in source
 	}
 
 	// VoidLit Node is an Expr representing a void.
@@ -44,62 +43,71 @@ type (
 	// BoolLit Node is an Expr representing a literal boolean.
 	BoolLit struct {
 		position.Snippet
-		Value bool
+		Val bool
 	}
 
 	// NumLit Node is an Expr representing a literal number.
 	NumLit struct {
 		position.Snippet
-		Value number.Number
+		Val number.Number
 	}
 
 	// StrLit Node is an Expr representing a literal string.
 	StrLit struct {
 		position.Snippet
-		Value string
+		Val string
 	}
 
-	// BinaryOp Node is an Expr representing a binary operation.
-	BinaryOp struct {
-		Left   Expr
-		Op     token.Token
-		OpSnip position.Snippet
-		Right  Expr
-	}
+	/*
+		// BinaryOp Node is an Expr representing a binary operation.
+		BinaryOp struct {
+			Left   Expr
+			Op     token.Token
+			OpSnip position.Snippet
+			Right  Expr
+		}
 
-	// BoolOp Node is an Expr representing a boolean operation.
-	BoolOp struct {
-		BinaryOp
-	}
+		// BoolOp Node is an Expr representing a boolean operation.
+		BoolOp struct {
+			BinaryOp
+		}
 
-	// ArithOp Node is an Expr representing an arithmetic operation.
-	ArithOp struct {
-		BinaryOp
-	}
+		// ArithOp Node is an Expr representing an arithmetic operation.
+		ArithOp struct {
+			BinaryOp
+		}
 
-	// SpellCall Node is an Expr representing a spell call.
-	SpellCall struct {
-		Prefix   position.Snippet
-		NameSnip position.Snippet
-		Name     string // Identifier name as defined in source
-		LParen   position.Snippet
-		Args     []Expr // Ordered left to right
-		RParen   position.Snippet
-	}
+		// SpellCall Node is an Expr representing a spell call.
+		SpellCall struct {
+			Prefix   position.Snippet
+			NameSnip position.Snippet
+			Name     string // Identifier name as defined in source
+			LParen   position.Snippet
+			Args     []Expr // Ordered left to right
+			RParen   position.Snippet
+		}
 
-	// ExprStat Node is a Stat representing an Expr.
-	ExprStat struct {
-		Expr Expr
+		// ExprStat Node is a Stat representing an Expr.
+		ExprStat struct {
+			Expr Expr
+		}
+	*/
+
+	// SingleAssign Node is a Stat representing a single assignment.
+	SingleAssign struct {
+		Left  Expr
+		Infix position.Snippet
+		Right Expr
 	}
 
 	// MultiAssign Node is a Stat representing a multiple assignment.
 	MultiAssign struct {
-		Left     []Expr // Ordered left to right
-		Infix    token.Token
-		InfixPos position.Snippet
-		Right    []Expr // Ordered left to right
+		Left  []Expr // Ordered left to right
+		Infix position.Snippet
+		Right []Expr // Ordered left to right
 	}
 
+/*
 	// Block Node is a Stat representing a block of code with its own scope.
 	Block struct {
 		LCurly position.Snippet
@@ -121,41 +129,56 @@ type (
 		Loop  position.Snippet
 		Guard Guard
 	}
+*/
 )
 
-func (n Ident) expr()     {}
-func (n VoidLit) expr()   {}
-func (n BoolLit) expr()   {}
-func (n NumLit) expr()    {}
-func (n StrLit) expr()    {}
+func (n Ident) expr()   {}
+func (n VoidLit) expr() {}
+func (n BoolLit) expr() {}
+func (n NumLit) expr()  {}
+func (n StrLit) expr()  {}
+
+/*
 func (n BoolOp) expr()    {}
 func (n ArithOp) expr()   {}
 func (n SpellCall) expr() {}
+*/
 
+func (n SingleAssign) stat() {}
+func (n MultiAssign) stat()  {}
+
+/*
 func (n ExprStat) stat()    {}
-func (n MultiAssign) stat() {}
 func (n Block) stat()       {}
 func (n Guard) stat()       {}
 func (n WhileLoop) stat()   {}
+*/
 
 func (n Ident) Snip() position.Snippet   { return n.Snippet }
 func (n VoidLit) Snip() position.Snippet { return n.Snippet }
 func (n BoolLit) Snip() position.Snippet { return n.Snippet }
 func (n NumLit) Snip() position.Snippet  { return n.Snippet }
 func (n StrLit) Snip() position.Snippet  { return n.Snippet }
-func (n BinaryOp) Snip() position.Snippet {
+
+func (n SingleAssign) Snip() position.Snippet {
 	return position.SuperSnippet(n.Left.Snip(), n.Right.Snip())
 }
-func (n SpellCall) Snip() position.Snippet {
-	return position.SuperSnippet(n.Prefix, n.RParen)
-}
-func (n ExprStat) Snip() position.Snippet { return n.Expr.Snip() }
+
 func (n MultiAssign) Snip() position.Snippet {
 	return position.SuperSnippet(
 		exprListSnippet(n.Left),
 		exprListSnippet(n.Right),
 	)
 }
+
+/*
+func (n BinaryOp) Snip() position.Snippet {
+	return position.SuperSnippet(n.Left.Snip(), n.Right.Snip())
+}
+func (n SpellCall) Snip() position.Snippet {
+	return position.SuperSnippet(n.Prefix, n.RParen)
+}
+func (n ExprStat) Snip() position.Snippet { return n.Expr.Snip() {
 func (n Block) Snip() position.Snippet {
 	return position.SuperSnippet(n.LCurly, n.RCurly)
 }
@@ -165,6 +188,7 @@ func (n Guard) Snip() position.Snippet {
 func (n WhileLoop) Snip() position.Snippet {
 	return position.SuperSnippet(n.Loop, n.Guard.Snip())
 }
+*/
 
 func exprListSnippet(nodes []Expr) position.Snippet {
 	var r position.Snippet
