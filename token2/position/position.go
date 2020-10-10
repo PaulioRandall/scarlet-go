@@ -95,6 +95,14 @@ func (tm *TextMarker) Advance(s string) {
 	}
 }
 
+// Position returns a UTF8Pos representing the end of 's' in source code
+// assuming 's' starts at the TextMarker's current position.
+func (tm *TextMarker) Position(s string) UTF8Pos {
+	pos := TextMarker(tm.Snapshot())
+	pos.Advance(s)
+	return UTF8Pos(pos)
+}
+
 // Snippet returns a Snippet representing 's' in source code assuming 's'
 // starts at the TextMarker's current position.
 func (tm *TextMarker) Snippet(s string) Snippet {

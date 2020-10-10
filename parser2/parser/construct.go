@@ -11,7 +11,7 @@ import (
 func expectIdent(l lexeme.Lexeme) (id Ident, e error) {
 
 	if l.Token != token.IDENT {
-		e = newErr("Expected identifier")
+		e = errSnip(l.Snippet, "Expected identifier")
 		return
 	}
 

@@ -20,6 +20,11 @@ type Lexeme struct {
 	Val string
 }
 
+// Value returns the original text that makes up the Lexeme.
+func (l Lexeme) Value() string {
+	return l.Val
+}
+
 // Make returns a new Lexeme. It's convenience to help avoid construction
 // errors.
 func Make(val string, tk token.Token, snip position.Snippet) Lexeme {

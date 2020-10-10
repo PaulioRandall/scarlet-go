@@ -45,7 +45,8 @@ func statements(ctx *context) ([]Stat, error) {
 			s, e = leadingIdentStat(ctx)
 
 		default:
-			return nil, newErr("Unparsable statement")
+			return nil, errSnip(l.Snippet,
+				"%s does not lead any known statement", l.Token.String())
 		}
 
 		if e != nil {
@@ -62,7 +63,10 @@ func statements(ctx *context) ([]Stat, error) {
 // begins a statement.
 func leadingIdentStat(ctx *context) (Stat, error) {
 
-	switch ctx.Next(); ctx.LookAhead().Token {
+	ctx.Next()
+	l := ctx.LookAhead()
+
+	switch l.Token {
 	case token.ASSIGN:
 		ctx.Prev()
 		return singleAssignment(ctx)
@@ -72,7 +76,8 @@ func leadingIdentStat(ctx *context) (Stat, error) {
 		return multiAssignment(ctx)
 	}
 
-	return nil, newErr("Unknown statement")
+	return nil, errSnip(l.Snippet,
+		"%s does not follow an identifier in any known statement", l.Token.String())
 }
 
 // Assumes: IDENT ASSIGN ...
@@ -106,10 +111,11 @@ func multiAssignment(ctx *context) (Stat, error) {
 		return ZERO, e
 	}
 
-	if ctx.LookAhead().Token != token.ASSIGN {
-		return ZERO, newErr("Expected assignment token")
+	l := ctx.Next()
+	if l.Token != token.ASSIGN {
+		return ZERO, errSnip(l.Snippet, "Expected assignment symbol")
 	}
-	m.Infix = ctx.Next().Snippet
+	m.Infix = l.Snippet
 
 	if m.Right, e = multiAssignRight(ctx); e != nil {
 		return ZERO, e
@@ -174,14 +180,17 @@ func multiAssignRight(ctx *context) ([]Expr, error) {
 // Pattern: BOOL | NUMBER | STRING
 func expectExpr(ctx *context) (Expr, error) {
 
-	switch ctx.LookAhead().Token {
+	l := ctx.Next()
+
+	switch l.Token {
 	case token.TRUE, token.FALSE:
-		return boolLit(ctx.Next()), nil
+		return boolLit(l), nil
 	case token.NUMBER:
-		return numLit(ctx.Next()), nil
+		return numLit(l), nil
 	case token.STRING:
-		return strLit(ctx.Next()), nil
+		return strLit(l), nil
 	}
 
-	return nil, newErr("Unknown expression")
+	return nil, errSnip(l.Snippet,
+		"%s does not lead any known expression", l.Token.String())
 }

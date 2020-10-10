@@ -1,13 +1,20 @@
 package parser
 
-type err struct {
+import (
+	"fmt"
+
+	"github.com/PaulioRandall/scarlet-go/token2/position"
+)
+
+type scanSnipErr struct {
+	error
+	position.Snippet
 	msg string
 }
 
-func (e err) Error() string {
-	return e.msg
-}
-
-func newErr(msg string) error {
-	return err{msg: msg}
+func errSnip(snip position.Snippet, msg string, args ...interface{}) error {
+	return scanSnipErr{
+		Snippet: snip,
+		msg:     fmt.Sprintf(msg, args...),
+	}
 }
