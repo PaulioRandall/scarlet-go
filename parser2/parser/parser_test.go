@@ -30,7 +30,7 @@ func requireNodes(t *testing.T, exp, act []Node) {
 	}
 }
 
-func TestParse(t *testing.T) {
+func TestParse_SingleAssign(t *testing.T) {
 
 	// x := 1
 	in := positionLexemes(
@@ -45,14 +45,51 @@ func TestParse(t *testing.T) {
 				UTF8Pos: in[0].Snippet.UTF8Pos,
 				End:     in[2].Snippet.End,
 			},
-			Left: Ident{
-				Snippet: in[0].Snippet,
-				Val:     in[0].Val,
-			},
+			Left:  Ident{Snippet: in[0].Snippet, Val: "x"},
 			Infix: in[1].Snippet,
-			Right: NumLit{
-				Snippet: in[2].Snippet,
-				Val:     number.New(in[2].Val),
+			Right: NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+		},
+	}
+
+	tokenItr := tokentest.FeignSeries(in...)
+	act, e := Parse(tokenItr)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
+func TestParse_MultiAssign(t *testing.T) {
+
+	// x, y, z := true, 1, "abc"
+	in := positionLexemes(
+		lexeme.MakeTok("x", token.IDENT), // 0
+		lexeme.MakeTok(",", token.DELIM),
+		lexeme.MakeTok("y", token.IDENT), // 2
+		lexeme.MakeTok(",", token.DELIM),
+		lexeme.MakeTok("z", token.IDENT), // 4
+		lexeme.MakeTok(":=", token.ASSIGN),
+		lexeme.MakeTok("true", token.TRUE), // 6
+		lexeme.MakeTok(",", token.DELIM),
+		lexeme.MakeTok("1", token.NUMBER), // 8
+		lexeme.MakeTok(",", token.DELIM),
+		lexeme.MakeTok(`"text"`, token.STRING), // 10
+	)
+
+	exp := []Node{
+		MultiAssign{
+			Snippet: position.Snippet{
+				UTF8Pos: in[0].Snippet.UTF8Pos,
+				End:     in[10].Snippet.End,
+			},
+			Left: []Expr{
+				Ident{Snippet: in[0].Snippet, Val: "x"},
+				Ident{Snippet: in[2].Snippet, Val: "y"},
+				Ident{Snippet: in[4].Snippet, Val: "z"},
+			},
+			Infix: in[5].Snippet,
+			Right: []Expr{
+				BoolLit{Snippet: in[6].Snippet, Val: true},
+				NumLit{Snippet: in[8].Snippet, Val: number.New("1")},
+				StrLit{Snippet: in[10].Snippet, Val: `"text"`},
 			},
 		},
 	}
