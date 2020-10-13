@@ -34,6 +34,9 @@ func statements(ctx *context) ([]Node, error) {
 			ctx.Next()
 			n, e = indentLeads(ctx)
 
+		case l.IsLiteral():
+			n, e = expectExpr(ctx)
+
 		default:
 			return nil, errSnip(l.Snippet,
 				"%s does not lead any known statement", l.Token.String())
@@ -194,7 +197,7 @@ func multiAssignRight(ctx *context) ([]Expr, position.Snippet, error) {
 }
 
 // Pattern: BOOL | NUMBER | STRING
-func expectExpr(ctx *context) (Expr, error) {
+func expectLiteral(ctx *context) (Expr, error) {
 
 	if !ctx.More() {
 		return nil, errPos(ctx.Snippet().End,
@@ -202,7 +205,6 @@ func expectExpr(ctx *context) (Expr, error) {
 	}
 
 	l := ctx.Next()
-
 	switch l.Token {
 	case token.TRUE, token.FALSE:
 		return boolLit(l), nil
@@ -214,4 +216,34 @@ func expectExpr(ctx *context) (Expr, error) {
 
 	return nil, errSnip(l.Snippet,
 		"%s does not lead any known expression", l.Token.String())
+}
+
+// Pattern: <literal> [<operator> <literal>]
+// TODO: Multi-operator expressions
+func expectExpr(ctx *context) (Expr, error) {
+
+	left, e := expectLiteral(ctx)
+	if e != nil {
+		return nil, e
+	}
+
+	if !ctx.LookAhead().IsOperator() {
+		return left, nil
+	}
+
+	r := BinaryExpr{
+		Left: left,
+	}
+
+	op := ctx.Next()
+	r.Op = op.Token
+	r.OpPos = op.Snippet
+
+	r.Right, e = expectLiteral(ctx)
+	if e != nil {
+		return nil, e
+	}
+
+	r.Snippet = position.SuperSnippet(r.Left.Pos(), r.Right.Pos())
+	return r, nil
 }

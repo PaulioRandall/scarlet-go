@@ -7,19 +7,15 @@ Scarlet is a template for building domain or team specific scripting tools. I st
 
 ## Syntax
 
-**Assignments:**
 ```
 x := 1
 x, y, z := true, 1, "Scarlet"
-```
 
-**Arithmetic expressions:**
-```
-1 + 1
-2 - 1
-3 * 2
-4 / 2
-5 % 4
+x := 1 + 1
+x := 2 - 1
+x := 3 * 2
+x := 4 / 2
+x := 5 % 4
 ```
 
 # Roadmap
