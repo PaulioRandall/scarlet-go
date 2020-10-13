@@ -23,10 +23,10 @@ func positionLexemes(lexs ...lexeme.Lexeme) []lexeme.Lexeme {
 	return lexs
 }
 
-func requireStats(t *testing.T, exp, act []Stat) {
+func requireNodes(t *testing.T, exp, act []Node) {
 	require.Equal(t, len(exp), len(act))
-	for i, s := range act {
-		require.Equal(t, exp[i], s)
+	for i, n := range act {
+		require.Equal(t, exp[i], n)
 	}
 }
 
@@ -39,7 +39,7 @@ func TestParse(t *testing.T) {
 		lexeme.MakeTok("1", token.NUMBER),
 	)
 
-	exp := []Stat{
+	exp := []Node{
 		SingleAssign{
 			Snippet: position.Snippet{
 				UTF8Pos: in[0].Snippet.UTF8Pos,
@@ -60,5 +60,5 @@ func TestParse(t *testing.T) {
 	tokenItr := tokentest.FeignSeries(in...)
 	act, e := Parse(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
-	requireStats(t, exp, act)
+	requireNodes(t, exp, act)
 }

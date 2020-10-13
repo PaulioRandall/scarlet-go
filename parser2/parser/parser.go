@@ -8,7 +8,7 @@ import (
 )
 
 // Parse parses a series of Tokens into a series of parse trees.
-func Parse(itr TokenItr) ([]Stat, error) {
+func Parse(itr TokenItr) ([]Node, error) {
 	ctx := newCtx(itr, nil)
 	return statements(ctx)
 }
@@ -20,11 +20,11 @@ func newCtx(itr TokenItr, parent *context) *context {
 	}
 }
 
-func statements(ctx *context) ([]Stat, error) {
+func statements(ctx *context) ([]Node, error) {
 
 	var (
-		r = []Stat{}
-		s Stat
+		r = []Node{}
+		n Node
 		e error
 	)
 
@@ -32,7 +32,7 @@ func statements(ctx *context) ([]Stat, error) {
 		switch l := ctx.LookAhead(); {
 		case l.Token == token.IDENT:
 			ctx.Next()
-			s, e = indentLeads(ctx)
+			n, e = indentLeads(ctx)
 
 		default:
 			return nil, errSnip(l.Snippet,
@@ -43,7 +43,7 @@ func statements(ctx *context) ([]Stat, error) {
 			return nil, e
 		}
 
-		r = append(r, s)
+		r = append(r, n)
 	}
 
 	return r, nil
@@ -51,7 +51,7 @@ func statements(ctx *context) ([]Stat, error) {
 
 // indentLeads must only be used when the next Token is an IDENT and it begins
 // a statement.
-func indentLeads(ctx *context) (Stat, error) {
+func indentLeads(ctx *context) (Node, error) {
 
 	l := ctx.LookAhead()
 
@@ -69,7 +69,7 @@ func indentLeads(ctx *context) (Stat, error) {
 
 // Assumes: IDENT ASSIGN ...
 // Pattern: IDENT ASSIGN <expr>
-func singleAssignment(ctx *context) (Stat, error) {
+func singleAssignment(ctx *context) (Node, error) {
 
 	var e error
 	var s SingleAssign
@@ -91,7 +91,7 @@ func singleAssignment(ctx *context) (Stat, error) {
 
 // Assumes: IDENT DELIM ...
 // Pattern: IDENT {DELIM IDENT} ASSIGN <expr> {DELIM <expr>}
-func multiAssignment(ctx *context) (Stat, error) {
+func multiAssignment(ctx *context) (Node, error) {
 
 	var (
 		lSnip position.Snippet

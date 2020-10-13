@@ -8,6 +8,7 @@ import (
 // TODO: Model on https://github.com/golang/go/blob/a517c3422e808ae51533a0700e05d59e8a799136/src/go/ast/ast.go
 
 type (
+
 	// Node represents a node in a syntax graph or tree.
 	Node interface {
 		Pos() position.Snippet
