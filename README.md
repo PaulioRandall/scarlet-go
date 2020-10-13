@@ -3,9 +3,24 @@
   "Sometimes it's better to light a flamethrower than curse the darkness."
     - 'Men at Arms' by Terry Pratchett
 
-Scarlet is a template for building domain or team specific scripting tools. I started it as a way to learn Go while trying also attempting to create an extremely light weight API testing tool. The primary objective is an executable
-small enough to be included within VCS repositories while being easily
-modifiable at source.
+Scarlet is a template for building domain or team specific scripting tools. I started it as a way to learn Go while attempting to create an extremely light weight API testing tool. The primary objective is a binary small enough to be included within VCS repositories while being easily modifiable at source.
+
+## Syntax
+
+**Assignments:**
+```
+x := 1
+x, y, z := true, 1, "Scarlet"
+```
+
+**Arithmetic expressions:**
+```
+1 + 1
+2 - 1
+3 * 2
+4 / 2
+5 % 4
+```
 
 # Roadmap
 

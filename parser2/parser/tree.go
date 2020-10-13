@@ -3,6 +3,7 @@ package parser
 import (
 	"github.com/PaulioRandall/scarlet-go/number"
 	"github.com/PaulioRandall/scarlet-go/token2/position"
+	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
 // TODO: Model on https://github.com/golang/go/blob/a517c3422e808ae51533a0700e05d59e8a799136/src/go/ast/ast.go
@@ -75,6 +76,15 @@ type (
 		Infix position.Snippet
 		Right []Expr // Ordered left to right
 	}
+
+	// BinaryExpr Node is an Expr representing an operation with two operands.
+	BinaryExpr struct {
+		position.Snippet
+		Left  Expr
+		Op    token.Token
+		OpPos position.Snippet
+		Right Expr
+	}
 )
 
 func (n Ident) Pos() position.Snippet        { return n.Snippet }
@@ -84,6 +94,7 @@ func (n NumLit) Pos() position.Snippet       { return n.Snippet }
 func (n StrLit) Pos() position.Snippet       { return n.Snippet }
 func (n SingleAssign) Pos() position.Snippet { return n.Snippet }
 func (n MultiAssign) Pos() position.Snippet  { return n.Snippet }
+func (n BinaryExpr) Pos() position.Snippet   { return n.Snippet }
 
 func (n Ident) node()        {}
 func (n VoidLit) node()      {}
@@ -92,12 +103,14 @@ func (n NumLit) node()       {}
 func (n StrLit) node()       {}
 func (n SingleAssign) node() {}
 func (n MultiAssign) node()  {}
+func (n BinaryExpr) node()   {}
 
-func (n Ident) expr()   {}
-func (n VoidLit) expr() {}
-func (n BoolLit) expr() {}
-func (n NumLit) expr()  {}
-func (n StrLit) expr()  {}
+func (n Ident) expr()      {}
+func (n VoidLit) expr()    {}
+func (n BoolLit) expr()    {}
+func (n NumLit) expr()     {}
+func (n StrLit) expr()     {}
+func (n BinaryExpr) expr() {}
 
 func (n SingleAssign) stat() {}
 func (n MultiAssign) stat()  {}
