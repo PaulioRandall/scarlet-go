@@ -10,7 +10,8 @@ import (
 type (
 	// Node represents a node in a syntax graph or tree.
 	Node interface {
-		Snip() position.Snippet
+		Pos() position.Snippet
+		node()
 	}
 
 	// Expr (Expression) is a Node that represents a traditional programmers
@@ -58,43 +59,9 @@ type (
 		Val string
 	}
 
-	/*
-		// BinaryOp Node is an Expr representing a binary operation.
-		BinaryOp struct {
-			Left   Expr
-			Op     token.Token
-			OpSnip position.Snippet
-			Right  Expr
-		}
-
-		// BoolOp Node is an Expr representing a boolean operation.
-		BoolOp struct {
-			BinaryOp
-		}
-
-		// ArithOp Node is an Expr representing an arithmetic operation.
-		ArithOp struct {
-			BinaryOp
-		}
-
-		// SpellCall Node is an Expr representing a spell call.
-		SpellCall struct {
-			Prefix   position.Snippet
-			NameSnip position.Snippet
-			Name     string // Identifier name as defined in source
-			LParen   position.Snippet
-			Args     []Expr // Ordered left to right
-			RParen   position.Snippet
-		}
-
-		// ExprStat Node is a Stat representing an Expr.
-		ExprStat struct {
-			Expr Expr
-		}
-	*/
-
 	// SingleAssign Node is a Stat representing a single assignment.
 	SingleAssign struct {
+		position.Snippet
 		Left  Expr
 		Infix position.Snippet
 		Right Expr
@@ -102,35 +69,28 @@ type (
 
 	// MultiAssign Node is a Stat representing a multiple assignment.
 	MultiAssign struct {
+		position.Snippet
 		Left  []Expr // Ordered left to right
 		Infix position.Snippet
 		Right []Expr // Ordered left to right
 	}
-
-/*
-	// Block Node is a Stat representing a block of code with its own scope.
-	Block struct {
-		LCurly position.Snippet
-		Stats  []Stat
-		RCurly position.Snippet
-	}
-
-	// Guard Node is a Stat representing a block of code that is conditionally
-	// executed, i.e. 'if' statement.
-	Guard struct {
-		LSquare position.Snippet
-		Cond    Expr
-		RSquare position.Snippet
-		Body    Block
-	}
-
-	// WhileLoop Node is a Stat representing a while loop.
-	WhileLoop struct {
-		Loop  position.Snippet
-		Guard Guard
-	}
-*/
 )
+
+func (n Ident) Pos() position.Snippet        { return n.Snippet }
+func (n VoidLit) Pos() position.Snippet      { return n.Snippet }
+func (n BoolLit) Pos() position.Snippet      { return n.Snippet }
+func (n NumLit) Pos() position.Snippet       { return n.Snippet }
+func (n StrLit) Pos() position.Snippet       { return n.Snippet }
+func (n SingleAssign) Pos() position.Snippet { return n.Snippet }
+func (n MultiAssign) Pos() position.Snippet  { return n.Snippet }
+
+func (n Ident) node()        {}
+func (n VoidLit) node()      {}
+func (n BoolLit) node()      {}
+func (n NumLit) node()       {}
+func (n StrLit) node()       {}
+func (n SingleAssign) node() {}
+func (n MultiAssign) node()  {}
 
 func (n Ident) expr()   {}
 func (n VoidLit) expr() {}
@@ -138,66 +98,5 @@ func (n BoolLit) expr() {}
 func (n NumLit) expr()  {}
 func (n StrLit) expr()  {}
 
-/*
-func (n BoolOp) expr()    {}
-func (n ArithOp) expr()   {}
-func (n SpellCall) expr() {}
-*/
-
 func (n SingleAssign) stat() {}
 func (n MultiAssign) stat()  {}
-
-/*
-func (n ExprStat) stat()    {}
-func (n Block) stat()       {}
-func (n Guard) stat()       {}
-func (n WhileLoop) stat()   {}
-*/
-
-func (n Ident) Snip() position.Snippet   { return n.Snippet }
-func (n VoidLit) Snip() position.Snippet { return n.Snippet }
-func (n BoolLit) Snip() position.Snippet { return n.Snippet }
-func (n NumLit) Snip() position.Snippet  { return n.Snippet }
-func (n StrLit) Snip() position.Snippet  { return n.Snippet }
-
-func (n SingleAssign) Snip() position.Snippet {
-	return position.SuperSnippet(n.Left.Snip(), n.Right.Snip())
-}
-
-func (n MultiAssign) Snip() position.Snippet {
-	return position.SuperSnippet(
-		exprListSnippet(n.Left),
-		exprListSnippet(n.Right),
-	)
-}
-
-/*
-func (n BinaryOp) Snip() position.Snippet {
-	return position.SuperSnippet(n.Left.Snip(), n.Right.Snip())
-}
-func (n SpellCall) Snip() position.Snippet {
-	return position.SuperSnippet(n.Prefix, n.RParen)
-}
-func (n ExprStat) Snip() position.Snippet { return n.Expr.Snip() {
-func (n Block) Snip() position.Snippet {
-	return position.SuperSnippet(n.LCurly, n.RCurly)
-}
-func (n Guard) Snip() position.Snippet {
-	return position.SuperSnippet(n.LSquare, n.Body.Snip())
-}
-func (n WhileLoop) Snip() position.Snippet {
-	return position.SuperSnippet(n.Loop, n.Guard.Snip())
-}
-*/
-
-func exprListSnippet(nodes []Expr) position.Snippet {
-	var r position.Snippet
-	for i, s := range nodes {
-		if i == 0 {
-			r = s.Snip()
-		} else {
-			r = position.SuperSnippet(r, s.Snip())
-		}
-	}
-	return r
-}

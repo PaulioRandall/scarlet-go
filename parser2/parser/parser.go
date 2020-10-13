@@ -3,46 +3,35 @@ package parser
 
 import (
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token2/position"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 )
 
-// NEXT:
-// Store Lexemes in Nodes instead of Snippets, the positions and snippets can
-// still be accessed but Node consumers have more flexibility.
-// NEXT:
-// Update perror to store Lexemes or positions and snippets.
-
-type LexemeIterator interface {
-	More() bool
-	Next() lexeme.Lexeme
-	Prev() lexeme.Lexeme
-	LookAhead() lexeme.Lexeme
-}
-
-func Parse(itr LexemeIterator) ([]Stat, error) {
+// Parse parses a series of Tokens into a series of parse trees.
+func Parse(itr TokenItr) ([]Stat, error) {
 	ctx := newCtx(itr, nil)
 	return statements(ctx)
 }
 
-func newCtx(itr LexemeIterator, parent *context) *context {
+func newCtx(itr TokenItr, parent *context) *context {
 	return &context{
-		LexemeIterator: itr,
-		parent:         parent,
+		TokenItr: itr,
+		parent:   parent,
 	}
 }
 
 func statements(ctx *context) ([]Stat, error) {
 
 	var (
-		stats = []Stat{}
-		s     Stat
-		e     error
+		r = []Stat{}
+		s Stat
+		e error
 	)
 
 	for ctx.More() {
 		switch l := ctx.LookAhead(); {
 		case l.Token == token.IDENT:
-			s, e = leadingIdentStat(ctx)
+			s, e = indentLeads(ctx)
 
 		default:
 			return nil, errSnip(l.Snippet,
@@ -53,15 +42,15 @@ func statements(ctx *context) ([]Stat, error) {
 			return nil, e
 		}
 
-		stats = append(stats, s)
+		r = append(r, s)
 	}
 
-	return stats, nil
+	return r, nil
 }
 
-// leadingIdentStat must only be used when the next Token is an IDENT and it
-// begins a statement.
-func leadingIdentStat(ctx *context) (Stat, error) {
+// indentLeads must only be used when the next Token is an IDENT and it begins
+// a statement.
+func indentLeads(ctx *context) (Stat, error) {
 
 	ctx.Next()
 	l := ctx.LookAhead()
@@ -94,6 +83,8 @@ func singleAssignment(ctx *context) (Stat, error) {
 
 	s.Infix = ctx.Next().Snippet
 	s.Right, e = expectExpr(ctx)
+
+	s.Snippet = position.SuperSnippet(s.Left.Pos(), s.Right.Pos())
 	return s, e
 }
 
@@ -102,79 +93,94 @@ func singleAssignment(ctx *context) (Stat, error) {
 func multiAssignment(ctx *context) (Stat, error) {
 
 	var (
-		ZERO MultiAssign
-		m    MultiAssign
-		e    error
+		lSnip position.Snippet
+		rSnip position.Snippet
+		zero  MultiAssign
+		m     MultiAssign
+		e     error
 	)
 
-	if m.Left, e = multiAssignLeft(ctx); e != nil {
-		return ZERO, e
+	if m.Left, lSnip, e = multiAssignLeft(ctx); e != nil {
+		return zero, e
 	}
 
 	l := ctx.Next()
 	if l.Token != token.ASSIGN {
-		return ZERO, errSnip(l.Snippet, "Expected assignment symbol")
+		return zero, errSnip(l.Snippet, "Expected assignment symbol")
 	}
 	m.Infix = l.Snippet
 
-	if m.Right, e = multiAssignRight(ctx); e != nil {
-		return ZERO, e
+	if m.Right, rSnip, e = multiAssignRight(ctx); e != nil {
+		return zero, e
 	}
 
+	m.Snippet = position.SuperSnippet(lSnip, rSnip)
 	return m, nil
 }
 
 // Assumes: IDENT DELIM ...
 // Pattern: IDENT {DELIM IDENT}
-func multiAssignLeft(ctx *context) ([]Expr, error) {
+func multiAssignLeft(ctx *context) ([]Expr, position.Snippet, error) {
 
 	var (
-		r  []Expr
-		id Ident
-		e  error
+		zero position.Snippet
+		snip position.Snippet
+		l    lexeme.Lexeme
+		r    []Expr
+		id   Ident
+		e    error
 	)
 
-	if id, e = expectIdent(ctx.Next()); e != nil {
-		return nil, e
+	l = ctx.Next()
+	snip = l.Snippet
+
+	if id, e = expectIdent(l); e != nil {
+		return nil, zero, e
 	}
 	r = append(r, id)
 
 	for ctx.LookAhead().Token == token.DELIM {
 		ctx.Next()
+		l = ctx.Next()
 
-		if id, e = expectIdent(ctx.Next()); e != nil {
-			return nil, e
+		if id, e = expectIdent(l); e != nil {
+			return nil, zero, e
 		}
 		r = append(r, id)
 	}
 
-	return r, nil
+	snip = position.SuperSnippet(snip, l.Snippet)
+	return r, snip, nil
 }
 
 // Pattern: <expr> {DELIM <expr>}
-func multiAssignRight(ctx *context) ([]Expr, error) {
+func multiAssignRight(ctx *context) ([]Expr, position.Snippet, error) {
 
 	var (
-		r  []Expr
-		ex Expr
-		e  error
+		zero position.Snippet
+		snip position.Snippet
+		r    []Expr
+		ex   Expr
+		e    error
 	)
 
 	if ex, e = expectExpr(ctx); e != nil {
-		return nil, e
+		return nil, zero, e
 	}
 	r = append(r, ex)
+	snip = ex.Pos()
 
 	for ctx.LookAhead().Token == token.DELIM {
 		ctx.Next()
 
 		if ex, e = expectExpr(ctx); e != nil {
-			return nil, e
+			return nil, zero, e
 		}
 		r = append(r, ex)
 	}
 
-	return r, nil
+	snip = position.SuperSnippet(snip, ex.Pos())
+	return r, snip, nil
 }
 
 // Pattern: BOOL | NUMBER | STRING
