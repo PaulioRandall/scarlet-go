@@ -95,14 +95,24 @@ func makeWith(nodes ...*node) *Series {
 	}
 }
 
+// Size returns the length of the Series.
+func (s *Series) Size() int {
+	return s.list.size
+}
+
+// Empty returns true if the size of the Series is 0.
+func (s *Series) Empty() bool {
+	return s.list.size == 0
+}
+
 // JumpToStart resets the iterator mark before the first item in the Series.
 func (s *Series) JumpToStart() {
-	s.jumpToStart(s.head)
+	s.mark.jumpToStart(s.list.head)
 }
 
 // JumpToEnd puts the iterator mark after the last item in the Series.
 func (s *Series) JumpToEnd() {
-	s.jumpToEnd(s.tail)
+	s.mark.jumpToEnd(s.list.tail)
 }
 
 // JumpToPrev iterates backwards calling 'matcher' on each item on the way. If
@@ -111,14 +121,14 @@ func (s *Series) JumpToEnd() {
 // and false is returned.
 func (s *Series) JumpToPrev(matcher Matcher) bool {
 
-	for n := s.prev; n != nil; n = n.prev {
-		s.jumpTo(n)
+	for n := s.mark.prev; n != nil; n = n.prev {
+		s.mark.jumpTo(n)
 		if matcher(s) {
 			return true
 		}
 	}
 
-	s.JumpToStart()
+	s.mark.jumpToStart(s.list.head)
 	return false
 }
 
@@ -128,34 +138,79 @@ func (s *Series) JumpToPrev(matcher Matcher) bool {
 // and false is returned.
 func (s *Series) JumpToNext(matcher Matcher) bool {
 
-	for n := s.next; n != nil; n = n.next {
-		s.jumpTo(n)
+	for n := s.mark.next; n != nil; n = n.next {
+		s.mark.jumpTo(n)
 		if matcher(s) {
 			return true
 		}
 	}
 
-	s.JumpToEnd()
+	s.mark.jumpToEnd(s.list.tail)
 	return false
+}
+
+// Next moves the iterator mark onto the next item and returns it. A panic will
+// ensue if the end of the iterator has already been reached so Series.More
+// should be called before hand.
+func (s *Series) Next() lexeme.Lexeme {
+	return s.mark.nextLex()
+}
+
+// Prev moves the iterator mark onto the previous item and returns it. A panic
+// will ensue if the start of the iterator has already been reached.
+func (s *Series) Prev() lexeme.Lexeme {
+	return s.mark.prevLex()
+}
+
+// Get returns the item at the current iterator mark or the Lexeme zero value if
+// there is no item at the mark, Iie. before the first item, after the last
+// item, and immediately after an item has been removed.
+func (s *Series) Get() lexeme.Lexeme {
+	if s.mark.curr == nil {
+		return lexeme.Lexeme{}
+	}
+	return s.mark.curr.data
+}
+
+// LookAhead returns the Lexeme next in the iteration without incrementing the
+// iterator mark. An empty Lexeme is returned if there is no item ahead.
+func (s *Series) LookAhead() lexeme.Lexeme {
+	if s.mark.next == nil {
+		return lexeme.Lexeme{}
+	}
+	return s.mark.next.data
+}
+
+// Lookback returns the Lexeme previous in the iteration without decrementing
+// the iterator mark. An empty Lexeme is returned if there is no item behind.
+func (s *Series) LookBack() lexeme.Lexeme {
+	if s.mark.prev == nil {
+		return lexeme.Lexeme{}
+	}
+	return s.mark.prev.data
 }
 
 // Prepend inserts a Lexeme at the front of the Series.
 func (s *Series) Prepend(l lexeme.Lexeme) {
-	s.prepend(l)
-	if s.curr != nil {
-		s.jumpTo(s.curr)
+	atStart := s.mark.prev == nil && s.mark.curr == nil
+	if s.list.prepend(l); atStart {
+		s.mark.jumpToStart(s.list.head)
+	} else if s.curr != nil {
+		s.mark.jumpTo(s.mark.curr)
 	} else {
-		s.JumpToStart()
+		s.mark.jumpToEnd(s.list.tail)
 	}
 }
 
 // Append inserts a Lexeme at the back of the Series.
 func (s *Series) Append(l lexeme.Lexeme) {
-	s.append(l)
-	if s.curr != nil {
-		s.jumpTo(s.curr)
+	atStart := s.mark.prev == nil && s.mark.curr == nil
+	if s.list.append(l); atStart {
+		s.mark.jumpToStart(s.list.head)
+	} else if s.mark.curr != nil {
+		s.mark.jumpTo(s.mark.curr)
 	} else {
-		s.JumpToEnd()
+		s.mark.jumpToEnd(s.list.tail)
 	}
 }
 
@@ -163,37 +218,37 @@ func (s *Series) Append(l lexeme.Lexeme) {
 // A panic will ensue if the mark isn't pointing to an item.
 func (s *Series) InsertAfter(l lexeme.Lexeme) {
 
-	if s.curr == nil {
+	if s.mark.curr == nil {
 		panic("Current node missing, can't insert after it")
 	}
 
 	n := &node{data: l}
-	s.insertAfter(n)
-	s.inserted(n)
+	s.mark.insertAfter(n)
+	s.list.inserted(n)
 }
 
 // InsertBefore inserts a Lexeme before the item indicated by the iterator mark.
 // A panic will ensue if the mark isn't pointing to an item.
 func (s *Series) InsertBefore(l lexeme.Lexeme) {
 
-	if s.curr == nil {
+	if s.mark.curr == nil {
 		panic("Current node missing, can't insert before it")
 	}
 
 	n := &node{data: l}
-	s.insertBefore(n)
-	s.inserted(n)
+	s.mark.insertBefore(n)
+	s.list.inserted(n)
 }
 
 // Remove removes a the Lexeme indicated by the iterator mark from the Series.
 func (s *Series) Remove() lexeme.Lexeme {
 
-	if s.curr == nil {
+	if s.mark.curr == nil {
 		return lexeme.Lexeme{}
 	}
 
-	n := s.curr
-	s.curr = nil
+	n := s.mark.curr
+	s.mark.curr = nil
 	s.list.removing(n)
 	n.remove()
 	return n.data
@@ -203,7 +258,7 @@ func (s *Series) Remove() lexeme.Lexeme {
 func (s *Series) String() string {
 
 	var sb strings.Builder
-	for n := s.head; n != nil; n = n.next {
+	for n := s.list.head; n != nil; n = n.next {
 		if n != s.head {
 			sb.WriteRune('\n')
 		}

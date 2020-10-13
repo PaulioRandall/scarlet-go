@@ -11,6 +11,7 @@ import (
 
 func doTest(t *testing.T, in, exp *series.Series) {
 	SanitiseAll(in)
+	in.JumpToStart()
 	tokentest.RequireSeries(t, exp, in)
 }
 

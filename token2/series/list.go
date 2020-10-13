@@ -10,16 +10,6 @@ type list struct {
 	tail *node
 }
 
-// Size returns the length of the Series.
-func (li list) Size() int {
-	return li.size
-}
-
-// Empty returns true if the size of the Series is 0.
-func (li list) Empty() bool {
-	return li.size == 0
-}
-
 func (li *list) prepend(l lexeme.Lexeme) {
 	n := &node{
 		data: l,
@@ -56,8 +46,8 @@ func (li *list) inserted(n *node) {
 }
 
 func (li *list) removing(n *node) {
-	li.size--
 
+	li.size--
 	if n == li.head {
 		li.head = n.next
 	}

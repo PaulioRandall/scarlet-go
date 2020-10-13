@@ -31,6 +31,7 @@ func statements(ctx *context) ([]Stat, error) {
 	for ctx.More() {
 		switch l := ctx.LookAhead(); {
 		case l.Token == token.IDENT:
+			ctx.Next()
 			s, e = indentLeads(ctx)
 
 		default:
@@ -52,16 +53,13 @@ func statements(ctx *context) ([]Stat, error) {
 // a statement.
 func indentLeads(ctx *context) (Stat, error) {
 
-	ctx.Next()
 	l := ctx.LookAhead()
 
 	switch l.Token {
 	case token.ASSIGN:
-		ctx.Prev()
 		return singleAssignment(ctx)
 
 	case token.DELIM:
-		ctx.Prev()
 		return multiAssignment(ctx)
 	}
 
@@ -76,16 +74,19 @@ func singleAssignment(ctx *context) (Stat, error) {
 	var e error
 	var s SingleAssign
 
-	s.Left, e = expectIdent(ctx.Next())
+	s.Left, e = expectIdent(ctx.Get())
 	if e != nil {
 		return s, e
 	}
 
 	s.Infix = ctx.Next().Snippet
 	s.Right, e = expectExpr(ctx)
+	if e != nil {
+		return s, e
+	}
 
 	s.Snippet = position.SuperSnippet(s.Left.Pos(), s.Right.Pos())
-	return s, e
+	return s, nil
 }
 
 // Assumes: IDENT DELIM ...
@@ -131,7 +132,7 @@ func multiAssignLeft(ctx *context) ([]Expr, position.Snippet, error) {
 		e    error
 	)
 
-	l = ctx.Next()
+	l = ctx.Get()
 	snip = l.Snippet
 
 	if id, e = expectIdent(l); e != nil {

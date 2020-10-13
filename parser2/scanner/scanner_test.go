@@ -28,12 +28,26 @@ func TestBadToken(t *testing.T) {
 }
 
 func TestNewline_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("\n", token.NEWLINE))
+	exp := tokentest.FeignSeries(
+		lexeme.Make("\n", token.NEWLINE, position.Snippet{
+			End: position.UTF8Pos{
+				Offset: 1,
+				Line:   1,
+			},
+		}),
+	)
 	doTest(t, "\n", exp)
 }
 
 func TestNewline_2(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("\r\n", token.NEWLINE))
+	exp := tokentest.FeignSeries(
+		lexeme.Make("\r\n", token.NEWLINE, position.Snippet{
+			End: position.UTF8Pos{
+				Offset: 2,
+				Line:   1,
+			},
+		}),
+	)
 	doTest(t, "\r\n", exp)
 }
 

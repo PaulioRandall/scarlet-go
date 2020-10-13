@@ -33,10 +33,7 @@ func (m *mark) jumpToEnd(tail *node) {
 	m.next = nil
 }
 
-// Next moves the iterator mark onto the next item and returns it. A panic will
-// ensue if the end of the iterator has already been reached so Series.More
-// should be called before hand.
-func (m *mark) Next() lexeme.Lexeme {
+func (m *mark) nextLex() lexeme.Lexeme {
 	if m.next == nil {
 		panic("Can't move beyond the end of the series")
 	}
@@ -44,42 +41,19 @@ func (m *mark) Next() lexeme.Lexeme {
 	return m.curr.data
 }
 
-// Get returns the item at the current iterator mark or the Lexeme zero value if
-// there is no item at the mark, Iie. before the first item, after the last
-// item, and immediately after an item has been removed.
-func (m mark) Get() lexeme.Lexeme {
+func (m *mark) currLex() lexeme.Lexeme {
 	if m.curr == nil {
 		return lexeme.Lexeme{}
 	}
 	return m.curr.data
 }
 
-// Prev moves the iterator mark onto the previous item and returns it. A panic
-// will ensue if the start of the iterator has already been reached.
-func (m *mark) Prev() lexeme.Lexeme {
+func (m *mark) prevLex() lexeme.Lexeme {
 	if m.prev == nil {
 		panic("Can't move beyond the start of the series")
 	}
 	m.jumpTo(m.prev)
 	return m.curr.data
-}
-
-// LookAhead returns the Lexeme next in the iteration without incrementing the
-// iterator mark. An empty Lexeme is returned if there is no item ahead.
-func (m mark) LookAhead() lexeme.Lexeme {
-	if m.next == nil {
-		return lexeme.Lexeme{}
-	}
-	return m.next.data
-}
-
-// Lookback returns the Lexeme previous in the iteration without decrementing
-// the iterator mark. An empty Lexeme is returned if there is no item behind.
-func (m mark) LookBack() lexeme.Lexeme {
-	if m.prev == nil {
-		return lexeme.Lexeme{}
-	}
-	return m.prev.data
 }
 
 func (m *mark) insertAfter(n *node) {

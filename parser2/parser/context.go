@@ -6,6 +6,7 @@ import (
 
 type TokenItr interface {
 	More() bool
+	Get() lexeme.Lexeme
 	Next() lexeme.Lexeme
 	Prev() lexeme.Lexeme
 	LookAhead() lexeme.Lexeme
