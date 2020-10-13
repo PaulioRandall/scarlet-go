@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func requireSeries(t *testing.T, s Series, lexs ...lexeme.Lexeme) {
+func requireSeries(t *testing.T, s *Series, lexs ...lexeme.Lexeme) {
 	expHead, expTail, _ := chainLexemes(lexs...)
 	requireChain(t, expHead, s.head)
 	requireChain(t, expTail, s.tail)

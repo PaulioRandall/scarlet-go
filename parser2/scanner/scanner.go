@@ -23,7 +23,7 @@ type lex struct {
 // ScanString converts the text 's' into a Series of Lexemes (Tokens).
 // Redundant Tokens are not removed in the process so the result will be a
 // lossless representation of the original input text 's'.
-func ScanString(s string) (series.Series, error) {
+func ScanString(s string) (*series.Series, error) {
 
 	se := series.Make()
 	r := newReader(s)
@@ -31,7 +31,7 @@ func ScanString(s string) (series.Series, error) {
 	for r.more() {
 		l := &lex{}
 		if e := identifyLexeme(r, l); e != nil {
-			return series.Series{}, e
+			return nil, e
 		}
 
 		snip, val := r.read(l.size)

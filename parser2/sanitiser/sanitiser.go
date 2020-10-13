@@ -25,7 +25,7 @@ type LexemeIterator interface {
 // inconvenient linefeeds.
 func SanitiseAll(itr LexemeIterator) {
 
-	ZERO := token.UNDEFINED
+	zero := token.UNDEFINED
 
 	itr.JumpToStart()
 	for itr.More() {
@@ -36,10 +36,10 @@ func SanitiseAll(itr LexemeIterator) {
 		case curr.IsRedundant():
 			itr.Remove() // Always remove tokens redundant to the parsing process.
 
-		case prev == ZERO && curr.IsTerminator():
+		case prev == zero && curr.IsTerminator():
 			itr.Remove() // Remove leading terminators
 
-		case prev == ZERO:
+		case prev == zero:
 			// No action for the first token
 
 		case removeAfterPrev(prev, curr):

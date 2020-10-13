@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func doTest(t *testing.T, in string, exp series.Series) {
+func doTest(t *testing.T, in string, exp *series.Series) {
 	act, e := ScanString(in)
 	require.Nil(t, e, "%+v", e)
 	tokentest.RequireSeries(t, exp, act)

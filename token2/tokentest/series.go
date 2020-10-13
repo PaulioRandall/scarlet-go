@@ -33,7 +33,7 @@ func RequireSeries(t *testing.T, exp, act LexemeIterator) {
 	}
 }
 
-func FeignSeries(lexs ...lexeme.Lexeme) series.Series {
+func FeignSeries(lexs ...lexeme.Lexeme) *series.Series {
 	s := series.Make()
 	for _, l := range lexs {
 		s.Append(l)

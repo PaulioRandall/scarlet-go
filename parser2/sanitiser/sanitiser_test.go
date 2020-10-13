@@ -9,7 +9,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/tokentest"
 )
 
-func doTest(t *testing.T, in, exp series.Series) {
+func doTest(t *testing.T, in, exp *series.Series) {
 	SanitiseAll(in)
 	tokentest.RequireSeries(t, exp, in)
 }
