@@ -2,6 +2,7 @@ package parser
 
 import (
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token2/position"
 )
 
 type TokenItr interface {
@@ -10,6 +11,7 @@ type TokenItr interface {
 	Next() lexeme.Lexeme
 	Prev() lexeme.Lexeme
 	LookAhead() lexeme.Lexeme
+	Snippet() position.Snippet
 }
 
 type context struct {

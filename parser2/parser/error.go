@@ -6,10 +6,31 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/position"
 )
 
-type scanSnipErr struct {
-	error
-	position.Snippet
-	msg string
+type (
+	scanPosErr struct {
+		position.UTF8Pos
+		msg string
+	}
+
+	scanSnipErr struct {
+		position.Snippet
+		msg string
+	}
+)
+
+func (e scanPosErr) Error() string {
+	return e.msg
+}
+
+func (e scanSnipErr) Error() string {
+	return e.msg
+}
+
+func errPos(pos position.UTF8Pos, msg string, args ...interface{}) error {
+	return scanPosErr{
+		UTF8Pos: pos,
+		msg:     fmt.Sprintf(msg, args...),
+	}
 }
 
 func errSnip(snip position.Snippet, msg string, args ...interface{}) error {

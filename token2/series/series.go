@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token2/position"
 )
 
 // Matcher function signiture is used by Series search functions such as
@@ -32,6 +33,7 @@ type Snapshot interface {
 	Get() lexeme.Lexeme
 	LookAhead() lexeme.Lexeme
 	LookBack() lexeme.Lexeme
+	Snippet() position.Snippet
 	String() string
 }
 
@@ -252,6 +254,18 @@ func (s *Series) Remove() lexeme.Lexeme {
 	s.list.removing(n)
 	n.remove()
 	return n.data
+}
+
+// Snippet returns a Snippet providing the range of the Series within source
+// code.
+func (s *Series) Snippet() position.Snippet {
+	if s.Empty() {
+		return position.Snippet{}
+	}
+	return position.SuperSnippet(
+		s.list.head.data.Snippet,
+		s.list.tail.data.Snippet,
+	)
 }
 
 // String returns a human readable string representation of the Series.

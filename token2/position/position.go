@@ -74,6 +74,16 @@ func SuperSnippet(a, b Snippet) Snippet {
 	}
 }
 
+// From returns the UTF8Pos representing the beginning of the snippet.
+func (s Snippet) From() UTF8Pos {
+	return s.UTF8Pos
+}
+
+// To returns the UTF8Pos representing the end of the snippet.
+func (s Snippet) To() UTF8Pos {
+	return s.End
+}
+
 // String returns a human readable string representation of the Snippet.
 func (s Snippet) String() string {
 	return fmt.Sprintf("%s -> %s", s.UTF8Pos.String(), s.End.String())

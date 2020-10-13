@@ -114,8 +114,17 @@ func multiAssignment(ctx *context) (Node, error) {
 	if m.Right, rSnip, e = multiAssignRight(ctx); e != nil {
 		return zero, e
 	}
-
 	m.Snippet = position.SuperSnippet(lSnip, rSnip)
+
+	lSize, rSize := len(m.Left), len(m.Right)
+	if lSize < rSize {
+		return zero, errSnip(m.Snippet,
+			"Not enough expressions on left or too many on right of assignment")
+	} else if lSize > rSize {
+		return zero, errSnip(m.Snippet,
+			"Too many expressions on left or not enough on right of assignment")
+	}
+
 	return m, nil
 }
 
@@ -186,6 +195,11 @@ func multiAssignRight(ctx *context) ([]Expr, position.Snippet, error) {
 
 // Pattern: BOOL | NUMBER | STRING
 func expectExpr(ctx *context) (Expr, error) {
+
+	if !ctx.More() {
+		return nil, errPos(ctx.Snippet().End,
+			"Expected expression but reached EOF")
+	}
 
 	l := ctx.Next()
 
