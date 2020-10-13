@@ -218,32 +218,51 @@ func expectLiteral(ctx *context) (Expr, error) {
 		"%s does not lead any known expression", l.Token.String())
 }
 
-// Pattern: <literal> [<operator> <literal>]
-// TODO: Multi-operator expressions
+// Pattern: <literal> {<operator> <literal>}
 func expectExpr(ctx *context) (Expr, error) {
+	return expectExprRight(ctx, 0)
+}
 
-	left, e := expectLiteral(ctx)
+// Pattern: <literal>
+func expectExprLeft(ctx *context) (Expr, error) {
+	return expectLiteral(ctx)
+}
+
+// Pattern: <literal> {<operator> <literal>}
+func expectExprRight(ctx *context, leftOpPrec int) (Expr, error) {
+	left, e := expectExprLeft(ctx)
 	if e != nil {
 		return nil, e
 	}
+	return maybeBinaryExpr(ctx, left, leftOpPrec)
+}
+
+// Pattern: {<operator> <literal>}
+func maybeBinaryExpr(ctx *context, left Expr, leftOpPrec int) (Expr, error) {
+
+	// TODO: Multi-operator & precedence needs testing!!
 
 	if !ctx.LookAhead().IsOperator() {
 		return left, nil
 	}
 
-	r := BinaryExpr{
-		Left: left,
+	if leftOpPrec >= ctx.LookAhead().Precedence() {
+		return left, nil
 	}
 
 	op := ctx.Next()
-	r.Op = op.Token
-	r.OpPos = op.Snippet
-
-	r.Right, e = expectLiteral(ctx)
+	right, e := expectExprRight(ctx, op.Precedence())
 	if e != nil {
 		return nil, e
 	}
 
-	r.Snippet = position.SuperSnippet(r.Left.Pos(), r.Right.Pos())
-	return r, nil
+	binExpr := BinaryExpr{
+		Left:    left,
+		Op:      op.Token,
+		OpPos:   op.Snippet,
+		Right:   right,
+		Snippet: position.SuperSnippet(left.Pos(), right.Pos()),
+	}
+
+	return maybeBinaryExpr(ctx, binExpr, leftOpPrec)
 }
