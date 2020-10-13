@@ -142,6 +142,16 @@ func (tk Token) IsAssignee() bool {
 // compilers might. This is just the way the compiler is built and may be
 // subject to change later.
 func (tk Token) IsOperator() bool {
+	return tk.IsUnaryOperator() || tk.IsBinaryOperator()
+}
+
+// IsUnaryOperator returns true if the Token represents a unary operator.
+func (tk Token) IsUnaryOperator() bool {
+	return false
+}
+
+// IsBinaryOperator returns true if the Token represents a binary operator.
+func (tk Token) IsBinaryOperator() bool {
 	return tk == MUL ||
 		tk == DIV ||
 		tk == REM ||

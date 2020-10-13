@@ -20,6 +20,7 @@ func newCtx(itr TokenItr, parent *context) *context {
 	}
 }
 
+// Parses: <expr> | <stat>
 func statements(ctx *context) ([]Node, error) {
 
 	var (
@@ -32,7 +33,7 @@ func statements(ctx *context) ([]Node, error) {
 		switch l := ctx.LookAhead(); {
 		case l.Token == token.IDENT:
 			ctx.Next()
-			n, e = indentLeads(ctx)
+			n, e = identLeads(ctx)
 
 		case l.IsLiteral():
 			n, e = expectExpr(ctx)
@@ -52,9 +53,9 @@ func statements(ctx *context) ([]Node, error) {
 	return r, nil
 }
 
-// indentLeads must only be used when the next Token is an IDENT and it begins
+// identLeads must only be used when the next Token is an IDENT and it begins
 // a statement.
-func indentLeads(ctx *context) (Node, error) {
+func identLeads(ctx *context) (Node, error) {
 
 	l := ctx.LookAhead()
 
@@ -71,7 +72,7 @@ func indentLeads(ctx *context) (Node, error) {
 }
 
 // Assumes: IDENT ASSIGN ...
-// Pattern: IDENT ASSIGN <expr>
+// Parses: IDENT ASSIGN <expr>
 func singleAssignment(ctx *context) (Node, error) {
 
 	var e error
@@ -93,7 +94,7 @@ func singleAssignment(ctx *context) (Node, error) {
 }
 
 // Assumes: IDENT DELIM ...
-// Pattern: IDENT {DELIM IDENT} ASSIGN <expr> {DELIM <expr>}
+// Parses: IDENT {DELIM IDENT} ASSIGN <expr> {DELIM <expr>}
 func multiAssignment(ctx *context) (Node, error) {
 
 	var (
@@ -132,7 +133,7 @@ func multiAssignment(ctx *context) (Node, error) {
 }
 
 // Assumes: IDENT DELIM ...
-// Pattern: IDENT {DELIM IDENT}
+// Parses: IDENT {DELIM IDENT}
 func multiAssignLeft(ctx *context) ([]Expr, position.Snippet, error) {
 
 	var (
@@ -166,7 +167,7 @@ func multiAssignLeft(ctx *context) ([]Expr, position.Snippet, error) {
 	return r, snip, nil
 }
 
-// Pattern: <expr> {DELIM <expr>}
+// Parses: <expr> {DELIM <expr>}
 func multiAssignRight(ctx *context) ([]Expr, position.Snippet, error) {
 
 	var (
@@ -196,7 +197,7 @@ func multiAssignRight(ctx *context) ([]Expr, position.Snippet, error) {
 	return r, snip, nil
 }
 
-// Pattern: BOOL | NUMBER | STRING
+// Parses: BOOL | NUMBER | STRING
 func expectLiteral(ctx *context) (Expr, error) {
 
 	if !ctx.More() {
@@ -218,17 +219,17 @@ func expectLiteral(ctx *context) (Expr, error) {
 		"%s does not lead any known expression", l.Token.String())
 }
 
-// Pattern: <literal> {<operator> <literal>}
+// Parses: <expr> {<operator> <expr>}
 func expectExpr(ctx *context) (Expr, error) {
 	return expectExprRight(ctx, 0)
 }
 
-// Pattern: <literal>
+// Parses: <expr>
 func expectExprLeft(ctx *context) (Expr, error) {
 	return expectLiteral(ctx)
 }
 
-// Pattern: <literal> {<operator> <literal>}
+// Parses: <expr> {<operator> <expr>}
 func expectExprRight(ctx *context, leftOpPrec int) (Expr, error) {
 	left, e := expectExprLeft(ctx)
 	if e != nil {
@@ -237,12 +238,12 @@ func expectExprRight(ctx *context, leftOpPrec int) (Expr, error) {
 	return maybeBinaryExpr(ctx, left, leftOpPrec)
 }
 
-// Pattern: {<operator> <literal>}
+// Parses: {<operator> <expr>}
 func maybeBinaryExpr(ctx *context, left Expr, leftOpPrec int) (Expr, error) {
 
-	// TODO: Multi-operator & precedence needs testing!!
+	// TODO: Binary operator & precedence needs testing!!
 
-	if !ctx.LookAhead().IsOperator() {
+	if !ctx.LookAhead().IsBinaryOperator() {
 		return left, nil
 	}
 
