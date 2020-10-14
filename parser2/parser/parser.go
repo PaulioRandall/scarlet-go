@@ -241,8 +241,6 @@ func expectExprRight(ctx *context, leftOpPrec int) (Expr, error) {
 // Parses: {<operator> <expr>}
 func maybeBinaryExpr(ctx *context, left Expr, leftOpPrec int) (Expr, error) {
 
-	// TODO: Binary operator & precedence needs testing!!
-
 	if !ctx.LookAhead().IsBinaryOperator() {
 		return left, nil
 	}

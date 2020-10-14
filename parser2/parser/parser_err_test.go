@@ -3,10 +3,7 @@ package parser
 import (
 	"testing"
 
-	//"github.com/PaulioRandall/scarlet-go/number"
-
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
-	//	"github.com/PaulioRandall/scarlet-go/token2/position"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 	"github.com/PaulioRandall/scarlet-go/token2/tokentest"
 
@@ -115,5 +112,15 @@ func TestParse_FailAssign_9(t *testing.T) {
 		lexeme.MakeTok("2", token.NUMBER),
 		lexeme.MakeTok(",", token.DELIM),
 		lexeme.MakeTok("3", token.NUMBER),
+	)
+}
+
+func TestParse_FailBinaryExpr_1(t *testing.T) {
+	// 1 + + 2
+	doErrTest(t,
+		lexeme.MakeTok("1", token.NUMBER),
+		lexeme.MakeTok("+", token.ADD),
+		lexeme.MakeTok("+", token.ADD),
+		lexeme.MakeTok("2", token.NUMBER),
 	)
 }

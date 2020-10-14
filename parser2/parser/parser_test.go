@@ -156,6 +156,174 @@ func TestParse_BinaryExpr_2(t *testing.T) {
 	requireNodes(t, exp, act)
 }
 
+func TestParse_BinaryExpr_3(t *testing.T) {
+
+	// 1 + 2 - 3
+	in := positionLexemes(
+		lexeme.MakeTok("1", token.NUMBER),
+		lexeme.MakeTok("+", token.ADD),
+		lexeme.MakeTok("2", token.NUMBER),
+		lexeme.MakeTok("-", token.SUB),
+		lexeme.MakeTok("3", token.NUMBER),
+	)
+
+	add := BinaryExpr{
+		Snippet: position.Snippet{
+			UTF8Pos: in[0].Snippet.UTF8Pos,
+			End:     in[2].Snippet.End,
+		},
+		Left:  NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+		Op:    in[1].Token,
+		OpPos: in[1].Snippet,
+		Right: NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+	}
+
+	exp := []Node{
+		BinaryExpr{
+			Snippet: position.Snippet{
+				UTF8Pos: in[0].Snippet.UTF8Pos,
+				End:     in[4].Snippet.End,
+			},
+			Left:  add,
+			Op:    in[3].Token,
+			OpPos: in[3].Snippet,
+			Right: NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
+		},
+	}
+
+	tokenItr := tokentest.FeignSeries(in...)
+	act, e := Parse(tokenItr)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
+func TestParse_BinaryExpr_4(t *testing.T) {
+
+	// 1 + 2 * 3
+	in := positionLexemes(
+		lexeme.MakeTok("1", token.NUMBER),
+		lexeme.MakeTok("+", token.ADD),
+		lexeme.MakeTok("2", token.NUMBER),
+		lexeme.MakeTok("*", token.MUL),
+		lexeme.MakeTok("3", token.NUMBER),
+	)
+
+	mul := BinaryExpr{
+		Snippet: position.Snippet{
+			UTF8Pos: in[2].Snippet.UTF8Pos,
+			End:     in[4].Snippet.End,
+		},
+		Left:  NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+		Op:    in[3].Token,
+		OpPos: in[3].Snippet,
+		Right: NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
+	}
+
+	exp := []Node{
+		BinaryExpr{
+			Snippet: position.Snippet{
+				UTF8Pos: in[0].Snippet.UTF8Pos,
+				End:     in[4].Snippet.End,
+			},
+			Left:  NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+			Op:    in[1].Token,
+			OpPos: in[1].Snippet,
+			Right: mul,
+		},
+	}
+
+	tokenItr := tokentest.FeignSeries(in...)
+	act, e := Parse(tokenItr)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
+func TestParse_BinaryExpr_5(t *testing.T) {
+
+	// 1 + 2 * 3 - 4 / 5 % 6
+	// 1 + (2 * 3) - (4 / 5 % 6)
+	in := positionLexemes(
+		lexeme.MakeTok("1", token.NUMBER), // 0
+		lexeme.MakeTok("+", token.ADD),
+		lexeme.MakeTok("2", token.NUMBER), // 2
+		lexeme.MakeTok("*", token.MUL),
+		lexeme.MakeTok("3", token.NUMBER), // 4
+		lexeme.MakeTok("-", token.SUB),
+		lexeme.MakeTok("4", token.NUMBER), // 6
+		lexeme.MakeTok("/", token.DIV),
+		lexeme.MakeTok("5", token.NUMBER), // 8
+		lexeme.MakeTok("%", token.REM),
+		lexeme.MakeTok("6", token.NUMBER), // 10
+	)
+
+	// 2 * 3
+	mul := BinaryExpr{
+		Snippet: position.Snippet{
+			UTF8Pos: in[2].Snippet.UTF8Pos,
+			End:     in[4].Snippet.End,
+		},
+		Left:  NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+		Op:    in[3].Token,
+		OpPos: in[3].Snippet,
+		Right: NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
+	}
+
+	// 1 + (2 * 3)
+	add := BinaryExpr{
+		Snippet: position.Snippet{
+			UTF8Pos: in[0].Snippet.UTF8Pos,
+			End:     in[4].Snippet.End,
+		},
+		Left:  NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+		Op:    in[1].Token,
+		OpPos: in[1].Snippet,
+		Right: mul,
+	}
+
+	// 4 / 5
+	div := BinaryExpr{
+		Snippet: position.Snippet{
+			UTF8Pos: in[6].Snippet.UTF8Pos,
+			End:     in[8].Snippet.End,
+		},
+		Left:  NumLit{Snippet: in[6].Snippet, Val: number.New("4")},
+		Op:    in[7].Token,
+		OpPos: in[7].Snippet,
+		Right: NumLit{Snippet: in[8].Snippet, Val: number.New("5")},
+	}
+
+	// (4 / 5) % 6
+	rem := BinaryExpr{
+		Snippet: position.Snippet{
+			UTF8Pos: in[6].Snippet.UTF8Pos,
+			End:     in[10].Snippet.End,
+		},
+		Left:  div,
+		Op:    in[9].Token,
+		OpPos: in[9].Snippet,
+		Right: NumLit{Snippet: in[10].Snippet, Val: number.New("6")},
+	}
+
+	exp := []Node{
+		// (1 + 2 * 3) - (4 / 5 % 6)
+		BinaryExpr{
+			Snippet: position.Snippet{
+				UTF8Pos: in[0].Snippet.UTF8Pos,
+				End:     in[10].Snippet.End,
+			},
+			Left:  add,
+			Op:    in[5].Token,
+			OpPos: in[5].Snippet,
+			Right: rem,
+		},
+	}
+
+	tokenItr := tokentest.FeignSeries(in...)
+	act, e := Parse(tokenItr)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
 func TestParse_Assign_BinaryExpr_1(t *testing.T) {
 
 	// x := 1 + 2
