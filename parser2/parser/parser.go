@@ -35,7 +35,7 @@ func statements(ctx *context) ([]Node, error) {
 			ctx.Next()
 			n, e = identLeads(ctx)
 
-		case l.IsLiteral():
+		case l.IsLiteral(), l.Token == token.L_PAREN:
 			n, e = expectExpr(ctx)
 
 		default:
@@ -219,23 +219,64 @@ func expectLiteral(ctx *context) (Expr, error) {
 		"%s does not lead any known expression", l.Token.String())
 }
 
-// Parses: <expr> {<operator> <expr>}
+// Parses:  <expr> {<operator> <expr>}
+// Parses:  L_PAREN <expr> {<operator> <expr>} R_PAREN
 func expectExpr(ctx *context) (Expr, error) {
 	return expectExprRight(ctx, 0)
 }
 
-// Parses: <expr>
-func expectExprLeft(ctx *context) (Expr, error) {
+// Parses: <term>
+func expectTerm(ctx *context) (Expr, error) {
 	return expectLiteral(ctx)
 }
 
-// Parses: <expr> {<operator> <expr>}
+// Parses:  <expr> {<operator> <expr>}
+// Parses:  L_PAREN <expr> {<operator> <expr>} R_PAREN
 func expectExprRight(ctx *context, leftOpPrec int) (Expr, error) {
-	left, e := expectExprLeft(ctx)
+
+	var left Expr
+	var e error
+
+	if ctx.LookAhead().Token == token.L_PAREN {
+		left, e = expectExprParen(ctx)
+	} else {
+		left, e = expectTerm(ctx)
+	}
+
 	if e != nil {
 		return nil, e
 	}
+
 	return maybeBinaryExpr(ctx, left, leftOpPrec)
+}
+
+// Parses: L_PAREN <expr> {<operator> <expr>} R_PAREN
+func expectExprParen(ctx *context) (Expr, error) {
+
+	if !ctx.More() {
+		return nil, errPos(ctx.Snippet().End, "Missing left parenthesis")
+	}
+
+	if l := ctx.Next(); l.Token != token.L_PAREN {
+		return nil, errSnip(l.Snippet,
+			"Expected left parenthesis but got %s", l.Token.String())
+	}
+
+	r, e := expectExprRight(ctx, 0)
+	if e != nil {
+		return nil, e
+	}
+
+	if !ctx.More() {
+		return nil, errPos(ctx.Snippet().End, "Missing right parenthesis")
+	}
+
+	if l := ctx.Next(); l.Token != token.R_PAREN {
+		return nil, errSnip(l.Snippet,
+			"Expected right parenthesis but got %s", l.Token.String())
+	}
+
+	return r, nil
 }
 
 // Parses: {<operator> <expr>}

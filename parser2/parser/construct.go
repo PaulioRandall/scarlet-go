@@ -4,7 +4,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/number"
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
-	//"github.com/PaulioRandall/scarlet-go/token2/position"
 )
 
 // Pattern: IDENT
