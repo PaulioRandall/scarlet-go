@@ -5,10 +5,11 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
 	"github.com/PaulioRandall/scarlet-go/token2/position"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
+	"github.com/PaulioRandall/scarlet-go/token2/tree"
 )
 
 // Parse parses a series of Tokens into a series of parse trees.
-func Parse(itr TokenItr) ([]Node, error) {
+func Parse(itr TokenItr) ([]tree.Node, error) {
 	ctx := newCtx(itr, nil)
 	return statements(ctx)
 }
@@ -21,11 +22,11 @@ func newCtx(itr TokenItr, parent *context) *context {
 }
 
 // Parses: <expr> | <stat>
-func statements(ctx *context) ([]Node, error) {
+func statements(ctx *context) ([]tree.Node, error) {
 
 	var (
-		r = []Node{}
-		n Node
+		r = []tree.Node{}
+		n tree.Node
 		e error
 	)
 
@@ -55,7 +56,7 @@ func statements(ctx *context) ([]Node, error) {
 
 // identLeads must only be used when the next Token is an IDENT and it begins
 // a statement.
-func identLeads(ctx *context) (Node, error) {
+func identLeads(ctx *context) (tree.Node, error) {
 
 	l := ctx.LookAhead()
 
@@ -73,10 +74,10 @@ func identLeads(ctx *context) (Node, error) {
 
 // Assumes: IDENT ASSIGN ...
 // Parses: IDENT ASSIGN <expr>
-func singleAssignment(ctx *context) (Node, error) {
+func singleAssignment(ctx *context) (tree.Node, error) {
 
 	var e error
-	var s SingleAssign
+	var s tree.SingleAssign
 
 	s.Left, e = expectIdent(ctx.Get())
 	if e != nil {
@@ -95,13 +96,13 @@ func singleAssignment(ctx *context) (Node, error) {
 
 // Assumes: IDENT DELIM ...
 // Parses: IDENT {DELIM IDENT} ASSIGN <expr> {DELIM <expr>}
-func multiAssignment(ctx *context) (Node, error) {
+func multiAssignment(ctx *context) (tree.Node, error) {
 
 	var (
 		lSnip position.Snippet
 		rSnip position.Snippet
-		zero  MultiAssign
-		m     MultiAssign
+		zero  tree.MultiAssign
+		m     tree.MultiAssign
 		e     error
 	)
 
@@ -134,14 +135,14 @@ func multiAssignment(ctx *context) (Node, error) {
 
 // Assumes: IDENT DELIM ...
 // Parses: IDENT {DELIM IDENT}
-func multiAssignLeft(ctx *context) ([]Expr, position.Snippet, error) {
+func multiAssignLeft(ctx *context) ([]tree.Expr, position.Snippet, error) {
 
 	var (
 		zero position.Snippet
 		snip position.Snippet
 		l    lexeme.Lexeme
-		r    []Expr
-		id   Ident
+		r    []tree.Expr
+		id   tree.Ident
 		e    error
 	)
 
@@ -168,13 +169,13 @@ func multiAssignLeft(ctx *context) ([]Expr, position.Snippet, error) {
 }
 
 // Parses: <expr> {DELIM <expr>}
-func multiAssignRight(ctx *context) ([]Expr, position.Snippet, error) {
+func multiAssignRight(ctx *context) ([]tree.Expr, position.Snippet, error) {
 
 	var (
 		zero position.Snippet
 		snip position.Snippet
-		r    []Expr
-		ex   Expr
+		r    []tree.Expr
+		ex   tree.Expr
 		e    error
 	)
 
@@ -198,7 +199,7 @@ func multiAssignRight(ctx *context) ([]Expr, position.Snippet, error) {
 }
 
 // Parses: BOOL | NUMBER | STRING
-func expectLiteral(ctx *context) (Expr, error) {
+func expectLiteral(ctx *context) (tree.Expr, error) {
 
 	if !ctx.More() {
 		return nil, errPos(ctx.Snippet().End,
@@ -221,20 +222,20 @@ func expectLiteral(ctx *context) (Expr, error) {
 
 // Parses:  <expr> {<operator> <expr>}
 // Parses:  L_PAREN <expr> {<operator> <expr>} R_PAREN
-func expectExpr(ctx *context) (Expr, error) {
+func expectExpr(ctx *context) (tree.Expr, error) {
 	return expectExprRight(ctx, 0)
 }
 
 // Parses: <term>
-func expectTerm(ctx *context) (Expr, error) {
+func expectTerm(ctx *context) (tree.Expr, error) {
 	return expectLiteral(ctx)
 }
 
 // Parses:  <expr> {<operator> <expr>}
 // Parses:  L_PAREN <expr> {<operator> <expr>} R_PAREN
-func expectExprRight(ctx *context, leftOpPrec int) (Expr, error) {
+func expectExprRight(ctx *context, leftOpPrec int) (tree.Expr, error) {
 
-	var left Expr
+	var left tree.Expr
 	var e error
 
 	if ctx.LookAhead().Token == token.L_PAREN {
@@ -251,7 +252,7 @@ func expectExprRight(ctx *context, leftOpPrec int) (Expr, error) {
 }
 
 // Parses: L_PAREN <expr> {<operator> <expr>} R_PAREN
-func expectExprParen(ctx *context) (Expr, error) {
+func expectExprParen(ctx *context) (tree.Expr, error) {
 
 	if !ctx.More() {
 		return nil, errPos(ctx.Snippet().End, "Missing left parenthesis")
@@ -280,7 +281,7 @@ func expectExprParen(ctx *context) (Expr, error) {
 }
 
 // Parses: {<operator> <expr>}
-func maybeBinaryExpr(ctx *context, left Expr, leftOpPrec int) (Expr, error) {
+func maybeBinaryExpr(ctx *context, left tree.Expr, leftOpPrec int) (tree.Expr, error) {
 
 	if !ctx.LookAhead().IsBinaryOperator() {
 		return left, nil
@@ -296,7 +297,7 @@ func maybeBinaryExpr(ctx *context, left Expr, leftOpPrec int) (Expr, error) {
 		return nil, e
 	}
 
-	binExpr := BinaryExpr{
+	binExpr := tree.BinaryExpr{
 		Left:    left,
 		Op:      op.Token,
 		OpPos:   op.Snippet,

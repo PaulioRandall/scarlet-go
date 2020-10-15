@@ -9,6 +9,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/position"
 	"github.com/PaulioRandall/scarlet-go/token2/token"
 	"github.com/PaulioRandall/scarlet-go/token2/tokentest"
+	"github.com/PaulioRandall/scarlet-go/token2/tree"
 
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +24,7 @@ func positionLexemes(lexs ...lexeme.Lexeme) []lexeme.Lexeme {
 	return lexs
 }
 
-func requireNodes(t *testing.T, exp, act []Node) {
+func requireNodes(t *testing.T, exp, act []tree.Node) {
 	require.Equal(t, len(exp), len(act))
 	for i, n := range act {
 		require.Equal(t, exp[i], n)
@@ -39,15 +40,15 @@ func TestParse_SingleAssign(t *testing.T) {
 		lexeme.MakeTok("1", token.NUMBER),
 	)
 
-	exp := []Node{
-		SingleAssign{
+	exp := []tree.Node{
+		tree.SingleAssign{
 			Snippet: position.Snippet{
 				UTF8Pos: in[0].Snippet.UTF8Pos,
 				End:     in[2].Snippet.End,
 			},
-			Left:  Ident{Snippet: in[0].Snippet, Val: "x"},
+			Left:  tree.Ident{Snippet: in[0].Snippet, Val: "x"},
 			Infix: in[1].Snippet,
-			Right: NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+			Right: tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
 		},
 	}
 
@@ -74,22 +75,22 @@ func TestParse_MultiAssign(t *testing.T) {
 		lexeme.MakeTok(`"text"`, token.STRING), // 10
 	)
 
-	exp := []Node{
-		MultiAssign{
+	exp := []tree.Node{
+		tree.MultiAssign{
 			Snippet: position.Snippet{
 				UTF8Pos: in[0].Snippet.UTF8Pos,
 				End:     in[10].Snippet.End,
 			},
-			Left: []Expr{
-				Ident{Snippet: in[0].Snippet, Val: "x"},
-				Ident{Snippet: in[2].Snippet, Val: "y"},
-				Ident{Snippet: in[4].Snippet, Val: "z"},
+			Left: []tree.Expr{
+				tree.Ident{Snippet: in[0].Snippet, Val: "x"},
+				tree.Ident{Snippet: in[2].Snippet, Val: "y"},
+				tree.Ident{Snippet: in[4].Snippet, Val: "z"},
 			},
 			Infix: in[5].Snippet,
-			Right: []Expr{
-				BoolLit{Snippet: in[6].Snippet, Val: true},
-				NumLit{Snippet: in[8].Snippet, Val: number.New("1")},
-				StrLit{Snippet: in[10].Snippet, Val: `"text"`},
+			Right: []tree.Expr{
+				tree.BoolLit{Snippet: in[6].Snippet, Val: true},
+				tree.NumLit{Snippet: in[8].Snippet, Val: number.New("1")},
+				tree.StrLit{Snippet: in[10].Snippet, Val: `"text"`},
 			},
 		},
 	}
@@ -109,16 +110,16 @@ func TestParse_BinaryExpr_1(t *testing.T) {
 		lexeme.MakeTok("2", token.NUMBER),
 	)
 
-	exp := []Node{
-		BinaryExpr{
+	exp := []tree.Node{
+		tree.BinaryExpr{
 			Snippet: position.Snippet{
 				UTF8Pos: in[0].Snippet.UTF8Pos,
 				End:     in[2].Snippet.End,
 			},
-			Left:  NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+			Left:  tree.NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
 			Op:    in[1].Token,
 			OpPos: in[1].Snippet,
-			Right: NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+			Right: tree.NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
 		},
 	}
 
@@ -137,16 +138,16 @@ func TestParse_BinaryExpr_2(t *testing.T) {
 		lexeme.MakeTok("false", token.FALSE),
 	)
 
-	exp := []Node{
-		BinaryExpr{
+	exp := []tree.Node{
+		tree.BinaryExpr{
 			Snippet: position.Snippet{
 				UTF8Pos: in[0].Snippet.UTF8Pos,
 				End:     in[2].Snippet.End,
 			},
-			Left:  BoolLit{Snippet: in[0].Snippet, Val: true},
+			Left:  tree.BoolLit{Snippet: in[0].Snippet, Val: true},
 			Op:    in[1].Token,
 			OpPos: in[1].Snippet,
-			Right: BoolLit{Snippet: in[2].Snippet, Val: false},
+			Right: tree.BoolLit{Snippet: in[2].Snippet, Val: false},
 		},
 	}
 
@@ -167,19 +168,19 @@ func TestParse_BinaryExpr_3(t *testing.T) {
 		lexeme.MakeTok("3", token.NUMBER),
 	)
 
-	add := BinaryExpr{
+	add := tree.BinaryExpr{
 		Snippet: position.Snippet{
 			UTF8Pos: in[0].Snippet.UTF8Pos,
 			End:     in[2].Snippet.End,
 		},
-		Left:  NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+		Left:  tree.NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
 		Op:    in[1].Token,
 		OpPos: in[1].Snippet,
-		Right: NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+		Right: tree.NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
 	}
 
-	exp := []Node{
-		BinaryExpr{
+	exp := []tree.Node{
+		tree.BinaryExpr{
 			Snippet: position.Snippet{
 				UTF8Pos: in[0].Snippet.UTF8Pos,
 				End:     in[4].Snippet.End,
@@ -187,7 +188,7 @@ func TestParse_BinaryExpr_3(t *testing.T) {
 			Left:  add,
 			Op:    in[3].Token,
 			OpPos: in[3].Snippet,
-			Right: NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
+			Right: tree.NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
 		},
 	}
 
@@ -208,24 +209,24 @@ func TestParse_BinaryExpr_4(t *testing.T) {
 		lexeme.MakeTok("3", token.NUMBER),
 	)
 
-	mul := BinaryExpr{
+	mul := tree.BinaryExpr{
 		Snippet: position.Snippet{
 			UTF8Pos: in[2].Snippet.UTF8Pos,
 			End:     in[4].Snippet.End,
 		},
-		Left:  NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+		Left:  tree.NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
 		Op:    in[3].Token,
 		OpPos: in[3].Snippet,
-		Right: NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
+		Right: tree.NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
 	}
 
-	exp := []Node{
-		BinaryExpr{
+	exp := []tree.Node{
+		tree.BinaryExpr{
 			Snippet: position.Snippet{
 				UTF8Pos: in[0].Snippet.UTF8Pos,
 				End:     in[4].Snippet.End,
 			},
-			Left:  NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+			Left:  tree.NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
 			Op:    in[1].Token,
 			OpPos: in[1].Snippet,
 			Right: mul,
@@ -257,43 +258,43 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 	)
 
 	// 2 * 3
-	mul := BinaryExpr{
+	mul := tree.BinaryExpr{
 		Snippet: position.Snippet{
 			UTF8Pos: in[2].Snippet.UTF8Pos,
 			End:     in[4].Snippet.End,
 		},
-		Left:  NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+		Left:  tree.NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
 		Op:    in[3].Token,
 		OpPos: in[3].Snippet,
-		Right: NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
+		Right: tree.NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
 	}
 
 	// 1 + (2 * 3)
-	add := BinaryExpr{
+	add := tree.BinaryExpr{
 		Snippet: position.Snippet{
 			UTF8Pos: in[0].Snippet.UTF8Pos,
 			End:     in[4].Snippet.End,
 		},
-		Left:  NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+		Left:  tree.NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
 		Op:    in[1].Token,
 		OpPos: in[1].Snippet,
 		Right: mul,
 	}
 
 	// 4 / 5
-	div := BinaryExpr{
+	div := tree.BinaryExpr{
 		Snippet: position.Snippet{
 			UTF8Pos: in[6].Snippet.UTF8Pos,
 			End:     in[8].Snippet.End,
 		},
-		Left:  NumLit{Snippet: in[6].Snippet, Val: number.New("4")},
+		Left:  tree.NumLit{Snippet: in[6].Snippet, Val: number.New("4")},
 		Op:    in[7].Token,
 		OpPos: in[7].Snippet,
-		Right: NumLit{Snippet: in[8].Snippet, Val: number.New("5")},
+		Right: tree.NumLit{Snippet: in[8].Snippet, Val: number.New("5")},
 	}
 
 	// (4 / 5) % 6
-	rem := BinaryExpr{
+	rem := tree.BinaryExpr{
 		Snippet: position.Snippet{
 			UTF8Pos: in[6].Snippet.UTF8Pos,
 			End:     in[10].Snippet.End,
@@ -301,12 +302,12 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 		Left:  div,
 		Op:    in[9].Token,
 		OpPos: in[9].Snippet,
-		Right: NumLit{Snippet: in[10].Snippet, Val: number.New("6")},
+		Right: tree.NumLit{Snippet: in[10].Snippet, Val: number.New("6")},
 	}
 
-	exp := []Node{
+	exp := []tree.Node{
 		// (1 + 2 * 3) - (4 / 5 % 6)
-		BinaryExpr{
+		tree.BinaryExpr{
 			Snippet: position.Snippet{
 				UTF8Pos: in[0].Snippet.UTF8Pos,
 				End:     in[10].Snippet.End,
@@ -335,24 +336,24 @@ func TestParse_Assign_BinaryExpr_1(t *testing.T) {
 		lexeme.MakeTok("2", token.NUMBER),
 	)
 
-	right := BinaryExpr{
+	right := tree.BinaryExpr{
 		Snippet: position.Snippet{
 			UTF8Pos: in[2].Snippet.UTF8Pos,
 			End:     in[4].Snippet.End,
 		},
-		Left:  NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+		Left:  tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
 		Op:    in[3].Token,
 		OpPos: in[3].Snippet,
-		Right: NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
+		Right: tree.NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
 	}
 
-	exp := []Node{
-		SingleAssign{
+	exp := []tree.Node{
+		tree.SingleAssign{
 			Snippet: position.Snippet{
 				UTF8Pos: in[0].Snippet.UTF8Pos,
 				End:     in[4].Snippet.End,
 			},
-			Left:  Ident{Snippet: in[0].Snippet, Val: "x"},
+			Left:  tree.Ident{Snippet: in[0].Snippet, Val: "x"},
 			Infix: in[1].Snippet,
 			Right: right,
 		},
@@ -373,8 +374,8 @@ func TestParse_ParenExpr_1(t *testing.T) {
 		lexeme.MakeTok(")", token.R_PAREN),
 	)
 
-	exp := []Node{
-		NumLit{Snippet: in[1].Snippet, Val: number.New("1")},
+	exp := []tree.Node{
+		tree.NumLit{Snippet: in[1].Snippet, Val: number.New("1")},
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
@@ -394,16 +395,16 @@ func TestParse_ParenExpr_2(t *testing.T) {
 		lexeme.MakeTok(")", token.R_PAREN),
 	)
 
-	exp := []Node{
-		BinaryExpr{
+	exp := []tree.Node{
+		tree.BinaryExpr{
 			Snippet: position.Snippet{
 				UTF8Pos: in[1].Snippet.UTF8Pos,
 				End:     in[3].Snippet.End,
 			},
-			Left:  NumLit{Snippet: in[1].Snippet, Val: number.New("1")},
+			Left:  tree.NumLit{Snippet: in[1].Snippet, Val: number.New("1")},
 			Op:    in[2].Token,
 			OpPos: in[2].Snippet,
-			Right: NumLit{Snippet: in[3].Snippet, Val: number.New("2")},
+			Right: tree.NumLit{Snippet: in[3].Snippet, Val: number.New("2")},
 		},
 	}
 
@@ -426,16 +427,16 @@ func TestParse_ParenExpr_3(t *testing.T) {
 		lexeme.MakeTok(")", token.R_PAREN),
 	)
 
-	exp := []Node{
-		BinaryExpr{
+	exp := []tree.Node{
+		tree.BinaryExpr{
 			Snippet: position.Snippet{
 				UTF8Pos: in[2].Snippet.UTF8Pos,
 				End:     in[4].Snippet.End,
 			},
-			Left:  NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+			Left:  tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
 			Op:    in[3].Token,
 			OpPos: in[3].Snippet,
-			Right: NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
+			Right: tree.NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
 		},
 	}
 
@@ -463,19 +464,19 @@ func TestParse_ParenExpr_4(t *testing.T) {
 	)
 
 	// (1 + 2)
-	add := BinaryExpr{
+	add := tree.BinaryExpr{
 		Snippet: position.Snippet{
 			UTF8Pos: in[2].Snippet.UTF8Pos,
 			End:     in[4].Snippet.End,
 		},
-		Left:  NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+		Left:  tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
 		Op:    in[3].Token,
 		OpPos: in[3].Snippet,
-		Right: NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
+		Right: tree.NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
 	}
 
 	// ((1 + 2) * 3)
-	mul := BinaryExpr{
+	mul := tree.BinaryExpr{
 		Snippet: position.Snippet{
 			UTF8Pos: in[2].Snippet.UTF8Pos,
 			End:     in[7].Snippet.End,
@@ -483,12 +484,12 @@ func TestParse_ParenExpr_4(t *testing.T) {
 		Left:  add,
 		Op:    in[6].Token,
 		OpPos: in[6].Snippet,
-		Right: NumLit{Snippet: in[7].Snippet, Val: number.New("3")},
+		Right: tree.NumLit{Snippet: in[7].Snippet, Val: number.New("3")},
 	}
 
-	exp := []Node{
+	exp := []tree.Node{
 		// ((1 + 2) * 3) - 4
-		BinaryExpr{
+		tree.BinaryExpr{
 			Snippet: position.Snippet{
 				UTF8Pos: in[2].Snippet.UTF8Pos,
 				End:     in[10].Snippet.End,
@@ -496,7 +497,7 @@ func TestParse_ParenExpr_4(t *testing.T) {
 			Left:  mul,
 			Op:    in[9].Token,
 			OpPos: in[9].Snippet,
-			Right: NumLit{Snippet: in[10].Snippet, Val: number.New("4")},
+			Right: tree.NumLit{Snippet: in[10].Snippet, Val: number.New("4")},
 		},
 	}
 

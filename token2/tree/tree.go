@@ -1,4 +1,4 @@
-package parser
+package tree
 
 import (
 	"github.com/PaulioRandall/scarlet-go/number"
