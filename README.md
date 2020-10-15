@@ -23,6 +23,10 @@ x := (6 + 5 - 4) * ((3 / 2) % 1)
 
 # Roadmap
 
+## Chapter 2.5 (Reimplementation)
+
+Reimplemention using parse trees.
+
 ## Chapter 3 (Error Handling)
 
 Improved error handling and useful error messages
