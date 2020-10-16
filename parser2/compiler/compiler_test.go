@@ -34,7 +34,8 @@ func TestCompile_SingleAssign(t *testing.T) {
 		inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
 	}
 
-	act := Compile(in)
+	act, e := Compile(in)
+	require.Nil(t, e, "ERROR: %+v", e)
 	requireInsts(t, exp, act)
 }
 
@@ -63,7 +64,8 @@ func TestCompile_MultiAssign(t *testing.T) {
 		inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("z")},
 	}
 
-	act := Compile(in)
+	act, e := Compile(in)
+	require.Nil(t, e, "ERROR: %+v", e)
 	requireInsts(t, exp, act)
 }
 
@@ -86,7 +88,8 @@ func TestCompile_BinaryExpr_1(t *testing.T) {
 		inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
 	}
 
-	act := Compile(in)
+	act, e := Compile(in)
+	require.Nil(t, e, "ERROR: %+v", e)
 	requireInsts(t, exp, act)
 }
 
@@ -115,7 +118,8 @@ func TestCompile_BinaryExpr_2(t *testing.T) {
 		inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
 	}
 
-	act := Compile(in)
+	act, e := Compile(in)
+	require.Nil(t, e, "ERROR: %+v", e)
 	requireInsts(t, exp, act)
 }
 
@@ -158,6 +162,7 @@ func TestCompile_BinaryExpr_3(t *testing.T) {
 		inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("y")},
 	}
 
-	act := Compile(in)
+	act, e := Compile(in)
+	require.Nil(t, e, "ERROR: %+v", e)
 	requireInsts(t, exp, act)
 }

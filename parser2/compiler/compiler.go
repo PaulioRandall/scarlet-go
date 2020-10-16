@@ -8,14 +8,16 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/value"
 )
 
-func Compile(n tree.Node) []inst.Inst {
+func Compile(n tree.Node) ([]inst.Inst, error) {
 	switch v := n.(type) {
 	case tree.SingleAssign:
-		return singleAssign(v)
+		return singleAssign(v), nil
 	case tree.MultiAssign:
-		return multiAssign(v)
+		return multiAssign(v), nil
+	case tree.Literal, tree.BinaryExpr:
+		return nil, errSnip(n.Pos(), "Result of expression ignored")
 	default:
-		panic("[ERROR] Unknown node type")
+		return nil, errSnip(n.Pos(), "Unknown node type")
 	}
 }
 
@@ -50,11 +52,10 @@ func createAssignData(n tree.Assignee) value.Value {
 func expression(n tree.Expr) []inst.Inst {
 	switch v := n.(type) {
 	case tree.Literal:
-		return []inst.Inst{
-			inst.Inst{
-				Code: code.STACK_PUSH,
-				Data: createLitData(v),
-			}}
+		return []inst.Inst{inst.Inst{
+			Code: code.STACK_PUSH,
+			Data: createLitData(v),
+		}}
 	case tree.BinaryExpr:
 		return binaryExpression(v)
 	default:
