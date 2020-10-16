@@ -10,15 +10,16 @@ Scarlet is a template for building domain or team specific scripting tools. I st
 ```
 x := 1
 x, y, z := true, 1, "Scarlet"
+x := (1 + 2) * 3
 
-x := 1 + 1
-x := 2 - 1
-x := 3 * 2
-x := 4 / 2
-x := 5 % 4
-
-x := 6 + 5 - 4 * 3 / 2 % 1
-x := (6 + 5 - 4) * ((3 / 2) % 1)
+# Operators & Precedence
+first := (1)
+second := 2 * 3 / 4 % 5
+third :=  5 + 6 - 7
+fourth := 8 < 9 > 10 <= 11 >= 12
+fifth := 13 == 14 != 15
+sixth := true && false
+seventh := true || false
 ```
 
 # Roadmap
