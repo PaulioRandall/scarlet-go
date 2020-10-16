@@ -7,21 +7,16 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/value"
 )
 
-// TODO: Need to test singleAssign!
-
 func Compile(n tree.Node) []inst.Inst {
-
-	var ins []inst.Inst
-
 	switch v := n.(type) {
 	case tree.SingleAssign:
-		ins = singleAssign(v)
+		return singleAssign(v)
+	case tree.MultiAssign:
+		return multiAssign(v)
 
 	default:
 		panic("[ERROR] Unknown node type")
 	}
-
-	return ins
 }
 
 func singleAssign(n tree.SingleAssign) []inst.Inst {
@@ -30,6 +25,17 @@ func singleAssign(n tree.SingleAssign) []inst.Inst {
 		Code: code.SCOPE_BIND,
 		Data: createAssignData(n.Left),
 	})
+}
+
+func multiAssign(n tree.MultiAssign) (ins []inst.Inst) {
+	for i, v := range n.Right {
+		ins = append(ins, expression(v)...)
+		ins = append(ins, inst.Inst{
+			Code: code.SCOPE_BIND,
+			Data: createAssignData(n.Left[i]),
+		})
+	}
+	return
 }
 
 func createAssignData(n tree.Assignee) value.Value {
