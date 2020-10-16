@@ -3,6 +3,7 @@ package compiler
 import (
 	"github.com/PaulioRandall/scarlet-go/token2/code"
 	"github.com/PaulioRandall/scarlet-go/token2/inst"
+	"github.com/PaulioRandall/scarlet-go/token2/token"
 	"github.com/PaulioRandall/scarlet-go/token2/tree"
 	"github.com/PaulioRandall/scarlet-go/token2/value"
 )
@@ -13,7 +14,6 @@ func Compile(n tree.Node) []inst.Inst {
 		return singleAssign(v)
 	case tree.MultiAssign:
 		return multiAssign(v)
-
 	default:
 		panic("[ERROR] Unknown node type")
 	}
@@ -55,7 +55,8 @@ func expression(n tree.Expr) []inst.Inst {
 				Code: code.STACK_PUSH,
 				Data: createLitData(v),
 			}}
-
+	case tree.BinaryExpr:
+		return binaryExpression(v)
 	default:
 		panic("[ERROR] Unknown expression type")
 	}
@@ -71,5 +72,47 @@ func createLitData(n tree.Literal) value.Value {
 		return value.Str(v.Val)
 	default:
 		panic("[ERROR] Unknown literal type")
+	}
+}
+
+func binaryExpression(n tree.BinaryExpr) []inst.Inst {
+	l := expression(n.Left)
+	r := expression(n.Right)
+	ins := append(l, r...) // left associative
+	return append(ins, inst.Inst{
+		Code: findOpCode(n.Op),
+	})
+}
+
+func findOpCode(tk token.Token) code.Code {
+	switch tk {
+	case token.ADD:
+		return code.OP_ADD
+	case token.SUB:
+		return code.OP_SUB
+	case token.MUL:
+		return code.OP_MUL
+	case token.DIV:
+		return code.OP_DIV
+	case token.REM:
+		return code.OP_REM
+	case token.LESS:
+		return code.OP_LESS
+	case token.MORE:
+		return code.OP_MORE
+	case token.LESS_EQUAL:
+		return code.OP_LEQU
+	case token.MORE_EQUAL:
+		return code.OP_MEQU
+	case token.EQUAL:
+		return code.OP_EQU
+	case token.NOT_EQUAL:
+		return code.OP_NEQU
+	case token.AND:
+		return code.OP_AND
+	case token.OR:
+		return code.OP_OR
+	default:
+		panic("[ERROR] Unknown operator token")
 	}
 }
