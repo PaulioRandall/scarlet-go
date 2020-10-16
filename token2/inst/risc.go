@@ -4,10 +4,13 @@ import (
 	"fmt"
 )
 
-// RiscInst represents a RISC instruction with a reference to associated data.
+type DataRef uint16
+
+// RiscInst represents a RISC instruction with a reference to any accompanying
+// data.
 type RiscInst struct {
 	Inst Inst
-	Data uint16
+	Data DataRef
 }
 
 // HasData returns true if the instruction references some data in the static

@@ -81,7 +81,7 @@ func TestParse_MultiAssign(t *testing.T) {
 				UTF8Pos: in[0].Snippet.UTF8Pos,
 				End:     in[10].Snippet.End,
 			},
-			Left: []tree.Expr{
+			Left: []tree.Assignee{
 				tree.Ident{Snippet: in[0].Snippet, Val: "x"},
 				tree.Ident{Snippet: in[2].Snippet, Val: "y"},
 				tree.Ident{Snippet: in[4].Snippet, Val: "z"},

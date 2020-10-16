@@ -21,37 +21,38 @@ func newCtx(itr TokenItr, parent *context) *context {
 	}
 }
 
-// Parses: <expr> | <stat>
+// Parses: {<assign> | <expr>}
 func statements(ctx *context) ([]tree.Node, error) {
 
-	var (
-		r = []tree.Node{}
-		n tree.Node
-		e error
-	)
+	r := []tree.Node{}
 
 	for ctx.More() {
-		switch l := ctx.LookAhead(); {
-		case l.Token == token.IDENT:
-			ctx.Next()
-			n, e = identLeads(ctx)
-
-		case l.IsLiteral(), l.Token == token.L_PAREN:
-			n, e = expectExpr(ctx)
-
-		default:
-			return nil, errSnip(l.Snippet,
-				"%s does not lead any known statement", l.Token.String())
-		}
-
+		n, e := statement(ctx)
 		if e != nil {
 			return nil, e
 		}
-
 		r = append(r, n)
 	}
 
 	return r, nil
+}
+
+// Parses: <assign> | <expr>
+func statement(ctx *context) (n tree.Node, e error) {
+	switch l := ctx.LookAhead(); {
+	case l.Token == token.IDENT:
+		ctx.Next()
+		n, e = identLeads(ctx)
+
+	case l.IsLiteral(), l.Token == token.L_PAREN:
+		n, e = expectExpr(ctx)
+
+	default:
+		e = errSnip(l.Snippet,
+			"%s does not lead any known statement", l.Token.String())
+	}
+
+	return
 }
 
 // identLeads must only be used when the next Token is an IDENT and it begins
@@ -135,13 +136,13 @@ func multiAssignment(ctx *context) (tree.Node, error) {
 
 // Assumes: IDENT DELIM ...
 // Parses: IDENT {DELIM IDENT}
-func multiAssignLeft(ctx *context) ([]tree.Expr, position.Snippet, error) {
+func multiAssignLeft(ctx *context) ([]tree.Assignee, position.Snippet, error) {
 
 	var (
 		zero position.Snippet
 		snip position.Snippet
 		l    lexeme.Lexeme
-		r    []tree.Expr
+		r    []tree.Assignee
 		id   tree.Ident
 		e    error
 	)

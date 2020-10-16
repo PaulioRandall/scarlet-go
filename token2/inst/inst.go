@@ -79,6 +79,7 @@ func (in Inst) String() string {
 		return "Equal"
 	case OP_NEQU:
 		return "Not_equal"
+
 	default:
 		return ""
 	}

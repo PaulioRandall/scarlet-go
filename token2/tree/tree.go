@@ -16,18 +16,32 @@ type (
 		node()
 	}
 
+	// Assignee is a Node that represents something that can have value bound
+	// to it, i.e. an identifier.
+	Assignee interface {
+		Node
+		assignee()
+	}
+
 	// Expr (Expression) is a Node that represents a traditional programmers
 	// expression, i.e. a statement that always returns a single result.
 	Expr interface {
 		Node
-		expr() // Constrains assignment by expression nodes only
+		expr()
+	}
+
+	// Literal is a Node that represents a literal value such as a bool, a number
+	// or a string.
+	Literal interface {
+		Node
+		literal()
 	}
 
 	// Stat (Statement) is a Node representing a traditional programmers
 	// statement.
 	Stat interface {
 		Node
-		stat() // Constrains assignment by statement nodes only
+		stat()
 	}
 )
 
@@ -64,7 +78,7 @@ type (
 	// SingleAssign Node is a Stat representing a single assignment.
 	SingleAssign struct {
 		position.Snippet
-		Left  Expr
+		Left  Assignee
 		Infix position.Snippet
 		Right Expr
 	}
@@ -72,7 +86,7 @@ type (
 	// MultiAssign Node is a Stat representing a multiple assignment.
 	MultiAssign struct {
 		position.Snippet
-		Left  []Expr // Ordered left to right
+		Left  []Assignee // Ordered left to right
 		Infix position.Snippet
 		Right []Expr // Ordered left to right
 	}
@@ -105,12 +119,18 @@ func (n SingleAssign) node() {}
 func (n MultiAssign) node()  {}
 func (n BinaryExpr) node()   {}
 
+func (n Ident) assignee() {}
+
 func (n Ident) expr()      {}
 func (n VoidLit) expr()    {}
 func (n BoolLit) expr()    {}
 func (n NumLit) expr()     {}
 func (n StrLit) expr()     {}
 func (n BinaryExpr) expr() {}
+
+func (n BoolLit) literal() {}
+func (n NumLit) literal()  {}
+func (n StrLit) literal()  {}
 
 func (n SingleAssign) stat() {}
 func (n MultiAssign) stat()  {}
