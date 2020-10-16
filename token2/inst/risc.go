@@ -4,20 +4,19 @@ import (
 	"fmt"
 )
 
-type DataRef uint16
+type (
+	// DataRef represents a reference to a data value.
+	DataRef uint16
 
-// RiscInst represents a RISC instruction with a reference to any accompanying
-// data.
-type RiscInst struct {
-	Inst Inst
-	Data DataRef
-}
+	// RiscInst represents a RISC instruction with a reference to any accompanying
+	// data.
+	RiscInst struct {
+		Inst Inst
+		Data DataRef
+	}
+)
 
-// HasData returns true if the instruction references some data in the static
-// data pool.
-func (ri RiscInst) HasData() bool {
-	return ri.Data > 0
-}
+const NoData DataRef = 0
 
 // String returns a human readable string representation of the instruction.
 func (ri RiscInst) String() string {

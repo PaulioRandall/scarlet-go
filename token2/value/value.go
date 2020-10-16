@@ -2,18 +2,31 @@ package value
 
 import (
 	"fmt"
+	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/number"
 )
 
-type Value interface {
-	Name() string
-	Comparable(other Value) bool
-	Equal(other Value) bool
-	String() string
-}
-
 type (
+	// Value represents a value at runtime.
+	Value interface {
+
+		// Name returns the name of the type.
+		Name() string
+
+		// Comparable returns true if the 'other' value can be compared with the
+		// receiver.
+		Comparable(other Value) bool
+
+		// Equal returns true if the 'other' value is equal to the receiver.
+		Equal(other Value) bool
+
+		// String returns the human readable representation of the value.
+		String() string
+	}
+
+	// Ident represents an identifier. They are not available to language users
+	// but are accessible within spells.
 	Ident string
 	Str   string
 	Bool  bool
@@ -50,3 +63,16 @@ func (a Num) String() string   { return a.Number.String() }
 
 func (a Bool) And(b Bool) Bool { return Bool(bool(a) && bool(b)) }
 func (a Bool) Or(b Bool) Bool  { return Bool(bool(a) || bool(b)) }
+
+func (id Ident) Valid() Bool {
+	for i, ru := range string(id) {
+		if i == 0 && ru == '_' {
+			return false
+		}
+
+		if !unicode.IsLetter(ru) && ru != '_' {
+			return false
+		}
+	}
+	return true
+}

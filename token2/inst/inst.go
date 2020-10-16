@@ -40,6 +40,7 @@ const (
 	OP_NEQU
 )
 
+// String returns a human readable string representation of the Inst.
 func (in Inst) String() string {
 	switch in {
 	case UNDEFINED:

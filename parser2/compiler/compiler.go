@@ -6,19 +6,21 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/value"
 )
 
-func Compile(n tree.Node) ([]inst.RiscInst, inst.InstData) {
+// TODO: Need to test singleAssign!
 
-	var (
-		ds = &inst.DataSet{}
-		in []inst.RiscInst
-	)
+func Compile(n tree.Node, ds *inst.DataSet) []inst.RiscInst {
+
+	var in []inst.RiscInst
 
 	switch v := n.(type) {
 	case tree.SingleAssign:
 		in = singleAssign(v, ds)
+
+	default:
+		panic("[ERROR] Unknown node type")
 	}
 
-	return in, ds.Compile()
+	return in
 }
 
 func singleAssign(n tree.SingleAssign, ds *inst.DataSet) []inst.RiscInst {
@@ -40,7 +42,6 @@ func createAssignData(n tree.Assignee, ds *inst.DataSet) inst.DataRef {
 }
 
 func expression(n tree.Expr, ds *inst.DataSet) []inst.RiscInst {
-
 	switch v := n.(type) {
 	case tree.Literal:
 		return []inst.RiscInst{
