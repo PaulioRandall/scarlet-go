@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"github.com/PaulioRandall/scarlet-go/token2/code"
 	"github.com/PaulioRandall/scarlet-go/token2/inst"
 	"github.com/PaulioRandall/scarlet-go/token2/tree"
 	"github.com/PaulioRandall/scarlet-go/token2/value"
@@ -8,46 +9,45 @@ import (
 
 // TODO: Need to test singleAssign!
 
-func Compile(n tree.Node, ds *inst.DataSet) []inst.RiscInst {
+func Compile(n tree.Node) []inst.Inst {
 
-	var in []inst.RiscInst
+	var ins []inst.Inst
 
 	switch v := n.(type) {
 	case tree.SingleAssign:
-		in = singleAssign(v, ds)
+		ins = singleAssign(v)
 
 	default:
 		panic("[ERROR] Unknown node type")
 	}
 
-	return in
+	return ins
 }
 
-func singleAssign(n tree.SingleAssign, ds *inst.DataSet) []inst.RiscInst {
-	ins := expression(n.Right, ds)
-	return append(ins, inst.RiscInst{
-		Inst: inst.SCP_BIND,
-		Data: createAssignData(n.Left, ds),
+func singleAssign(n tree.SingleAssign) []inst.Inst {
+	ins := expression(n.Right)
+	return append(ins, inst.Inst{
+		Code: code.SCOPE_BIND,
+		Data: createAssignData(n.Left),
 	})
 }
 
-func createAssignData(n tree.Assignee, ds *inst.DataSet) inst.DataRef {
+func createAssignData(n tree.Assignee) value.Value {
 	switch v := n.(type) {
 	case tree.Ident:
-		return ds.Insert(value.Ident(v.Val))
-
+		return value.Ident(v.Val)
 	default:
 		panic("[ERROR] Unknown assignee type")
 	}
 }
 
-func expression(n tree.Expr, ds *inst.DataSet) []inst.RiscInst {
+func expression(n tree.Expr) []inst.Inst {
 	switch v := n.(type) {
 	case tree.Literal:
-		return []inst.RiscInst{
-			inst.RiscInst{
-				Inst: inst.STK_PUSH,
-				Data: createLitData(v, ds),
+		return []inst.Inst{
+			inst.Inst{
+				Code: code.STACK_PUSH,
+				Data: createLitData(v),
 			}}
 
 	default:
@@ -55,15 +55,14 @@ func expression(n tree.Expr, ds *inst.DataSet) []inst.RiscInst {
 	}
 }
 
-func createLitData(n tree.Literal, ds *inst.DataSet) inst.DataRef {
+func createLitData(n tree.Literal) value.Value {
 	switch v := n.(type) {
 	case tree.BoolLit:
-		return ds.Insert(value.Bool(v.Val))
+		return value.Bool(v.Val)
 	case tree.NumLit:
-		return ds.Insert(value.Num{v.Val})
+		return value.Num{v.Val}
 	case tree.StrLit:
-		return ds.Insert(value.Str(v.Val))
-
+		return value.Str(v.Val)
 	default:
 		panic("[ERROR] Unknown literal type")
 	}

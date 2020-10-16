@@ -5,6 +5,7 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/number"
 
+	"github.com/PaulioRandall/scarlet-go/token2/code"
 	"github.com/PaulioRandall/scarlet-go/token2/inst"
 	"github.com/PaulioRandall/scarlet-go/token2/tree"
 	"github.com/PaulioRandall/scarlet-go/token2/value"
@@ -12,14 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func requireRiscs(t *testing.T, exp, act []inst.RiscInst) {
-	require.Equal(t, len(exp), len(act))
-	for i, v := range act {
-		require.Equal(t, exp[i], v)
-	}
-}
-
-func requireData(t *testing.T, exp, act inst.InstData) {
+func requireInsts(t *testing.T, exp, act []inst.Inst) {
 	require.Equal(t, len(exp), len(act))
 	for i, v := range act {
 		require.Equal(t, exp[i], v)
@@ -34,18 +28,11 @@ func TestCompile_SingleAssign(t *testing.T) {
 		Right: tree.NumLit{Val: number.New("1")},
 	}
 
-	expRisc := []inst.RiscInst{
-		inst.RiscInst{Inst: inst.STK_PUSH, Data: 1},
-		inst.RiscInst{Inst: inst.SCP_BIND, Data: 2},
+	exp := []inst.Inst{
+		inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("1")}},
+		inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
 	}
 
-	expData := inst.InstData{
-		1: value.Num{number.New("1")},
-		2: value.Ident("x"),
-	}
-
-	ds := inst.NewDataSet()
-	actRisc := Compile(in, ds)
-	requireRiscs(t, expRisc, actRisc)
-	requireData(t, expData, ds.Compile())
+	act := Compile(in)
+	requireInsts(t, exp, act)
 }
