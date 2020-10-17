@@ -1,6 +1,7 @@
 package processor
 
 import (
+	"github.com/PaulioRandall/scarlet-go/token2/code"
 	"github.com/PaulioRandall/scarlet-go/token2/inst"
 	"github.com/PaulioRandall/scarlet-go/token2/value"
 )
@@ -29,11 +30,12 @@ type Memory interface {
 // Processor executes instructions in a similar fashion to a CPU but at a
 // higher level.
 type Processor struct {
-	Memory  Memory  // Access to memory, i.e. instructions and variables
-	Counter Counter // Program counter
-	Stop    bool    // True to interupt execution after the next instruction
-	Stopped bool    // True if execution was stopped by an interupt or error
-	Halt    bool    // True to halt execution, invoked only by instructions
+	Memory  Memory      // Access to memory, i.e. instructions and variables
+	Counter Counter     // Program counter
+	Stack   value.Stack // Value stack
+	Stop    bool        // True to interupt execution after the next instruction
+	Stopped bool        // True if execution was stopped by an interupt or error
+	Halt    bool        // True to halt execution, invoked only by instructions
 	Err     error
 }
 
@@ -74,7 +76,7 @@ func (p *Processor) Run() {
 			return
 		}
 
-		if p.Halt, p.Err = Process(p.Memory, in); p.Err != nil {
+		if p.Halt, p.Err = Process(p, in); p.Err != nil {
 			p.Stopped = true
 			return
 		}
@@ -85,7 +87,63 @@ func (p *Processor) Run() {
 
 // Process the instruction 'in' using the memory 'm'. 'halt' should only be
 // returned as true if an instruction specifically requests execution to halt.
-func Process(m Memory, in inst.Inst) (halt bool, e error) {
-	// TODO
+func Process(p *Processor, in inst.Inst) (halt bool, e error) {
+
+	// TODO Needs testing!
+
+	switch {
+	case in.Code == code.STACK_PUSH:
+		p.Stack.Push(in.Data)
+	case in.Code == code.SCOPE_BIND:
+		e = p.Memory.Bind(in.Data.(value.Ident), p.Stack.Pop())
+	case processNumOp(p, in):
+	default:
+		panic("Unhandled instruction code: " + in.Code.String())
+	}
+
 	return
+}
+
+func processNumOp(p *Processor, in inst.Inst) bool {
+
+	binNumOp := func(f func(l, r *value.Num)) {
+		r := p.Stack.Pop().(value.Num)
+		l := p.Stack.Pop().(value.Num)
+		l.Number = l.Number.Copy()
+		f(&l, &r) // Answer is always held in the left value
+		p.Stack.Push(l)
+	}
+
+	switch in.Code {
+	case code.OP_ADD:
+		binNumOp(func(l, r *value.Num) { l.Number.Add(r.Number) })
+	case code.OP_SUB:
+		binNumOp(func(l, r *value.Num) { l.Number.Sub(r.Number) })
+	case code.OP_MUL:
+		binNumOp(func(l, r *value.Num) { l.Number.Mul(r.Number) })
+	case code.OP_DIV:
+		binNumOp(func(l, r *value.Num) { l.Number.Div(r.Number) })
+	case code.OP_REM:
+		binNumOp(func(l, r *value.Num) { l.Number.Mod(r.Number) })
+	case code.OP_AND:
+		// TODO
+	case code.OP_OR:
+		// TODO
+	case code.OP_LESS:
+		binNumOp(func(l, r *value.Num) { l.Number.Less(r.Number) })
+	case code.OP_MORE:
+		binNumOp(func(l, r *value.Num) { l.Number.More(r.Number) })
+	case code.OP_LEQU:
+		binNumOp(func(l, r *value.Num) { l.Number.LessOrEqual(r.Number) })
+	case code.OP_MEQU:
+		binNumOp(func(l, r *value.Num) { l.Number.MoreOrEqual(r.Number) })
+	case code.OP_EQU:
+		// TODO
+	case code.OP_NEQU:
+		// TODO
+	default:
+		return false
+	}
+
+	return true
 }

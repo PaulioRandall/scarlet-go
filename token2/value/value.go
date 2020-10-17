@@ -61,9 +61,6 @@ func (a Str) String() string   { return string(a) }
 func (a Bool) String() string  { return fmt.Sprintf("%v", bool(a)) }
 func (a Num) String() string   { return a.Number.String() }
 
-func (a Bool) And(b Bool) Bool { return Bool(bool(a) && bool(b)) }
-func (a Bool) Or(b Bool) Bool  { return Bool(bool(a) || bool(b)) }
-
 func (id Ident) Valid() Bool {
 	for i, ru := range string(id) {
 		if i == 0 && ru == '_' {
@@ -76,3 +73,6 @@ func (id Ident) Valid() Bool {
 	}
 	return true
 }
+
+func (a Bool) And(b Bool) Bool { return Bool(bool(a) && bool(b)) }
+func (a Bool) Or(b Bool) Bool  { return Bool(bool(a) || bool(b)) }
