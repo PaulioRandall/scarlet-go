@@ -6,19 +6,14 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/value"
 )
 
-// Counter represents a program counter wihtin a processor.
-type Counter uint
-
 // Runtime represents the source of instructions and handler for performing
 // context dependent instructions such as access to variables.
 type Runtime interface {
 
-	// Has returns true if the program 'counter' has not reached the end of
-	// the instruction list.
-	Has(Counter) bool
-
-	// Fetch returns the instruction specified by the program 'counter'.
-	Fetch(Counter) (inst.Inst, error)
+	// Next returns the next instruction specified by the program counter. True is
+	// returned if an instruction was returned otherwise the end of program has
+	// been reached.
+	Next() (inst.Inst, bool)
 
 	// Push a value onto the top of the value stack.
 	Push(value.Value)
@@ -26,8 +21,8 @@ type Runtime interface {
 	// Pop a value off the top of the value stack,
 	Pop() value.Value
 
-	// Get returns the value associated with the specified identifier.
-	Get(value.Ident) (value.Value, error)
+	// Fetch returns the value associated with the specified identifier.
+	Fetch(value.Ident) (value.Value, error)
 
 	// Bind sets the value of a variable overwriting any existing value.
 	Bind(value.Ident, value.Value) error
@@ -37,7 +32,6 @@ type Runtime interface {
 // higher level.
 type Processor struct {
 	Runtime Runtime // Access to memory, i.e. instructions and variables
-	Counter Counter // Program counter
 	Stop    bool    // True to interupt execution after the next instruction
 	Stopped bool    // True if execution was stopped by an interupt or error
 	Halt    bool    // True to halt execution, invoked only by instructions
@@ -64,6 +58,7 @@ func (p *Processor) PleaseStop() {
 func (p *Processor) Run() {
 
 	var in inst.Inst
+	var ok bool
 
 	if p.Err != nil {
 		p.Stopped = true
@@ -74,15 +69,14 @@ func (p *Processor) Run() {
 	p.Stopped = false
 	p.Halt = false
 
-	for !p.Halt && p.Runtime.Has(p.Counter) {
+	for !p.Halt {
 
 		if p.Stop {
 			p.Stopped = true
 			return
 		}
 
-		if in, p.Err = p.Runtime.Fetch(p.Counter); p.Err != nil {
-			p.Stopped = true
+		if in, ok = p.Runtime.Next(); !ok {
 			return
 		}
 
@@ -90,8 +84,6 @@ func (p *Processor) Run() {
 			p.Stopped = true
 			return
 		}
-
-		p.Counter++ // Increment when on 'Halt' but never on 'Stop'
 	}
 }
 

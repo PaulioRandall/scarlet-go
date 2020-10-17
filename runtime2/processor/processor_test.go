@@ -15,22 +15,28 @@ import (
 
 type testRuntime struct {
 	value.Stack
-	ins []inst.Inst
-	ids map[value.Ident]value.Value
+	started bool
+	counter int
+	ins     []inst.Inst
+	ids     map[value.Ident]value.Value
 }
 
-func (rt *testRuntime) Has(c Counter) bool {
-	return uint(len(rt.ins)) > uint(c)
-}
+func (rt *testRuntime) Next() (inst.Inst, bool) {
 
-func (rt *testRuntime) Fetch(c Counter) (inst.Inst, error) {
-	if !rt.Has(c) {
-		return inst.Inst{}, errors.New("Program counter out of bounds")
+	if rt.started {
+		rt.counter++
+	} else {
+		rt.started = true
 	}
-	return rt.ins[c], nil
+
+	if rt.counter >= len(rt.ins) {
+		return inst.Inst{}, false
+	}
+
+	return rt.ins[rt.counter], true
 }
 
-func (rt *testRuntime) Get(id value.Ident) (value.Value, error) {
+func (rt *testRuntime) Fetch(id value.Ident) (value.Value, error) {
 	if v, ok := rt.ids[id]; ok {
 		return v, nil
 	}
