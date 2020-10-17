@@ -39,6 +39,11 @@ type Processor struct {
 	Err     error
 }
 
+// New returns a new Processor with the specified memory installed.
+func New(m Memory) *Processor {
+	return &Processor{Memory: m}
+}
+
 // PleaseStop tells the processor to stop execution after finishing the current
 // instruction. 'Processor.Stopped' will be set to true upon stopping.
 func (p *Processor) PleaseStop() {
@@ -88,9 +93,6 @@ func (p *Processor) Run() {
 // Process the instruction 'in' using the memory 'm'. 'halt' should only be
 // returned as true if an instruction specifically requests execution to halt.
 func Process(p *Processor, in inst.Inst) (halt bool, e error) {
-
-	// TODO Needs testing!
-
 	switch {
 	case in.Code == code.STACK_PUSH:
 		p.Stack.Push(in.Data)
@@ -100,7 +102,6 @@ func Process(p *Processor, in inst.Inst) (halt bool, e error) {
 	default:
 		panic("Unhandled instruction code: " + in.Code.String())
 	}
-
 	return
 }
 
@@ -125,10 +126,14 @@ func processNumOp(p *Processor, in inst.Inst) bool {
 		binNumOp(func(l, r *value.Num) { l.Number.Div(r.Number) })
 	case code.OP_REM:
 		binNumOp(func(l, r *value.Num) { l.Number.Mod(r.Number) })
+
 	case code.OP_AND:
-		// TODO
+		answer := p.Stack.Pop().(value.Bool) && p.Stack.Pop().(value.Bool)
+		p.Stack.Push(answer)
 	case code.OP_OR:
-		// TODO
+		answer := p.Stack.Pop().(value.Bool) || p.Stack.Pop().(value.Bool)
+		p.Stack.Push(answer)
+
 	case code.OP_LESS:
 		binNumOp(func(l, r *value.Num) { l.Number.Less(r.Number) })
 	case code.OP_MORE:
@@ -137,10 +142,14 @@ func processNumOp(p *Processor, in inst.Inst) bool {
 		binNumOp(func(l, r *value.Num) { l.Number.LessOrEqual(r.Number) })
 	case code.OP_MEQU:
 		binNumOp(func(l, r *value.Num) { l.Number.MoreOrEqual(r.Number) })
+
 	case code.OP_EQU:
-		// TODO
+		r, l := p.Stack.Pop(), p.Stack.Pop()
+		p.Stack.Push(value.Bool(l.Equal(r)))
 	case code.OP_NEQU:
-		// TODO
+		r, l := p.Stack.Pop(), p.Stack.Pop()
+		p.Stack.Push(value.Bool(!l.Equal(r)))
+
 	default:
 		return false
 	}

@@ -24,17 +24,23 @@ seventh := true || false
 
 # Roadmap
 
-## Chapter 2.5 (Reimplementation)
+## Next Chapter (Reimplementation)
 
-Reimplemention using parse trees.
+- Reimplemention using parse trees
 
-## Chapter 3 (Error Handling)
+## Further Chapters
 
-Improved error handling and useful error messages
+- Error Handling: Improved error handling and useful error messages
+- Spell returns: Spells will be able to return multiple values and a number of default spells will be added
+- TinyGo Compatibility: Update so Scarlet can be compiled using TinyGo. This has been done to some degree but I'm waiting on a versioned resolution to https://github.com/tinygo-org/tinygo/issues/890 which is **probably** preventing https://github.com/shopspring/decimal from compiling.
+- String spells
+- List type and spells
+- Map type and spells
+- Functions
+- Expression functions
 
-## Chapter 4 (Spell Returns)
 
-Spells will be able to return multiple values and a number of default spells will be added.
+## Spells
 
 Get the program arguments:
 ```
@@ -60,8 +66,6 @@ Exit the script with an error message:
 ```
 @Panic(exitCode, message)
 ```
-
-## Chapter 5 (String Spells)
 
 Take a slice of a string:
 ```
@@ -103,14 +107,7 @@ Parse a string as a bool:
 x, e := @str.ParseBool(bool)
 ```
 
-## Chapter 6 (TinyGo Compatibility)
-
-Update so Scarlet can be compiled using TinyGo. This has been done to some
-degree but I'm waiting on a versioned resolution to https://github.com/tinygo-org/tinygo/issues/890 which is **probably** preventing https://github.com/shopspring/decimal from compiling.
-
-## Chapter 7 (Lists)
-
-reate a new list:
+create a new list:
 ```
 list := @list.New(
   1,
@@ -166,8 +163,6 @@ x := @list.Foreach(list, F(i, value, more) {
 })
 ```
 
-## Chapter 7 (Maps)
-
 Create a new map:
 ```
 map := @map.New(
@@ -214,8 +209,15 @@ x := @map.Foreach(map, F(key, value) {
 })
 ```
 
-## Chapter 8 (Functions)
+## Function examples
 
+Example expression function:
+```
+add := E(a, b, c) a + b + c
+x := add(1, 2, 3)
+```
+
+Example function:
 ```
 f := F(a, b -> x, y) {
   ...
@@ -224,7 +226,7 @@ f := F(a, b -> x, y) {
 x, y := f(1, 2)
 ```
 
-## Chapters 9+
+## Potential Features
 
 These are debatable features that are not really required but might make
 programming moderately smoother.
