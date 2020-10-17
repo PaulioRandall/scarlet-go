@@ -56,10 +56,71 @@ func TestProcess_Assign(t *testing.T) {
 		value.Ident("x"): value.Num{number.New("1")},
 	}
 
+	expStk := value.Stack{}
+
 	p := New(m)
 	p.Run()
 
 	require.False(t, p.Stopped)
 	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
 	require.Equal(t, expIds, m.ids)
+	require.Equal(t, expStk, p.Stack)
+}
+
+func TestProcess_MultiAssign(t *testing.T) {
+
+	// x, y, z := true, 1, text
+	m := &testMem{
+		ins: []inst.Inst{
+			inst.Inst{Code: code.STACK_PUSH, Data: value.Bool(true)},
+			inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
+			inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("1")}},
+			inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("y")},
+			inst.Inst{Code: code.STACK_PUSH, Data: value.Str("text")},
+			inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("z")},
+		},
+		ids: map[value.Ident]value.Value{},
+	}
+
+	expIds := map[value.Ident]value.Value{
+		value.Ident("x"): value.Bool(true),
+		value.Ident("y"): value.Num{number.New("1")},
+		value.Ident("z"): value.Str("text"),
+	}
+
+	expStk := value.Stack{}
+
+	p := New(m)
+	p.Run()
+
+	require.False(t, p.Stopped)
+	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
+	require.Equal(t, expIds, m.ids)
+	require.Equal(t, expStk, p.Stack)
+}
+
+func TestProcess_Add(t *testing.T) {
+
+	// 1 + 2
+	m := &testMem{
+		ins: []inst.Inst{
+			inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("1")}},
+			inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("2")}},
+			inst.Inst{Code: code.OP_ADD},
+		},
+		ids: map[value.Ident]value.Value{},
+	}
+
+	expIds := map[value.Ident]value.Value{}
+
+	expStk := value.Stack{}
+	expStk.Push(value.Num{number.New("3")})
+
+	p := New(m)
+	p.Run()
+
+	require.False(t, p.Stopped)
+	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
+	require.Equal(t, expIds, m.ids)
+	require.Equal(t, expStk, p.Stack)
 }
