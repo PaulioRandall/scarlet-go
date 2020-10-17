@@ -33,7 +33,7 @@ type (
 	Num   struct{ number.Number }
 )
 
-func (Ident) Name() string { return "string" }
+func (Ident) Name() string { return "ident" }
 func (Str) Name() string   { return "string" }
 func (Bool) Name() string  { return "bool" }
 func (Num) Name() string   { return "number" }

@@ -10,7 +10,7 @@ import (
 // context dependent instructions such as access to variables.
 type Runtime interface {
 
-	// Next returns the next instruction specified by the program counter. True is
+	// Next returns the next instruction inicated by the program counter. True is
 	// returned if an instruction was returned otherwise the end of program has
 	// been reached.
 	Next() (inst.Inst, bool)
@@ -31,7 +31,7 @@ type Runtime interface {
 // Processor executes instructions in a similar fashion to a CPU but at a
 // higher level.
 type Processor struct {
-	Runtime Runtime // Access to memory, i.e. instructions and variables
+	Runtime Runtime // Access to memory etc, e.g. instructions and variables
 	Stop    bool    // True to interupt execution after the next instruction
 	Stopped bool    // True if execution was stopped by an interupt or error
 	Halt    bool    // True to halt execution, invoked only by instructions
@@ -41,12 +41,6 @@ type Processor struct {
 // New returns a new Processor with the specified memory installed.
 func New(rt Runtime) *Processor {
 	return &Processor{Runtime: rt}
-}
-
-// PleaseStop tells the processor to stop execution after finishing the current
-// instruction. 'Processor.Stopped' will be set to true upon stopping.
-func (p *Processor) PleaseStop() {
-	p.Stop = true
 }
 
 // Run begins or continues execution of instructions and returns true if the
@@ -80,7 +74,7 @@ func (p *Processor) Run() {
 			return
 		}
 
-		if p.Halt, p.Err = Process(p, in); p.Err != nil {
+		if p.Halt, p.Err = p.Process(in); p.Err != nil {
 			p.Stopped = true
 			return
 		}
@@ -89,7 +83,7 @@ func (p *Processor) Run() {
 
 // Process the instruction 'in' using the memory 'm'. 'halt' should only be
 // returned as true if an instruction specifically requests execution to halt.
-func Process(p *Processor, in inst.Inst) (halt bool, e error) {
+func (p *Processor) Process(in inst.Inst) (halt bool, e error) {
 	switch {
 	case in.Code == code.STACK_PUSH:
 		p.Runtime.Push(in.Data)
