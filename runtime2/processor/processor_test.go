@@ -13,38 +13,39 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type testMem struct {
+type testRuntime struct {
+	value.Stack
 	ins []inst.Inst
 	ids map[value.Ident]value.Value
 }
 
-func (m *testMem) Has(c Counter) bool {
-	return uint(len(m.ins)) > uint(c)
+func (rt *testRuntime) Has(c Counter) bool {
+	return uint(len(rt.ins)) > uint(c)
 }
 
-func (m *testMem) Fetch(c Counter) (inst.Inst, error) {
-	if !m.Has(c) {
+func (rt *testRuntime) Fetch(c Counter) (inst.Inst, error) {
+	if !rt.Has(c) {
 		return inst.Inst{}, errors.New("Program counter out of bounds")
 	}
-	return m.ins[c], nil
+	return rt.ins[c], nil
 }
 
-func (m *testMem) Get(id value.Ident) (value.Value, error) {
-	if v, ok := m.ids[id]; ok {
+func (rt *testRuntime) Get(id value.Ident) (value.Value, error) {
+	if v, ok := rt.ids[id]; ok {
 		return v, nil
 	}
 	return nil, errors.New("Identifier " + string(id) + " not found in scope")
 }
 
-func (m *testMem) Bind(id value.Ident, v value.Value) error {
-	m.ids[id] = v
+func (rt *testRuntime) Bind(id value.Ident, v value.Value) error {
+	rt.ids[id] = v
 	return nil
 }
 
 func TestProcess_Assign(t *testing.T) {
 
 	// x := 1
-	m := &testMem{
+	rt := &testRuntime{
 		ins: []inst.Inst{
 			inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("1")}},
 			inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
@@ -58,19 +59,19 @@ func TestProcess_Assign(t *testing.T) {
 
 	expStk := value.Stack{}
 
-	p := New(m)
+	p := New(rt)
 	p.Run()
 
 	require.False(t, p.Stopped)
 	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
-	require.Equal(t, expIds, m.ids)
-	require.Equal(t, expStk, p.Stack)
+	require.Equal(t, expIds, rt.ids)
+	require.Equal(t, expStk, rt.Stack)
 }
 
 func TestProcess_MultiAssign(t *testing.T) {
 
 	// x, y, z := true, 1, text
-	m := &testMem{
+	rt := &testRuntime{
 		ins: []inst.Inst{
 			inst.Inst{Code: code.STACK_PUSH, Data: value.Bool(true)},
 			inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
@@ -90,20 +91,20 @@ func TestProcess_MultiAssign(t *testing.T) {
 
 	expStk := value.Stack{}
 
-	p := New(m)
+	p := New(rt)
 	p.Run()
 
 	require.False(t, p.Stopped)
 	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
-	require.Equal(t, expIds, m.ids)
-	require.Equal(t, expStk, p.Stack)
+	require.Equal(t, expIds, rt.ids)
+	require.Equal(t, expStk, rt.Stack)
 }
 
 func processBinOpTest(t *testing.T,
 	exp, left, right value.Value,
 	opCode code.Code) {
 
-	m := &testMem{
+	rt := &testRuntime{
 		ins: []inst.Inst{
 			inst.Inst{Code: code.STACK_PUSH, Data: left},
 			inst.Inst{Code: code.STACK_PUSH, Data: right},
@@ -117,18 +118,18 @@ func processBinOpTest(t *testing.T,
 	expStk := value.Stack{}
 	expStk.Push(exp)
 
-	p := New(m)
+	p := New(rt)
 	p.Run()
 
 	require.False(t, p.Stopped)
 	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
-	require.Equal(t, expIds, m.ids)
+	require.Equal(t, expIds, rt.ids)
 
 	// Implementations of number.Number may not return the correct results when
 	// using == or != so number.Equal should be used to check equality.
-	require.Equal(t, expStk.Size(), p.Stack.Size())
+	require.Equal(t, expStk.Size(), rt.Stack.Size())
 	want := expStk.Top()
-	have := p.Stack.Top()
+	have := rt.Stack.Top()
 	if !have.Equal(want) {
 		require.Equal(t, want, have)
 	}

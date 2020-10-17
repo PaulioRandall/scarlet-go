@@ -9,9 +9,9 @@ import (
 // Counter represents a program counter wihtin a processor.
 type Counter uint
 
-// Memory represents the source of instructions and handler for performing
+// Runtime represents the source of instructions and handler for performing
 // context dependent instructions such as access to variables.
-type Memory interface {
+type Runtime interface {
 
 	// Has returns true if the program 'counter' has not reached the end of
 	// the instruction list.
@@ -19,6 +19,12 @@ type Memory interface {
 
 	// Fetch returns the instruction specified by the program 'counter'.
 	Fetch(Counter) (inst.Inst, error)
+
+	// Push a value onto the top of the value stack.
+	Push(value.Value)
+
+	// Pop a value off the top of the value stack,
+	Pop() value.Value
 
 	// Get returns the value associated with the specified identifier.
 	Get(value.Ident) (value.Value, error)
@@ -30,18 +36,17 @@ type Memory interface {
 // Processor executes instructions in a similar fashion to a CPU but at a
 // higher level.
 type Processor struct {
-	Memory  Memory      // Access to memory, i.e. instructions and variables
-	Counter Counter     // Program counter
-	Stack   value.Stack // Value stack
-	Stop    bool        // True to interupt execution after the next instruction
-	Stopped bool        // True if execution was stopped by an interupt or error
-	Halt    bool        // True to halt execution, invoked only by instructions
+	Runtime Runtime // Access to memory, i.e. instructions and variables
+	Counter Counter // Program counter
+	Stop    bool    // True to interupt execution after the next instruction
+	Stopped bool    // True if execution was stopped by an interupt or error
+	Halt    bool    // True to halt execution, invoked only by instructions
 	Err     error
 }
 
 // New returns a new Processor with the specified memory installed.
-func New(m Memory) *Processor {
-	return &Processor{Memory: m}
+func New(rt Runtime) *Processor {
+	return &Processor{Runtime: rt}
 }
 
 // PleaseStop tells the processor to stop execution after finishing the current
@@ -69,14 +74,14 @@ func (p *Processor) Run() {
 	p.Stopped = false
 	p.Halt = false
 
-	for !p.Halt && p.Memory.Has(p.Counter) {
+	for !p.Halt && p.Runtime.Has(p.Counter) {
 
 		if p.Stop {
 			p.Stopped = true
 			return
 		}
 
-		if in, p.Err = p.Memory.Fetch(p.Counter); p.Err != nil {
+		if in, p.Err = p.Runtime.Fetch(p.Counter); p.Err != nil {
 			p.Stopped = true
 			return
 		}
@@ -95,9 +100,9 @@ func (p *Processor) Run() {
 func Process(p *Processor, in inst.Inst) (halt bool, e error) {
 	switch {
 	case in.Code == code.STACK_PUSH:
-		p.Stack.Push(in.Data)
+		p.Runtime.Push(in.Data)
 	case in.Code == code.SCOPE_BIND:
-		e = p.Memory.Bind(in.Data.(value.Ident), p.Stack.Pop())
+		e = p.Runtime.Bind(in.Data.(value.Ident), p.Runtime.Pop())
 	case processNumOp(p, in):
 	default:
 		panic("Unhandled instruction code: " + in.Code.String())
@@ -108,17 +113,17 @@ func Process(p *Processor, in inst.Inst) (halt bool, e error) {
 func processNumOp(p *Processor, in inst.Inst) bool {
 
 	binNumOp := func(f func(l, r *value.Num)) {
-		r := p.Stack.Pop().(value.Num)
-		l := p.Stack.Pop().(value.Num)
+		r := p.Runtime.Pop().(value.Num)
+		l := p.Runtime.Pop().(value.Num)
 		l.Number = l.Number.Copy()
 		f(&l, &r) // Answer is always held in the left value
-		p.Stack.Push(l)
+		p.Runtime.Push(l)
 	}
 
 	binCmpOp := func(f func(l, r *value.Num) bool) {
-		r := p.Stack.Pop().(value.Num)
-		l := p.Stack.Pop().(value.Num)
-		p.Stack.Push(value.Bool(f(&l, &r)))
+		r := p.Runtime.Pop().(value.Num)
+		l := p.Runtime.Pop().(value.Num)
+		p.Runtime.Push(value.Bool(f(&l, &r)))
 	}
 
 	switch in.Code {
@@ -134,11 +139,11 @@ func processNumOp(p *Processor, in inst.Inst) bool {
 		binNumOp(func(l, r *value.Num) { l.Number.Mod(r.Number) })
 
 	case code.OP_AND:
-		l, r := p.Stack.Pop().(value.Bool), p.Stack.Pop().(value.Bool)
-		p.Stack.Push(l && r)
+		l, r := p.Runtime.Pop().(value.Bool), p.Runtime.Pop().(value.Bool)
+		p.Runtime.Push(l && r)
 	case code.OP_OR:
-		l, r := p.Stack.Pop().(value.Bool), p.Stack.Pop().(value.Bool)
-		p.Stack.Push(l || r)
+		l, r := p.Runtime.Pop().(value.Bool), p.Runtime.Pop().(value.Bool)
+		p.Runtime.Push(l || r)
 
 	case code.OP_LESS:
 		binCmpOp(func(l, r *value.Num) bool { return l.Number.Less(r.Number) })
@@ -150,11 +155,11 @@ func processNumOp(p *Processor, in inst.Inst) bool {
 		binCmpOp(func(l, r *value.Num) bool { return l.Number.MoreOrEqual(r.Number) })
 
 	case code.OP_EQU:
-		r, l := p.Stack.Pop(), p.Stack.Pop()
-		p.Stack.Push(value.Bool(l.Equal(r)))
+		r, l := p.Runtime.Pop(), p.Runtime.Pop()
+		p.Runtime.Push(value.Bool(l.Equal(r)))
 	case code.OP_NEQU:
-		r, l := p.Stack.Pop(), p.Stack.Pop()
-		p.Stack.Push(value.Bool(!l.Equal(r)))
+		r, l := p.Runtime.Pop(), p.Runtime.Pop()
+		p.Runtime.Push(value.Bool(!l.Equal(r)))
 
 	default:
 		return false
