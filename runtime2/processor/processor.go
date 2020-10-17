@@ -115,6 +115,12 @@ func processNumOp(p *Processor, in inst.Inst) bool {
 		p.Stack.Push(l)
 	}
 
+	binCmpOp := func(f func(l, r *value.Num) bool) {
+		r := p.Stack.Pop().(value.Num)
+		l := p.Stack.Pop().(value.Num)
+		p.Stack.Push(value.Bool(f(&l, &r)))
+	}
+
 	switch in.Code {
 	case code.OP_ADD:
 		binNumOp(func(l, r *value.Num) { l.Number.Add(r.Number) })
@@ -128,20 +134,20 @@ func processNumOp(p *Processor, in inst.Inst) bool {
 		binNumOp(func(l, r *value.Num) { l.Number.Mod(r.Number) })
 
 	case code.OP_AND:
-		answer := p.Stack.Pop().(value.Bool) && p.Stack.Pop().(value.Bool)
-		p.Stack.Push(answer)
+		l, r := p.Stack.Pop().(value.Bool), p.Stack.Pop().(value.Bool)
+		p.Stack.Push(l && r)
 	case code.OP_OR:
-		answer := p.Stack.Pop().(value.Bool) || p.Stack.Pop().(value.Bool)
-		p.Stack.Push(answer)
+		l, r := p.Stack.Pop().(value.Bool), p.Stack.Pop().(value.Bool)
+		p.Stack.Push(l || r)
 
 	case code.OP_LESS:
-		binNumOp(func(l, r *value.Num) { l.Number.Less(r.Number) })
+		binCmpOp(func(l, r *value.Num) bool { return l.Number.Less(r.Number) })
 	case code.OP_MORE:
-		binNumOp(func(l, r *value.Num) { l.Number.More(r.Number) })
+		binCmpOp(func(l, r *value.Num) bool { return l.Number.More(r.Number) })
 	case code.OP_LEQU:
-		binNumOp(func(l, r *value.Num) { l.Number.LessOrEqual(r.Number) })
+		binCmpOp(func(l, r *value.Num) bool { return l.Number.LessOrEqual(r.Number) })
 	case code.OP_MEQU:
-		binNumOp(func(l, r *value.Num) { l.Number.MoreOrEqual(r.Number) })
+		binCmpOp(func(l, r *value.Num) bool { return l.Number.MoreOrEqual(r.Number) })
 
 	case code.OP_EQU:
 		r, l := p.Stack.Pop(), p.Stack.Pop()

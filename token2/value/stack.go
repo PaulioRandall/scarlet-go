@@ -10,8 +10,19 @@ type node struct {
 	next *node
 }
 
+func (stk *Stack) Size() int {
+	return stk.size
+}
+
 func (stk *Stack) Empty() bool {
 	return stk.size == 0
+}
+
+func (stk *Stack) Top() Value {
+	if stk.size == 0 {
+		panic("Nothing on top, check stack first")
+	}
+	return stk.top.data
 }
 
 func (stk *Stack) Push(data Value) {
