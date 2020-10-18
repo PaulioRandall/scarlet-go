@@ -10,7 +10,7 @@ import (
 
 const GENERAL_ERROR = 1
 
-func Run(args Arguments) (int, error) {
+func Run(args Args) (int, error) {
 
 	if args.empty() {
 		return GENERAL_ERROR, fmt.Errorf("Missing command!")
@@ -52,7 +52,7 @@ func run(ins []inst.Instruction) (int, error) {
 	return 0, nil
 }
 
-func buildFromArgs(args Arguments) ([]inst.Instruction, int, error) {
+func buildFromArgs(args Args) ([]inst.Instruction, int, error) {
 
 	c := config{}
 	e := c.captureConfig(args)
@@ -68,7 +68,7 @@ func buildFromArgs(args Arguments) ([]inst.Instruction, int, error) {
 	return ins, 0, nil
 }
 
-func docs(args Arguments) (int, error) {
+func docs(args Args) (int, error) {
 
 	searchTerm := args.shiftDefault("")
 

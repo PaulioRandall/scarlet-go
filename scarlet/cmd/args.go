@@ -4,28 +4,26 @@ import (
 	"strings"
 )
 
-type Arguments struct {
+type Args struct {
 	list *[]string
 }
 
-func NewArgs(args []string) Arguments {
-
+func NewArgs(args []string) Args {
 	if args == nil {
 		panic("Nil args not allowed")
 	}
-
-	return Arguments{
+	return Args{
 		list: &args,
 	}
 }
 
-func (args *Arguments) shift() string {
+func (args *Args) shift() string {
 	arg := (*args.list)[0]
 	*args.list = (*args.list)[1:]
 	return arg
 }
 
-func (args *Arguments) shiftDefault(def string) string {
+func (args *Args) shiftDefault(def string) string {
 
 	if args.empty() {
 		return def
@@ -36,7 +34,7 @@ func (args *Arguments) shiftDefault(def string) string {
 	return arg
 }
 
-func (args *Arguments) accept(s string) bool {
+func (args *Args) accept(s string) bool {
 
 	if args.peek() == s {
 		args.shift()
@@ -46,22 +44,22 @@ func (args *Arguments) accept(s string) bool {
 	return false
 }
 
-func (args *Arguments) peek() string {
+func (args *Args) peek() string {
 	return (*args.list)[0]
 }
 
-func (args *Arguments) count() int {
+func (args *Args) count() int {
 	return len(*args.list)
 }
 
-func (args *Arguments) empty() bool {
+func (args *Args) empty() bool {
 	return len(*args.list) == 0
 }
 
-func (args *Arguments) more() bool {
+func (args *Args) more() bool {
 	return len(*args.list) > 0
 }
 
-func (args *Arguments) isOption() bool {
+func (args *Args) isOption() bool {
 	return strings.HasPrefix(args.peek(), "-")
 }

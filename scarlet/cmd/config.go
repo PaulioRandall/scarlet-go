@@ -10,12 +10,12 @@ type config struct {
 	logDir string
 }
 
-func (c *config) captureConfig(args Arguments) error {
+func (c *config) captureConfig(args Args) error {
 	c.captureOptions(args)
 	return c.captureScriptFile(args)
 }
 
-func (c *config) captureOptions(args Arguments) error {
+func (c *config) captureOptions(args Args) error {
 	for args.more() && args.isOption() {
 
 		switch {
@@ -30,7 +30,7 @@ func (c *config) captureOptions(args Arguments) error {
 	return nil
 }
 
-func (c *config) captureScriptFile(args Arguments) error {
+func (c *config) captureScriptFile(args Args) error {
 
 	if args.empty() {
 		return fmt.Errorf("Expected script filename")

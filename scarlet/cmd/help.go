@@ -5,7 +5,7 @@ import (
 )
 
 // Help show the instructions and options for how to use Scarlet CLI.
-func help(args Arguments) (int, error) {
+func help(args Args) (int, error) {
 
 	switch {
 	case args.count() > 1:
