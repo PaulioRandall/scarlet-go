@@ -8,16 +8,29 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/value"
 )
 
-func Compile(n tree.Node) ([]inst.Inst, error) {
-	switch v := n.(type) {
+// CompileAll converts the each parse tree into a slice of statements and
+// aggregates them all into a slice of slices.
+func CompileAll(trees []tree.Node) (r [][]inst.Inst, e error) {
+	r = make([][]inst.Inst, len(trees))
+	for i, t := range trees {
+		if r[i], e = Compile(t); e != nil {
+			return nil, e
+		}
+	}
+	return r, nil
+}
+
+// Compile converts the parse tree 't' into a slice of instructions.
+func Compile(t tree.Node) ([]inst.Inst, error) {
+	switch v := t.(type) {
 	case tree.SingleAssign:
 		return singleAssign(v), nil
 	case tree.MultiAssign:
 		return multiAssign(v), nil
 	case tree.Literal, tree.BinaryExpr:
-		return nil, errSnip(n.Pos(), "Result of expression ignored")
+		return nil, errSnip(t.Pos(), "Result of expression ignored")
 	default:
-		return nil, errSnip(n.Pos(), "Unknown node type")
+		return nil, errSnip(t.Pos(), "Unknown node type")
 	}
 }
 

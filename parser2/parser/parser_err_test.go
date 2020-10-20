@@ -12,7 +12,7 @@ import (
 
 func doErrTest(t *testing.T, in ...lexeme.Lexeme) {
 	tokenItr := tokentest.FeignSeries(in...)
-	_, e := Parse(tokenItr)
+	_, e := ParseAll(tokenItr)
 	require.NotNil(t, e, "Expected parse error")
 }
 

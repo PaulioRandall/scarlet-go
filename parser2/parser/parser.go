@@ -9,7 +9,7 @@ import (
 )
 
 // Parse parses a series of Tokens into a series of parse trees.
-func Parse(itr TokenItr) ([]tree.Node, error) {
+func ParseAll(itr TokenItr) ([]tree.Node, error) {
 	ctx := newCtx(itr, nil)
 	return statements(ctx)
 }

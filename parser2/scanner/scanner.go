@@ -20,13 +20,16 @@ type lex struct {
 	tk   token.Token
 }
 
-// ScanString converts the text 's' into a Series of Lexemes (Tokens).
+// ScanAll converts the input 'in' into a Series of Lexemes (Tokens).
 // Redundant Tokens are not removed in the process so the result will be a
-// lossless representation of the original input text 's'.
-func ScanString(s string) (*series.Series, error) {
+// lossless representation of the original input 'in'.
+func ScanAll(in []rune) (*series.Series, error) {
 
 	se := series.Make()
-	r := newReader(s)
+	r := &reader{
+		data:   in,
+		remain: len(in),
+	}
 
 	for r.more() {
 		l := &lex{}
@@ -35,8 +38,8 @@ func ScanString(s string) (*series.Series, error) {
 		}
 
 		snip, val := r.read(l.size)
-		lexTk := lexeme.Make(val, l.tk, snip)
-		se.Append(lexTk)
+		tk := lexeme.Make(val, l.tk, snip)
+		se.Append(tk)
 	}
 
 	return se, nil

@@ -1,0 +1,51 @@
+package cmd2
+
+import (
+	"io/ioutil"
+
+	"github.com/PaulioRandall/scarlet-go/token2/inst"
+
+	"github.com/PaulioRandall/scarlet-go/parser2/compiler"
+	"github.com/PaulioRandall/scarlet-go/parser2/parser"
+	"github.com/PaulioRandall/scarlet-go/parser2/sanitiser"
+	"github.com/PaulioRandall/scarlet-go/parser2/scanner"
+)
+
+// Build performs a simple workflow that converts a scroll into a set of
+// lower level instructions.
+func Build(c BuildCmd) ([]inst.Inst, error) {
+
+	src, e := ioutil.ReadFile(c.Scroll)
+	if e != nil {
+		return nil, e
+	}
+
+	runes := []rune(string(src))
+	s, e := scanner.ScanAll(runes)
+	if e != nil {
+		return nil, e
+	}
+
+	sanitiser.SanitiseAll(s)
+	trees, e := parser.ParseAll(s)
+	if e != nil {
+		return nil, e
+	}
+
+	insSlice, e := compiler.CompileAll(trees)
+	if e != nil {
+		return nil, e
+	}
+
+	return joinInst(insSlice), nil
+}
+
+// joinInst will need to be replaced with more a sohpisticated process that
+// once functions are introduced.
+func joinInst(insSlice [][]inst.Inst) []inst.Inst {
+	r := []inst.Inst{}
+	for _, in := range insSlice {
+		r = append(r, in...)
+	}
+	return r
+}

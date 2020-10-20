@@ -53,7 +53,7 @@ func TestParse_SingleAssign(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -96,7 +96,7 @@ func TestParse_MultiAssign(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -124,7 +124,7 @@ func TestParse_BinaryExpr_1(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -152,7 +152,7 @@ func TestParse_BinaryExpr_2(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -193,7 +193,7 @@ func TestParse_BinaryExpr_3(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -234,7 +234,7 @@ func TestParse_BinaryExpr_4(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -320,7 +320,7 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -360,7 +360,7 @@ func TestParse_Assign_BinaryExpr_1(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -379,7 +379,7 @@ func TestParse_ParenExpr_1(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -409,7 +409,7 @@ func TestParse_ParenExpr_2(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -441,7 +441,7 @@ func TestParse_ParenExpr_3(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -502,7 +502,7 @@ func TestParse_ParenExpr_4(t *testing.T) {
 	}
 
 	tokenItr := tokentest.FeignSeries(in...)
-	act, e := Parse(tokenItr)
+	act, e := ParseAll(tokenItr)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
