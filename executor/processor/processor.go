@@ -6,6 +6,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token2/value"
 )
 
+// TODO: Needs testing!
+
 // Runtime represents the source of instructions and handler for performing
 // context dependent instructions such as access to variables.
 type Runtime interface {
@@ -113,37 +115,37 @@ func processNumOp(p *Processor, in inst.Inst) bool {
 	}
 
 	switch in.Code {
-	case code.OP_ADD:
+	case code.BIN_OP_ADD:
 		binNumOp(func(l, r *value.Num) { l.Number.Add(r.Number) })
-	case code.OP_SUB:
+	case code.BIN_OP_SUB:
 		binNumOp(func(l, r *value.Num) { l.Number.Sub(r.Number) })
-	case code.OP_MUL:
+	case code.BIN_OP_MUL:
 		binNumOp(func(l, r *value.Num) { l.Number.Mul(r.Number) })
-	case code.OP_DIV:
+	case code.BIN_OP_DIV:
 		binNumOp(func(l, r *value.Num) { l.Number.Div(r.Number) })
-	case code.OP_REM:
+	case code.BIN_OP_REM:
 		binNumOp(func(l, r *value.Num) { l.Number.Mod(r.Number) })
 
-	case code.OP_AND:
+	case code.BIN_OP_AND:
 		l, r := p.Runtime.Pop().(value.Bool), p.Runtime.Pop().(value.Bool)
 		p.Runtime.Push(l && r)
-	case code.OP_OR:
+	case code.BIN_OP_OR:
 		l, r := p.Runtime.Pop().(value.Bool), p.Runtime.Pop().(value.Bool)
 		p.Runtime.Push(l || r)
 
-	case code.OP_LESS:
+	case code.BIN_OP_LESS:
 		binCmpOp(func(l, r *value.Num) bool { return l.Number.Less(r.Number) })
-	case code.OP_MORE:
+	case code.BIN_OP_MORE:
 		binCmpOp(func(l, r *value.Num) bool { return l.Number.More(r.Number) })
-	case code.OP_LEQU:
+	case code.BIN_OP_LEQU:
 		binCmpOp(func(l, r *value.Num) bool { return l.Number.LessOrEqual(r.Number) })
-	case code.OP_MEQU:
+	case code.BIN_OP_MEQU:
 		binCmpOp(func(l, r *value.Num) bool { return l.Number.MoreOrEqual(r.Number) })
 
-	case code.OP_EQU:
+	case code.BIN_OP_EQU:
 		r, l := p.Runtime.Pop(), p.Runtime.Pop()
 		p.Runtime.Push(value.Bool(l.Equal(r)))
-	case code.OP_NEQU:
+	case code.BIN_OP_NEQU:
 		r, l := p.Runtime.Pop(), p.Runtime.Pop()
 		p.Runtime.Push(value.Bool(!l.Equal(r)))
 

@@ -58,14 +58,6 @@ func exeCmd(cmd string) {
 		copyTestScroll()
 		invokeScroll("run", "test.scroll")
 
-	case "log":
-		setupBuild()
-		goBuild()
-		goFmt()
-		goTest()
-		copyTestScroll()
-		invokeScroll("run", "-log", ".", "test.scroll")
-
 	default:
 		fmt.Println("[ERROR] Unknown command: " + cmd)
 		printUsage()

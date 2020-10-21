@@ -15,5 +15,8 @@ type Inst struct {
 
 // String returns a human readable string representation of the instruction.
 func (in Inst) String() string {
+	if in.Data == nil {
+		return in.Code.String()
+	}
 	return fmt.Sprintf("%s %s", in.Code.String(), in.Data.String())
 }

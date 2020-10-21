@@ -12,7 +12,8 @@ type (
 	}
 
 	// HelpCmd is used to present help text.
-	HelpCmd struct{}
+	HelpCmd struct {
+	}
 
 	// BuildCmd is used to scan, sanitise, parse, then compile a scroll.
 	BuildCmd struct {
@@ -21,7 +22,7 @@ type (
 
 	// RunCmd is used to when building then running in one go.
 	RunCmd struct {
-		BuildCmd
+		BuildCmd BuildCmd
 	}
 )
 
@@ -32,7 +33,7 @@ func (c RunCmd) cmd()   {}
 // Capture converts the program arguments into a form easy to work with.
 func Capture(a *Args) (Command, error) {
 	switch {
-	case a.Empty(), a.Accept("help"): // help [<item>]
+	case !a.More(), a.Accept("help"): // help [<item>]
 		c := HelpCmd{}
 		e := captureHelpCmd(&c, a)
 		return c, e
@@ -71,7 +72,7 @@ func captureRunCmd(c *RunCmd, a *Args) error {
 }
 
 func captureScroll(c *BuildCmd, a *Args) error {
-	if a.Empty() {
+	if !a.More() {
 		return fmt.Errorf("Expected scroll filename")
 	}
 	c.Scroll = a.Shift()

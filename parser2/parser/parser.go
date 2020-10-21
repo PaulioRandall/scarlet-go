@@ -32,6 +32,7 @@ func statements(ctx *context) ([]tree.Node, error) {
 			return nil, e
 		}
 		r = append(r, n)
+		expectTerminator(ctx)
 	}
 
 	return r, nil
@@ -197,6 +198,18 @@ func multiAssignRight(ctx *context) ([]tree.Expr, position.Snippet, error) {
 
 	snip = position.SuperSnippet(snip, ex.Pos())
 	return r, snip, nil
+}
+
+// Parses: <terminator>
+func expectTerminator(ctx *context) error {
+	if !ctx.More() {
+		return errPos(ctx.Snippet().End,
+			"Expected terminator but reached EOF")
+	}
+	if tk := ctx.Next(); !tk.IsTerminator() {
+		return errSnip(tk.Snippet, "Expected expression but reached EOF")
+	}
+	return nil
 }
 
 // Parses: BOOL | NUMBER | STRING

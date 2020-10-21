@@ -27,6 +27,8 @@ func Build(c BuildCmd) ([]inst.Inst, error) {
 	}
 
 	sanitiser.SanitiseAll(s)
+	s.JumpToStart()
+
 	trees, e := parser.ParseAll(s)
 	if e != nil {
 		return nil, e

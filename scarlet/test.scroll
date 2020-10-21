@@ -1,18 +1,2 @@
 
-@Println()
-@FmtScroll("test.scroll")
-
-@Println("¯\_(ツ)_/¯")
-
 answer := 6 * 7
-@Println("6 * 7 = ", answer)
-answer := _
-@Println()
-
-整数 := 0
-loop [整数 < 10] {
-  @Println(整数)
-  整数 := 整数 + 1
-}
-
-@Exit(1)

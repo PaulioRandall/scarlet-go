@@ -1,6 +1,8 @@
 package cmd2
 
 import (
+	"fmt"
+
 	"github.com/PaulioRandall/scarlet-go/executor/processor"
 	"github.com/PaulioRandall/scarlet-go/executor/runtime"
 )
@@ -42,13 +44,23 @@ func Run(c RunCmd) (ExeResult, error) {
 		return nil, e
 	}
 
-	rt := runtime.New(program)
-	p := processor.New(rt)
+	env := runtime.New(program)
+	p := processor.New(env)
 	p.Run()
+
+	printEnv(env) // Temp
 
 	if p.Err != nil {
 		return exeResult{err: p.Err, exitCode: 1}, nil
 	}
 
 	return exeResult{exitCode: 0}, nil
+}
+
+// Temp
+func printEnv(env *runtime.Environment) {
+	fmt.Println("\nVariables created:")
+	for id, v := range env.Scope {
+		fmt.Println("\t" + id.String() + " " + v.String())
+	}
 }

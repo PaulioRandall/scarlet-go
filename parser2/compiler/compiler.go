@@ -101,31 +101,31 @@ func binaryExpression(n tree.BinaryExpr) []inst.Inst {
 func findOpCode(tk token.Token) code.Code {
 	switch tk {
 	case token.ADD:
-		return code.OP_ADD
+		return code.BIN_OP_ADD
 	case token.SUB:
-		return code.OP_SUB
+		return code.BIN_OP_SUB
 	case token.MUL:
-		return code.OP_MUL
+		return code.BIN_OP_MUL
 	case token.DIV:
-		return code.OP_DIV
+		return code.BIN_OP_DIV
 	case token.REM:
-		return code.OP_REM
+		return code.BIN_OP_REM
 	case token.LESS:
-		return code.OP_LESS
+		return code.BIN_OP_LESS
 	case token.MORE:
-		return code.OP_MORE
+		return code.BIN_OP_MORE
 	case token.LESS_EQUAL:
-		return code.OP_LEQU
+		return code.BIN_OP_LEQU
 	case token.MORE_EQUAL:
-		return code.OP_MEQU
+		return code.BIN_OP_MEQU
 	case token.EQUAL:
-		return code.OP_EQU
+		return code.BIN_OP_EQU
 	case token.NOT_EQUAL:
-		return code.OP_NEQU
+		return code.BIN_OP_NEQU
 	case token.AND:
-		return code.OP_AND
+		return code.BIN_OP_AND
 	case token.OR:
-		return code.OP_OR
+		return code.BIN_OP_OR
 	default:
 		panic("[ERROR] Unknown operator token")
 	}

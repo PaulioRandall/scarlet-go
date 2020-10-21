@@ -142,14 +142,6 @@ func TestParse_FailParenExpr_2(t *testing.T) {
 }
 
 func TestParse_FailParenExpr_3(t *testing.T) {
-	// 1)
-	doErrTest(t,
-		lexeme.MakeTok("1", token.NUMBER),
-		lexeme.MakeTok(")", token.R_PAREN),
-	)
-}
-
-func TestParse_FailParenExpr_4(t *testing.T) {
 	// ((1 + 2)
 	doErrTest(t,
 		lexeme.MakeTok("(", token.L_PAREN),
@@ -161,7 +153,7 @@ func TestParse_FailParenExpr_4(t *testing.T) {
 	)
 }
 
-func TestParse_FailParenExpr_5(t *testing.T) {
+func TestParse_FailParenExpr_4(t *testing.T) {
 	// (1 +)
 	doErrTest(t,
 		lexeme.MakeTok("(", token.L_PAREN),
@@ -171,7 +163,7 @@ func TestParse_FailParenExpr_5(t *testing.T) {
 	)
 }
 
-func TestParse_FailParenExpr_6(t *testing.T) {
+func TestParse_FailParenExpr_5(t *testing.T) {
 	// (+ 2)
 	doErrTest(t,
 		lexeme.MakeTok("(", token.L_PAREN),

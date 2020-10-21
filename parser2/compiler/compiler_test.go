@@ -84,7 +84,7 @@ func TestCompile_BinaryExpr_1(t *testing.T) {
 	exp := []inst.Inst{
 		inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("1")}},
 		inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("2")}},
-		inst.Inst{Code: code.OP_ADD},
+		inst.Inst{Code: code.BIN_OP_ADD},
 		inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
 	}
 
@@ -113,8 +113,8 @@ func TestCompile_BinaryExpr_2(t *testing.T) {
 		inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("1")}},
 		inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("2")}},
 		inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("3")}},
-		inst.Inst{Code: code.OP_MUL},
-		inst.Inst{Code: code.OP_ADD},
+		inst.Inst{Code: code.BIN_OP_MUL},
+		inst.Inst{Code: code.BIN_OP_ADD},
 		inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
 	}
 
@@ -152,13 +152,13 @@ func TestCompile_BinaryExpr_3(t *testing.T) {
 	exp := []inst.Inst{
 		inst.Inst{Code: code.STACK_PUSH, Data: value.Bool(true)},
 		inst.Inst{Code: code.STACK_PUSH, Data: value.Bool(false)},
-		inst.Inst{Code: code.OP_AND},
+		inst.Inst{Code: code.BIN_OP_AND},
 		inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
 		inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("1")}},
 		inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("2")}},
 		inst.Inst{Code: code.STACK_PUSH, Data: value.Num{number.New("3")}},
-		inst.Inst{Code: code.OP_MUL},
-		inst.Inst{Code: code.OP_ADD},
+		inst.Inst{Code: code.BIN_OP_MUL},
+		inst.Inst{Code: code.BIN_OP_ADD},
 		inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("y")},
 	}
 
