@@ -12,20 +12,11 @@ type (
 	}
 
 	// HelpCmd is used to present help text.
-	HelpCmd struct {
-		Item string // Empty string indicates general help
-	}
+	HelpCmd struct{}
 
 	// BuildCmd is used to scan, sanitise, parse, then compile a scroll.
 	BuildCmd struct {
 		Scroll string
-	}
-
-	// LogCmd is used to build but the output of each stage as a separate
-	// file.
-	LogCmd struct {
-		BuildCmd
-		Dir string // Empty string represents the current working directory
 	}
 
 	// RunCmd is used to when building then running in one go.
@@ -36,11 +27,7 @@ type (
 
 func (c HelpCmd) cmd()  {}
 func (c BuildCmd) cmd() {}
-func (c LogCmd) cmd()   {}
 func (c RunCmd) cmd()   {}
-
-func (c LogCmd) log() {}
-func (c RunCmd) run() {}
 
 // Capture converts the program arguments into a form easy to work with.
 func Capture(a *Args) (Command, error) {
@@ -55,11 +42,6 @@ func Capture(a *Args) (Command, error) {
 		e := captureBuildCmd(&c, a)
 		return c, e
 
-	case a.Accept("log"): // log [-d <dir>] <scroll>
-		c := LogCmd{}
-		e := captureLogCmd(&c, a)
-		return c, e
-
 	case a.Accept("run"): // run <scroll>
 		c := RunCmd{}
 		e := captureBuildCmd(&c.BuildCmd, a)
@@ -71,27 +53,11 @@ func Capture(a *Args) (Command, error) {
 }
 
 func captureHelpCmd(c *HelpCmd, a *Args) error {
-	if a.More() {
-		c.Item = a.Shift()
-	}
 	return expectEndOfArgs(a)
 }
 
 func captureBuildCmd(c *BuildCmd, a *Args) error {
 	if e := captureScroll(c, a); e != nil {
-		return e
-	}
-	return expectEndOfArgs(a)
-}
-
-func captureLogCmd(c *LogCmd, a *Args) error {
-	if a.Accept("-d") {
-		if a.Empty() {
-			return fmt.Errorf("Expected log directory")
-		}
-		c.Dir = a.Shift()
-	}
-	if e := captureScroll(&c.BuildCmd, a); e != nil {
 		return e
 	}
 	return expectEndOfArgs(a)

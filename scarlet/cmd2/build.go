@@ -40,8 +40,8 @@ func Build(c BuildCmd) ([]inst.Inst, error) {
 	return joinInst(insSlice), nil
 }
 
-// joinInst will need to be replaced with more a sohpisticated process that
-// once functions are introduced.
+// joinInst will need to be replaced with more a sohpisticated process once
+// functions arrive.
 func joinInst(insSlice [][]inst.Inst) []inst.Inst {
 	r := []inst.Inst{}
 	for _, in := range insSlice {

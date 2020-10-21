@@ -1,4 +1,4 @@
-package runtime2
+package runtime
 
 import (
 	"errors"
