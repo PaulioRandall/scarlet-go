@@ -1,14 +1,14 @@
-package cmd2
+package cmd
 
 import (
 	"io/ioutil"
 
 	"github.com/PaulioRandall/scarlet-go/token/inst"
 
-	"github.com/PaulioRandall/scarlet-go/parser2/compiler"
-	"github.com/PaulioRandall/scarlet-go/parser2/parser"
-	"github.com/PaulioRandall/scarlet-go/parser2/sanitiser"
-	"github.com/PaulioRandall/scarlet-go/parser2/scanner"
+	"github.com/PaulioRandall/scarlet-go/parser/compiler"
+	"github.com/PaulioRandall/scarlet-go/parser/parser"
+	"github.com/PaulioRandall/scarlet-go/parser/sanitiser"
+	"github.com/PaulioRandall/scarlet-go/parser/scanner"
 )
 
 // Build performs a simple workflow that converts a scroll into a set of

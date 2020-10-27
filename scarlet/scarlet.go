@@ -4,26 +4,26 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/PaulioRandall/scarlet-go/scarlet/cmd2"
+	"github.com/PaulioRandall/scarlet-go/scarlet/cmd"
 )
 
 func main() {
 
 	var e error
-	a := cmd2.NewArgs(os.Args[1:])
-	c, e := cmd2.Capture(a)
+	a := cmd.NewArgs(os.Args[1:])
+	c, e := cmd.Capture(a)
 	checkErr(e, 1)
 
 	switch v := c.(type) {
-	case cmd2.HelpCmd:
-		cmd2.Help(v)
+	case cmd.HelpCmd:
+		cmd.Help(v)
 
-	case cmd2.BuildCmd:
-		_, e := cmd2.Build(v)
+	case cmd.BuildCmd:
+		_, e := cmd.Build(v)
 		checkErr(e, 1)
 
-	case cmd2.RunCmd:
-		r, e := cmd2.Run(v)
+	case cmd.RunCmd:
+		r, e := cmd.Run(v)
 		checkErr(e, 1)
 		if !r.Ok() {
 			checkErr(r, r.ExitCode())
