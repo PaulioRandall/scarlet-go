@@ -14,7 +14,7 @@ var (
 	ROOT            = quick.AbsPath(".")
 	BUILD           = filepath.Join(ROOT, "build")
 	PROJ_PATH       = "github.com/PaulioRandall/scarlet-go"
-	MAIN_PKG        = "scarlet"
+	MAIN_PKG        = "cmd"
 	TEST_SCROLL     = "test.scroll"
 	TEST_SCROLL_SRC = filepath.Join(ROOT, MAIN_PKG, TEST_SCROLL)
 	TEST_SCROLL_DST = filepath.Join(ROOT, "build", TEST_SCROLL)

@@ -1,4 +1,4 @@
-package cmd
+package program
 
 import (
 	"strings"
