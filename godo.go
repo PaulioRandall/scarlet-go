@@ -2,238 +2,342 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
+	"strings"
+
+	"os/exec"
 	"syscall"
+
+	"github.com/pkg/errors"
+	"io"
 )
 
 var (
-	ROOT_DIR        = "."
-	BUILD_DIR       = filepath.Join(ROOT_DIR, "build")
-	BUILD_FILE_PERM = os.ModePerm
-	TINY            = false
+	RootDir        = absPath(".")
+	BuildDir       = filepath.Join(RootDir, "build")
+	BuildPerm      = os.ModePerm
+	BuildFlags     = ""   // "-gcflags -m -ldflags -s -w"
+	TestTimeout    = "2s" // E.g. 1m, 5s, 250ms, etc
+	MainPkgName    = "scarlet"
+	MainPkg        = "github.com/PaulioRandall/scarlet-go/" + MainPkgName
+	TestScrollName = "test.scroll"
+	TestScrollSrc  = filepath.Join(RootDir, MainPkgName, TestScrollName)
+	TestScroll     = filepath.Join(RootDir, "build", TestScrollName)
+	Usage          = `Usage:
+	help       Show usage
+	clean      Remove build files
+	build      Build -> format
+	test       Build -> format -> test
+	run        Build -> format -> test -> run`
 )
 
 func main() {
 
-	if len(os.Args) < 2 {
-		fmt.Println("[ERROR] Missing command")
-		printUsage()
-		return
+	code := 0
+	args := os.Args[1:]
+
+	if len(args) == 0 {
+		usageErr("Missing command argument")
 	}
 
-	if len(os.Args) > 2 && os.Args[2] == "-tiny" {
-		TINY = true
-	}
-
-	exeCmd(os.Args[1])
-}
-
-func exeCmd(cmd string) {
-	switch cmd {
+	switch cmd := args[0]; strings.ToLower(cmd) {
 	case "help":
-		printUsage()
+		fmt.Println(Usage)
 
 	case "clean":
-		removeDir(BUILD_DIR)
+		GoClean()
 
 	case "build":
-		setupBuild()
-		goBuild()
-		goFmt()
+		GoClean()
+		GoSetup()
+		GoBuild()
+		GoFormat()
 
 	case "test":
-		setupBuild()
-		goBuild()
-		goFmt()
-		goTest()
+		GoClean()
+		GoSetup()
+		GoBuild()
+		GoFormat()
+		GoTest()
 
 	case "run":
-		setupBuild()
-		goBuild()
-		goFmt()
-		goTest()
-		copyTestScroll()
-		invokeScroll("run", "test.scroll")
+		GoClean()
+		GoSetup()
+		GoBuild()
+		GoFormat()
+		GoTest()
+		GoCopyTestScroll()
+		code = GoRun("run", TestScroll)
 
 	default:
-		fmt.Println("[ERROR] Unknown command: " + cmd)
-		printUsage()
+		usageErr("Unknown command argument %q", cmd)
 	}
+
+	fmt.Printf("\nExit: %d\n", code)
+	os.Exit(code)
 }
 
-// *** Commands ***
-
-func setupBuild() {
-	removeDir(BUILD_DIR)
-
-	if e := os.MkdirAll(BUILD_DIR, BUILD_FILE_PERM); e != nil {
-		panik("Failed to create directory", e)
-	}
+func GoClean() {
+	e := os.RemoveAll(BuildDir)
+	exitIfErr(e, "Failed to remove build directory: %s", BuildDir)
 }
 
-func goBuild() {
-	fmt.Println("Building...")
-
-	const (
-		BUILD_FLAGS = "" // "-gcflags -m -ldflags -s -w"
-		MAIN_PKG    = "github.com/PaulioRandall/scarlet-go/scarlet"
-	)
-
-	var cmd *exec.Cmd
-	if TINY {
-		cmd = newGoCmd("tinygo", "build", "-o", BUILD_DIR, MAIN_PKG)
-	} else {
-		cmd = newGoCmd("go", "build", "-o", BUILD_DIR, BUILD_FLAGS, MAIN_PKG)
-	}
-
-	if e := cmd.Run(); e != nil {
-		panik("", e)
-	}
+func GoSetup() {
+	e := os.MkdirAll(BuildDir, BuildPerm)
+	exitIfErr(e, "Failed to make build directory: %s", BuildDir)
 }
 
-func goFmt() {
-	fmt.Println("Formatting...")
-
-	var cmd *exec.Cmd
-	if TINY {
-		cmd = newGoCmd("go", "fmt", "./...")
-	} else {
-		cmd = newGoCmd("go", "fmt", "./...")
-	}
-
-	if e := cmd.Run(); e != nil {
-		panik("", e)
-	}
+func GoBuild() {
+	g, e := NewGo(RootDir)
+	exitIfErr(e, "Failed to build")
+	e = g.Build(BuildDir, BuildFlags, MainPkg)
+	exitIfErr(e, "Failed to build")
 }
 
-func goTest() {
-	fmt.Println("Testing...")
-
-	var cmd *exec.Cmd
-	if TINY {
-		cmd = newGoCmd("tinygo", "test", "./...", "-timeout", "2s")
-	} else {
-		cmd = newGoCmd("go", "test", "./...", "-timeout", "2s")
-	}
-
-	if e := cmd.Run(); e != nil {
-		panik("", e)
-	}
+func GoFormat() {
+	g, e := NewGo(RootDir)
+	exitIfErr(e, "Failed to format")
+	e = g.FmtAll()
+	exitIfErr(e, "Failed to format")
 }
 
-func copyTestScroll() {
-
-	src := filepath.Join(ROOT_DIR, "scarlet", "test.scroll")
-	dst := filepath.Join(BUILD_DIR, "test.scroll")
-
-	if e := copyFile(src, dst); e != nil {
-		panik("Failed to copy test scroll", e)
-	}
+func GoTest() {
+	g, e := NewGo(RootDir)
+	exitIfErr(e, "Testing failed")
+	e = g.TestAll(TestTimeout)
+	exitIfErr(e, "Testing failed")
 }
 
-func invokeScroll(args ...string) {
-	fmt.Println("Invoking scroll...")
+func GoCopyTestScroll() {
+	e := CopyFile(TestScrollSrc, TestScroll, true)
+	exitIfErr(e, "Failed to copy test scroll to build directory")
+}
 
-	cd(BUILD_DIR)
+func GoRun(args ...string) int {
+	var e error
+	exePath := filepath.Join(BuildDir, MainPkgName)
+	exePath, e = filepath.Abs(exePath)
+	exitIfErr(e, "Failed to run")
+	code, e := Run(exePath, BuildDir, args...)
+	exitIfErr(e, "Failed to run")
+	return code
+}
+
+func absPath(rel string) string {
+	p, e := filepath.Abs(rel)
+	exitIfErr(e, "Failed to identify path")
+	return p
+}
+
+func exitIfErr(cause error, msg string, args ...interface{}) {
+	if cause == nil {
+		return
+	}
+	const code = 1
+	fmt.Printf("Exit: %d\n", code)
+	fmt.Printf("Error: "+msg+"\n", args...)
+	fmt.Printf("Caused by: %+v", cause)
+	os.Exit(code)
+}
+
+func usageErr(msg string, args ...interface{}) {
+	const code = 1
+	fmt.Printf("Exit: %d\n", code)
+	fmt.Printf("Error: "+msg+"\n\n", args...)
+	fmt.Println(Usage)
+	os.Exit(code)
+}
+
+// Package "github.com/PaulioRandall/go-cookies/gobuild"
+
+// Go represents a wrapper to the Go compiler. Functionality is provided for
+// building, formatting, and testing.
+type Go struct {
+	Path    string
+	WorkDir string
+}
+
+// NewGo returns a new Go struct. 'workDir' may be empty to signify the current
+// working directory should be used.
+func NewGo(workDir string) (Go, error) {
 
 	var e error
-	exePath := filepath.Join(ROOT_DIR, "scarlet")
-	exePath, e = filepath.Abs(exePath)
-	if e != nil {
-		panik("", e)
-	}
+	g := Go{WorkDir: workDir}
 
-	cmd := exec.Command(exePath, args...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	fmt.Println(cmd.String())
-
-	if e := cmd.Start(); e != nil {
-		panik("Could not start Scarlet", e)
-	}
-
-	if e := cmd.Wait(); e != nil {
-		if exitErr, ok := e.(*exec.ExitError); ok {
-			if stat, ok := exitErr.Sys().(syscall.WaitStatus); ok {
-				fmt.Printf("\nScarlet exit code: %d\n", stat.ExitStatus())
-			}
-		} else {
-			panik("Failed to run Scarlet or non-zero exit code", e)
+	if g.WorkDir == "" {
+		if g.WorkDir, e = os.Getwd(); e != nil {
+			return Go{}, Wrap(e,
+				"Unable to identify current working directory")
 		}
-	} else {
-		fmt.Println("\nScarlet exit code: 0")
 	}
 
-	cd("..")
+	if g.Path, e = exec.LookPath("go"); e != nil {
+		return Go{}, Wrap(e,
+			"Can't find compiler. Is it installed? Environment variables set?")
+	}
+	return g, nil
 }
 
-// *** Script utils ***
-
-func cd(dir string) {
-	if e := os.Chdir(dir); e != nil {
-		panik("Failed to change directory", e)
-	}
-}
-
-func newGoCmd(compiler string, args ...string) *exec.Cmd {
-
-	goPath, e := exec.LookPath(compiler)
-	if e != nil {
-		panik("Can't find compiler. Is it installed? Environment variables set?", e)
-	}
-
-	cmd := exec.Command(goPath, args...)
+func (g Go) NewCmd(args ...string) *exec.Cmd {
+	cmd := exec.Command(g.Path, args...)
+	cmd.Dir = g.WorkDir
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-
 	return cmd
 }
 
-func removeDir(dir string) {
-
-	if _, e := os.Stat(dir); os.IsNotExist(e) {
-		return
-	} else if e != nil {
-		panik("Failed to analyse directory", e)
+func (g Go) Build(dir, flags, pkg string) error {
+	var cmd *exec.Cmd
+	if dir == "" {
+		cmd = g.NewCmd("build", flags, pkg)
+	} else {
+		cmd = g.NewCmd("build", "-o", dir, flags, pkg)
 	}
-
-	if e := os.RemoveAll(dir); e != nil {
-		panik("Failed to remove directory", e)
-	}
+	return run(cmd, "Build failed")
 }
 
-func printUsage() {
-	s := `Usage:
-	help              Show usage
-	clean             Remove build files
-	build [-tiny]     Build -> format
-	test  [-tiny]     Build -> format -> test
-	run   [-tiny]     Build -> format -> test -> exe (test scroll)
-	log   [-tiny]     Build -> format -> test -> exe (test scroll + logs)
-
-	-tiny             Use Tinygo compiler`
-
-	fmt.Println(s)
+func (g Go) Fmt(pkg string) error {
+	cmd := g.NewCmd("fmt", pkg)
+	return run(cmd, "Format failed")
 }
 
-// *** General utils ***
+func (g Go) FmtAll() error {
+	return g.Fmt("./...")
+}
 
-func copyFile(src, dst string) error {
+func (g Go) Test(pkg string, timeout string) error {
+	var cmd *exec.Cmd
+	if timeout == "" {
+		cmd = g.NewCmd("test", pkg)
+	} else {
+		cmd = g.NewCmd("test", pkg, "-timeout", timeout)
+	}
+	return run(cmd, "Testing error")
+}
 
-	stat, e := os.Stat(src)
+func (g Go) TestAll(timeout string) error {
+	return g.Test("./...", timeout)
+}
+
+func run(cmd *exec.Cmd, errMsg string) error {
+	if e := cmd.Run(); e != nil {
+		return Wrap(e, "Execution failed")
+	}
+	return nil
+}
+
+const (
+	EXIT_OK  = 0 // Zero exit code
+	EXIT_BAD = 1 // General error exit code
+)
+
+// Run runs the executable at 'exePath'. Setting the 'workDir' as empty will
+// use the default as specified by functions that accept exec.Cmd. EXIT_OK is
+// returned on successful execution otherwise EXIT_BAD or another non-zero
+// exit code is returned.
+func Run(exePath string, workDir string, args ...string) (int, error) {
+
+	var e error
+
+	cmd := exec.Command(exePath, args...)
+	cmd.Dir = workDir
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if e := cmd.Start(); e != nil {
+		return EXIT_BAD, e
+	}
+
+	if e = cmd.Wait(); e == nil {
+		return EXIT_OK, nil
+	}
+
+	if exitErr, ok := e.(*exec.ExitError); ok {
+		if stat, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+			return stat.ExitStatus(), e
+		}
+	}
+
+	return EXIT_BAD, e
+}
+
+// Package "github.com/PaulioRandall/go-cookies/cookies"
+
+// Wrap wraps an error 'e' with a another message 'm'.
+func Wrap(e error, m string, args ...interface{}) error {
+	m = fmt.Sprintf(m, args...)
+	return errors.Wrap(e, m)
+}
+
+// FileExists returns true if the file exists, false if not, and an error if
+// file existence could not be determined.
+func FileExists(f string) (bool, error) {
+	_, e := os.Stat(f)
+	if os.IsNotExist(e) {
+		return false, nil
+	}
+	return true, e
+}
+
+// IsRegFile returns true if the file exists and is a regular file. An error is
+// returned if this could not be determined.
+func IsRegFile(f string) (bool, error) {
+	stat, e := os.Stat(f)
+	if os.IsNotExist(e) {
+		return false, nil
+	}
 	if e != nil {
-		return fmt.Errorf("Missing file: %s", src)
+		return false, e
+	}
+	return stat.Mode().IsRegular(), nil
+}
+
+// SameFile returns true if the two files 'a' and 'b' describe the same file
+// as determined by os.SameFile. An error is returned if the file info could
+// not be retreived for either file.
+func SameFile(a, b string) (bool, error) {
+	aStat, e := os.Stat(a)
+	if e != nil {
+		return false, e
+	}
+	bStat, e := os.Stat(b)
+	if e != nil {
+		return false, e
+	}
+	return os.SameFile(aStat, bStat), nil
+}
+
+// CopyFile copies the single file 'src' to 'dst'.
+func CopyFile(src, dst string, overwrite bool) error {
+
+	if ok, e := IsRegFile(src); e != nil || !ok {
+		return fmt.Errorf("Missing or not a regular file: %s", src)
 	}
 
-	if !stat.Mode().IsRegular() {
-		return fmt.Errorf("Not a regular file: %s", src)
+	if !overwrite {
+		ok, e := FileExists(dst)
+		if e != nil {
+			return e
+		}
+		if ok {
+			return fmt.Errorf("Destination already exists: %s", dst)
+		}
 	}
+
+	same, e := SameFile(src, dst)
+	if e == nil && same {
+		return fmt.Errorf("Destination is the same as source: %s == %s", dst, src)
+	}
+
+	return NoCheckCopyFile(src, dst)
+}
+
+// NoCheckCopyFile copies the single file 'src' to 'dst' and doesn't make any
+// attempt to check the file paths before hand.
+func NoCheckCopyFile(src, dst string) error {
 
 	srcFile, e := os.Open(src)
 	if e != nil {
@@ -248,20 +352,5 @@ func copyFile(src, dst string) error {
 	defer dstFile.Close()
 
 	_, e = io.Copy(dstFile, srcFile)
-	if e != nil {
-		return e
-	}
-
-	return nil
-}
-
-func panik(msg string, e error) {
-
-	if e == nil {
-		e = fmt.Errorf(msg)
-	} else if msg != "" {
-		e = fmt.Errorf("%s: %s", msg, e.Error())
-	}
-
-	panic(e)
+	return e
 }
