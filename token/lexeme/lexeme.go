@@ -8,8 +8,8 @@ package lexeme
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/token2/position"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
+	"github.com/PaulioRandall/scarlet-go/token/position"
+	"github.com/PaulioRandall/scarlet-go/token/token"
 )
 
 // Lexeme represents a token from source code including its position and raw

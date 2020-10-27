@@ -3,9 +3,9 @@ package parser
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
-	"github.com/PaulioRandall/scarlet-go/token2/tokentest"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/token"
+	"github.com/PaulioRandall/scarlet-go/token/tokentest"
 
 	"github.com/stretchr/testify/require"
 )

@@ -3,7 +3,7 @@ package parser
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/token2/position"
+	"github.com/PaulioRandall/scarlet-go/token/position"
 )
 
 type (

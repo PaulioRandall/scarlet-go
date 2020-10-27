@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/token"
 
 	"github.com/stretchr/testify/require"
 )

@@ -2,10 +2,10 @@
 package parser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token2/position"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
-	"github.com/PaulioRandall/scarlet-go/token2/tree"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/position"
+	"github.com/PaulioRandall/scarlet-go/token/token"
+	"github.com/PaulioRandall/scarlet-go/token/tree"
 )
 
 // Parse parses a series of Tokens into a series of parse trees.

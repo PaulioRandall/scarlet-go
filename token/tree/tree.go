@@ -2,8 +2,8 @@ package tree
 
 import (
 	"github.com/PaulioRandall/scarlet-go/number"
-	"github.com/PaulioRandall/scarlet-go/token2/position"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
+	"github.com/PaulioRandall/scarlet-go/token/position"
+	"github.com/PaulioRandall/scarlet-go/token/token"
 )
 
 // TODO: Model on https://github.com/golang/go/blob/a517c3422e808ae51533a0700e05d59e8a799136/src/go/ast/ast.go

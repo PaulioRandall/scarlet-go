@@ -5,8 +5,8 @@
 package sanitiser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/token"
 )
 
 // LexemeIterator specifies the iteration functionality required by inputs to

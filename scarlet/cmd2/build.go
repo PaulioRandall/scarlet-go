@@ -3,7 +3,7 @@ package cmd2
 import (
 	"io/ioutil"
 
-	"github.com/PaulioRandall/scarlet-go/token2/inst"
+	"github.com/PaulioRandall/scarlet-go/token/inst"
 
 	"github.com/PaulioRandall/scarlet-go/parser2/compiler"
 	"github.com/PaulioRandall/scarlet-go/parser2/parser"

@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token2/position"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/position"
 )
 
 type TokenItr interface {

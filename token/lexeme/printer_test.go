@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/token2/position"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
+	"github.com/PaulioRandall/scarlet-go/token/position"
+	"github.com/PaulioRandall/scarlet-go/token/token"
 
 	"github.com/stretchr/testify/require"
 )

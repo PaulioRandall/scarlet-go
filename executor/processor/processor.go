@@ -1,9 +1,9 @@
 package processor
 
 import (
-	"github.com/PaulioRandall/scarlet-go/token2/code"
-	"github.com/PaulioRandall/scarlet-go/token2/inst"
-	"github.com/PaulioRandall/scarlet-go/token2/value"
+	"github.com/PaulioRandall/scarlet-go/token/code"
+	"github.com/PaulioRandall/scarlet-go/token/inst"
+	"github.com/PaulioRandall/scarlet-go/token/value"
 )
 
 // TODO: Needs testing!

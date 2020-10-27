@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/token2/position"
+	"github.com/PaulioRandall/scarlet-go/token/position"
 )
 
 // LexemeIterator provides sequential access to the ordered list of Lexemes

@@ -5,11 +5,11 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/number"
 
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token2/position"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
-	"github.com/PaulioRandall/scarlet-go/token2/tokentest"
-	"github.com/PaulioRandall/scarlet-go/token2/tree"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/position"
+	"github.com/PaulioRandall/scarlet-go/token/token"
+	"github.com/PaulioRandall/scarlet-go/token/tokentest"
+	"github.com/PaulioRandall/scarlet-go/token/tree"
 
 	"github.com/stretchr/testify/require"
 )

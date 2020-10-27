@@ -5,8 +5,8 @@ package series
 import (
 	"strings"
 
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token2/position"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/position"
 )
 
 // Matcher function signiture is used by Series search functions such as

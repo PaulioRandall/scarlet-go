@@ -9,10 +9,10 @@ package scanner
 import (
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token2/series"
-	"github.com/PaulioRandall/scarlet-go/token2/symbol"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/series"
+	"github.com/PaulioRandall/scarlet-go/token/symbol"
+	"github.com/PaulioRandall/scarlet-go/token/token"
 )
 
 type lex struct {

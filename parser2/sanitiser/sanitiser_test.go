@@ -3,10 +3,10 @@ package sanitiser
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token2/series"
-	"github.com/PaulioRandall/scarlet-go/token2/token"
-	"github.com/PaulioRandall/scarlet-go/token2/tokentest"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/series"
+	"github.com/PaulioRandall/scarlet-go/token/token"
+	"github.com/PaulioRandall/scarlet-go/token/tokentest"
 )
 
 func doTest(t *testing.T, in, exp *series.Series) {

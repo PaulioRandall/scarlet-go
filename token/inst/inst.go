@@ -3,8 +3,8 @@ package inst
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/token2/code"
-	"github.com/PaulioRandall/scarlet-go/token2/value"
+	"github.com/PaulioRandall/scarlet-go/token/code"
+	"github.com/PaulioRandall/scarlet-go/token/value"
 )
 
 // Inst represents an instruction, data may be included with some codes.

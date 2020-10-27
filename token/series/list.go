@@ -1,7 +1,7 @@
 package series
 
 import (
-	"github.com/PaulioRandall/scarlet-go/token2/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 )
 
 type list struct {
