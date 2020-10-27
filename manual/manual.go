@@ -18,7 +18,6 @@ func New() Manual {
 	m.Register("examples", examples)
 	m.Register("future", future)
 	m.Register("chapters", chapters)
-	m.Register("spells", spellsDoc)
 
 	return m
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/PaulioRandall/scarlet-go/scarlet/cmd"
 	"github.com/PaulioRandall/scarlet-go/scarlet/cmd2"
 )
 
@@ -38,17 +37,4 @@ func checkErr(e error, errCode int) {
 		fmt.Printf("[ERROR] %d\n%s\n", errCode, e.Error())
 		os.Exit(errCode)
 	}
-}
-
-func main_old() {
-	args := cmd.NewArgs(os.Args[1:])
-
-	exitCode, e := cmd.Run(args)
-
-	// TODO: Exploit new error interface
-	if e != nil {
-		fmt.Printf("[ERROR] %d\n%s\n", 1, e.Error())
-	}
-
-	os.Exit(exitCode)
 }

@@ -243,8 +243,6 @@ func stringLiteral(r *reader, l *lex) error {
 		l.size++
 	}
 
-	return nil
-
 ERROR:
 	// TODO: Snippet here, `colRune + l.size`
 	return errPos(r.Snapshot(), "Unterminated string")

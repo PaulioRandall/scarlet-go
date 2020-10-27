@@ -81,7 +81,7 @@ func createLitData(n tree.Literal) value.Value {
 	case tree.BoolLit:
 		return value.Bool(v.Val)
 	case tree.NumLit:
-		return value.Num{v.Val}
+		return value.Num{Number: v.Val}
 	case tree.StrLit:
 		return value.Str(v.Val)
 	default:
