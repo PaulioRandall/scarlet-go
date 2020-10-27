@@ -3,7 +3,7 @@ package parser
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/number"
+	"github.com/PaulioRandall/scarlet-go/token/number"
 
 	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 	"github.com/PaulioRandall/scarlet-go/token/position"

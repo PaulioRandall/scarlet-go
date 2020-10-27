@@ -1,21 +1,10 @@
 # Scribbles
 
-## Current Syntax
+## v0.2.0
 
-```
-x       := 1
-x, y, z := true, 1, "Scarlet"
-x       := (1 + 2) * 3
+### New
 
-# Operators & Precedence
-first   := "(1)"
-second  := "2 * 3 / 4 % 5"
-third   := "5 + 6 - 7"
-fourth  := "8 < 9 > 10 <= 11 >= 12"
-fifth   := "13 == 14 != 15"
-sixth   := "true && false"
-seventh := "true || false"
-```
+- Identifiers within expressions: `x := y`, `x * (y - 1)`
 
 ## Potential Features
 

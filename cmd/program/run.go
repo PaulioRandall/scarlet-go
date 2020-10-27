@@ -3,8 +3,8 @@ package program
 import (
 	"fmt"
 
-	"github.com/PaulioRandall/scarlet-go/executor/processor"
-	"github.com/PaulioRandall/scarlet-go/executor/runtime"
+	"github.com/PaulioRandall/scarlet-go/runner/processor"
+	"github.com/PaulioRandall/scarlet-go/runner/runtime"
 )
 
 // ExeResult represents the result of executing a program within a Processor.

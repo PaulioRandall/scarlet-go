@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/number"
+	"github.com/PaulioRandall/scarlet-go/token/number"
 )
 
 type (

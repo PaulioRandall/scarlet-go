@@ -9,7 +9,6 @@ import (
 
 func main() {
 
-	var e error
 	a := program.NewArgs(os.Args[1:])
 	c, e := program.Capture(a)
 	checkErr(e, 1)

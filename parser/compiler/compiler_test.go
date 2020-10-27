@@ -3,10 +3,9 @@ package compiler
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/number"
-
 	"github.com/PaulioRandall/scarlet-go/token/code"
 	"github.com/PaulioRandall/scarlet-go/token/inst"
+	"github.com/PaulioRandall/scarlet-go/token/number"
 	"github.com/PaulioRandall/scarlet-go/token/token"
 	"github.com/PaulioRandall/scarlet-go/token/tree"
 	"github.com/PaulioRandall/scarlet-go/token/value"

@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/PaulioRandall/scarlet-go/number"
 	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/number"
 	"github.com/PaulioRandall/scarlet-go/token/token"
 	"github.com/PaulioRandall/scarlet-go/token/tree"
 )
