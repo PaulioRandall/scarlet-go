@@ -3,14 +3,14 @@ package program
 import (
 	"io/ioutil"
 
-	"github.com/PaulioRandall/scarlet-go/token/inst"
-	"github.com/PaulioRandall/scarlet-go/token/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token/series"
+	"github.com/PaulioRandall/scarlet-go/todo/series"
 
-	"github.com/PaulioRandall/scarlet-go/parser/compiler"
-	"github.com/PaulioRandall/scarlet-go/parser/parser"
-	"github.com/PaulioRandall/scarlet-go/parser/sanitiser"
-	"github.com/PaulioRandall/scarlet-go/parser/scanner"
+	"github.com/PaulioRandall/scarlet-go/scarlet/compiler"
+	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
+	"github.com/PaulioRandall/scarlet-go/scarlet/parser"
+	"github.com/PaulioRandall/scarlet-go/scarlet/sanitiser"
+	"github.com/PaulioRandall/scarlet-go/scarlet/scanner"
+	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 )
 
 // Build performs a simple workflow that converts a scroll into a set of
@@ -48,7 +48,7 @@ func scanAll(src []byte) (*series.Series, error) {
 	var (
 		in = []rune(string(src))
 		s  = series.New()
-		l  lexeme.Lexeme
+		l  token.Lexeme
 		pt = scanner.New(in)
 		e  error
 	)

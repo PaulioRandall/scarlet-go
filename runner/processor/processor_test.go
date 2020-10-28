@@ -4,11 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/token/number"
-
-	"github.com/PaulioRandall/scarlet-go/token/code"
-	"github.com/PaulioRandall/scarlet-go/token/inst"
-	"github.com/PaulioRandall/scarlet-go/token/value"
+	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
+	"github.com/PaulioRandall/scarlet-go/scarlet/value"
+	"github.com/PaulioRandall/scarlet-go/scarlet/value/number"
 
 	"github.com/stretchr/testify/require"
 )
@@ -57,8 +55,8 @@ func TestProcess_Assign(t *testing.T) {
 	// x := 1
 	rt := &testRuntime{
 		ins: []inst.Inst{
-			inst.Inst{Code: code.STACK_PUSH, Data: numValue("1")},
-			inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
+			inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
+			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
 		},
 		ids: map[value.Ident]value.Value{},
 	}
@@ -83,12 +81,12 @@ func TestProcess_MultiAssign(t *testing.T) {
 	// x, y, z := true, 1, text
 	rt := &testRuntime{
 		ins: []inst.Inst{
-			inst.Inst{Code: code.STACK_PUSH, Data: value.Bool(true)},
-			inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("x")},
-			inst.Inst{Code: code.STACK_PUSH, Data: numValue("1")},
-			inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("y")},
-			inst.Inst{Code: code.STACK_PUSH, Data: value.Str("text")},
-			inst.Inst{Code: code.SCOPE_BIND, Data: value.Ident("z")},
+			inst.Inst{Code: inst.STACK_PUSH, Data: value.Bool(true)},
+			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
+			inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
+			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("y")},
+			inst.Inst{Code: inst.STACK_PUSH, Data: value.Str("text")},
+			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("z")},
 		},
 		ids: map[value.Ident]value.Value{},
 	}
@@ -112,12 +110,12 @@ func TestProcess_MultiAssign(t *testing.T) {
 
 func processBinOpTest(t *testing.T,
 	exp, left, right value.Value,
-	opCode code.Code) {
+	opCode inst.Code) {
 
 	rt := &testRuntime{
 		ins: []inst.Inst{
-			inst.Inst{Code: code.STACK_PUSH, Data: left},
-			inst.Inst{Code: code.STACK_PUSH, Data: right},
+			inst.Inst{Code: inst.STACK_PUSH, Data: left},
+			inst.Inst{Code: inst.STACK_PUSH, Data: right},
 			inst.Inst{Code: opCode},
 		},
 		ids: map[value.Ident]value.Value{},
@@ -151,7 +149,7 @@ func TestProcess_Add(t *testing.T) {
 		numValue("3"),
 		numValue("1"),
 		numValue("2"),
-		code.BIN_OP_ADD,
+		inst.BIN_OP_ADD,
 	)
 }
 
@@ -161,7 +159,7 @@ func TestProcess_Sub(t *testing.T) {
 		numValue("-1"),
 		numValue("1"),
 		numValue("2"),
-		code.BIN_OP_SUB,
+		inst.BIN_OP_SUB,
 	)
 }
 
@@ -171,7 +169,7 @@ func TestProcess_Mul(t *testing.T) {
 		numValue("8"),
 		numValue("2"),
 		numValue("4"),
-		code.BIN_OP_MUL,
+		inst.BIN_OP_MUL,
 	)
 }
 
@@ -181,7 +179,7 @@ func TestProcess_Div(t *testing.T) {
 		numValue("4"),
 		numValue("12"),
 		numValue("3"),
-		code.BIN_OP_DIV,
+		inst.BIN_OP_DIV,
 	)
 }
 
@@ -191,7 +189,7 @@ func TestProcess_Rem(t *testing.T) {
 		numValue("2"),
 		numValue("5"),
 		numValue("3"),
-		code.BIN_OP_REM,
+		inst.BIN_OP_REM,
 	)
 }
 
@@ -201,21 +199,21 @@ func TestProcess_And(t *testing.T) {
 		value.Bool(false),
 		value.Bool(false),
 		value.Bool(false),
-		code.BIN_OP_AND,
+		inst.BIN_OP_AND,
 	)
 	// true && false
 	processBinOpTest(t,
 		value.Bool(false),
 		value.Bool(true),
 		value.Bool(false),
-		code.BIN_OP_AND,
+		inst.BIN_OP_AND,
 	)
 	// true && true
 	processBinOpTest(t,
 		value.Bool(true),
 		value.Bool(true),
 		value.Bool(true),
-		code.BIN_OP_AND,
+		inst.BIN_OP_AND,
 	)
 }
 
@@ -225,21 +223,21 @@ func TestProcess_Or(t *testing.T) {
 		value.Bool(false),
 		value.Bool(false),
 		value.Bool(false),
-		code.BIN_OP_OR,
+		inst.BIN_OP_OR,
 	)
 	// true || false
 	processBinOpTest(t,
 		value.Bool(true),
 		value.Bool(true),
 		value.Bool(false),
-		code.BIN_OP_OR,
+		inst.BIN_OP_OR,
 	)
 	// true || true
 	processBinOpTest(t,
 		value.Bool(true),
 		value.Bool(true),
 		value.Bool(true),
-		code.BIN_OP_OR,
+		inst.BIN_OP_OR,
 	)
 }
 
@@ -249,21 +247,21 @@ func TestProcess_Less(t *testing.T) {
 		value.Bool(true),
 		numValue("1"),
 		numValue("2"),
-		code.BIN_OP_LESS,
+		inst.BIN_OP_LESS,
 	)
 	// 2 < 2
 	processBinOpTest(t,
 		value.Bool(false),
 		numValue("2"),
 		numValue("2"),
-		code.BIN_OP_LESS,
+		inst.BIN_OP_LESS,
 	)
 	// 3 < 2
 	processBinOpTest(t,
 		value.Bool(false),
 		numValue("3"),
 		numValue("2"),
-		code.BIN_OP_LESS,
+		inst.BIN_OP_LESS,
 	)
 }
 
@@ -273,21 +271,21 @@ func TestProcess_More(t *testing.T) {
 		value.Bool(false),
 		numValue("1"),
 		numValue("2"),
-		code.BIN_OP_MORE,
+		inst.BIN_OP_MORE,
 	)
 	// 2 > 2
 	processBinOpTest(t,
 		value.Bool(false),
 		numValue("2"),
 		numValue("2"),
-		code.BIN_OP_MORE,
+		inst.BIN_OP_MORE,
 	)
 	// 3 > 2
 	processBinOpTest(t,
 		value.Bool(true),
 		numValue("3"),
 		numValue("2"),
-		code.BIN_OP_MORE,
+		inst.BIN_OP_MORE,
 	)
 }
 
@@ -297,21 +295,21 @@ func TestProcess_LessOrEqual(t *testing.T) {
 		value.Bool(true),
 		numValue("1"),
 		numValue("2"),
-		code.BIN_OP_LEQU,
+		inst.BIN_OP_LEQU,
 	)
 	// 2 <= 2
 	processBinOpTest(t,
 		value.Bool(true),
 		numValue("2"),
 		numValue("2"),
-		code.BIN_OP_LEQU,
+		inst.BIN_OP_LEQU,
 	)
 	// 3 <= 2
 	processBinOpTest(t,
 		value.Bool(false),
 		numValue("3"),
 		numValue("2"),
-		code.BIN_OP_LEQU,
+		inst.BIN_OP_LEQU,
 	)
 }
 
@@ -321,21 +319,21 @@ func TestProcess_MoreOrEqual(t *testing.T) {
 		value.Bool(false),
 		numValue("1"),
 		numValue("2"),
-		code.BIN_OP_MEQU,
+		inst.BIN_OP_MEQU,
 	)
 	// 2 >= 2
 	processBinOpTest(t,
 		value.Bool(true),
 		numValue("2"),
 		numValue("2"),
-		code.BIN_OP_MEQU,
+		inst.BIN_OP_MEQU,
 	)
 	// 3 >= 2
 	processBinOpTest(t,
 		value.Bool(true),
 		numValue("3"),
 		numValue("2"),
-		code.BIN_OP_MEQU,
+		inst.BIN_OP_MEQU,
 	)
 }
 
@@ -345,21 +343,21 @@ func TestProcess_Equal(t *testing.T) {
 		value.Bool(false),
 		numValue("1"),
 		numValue("2"),
-		code.BIN_OP_EQU,
+		inst.BIN_OP_EQU,
 	)
 	// 2 == 2
 	processBinOpTest(t,
 		value.Bool(true),
 		numValue("2"),
 		numValue("2"),
-		code.BIN_OP_EQU,
+		inst.BIN_OP_EQU,
 	)
 	// 2 == "apple"
 	processBinOpTest(t,
 		value.Bool(false),
 		numValue("2"),
 		value.Str("apple"),
-		code.BIN_OP_EQU,
+		inst.BIN_OP_EQU,
 	)
 }
 
@@ -369,20 +367,20 @@ func TestProcess_NotEqual(t *testing.T) {
 		value.Bool(true),
 		numValue("1"),
 		numValue("2"),
-		code.BIN_OP_NEQU,
+		inst.BIN_OP_NEQU,
 	)
 	// 2 != 2
 	processBinOpTest(t,
 		value.Bool(false),
 		numValue("2"),
 		numValue("2"),
-		code.BIN_OP_NEQU,
+		inst.BIN_OP_NEQU,
 	)
 	// 2 != "apple"
 	processBinOpTest(t,
 		value.Bool(true),
 		numValue("2"),
 		value.Str("apple"),
-		code.BIN_OP_NEQU,
+		inst.BIN_OP_NEQU,
 	)
 }

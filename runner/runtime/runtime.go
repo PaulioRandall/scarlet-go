@@ -3,8 +3,8 @@ package runtime
 import (
 	"errors"
 
-	"github.com/PaulioRandall/scarlet-go/token/inst"
-	"github.com/PaulioRandall/scarlet-go/token/value"
+	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
+	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
 // IdMap represents a mapping of declared identifiers with their current values.

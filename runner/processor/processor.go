@@ -1,9 +1,8 @@
 package processor
 
 import (
-	"github.com/PaulioRandall/scarlet-go/token/code"
-	"github.com/PaulioRandall/scarlet-go/token/inst"
-	"github.com/PaulioRandall/scarlet-go/token/value"
+	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
+	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
 // Runtime represents the source of instructions and handler for performing
@@ -85,9 +84,9 @@ func (p *Processor) Run() {
 // returned as true if an instruction specifically requests execution to halt.
 func (p *Processor) Process(in inst.Inst) (halt bool, e error) {
 	switch {
-	case in.Code == code.STACK_PUSH:
+	case in.Code == inst.STACK_PUSH:
 		p.Runtime.Push(in.Data)
-	case in.Code == code.SCOPE_BIND:
+	case in.Code == inst.SCOPE_BIND:
 		e = p.Runtime.Bind(in.Data.(value.Ident), p.Runtime.Pop())
 	case processNumOp(p, in):
 	default:
@@ -113,37 +112,37 @@ func processNumOp(p *Processor, in inst.Inst) bool {
 	}
 
 	switch in.Code {
-	case code.BIN_OP_ADD:
+	case inst.BIN_OP_ADD:
 		binNumOp(func(l, r *value.Num) { l.Number.Add(r.Number) })
-	case code.BIN_OP_SUB:
+	case inst.BIN_OP_SUB:
 		binNumOp(func(l, r *value.Num) { l.Number.Sub(r.Number) })
-	case code.BIN_OP_MUL:
+	case inst.BIN_OP_MUL:
 		binNumOp(func(l, r *value.Num) { l.Number.Mul(r.Number) })
-	case code.BIN_OP_DIV:
+	case inst.BIN_OP_DIV:
 		binNumOp(func(l, r *value.Num) { l.Number.Div(r.Number) })
-	case code.BIN_OP_REM:
+	case inst.BIN_OP_REM:
 		binNumOp(func(l, r *value.Num) { l.Number.Mod(r.Number) })
 
-	case code.BIN_OP_AND:
+	case inst.BIN_OP_AND:
 		l, r := p.Runtime.Pop().(value.Bool), p.Runtime.Pop().(value.Bool)
 		p.Runtime.Push(l && r)
-	case code.BIN_OP_OR:
+	case inst.BIN_OP_OR:
 		l, r := p.Runtime.Pop().(value.Bool), p.Runtime.Pop().(value.Bool)
 		p.Runtime.Push(l || r)
 
-	case code.BIN_OP_LESS:
+	case inst.BIN_OP_LESS:
 		binCmpOp(func(l, r *value.Num) bool { return l.Number.Less(r.Number) })
-	case code.BIN_OP_MORE:
+	case inst.BIN_OP_MORE:
 		binCmpOp(func(l, r *value.Num) bool { return l.Number.More(r.Number) })
-	case code.BIN_OP_LEQU:
+	case inst.BIN_OP_LEQU:
 		binCmpOp(func(l, r *value.Num) bool { return l.Number.LessOrEqual(r.Number) })
-	case code.BIN_OP_MEQU:
+	case inst.BIN_OP_MEQU:
 		binCmpOp(func(l, r *value.Num) bool { return l.Number.MoreOrEqual(r.Number) })
 
-	case code.BIN_OP_EQU:
+	case inst.BIN_OP_EQU:
 		r, l := p.Runtime.Pop(), p.Runtime.Pop()
 		p.Runtime.Push(value.Bool(l.Equal(r)))
-	case code.BIN_OP_NEQU:
+	case inst.BIN_OP_NEQU:
 		r, l := p.Runtime.Pop(), p.Runtime.Pop()
 		p.Runtime.Push(value.Bool(!l.Equal(r)))
 
