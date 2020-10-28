@@ -15,11 +15,75 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token/token"
 )
 
-type lex struct {
-	size int // In runes
-	tk   token.Token
+type (
+	// ParseToken is designed to be used in a recursice fashion. It returns a
+	// lexeme and another ParseToken function to obtain the subsequent lexeme.
+	// On the last lexeme the ParseToken will be nil. Parsing may also end if an
+	// error is returned.
+	ParseToken func() (lexeme.Lexeme, ParseToken, error)
+
+	lex struct {
+		size int // In runes
+		tk   token.Token
+	}
+)
+
+// ScanAll scans all lexemes within 'in' and returns them as an ordered slice.
+func ScanAll_new(in []rune) ([]lexeme.Lexeme, error) {
+
+	var (
+		r  []lexeme.Lexeme
+		l  lexeme.Lexeme
+		pt = New(in)
+		e  error
+	)
+
+	for pt != nil {
+		if l, pt, e = pt(); e != nil {
+			return nil, e
+		}
+		r = append(r, l)
+	}
+
+	return r, nil
 }
 
+// New returns a ParseToken function. Calling the function will return a lexeme
+// and another ParseToken function to obtain the subsequent lexeme. On the last
+// lexeme the ParseToken will be nil. Parsing may also end if an error is
+// returned.
+func New(in []rune) ParseToken {
+
+	r := &reader{
+		data:   in,
+		remain: len(in),
+	}
+
+	if r.more() {
+		return scan(r)
+	}
+	return nil
+}
+
+func scan(r *reader) ParseToken {
+	return func() (lexeme.Lexeme, ParseToken, error) {
+
+		l := &lex{}
+		if e := identifyLexeme(r, l); e != nil {
+			return lexeme.Lexeme{}, nil, e
+		}
+
+		snip, val := r.read(l.size)
+		tk := lexeme.Make(val, l.tk, snip)
+
+		if r.more() {
+			return tk, scan(r), nil
+		}
+		return tk, nil, nil
+	}
+}
+
+// @Retire
 // ScanAll converts the input 'in' into a Series of Lexemes (Tokens).
 // Redundant Tokens are not removed in the process so the result will be a
 // lossless representation of the original input 'in'.

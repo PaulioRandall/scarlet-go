@@ -5,21 +5,19 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/token/lexeme"
 	"github.com/PaulioRandall/scarlet-go/token/position"
-	"github.com/PaulioRandall/scarlet-go/token/series"
 	"github.com/PaulioRandall/scarlet-go/token/token"
 
-	"github.com/PaulioRandall/scarlet-go/token/tokentest"
 	"github.com/stretchr/testify/require"
 )
 
-func doTest(t *testing.T, in string, exp *series.Series) {
-	act, e := ScanAll([]rune(in))
+func doTest(t *testing.T, in string, exp []lexeme.Lexeme) {
+	act, e := ScanAll_new([]rune(in))
 	require.Nil(t, e, "%+v", e)
-	tokentest.RequireSeries(t, exp, act)
+	require.Equal(t, exp, act)
 }
 
 func doErrTest(t *testing.T, in string) {
-	_, e := ScanAll([]rune(in))
+	_, e := ScanAll_new([]rune(in))
 	require.NotNil(t, e, "Expected an error for input %q", in)
 }
 
@@ -28,192 +26,217 @@ func TestBadToken(t *testing.T) {
 }
 
 func TestNewline_1(t *testing.T) {
-	exp := tokentest.FeignSeries(
+	doTest(t, "\n", []lexeme.Lexeme{
 		lexeme.Make("\n", token.NEWLINE, position.Snippet{
-			End: position.UTF8Pos{
-				Offset: 1,
-				Line:   1,
-			},
+			End: position.UTF8Pos{Offset: 1, Line: 1},
 		}),
-	)
-	doTest(t, "\n", exp)
+	})
 }
 
 func TestNewline_2(t *testing.T) {
-	exp := tokentest.FeignSeries(
+	doTest(t, "\r\n", []lexeme.Lexeme{
 		lexeme.Make("\r\n", token.NEWLINE, position.Snippet{
-			End: position.UTF8Pos{
-				Offset: 2,
-				Line:   1,
-			},
+			End: position.UTF8Pos{Offset: 2, Line: 1},
 		}),
-	)
-	doTest(t, "\r\n", exp)
+	})
 }
 
 func TestSpace_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok(" ", token.SPACE))
-	doTest(t, " ", exp)
+	doTest(t, " ", []lexeme.Lexeme{
+		lexeme.MakeTok(" ", token.SPACE),
+	})
 }
 
 func TestSpace_2(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("\t\r\v\f ", token.SPACE))
-	doTest(t, "\t\r\v\f ", exp)
+	doTest(t, "\t\r\v\f ", []lexeme.Lexeme{
+		lexeme.MakeTok("\t\r\v\f ", token.SPACE),
+	})
 }
 
 func TestComment_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("# :)", token.COMMENT))
-	doTest(t, "# :)", exp)
+	doTest(t, "# :)", []lexeme.Lexeme{
+		lexeme.MakeTok("# :)", token.COMMENT),
+	})
 }
 
 func TestBool_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("true", token.TRUE))
-	doTest(t, "true", exp)
+	doTest(t, "true", []lexeme.Lexeme{
+		lexeme.MakeTok("true", token.TRUE),
+	})
 }
 
 func TestBool_2(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("false", token.FALSE))
-	doTest(t, "false", exp)
+	doTest(t, "false", []lexeme.Lexeme{
+		lexeme.MakeTok("false", token.FALSE),
+	})
 }
 
 func TestLoop_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("loop", token.LOOP))
-	doTest(t, "loop", exp)
+	doTest(t, "loop", []lexeme.Lexeme{
+		lexeme.MakeTok("loop", token.LOOP),
+	})
 }
 
 func TestIdent_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("abc", token.IDENT))
-	doTest(t, "abc", exp)
+	doTest(t, "abc", []lexeme.Lexeme{
+		lexeme.MakeTok("abc", token.IDENT),
+	})
 }
 
 func TestIdent_2(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("abc_xyz", token.IDENT))
-	doTest(t, "abc_xyz", exp)
+	doTest(t, "abc_xyz", []lexeme.Lexeme{
+		lexeme.MakeTok("abc_xyz", token.IDENT),
+	})
 }
 
 func TestTerminator_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok(";", token.TERMINATOR))
-	doTest(t, ";", exp)
+	doTest(t, ";", []lexeme.Lexeme{
+		lexeme.MakeTok(";", token.TERMINATOR),
+	})
 }
 
 func TestAssign_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok(":=", token.ASSIGN))
-	doTest(t, ":=", exp)
+	doTest(t, ":=", []lexeme.Lexeme{
+		lexeme.MakeTok(":=", token.ASSIGN),
+	})
 }
 
 func TestDelim_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok(",", token.DELIM))
-	doTest(t, ",", exp)
+	doTest(t, ",", []lexeme.Lexeme{
+		lexeme.MakeTok(",", token.DELIM),
+	})
 }
 
 func TestLeftParen_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("(", token.L_PAREN))
-	doTest(t, "(", exp)
+	doTest(t, "(", []lexeme.Lexeme{
+		lexeme.MakeTok("(", token.L_PAREN),
+	})
 }
 
 func TestRightParen_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok(")", token.R_PAREN))
-	doTest(t, ")", exp)
+	doTest(t, ")", []lexeme.Lexeme{
+		lexeme.MakeTok(")", token.R_PAREN),
+	})
 }
 
 func TestLeftSquare_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("[", token.L_SQUARE))
-	doTest(t, "[", exp)
+	doTest(t, "[", []lexeme.Lexeme{
+		lexeme.MakeTok("[", token.L_SQUARE),
+	})
 }
 
 func TestRightSquare_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("]", token.R_SQUARE))
-	doTest(t, "]", exp)
+	doTest(t, "]", []lexeme.Lexeme{
+		lexeme.MakeTok("]", token.R_SQUARE),
+	})
 }
 
 func TestLeftCurly_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("{", token.L_CURLY))
-	doTest(t, "{", exp)
+	doTest(t, "{", []lexeme.Lexeme{
+		lexeme.MakeTok("{", token.L_CURLY),
+	})
 }
 
 func TestRightCurly_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("}", token.R_CURLY))
-	doTest(t, "}", exp)
+	doTest(t, "}", []lexeme.Lexeme{
+		lexeme.MakeTok("}", token.R_CURLY),
+	})
 }
 
 func TestVoid_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("_", token.VOID))
-	doTest(t, "_", exp)
+	doTest(t, "_", []lexeme.Lexeme{
+		lexeme.MakeTok("_", token.VOID),
+	})
 }
 
 func TestAdd_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("+", token.ADD))
-	doTest(t, "+", exp)
+	doTest(t, "+", []lexeme.Lexeme{
+		lexeme.MakeTok("+", token.ADD),
+	})
 }
 
 func TestSub_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("-", token.SUB))
-	doTest(t, "-", exp)
+	doTest(t, "-", []lexeme.Lexeme{
+		lexeme.MakeTok("-", token.SUB),
+	})
 }
 
 func TestMul_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("*", token.MUL))
-	doTest(t, "*", exp)
+	doTest(t, "*", []lexeme.Lexeme{
+		lexeme.MakeTok("*", token.MUL),
+	})
 }
 
 func TestDiv_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("/", token.DIV))
-	doTest(t, "/", exp)
+	doTest(t, "/", []lexeme.Lexeme{
+		lexeme.MakeTok("/", token.DIV),
+	})
 }
 
 func TestRem_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("%", token.REM))
-	doTest(t, "%", exp)
+	doTest(t, "%", []lexeme.Lexeme{
+		lexeme.MakeTok("%", token.REM),
+	})
 }
 
 func TestAnd_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("&&", token.AND))
-	doTest(t, "&&", exp)
+	doTest(t, "&&", []lexeme.Lexeme{
+		lexeme.MakeTok("&&", token.AND),
+	})
 }
 
 func TestOr_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("||", token.OR))
-	doTest(t, "||", exp)
+	doTest(t, "||", []lexeme.Lexeme{
+		lexeme.MakeTok("||", token.OR),
+	})
 }
 
 func TestLessEqual_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("<=", token.LESS_EQUAL))
-	doTest(t, "<=", exp)
+	doTest(t, "<=", []lexeme.Lexeme{
+		lexeme.MakeTok("<=", token.LESS_EQUAL),
+	})
 }
 
 func TestLess_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("<", token.LESS))
-	doTest(t, "<", exp)
+	doTest(t, "<", []lexeme.Lexeme{
+		lexeme.MakeTok("<", token.LESS),
+	})
 }
 
 func TestMoreEqual_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok(">=", token.MORE_EQUAL))
-	doTest(t, ">=", exp)
+	doTest(t, ">=", []lexeme.Lexeme{
+		lexeme.MakeTok(">=", token.MORE_EQUAL),
+	})
 }
 
 func TestMore_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok(">", token.MORE))
-	doTest(t, ">", exp)
+	doTest(t, ">", []lexeme.Lexeme{
+		lexeme.MakeTok(">", token.MORE),
+	})
 }
 
 func TestEqual_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("==", token.EQUAL))
-	doTest(t, "==", exp)
+	doTest(t, "==", []lexeme.Lexeme{
+		lexeme.MakeTok("==", token.EQUAL),
+	})
 }
 
 func TestNotEqual_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("!=", token.NOT_EQUAL))
-	doTest(t, "!=", exp)
+	doTest(t, "!=", []lexeme.Lexeme{
+		lexeme.MakeTok("!=", token.NOT_EQUAL),
+	})
 }
 
 func TestSpell_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("@abc", token.SPELL))
-	doTest(t, "@abc", exp)
+	doTest(t, "@abc", []lexeme.Lexeme{
+		lexeme.MakeTok("@abc", token.SPELL),
+	})
 }
 
 func TestSpell_2(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("@a.b.c", token.SPELL))
-	doTest(t, "@a.b.c", exp)
+	doTest(t, "@a.b.c", []lexeme.Lexeme{
+		lexeme.MakeTok("@a.b.c", token.SPELL),
+	})
 }
 
 func TestSpell_3(t *testing.T) {
@@ -225,18 +248,21 @@ func TestSpell_4(t *testing.T) {
 }
 
 func TestString_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok(`""`, token.STRING))
-	doTest(t, `""`, exp)
+	doTest(t, `""`, []lexeme.Lexeme{
+		lexeme.MakeTok(`""`, token.STRING),
+	})
 }
 
 func TestString_2(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok(`"abc"`, token.STRING))
-	doTest(t, `"abc"`, exp)
+	doTest(t, `"abc"`, []lexeme.Lexeme{
+		lexeme.MakeTok(`"abc"`, token.STRING),
+	})
 }
 
 func TestString_3(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok(`"\""`, token.STRING))
-	doTest(t, `"\""`, exp)
+	doTest(t, `"\""`, []lexeme.Lexeme{
+		lexeme.MakeTok(`"\""`, token.STRING),
+	})
 }
 
 func TestString_4(t *testing.T) {
@@ -256,13 +282,15 @@ func TestString_7(t *testing.T) {
 }
 
 func TestNumber_1(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("123", token.NUMBER))
-	doTest(t, "123", exp)
+	doTest(t, "123", []lexeme.Lexeme{
+		lexeme.MakeTok("123", token.NUMBER),
+	})
 }
 
 func TestNumber_2(t *testing.T) {
-	exp := tokentest.FeignSeries(lexeme.MakeTok("123.456", token.NUMBER))
-	doTest(t, "123.456", exp)
+	doTest(t, "123.456", []lexeme.Lexeme{
+		lexeme.MakeTok("123.456", token.NUMBER),
+	})
 }
 
 func TestNumber_3(t *testing.T) {
@@ -285,7 +313,7 @@ func TestComprehensive_1(t *testing.T) {
 		return lexeme.Make(v, tk, snip)
 	}
 
-	exp := tokentest.FeignSeries(
+	exp := []lexeme.Lexeme{
 		genLex("x", token.IDENT),
 		genLex(" ", token.SPACE),
 		genLex(":=", token.ASSIGN),
@@ -303,7 +331,7 @@ func TestComprehensive_1(t *testing.T) {
 		genLex(" ", token.SPACE),
 		genLex("x", token.IDENT),
 		genLex(")", token.R_PAREN),
-	)
+	}
 
 	doTest(t, in, exp)
 }

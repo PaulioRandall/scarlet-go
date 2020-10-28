@@ -6,8 +6,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/token/value"
 )
 
-// TODO: Needs testing!
-
 // Runtime represents the source of instructions and handler for performing
 // context dependent instructions such as access to variables.
 type Runtime interface {

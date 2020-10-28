@@ -46,6 +46,6 @@ Precedence of operators from highest to lowest:
 2. `*`, `/`, `%`
 3. `+`, `-`
 4. `<`, `>`, `<=`, `>=`
-5. `==`. `!=`
+5. `==`, `!=`
 6. `&&`
 7. `||`
