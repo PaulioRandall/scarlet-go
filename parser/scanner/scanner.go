@@ -1,16 +1,14 @@
-// Scanner package is scans in Lexemes (Tokens) from a text source into a
-// Series. The scanner is will not sanitise any text in the process so the
-// resultant Series of Lexemes will be an exact representation of the input
-// source code including whitespace and other redundant Tokens. Pre-parsing
-// should be performed via the sanitiser module if the Tokens are heading for
-// compilation.
+// Scanner package scans Lexemes (Tokens) from a text source. The scanner will
+// not sanitise any text in the process so the resultant lexemes will be an
+// exact representation of the input including whitespace and other redundant
+// Tokens. Pre-parsing should be performed via the sanitiser package if the
+// Tokens are heading for compilation.
 package scanner
 
 import (
 	"unicode"
 
 	"github.com/PaulioRandall/scarlet-go/token/lexeme"
-	"github.com/PaulioRandall/scarlet-go/token/series"
 	"github.com/PaulioRandall/scarlet-go/token/symbol"
 	"github.com/PaulioRandall/scarlet-go/token/token"
 )
@@ -29,7 +27,7 @@ type (
 )
 
 // ScanAll scans all lexemes within 'in' and returns them as an ordered slice.
-func ScanAll_new(in []rune) ([]lexeme.Lexeme, error) {
+func ScanAll(in []rune) ([]lexeme.Lexeme, error) {
 
 	var (
 		r  []lexeme.Lexeme
@@ -81,32 +79,6 @@ func scan(r *reader) ParseToken {
 		}
 		return tk, nil, nil
 	}
-}
-
-// @Retire
-// ScanAll converts the input 'in' into a Series of Lexemes (Tokens).
-// Redundant Tokens are not removed in the process so the result will be a
-// lossless representation of the original input 'in'.
-func ScanAll(in []rune) (*series.Series, error) {
-
-	se := series.Make()
-	r := &reader{
-		data:   in,
-		remain: len(in),
-	}
-
-	for r.more() {
-		l := &lex{}
-		if e := identifyLexeme(r, l); e != nil {
-			return nil, e
-		}
-
-		snip, val := r.read(l.size)
-		tk := lexeme.Make(val, l.tk, snip)
-		se.Append(tk)
-	}
-
-	return se, nil
 }
 
 func identifyLexeme(r *reader, l *lex) error {

@@ -75,25 +75,11 @@ type Series struct {
 	mark
 }
 
-// Make returns a new empty Series.
-func Make() *Series {
+// New returns a new empty Series.
+func New() *Series {
 	return &Series{
 		list: list{},
 		mark: mark{},
-	}
-}
-
-func makeWith(nodes ...*node) *Series {
-	head, tail, size := chain(nodes...)
-	return &Series{
-		list: list{
-			size: size,
-			head: head,
-			tail: tail,
-		},
-		mark: mark{
-			next: head,
-		},
 	}
 }
 

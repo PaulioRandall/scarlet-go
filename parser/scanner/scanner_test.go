@@ -11,13 +11,13 @@ import (
 )
 
 func doTest(t *testing.T, in string, exp []lexeme.Lexeme) {
-	act, e := ScanAll_new([]rune(in))
+	act, e := ScanAll([]rune(in))
 	require.Nil(t, e, "%+v", e)
 	require.Equal(t, exp, act)
 }
 
 func doErrTest(t *testing.T, in string) {
-	_, e := ScanAll_new([]rune(in))
+	_, e := ScanAll([]rune(in))
 	require.NotNil(t, e, "Expected an error for input %q", in)
 }
 

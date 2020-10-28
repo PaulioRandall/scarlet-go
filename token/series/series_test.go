@@ -8,6 +8,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func testSeries(nodes ...*node) *Series {
+	head, tail, size := chain(nodes...)
+	return &Series{
+		list: list{
+			size: size,
+			head: head,
+			tail: tail,
+		},
+		mark: mark{
+			next: head,
+		},
+	}
+}
+
 func requireSeries(t *testing.T, s *Series, lexs ...lexeme.Lexeme) {
 	expHead, expTail, _ := chainLexemes(lexs...)
 	requireChain(t, expHead, s.head)
@@ -17,7 +31,7 @@ func requireSeries(t *testing.T, s *Series, lexs ...lexeme.Lexeme) {
 func TestSeries_Prepend(t *testing.T) {
 
 	l1, l2, l3, l4 := dummyLexemes()
-	s := Make()
+	s := New()
 
 	s.Prepend(l4)
 	requireSeries(t, s, l4)
@@ -35,7 +49,7 @@ func TestSeries_Prepend(t *testing.T) {
 func TestSeries_Append(t *testing.T) {
 
 	l1, l2, l3, l4 := dummyLexemes()
-	s := Make()
+	s := New()
 
 	s.Append(l1)
 	requireSeries(t, s, l1)
@@ -55,14 +69,14 @@ func TestSeries_InsertAfter(t *testing.T) {
 	l1, l2, l3, _ := dummyLexemes()
 	n1, _, n3, _ := dummyNodes()
 
-	s := makeWith(n1)
+	s := testSeries(n1)
 	s.Next()
 	s.InsertAfter(l2)
 	requireSeries(t, s, l1, l2)
 
 	unlinkAll(n1, n3)
 
-	s = makeWith(n1, n3)
+	s = testSeries(n1, n3)
 	s.Next()
 	s.InsertAfter(l2)
 	requireSeries(t, s, l1, l2, l3)
@@ -73,14 +87,14 @@ func TestSeries_InsertBefore(t *testing.T) {
 	l1, l2, l3, _ := dummyLexemes()
 	n1, n2, n3, _ := dummyNodes()
 
-	s := makeWith(n2)
+	s := testSeries(n2)
 	s.Next()
 	s.InsertBefore(l1)
 	requireSeries(t, s, l1, l2)
 
 	unlinkAll(n1, n2, n3)
 
-	s = makeWith(n1, n3)
+	s = testSeries(n1, n3)
 	s.Next()
 	s.Next()
 	s.InsertBefore(l2)
@@ -92,7 +106,7 @@ func TestSeries_Remove(t *testing.T) {
 	l1, l2, l3, _ := dummyLexemes()
 	n1, n2, n3, _ := dummyNodes()
 
-	s := makeWith(n1, n2, n3)
+	s := testSeries(n1, n2, n3)
 	s.Next()
 	act := s.Remove()
 	require.Equal(t, l1, act)
@@ -100,7 +114,7 @@ func TestSeries_Remove(t *testing.T) {
 
 	unlinkAll(n1, n2, n3)
 
-	s = makeWith(n1, n2, n3)
+	s = testSeries(n1, n2, n3)
 	s.Next()
 	s.Next()
 	act = s.Remove()
@@ -112,7 +126,7 @@ func TestSeries_JumpToNext(t *testing.T) {
 
 	l1, _, l3, _ := dummyLexemes()
 	n1, n2, n3, n4 := dummyNodes()
-	s := makeWith(n1, n2, n3, n4)
+	s := testSeries(n1, n2, n3, n4)
 
 	s.JumpToNext(func(sn Snapshot) bool {
 		return sn.Get() == l1
@@ -135,7 +149,7 @@ func TestSeries_JumpToPrev(t *testing.T) {
 
 	_, l2, _, l4 := dummyLexemes()
 	n1, n2, n3, n4 := dummyNodes()
-	s := makeWith(n1, n2, n3, n4)
+	s := testSeries(n1, n2, n3, n4)
 	s.JumpToEnd()
 
 	s.JumpToPrev(func(sn Snapshot) bool {

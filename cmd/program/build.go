@@ -4,6 +4,8 @@ import (
 	"io/ioutil"
 
 	"github.com/PaulioRandall/scarlet-go/token/inst"
+	"github.com/PaulioRandall/scarlet-go/token/lexeme"
+	"github.com/PaulioRandall/scarlet-go/token/series"
 
 	"github.com/PaulioRandall/scarlet-go/parser/compiler"
 	"github.com/PaulioRandall/scarlet-go/parser/parser"
@@ -20,8 +22,7 @@ func Build(c BuildCmd) ([]inst.Inst, error) {
 		return nil, e
 	}
 
-	runes := []rune(string(src))
-	s, e := scanner.ScanAll(runes)
+	s, e := scanAll(src)
 	if e != nil {
 		return nil, e
 	}
@@ -40,6 +41,26 @@ func Build(c BuildCmd) ([]inst.Inst, error) {
 	}
 
 	return joinInst(insSlice), nil
+}
+
+func scanAll(src []byte) (*series.Series, error) {
+
+	var (
+		in = []rune(string(src))
+		s  = series.New()
+		l  lexeme.Lexeme
+		pt = scanner.New(in)
+		e  error
+	)
+
+	for pt != nil {
+		if l, pt, e = pt(); e != nil {
+			return nil, e
+		}
+		s.Append(l)
+	}
+
+	return s, nil
 }
 
 // joinInst will need to be replaced with more a sohpisticated process once
