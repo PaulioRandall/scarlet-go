@@ -24,6 +24,23 @@ type (
 	}
 )
 
+// New returns a ParseToken function. Calling the function will return a lexeme
+// and another ParseToken function to obtain the subsequent token. On the last
+// lexeme the ParseToken will be nil. Parsing may also end if an error is
+// returned.
+func New(in []rune) ParseToken {
+
+	r := &reader{
+		data:   in,
+		remain: len(in),
+	}
+
+	if r.more() {
+		return scan(r)
+	}
+	return nil
+}
+
 // ScanAll scans all lexemes within 'in' and returns them as an ordered slice.
 func ScanAll(in []rune) ([]token.Lexeme, error) {
 
@@ -42,23 +59,6 @@ func ScanAll(in []rune) ([]token.Lexeme, error) {
 	}
 
 	return r, nil
-}
-
-// New returns a ParseToken function. Calling the function will return a lexeme
-// and another ParseToken function to obtain the subsequent token. On the last
-// lexeme the ParseToken will be nil. Parsing may also end if an error is
-// returned.
-func New(in []rune) ParseToken {
-
-	r := &reader{
-		data:   in,
-		remain: len(in),
-	}
-
-	if r.more() {
-		return scan(r)
-	}
-	return nil
 }
 
 func scan(r *reader) ParseToken {
