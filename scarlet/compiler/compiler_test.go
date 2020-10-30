@@ -168,3 +168,27 @@ func TestCompile_BinaryExpr_3(t *testing.T) {
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireInsts(t, exp, act)
 }
+
+func TestCompile_BinaryExpr_4(t *testing.T) {
+
+	// x := y + z
+	in := tree.SingleAssign{
+		Left: tree.Ident{Val: "x"},
+		Right: tree.BinaryExpr{
+			Left:  tree.Ident{Val: "y"},
+			Op:    token.ADD,
+			Right: tree.Ident{Val: "z"},
+		},
+	}
+
+	exp := []inst.Inst{
+		inst.Inst{Code: inst.STACK_PUSH, Data: value.Ident("y")},
+		inst.Inst{Code: inst.STACK_PUSH, Data: value.Ident("z")},
+		inst.Inst{Code: inst.BIN_OP_ADD},
+		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
+	}
+
+	act, e := Compile(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireInsts(t, exp, act)
+}

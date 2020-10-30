@@ -26,7 +26,7 @@ func Compile(t tree.Node) ([]inst.Inst, error) {
 		return singleAssign(v), nil
 	case tree.MultiAssign:
 		return multiAssign(v), nil
-	case tree.Literal, tree.BinaryExpr:
+	case tree.Ident, tree.Literal, tree.BinaryExpr:
 		return nil, errSnip(t.Pos(), "Result of expression ignored")
 	default:
 		return nil, errSnip(t.Pos(), "Unknown node type")
@@ -68,6 +68,13 @@ func expression(n tree.Expr) []inst.Inst {
 			Code: inst.STACK_PUSH,
 			Data: createLitData(v),
 		}}
+
+	case tree.Ident:
+		return []inst.Inst{inst.Inst{
+			Code: inst.STACK_PUSH,
+			Data: value.Ident(v.Val),
+		}}
+
 	case tree.BinaryExpr:
 		return binaryExpression(v)
 	default:
