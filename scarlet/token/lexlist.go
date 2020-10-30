@@ -36,6 +36,14 @@ func (itr *LexItr) Less() bool {
 	return itr.Idx > 0
 }
 
+// Get returns th current lexeme referenced by the iterators pointer.
+func (itr *LexItr) Get() Lexeme {
+	if itr.Idx < 0 {
+		panic("Beyond start of iterator, call LexItr.Next first")
+	}
+	return itr.Items[itr.Idx]
+}
+
 // Next returns the next lexeme in the iterator incrementing the iterators
 // index accordingly. If the end of the iterator has already been reached then
 // a panic insues.
@@ -64,7 +72,7 @@ func (itr *LexItr) Peek() Lexeme {
 	if !itr.More() {
 		return Lexeme{}
 	}
-	return itr.Items[itr.Idx]
+	return itr.Items[itr.Idx+1]
 }
 
 // Window returns the lexeme indicated by the iterators pointer along with the
@@ -79,4 +87,13 @@ func (itr *LexItr) Window() (prev, curr, next Lexeme) {
 		next = itr.Items[itr.Idx+1]
 	}
 	return
+}
+
+// End returns the UTF8Pos in the last item.
+func (itr *LexItr) End() UTF8Pos {
+	size := len(itr.Items)
+	if size == 0 {
+		return UTF8Pos{}
+	}
+	return itr.Items[size-1].End
 }
