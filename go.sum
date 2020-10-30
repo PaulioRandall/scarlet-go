@@ -1,5 +1,5 @@
-github.com/PaulioRandall/go-cookies v0.1.0 h1:j3XyaShugiawBeELWWhscPxHMSEg4bMhZQ44l5fnBkE=
-github.com/PaulioRandall/go-cookies v0.1.0/go.mod h1:dbZVgdIUECrNlfIkEApfQUk3d5wFNxB7LgdaIrg/eeQ=
+github.com/PaulioRandall/go-cookies v0.1.1 h1:Ka5WjVOK5wFi5Um1Rl2QM0dZs/r74qPCO+n47hdRiyM=
+github.com/PaulioRandall/go-cookies v0.1.1/go.mod h1:dbZVgdIUECrNlfIkEApfQUk3d5wFNxB7LgdaIrg/eeQ=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
