@@ -1,101 +1,98 @@
 package sanitiser
 
-/*
 import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
-	"github.com/PaulioRandall/scarlet-go/todo/series"
-	"github.com/PaulioRandall/scarlet-go/todo/tokentest"
+
+	"github.com/stretchr/testify/require"
 )
 
-func doTest(t *testing.T, in, exp *series.Series) {
-	SanitiseAll(in)
-	in.JumpToStart()
-	tokentest.RequireSeries(t, exp, in)
-}
-
 func TestRedundant_1(t *testing.T) {
-	in := tokentest.FeignSeries(token.MakeTok(" ", token.SPACE))
-	exp := tokentest.FeignSeries()
-	doTest(t, in, exp)
+	in := []token.Lexeme{
+		token.MakeTok(" ", token.SPACE),
+	}
+	exp := []token.Lexeme{}
+	require.Equal(t, exp, Sanitise(in))
 }
 
 func TestRedundant_2(t *testing.T) {
-	in := tokentest.FeignSeries(token.MakeTok("# Scarlet", token.COMMENT))
-	exp := tokentest.FeignSeries()
-	doTest(t, in, exp)
+	in := []token.Lexeme{
+		token.MakeTok("# Scarlet", token.COMMENT),
+	}
+	exp := []token.Lexeme{}
+	require.Equal(t, exp, Sanitise(in))
 }
 
 func TestLeadingTerminators_1(t *testing.T) {
-	in := tokentest.FeignSeries(
+	in := []token.Lexeme{
 		token.MakeTok("\n", token.TERMINATOR),
 		token.MakeTok(";", token.TERMINATOR),
-	)
-	exp := tokentest.FeignSeries()
-	doTest(t, in, exp)
+	}
+	exp := []token.Lexeme{}
+	require.Equal(t, exp, Sanitise(in))
 }
 
 func TestSuccessiveTerminators_1(t *testing.T) {
-	in := tokentest.FeignSeries(
+	in := []token.Lexeme{
 		token.MakeTok("x", token.IDENT),
 		token.MakeTok("\n", token.TERMINATOR),
 		token.MakeTok(";", token.TERMINATOR),
-	)
-	exp := tokentest.FeignSeries(
+	}
+	exp := []token.Lexeme{
 		token.MakeTok("x", token.IDENT),
 		token.MakeTok("\n", token.TERMINATOR),
-	)
-	doTest(t, in, exp)
+	}
+	require.Equal(t, exp, Sanitise(in))
 }
 
 func TestNewlineAfterOpener_1(t *testing.T) {
-	in := tokentest.FeignSeries(
+	in := []token.Lexeme{
 		token.MakeTok("(", token.L_PAREN),
 		token.MakeTok("\n", token.NEWLINE),
-	)
-	exp := tokentest.FeignSeries(
+	}
+	exp := []token.Lexeme{
 		token.MakeTok("(", token.L_PAREN),
-	)
-	doTest(t, in, exp)
+	}
+	require.Equal(t, exp, Sanitise(in))
 }
 
 func TestNewlineAfterDelim_1(t *testing.T) {
-	in := tokentest.FeignSeries(
+	in := []token.Lexeme{
 		token.MakeTok(",", token.DELIM),
 		token.MakeTok("\n", token.NEWLINE),
-	)
-	exp := tokentest.FeignSeries(
+	}
+	exp := []token.Lexeme{
 		token.MakeTok(",", token.DELIM),
-	)
-	doTest(t, in, exp)
+	}
+	require.Equal(t, exp, Sanitise(in))
 }
 
 func TestDelimBeforeRParen_1(t *testing.T) {
-	in := tokentest.FeignSeries(
+	in := []token.Lexeme{
 		token.MakeTok(",", token.DELIM),
 		token.MakeTok(")", token.R_PAREN),
-	)
-	exp := tokentest.FeignSeries(
+	}
+	exp := []token.Lexeme{
 		token.MakeTok(")", token.R_PAREN),
-	)
-	doTest(t, in, exp)
+	}
+	require.Equal(t, exp, Sanitise(in))
 }
 
 func TestTerminatorBeforeRCurly_1(t *testing.T) {
-	in := tokentest.FeignSeries(
+	in := []token.Lexeme{
 		token.MakeTok("\n", token.NEWLINE),
 		token.MakeTok("}", token.R_CURLY),
-	)
-	exp := tokentest.FeignSeries(
+	}
+	exp := []token.Lexeme{
 		token.MakeTok("}", token.R_CURLY),
-	)
-	doTest(t, in, exp)
+	}
+	require.Equal(t, exp, Sanitise(in))
 }
 
 func TestFull_1(t *testing.T) {
 
-	in := tokentest.FeignSeries(
+	in := []token.Lexeme{
 		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("\n", token.NEWLINE),
 		token.MakeTok(" ", token.SPACE),
@@ -124,10 +121,10 @@ func TestFull_1(t *testing.T) {
 		token.MakeTok(")", token.R_PAREN),
 		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("\n", token.NEWLINE),
-	)
+	}
 
 	// @Println(1,1)
-	exp := tokentest.FeignSeries(
+	exp := []token.Lexeme{
 		token.MakeTok("@Println", token.SPELL),
 		token.MakeTok("(", token.L_PAREN),
 		token.MakeTok("1", token.NUMBER),
@@ -135,9 +132,9 @@ func TestFull_1(t *testing.T) {
 		token.MakeTok("1", token.NUMBER),
 		token.MakeTok(")", token.R_PAREN),
 		token.MakeTok("\n", token.NEWLINE),
-	)
+	}
 
-	doTest(t, in, exp)
+	require.Equal(t, exp, Sanitise(in))
 }
 
 func TestFull_2(t *testing.T) {
@@ -146,7 +143,7 @@ func TestFull_2(t *testing.T) {
 	//   "abc"
 	//   "xyz"
 	// }
-	in := tokentest.FeignSeries(
+	in := []token.Lexeme{
 		token.MakeTok("[", token.L_SQUARE),
 		token.MakeTok("true", token.TRUE),
 		token.MakeTok("]", token.R_SQUARE),
@@ -160,11 +157,11 @@ func TestFull_2(t *testing.T) {
 		token.MakeTok(`"xyz"`, token.STRING),
 		token.MakeTok("\n", token.NEWLINE),
 		token.MakeTok("}", token.R_CURLY),
-	)
+	}
 
 	// [true] {"abc"
 	// "xyz"}
-	exp := tokentest.FeignSeries(
+	exp := []token.Lexeme{
 		token.MakeTok("[", token.L_SQUARE),
 		token.MakeTok("true", token.TRUE),
 		token.MakeTok("]", token.R_SQUARE),
@@ -173,8 +170,7 @@ func TestFull_2(t *testing.T) {
 		token.MakeTok("\n", token.NEWLINE),
 		token.MakeTok(`"xyz"`, token.STRING),
 		token.MakeTok("}", token.R_CURLY),
-	)
+	}
 
-	doTest(t, in, exp)
+	require.Equal(t, exp, Sanitise(in))
 }
-*/
