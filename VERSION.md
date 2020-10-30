@@ -1,5 +1,21 @@
 # Versions
 
+## v0.2.0
+
+```
+x := y
+x := y * (3 + z)
+```
+
+### API Additions
+
+- Identifier as a term: `x := y`, `x * (y - 1)`
+
+### Notes & Other Changes
+
+- Rewrote large portions of the code base to be simpler and easier to modify.
+- Reorganised and amalgamated packages.
+
 ## v0.1.0
 
 ```
@@ -8,7 +24,7 @@ x, y, z := true, 1, "Scarlet"
 x       := (1 + 2) * 3
 ```
 
-### New
+### API Additions
 
 - Assignments
 	- Single:             `x := 1`
@@ -36,9 +52,9 @@ x       := (1 + 2) * 3
 - Parameters:           `(1)`, `(1 + 2) * 3`
 - Complex expressions:  `(1 + 2 * (3 - 1) == 5) < 2 * 2 * 2 `
 
-## Notes
+### Notes & Other Changes
 
-- Numbers have arbitrary precision
+- Numbers have arbitrary precision.
 
 Precedence of operators from highest to lowest:
 

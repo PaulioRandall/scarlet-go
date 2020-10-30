@@ -1,12 +1,6 @@
 # Scribbles
 
-## v0.2.0
-
-### New
-
-- Identifiers within expressions: `x := y`, `x * (y - 1)`
-
-## Potential Features
+## [v0.3.0+] Potential Features
 
 ```
 # Get the program arguments
