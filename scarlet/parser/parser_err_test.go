@@ -4,14 +4,12 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
-	"github.com/PaulioRandall/scarlet-go/todo/tokentest"
 
 	"github.com/stretchr/testify/require"
 )
 
 func doErrTest(t *testing.T, in ...token.Lexeme) {
-	tokenItr := tokentest.FeignSeries(in...)
-	_, e := ParseAll(tokenItr)
+	_, e := ParseAll(in)
 	require.NotNil(t, e, "Expected parse error")
 }
 

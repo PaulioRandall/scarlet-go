@@ -7,38 +7,39 @@ import (
 )
 
 // Parse parses a series of Tokens into a series of parse trees.
-func ParseAll(itr TokenItr) ([]tree.Node, error) {
+func ParseAll(tks []token.Lexeme) ([]tree.Node, error) {
+	itr := token.NewLexItr(tks)
 	ctx := newCtx(itr, nil)
 	return statements(ctx)
 }
 
-func newCtx(itr TokenItr, parent *context) *context {
+func newCtx(itr *token.LexItr, parent *context) *context {
 	return &context{
-		TokenItr: itr,
-		parent:   parent,
+		LexItr: itr,
+		parent: parent,
 	}
 }
 
 // Parses: {<assign> | <expr>}
 func statements(ctx *context) ([]tree.Node, error) {
 
-	r := []tree.Node{}
+	nodes := []tree.Node{}
 
 	for ctx.More() {
 		n, e := statement(ctx)
 		if e != nil {
 			return nil, e
 		}
-		r = append(r, n)
+		nodes = append(nodes, n)
 		expectTerminator(ctx)
 	}
 
-	return r, nil
+	return nodes, nil
 }
 
 // Parses: <assign> | <expr>
 func statement(ctx *context) (n tree.Node, e error) {
-	switch l := ctx.LookAhead(); {
+	switch l := ctx.Peek(); {
 	case l.Token == token.IDENT:
 		ctx.Next()
 		n, e = identLeads(ctx)
@@ -58,7 +59,7 @@ func statement(ctx *context) (n tree.Node, e error) {
 // a statement.
 func identLeads(ctx *context) (tree.Node, error) {
 
-	l := ctx.LookAhead()
+	l := ctx.Peek()
 
 	switch l.Token {
 	case token.ASSIGN:
@@ -138,12 +139,12 @@ func multiAssignment(ctx *context) (tree.Node, error) {
 func multiAssignLeft(ctx *context) ([]tree.Assignee, token.Snippet, error) {
 
 	var (
-		zero token.Snippet
-		snip token.Snippet
-		l    token.Lexeme
-		r    []tree.Assignee
-		id   tree.Ident
-		e    error
+		zero  token.Snippet
+		snip  token.Snippet
+		l     token.Lexeme
+		nodes []tree.Assignee
+		id    tree.Ident
+		e     error
 	)
 
 	l = ctx.Get()
@@ -152,57 +153,56 @@ func multiAssignLeft(ctx *context) ([]tree.Assignee, token.Snippet, error) {
 	if id, e = expectIdent(l); e != nil {
 		return nil, zero, e
 	}
-	r = append(r, id)
+	nodes = append(nodes, id)
 
-	for ctx.LookAhead().Token == token.DELIM {
+	for ctx.Peek().Token == token.DELIM {
 		ctx.Next()
 		l = ctx.Next()
 
 		if id, e = expectIdent(l); e != nil {
 			return nil, zero, e
 		}
-		r = append(r, id)
+		nodes = append(nodes, id)
 	}
 
 	snip = token.SuperSnippet(snip, l.Snippet)
-	return r, snip, nil
+	return nodes, snip, nil
 }
 
 // Parses: <expr> {DELIM <expr>}
 func multiAssignRight(ctx *context) ([]tree.Expr, token.Snippet, error) {
 
 	var (
-		zero token.Snippet
-		snip token.Snippet
-		r    []tree.Expr
-		ex   tree.Expr
-		e    error
+		zero  token.Snippet
+		snip  token.Snippet
+		nodes []tree.Expr
+		ex    tree.Expr
+		e     error
 	)
 
 	if ex, e = expectExpr(ctx); e != nil {
 		return nil, zero, e
 	}
-	r = append(r, ex)
+	nodes = append(nodes, ex)
 	snip = ex.Pos()
 
-	for ctx.LookAhead().Token == token.DELIM {
+	for ctx.Peek().Token == token.DELIM {
 		ctx.Next()
 
 		if ex, e = expectExpr(ctx); e != nil {
 			return nil, zero, e
 		}
-		r = append(r, ex)
+		nodes = append(nodes, ex)
 	}
 
 	snip = token.SuperSnippet(snip, ex.Pos())
-	return r, snip, nil
+	return nodes, snip, nil
 }
 
 // Parses: <terminator>
 func expectTerminator(ctx *context) error {
 	if !ctx.More() {
-		return errPos(ctx.Snippet().End,
-			"Expected terminator but reached EOF")
+		return errPos(ctx.End(), "Expected terminator but reached EOF")
 	}
 	if tk := ctx.Next(); !tk.IsTerminator() {
 		return errSnip(tk.Snippet, "Expected expression but reached EOF")
@@ -214,8 +214,7 @@ func expectTerminator(ctx *context) error {
 func expectLiteral(ctx *context) (tree.Expr, error) {
 
 	if !ctx.More() {
-		return nil, errPos(ctx.Snippet().End,
-			"Expected expression but reached EOF")
+		return nil, errPos(ctx.End(), "Expected expression but reached EOF")
 	}
 
 	l := ctx.Next()
@@ -250,7 +249,7 @@ func expectExprRight(ctx *context, leftOpPrec int) (tree.Expr, error) {
 	var left tree.Expr
 	var e error
 
-	if ctx.LookAhead().Token == token.L_PAREN {
+	if ctx.Peek().Token == token.L_PAREN {
 		left, e = expectExprParen(ctx)
 	} else {
 		left, e = expectTerm(ctx)
@@ -267,7 +266,7 @@ func expectExprRight(ctx *context, leftOpPrec int) (tree.Expr, error) {
 func expectExprParen(ctx *context) (tree.Expr, error) {
 
 	if !ctx.More() {
-		return nil, errPos(ctx.Snippet().End, "Missing left parenthesis")
+		return nil, errPos(ctx.End(), "Missing left parenthesis")
 	}
 
 	if l := ctx.Next(); l.Token != token.L_PAREN {
@@ -281,7 +280,7 @@ func expectExprParen(ctx *context) (tree.Expr, error) {
 	}
 
 	if !ctx.More() {
-		return nil, errPos(ctx.Snippet().End, "Missing right parenthesis")
+		return nil, errPos(ctx.End(), "Missing right parenthesis")
 	}
 
 	if l := ctx.Next(); l.Token != token.R_PAREN {
@@ -295,11 +294,11 @@ func expectExprParen(ctx *context) (tree.Expr, error) {
 // Parses: {<operator> <expr>}
 func maybeBinaryExpr(ctx *context, left tree.Expr, leftOpPrec int) (tree.Expr, error) {
 
-	if !ctx.LookAhead().IsBinaryOperator() {
+	if !ctx.Peek().IsBinaryOperator() {
 		return left, nil
 	}
 
-	if leftOpPrec >= ctx.LookAhead().Precedence() {
+	if leftOpPrec >= ctx.Peek().Precedence() {
 		return left, nil
 	}
 

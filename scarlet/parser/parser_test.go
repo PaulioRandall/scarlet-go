@@ -3,8 +3,6 @@ package parser
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/todo/tokentest"
-
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value/number"
@@ -50,8 +48,7 @@ func TestParse_SingleAssign(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -93,8 +90,7 @@ func TestParse_MultiAssign(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -121,8 +117,7 @@ func TestParse_BinaryExpr_1(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -149,8 +144,7 @@ func TestParse_BinaryExpr_2(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -190,8 +184,7 @@ func TestParse_BinaryExpr_3(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -231,8 +224,7 @@ func TestParse_BinaryExpr_4(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -317,8 +309,7 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -357,8 +348,7 @@ func TestParse_Assign_BinaryExpr_1(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -376,8 +366,7 @@ func TestParse_ParenExpr_1(t *testing.T) {
 		tree.NumLit{Snippet: in[1].Snippet, Val: number.New("1")},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -406,8 +395,7 @@ func TestParse_ParenExpr_2(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -438,8 +426,7 @@ func TestParse_ParenExpr_3(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
@@ -499,8 +486,7 @@ func TestParse_ParenExpr_4(t *testing.T) {
 		},
 	}
 
-	tokenItr := tokentest.FeignSeries(in...)
-	act, e := ParseAll(tokenItr)
+	act, e := ParseAll(in)
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }

@@ -3,14 +3,11 @@ package program
 import (
 	"io/ioutil"
 
-	"github.com/PaulioRandall/scarlet-go/todo/series"
-
 	"github.com/PaulioRandall/scarlet-go/scarlet/compiler"
 	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
 	"github.com/PaulioRandall/scarlet-go/scarlet/parser"
 	"github.com/PaulioRandall/scarlet-go/scarlet/sanitiser"
 	"github.com/PaulioRandall/scarlet-go/scarlet/scanner"
-	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 )
 
 // Build performs a simple workflow that converts a scroll into a set of
@@ -29,9 +26,7 @@ func Build(c BuildCmd) ([]inst.Inst, error) {
 	}
 
 	tks = sanitiser.Sanitise(tks)
-	s := sliceToSeries(tks)
-
-	trees, e := parser.ParseAll(s)
+	trees, e := parser.ParseAll(tks)
 	if e != nil {
 		return nil, e
 	}
@@ -52,13 +47,4 @@ func joinInst(insSlice [][]inst.Inst) []inst.Inst {
 		r = append(r, in...)
 	}
 	return r
-}
-
-func sliceToSeries(tks []token.Lexeme) *series.Series {
-	s := series.New()
-	for _, v := range tks {
-		s.Append(v)
-	}
-	s.JumpToStart()
-	return s
 }
