@@ -27,7 +27,7 @@ func requireNodes(t *testing.T, exp, act []tree.Node) {
 	}
 }
 
-func TestParse_SingleAssign(t *testing.T) {
+func TestParse_SingleAssign_1(t *testing.T) {
 
 	// x := 1
 	in := positionLexemes(
@@ -45,6 +45,32 @@ func TestParse_SingleAssign(t *testing.T) {
 			Left:  tree.Ident{Snippet: in[0].Snippet, Val: "x"},
 			Infix: in[1].Snippet,
 			Right: tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+		},
+	}
+
+	act, e := ParseAll(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
+func TestParse_SingleAssign_2(t *testing.T) {
+
+	// x := 1
+	in := positionLexemes(
+		token.MakeTok("x", token.IDENT),
+		token.MakeTok(":=", token.ASSIGN),
+		token.MakeTok("y", token.IDENT),
+	)
+
+	exp := []tree.Node{
+		tree.SingleAssign{
+			Snippet: token.Snippet{
+				UTF8Pos: in[0].Snippet.UTF8Pos,
+				End:     in[2].Snippet.End,
+			},
+			Left:  tree.Ident{Snippet: in[0].Snippet, Val: "x"},
+			Infix: in[1].Snippet,
+			Right: tree.Ident{Snippet: in[2].Snippet, Val: "y"},
 		},
 	}
 
@@ -88,6 +114,22 @@ func TestParse_MultiAssign(t *testing.T) {
 				tree.StrLit{Snippet: in[10].Snippet, Val: `"text"`},
 			},
 		},
+	}
+
+	act, e := ParseAll(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
+func TestParse_IdentExpr_1(t *testing.T) {
+
+	// x
+	in := positionLexemes(
+		token.MakeTok("x", token.IDENT),
+	)
+
+	exp := []tree.Node{
+		tree.Ident{Snippet: in[0].Snippet, Val: "x"},
 	}
 
 	act, e := ParseAll(in)
@@ -433,7 +475,7 @@ func TestParse_ParenExpr_3(t *testing.T) {
 
 func TestParse_ParenExpr_4(t *testing.T) {
 
-	// ((1 + 2) * 3) - 4
+	// ((1 + 2) * x) - y
 	in := positionLexemes(
 		token.MakeTok("(", token.L_PAREN),
 		token.MakeTok("(", token.L_PAREN),
@@ -442,10 +484,10 @@ func TestParse_ParenExpr_4(t *testing.T) {
 		token.MakeTok("2", token.NUMBER),
 		token.MakeTok(")", token.R_PAREN),
 		token.MakeTok("*", token.MUL),
-		token.MakeTok("3", token.NUMBER),
+		token.MakeTok("x", token.IDENT),
 		token.MakeTok(")", token.R_PAREN),
 		token.MakeTok("-", token.SUB),
-		token.MakeTok("4", token.NUMBER),
+		token.MakeTok("y", token.IDENT),
 	)
 
 	// (1 + 2)
@@ -460,7 +502,7 @@ func TestParse_ParenExpr_4(t *testing.T) {
 		Right: tree.NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
 	}
 
-	// ((1 + 2) * 3)
+	// ((1 + 2) * x)
 	mul := tree.BinaryExpr{
 		Snippet: token.Snippet{
 			UTF8Pos: in[2].Snippet.UTF8Pos,
@@ -469,11 +511,11 @@ func TestParse_ParenExpr_4(t *testing.T) {
 		Left:  add,
 		Op:    in[6].Token,
 		OpPos: in[6].Snippet,
-		Right: tree.NumLit{Snippet: in[7].Snippet, Val: number.New("3")},
+		Right: tree.Ident{Snippet: in[7].Snippet, Val: "x"},
 	}
 
 	exp := []tree.Node{
-		// ((1 + 2) * 3) - 4
+		// ((1 + 2) * x) - y
 		tree.BinaryExpr{
 			Snippet: token.Snippet{
 				UTF8Pos: in[2].Snippet.UTF8Pos,
@@ -482,7 +524,7 @@ func TestParse_ParenExpr_4(t *testing.T) {
 			Left:  mul,
 			Op:    in[9].Token,
 			OpPos: in[9].Snippet,
-			Right: tree.NumLit{Snippet: in[10].Snippet, Val: number.New("4")},
+			Right: tree.Ident{Snippet: in[10].Snippet, Val: "y"},
 		},
 	}
 

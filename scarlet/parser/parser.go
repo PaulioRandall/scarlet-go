@@ -41,7 +41,6 @@ func statements(ctx *context) ([]tree.Node, error) {
 func statement(ctx *context) (n tree.Node, e error) {
 	switch l := ctx.Peek(); {
 	case l.Token == token.IDENT:
-		ctx.Next()
 		n, e = identLeads(ctx)
 
 	case l.IsLiteral(), l.Token == token.L_PAREN:
@@ -55,22 +54,19 @@ func statement(ctx *context) (n tree.Node, e error) {
 	return
 }
 
-// identLeads must only be used when the next Token is an IDENT and it begins
-// a statement.
+// Assumes: IDENT ...
 func identLeads(ctx *context) (tree.Node, error) {
-
-	l := ctx.Peek()
-
-	switch l.Token {
+	switch ctx.Next(); ctx.Peek().Token {
 	case token.ASSIGN:
 		return singleAssign(ctx)
 
 	case token.DELIM:
 		return multiAssign(ctx)
-	}
 
-	return nil, errSnip(l.Snippet,
-		"%s does not follow an identifier in any known statement", l.Token.String())
+	default:
+		ctx.Back()
+		return expectExpr(ctx)
+	}
 }
 
 // Assumes: IDENT ASSIGN ...

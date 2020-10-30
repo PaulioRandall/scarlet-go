@@ -40,7 +40,7 @@ func (r *reader) contains(start int, s string) bool {
 	dataSize := len(r.data)
 	if start > dataSize {
 		e := fmt.Errorf(
-			"Start index i out of range, given %d, want <%d", start, dataSize)
+			"Start index out of range, given %d, want <%d", start, dataSize)
 		panic(e)
 	}
 

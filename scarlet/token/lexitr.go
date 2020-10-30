@@ -32,6 +32,14 @@ func (itr *LexItr) Get() Lexeme {
 	return itr.Items[itr.Idx]
 }
 
+// Back decrements the iterators index if the index is not referencing the point
+// before the first item.
+func (itr *LexItr) Back() {
+	if itr.Idx != -1 {
+		itr.Idx--
+	}
+}
+
 // Next returns the next lexeme in the iterator incrementing the iterators
 // index accordingly. If the end of the iterator has already been reached then
 // a panic insues.

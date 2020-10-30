@@ -13,14 +13,6 @@ func doErrTest(t *testing.T, in ...token.Lexeme) {
 	require.NotNil(t, e, "Expected parse error")
 }
 
-func TestParse_FailAssign_1(t *testing.T) {
-	// x 1
-	doErrTest(t,
-		token.MakeTok("x", token.IDENT),
-		token.MakeTok("1", token.NUMBER),
-	)
-}
-
 func TestParse_FailAssign_2(t *testing.T) {
 	// x :=
 	doErrTest(t,
@@ -34,14 +26,6 @@ func TestParse_FailAssign_3(t *testing.T) {
 	doErrTest(t,
 		token.MakeTok(":=", token.ASSIGN),
 		token.MakeTok("1", token.NUMBER),
-	)
-}
-
-func TestParse_FailAssign_4(t *testing.T) {
-	// x x
-	doErrTest(t,
-		token.MakeTok("x", token.IDENT),
-		token.MakeTok("x", token.IDENT),
 	)
 }
 
