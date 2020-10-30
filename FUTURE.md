@@ -1,6 +1,12 @@
 # Scribbles
 
-## [v0.3.0+] Potential Features
+## [v0.3.0]
+
+- Spells
+
+## [v0.4.0+] Potential Features
+
+- Manual/documentation
 
 ```
 # Get the program arguments
