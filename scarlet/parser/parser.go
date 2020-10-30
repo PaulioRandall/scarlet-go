@@ -1,4 +1,4 @@
-// Package parser converts a stream of Tokens into a parser tree...
+// Package parser converts a stream of Tokens into ASTs.
 package parser
 
 import (
@@ -6,7 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
 )
 
-// Parse parses a series of Tokens into a series of parse trees.
+// Parse parses a slice of Tokens into a slice of abstract syntax trees.
 func ParseAll(tks []token.Lexeme) ([]tree.Node, error) {
 	itr := token.NewLexItr(tks)
 	ctx := newCtx(itr, nil)

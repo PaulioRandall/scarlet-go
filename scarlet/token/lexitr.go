@@ -1,17 +1,5 @@
 package token
 
-// LexList represents a list of Lexemes. There is no way to remove items,
-// instead a new LexList should be created accomodate any list changes.
-type LexList []Lexeme
-
-// LexListFrom returns a new LexList initialised with the supplied items. The
-// initial capacity will be input size.
-func LexListFrom(lexs ...Lexeme) LexList {
-	items := make([]Lexeme, 0, len(lexs))
-	items = append(items, lexs...)
-	return LexList(items)
-}
-
 // LexItr represents an iterator of Lexemes.
 type LexItr struct {
 	Items []Lexeme
@@ -76,13 +64,15 @@ func (itr *LexItr) Peek() Lexeme {
 }
 
 // Window returns the lexeme indicated by the iterators pointer along with the
-// lexemes before and after it. If the next or previous do not exist then the
-// zero Lexeme is returned in their place.
+// lexemes before and after it. If any index is out of bounds then the zero
+// Lexeme is returned in their place.
 func (itr *LexItr) Window() (prev, curr, next Lexeme) {
 	if itr.Less() {
 		prev = itr.Items[itr.Idx-1]
 	}
-	curr = itr.Items[itr.Idx]
+	if itr.Idx >= 0 {
+		curr = itr.Items[itr.Idx]
+	}
 	if itr.More() {
 		next = itr.Items[itr.Idx+1]
 	}

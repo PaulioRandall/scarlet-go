@@ -7,7 +7,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
-// CompileAll converts the each parse tree into a slice of statements and
+// CompileAll converts the each AST into a slice of statements and
 // aggregates them all into a slice of slices.
 func CompileAll(trees []tree.Node) (r [][]inst.Inst, e error) {
 	r = make([][]inst.Inst, len(trees))
@@ -19,7 +19,7 @@ func CompileAll(trees []tree.Node) (r [][]inst.Inst, e error) {
 	return r, nil
 }
 
-// Compile converts the parse tree 't' into a slice of instructions.
+// Compile converts the AST 't' into a slice of instructions.
 func Compile(t tree.Node) ([]inst.Inst, error) {
 	switch v := t.(type) {
 	case tree.SingleAssign:
