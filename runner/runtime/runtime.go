@@ -46,6 +46,15 @@ func (env *Environment) Fetch(id value.Ident) (value.Value, error) {
 	return nil, errors.New("Identifier " + string(id) + " not found in scope")
 }
 
+// Fetch implements processor.Runtime.FetchPush.
+func (env *Environment) FetchPush(id value.Ident) error {
+	if v, ok := env.Scope[id]; ok {
+		env.Push(v)
+		return nil
+	}
+	return errors.New("Identifier " + string(id) + " not found in scope")
+}
+
 // Bind implements processor.Runtime.Bind.
 func (env *Environment) Bind(id value.Ident, v value.Value) error {
 	env.Scope[id] = v

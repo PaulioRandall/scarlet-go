@@ -71,7 +71,7 @@ func expression(n tree.Expr) []inst.Inst {
 
 	case tree.Ident:
 		return []inst.Inst{inst.Inst{
-			Code: inst.STACK_PUSH,
+			Code: inst.FETCH_PUSH,
 			Data: value.Ident(v.Val),
 		}}
 

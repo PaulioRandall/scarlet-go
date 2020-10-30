@@ -13,6 +13,10 @@ const (
 	// Pop a value off the top of the value stack and discard it.
 	STACK_POP
 
+	// Fetches a specified value from the stack and pushes it on to the top of the
+	// value stack.
+	FETCH_PUSH
+
 	// Pop a value off the top of the value stack and bind it to an identifier
 	// within the current scope.
 	SCOPE_BIND

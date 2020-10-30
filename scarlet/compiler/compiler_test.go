@@ -182,8 +182,8 @@ func TestCompile_BinaryExpr_4(t *testing.T) {
 	}
 
 	exp := []inst.Inst{
-		inst.Inst{Code: inst.STACK_PUSH, Data: value.Ident("y")},
-		inst.Inst{Code: inst.STACK_PUSH, Data: value.Ident("z")},
+		inst.Inst{Code: inst.FETCH_PUSH, Data: value.Ident("y")},
+		inst.Inst{Code: inst.FETCH_PUSH, Data: value.Ident("z")},
 		inst.Inst{Code: inst.BIN_OP_ADD},
 		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
 	}

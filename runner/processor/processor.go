@@ -23,6 +23,10 @@ type Runtime interface {
 	// Fetch returns the value associated with the specified identifier.
 	Fetch(value.Ident) (value.Value, error)
 
+	// Fetch pushes the value associated with the specified identifier on to the
+	// value stack.
+	FetchPush(value.Ident) error
+
 	// Bind sets the value of a variable overwriting any existing value.
 	Bind(value.Ident, value.Value) error
 }
@@ -84,11 +88,17 @@ func (p *Processor) Run() {
 // returned as true if an instruction specifically requests execution to halt.
 func (p *Processor) Process(in inst.Inst) (halt bool, e error) {
 	switch {
+	case in.Code == inst.FETCH_PUSH:
+		e = p.Runtime.FetchPush(in.Data.(value.Ident))
+
 	case in.Code == inst.STACK_PUSH:
 		p.Runtime.Push(in.Data)
+
 	case in.Code == inst.SCOPE_BIND:
 		e = p.Runtime.Bind(in.Data.(value.Ident), p.Runtime.Pop())
+
 	case processNumOp(p, in):
+
 	default:
 		panic("Unhandled instruction code: " + in.Code.String())
 	}

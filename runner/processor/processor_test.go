@@ -41,6 +41,14 @@ func (rt *testRuntime) Fetch(id value.Ident) (value.Value, error) {
 	return nil, errors.New("Identifier " + string(id) + " not found in scope")
 }
 
+func (rt *testRuntime) FetchPush(id value.Ident) error {
+	if v, ok := rt.ids[id]; ok {
+		rt.Push(v)
+		return nil
+	}
+	return errors.New("Identifier " + string(id) + " not found in scope")
+}
+
 func (rt *testRuntime) Bind(id value.Ident, v value.Value) error {
 	rt.ids[id] = v
 	return nil
@@ -50,7 +58,7 @@ func numValue(n string) value.Num {
 	return value.Num{Number: number.New(n)}
 }
 
-func TestProcess_Assign(t *testing.T) {
+func TestProcess_Assign_1(t *testing.T) {
 
 	// x := 1
 	rt := &testRuntime{
@@ -72,6 +80,35 @@ func TestProcess_Assign(t *testing.T) {
 
 	require.False(t, p.Stopped)
 	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
+	require.Equal(t, expIds, rt.ids)
+	require.Equal(t, expStk, rt.Stack)
+}
+
+func TestProcess_Assign_2(t *testing.T) {
+
+	// x := y
+	rt := &testRuntime{
+		ins: []inst.Inst{
+			inst.Inst{Code: inst.FETCH_PUSH, Data: value.Ident("y")},
+			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
+		},
+		ids: map[value.Ident]value.Value{
+			value.Ident("y"): numValue("1"),
+		},
+	}
+
+	expIds := map[value.Ident]value.Value{
+		value.Ident("y"): numValue("1"),
+		value.Ident("x"): numValue("1"),
+	}
+
+	expStk := value.Stack{}
+
+	p := New(rt)
+	p.Run()
+
+	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
+	require.False(t, p.Stopped)
 	require.Equal(t, expIds, rt.ids)
 	require.Equal(t, expStk, rt.Stack)
 }
