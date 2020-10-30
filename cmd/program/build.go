@@ -17,18 +17,19 @@ import (
 // lower level instructions.
 func Build(c BuildCmd) ([]inst.Inst, error) {
 
-	src, e := ioutil.ReadFile(c.Scroll)
+	b, e := ioutil.ReadFile(c.Scroll)
 	if e != nil {
 		return nil, e
 	}
 
-	s, e := scanAll(src)
+	src := []rune(string(b))
+	tks, e := scanner.ScanAll(src)
 	if e != nil {
 		return nil, e
 	}
 
-	sanitiser.SanitiseAll(s)
-	s.JumpToStart()
+	tks = sanitiser.Sanitise(tks)
+	s := sliceToSeries(tks)
 
 	trees, e := parser.ParseAll(s)
 	if e != nil {
@@ -43,26 +44,6 @@ func Build(c BuildCmd) ([]inst.Inst, error) {
 	return joinInst(insSlice), nil
 }
 
-func scanAll(src []byte) (*series.Series, error) {
-
-	var (
-		in = []rune(string(src))
-		s  = series.New()
-		l  token.Lexeme
-		pt = scanner.New(in)
-		e  error
-	)
-
-	for pt != nil {
-		if l, pt, e = pt(); e != nil {
-			return nil, e
-		}
-		s.Append(l)
-	}
-
-	return s, nil
-}
-
 // joinInst will need to be replaced with more a sohpisticated process once
 // functions arrive.
 func joinInst(insSlice [][]inst.Inst) []inst.Inst {
@@ -71,4 +52,13 @@ func joinInst(insSlice [][]inst.Inst) []inst.Inst {
 		r = append(r, in...)
 	}
 	return r
+}
+
+func sliceToSeries(tks []token.Lexeme) *series.Series {
+	s := series.New()
+	for _, v := range tks {
+		s.Append(v)
+	}
+	s.JumpToStart()
+	return s
 }
