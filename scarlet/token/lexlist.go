@@ -18,6 +18,14 @@ type LexItr struct {
 	Idx   int
 }
 
+// NewLexItr returns a new initialised LexItr.
+func NewLexItr(items []Lexeme) *LexItr {
+	return &LexItr{
+		Items: items,
+		Idx:   -1,
+	}
+}
+
 // More returns true if the end of iterator has not been reached yet.
 func (itr *LexItr) More() bool {
 	return itr.Idx+1 < len(itr.Items)
@@ -47,6 +55,15 @@ func (itr *LexItr) Prev() Lexeme {
 		panic("Start of iterator reached, check using LexItr.Less first")
 	}
 	itr.Idx--
+	return itr.Items[itr.Idx]
+}
+
+// Peek returns the next lexeme in the iterator or the zero lexeme if the end
+// of the iterator has been reached.
+func (itr *LexItr) Peek() Lexeme {
+	if !itr.More() {
+		return Lexeme{}
+	}
 	return itr.Items[itr.Idx]
 }
 
