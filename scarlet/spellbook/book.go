@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/cmd/runtime"
+	"github.com/PaulioRandall/scarlet-go/scarlet/processor"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
@@ -14,7 +14,7 @@ type (
 	Book map[string]Spell
 
 	// Spell represents a builtin function.
-	Spell func(book Book, env runtime.Environment, args []value.Value)
+	Spell func(book Book, env processor.Runtime, args []value.Value)
 )
 
 // Register stores a named spell within the Book returning an erro if the name
