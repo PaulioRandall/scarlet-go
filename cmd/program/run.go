@@ -45,20 +45,16 @@ func Run(c RunCmd) (ExeResult, error) {
 	}
 
 	env := runtime.New(program)
-	p := processor.New(env)
+	p := processor.New(env, env)
 	p.Run()
 
 	printEnv(env) // Temp
 
-	if p.Err != nil {
-		return exeResult{err: p.Err, exitCode: 1}, nil
-	}
-
-	return exeResult{exitCode: 0}, nil
+	return exeResult{err: env.GetErr(), exitCode: env.GetExitCode()}, nil
 }
 
 // Temp
-func printEnv(env *runtime.Environment) {
+func printEnv(env *runtime.RuntimeEnv) {
 	fmt.Println("\nVariables created:")
 	for id, v := range env.Scope {
 		fmt.Println("\t" + id.String() + " " + v.String())

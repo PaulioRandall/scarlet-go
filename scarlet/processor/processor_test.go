@@ -1,7 +1,6 @@
 package processor
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
@@ -11,49 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type testRuntime struct {
-	value.Stack
-	started bool
-	counter int
-	ins     []inst.Inst
-	ids     map[value.Ident]value.Value
-}
-
-func (rt *testRuntime) Next() (inst.Inst, bool) {
-
-	if rt.started {
-		rt.counter++
-	} else {
-		rt.started = true
-	}
-
-	if rt.counter >= len(rt.ins) {
-		return inst.Inst{}, false
-	}
-
-	return rt.ins[rt.counter], true
-}
-
-func (rt *testRuntime) Fetch(id value.Ident) (value.Value, error) {
-	if v, ok := rt.ids[id]; ok {
-		return v, nil
-	}
-	return nil, errors.New("Identifier " + string(id) + " not found in scope")
-}
-
-func (rt *testRuntime) FetchPush(id value.Ident) error {
-	if v, ok := rt.ids[id]; ok {
-		rt.Push(v)
-		return nil
-	}
-	return errors.New("Identifier " + string(id) + " not found in scope")
-}
-
-func (rt *testRuntime) Bind(id value.Ident, v value.Value) error {
-	rt.ids[id] = v
-	return nil
-}
-
 func numValue(n string) value.Num {
 	return value.Num{Number: number.New(n)}
 }
@@ -61,7 +17,7 @@ func numValue(n string) value.Num {
 func TestProcess_Assign_1(t *testing.T) {
 
 	// x := 1
-	rt := &testRuntime{
+	env := &runtimeEnv{
 		ins: []inst.Inst{
 			inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
 			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
@@ -75,19 +31,21 @@ func TestProcess_Assign_1(t *testing.T) {
 
 	expStk := value.Stack{}
 
-	p := New(rt)
+	p := New(env, env)
 	p.Run()
 
-	require.False(t, p.Stopped)
-	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
-	require.Equal(t, expIds, rt.ids)
-	require.Equal(t, expStk, rt.Stack)
+	require.Nil(t, env.err, "ERROR: %+v", env.err)
+	require.True(t, env.exitFlag)
+	require.Equal(t, 0, env.exitCode)
+	require.False(t, p.Halted)
+	require.Equal(t, expIds, env.ids)
+	require.Equal(t, expStk, env.Stack)
 }
 
 func TestProcess_Assign_2(t *testing.T) {
 
 	// x := y
-	rt := &testRuntime{
+	env := &runtimeEnv{
 		ins: []inst.Inst{
 			inst.Inst{Code: inst.FETCH_PUSH, Data: value.Ident("y")},
 			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
@@ -104,19 +62,21 @@ func TestProcess_Assign_2(t *testing.T) {
 
 	expStk := value.Stack{}
 
-	p := New(rt)
+	p := New(env, env)
 	p.Run()
 
-	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
-	require.False(t, p.Stopped)
-	require.Equal(t, expIds, rt.ids)
-	require.Equal(t, expStk, rt.Stack)
+	require.Nil(t, env.err, "ERROR: %+v", env.err)
+	require.True(t, env.exitFlag)
+	require.Equal(t, 0, env.exitCode)
+	require.False(t, p.Halted)
+	require.Equal(t, expIds, env.ids)
+	require.Equal(t, expStk, env.Stack)
 }
 
 func TestProcess_MultiAssign(t *testing.T) {
 
 	// x, y, z := true, 1, text
-	rt := &testRuntime{
+	env := &runtimeEnv{
 		ins: []inst.Inst{
 			inst.Inst{Code: inst.STACK_PUSH, Data: value.Bool(true)},
 			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
@@ -136,20 +96,22 @@ func TestProcess_MultiAssign(t *testing.T) {
 
 	expStk := value.Stack{}
 
-	p := New(rt)
+	p := New(env, env)
 	p.Run()
 
-	require.False(t, p.Stopped)
-	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
-	require.Equal(t, expIds, rt.ids)
-	require.Equal(t, expStk, rt.Stack)
+	require.Nil(t, env.err, "ERROR: %+v", env.err)
+	require.True(t, env.exitFlag)
+	require.Equal(t, 0, env.exitCode)
+	require.False(t, p.Halted)
+	require.Equal(t, expIds, env.ids)
+	require.Equal(t, expStk, env.Stack)
 }
 
 func processBinOpTest(t *testing.T,
 	exp, left, right value.Value,
 	opCode inst.Code) {
 
-	rt := &testRuntime{
+	env := &runtimeEnv{
 		ins: []inst.Inst{
 			inst.Inst{Code: inst.STACK_PUSH, Data: left},
 			inst.Inst{Code: inst.STACK_PUSH, Data: right},
@@ -163,18 +125,20 @@ func processBinOpTest(t *testing.T,
 	expStk := value.Stack{}
 	expStk.Push(exp)
 
-	p := New(rt)
+	p := New(env, env)
 	p.Run()
 
-	require.False(t, p.Stopped)
-	require.Nil(t, p.Err, "ERROR: %+v", p.Err)
-	require.Equal(t, expIds, rt.ids)
+	require.Nil(t, env.err, "ERROR: %+v", env.err)
+	require.True(t, env.exitFlag)
+	require.Equal(t, 0, env.exitCode)
+	require.False(t, p.Halted)
+	require.Equal(t, expIds, env.ids)
 
 	// Implementations of number.Number may not return the correct results when
 	// using == or != so number.Equal should be used to check equality.
-	require.Equal(t, expStk.Size(), rt.Stack.Size())
+	require.Equal(t, expStk.Size(), env.Stack.Size())
 	want := expStk.Top()
-	have := rt.Stack.Top()
+	have := env.Stack.Top()
 	if !have.Equal(want) {
 		require.Equal(t, want, have)
 	}

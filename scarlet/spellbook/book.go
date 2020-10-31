@@ -5,16 +5,47 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/PaulioRandall/scarlet-go/scarlet/processor"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
 type (
-	// Book represents a spellbook that stores collections of named spells.
+	// Book represents a collections of named spells.
 	Book map[string]Spell
 
-	// Spell represents a builtin function.
-	Spell func(book Book, env processor.Runtime, args []value.Value)
+	// Spell represents a builtin function... because to the readers and writers
+	// of scrolls, it's indistinguishable from magic.
+	Spell func(book Book, env Runtime, args []value.Value)
+
+	// Runtime is a handler for performing memory related and context dependent
+	// instructions such as access to scope variables and storing exit and error
+	// information for the processor. It's a subset of the Runtime used by the
+	// Processor that only exposes appropriate functionality for spells.
+	Runtime interface {
+
+		// Bind sets the value of a variable overwriting any existing value.
+		Bind(value.Ident, value.Value)
+
+		// Fetch returns the value associated with the specified identifier.
+		Fetch(value.Ident) value.Value
+
+		// Fail sets the error and exit status a non-recoverable error occurs
+		// during execution.
+		Fail(int, error)
+
+		// Exit causes the program to exit with the specified exit code.
+		Exit(int)
+
+		// GetErr returns the error if set else returns nil.
+		GetErr() error
+
+		// GetExitCode returns the currently set exit code. Only meaningful if the
+		// exit flag has been set.
+		GetExitCode() int
+
+		// GetExitFlag returns true if the program should stop execution after
+		// finishing any instruction currently being executed.
+		GetExitFlag() bool
+	}
 )
 
 // Register stores a named spell within the Book returning an erro if the name

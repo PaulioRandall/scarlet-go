@@ -10,18 +10,23 @@ import (
 // IdMap represents a mapping of declared identifiers with their current values.
 type IdMap map[value.Ident]value.Value
 
-// Environment represents a Runtime Environment for a specific program.
-type Environment struct {
-	value.Stack
+// RuntimeEnv represents a Runtime and an Environment for a specific program.
+type RuntimeEnv struct {
+	// processor.Program
 	Counter int
 	Program []inst.Inst
 	Size    int
-	Scope   IdMap
+	// processor.Runtime
+	value.Stack
+	Scope    IdMap
+	exitFlag bool
+	exitCode int
+	err      error
 }
 
-// New creates and returns a new Environment for a specific program.
-func New(program []inst.Inst) *Environment {
-	return &Environment{
+// New creates and returns a new RuntimeEnv for a specific program.
+func New(program []inst.Inst) *RuntimeEnv {
+	return &RuntimeEnv{
 		Counter: -1,
 		Program: program,
 		Size:    len(program),
@@ -30,7 +35,7 @@ func New(program []inst.Inst) *Environment {
 }
 
 // Next implements processor.Runtime.Next.
-func (env *Environment) Next() (inst.Inst, bool) {
+func (env *RuntimeEnv) Next() (inst.Inst, bool) {
 	env.Counter++
 	if env.Counter >= env.Size {
 		return inst.Inst{}, false
@@ -39,24 +44,52 @@ func (env *Environment) Next() (inst.Inst, bool) {
 }
 
 // Fetch implements processor.Runtime.Fetch.
-func (env *Environment) Fetch(id value.Ident) (value.Value, error) {
+func (env *RuntimeEnv) Fetch(id value.Ident) value.Value {
 	if v, ok := env.Scope[id]; ok {
-		return v, nil
+		return v
 	}
-	return nil, errors.New("Identifier " + string(id) + " not found in scope")
+	env.Fail(1, errors.New("Identifier "+string(id)+" not found in scope"))
+	return nil
 }
 
 // Fetch implements processor.Runtime.FetchPush.
-func (env *Environment) FetchPush(id value.Ident) error {
+func (env *RuntimeEnv) FetchPush(id value.Ident) {
 	if v, ok := env.Scope[id]; ok {
 		env.Push(v)
-		return nil
+		return
 	}
-	return errors.New("Identifier " + string(id) + " not found in scope")
+	env.Fail(1, errors.New("Identifier "+string(id)+" not found in scope"))
 }
 
 // Bind implements processor.Runtime.Bind.
-func (env *Environment) Bind(id value.Ident, v value.Value) error {
+func (env *RuntimeEnv) Bind(id value.Ident, v value.Value) {
 	env.Scope[id] = v
-	return nil
+}
+
+// Fail implements processor.Runtime.Fail.
+func (env *RuntimeEnv) Fail(exitCode int, e error) {
+	env.exitCode = exitCode
+	env.err = e
+	env.exitFlag = true
+}
+
+// Exit implements processor.Runtime.Exit.
+func (env *RuntimeEnv) Exit(exitCode int) {
+	env.exitCode = exitCode
+	env.exitFlag = true
+}
+
+// GetErr implements processor.Runtime.Exit.
+func (env *RuntimeEnv) GetErr() error {
+	return env.err
+}
+
+// GetExitCode implements processor.Runtime.GetExitCode.
+func (env *RuntimeEnv) GetExitCode() int {
+	return env.exitCode
+}
+
+// GetExitFlag implements processor.Runtime.GetExitFlag.
+func (env *RuntimeEnv) GetExitFlag() bool {
+	return env.exitFlag
 }
