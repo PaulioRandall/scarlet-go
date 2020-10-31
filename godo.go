@@ -22,8 +22,8 @@ var (
 	help       Show usage
 	clean      Remove build files
 	build      Build -> format -> vet
-	test       Build -> format -> vet -> test
-	run        Build -> format -> vet -> test -> run`
+	test       Build -> format -> test -> vet
+	run        Build -> format -> test -> vet -> run`
 )
 
 var (
@@ -85,6 +85,8 @@ func main() {
 		quick.UsageErr(USAGE, "Unknown command argument %q", cmd)
 	}
 
-	fmt.Printf("\nExit: %d\n", code)
+	if code != 0 {
+		fmt.Printf("\nExit: %d\n", code)
+	}
 	os.Exit(code)
 }
