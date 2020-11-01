@@ -18,7 +18,7 @@ type (
 	Book map[string]Inscription
 
 	// Spell represents a builtin function.
-	Spell func(book Book, env Runtime, args []value.Value)
+	Spell func(book Book, env Runtime, args []value.Value) []value.Value
 
 	// Inscription represents a spell inscribed within a spell book.
 	Inscription struct {
