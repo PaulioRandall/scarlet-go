@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
+	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
@@ -15,6 +16,7 @@ type runtimeEnv struct {
 	// Runtime
 	value.Stack
 	ids      map[value.Ident]value.Value
+	book     spell.Book
 	exitFlag bool
 	exitCode int
 	err      error
@@ -49,6 +51,10 @@ func (rt *runtimeEnv) FetchPush(id value.Ident) {
 		return
 	}
 	rt.Fail(1, errors.New("Identifier "+string(id)+" not found in scope"))
+}
+
+func (rt *runtimeEnv) Spellbook() spell.Book {
+	return rt.book
 }
 
 func (rt *runtimeEnv) Bind(id value.Ident, v value.Value) {

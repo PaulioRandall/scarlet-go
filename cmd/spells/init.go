@@ -1,18 +1,18 @@
 package spells
 
 import (
-	"github.com/PaulioRandall/scarlet-go/scarlet/spellbook"
+	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 )
 
 // NewBook returns a new spell book inscribed with all spells.
-func NewBook() spellbook.Book {
+func NewBook() spell.Book {
 
 	const (
-		NO_ARGS  = spellbook.NO_ARGS
-		VAR_ARGS = spellbook.VAR_ARGS
+		NO_ARGS  = spell.NO_ARGS
+		VAR_ARGS = spell.VAR_ARGS
 	)
 
-	b := spellbook.Book{}
+	b := spell.Book{}
 
 	b.Inscribe("Exit", 1, NO_ARGS, Exit)
 	b.Inscribe("Print", VAR_ARGS, NO_ARGS, Print)

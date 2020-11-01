@@ -2,6 +2,7 @@ package processor
 
 import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
+	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
@@ -14,6 +15,9 @@ type Runtime interface {
 
 	// Pop a value off the top of the value stack,
 	Pop() value.Value
+
+	// Spellbook returns the book containing the spells available during runtime.
+	Spellbook() spell.Book
 
 	// Bind sets the value of a variable overwriting any existing value.
 	Bind(value.Ident, value.Value)

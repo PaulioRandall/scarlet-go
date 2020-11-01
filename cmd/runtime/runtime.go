@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
+	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
@@ -18,10 +19,11 @@ type RuntimeEnv struct {
 	Size    int
 	// processor.Runtime
 	value.Stack
-	Scope    IdMap
-	exitFlag bool
-	exitCode int
-	err      error
+	Scope     IdMap
+	spellbook spell.Book
+	exitFlag  bool
+	exitCode  int
+	err       error
 }
 
 // New creates and returns a new RuntimeEnv for a specific program.
@@ -59,6 +61,11 @@ func (env *RuntimeEnv) FetchPush(id value.Ident) {
 		return
 	}
 	env.Fail(1, errors.New("Identifier "+string(id)+" not found in scope"))
+}
+
+// Spellbook implements processor.Runtime.Spellbook.
+func (env *RuntimeEnv) Spellbook() spell.Book {
+	return env.spellbook
 }
 
 // Bind implements processor.Runtime.Bind.

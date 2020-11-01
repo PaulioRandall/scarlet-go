@@ -1,4 +1,4 @@
-package spellbook
+package spell
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ type (
 	Book map[string]Inscription
 
 	// Spell represents a builtin function.
-	Spell func(book Book, env Runtime, args []value.Value) []value.Value
+	Spell func(env Runtime, args []value.Value) []value.Value
 
 	// Inscription represents a spell inscribed within a spell book.
 	Inscription struct {
@@ -33,6 +33,9 @@ type (
 	// information for the processor. It's a subset of the Runtime used by the
 	// Processor that only exposes appropriate functionality for spells.
 	Runtime interface {
+
+		// Spellbook returns the book containing all spells available.
+		Spellbook() Book
 
 		// Bind sets the value of a variable overwriting any existing value.
 		Bind(value.Ident, value.Value)
