@@ -46,6 +46,9 @@ func statement(ctx *context) (n tree.Node, e error) {
 	case l.IsLiteral(), l.Token == token.L_PAREN:
 		n, e = expectExpr(ctx)
 
+	case l.Token == token.SPELL:
+		n, e = spellCall(ctx)
+
 	default:
 		e = errSnip(l.Snippet,
 			"%s does not lead any known statement", l.Token.String())
@@ -193,4 +196,23 @@ func multiAssignRight(ctx *context) ([]tree.Expr, token.Snippet, error) {
 
 	snip = token.SuperSnippet(snip, ex.Pos())
 	return nodes, snip, nil
+}
+
+// Assumes SPELL ...
+// Parses: SPELL L_PAREN [<expr> {DELIM <expr>}] R_PAREN
+func spellCall(ctx *context) (tree.Node, error) {
+
+	var e error
+	sp := ctx.Next()
+	n := tree.SpellCall{
+		Snippet: sp.Snippet,
+		Name:    sp.Val[1:],
+	}
+
+	if n.Args, e = expectParams(ctx); e != nil {
+		return nil, e
+	}
+
+	n.ArgCount = len(n.Args)
+	return n, nil
 }

@@ -98,6 +98,14 @@ type (
 		OpPos token.Snippet
 		Right Expr
 	}
+
+	// SpellCall Node is Expr representing a spell invocation.
+	SpellCall struct {
+		token.Snippet
+		Name     string
+		ArgCount int
+		Args     []Expr
+	}
 )
 
 func (n Ident) Pos() token.Snippet        { return n.Snippet }
@@ -108,6 +116,7 @@ func (n StrLit) Pos() token.Snippet       { return n.Snippet }
 func (n SingleAssign) Pos() token.Snippet { return n.Snippet }
 func (n MultiAssign) Pos() token.Snippet  { return n.Snippet }
 func (n BinaryExpr) Pos() token.Snippet   { return n.Snippet }
+func (n SpellCall) Pos() token.Snippet    { return n.Snippet }
 
 func (n Ident) node()        {}
 func (n VoidLit) node()      {}
@@ -117,6 +126,7 @@ func (n StrLit) node()       {}
 func (n SingleAssign) node() {}
 func (n MultiAssign) node()  {}
 func (n BinaryExpr) node()   {}
+func (n SpellCall) node()    {}
 
 func (n Ident) assignee() {}
 
@@ -126,6 +136,7 @@ func (n BoolLit) expr()    {}
 func (n NumLit) expr()     {}
 func (n StrLit) expr()     {}
 func (n BinaryExpr) expr() {}
+func (n SpellCall) expr()  {}
 
 func (n BoolLit) literal() {}
 func (n NumLit) literal()  {}
@@ -133,3 +144,4 @@ func (n StrLit) literal()  {}
 
 func (n SingleAssign) stat() {}
 func (n MultiAssign) stat()  {}
+func (n SpellCall) stat()    {}

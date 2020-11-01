@@ -173,3 +173,62 @@ func maybeBinaryExpr(ctx *context, left tree.Expr, leftOpPrec int) (tree.Expr, e
 
 	return maybeBinaryExpr(ctx, binExpr, leftOpPrec)
 }
+
+// Parses: L_PAREN [<expr> {DELIM <expr>}] R_PAREN
+func expectParams(ctx *context) ([]tree.Expr, error) {
+
+	if !ctx.More() {
+		return nil, errPos(ctx.End(), "Missing parameters")
+	}
+
+	if l := ctx.Next(); l.Token != token.L_PAREN {
+		return nil, errSnip(l.Snippet,
+			"Expected left parenthesis but got %s", l.Token.String())
+	}
+
+	var nodes []tree.Expr
+	var e error
+
+	if ctx.Peek().Token != token.R_PAREN {
+		nodes = []tree.Expr{}
+	} else {
+		if nodes, e = expectParamsSet(ctx); e != nil {
+			return nil, e
+		}
+	}
+
+	if !ctx.More() {
+		return nil, errPos(ctx.End(), "Missing right parenthesis")
+	}
+
+	if l := ctx.Next(); l.Token != token.R_PAREN {
+		return nil, errSnip(l.Snippet,
+			"Expected right parenthesis but got %s", l.Token.String())
+	}
+
+	return nodes, nil
+}
+
+// Parses:  <expr> {DELIM <expr>}
+func expectParamsSet(ctx *context) ([]tree.Expr, error) {
+
+	var (
+		nodes = []tree.Expr{}
+		ex    tree.Expr
+		e     error
+	)
+
+	for {
+		if ex, e = expectExpr(ctx); e != nil {
+			return nil, e
+		}
+		nodes = append(nodes, ex)
+
+		if ctx.Peek().Token != token.DELIM {
+			break
+		}
+		ctx.Next()
+	}
+
+	return nodes, nil
+}
