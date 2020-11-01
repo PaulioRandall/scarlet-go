@@ -205,14 +205,14 @@ func spellCall(ctx *context) (tree.Node, error) {
 	var e error
 	sp := ctx.Next()
 	n := tree.SpellCall{
-		Snippet: sp.Snippet,
-		Name:    sp.Val[1:],
+		Name: sp.Val[1:],
 	}
 
-	if n.Args, e = expectParams(ctx); e != nil {
+	if n.Args, n.Snippet, e = expectParams(ctx); e != nil {
 		return nil, e
 	}
 
 	n.ArgCount = len(n.Args)
+	n.Snippet = token.SuperSnippet(sp.Snippet, n.Snippet)
 	return n, nil
 }
