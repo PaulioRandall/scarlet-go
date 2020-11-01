@@ -24,10 +24,16 @@ func Compile(t tree.Node) ([]inst.Inst, error) {
 	switch v := t.(type) {
 	case tree.SingleAssign:
 		return singleAssign(v), nil
+
 	case tree.MultiAssign:
 		return multiAssign(v), nil
+
+	case tree.SpellCall:
+		return spellCall(v), nil
+
 	case tree.Ident, tree.Literal, tree.BinaryExpr:
 		return nil, errSnip(t.Pos(), "Result of expression ignored")
+
 	default:
 		return nil, errSnip(t.Pos(), "Unknown node type")
 	}
@@ -50,6 +56,16 @@ func multiAssign(n tree.MultiAssign) (ins []inst.Inst) {
 		})
 	}
 	return
+}
+
+func spellCall(n tree.SpellCall) (ins []inst.Inst) {
+	for _, v := range n.Args {
+		ins = append(ins, expression(v)...)
+	}
+	return append(ins, inst.Inst{
+		Code: inst.SPELL_CALL,
+		Data: value.Ident(n.Name),
+	})
 }
 
 func createAssignData(n tree.Assignee) value.Value {
@@ -77,6 +93,10 @@ func expression(n tree.Expr) []inst.Inst {
 
 	case tree.BinaryExpr:
 		return binaryExpression(v)
+
+	case tree.SpellCall:
+		return spellCall(v)
+
 	default:
 		panic("[ERROR] Unknown expression type")
 	}

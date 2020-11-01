@@ -42,6 +42,11 @@ const (
 	BIN_OP_MEQU
 	BIN_OP_EQU
 	BIN_OP_NEQU
+
+	// Lookups up a spell by name, pops the specified number of spell arguments
+	// off the value stack, invokes the spell, and finally pushes the results
+	// onto the value stack.
+	SPELL_CALL
 )
 
 // String returns a human readable string representation of the Code.
@@ -84,6 +89,9 @@ func (c Code) String() string {
 		return "BIN_OP_EQU"
 	case BIN_OP_NEQU:
 		return "BIN_OP_NEQU"
+
+	case SPELL_CALL:
+		return "SPELL_CALL"
 
 	default:
 		return ""

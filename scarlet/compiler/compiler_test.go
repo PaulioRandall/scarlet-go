@@ -192,3 +192,75 @@ func TestCompile_BinaryExpr_4(t *testing.T) {
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireInsts(t, exp, act)
 }
+
+func TestCompile_BinaryExpr_5(t *testing.T) {
+
+	// x := y + @Add(1, 1)
+	in := tree.SingleAssign{
+		Left: tree.Ident{Val: "x"},
+		Right: tree.BinaryExpr{
+			Left: tree.Ident{Val: "y"},
+			Op:   token.ADD,
+			Right: tree.SpellCall{
+				Name:     "Add",
+				ArgCount: 2,
+				Args: []tree.Expr{
+					tree.NumLit{Val: number.New("1")},
+					tree.NumLit{Val: number.New("1")},
+				},
+			},
+		},
+	}
+
+	exp := []inst.Inst{
+		inst.Inst{Code: inst.FETCH_PUSH, Data: value.Ident("y")},
+		inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
+		inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
+		inst.Inst{Code: inst.SPELL_CALL, Data: value.Ident("Add")},
+		inst.Inst{Code: inst.BIN_OP_ADD},
+		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
+	}
+
+	act, e := Compile(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireInsts(t, exp, act)
+}
+
+func TestCompile_SpellCall_1(t *testing.T) {
+
+	// @Print()
+	in := tree.SpellCall{
+		Name:     "Print",
+		ArgCount: 0,
+		Args:     []tree.Expr{},
+	}
+
+	exp := []inst.Inst{
+		inst.Inst{Code: inst.SPELL_CALL, Data: value.Ident("Print")},
+	}
+
+	act, e := Compile(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireInsts(t, exp, act)
+}
+
+func TestCompile_SpellCall_2(t *testing.T) {
+
+	// @Print(x)
+	in := tree.SpellCall{
+		Name:     "Print",
+		ArgCount: 1,
+		Args: []tree.Expr{
+			tree.Ident{Val: "x"},
+		},
+	}
+
+	exp := []inst.Inst{
+		inst.Inst{Code: inst.FETCH_PUSH, Data: value.Ident("x")},
+		inst.Inst{Code: inst.SPELL_CALL, Data: value.Ident("Print")},
+	}
+
+	act, e := Compile(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireInsts(t, exp, act)
+}
