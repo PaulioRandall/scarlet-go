@@ -59,6 +59,9 @@ func multiAssign(n tree.MultiAssign) (ins []inst.Inst) {
 }
 
 func spellCall(n tree.SpellCall) (ins []inst.Inst) {
+	ins = append(ins, inst.Inst{
+		Code: inst.STACK_PUSH,
+	})
 	for _, v := range n.Args {
 		ins = append(ins, expression(v)...)
 	}

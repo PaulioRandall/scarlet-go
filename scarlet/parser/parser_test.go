@@ -488,10 +488,9 @@ func TestParse_SpellCall_1(t *testing.T) {
 
 	exp := []tree.Node{
 		tree.SpellCall{
-			Snippet:  superSnip(in[0], in[2]),
-			Name:     "Print",
-			ArgCount: 0,
-			Args:     []tree.Expr{},
+			Snippet: superSnip(in[0], in[2]),
+			Name:    "Print",
+			Args:    []tree.Expr{},
 		},
 	}
 
@@ -523,10 +522,9 @@ func TestParse_SpellCall_2(t *testing.T) {
 
 	exp := []tree.Node{
 		tree.SpellCall{
-			Snippet:  superSnip(in[0], in[5]),
-			Name:     "Print",
-			ArgCount: 1,
-			Args:     []tree.Expr{add},
+			Snippet: superSnip(in[0], in[5]),
+			Name:    "Print",
+			Args:    []tree.Expr{add},
 		},
 	}
 
@@ -551,9 +549,8 @@ func TestParse_SpellCall_3(t *testing.T) {
 
 	exp := []tree.Node{
 		tree.SpellCall{
-			Snippet:  superSnip(in[0], in[7]),
-			Name:     "Print",
-			ArgCount: 3,
+			Snippet: superSnip(in[0], in[7]),
+			Name:    "Print",
 			Args: []tree.Expr{
 				tree.BoolLit{Snippet: in[2].Snippet, Val: true},
 				tree.NumLit{Snippet: in[4].Snippet, Val: number.New("1")},
@@ -581,9 +578,8 @@ func TestParse_SpellCall_4(t *testing.T) {
 
 	exp := []tree.Node{
 		tree.SpellCall{
-			Snippet:  superSnip(in[0], in[5]),
-			Name:     "Print",
-			ArgCount: 1,
+			Snippet: superSnip(in[0], in[5]),
+			Name:    "Print",
 			Args: []tree.Expr{
 				tree.Ident{Snippet: in[3].Snippet, Val: "x"},
 			},

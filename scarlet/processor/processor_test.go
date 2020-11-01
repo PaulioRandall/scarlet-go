@@ -398,16 +398,16 @@ func TestProcess_SpellCall_1(t *testing.T) {
 	// x := y
 	env := &runtimeEnv{
 		ins: []inst.Inst{
+			inst.Inst{Code: inst.STACK_PUSH},
 			inst.Inst{Code: inst.STACK_PUSH, Data: value.Str("abc")},
 			inst.Inst{Code: inst.SPELL_CALL, Data: value.Ident("Print")},
 		},
 		ids: map[value.Ident]value.Value{},
 		book: spell.Book{
 			"print": spell.Inscription{
-				Spell:     testSpell,
-				Name:      "Print",
-				ParamsIn:  1,
-				ParamsOut: spell.NO_ARGS,
+				Spell:   testSpell,
+				Name:    "Print",
+				Outputs: 0,
 			},
 		},
 	}

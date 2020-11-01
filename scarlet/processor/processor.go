@@ -201,19 +201,19 @@ func spellCall(p *Processor, in inst.Inst) {
 		panic("Unknown spell: " + name)
 	}
 
-	args := make([]value.Value, sp.ParamsIn)
-	for i := 0; i < sp.ParamsIn; i++ {
-		args[i] = p.Env.Pop()
+	args := []value.Value{}
+	for a := p.Env.Pop(); a != nil; a = p.Env.Pop() {
+		args = append(args, a)
 	}
 
 	rets := sp.Spell(p.Env, args)
-	if len(rets) != sp.ParamsOut {
+	if len(rets) != sp.Outputs {
 		e := fmt.Errorf("Expected %d, not %d, spell return values %q",
-			sp.ParamsOut, len(rets), name)
+			sp.Outputs, len(rets), name)
 		panic(e)
 	}
 
-	for i := 0; i < sp.ParamsOut; i++ {
+	for i := 0; i < sp.Outputs; i++ {
 		p.Env.Push(rets[i])
 	}
 }

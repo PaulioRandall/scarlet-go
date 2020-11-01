@@ -212,7 +212,6 @@ func spellCall(ctx *context) (tree.Node, error) {
 		return nil, e
 	}
 
-	n.ArgCount = len(n.Args)
 	n.Snippet = token.SuperSnippet(sp.Snippet, n.Snippet)
 	return n, nil
 }

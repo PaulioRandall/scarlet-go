@@ -8,11 +8,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
-const (
-	VAR_ARGS = -1
-	NO_ARGS  = 0
-)
-
 type (
 	// Book represents a collections of named spells.
 	Book map[string]Inscription
@@ -23,9 +18,8 @@ type (
 	// Inscription represents a spell inscribed within a spell book.
 	Inscription struct {
 		Spell
-		Name      string
-		ParamsIn  int
-		ParamsOut int
+		Name    string
+		Outputs int
 	}
 
 	// Runtime is a handler for performing memory related and context dependent
@@ -65,7 +59,7 @@ type (
 
 // Inscribe stores a named spell within the Book returning an error if any of
 // the arguments are invalid.
-func (b Book) Inscribe(name string, paramsIn, paramsOut int, spell Spell) error {
+func (b Book) Inscribe(name string, outputs int, spell Spell) error {
 
 	if name == "" {
 		panic(fmt.Errorf("Attempted to register a spell with no name"))
@@ -79,17 +73,16 @@ func (b Book) Inscribe(name string, paramsIn, paramsOut int, spell Spell) error 
 		return fmt.Errorf("Attempted to register nil spell with name %q", name)
 	}
 
-	if paramsOut < 0 {
+	if outputs < 0 {
 		return fmt.Errorf("Attempted to register spell"+
 			" with variable or negative output parameters %q", name)
 	}
 
 	k := strings.ToLower(name)
 	b[k] = Inscription{
-		Spell:     spell,
-		Name:      name,
-		ParamsIn:  paramsIn,
-		ParamsOut: paramsOut,
+		Spell:   spell,
+		Name:    name,
+		Outputs: outputs,
 	}
 
 	return nil

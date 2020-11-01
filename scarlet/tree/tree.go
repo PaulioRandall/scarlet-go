@@ -102,9 +102,8 @@ type (
 	// SpellCall Node is Expr representing a spell invocation.
 	SpellCall struct {
 		token.Snippet
-		Name     string
-		ArgCount int
-		Args     []Expr
+		Name string
+		Args []Expr
 	}
 )
 

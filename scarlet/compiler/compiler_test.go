@@ -202,8 +202,7 @@ func TestCompile_BinaryExpr_5(t *testing.T) {
 			Left: tree.Ident{Val: "y"},
 			Op:   token.ADD,
 			Right: tree.SpellCall{
-				Name:     "Add",
-				ArgCount: 2,
+				Name: "Add",
 				Args: []tree.Expr{
 					tree.NumLit{Val: number.New("1")},
 					tree.NumLit{Val: number.New("1")},
@@ -214,6 +213,7 @@ func TestCompile_BinaryExpr_5(t *testing.T) {
 
 	exp := []inst.Inst{
 		inst.Inst{Code: inst.FETCH_PUSH, Data: value.Ident("y")},
+		inst.Inst{Code: inst.STACK_PUSH},
 		inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
 		inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
 		inst.Inst{Code: inst.SPELL_CALL, Data: value.Ident("Add")},
@@ -230,12 +230,12 @@ func TestCompile_SpellCall_1(t *testing.T) {
 
 	// @Print()
 	in := tree.SpellCall{
-		Name:     "Print",
-		ArgCount: 0,
-		Args:     []tree.Expr{},
+		Name: "Print",
+		Args: []tree.Expr{},
 	}
 
 	exp := []inst.Inst{
+		inst.Inst{Code: inst.STACK_PUSH},
 		inst.Inst{Code: inst.SPELL_CALL, Data: value.Ident("Print")},
 	}
 
@@ -248,14 +248,14 @@ func TestCompile_SpellCall_2(t *testing.T) {
 
 	// @Print(x)
 	in := tree.SpellCall{
-		Name:     "Print",
-		ArgCount: 1,
+		Name: "Print",
 		Args: []tree.Expr{
 			tree.Ident{Val: "x"},
 		},
 	}
 
 	exp := []inst.Inst{
+		inst.Inst{Code: inst.STACK_PUSH},
 		inst.Inst{Code: inst.FETCH_PUSH, Data: value.Ident("x")},
 		inst.Inst{Code: inst.SPELL_CALL, Data: value.Ident("Print")},
 	}
