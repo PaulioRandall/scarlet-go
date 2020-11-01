@@ -1,6 +1,8 @@
 package processor
 
 import (
+	"fmt"
+
 	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
 	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
@@ -122,6 +124,9 @@ func (p *Processor) Process(in inst.Inst) {
 	case in.Code == inst.SCOPE_BIND:
 		p.Env.Bind(in.Data.(value.Ident), p.Env.Pop())
 
+	case in.Code == inst.SPELL_CALL:
+		spellCall(p, in)
+
 	case processNumOp(p, in):
 
 	default:
@@ -185,4 +190,30 @@ func processNumOp(p *Processor, in inst.Inst) bool {
 	}
 
 	return true
+}
+
+func spellCall(p *Processor, in inst.Inst) {
+
+	name := in.Data.(value.Ident)
+	sp, ok := p.Env.Spellbook().Lookup(string(name))
+
+	if !ok {
+		panic("Unknown spell: " + name)
+	}
+
+	args := make([]value.Value, sp.ParamsIn)
+	for i := 0; i < sp.ParamsIn; i++ {
+		args[i] = p.Env.Pop()
+	}
+
+	rets := sp.Spell(p.Env, args)
+	if len(rets) != sp.ParamsOut {
+		e := fmt.Errorf("Expected %d, not %d, spell return values %q",
+			sp.ParamsOut, len(rets), name)
+		panic(e)
+	}
+
+	for i := 0; i < sp.ParamsOut; i++ {
+		p.Env.Push(rets[i])
+	}
 }

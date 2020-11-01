@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
+	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value/number"
 
@@ -384,4 +385,44 @@ func TestProcess_NotEqual(t *testing.T) {
 		value.Str("apple"),
 		inst.BIN_OP_NEQU,
 	)
+}
+
+func TestProcess_SpellCall_1(t *testing.T) {
+
+	testSpell := func(env spell.Runtime, args []value.Value) []value.Value {
+		require.Equal(t, 1, len(args))
+		require.Equal(t, value.Str("abc"), args[0])
+		return []value.Value{}
+	}
+
+	// x := y
+	env := &runtimeEnv{
+		ins: []inst.Inst{
+			inst.Inst{Code: inst.STACK_PUSH, Data: value.Str("abc")},
+			inst.Inst{Code: inst.SPELL_CALL, Data: value.Ident("Print")},
+		},
+		ids: map[value.Ident]value.Value{},
+		book: spell.Book{
+			"print": spell.Inscription{
+				Spell:     testSpell,
+				Name:      "Print",
+				ParamsIn:  1,
+				ParamsOut: spell.NO_ARGS,
+			},
+		},
+	}
+
+	expIds := map[value.Ident]value.Value{}
+
+	expStk := value.Stack{}
+
+	p := New(env, env)
+	p.Run()
+
+	require.Nil(t, env.err, "ERROR: %+v", env.err)
+	require.True(t, env.exitFlag)
+	require.Equal(t, 0, env.exitCode)
+	require.False(t, p.Halted)
+	require.Equal(t, expIds, env.ids)
+	require.Equal(t, expStk, env.Stack)
 }

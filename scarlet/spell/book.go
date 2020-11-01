@@ -108,10 +108,10 @@ func (b Book) Names() []string {
 
 // Lookup returns the spell given its name. If the spell is nil then no such
 // spell exists.
-func (b Book) LookUp(name string) Inscription {
+func (b Book) Lookup(name string) (Inscription, bool) {
 	k := strings.ToLower(name)
-	s, _ := b[k]
-	return s
+	s, ok := b[k]
+	return s, ok
 }
 
 func isSpellIdent(id string) bool {
