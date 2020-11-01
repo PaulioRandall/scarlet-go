@@ -8,13 +8,25 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
+const (
+	VAR_ARGS = -1
+	NO_ARGS  = 0
+)
+
 type (
 	// Book represents a collections of named spells.
-	Book map[string]Spell
+	Book map[string]Inscription
 
-	// Spell represents a builtin function... because to the readers and writers
-	// of scrolls, it's indistinguishable from magic.
+	// Spell represents a builtin function.
 	Spell func(book Book, env Runtime, args []value.Value)
+
+	// Inscription represents a spell inscribed within a spell book.
+	Inscription struct {
+		Spell
+		Name      string
+		ParamsIn  int
+		ParamsOut int
+	}
 
 	// Runtime is a handler for performing memory related and context dependent
 	// instructions such as access to scope variables and storing exit and error
@@ -48,9 +60,9 @@ type (
 	}
 )
 
-// Register stores a named spell within the Book returning an erro if the name
-// or spell are invalid.
-func (b Book) Register(name string, spell Spell) error {
+// Inscribe stores a named spell within the Book returning an error if any of
+// the arguments are invalid.
+func (b Book) Inscribe(name string, paramsIn, paramsOut int, spell Spell) error {
 
 	if name == "" {
 		panic(fmt.Errorf("Attempted to register a spell with no name"))
@@ -64,8 +76,19 @@ func (b Book) Register(name string, spell Spell) error {
 		return fmt.Errorf("Attempted to register nil spell with name %q", name)
 	}
 
+	if paramsOut < 0 {
+		return fmt.Errorf("Attempted to register spell"+
+			" with variable or negative output parameters %q", name)
+	}
+
 	k := strings.ToLower(name)
-	b[k] = spell
+	b[k] = Inscription{
+		Spell:     spell,
+		Name:      name,
+		ParamsIn:  paramsIn,
+		ParamsOut: paramsOut,
+	}
+
 	return nil
 }
 
@@ -82,7 +105,7 @@ func (b Book) Names() []string {
 
 // Lookup returns the spell given its name. If the spell is nil then no such
 // spell exists.
-func (b Book) LookUp(name string) Spell {
+func (b Book) LookUp(name string) Inscription {
 	k := strings.ToLower(name)
 	s, _ := b[k]
 	return s
