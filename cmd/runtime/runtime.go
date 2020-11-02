@@ -6,6 +6,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
 	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
+
+	"github.com/PaulioRandall/scarlet-go/cmd/spells"
 )
 
 // IdMap represents a mapping of declared identifiers with their current values.
@@ -29,10 +31,11 @@ type RuntimeEnv struct {
 // New creates and returns a new RuntimeEnv for a specific program.
 func New(program []inst.Inst) *RuntimeEnv {
 	return &RuntimeEnv{
-		Counter: -1,
-		Program: program,
-		Size:    len(program),
-		Scope:   IdMap{},
+		Counter:   -1,
+		Program:   program,
+		Size:      len(program),
+		Scope:     IdMap{},
+		spellbook: spells.NewBook(),
 	}
 }
 

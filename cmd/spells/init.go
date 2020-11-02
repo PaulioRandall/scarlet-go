@@ -9,9 +9,11 @@ func NewBook() spell.Book {
 
 	b := spell.Book{}
 
+	b.Inscribe("Len", 1, Len)
 	b.Inscribe("Exit", 0, Exit)
 	b.Inscribe("Print", 0, Print)
 	b.Inscribe("Println", 0, Println)
+	b.Inscribe("ParseNum", 2, ParseNum)
 
 	return b
 }

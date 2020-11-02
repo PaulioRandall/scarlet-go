@@ -65,8 +65,8 @@ func spellCall(n tree.SpellCall) (ins []inst.Inst) {
 	ins = append(ins, inst.Inst{
 		Code: inst.STACK_PUSH,
 	})
-	for _, v := range n.Args {
-		ins = append(ins, expression(v)...)
+	for i := len(n.Args) - 1; i >= 0; i-- {
+		ins = append(ins, expression(n.Args[i])...)
 	}
 	return append(ins, inst.Inst{
 		Code: inst.SPELL_CALL,
@@ -115,7 +115,7 @@ func createLitData(n tree.Literal) value.Value {
 	case tree.NumLit:
 		return value.Num{Number: v.Val}
 	case tree.StrLit:
-		return value.Str(v.Val)
+		return value.Str(v.Val[1 : len(v.Val)-1])
 	default:
 		panic("[ERROR] Unknown literal type")
 	}

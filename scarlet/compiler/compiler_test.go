@@ -53,14 +53,14 @@ func TestCompile_MultiAssign_1(t *testing.T) {
 		Right: []tree.Expr{
 			tree.BoolLit{Val: true},
 			tree.NumLit{Val: number.New("1")},
-			tree.StrLit{Val: "text"},
+			tree.StrLit{Val: `"text"`},
 		},
 	}
 
 	exp := []inst.Inst{
 		inst.Inst{Code: inst.STACK_PUSH, Data: value.Bool(true)},
 		inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
-		inst.Inst{Code: inst.STACK_PUSH, Data: value.Str("text")},
+		inst.Inst{Code: inst.STACK_PUSH, Data: value.Str(`text`)},
 		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("z")},
 		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("y")},
 		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},

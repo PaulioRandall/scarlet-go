@@ -74,5 +74,15 @@ func (id Ident) Valid() Bool {
 	return true
 }
 
+func (a Str) Len() int { return len(string(a)) }
+
 func (a Bool) And(b Bool) Bool { return Bool(bool(a) && bool(b)) }
 func (a Bool) Or(b Bool) Bool  { return Bool(bool(a) || bool(b)) }
+
+func NewInt(i int) Num {
+	return Num{Number: number.NewFromInt(int64(i))}
+}
+
+func NewFloat(f float64) Num {
+	return Num{Number: number.NewFromFloat(f)}
+}
