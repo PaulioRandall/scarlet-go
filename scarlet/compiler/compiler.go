@@ -48,8 +48,11 @@ func singleAssign(n tree.SingleAssign) []inst.Inst {
 }
 
 func multiAssign(n tree.MultiAssign) (ins []inst.Inst) {
-	for i, v := range n.Right {
+	for _, v := range n.Right {
 		ins = append(ins, expression(v)...)
+	}
+	// Reverse because the last expr result will be at the top of the stack
+	for i := len(n.Left) - 1; i >= 0; i-- {
 		ins = append(ins, inst.Inst{
 			Code: inst.SCOPE_BIND,
 			Data: createAssignData(n.Left[i]),

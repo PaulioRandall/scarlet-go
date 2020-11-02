@@ -41,7 +41,7 @@ func TestCompile_SingleAssign(t *testing.T) {
 	requireInsts(t, exp, act)
 }
 
-func TestCompile_MultiAssign(t *testing.T) {
+func TestCompile_MultiAssign_1(t *testing.T) {
 
 	// x, y, z := true, 1, "text"
 	in := tree.MultiAssign{
@@ -59,11 +59,11 @@ func TestCompile_MultiAssign(t *testing.T) {
 
 	exp := []inst.Inst{
 		inst.Inst{Code: inst.STACK_PUSH, Data: value.Bool(true)},
-		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
 		inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
-		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("y")},
 		inst.Inst{Code: inst.STACK_PUSH, Data: value.Str("text")},
 		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("z")},
+		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("y")},
+		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
 	}
 
 	act, e := Compile(in)
@@ -155,13 +155,13 @@ func TestCompile_BinaryExpr_3(t *testing.T) {
 		inst.Inst{Code: inst.STACK_PUSH, Data: value.Bool(true)},
 		inst.Inst{Code: inst.STACK_PUSH, Data: value.Bool(false)},
 		inst.Inst{Code: inst.BIN_OP_AND},
-		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
 		inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
 		inst.Inst{Code: inst.STACK_PUSH, Data: numValue("2")},
 		inst.Inst{Code: inst.STACK_PUSH, Data: numValue("3")},
 		inst.Inst{Code: inst.BIN_OP_MUL},
 		inst.Inst{Code: inst.BIN_OP_ADD},
 		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("y")},
+		inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
 	}
 
 	act, e := Compile(in)
