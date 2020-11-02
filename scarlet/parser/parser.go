@@ -121,11 +121,19 @@ func multiAssign(ctx *context) (tree.Node, error) {
 	}
 	m.Snippet = token.SuperSnippet(lSnip, rSnip)
 
-	lSize, rSize := len(m.Left), len(m.Right)
-	if lSize < rSize {
+	switch lSize, rSize := len(m.Left), len(m.Right); {
+	case lSize < rSize:
 		return zero, errSnip(m.Snippet,
 			"Not enough expressions on left or too many on right of assignment")
-	} else if lSize > rSize {
+
+	case rSize == 1:
+		if _, ok := m.Right[0].(tree.SpellCall); !ok {
+			return zero, errSnip(m.Snippet,
+				"Too many expressions on left or not enough on right of assignment")
+		}
+		m.Asym = true
+
+	case lSize > rSize:
 		return zero, errSnip(m.Snippet,
 			"Too many expressions on left or not enough on right of assignment")
 	}
@@ -214,4 +222,9 @@ func spellCall(ctx *context) (tree.Node, error) {
 
 	n.Snippet = token.SuperSnippet(sp.Snippet, n.Snippet)
 	return n, nil
+}
+
+func spellCallExpr(ctx *context) (tree.Expr, error) {
+	n, e := spellCall(ctx)
+	return n.(tree.Expr), e
 }

@@ -80,7 +80,7 @@ func TestParse_SingleAssign_2(t *testing.T) {
 	requireNodes(t, exp, act)
 }
 
-func TestParse_MultiAssign(t *testing.T) {
+func TestParse_MultiAssign_1(t *testing.T) {
 
 	// x, y, z := true, 1, "abc"
 	in := positionLexemes(
@@ -110,6 +110,43 @@ func TestParse_MultiAssign(t *testing.T) {
 				tree.BoolLit{Snippet: in[6].Snippet, Val: true},
 				tree.NumLit{Snippet: in[8].Snippet, Val: number.New("1")},
 				tree.StrLit{Snippet: in[10].Snippet, Val: `"text"`},
+			},
+		},
+	}
+
+	act, e := ParseAll(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
+func TestParse_MultiAssign_2(t *testing.T) {
+
+	// x, y := @Print()
+	in := positionLexemes(
+		token.MakeTok("x", token.IDENT), // 0
+		token.MakeTok(",", token.DELIM),
+		token.MakeTok("y", token.IDENT), // 2
+		token.MakeTok(":=", token.ASSIGN),
+		token.MakeTok("@Print", token.SPELL), // 4
+		token.MakeTok("(", token.L_PAREN),
+		token.MakeTok(")", token.R_PAREN), // 6
+	)
+
+	exp := []tree.Node{
+		tree.MultiAssign{
+			Snippet: superSnip(in[0], in[6]),
+			Asym:    true,
+			Left: []tree.Assignee{
+				tree.Ident{Snippet: in[0].Snippet, Val: "x"},
+				tree.Ident{Snippet: in[2].Snippet, Val: "y"},
+			},
+			Infix: in[3].Snippet,
+			Right: []tree.Expr{
+				tree.SpellCall{
+					Snippet: superSnip(in[4], in[6]),
+					Name:    "Print",
+					Args:    []tree.Expr{},
+				},
 			},
 		},
 	}

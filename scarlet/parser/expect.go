@@ -88,10 +88,16 @@ func expectTerm(ctx *context) (tree.Expr, error) {
 	switch {
 	case !ctx.More():
 		return nil, errPos(ctx.End(), "Expected term")
+
 	case ctx.LexItr.Peek().IsLiteral():
 		return expectLiteral(ctx)
+
 	case ctx.LexItr.Peek().Token == token.IDENT:
 		return expectIdent(ctx.Next())
+
+	case ctx.LexItr.Peek().Token == token.SPELL:
+		return spellCallExpr(ctx)
+
 	default:
 		return nil, errSnip(ctx.LexItr.Peek().Snippet, "Expected term")
 	}
