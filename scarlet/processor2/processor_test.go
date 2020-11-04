@@ -243,3 +243,36 @@ func TestEqualBinExpr(t *testing.T) {
 		assertOutput(t, a.exp, act)
 	}
 }
+
+func TestExprs(t *testing.T) {
+
+	var assertions = []struct {
+		env expRuntime
+		in  []tree.Expr
+		exp []value.Value
+	}{
+		{ // 0
+			in: []tree.Expr{
+				numLit("1"),
+				binExpr(numLit("1"), token.ADD, numLit("2")),
+				binExpr(numLit("1"), token.EQUAL, strLit("abc")),
+			},
+			exp: []value.Value{
+				numValue("1"),
+				numValue("3"),
+				value.Bool(false),
+			},
+		},
+	}
+
+	for i, a := range assertions {
+		t.Logf("Assertion %d", i)
+		env := newTestEnv()
+		act := Expressions(env, a.in)
+		assertRuntime(t, a.env, env)
+		require.Equal(t, len(a.exp), len(act))
+		for i := 0; i < len(a.exp); i++ {
+			assertOutput(t, a.exp[i], act[i])
+		}
+	}
+}

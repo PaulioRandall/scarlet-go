@@ -104,7 +104,7 @@ func Expressions(env Runtime, n []tree.Expr) []value.Value {
 func Expression(env Runtime, n tree.Expr) value.Value {
 	switch v := n.(type) {
 	case tree.Ident:
-		return value.Ident(v.Val)
+		panic("Not implemented yet!")
 	case tree.Literal:
 		return Literal(env, v)
 	case tree.BinaryExpr:
