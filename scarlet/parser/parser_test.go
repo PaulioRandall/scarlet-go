@@ -119,7 +119,7 @@ func TestParse_MultiAssign_1(t *testing.T) {
 	requireNodes(t, exp, act)
 }
 
-func TestParse_MultiAssign_2(t *testing.T) {
+func TestParse_AsymAssign_1(t *testing.T) {
 
 	// x, y := @Print()
 	in := positionLexemes(
@@ -133,20 +133,17 @@ func TestParse_MultiAssign_2(t *testing.T) {
 	)
 
 	exp := []tree.Node{
-		tree.MultiAssign{
+		tree.AsymAssign{
 			Snippet: superSnip(in[0], in[6]),
-			Asym:    true,
 			Left: []tree.Assignee{
 				tree.Ident{Snippet: in[0].Snippet, Val: "x"},
 				tree.Ident{Snippet: in[2].Snippet, Val: "y"},
 			},
 			Infix: in[3].Snippet,
-			Right: []tree.Expr{
-				tree.SpellCall{
-					Snippet: superSnip(in[4], in[6]),
-					Name:    "Print",
-					Args:    []tree.Expr{},
-				},
+			Right: tree.SpellCall{
+				Snippet: superSnip(in[4], in[6]),
+				Name:    "Print",
+				Args:    []tree.Expr{},
 			},
 		},
 	}

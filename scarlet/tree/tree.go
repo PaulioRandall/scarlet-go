@@ -82,6 +82,15 @@ type (
 		Right Expr
 	}
 
+	// AsymAssign Node is a Stat representing an assignment with multiple
+	// target identifiers but only one expression, a function or spell call.
+	AsymAssign struct {
+		token.Snippet
+		Left  []Assignee // Ordered left to right
+		Infix token.Snippet
+		Right Expr
+	}
+
 	// MultiAssign Node is a Stat representing a multiple assignment.
 	MultiAssign struct {
 		token.Snippet
@@ -114,6 +123,7 @@ func (n BoolLit) Pos() token.Snippet      { return n.Snippet }
 func (n NumLit) Pos() token.Snippet       { return n.Snippet }
 func (n StrLit) Pos() token.Snippet       { return n.Snippet }
 func (n SingleAssign) Pos() token.Snippet { return n.Snippet }
+func (n AsymAssign) Pos() token.Snippet   { return n.Snippet }
 func (n MultiAssign) Pos() token.Snippet  { return n.Snippet }
 func (n BinaryExpr) Pos() token.Snippet   { return n.Snippet }
 func (n SpellCall) Pos() token.Snippet    { return n.Snippet }
@@ -124,6 +134,7 @@ func (n BoolLit) node()      {}
 func (n NumLit) node()       {}
 func (n StrLit) node()       {}
 func (n SingleAssign) node() {}
+func (n AsymAssign) node()   {}
 func (n MultiAssign) node()  {}
 func (n BinaryExpr) node()   {}
 func (n SpellCall) node()    {}
@@ -143,5 +154,6 @@ func (n NumLit) literal()  {}
 func (n StrLit) literal()  {}
 
 func (n SingleAssign) stat() {}
+func (n AsymAssign) stat()   {}
 func (n MultiAssign) stat()  {}
 func (n SpellCall) stat()    {}

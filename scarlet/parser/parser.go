@@ -64,7 +64,7 @@ func identLeads(ctx *context) (tree.Node, error) {
 		return singleAssign(ctx)
 
 	case token.DELIM:
-		return multiAssign(ctx)
+		return multiOrAsymAssign(ctx)
 
 	default:
 		ctx.Back()
@@ -96,46 +96,61 @@ func singleAssign(ctx *context) (tree.Node, error) {
 
 // Assumes: IDENT DELIM ...
 // Parses: IDENT {DELIM IDENT} ASSIGN <expr> {DELIM <expr>}
-func multiAssign(ctx *context) (tree.Node, error) {
+func multiOrAsymAssign(ctx *context) (tree.Node, error) {
 
 	var (
 		lSnip token.Snippet
 		rSnip token.Snippet
-		zero  tree.MultiAssign
-		m     tree.MultiAssign
+		left  []tree.Assignee
+		right []tree.Expr
 		e     error
 	)
 
-	if m.Left, lSnip, e = multiAssignLeft(ctx); e != nil {
-		return zero, e
+	if left, lSnip, e = multiAssignLeft(ctx); e != nil {
+		return nil, e
 	}
 
-	l := ctx.Next()
-	if l.Token != token.ASSIGN {
-		return zero, errSnip(l.Snippet, "Expected assignment symbol")
+	op := ctx.Next()
+	if op.Token != token.ASSIGN {
+		return nil, errSnip(op.Snippet, "Expected assignment symbol")
 	}
-	m.Infix = l.Snippet
 
-	if m.Right, rSnip, e = multiAssignRight(ctx); e != nil {
-		return zero, e
+	if right, rSnip, e = multiAssignRight(ctx); e != nil {
+		return nil, e
 	}
-	m.Snippet = token.SuperSnippet(lSnip, rSnip)
 
-	switch lSize, rSize := len(m.Left), len(m.Right); {
+	snip := token.SuperSnippet(lSnip, rSnip)
+
+	var m tree.Node
+
+	switch lSize, rSize := len(left), len(right); {
 	case lSize < rSize:
-		return zero, errSnip(m.Snippet,
+		return nil, errSnip(snip,
 			"Not enough expressions on left or too many on right of assignment")
 
 	case rSize == 1:
-		if _, ok := m.Right[0].(tree.SpellCall); !ok {
-			return zero, errSnip(m.Snippet,
+		if _, ok := right[0].(tree.SpellCall); !ok {
+			return nil, errSnip(snip,
 				"Too many expressions on left or not enough on right of assignment")
 		}
-		m.Asym = true
+		m = tree.AsymAssign{
+			Left:    left,
+			Infix:   op.Snippet,
+			Right:   right[0],
+			Snippet: snip,
+		}
 
 	case lSize > rSize:
-		return zero, errSnip(m.Snippet,
+		return nil, errSnip(snip,
 			"Too many expressions on left or not enough on right of assignment")
+
+	default:
+		m = tree.MultiAssign{
+			Left:    left,
+			Infix:   op.Snippet,
+			Right:   right,
+			Snippet: snip,
+		}
 	}
 
 	return m, nil

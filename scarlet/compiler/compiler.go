@@ -28,6 +28,9 @@ func Compile(t tree.Node) ([]inst.Inst, error) {
 	case tree.MultiAssign:
 		return multiAssign(v), nil
 
+	case tree.AsymAssign:
+		return asymAssign(v), nil
+
 	case tree.SpellCall:
 		return spellCall(v), nil
 
@@ -51,6 +54,18 @@ func multiAssign(n tree.MultiAssign) (ins []inst.Inst) {
 	for _, v := range n.Right {
 		ins = append(ins, expression(v)...)
 	}
+	// Reverse because the last expr result will be at the top of the stack
+	for i := len(n.Left) - 1; i >= 0; i-- {
+		ins = append(ins, inst.Inst{
+			Code: inst.SCOPE_BIND,
+			Data: createAssignData(n.Left[i]),
+		})
+	}
+	return
+}
+
+func asymAssign(n tree.AsymAssign) (ins []inst.Inst) {
+	ins = append(ins, expression(n.Right)...)
 	// Reverse because the last expr result will be at the top of the stack
 	for i := len(n.Left) - 1; i >= 0; i-- {
 		ins = append(ins, inst.Inst{
