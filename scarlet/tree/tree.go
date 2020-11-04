@@ -32,6 +32,7 @@ type (
 	// or a string.
 	Literal interface {
 		Node
+		Expr
 		literal()
 	}
 
