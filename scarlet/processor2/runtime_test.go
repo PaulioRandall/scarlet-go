@@ -7,12 +7,21 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
+type testScope map[value.Ident]value.Value
+
 type testRuntime struct {
-	scope    map[value.Ident]value.Value
+	scope    testScope
 	book     spell.Book
 	exitFlag bool
 	exitCode int
 	err      error
+}
+
+func newTestEnv() *testRuntime {
+	return &testRuntime{
+		scope: testScope{},
+		book:  spell.Book{},
+	}
 }
 
 func (env *testRuntime) Spellbook() spell.Book {
