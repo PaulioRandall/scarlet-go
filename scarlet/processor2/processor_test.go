@@ -91,13 +91,13 @@ func TestArithBinExpr(t *testing.T) {
 		{ // 0
 			in:  binExpr(numLit("1"), token.ADD, numLit("2")),
 			exp: numValue("3"),
-		}, { //1
+		}, { // 1
 			in:  binExpr(numLit("4"), token.SUB, numLit("1")),
 			exp: numValue("3"),
-		}, { //2
+		}, { // 2
 			in:  binExpr(numLit("3"), token.MUL, numLit("4")),
 			exp: numValue("12"),
-		}, { //3
+		}, { // 3
 			in:  binExpr(numLit("12"), token.DIV, numLit("4")),
 			exp: numValue("3"),
 		}, { // 4
@@ -125,19 +125,19 @@ func TestLogicBinExpr(t *testing.T) {
 		{ // 0
 			in:  binExpr(boolLit(true), token.AND, boolLit(true)),
 			exp: value.Bool(true),
-		}, { //1
+		}, { // 1
 			in:  binExpr(boolLit(true), token.AND, boolLit(false)),
 			exp: value.Bool(false),
-		}, { //2
+		}, { // 2
 			in:  binExpr(boolLit(false), token.AND, boolLit(false)),
 			exp: value.Bool(false),
-		}, { //3
+		}, { // 3
 			in:  binExpr(boolLit(true), token.OR, boolLit(true)),
 			exp: value.Bool(true),
-		}, { //4
+		}, { // 4
 			in:  binExpr(boolLit(true), token.OR, boolLit(false)),
 			exp: value.Bool(true),
-		}, { //5
+		}, { // 5
 			in:  binExpr(boolLit(false), token.OR, boolLit(false)),
 			exp: value.Bool(false),
 		},
@@ -162,10 +162,10 @@ func TestCompBinExpr(t *testing.T) {
 		{ // 0
 			in:  binExpr(numLit("1"), token.LESS, numLit("2")),
 			exp: value.Bool(true),
-		}, { //1
+		}, { // 1
 			in:  binExpr(numLit("2"), token.LESS, numLit("2")),
 			exp: value.Bool(false),
-		}, { //2
+		}, { // 2
 			in:  binExpr(numLit("3"), token.LESS, numLit("2")),
 			exp: value.Bool(false),
 		}, { // 3
@@ -194,6 +194,43 @@ func TestCompBinExpr(t *testing.T) {
 			exp: value.Bool(true),
 		}, { // 11
 			in:  binExpr(numLit("3"), token.MORE_EQUAL, numLit("2")),
+			exp: value.Bool(true),
+		},
+	}
+
+	for i, a := range assertions {
+		t.Logf("Assertion %d", i)
+		env := newTestEnv()
+		act := Expression(env, a.in)
+		assertRuntime(t, a.env, env)
+		assertOutput(t, a.exp, act)
+	}
+}
+
+func TestEqualBinExpr(t *testing.T) {
+
+	var assertions = []struct {
+		env expRuntime
+		in  tree.BinaryExpr
+		exp value.Value
+	}{
+		{ // 0
+			in:  binExpr(numLit("1"), token.EQUAL, numLit("1")),
+			exp: value.Bool(true),
+		}, { // 1
+			in:  binExpr(numLit("1"), token.EQUAL, numLit("2")),
+			exp: value.Bool(false),
+		}, { // 2
+			in:  binExpr(numLit("1"), token.EQUAL, strLit("abc")),
+			exp: value.Bool(false),
+		}, { // 3
+			in:  binExpr(numLit("1"), token.NOT_EQUAL, numLit("1")),
+			exp: value.Bool(false),
+		}, { // 4
+			in:  binExpr(numLit("1"), token.NOT_EQUAL, numLit("2")),
+			exp: value.Bool(true),
+		}, { // 5
+			in:  binExpr(numLit("1"), token.NOT_EQUAL, strLit("abc")),
 			exp: value.Bool(true),
 		},
 	}
