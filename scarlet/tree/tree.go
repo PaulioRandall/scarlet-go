@@ -5,8 +5,6 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/value/number"
 )
 
-// TODO: Model on https://github.com/golang/go/blob/a517c3422e808ae51533a0700e05d59e8a799136/src/go/ast/ast.go
-
 type (
 	// Node represents a node in a syntax graph or tree.
 	Node interface {
@@ -94,7 +92,6 @@ type (
 	// MultiAssign Node is a Stat representing a multiple assignment.
 	MultiAssign struct {
 		token.Snippet
-		Asym  bool       // True if a single spell or function call exists in Right
 		Left  []Assignee // Ordered left to right
 		Infix token.Snippet
 		Right []Expr // Ordered left to right

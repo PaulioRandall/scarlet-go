@@ -39,12 +39,14 @@ const (
 	GENERAL_ERROR int = 1
 )
 
-func Execute(env Runtime, s tree.Stat) {
+func Statement(env Runtime, s tree.Stat) {
 	switch v := s.(type) {
 	case tree.SingleAssign:
 		SingleAssign(env, v)
 	case tree.MultiAssign:
 		MultiAssign(env, v)
+	case tree.AsymAssign:
+		AsymAssign(env, v)
 	case tree.SpellCall:
 		SpellCall(env, v)
 	default:
@@ -59,15 +61,16 @@ func SingleAssign(env Runtime, n tree.SingleAssign) {
 }
 
 func MultiAssign(env Runtime, n tree.MultiAssign) {
-
-	var vals []value.Value
-
-	if n.Asym {
-		vals = MultiReturn(env, n.Right[0])
-	} else {
-		vals = Expressions(env, n.Right)
+	vals := Expressions(env, n.Right)
+	for i, v := range n.Left {
+		l := Assignee(env, v)
+		r := vals[i]
+		env.Bind(l, r)
 	}
+}
 
+func AsymAssign(env Runtime, n tree.AsymAssign) {
+	vals := MultiReturn(env, n.Right)
 	for i, v := range n.Left {
 		l := Assignee(env, v)
 		r := vals[i]

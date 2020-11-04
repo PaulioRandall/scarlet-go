@@ -16,7 +16,6 @@ func ident(id string) tree.Ident  { return tree.Ident{Val: id} }
 func numLit(n string) tree.NumLit { return tree.NumLit{Val: number.New(n)} }
 func boolLit(b bool) tree.BoolLit { return tree.BoolLit{Val: b} }
 func strLit(s string) tree.StrLit { return tree.StrLit{Val: s} }
-
 func binExpr(l tree.Expr, op token.Token, r tree.Expr) tree.BinaryExpr {
 	return tree.BinaryExpr{Left: l, Op: op, Right: r}
 }
@@ -27,7 +26,7 @@ type expRuntime struct {
 	err      error
 }
 
-func assertRuntime(t *testing.T, exp expRuntime, act *testRuntime) {
+func assertRuntime(t *testing.T, exp *expRuntime, act *testRuntime) {
 	require.Equal(t, exp.err, act.err)
 	require.Equal(t, exp.exitFlag, act.exitFlag)
 	require.Equal(t, exp.exitCode, act.exitCode)
@@ -53,7 +52,6 @@ func assertOutput(t *testing.T, exp interface{}, act interface{}) {
 func TestLiteral(t *testing.T) {
 
 	var assertions = []struct {
-		env expRuntime
 		in  tree.Literal
 		exp value.Value
 	}{
@@ -76,7 +74,6 @@ func TestLiteral(t *testing.T) {
 		t.Logf("Assertion %d", i)
 		env := newTestEnv()
 		act := Expression(env, a.in)
-		assertRuntime(t, a.env, env)
 		assertOutput(t, a.exp, act)
 	}
 }
@@ -84,7 +81,6 @@ func TestLiteral(t *testing.T) {
 func TestArithBinExpr(t *testing.T) {
 
 	var assertions = []struct {
-		env expRuntime
 		in  tree.BinaryExpr
 		exp value.Value
 	}{
@@ -110,7 +106,6 @@ func TestArithBinExpr(t *testing.T) {
 		t.Logf("Assertion %d", i)
 		env := newTestEnv()
 		act := Expression(env, a.in)
-		assertRuntime(t, a.env, env)
 		assertOutput(t, a.exp, act)
 	}
 }
@@ -118,7 +113,6 @@ func TestArithBinExpr(t *testing.T) {
 func TestLogicBinExpr(t *testing.T) {
 
 	var assertions = []struct {
-		env expRuntime
 		in  tree.BinaryExpr
 		exp value.Value
 	}{
@@ -147,7 +141,6 @@ func TestLogicBinExpr(t *testing.T) {
 		t.Logf("Assertion %d", i)
 		env := newTestEnv()
 		act := Expression(env, a.in)
-		assertRuntime(t, a.env, env)
 		assertOutput(t, a.exp, act)
 	}
 }
@@ -155,7 +148,6 @@ func TestLogicBinExpr(t *testing.T) {
 func TestCompBinExpr(t *testing.T) {
 
 	var assertions = []struct {
-		env expRuntime
 		in  tree.BinaryExpr
 		exp value.Value
 	}{
@@ -202,7 +194,6 @@ func TestCompBinExpr(t *testing.T) {
 		t.Logf("Assertion %d", i)
 		env := newTestEnv()
 		act := Expression(env, a.in)
-		assertRuntime(t, a.env, env)
 		assertOutput(t, a.exp, act)
 	}
 }
@@ -210,7 +201,6 @@ func TestCompBinExpr(t *testing.T) {
 func TestEqualBinExpr(t *testing.T) {
 
 	var assertions = []struct {
-		env expRuntime
 		in  tree.BinaryExpr
 		exp value.Value
 	}{
@@ -239,7 +229,6 @@ func TestEqualBinExpr(t *testing.T) {
 		t.Logf("Assertion %d", i)
 		env := newTestEnv()
 		act := Expression(env, a.in)
-		assertRuntime(t, a.env, env)
 		assertOutput(t, a.exp, act)
 	}
 }
@@ -247,7 +236,6 @@ func TestEqualBinExpr(t *testing.T) {
 func TestExprs(t *testing.T) {
 
 	var assertions = []struct {
-		env expRuntime
 		in  []tree.Expr
 		exp []value.Value
 	}{
@@ -269,10 +257,62 @@ func TestExprs(t *testing.T) {
 		t.Logf("Assertion %d", i)
 		env := newTestEnv()
 		act := Expressions(env, a.in)
-		assertRuntime(t, a.env, env)
 		require.Equal(t, len(a.exp), len(act))
 		for i := 0; i < len(a.exp); i++ {
 			assertOutput(t, a.exp[i], act[i])
 		}
 	}
 }
+
+func TestSingleAssign(t *testing.T) {
+
+	in := tree.SingleAssign{
+		Left:  ident("x"),
+		Right: numLit("1"),
+	}
+
+	exp := newTestEnv()
+	exp.scope[value.Ident("x")] = numValue("1")
+
+	act := newTestEnv()
+	Statement(act, in)
+	require.Equal(t, exp, act)
+}
+
+func TestMultiAssign(t *testing.T) {
+
+	in := tree.MultiAssign{
+		Left:  []tree.Assignee{ident("x"), ident("y"), ident("z")},
+		Right: []tree.Expr{boolLit(true), numLit("1"), strLit(`"abc"`)},
+	}
+
+	exp := newTestEnv()
+	exp.scope[value.Ident("x")] = value.Bool(true)
+	exp.scope[value.Ident("y")] = numValue("1")
+	exp.scope[value.Ident("z")] = value.Str("abc")
+
+	act := newTestEnv()
+	Statement(act, in)
+	require.Equal(t, exp, act)
+}
+
+/*
+func TestAsymAssign(t *testing.T) {
+
+	in := tree.AsymAssign{
+		Left:  []tree.Assignee{ident("x"), ident("y"), ident("z")},
+		Right: tree.Expr{
+			// TODO: Spell call here!!
+		},
+	}
+
+	exp := newTestEnv()
+	exp.scope[value.Ident("x")] = value.Bool(true)
+	exp.scope[value.Ident("y")] = numValue("1")
+	exp.scope[value.Ident("z")] = value.Str("abc")
+
+	act := newTestEnv()
+	Statement(act, in)
+	require.Equal(t, exp, act)
+}
+*/
