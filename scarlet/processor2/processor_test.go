@@ -81,7 +81,7 @@ func TestLiteral(t *testing.T) {
 	}
 }
 
-func TestArithExpr(t *testing.T) {
+func TestArithBinExpr(t *testing.T) {
 
 	var assertions = []struct {
 		env expRuntime
@@ -115,7 +115,44 @@ func TestArithExpr(t *testing.T) {
 	}
 }
 
-func TestCompExpr(t *testing.T) {
+func TestLogicBinExpr(t *testing.T) {
+
+	var assertions = []struct {
+		env expRuntime
+		in  tree.BinaryExpr
+		exp value.Value
+	}{
+		{ // 0
+			in:  binExpr(boolLit(true), token.AND, boolLit(true)),
+			exp: value.Bool(true),
+		}, { //1
+			in:  binExpr(boolLit(true), token.AND, boolLit(false)),
+			exp: value.Bool(false),
+		}, { //2
+			in:  binExpr(boolLit(false), token.AND, boolLit(false)),
+			exp: value.Bool(false),
+		}, { //3
+			in:  binExpr(boolLit(true), token.OR, boolLit(true)),
+			exp: value.Bool(true),
+		}, { //4
+			in:  binExpr(boolLit(true), token.OR, boolLit(false)),
+			exp: value.Bool(true),
+		}, { //5
+			in:  binExpr(boolLit(false), token.OR, boolLit(false)),
+			exp: value.Bool(false),
+		},
+	}
+
+	for i, a := range assertions {
+		t.Logf("Assertion %d", i)
+		env := newTestEnv()
+		act := Expression(env, a.in)
+		assertRuntime(t, a.env, env)
+		assertOutput(t, a.exp, act)
+	}
+}
+
+func TestCompBinExpr(t *testing.T) {
 
 	var assertions = []struct {
 		env expRuntime
