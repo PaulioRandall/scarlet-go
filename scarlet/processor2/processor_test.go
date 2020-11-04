@@ -42,3 +42,31 @@ func TestLiteral_Bool_2(t *testing.T) {
 	require.Equal(t, 0, env.exitCode)
 	require.Equal(t, exp, act)
 }
+
+func TestLiteral_Number_1(t *testing.T) {
+
+	in := tree.NumLit{Val: number.New("1")}
+	exp := numValue("1")
+
+	env := newTestEnv()
+	act := Literal(env, in)
+
+	require.Nil(t, env.err, "ERROR: %+v", env.err)
+	require.False(t, env.exitFlag)
+	require.Equal(t, 0, env.exitCode)
+	require.Equal(t, exp, act)
+}
+
+func TestLiteral_String_1(t *testing.T) {
+
+	in := tree.StrLit{Val: `"abc"`}
+	exp := value.Str(`abc`)
+
+	env := newTestEnv()
+	act := Literal(env, in)
+
+	require.Nil(t, env.err, "ERROR: %+v", env.err)
+	require.False(t, env.exitFlag)
+	require.Equal(t, 0, env.exitCode)
+	require.Equal(t, exp, act)
+}
