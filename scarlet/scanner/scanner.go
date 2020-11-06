@@ -82,12 +82,12 @@ func scan(r *reader) ParseToken {
 func identifyLexeme(r *reader, l *lex) error {
 
 	switch {
-	case r.at(0) == LF:
+	case r.at(0) == '\n':
 		l.size, l.tk = 1, token.NEWLINE
-	case r.starts(CRLF):
+	case r.starts("\r\n"):
 		l.size, l.tk = 2, token.NEWLINE
-	case r.at(0) == CR:
-		return errPos(r.Position(string(CR)), "Missing LF after CR")
+	case r.at(0) == '\r':
+		return errPos(r.Position("\r"), "Missing LF after CR")
 
 	case unicode.IsSpace(r.at(0)):
 		l.size, l.tk = 1, token.SPACE
@@ -95,90 +95,90 @@ func identifyLexeme(r *reader, l *lex) error {
 			l.size++
 		}
 
-	case r.starts(COMMENT_PREFIX):
+	case r.at(0) == '#':
 		l.size, l.tk = 1, token.COMMENT
-		for r.inRange(l.size) && r.at(0) != LF && !r.starts(CRLF) {
+		for r.inRange(l.size) && r.at(0) != '\n' && !r.starts("\r\n") {
 			l.size++
 		}
 
 	case unicode.IsLetter(r.at(0)):
 		identifyWord(r, l)
 
-	case r.starts(TERMINATOR):
+	case r.at(0) == ';':
 		l.size, l.tk = 1, token.TERMINATOR
 
-	case r.starts(ASSIGN):
+	case r.starts(":="):
 		l.size, l.tk = 2, token.ASSIGN
 
-	case r.starts(DELIM):
+	case r.at(0) == ',':
 		l.size, l.tk = 1, token.DELIM
 
-	case r.starts(L_PAREN):
+	case r.at(0) == '(':
 		l.size, l.tk = 1, token.L_PAREN
 
-	case r.starts(R_PAREN):
+	case r.at(0) == ')':
 		l.size, l.tk = 1, token.R_PAREN
 
-	case r.starts(L_SQUARE):
+	case r.at(0) == '[':
 		l.size, l.tk = 1, token.L_SQUARE
 
-	case r.starts(R_SQUARE):
+	case r.at(0) == ']':
 		l.size, l.tk = 1, token.R_SQUARE
 
-	case r.starts(L_CURLY):
+	case r.at(0) == '{':
 		l.size, l.tk = 1, token.L_CURLY
 
-	case r.starts(R_CURLY):
+	case r.at(0) == '}':
 		l.size, l.tk = 1, token.R_CURLY
 
-	case r.at(0) == VOID:
+	case r.at(0) == '_':
 		l.size, l.tk = 1, token.VOID
 
-	case r.starts(ADD):
+	case r.at(0) == '+':
 		l.size, l.tk = 1, token.ADD
 
-	case r.starts(SUB):
+	case r.at(0) == '-':
 		l.size, l.tk = 1, token.SUB
 
-	case r.starts(MUL):
+	case r.at(0) == '*':
 		l.size, l.tk = 1, token.MUL
 
-	case r.starts(DIV):
+	case r.at(0) == '/':
 		l.size, l.tk = 1, token.DIV
 
-	case r.starts(REM):
+	case r.at(0) == '%':
 		l.size, l.tk = 1, token.REM
 
-	case r.starts(AND):
+	case r.starts("&&"):
 		l.size, l.tk = 2, token.AND
 
-	case r.starts(OR):
+	case r.starts("||"):
 		l.size, l.tk = 2, token.OR
 
-	case r.starts(LTE):
+	case r.starts("<="):
 		l.size, l.tk = 2, token.LTE
 
-	case r.starts(LT):
+	case r.at(0) == '<':
 		l.size, l.tk = 1, token.LT
 
-	case r.starts(MTE):
+	case r.starts(">="):
 		l.size, l.tk = 2, token.MTE
 
-	case r.starts(MT):
+	case r.at(0) == '>':
 		l.size, l.tk = 1, token.MT
 
-	case r.starts(EQU):
+	case r.starts("=="):
 		l.size, l.tk = 2, token.EQU
 
-	case r.starts(NEQ):
+	case r.starts("!="):
 		l.size, l.tk = 2, token.NEQ
 
-	case r.starts(SPELL_PREFIX):
+	case r.at(0) == '@':
 		if e := spell(r, l); e != nil {
 			return e
 		}
 
-	case r.at(0) == STRING_PREFIX:
+	case r.at(0) == '"':
 		if e := stringLiteral(r, l); e != nil {
 			return e
 		}
@@ -199,7 +199,7 @@ func identifyWord(r *reader, l *lex) {
 
 	l.size = 1
 	for r.inRange(l.size) {
-		if ru := r.at(l.size); !unicode.IsLetter(ru) && ru != VOID {
+		if ru := r.at(l.size); !unicode.IsLetter(ru) && ru != '_' {
 			break
 		}
 
@@ -241,7 +241,7 @@ func spell(r *reader, l *lex) error {
 			return e
 		}
 
-		if !r.inRange(l.size) || r.at(l.size) != SPELL_NAME_DELIM {
+		if !r.inRange(l.size) || r.at(l.size) != '.' {
 			break
 		}
 		l.size++
@@ -258,19 +258,19 @@ func stringLiteral(r *reader, l *lex) error {
 			goto ERROR
 		}
 
-		if r.at(l.size) == STRING_SUFFIX {
+		if r.at(l.size) == '"' {
 			l.size++
 			return nil
 		}
 
-		if r.at(l.size) == STRING_ESCAPE {
+		if r.at(l.size) == '\\' {
 			l.size++
 			if !r.inRange(l.size) {
 				goto ERROR
 			}
 		}
 
-		if ru := r.at(l.size); ru == CR || ru == LF {
+		if ru := r.at(l.size); ru == '\r' || ru == '\n' {
 			// TODO: Snippet here, `colRune + l.size`
 			return errPos(r.Snapshot(), "Unterminated string")
 		}
@@ -289,7 +289,7 @@ func numberLiteral(r *reader, l *lex) error {
 		l.size++
 	}
 
-	if !r.inRange(l.size) || r.at(l.size) != NUMBER_FRAC_DELIM {
+	if !r.inRange(l.size) || r.at(l.size) != '.' {
 		return nil
 	}
 	l.size++
