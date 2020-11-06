@@ -16,75 +16,70 @@ func setError(env spell.Runtime, m string, args ...interface{}) {
 	env.Fail(err_code, errors.New(s))
 }
 
-func ParseNum(env spell.Runtime, args []value.Value) []value.Value {
-
-	if len(args) != 1 {
-		setError(env, "@ParseNum requires one argument")
-		return nil
-	}
-
-	if v, ok := args[0].(value.Str); ok {
-		n, e := strconv.ParseFloat(string(v), 64)
-		if e != nil {
-			return []value.Value{
-				value.NewFloat(0),
-				value.Str("Unable to parse `" + string(v) + "`"),
-			}
-		}
-		return []value.Value{value.NewFloat(n), value.Str("")}
-	}
-
-	setError(env, "@ParseNum argument must be a string")
-	return nil
-}
-
-func Len(env spell.Runtime, args []value.Value) []value.Value {
+func Len(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	type lengthy interface {
 		Len() int
 	}
 
-	if len(args) != 1 {
+	if len(in) != 1 {
 		setError(env, "@Len requires one argument")
-		return nil
+		return
 	}
 
-	if v, ok := args[0].(lengthy); ok {
-		return []value.Value{
-			value.NewInt(v.Len()),
-		}
+	v, ok := in[0].(lengthy)
+	if !ok {
+		setError(env, "@Len argument has no length")
+		return
 	}
 
-	setError(env, "@Len argument has no length")
-	return nil
+	out.Set(0, value.NewInt(v.Len()))
 }
 
-func Exit(env spell.Runtime, args []value.Value) []value.Value {
+func Exit(env spell.Runtime, in []value.Value, _ *spell.Output) {
 
-	if len(args) != 1 {
+	if len(in) != 1 {
 		setError(env, "@Exit requires one argument")
-		return nil
+		return
 	}
 
-	c, ok := args[0].(value.Num)
+	c, ok := in[0].(value.Num)
 	if !ok {
 		setError(env, "@Exit requires its argument be a number")
-		return nil
+		return
 	}
 
 	env.Exit(int(c.Integer()))
-	return nil
 }
 
-func Print(env spell.Runtime, args []value.Value) []value.Value {
-	for _, v := range args {
+func Print(env spell.Runtime, in []value.Value, _ *spell.Output) {
+	for _, v := range in {
 		fmt.Print(v.String())
 	}
-	return nil
 }
 
-func Println(env spell.Runtime, args []value.Value) []value.Value {
-	Print(env, args)
+func Println(env spell.Runtime, in []value.Value, out *spell.Output) {
+	Print(env, in, out)
 	fmt.Println()
-	return nil
+}
+
+func ParseNum(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) != 1 {
+		setError(env, "@ParseNum requires one argument")
+		return
+	}
+
+	v, ok := in[0].(value.Str)
+	if !ok {
+		setError(env, "@ParseNum argument must be a string")
+	}
+
+	n, e := strconv.ParseFloat(string(v), 64)
+	if e != nil {
+		out.Set(1, value.Str("Unable to parse `"+string(v)+"`"))
+		return
+	}
+
+	out.Set(0, value.NewFloat(n))
 }

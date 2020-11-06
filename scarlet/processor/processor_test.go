@@ -389,10 +389,10 @@ func TestProcess_NotEqual(t *testing.T) {
 
 func TestProcess_SpellCall_1(t *testing.T) {
 
-	testSpell := func(env spell.Runtime, args []value.Value) []value.Value {
-		require.Equal(t, 1, len(args))
-		require.Equal(t, value.Str("abc"), args[0])
-		return []value.Value{}
+	testSpell := func(env spell.Runtime, in []value.Value, out *spell.Output) {
+		require.Equal(t, 1, len(in))
+		require.Equal(t, value.Str("abc"), in[0])
+		require.Equal(t, 0, len(out.Slice()))
 	}
 
 	// x := y

@@ -1,8 +1,6 @@
 package processor
 
 import (
-	"fmt"
-
 	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
 	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
@@ -23,6 +21,9 @@ type Runtime interface {
 
 	// Bind sets the value of a variable overwriting any existing value.
 	Bind(value.Ident, value.Value)
+
+	// Unbind.
+	Unbind(value.Ident)
 
 	// Fetch returns the value associated with the specified identifier.
 	Fetch(value.Ident) value.Value
@@ -122,7 +123,11 @@ func (p *Processor) Process(in inst.Inst) {
 		p.Env.Push(in.Data)
 
 	case in.Code == inst.SCOPE_BIND:
-		p.Env.Bind(in.Data.(value.Ident), p.Env.Pop())
+		v := p.Env.Pop()
+		if v == nil {
+			return // Temp
+		}
+		p.Env.Bind(in.Data.(value.Ident), v)
 
 	case in.Code == inst.SPELL_CALL:
 		spellCall(p, in)
@@ -206,14 +211,10 @@ func spellCall(p *Processor, in inst.Inst) {
 		args = append(args, a)
 	}
 
-	rets := sp.Spell(p.Env, args)
-	if len(rets) != sp.Outputs {
-		e := fmt.Errorf("Expected %d, not %d, spell return values %q",
-			sp.Outputs, len(rets), name)
-		panic(e)
-	}
+	out := spell.NewOutput(sp.Outputs)
+	sp.Spell(p.Env, args, out)
 
-	for i := 0; i < sp.Outputs; i++ {
-		p.Env.Push(rets[i])
+	for _, v := range out.Slice() {
+		p.Env.Push(v)
 	}
 }

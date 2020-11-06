@@ -9,11 +9,17 @@ import (
 )
 
 type (
+	// Spell represents a builtin function.
+	Spell func(env Runtime, in []value.Value, out *Output)
+
+	// Output is a container for spell return arguments.
+	Output struct {
+		size int
+		out  []value.Value
+	}
+
 	// Book represents a collections of named spells.
 	Book map[string]Inscription
-
-	// Spell represents a builtin function.
-	Spell func(env Runtime, args []value.Value) []value.Value
 
 	// Inscription represents a spell inscribed within a spell book.
 	Inscription struct {
@@ -33,6 +39,9 @@ type (
 
 		// Bind sets the value of a variable overwriting any existing value.
 		Bind(value.Ident, value.Value)
+
+		// Unbind removes a variable from the scope.
+		Unbind(value.Ident)
 
 		// Fetch returns the value associated with the specified identifier.
 		Fetch(value.Ident) value.Value
@@ -131,4 +140,35 @@ func isSpellIdent(id string) bool {
 	}
 
 	return !newPart
+}
+
+// NewOutput returns a new initialised output.
+func NewOutput(size int) *Output {
+	return &Output{
+		size: size,
+		out:  make([]value.Value, size),
+	}
+}
+
+// Get returns the return value of the index 'i' or nil if it has not been set
+// yet.
+func (o *Output) Get(i int) value.Value {
+	if i >= o.size || i < 0 {
+		panic("Out of range: invalid spell output index")
+	}
+	return o.out[i]
+}
+
+// Set sets the value of a spell return value.
+func (o *Output) Set(i int, v value.Value) {
+	if i >= o.size || i < 0 {
+		panic("Out of range: invalid spell output index")
+	}
+	o.out[i] = v
+}
+
+// Slice returns a slice of all return values. Note that unset slots will be
+// nil.
+func (o *Output) Slice() []value.Value {
+	return o.out
 }

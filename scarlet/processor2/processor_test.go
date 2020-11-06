@@ -3,6 +3,7 @@ package processor2
 import (
 	"testing"
 
+	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
@@ -316,3 +317,40 @@ func TestAsymAssign(t *testing.T) {
 	require.Equal(t, exp, act)
 }
 */
+
+func TestSpellCall(t *testing.T) {
+
+	in := tree.SpellCall{
+		Name: "Concat",
+		Args: []tree.Expr{
+			strLit(`"abc"`),
+			strLit(`"123"`),
+		},
+	}
+
+	expOut := []value.Value{value.Str("abc123")}
+
+	book := spell.Book{
+		"concat": spell.Inscription{
+			Name:    "Concat",
+			Outputs: 1,
+			Spell: func(env spell.Runtime, in []value.Value, out *spell.Output) {
+				require.Equal(t, 2, len(in))
+				require.Equal(t, value.Str("abc"), in[0])
+				require.Equal(t, value.Str("123"), in[1])
+				require.Equal(t, 1, len(out.Slice()))
+				out.Set(0, value.Str("abc123"))
+			},
+		},
+	}
+
+	exp := newTestEnv()
+	exp.book = book
+
+	act := newTestEnv()
+	act.book = book
+
+	out := SpellCall(act, in)
+	require.Equal(t, exp, act)
+	require.Equal(t, expOut, out)
+}

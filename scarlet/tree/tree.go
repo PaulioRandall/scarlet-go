@@ -26,6 +26,13 @@ type (
 		expr()
 	}
 
+	// MultiExpr (Multi return Expression) is a Node that represents a
+	// an expression returning multiple values such as spell calls and functions.
+	MultiExpr interface {
+		Node
+		multiExpr()
+	}
+
 	// Literal is a Node that represents a literal value such as a bool, a number
 	// or a string.
 	Literal interface {
@@ -106,51 +113,64 @@ type (
 		Right Expr
 	}
 
-	// SpellCall Node is Expr representing a spell invocation.
+	// SpellCall Node is a MultiExpr representing a spell invocation.
 	SpellCall struct {
+		token.Snippet
+		Name string
+		Args []Expr
+	}
+
+	// SpellCallExpr Node is an Expr representing a spell invocation.
+	SpellCallExpr struct {
 		token.Snippet
 		Name string
 		Args []Expr
 	}
 )
 
-func (n Ident) Pos() token.Snippet        { return n.Snippet }
-func (n VoidLit) Pos() token.Snippet      { return n.Snippet }
-func (n BoolLit) Pos() token.Snippet      { return n.Snippet }
-func (n NumLit) Pos() token.Snippet       { return n.Snippet }
-func (n StrLit) Pos() token.Snippet       { return n.Snippet }
-func (n SingleAssign) Pos() token.Snippet { return n.Snippet }
-func (n AsymAssign) Pos() token.Snippet   { return n.Snippet }
-func (n MultiAssign) Pos() token.Snippet  { return n.Snippet }
-func (n BinaryExpr) Pos() token.Snippet   { return n.Snippet }
-func (n SpellCall) Pos() token.Snippet    { return n.Snippet }
+func (n Ident) Pos() token.Snippet         { return n.Snippet }
+func (n VoidLit) Pos() token.Snippet       { return n.Snippet }
+func (n BoolLit) Pos() token.Snippet       { return n.Snippet }
+func (n NumLit) Pos() token.Snippet        { return n.Snippet }
+func (n StrLit) Pos() token.Snippet        { return n.Snippet }
+func (n SpellCallExpr) Pos() token.Snippet { return n.Snippet }
+func (n SingleAssign) Pos() token.Snippet  { return n.Snippet }
+func (n AsymAssign) Pos() token.Snippet    { return n.Snippet }
+func (n MultiAssign) Pos() token.Snippet   { return n.Snippet }
+func (n BinaryExpr) Pos() token.Snippet    { return n.Snippet }
+func (n SpellCall) Pos() token.Snippet     { return n.Snippet }
 
-func (n Ident) node()        {}
-func (n VoidLit) node()      {}
-func (n BoolLit) node()      {}
-func (n NumLit) node()       {}
-func (n StrLit) node()       {}
-func (n SingleAssign) node() {}
-func (n AsymAssign) node()   {}
-func (n MultiAssign) node()  {}
-func (n BinaryExpr) node()   {}
-func (n SpellCall) node()    {}
+func (n Ident) node()         {}
+func (n VoidLit) node()       {}
+func (n BoolLit) node()       {}
+func (n NumLit) node()        {}
+func (n StrLit) node()        {}
+func (n SpellCallExpr) node() {}
+func (n SingleAssign) node()  {}
+func (n AsymAssign) node()    {}
+func (n MultiAssign) node()   {}
+func (n BinaryExpr) node()    {}
+func (n SpellCall) node()     {}
 
 func (n Ident) assignee() {}
 
-func (n Ident) expr()      {}
-func (n VoidLit) expr()    {}
-func (n BoolLit) expr()    {}
-func (n NumLit) expr()     {}
-func (n StrLit) expr()     {}
-func (n BinaryExpr) expr() {}
-func (n SpellCall) expr()  {}
+func (n Ident) expr()         {}
+func (n VoidLit) expr()       {}
+func (n BoolLit) expr()       {}
+func (n NumLit) expr()        {}
+func (n StrLit) expr()        {}
+func (n BinaryExpr) expr()    {}
+func (n SpellCallExpr) expr() {}
+
+func (n SpellCall) expr()      {} // Delete when possible
+func (n SpellCall) multiExpr() {}
 
 func (n BoolLit) literal() {}
 func (n NumLit) literal()  {}
 func (n StrLit) literal()  {}
 
-func (n SingleAssign) stat() {}
-func (n AsymAssign) stat()   {}
-func (n MultiAssign) stat()  {}
-func (n SpellCall) stat()    {}
+func (n SingleAssign) stat()  {}
+func (n AsymAssign) stat()    {}
+func (n MultiAssign) stat()   {}
+func (n SpellCall) stat()     {}
+func (n SpellCallExpr) stat() {}

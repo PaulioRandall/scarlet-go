@@ -32,6 +32,10 @@ func (env *testRuntime) Bind(id value.Ident, v value.Value) {
 	env.scope[id] = v
 }
 
+func (env *testRuntime) Unbind(id value.Ident) {
+	delete(env.scope, id)
+}
+
 func (env *testRuntime) Fetch(id value.Ident) value.Value {
 	if v, ok := env.scope[id]; ok {
 		return v
@@ -49,6 +53,10 @@ func (env *testRuntime) Fail(code int, e error) {
 func (env *testRuntime) Exit(code int) {
 	env.exitCode = code
 	env.exitFlag = true
+}
+
+func (env *testRuntime) GetExitCode() int {
+	return env.exitCode
 }
 
 func (env *testRuntime) GetErr() error {

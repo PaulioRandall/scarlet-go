@@ -17,6 +17,9 @@ type Runtime interface {
 	// Bind sets the value of a variable overwriting any existing value.
 	Bind(value.Ident, value.Value)
 
+	// Unbind removes a variable from the scope.
+	Unbind(value.Ident)
+
 	// Fetch returns the value associated with the specified identifier.
 	Fetch(value.Ident) value.Value
 
@@ -29,6 +32,10 @@ type Runtime interface {
 
 	// GetErr returns the error if set else returns nil.
 	GetErr() error
+
+	// GetExitCode returns the currently set exit code. Only meaningful if the
+	// exit flag has been set.
+	GetExitCode() int
 
 	// GetExitFlag returns true if the program should stop execution after
 	// finishing any instruction currently being executed.
@@ -57,7 +64,11 @@ func Statement(env Runtime, s tree.Stat) {
 func SingleAssign(env Runtime, n tree.SingleAssign) {
 	l := Assignee(env, n.Left)
 	r := Expression(env, n.Right)
-	env.Bind(l, r)
+	if r == nil {
+		env.Unbind(l)
+	} else {
+		env.Bind(l, r)
+	}
 }
 
 func MultiAssign(env Runtime, n tree.MultiAssign) {
@@ -65,7 +76,11 @@ func MultiAssign(env Runtime, n tree.MultiAssign) {
 	for i, v := range n.Left {
 		l := Assignee(env, v)
 		r := vals[i]
-		env.Bind(l, r)
+		if r == nil {
+			env.Unbind(l)
+		} else {
+			env.Bind(l, r)
+		}
 	}
 }
 
@@ -74,12 +89,25 @@ func AsymAssign(env Runtime, n tree.AsymAssign) {
 	for i, v := range n.Left {
 		l := Assignee(env, v)
 		r := vals[i]
-		env.Bind(l, r)
+		if r == nil {
+			env.Unbind(l)
+		} else {
+			env.Bind(l, r)
+		}
 	}
 }
 
-func SpellCall(env Runtime, n tree.SpellCall) {
-	// TODO
+func SpellCall(env Runtime, n tree.SpellCall) []value.Value {
+
+	s, ok := env.Spellbook().Lookup(n.Name)
+	if !ok {
+		panic("SANITY CHECK! Unknown spell '" + n.Name + "'")
+	}
+
+	in := Expressions(env, n.Args)
+	out := spell.NewOutput(s.Outputs)
+	s.Spell(env, in, out)
+	return out.Slice()
 }
 
 func Assignee(env Runtime, n tree.Assignee) value.Ident {
@@ -92,7 +120,10 @@ func Assignee(env Runtime, n tree.Assignee) value.Ident {
 }
 
 func MultiReturn(env Runtime, n tree.Expr) []value.Value {
-	// TODO
+	switch v := n.(type) {
+	case tree.SpellCall:
+		return SpellCall(env, v)
+	}
 	return nil
 }
 
@@ -112,7 +143,7 @@ func Expression(env Runtime, n tree.Expr) value.Value {
 		return Literal(env, v)
 	case tree.BinaryExpr:
 		return BinaryExpr(env, v)
-	case tree.SpellCall:
+	case tree.SpellCallExpr:
 		return SpellCallExpr(env, v)
 	default:
 		panic("SANITY CHECK! Unknown tree.Expr type")
@@ -200,7 +231,15 @@ func BinaryExpr(env Runtime, n tree.BinaryExpr) value.Value {
 	}
 }
 
-func SpellCallExpr(env Runtime, n tree.SpellCall) value.Value {
-	// TODO
-	return nil
+func SpellCallExpr(env Runtime, n tree.SpellCallExpr) value.Value {
+
+	s, ok := env.Spellbook().Lookup(n.Name)
+	if !ok {
+		panic("SANITY CHECK! Unknown spell '" + n.Name + "'")
+	}
+
+	in := Expressions(env, n.Args)
+	out := spell.NewOutput(1)
+	s.Spell(env, in, out)
+	return out.Get(0)
 }

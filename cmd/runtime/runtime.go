@@ -76,6 +76,11 @@ func (env *RuntimeEnv) Bind(id value.Ident, v value.Value) {
 	env.Scope[id] = v
 }
 
+// Unbind implements processor.Runtime.Unbind.
+func (env *RuntimeEnv) Unbind(id value.Ident) {
+	delete(env.Scope, id)
+}
+
 // Fail implements processor.Runtime.Fail.
 func (env *RuntimeEnv) Fail(exitCode int, e error) {
 	env.exitCode = exitCode

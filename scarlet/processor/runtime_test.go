@@ -61,6 +61,10 @@ func (rt *runtimeEnv) Bind(id value.Ident, v value.Value) {
 	rt.ids[id] = v
 }
 
+func (rt *runtimeEnv) Unbind(id value.Ident) {
+	delete(rt.ids, id)
+}
+
 func (rt *runtimeEnv) Fail(code int, e error) {
 	rt.exitCode = code
 	rt.err = e
