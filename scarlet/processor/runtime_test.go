@@ -3,87 +3,66 @@ package processor
 import (
 	"errors"
 
-	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
 	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
-type runtimeEnv struct {
-	// Program
-	started bool
-	counter int
-	ins     []inst.Inst
-	// Runtime
-	value.Stack
-	ids      map[value.Ident]value.Value
+type testScope map[value.Ident]value.Value
+
+type testRuntime struct {
+	scope    testScope
 	book     spell.Book
 	exitFlag bool
 	exitCode int
 	err      error
 }
 
-func (rt *runtimeEnv) Next() (inst.Inst, bool) {
-
-	if rt.started {
-		rt.counter++
-	} else {
-		rt.started = true
+func newTestEnv() *testRuntime {
+	return &testRuntime{
+		scope: testScope{},
+		book:  spell.Book{},
 	}
-
-	if rt.counter >= len(rt.ins) {
-		return inst.Inst{}, false
-	}
-
-	return rt.ins[rt.counter], true
 }
 
-func (rt *runtimeEnv) Fetch(id value.Ident) value.Value {
-	if v, ok := rt.ids[id]; ok {
+func (env *testRuntime) Spellbook() spell.Book {
+	return env.book
+}
+
+func (env *testRuntime) Bind(id value.Ident, v value.Value) {
+	env.scope[id] = v
+}
+
+func (env *testRuntime) Unbind(id value.Ident) {
+	delete(env.scope, id)
+}
+
+func (env *testRuntime) Fetch(id value.Ident) value.Value {
+	if v, ok := env.scope[id]; ok {
 		return v
 	}
-	rt.Fail(1, errors.New("Identifier "+string(id)+" not found in scope"))
+	env.Fail(1, errors.New("Identifier "+string(id)+" not found in scope"))
 	return nil
 }
 
-func (rt *runtimeEnv) FetchPush(id value.Ident) {
-	if v, ok := rt.ids[id]; ok {
-		rt.Push(v)
-		return
-	}
-	rt.Fail(1, errors.New("Identifier "+string(id)+" not found in scope"))
+func (env *testRuntime) Fail(code int, e error) {
+	env.exitCode = code
+	env.err = e
+	env.exitFlag = true
 }
 
-func (rt *runtimeEnv) Spellbook() spell.Book {
-	return rt.book
+func (env *testRuntime) Exit(code int) {
+	env.exitCode = code
+	env.exitFlag = true
 }
 
-func (rt *runtimeEnv) Bind(id value.Ident, v value.Value) {
-	rt.ids[id] = v
+func (env *testRuntime) GetExitCode() int {
+	return env.exitCode
 }
 
-func (rt *runtimeEnv) Unbind(id value.Ident) {
-	delete(rt.ids, id)
+func (env *testRuntime) GetErr() error {
+	return env.err
 }
 
-func (rt *runtimeEnv) Fail(code int, e error) {
-	rt.exitCode = code
-	rt.err = e
-	rt.exitFlag = true
-}
-
-func (rt *runtimeEnv) Exit(code int) {
-	rt.exitCode = code
-	rt.exitFlag = true
-}
-
-func (rt *runtimeEnv) GetErr() error {
-	return rt.err
-}
-
-func (rt *runtimeEnv) GetExitCode() int {
-	return rt.exitCode
-}
-
-func (rt *runtimeEnv) GetExitFlag() bool {
-	return rt.exitFlag
+func (env *testRuntime) GetExitFlag() bool {
+	return env.exitFlag
 }

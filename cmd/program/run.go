@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/cmd/runtime"
-	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
-	processor "github.com/PaulioRandall/scarlet-go/scarlet/processor2"
+	"github.com/PaulioRandall/scarlet-go/scarlet/processor"
 )
 
 // ExeResult represents the result of executing a program within a Processor.
@@ -45,7 +44,7 @@ func Run(c RunCmd) (ExeResult, error) {
 		return nil, e
 	}
 
-	env := runtime.New([]inst.Inst{})
+	env := runtime.New()
 	for _, stmt := range program {
 		if processor.Statement(env, stmt); env.GetExitFlag() {
 			break

@@ -1,8 +1,9 @@
 package processor
 
 import (
-	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
 	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
+	"github.com/PaulioRandall/scarlet-go/scarlet/token"
+	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
@@ -10,27 +11,17 @@ import (
 // instructions such as access to the value stack and acces to scope variables.
 type Runtime interface {
 
-	// Push a value onto the top of the value stack.
-	Push(value.Value)
-
-	// Pop a value off the top of the value stack,
-	Pop() value.Value
-
 	// Spellbook returns the book containing the spells available during runtime.
 	Spellbook() spell.Book
 
 	// Bind sets the value of a variable overwriting any existing value.
 	Bind(value.Ident, value.Value)
 
-	// Unbind.
+	// Unbind removes a variable from the scope.
 	Unbind(value.Ident)
 
 	// Fetch returns the value associated with the specified identifier.
 	Fetch(value.Ident) value.Value
-
-	// Fetch the value associated with the specified identifier and pushes onto
-	// the value stack.
-	FetchPush(value.Ident)
 
 	// Fail sets the error and exit status a non-recoverable error occurs
 	// during execution.
@@ -51,170 +42,208 @@ type Runtime interface {
 	GetExitFlag() bool
 }
 
-// Program provides access to the program instructions.
-type Program interface {
+const (
+	GENERAL_ERROR int = 1
+)
 
-	// Next returns the next instruction inicated by the program counter. True is
-	// returned if an instruction was returned otherwise the end of program has
-	// been reached.
-	Next() (inst.Inst, bool)
-}
-
-// Processor executes instructions in a similar fashion to a CPU but at a
-// higher level.
-type Processor struct {
-	Program Program // Access to instructions and the value stack
-	Env     Runtime // Access to memory and context dependent behaviour
-	Halt    bool    // True to interupt execution after the next instruction
-	Halted  bool    // True if execution was stopped by an interupt
-}
-
-// New returns a new Processor with the specified Program and Runtime.
-func New(p Program, env Runtime) *Processor {
-	return &Processor{
-		Program: p,
-		Env:     env,
-	}
-}
-
-// Run begins or continues execution of instructions and returns true if the
-// execution halted because the program counter reached the end of the
-// instruction list or a halt instruction was encountered. False is returned if
-// execution was requested to halt via a separate process, the 'Processor.Err'
-// value contains an error from previous execution, or an error occurred
-// resulting in the 'Processor.Err' value being set.
-func (p *Processor) Run() {
-
-	var in inst.Inst
-	var ok bool
-
-	if p.Halt {
-		p.Halted = true
-		return
-	}
-
-	p.Halted = false
-
-	for !p.Env.GetExitFlag() {
-
-		if p.Halt {
-			p.Halt = false
-			p.Halted = true
-			return // Processor was directly interupted
-		}
-
-		if in, ok = p.Program.Next(); !ok {
-			p.Env.Exit(0)
-			return // No more instructions to execute
-		}
-
-		p.Process(in)
-	}
-}
-
-// Process the instruction 'in' using the memory 'm'. 'halt' should only be
-// returned as true if an instruction specifically requests execution to halt.
-func (p *Processor) Process(in inst.Inst) {
-	switch {
-	case in.Code == inst.FETCH_PUSH:
-		p.Env.FetchPush(in.Data.(value.Ident))
-
-	case in.Code == inst.STACK_PUSH:
-		p.Env.Push(in.Data)
-
-	case in.Code == inst.SCOPE_BIND:
-		v := p.Env.Pop()
-		if v == nil {
-			return // Temp
-		}
-		p.Env.Bind(in.Data.(value.Ident), v)
-
-	case in.Code == inst.SPELL_CALL:
-		spellCall(p, in)
-
-	case processNumOp(p, in):
-
+func Statement(env Runtime, s tree.Stat) {
+	switch v := s.(type) {
+	case tree.SingleAssign:
+		SingleAssign(env, v)
+	case tree.MultiAssign:
+		MultiAssign(env, v)
+	case tree.AsymAssign:
+		AsymAssign(env, v)
+	case tree.SpellCall:
+		SpellCall(env, v)
 	default:
-		panic("Unhandled instruction code: " + in.Code.String())
+		panic("SANITY CHECK! Unknown tree.Stat type")
 	}
 }
 
-func processNumOp(p *Processor, in inst.Inst) bool {
-
-	binNumOp := func(f func(l, r *value.Num)) {
-		r := p.Env.Pop().(value.Num)
-		l := p.Env.Pop().(value.Num)
-		l.Number = l.Number.Copy()
-		f(&l, &r) // Answer is always held in the left value
-		p.Env.Push(l)
+func SingleAssign(env Runtime, n tree.SingleAssign) {
+	l := Assignee(env, n.Left)
+	r := Expression(env, n.Right)
+	if r == nil {
+		env.Unbind(l)
+	} else {
+		env.Bind(l, r)
 	}
-
-	binCmpOp := func(f func(l, r *value.Num) bool) {
-		r := p.Env.Pop().(value.Num)
-		l := p.Env.Pop().(value.Num)
-		p.Env.Push(value.Bool(f(&l, &r)))
-	}
-
-	switch in.Code {
-	case inst.BIN_OP_ADD:
-		binNumOp(func(l, r *value.Num) { l.Number.Add(r.Number) })
-	case inst.BIN_OP_SUB:
-		binNumOp(func(l, r *value.Num) { l.Number.Sub(r.Number) })
-	case inst.BIN_OP_MUL:
-		binNumOp(func(l, r *value.Num) { l.Number.Mul(r.Number) })
-	case inst.BIN_OP_DIV:
-		binNumOp(func(l, r *value.Num) { l.Number.Div(r.Number) })
-	case inst.BIN_OP_REM:
-		binNumOp(func(l, r *value.Num) { l.Number.Mod(r.Number) })
-
-	case inst.BIN_OP_AND:
-		l, r := p.Env.Pop().(value.Bool), p.Env.Pop().(value.Bool)
-		p.Env.Push(l && r)
-	case inst.BIN_OP_OR:
-		l, r := p.Env.Pop().(value.Bool), p.Env.Pop().(value.Bool)
-		p.Env.Push(l || r)
-
-	case inst.BIN_OP_LESS:
-		binCmpOp(func(l, r *value.Num) bool { return l.Number.Less(r.Number) })
-	case inst.BIN_OP_MORE:
-		binCmpOp(func(l, r *value.Num) bool { return l.Number.More(r.Number) })
-	case inst.BIN_OP_LEQU:
-		binCmpOp(func(l, r *value.Num) bool { return l.Number.LessOrEqual(r.Number) })
-	case inst.BIN_OP_MEQU:
-		binCmpOp(func(l, r *value.Num) bool { return l.Number.MoreOrEqual(r.Number) })
-
-	case inst.BIN_OP_EQU:
-		r, l := p.Env.Pop(), p.Env.Pop()
-		p.Env.Push(value.Bool(l.Equal(r)))
-	case inst.BIN_OP_NEQU:
-		r, l := p.Env.Pop(), p.Env.Pop()
-		p.Env.Push(value.Bool(!l.Equal(r)))
-
-	default:
-		return false
-	}
-
-	return true
 }
 
-func spellCall(p *Processor, in inst.Inst) {
+func MultiAssign(env Runtime, n tree.MultiAssign) {
+	vals := Expressions(env, n.Right)
+	for i, v := range n.Left {
+		l := Assignee(env, v)
+		r := vals[i]
+		if r == nil {
+			env.Unbind(l)
+		} else {
+			env.Bind(l, r)
+		}
+	}
+}
 
-	name := in.Data.(value.Ident)
-	sp, ok := p.Env.Spellbook().Lookup(string(name))
+func AsymAssign(env Runtime, n tree.AsymAssign) {
+	vals := MultiReturn(env, n.Right)
+	for i, v := range n.Left {
+		l := Assignee(env, v)
+		r := vals[i]
+		if r == nil {
+			env.Unbind(l)
+		} else {
+			env.Bind(l, r)
+		}
+	}
+}
 
+func SpellCall(env Runtime, n tree.SpellCall) []value.Value {
+
+	s, ok := env.Spellbook().Lookup(n.Name)
 	if !ok {
-		panic("Unknown spell: " + name)
+		panic("SANITY CHECK! Unknown spell '" + n.Name + "'")
 	}
 
-	args := []value.Value{}
-	for a := p.Env.Pop(); a != nil; a = p.Env.Pop() {
-		args = append(args, a)
+	in := Expressions(env, n.Args)
+	out := spell.NewOutput(s.Outputs)
+	s.Spell(env, in, out)
+	return out.Slice()
+}
+
+func Assignee(env Runtime, n tree.Assignee) value.Ident {
+	switch v := n.(type) {
+	case tree.Ident:
+		return value.Ident(v.Val)
+	default:
+		panic("SANITY CHECK! Unknown tree.Assignee type")
+	}
+}
+
+func MultiReturn(env Runtime, n tree.Expr) []value.Value {
+	switch v := n.(type) {
+	case tree.SpellCall:
+		return SpellCall(env, v)
+	}
+	return nil
+}
+
+func Expressions(env Runtime, n []tree.Expr) []value.Value {
+	r := make([]value.Value, len(n))
+	for i, v := range n {
+		r[i] = Expression(env, v)
+	}
+	return r
+}
+
+func Expression(env Runtime, n tree.Expr) value.Value {
+	switch v := n.(type) {
+	case tree.Ident:
+		return Ident(env, v)
+	case tree.Literal:
+		return Literal(env, v)
+	case tree.BinaryExpr:
+		return BinaryExpr(env, v)
+	case tree.SpellCall:
+		return SpellCallExpr(env, v)
+	default:
+		panic("SANITY CHECK! Unknown tree.Expr type")
+	}
+}
+
+func Ident(env Runtime, n tree.Ident) value.Value {
+	return env.Fetch(value.Ident(n.Val))
+}
+
+func Literal(env Runtime, n tree.Literal) value.Value {
+	switch v := n.(type) {
+	case tree.BoolLit:
+		return value.Bool(v.Val)
+	case tree.NumLit:
+		return value.Num{Number: v.Val}
+	case tree.StrLit:
+		return value.Str(v.Val[1 : len(v.Val)-1])
+	default:
+		panic("SANITY CHECK! Unknown tree.Literal type")
+	}
+}
+
+func BinaryExpr(env Runtime, n tree.BinaryExpr) value.Value {
+
+	l, r := Expression(env, n.Left), Expression(env, n.Right)
+
+	switch n.Op {
+	case token.ADD:
+		lNum, rNum := l.(value.Num), r.(value.Num)
+		lNum.Number = lNum.Number.Copy()
+		lNum.Number.Add(rNum.Number)
+		return lNum
+
+	case token.SUB:
+		lNum, rNum := l.(value.Num), r.(value.Num)
+		lNum.Number = lNum.Number.Copy()
+		lNum.Number.Sub(rNum.Number)
+		return lNum
+
+	case token.MUL:
+		lNum, rNum := l.(value.Num), r.(value.Num)
+		lNum.Number = lNum.Number.Copy()
+		lNum.Number.Mul(rNum.Number)
+		return lNum
+
+	case token.DIV:
+		lNum, rNum := l.(value.Num), r.(value.Num)
+		lNum.Number = lNum.Number.Copy()
+		lNum.Number.Div(rNum.Number)
+		return lNum
+
+	case token.REM:
+		lNum, rNum := l.(value.Num), r.(value.Num)
+		lNum.Number = lNum.Number.Copy()
+		lNum.Number.Mod(rNum.Number)
+		return lNum
+
+	case token.AND:
+		return l.(value.Bool) && r.(value.Bool)
+
+	case token.OR:
+		return l.(value.Bool) || r.(value.Bool)
+
+	case token.LESS:
+		lNum, rNum := l.(value.Num), r.(value.Num)
+		return value.Bool(lNum.Number.Less(rNum.Number))
+
+	case token.MORE:
+		lNum, rNum := l.(value.Num), r.(value.Num)
+		return value.Bool(lNum.Number.More(rNum.Number))
+
+	case token.LESS_EQUAL:
+		lNum, rNum := l.(value.Num), r.(value.Num)
+		return value.Bool(lNum.Number.LessOrEqual(rNum.Number))
+
+	case token.MORE_EQUAL:
+		lNum, rNum := l.(value.Num), r.(value.Num)
+		return value.Bool(lNum.Number.MoreOrEqual(rNum.Number))
+
+	case token.EQUAL:
+		return value.Bool(l.Equal(r))
+
+	case token.NOT_EQUAL:
+		return value.Bool(!l.Equal(r))
+
+	default:
+		panic("SANITY CHECK! Unknown tree.binaryExpr type")
+	}
+}
+
+func SpellCallExpr(env Runtime, n tree.SpellCall) value.Value {
+
+	s, ok := env.Spellbook().Lookup(n.Name)
+	if !ok {
+		panic("SANITY CHECK! Unknown spell '" + n.Name + "'")
 	}
 
-	out := spell.NewOutput(sp.Outputs)
-	sp.Spell(p.Env, args, out)
-
-	for _, v := range out.Slice() {
-		p.Env.Push(v)
-	}
+	in := Expressions(env, n.Args)
+	out := spell.NewOutput(1)
+	s.Spell(env, in, out)
+	return out.Get(0)
 }

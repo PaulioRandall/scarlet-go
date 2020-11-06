@@ -3,426 +3,372 @@ package processor
 import (
 	"testing"
 
-	"github.com/PaulioRandall/scarlet-go/scarlet/inst"
 	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
+	"github.com/PaulioRandall/scarlet-go/scarlet/token"
+	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value/number"
 
 	"github.com/stretchr/testify/require"
 )
 
-func numValue(n string) value.Num {
-	return value.Num{Number: number.New(n)}
+func numValue(n string) value.Num { return value.Num{Number: number.New(n)} }
+func ident(id string) tree.Ident  { return tree.Ident{Val: id} }
+func numLit(n string) tree.NumLit { return tree.NumLit{Val: number.New(n)} }
+func boolLit(b bool) tree.BoolLit { return tree.BoolLit{Val: b} }
+func strLit(s string) tree.StrLit { return tree.StrLit{Val: s} }
+func binExpr(l tree.Expr, op token.Token, r tree.Expr) tree.BinaryExpr {
+	return tree.BinaryExpr{Left: l, Op: op, Right: r}
 }
 
-func TestProcess_Assign_1(t *testing.T) {
+type expRuntime struct {
+	exitCode int
+	exitFlag bool
+	err      error
+}
 
-	// x := 1
-	env := &runtimeEnv{
-		ins: []inst.Inst{
-			inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
-			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
+func assertRuntime(t *testing.T, exp *expRuntime, act *testRuntime) {
+	require.Equal(t, exp.err, act.err)
+	require.Equal(t, exp.exitFlag, act.exitFlag)
+	require.Equal(t, exp.exitCode, act.exitCode)
+}
+
+func assertOutput(t *testing.T, exp interface{}, act interface{}) {
+	if exp == nil {
+		require.Nil(t, act)
+		return
+	}
+
+	require.IsType(t, exp, act)
+
+	if want, ok := exp.(value.Num); ok {
+		have := act.(value.Num)
+		require.True(t, want.Equal(have))
+		return
+	}
+
+	require.Equal(t, exp, act)
+}
+
+func TestLiteral(t *testing.T) {
+
+	var assertions = []struct {
+		in  tree.Literal
+		exp value.Value
+	}{
+		{ // 0
+			in:  boolLit(true),
+			exp: value.Bool(true),
+		}, { // 1
+			in:  boolLit(false),
+			exp: value.Bool(false),
+		}, { // 2
+			in:  numLit("1"),
+			exp: numValue("1"),
+		}, { // 3
+			in:  strLit(`"abc"`),
+			exp: value.Str(`abc`),
 		},
-		ids: map[value.Ident]value.Value{},
 	}
 
-	expIds := map[value.Ident]value.Value{
-		value.Ident("x"): numValue("1"),
+	for i, a := range assertions {
+		t.Logf("Assertion %d", i)
+		env := newTestEnv()
+		act := Expression(env, a.in)
+		assertOutput(t, a.exp, act)
 	}
-
-	expStk := value.Stack{}
-
-	p := New(env, env)
-	p.Run()
-
-	require.Nil(t, env.err, "ERROR: %+v", env.err)
-	require.True(t, env.exitFlag)
-	require.Equal(t, 0, env.exitCode)
-	require.False(t, p.Halted)
-	require.Equal(t, expIds, env.ids)
-	require.Equal(t, expStk, env.Stack)
 }
 
-func TestProcess_Assign_2(t *testing.T) {
+func TestArithBinExpr(t *testing.T) {
 
-	// x := y
-	env := &runtimeEnv{
-		ins: []inst.Inst{
-			inst.Inst{Code: inst.FETCH_PUSH, Data: value.Ident("y")},
-			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
+	var assertions = []struct {
+		in  tree.BinaryExpr
+		exp value.Value
+	}{
+		{ // 0
+			in:  binExpr(numLit("1"), token.ADD, numLit("2")),
+			exp: numValue("3"),
+		}, { // 1
+			in:  binExpr(numLit("4"), token.SUB, numLit("1")),
+			exp: numValue("3"),
+		}, { // 2
+			in:  binExpr(numLit("3"), token.MUL, numLit("4")),
+			exp: numValue("12"),
+		}, { // 3
+			in:  binExpr(numLit("12"), token.DIV, numLit("4")),
+			exp: numValue("3"),
+		}, { // 4
+			in:  binExpr(numLit("5"), token.REM, numLit("3")),
+			exp: numValue("2"),
 		},
-		ids: map[value.Ident]value.Value{
-			value.Ident("y"): numValue("1"),
+	}
+
+	for i, a := range assertions {
+		t.Logf("Assertion %d", i)
+		env := newTestEnv()
+		act := Expression(env, a.in)
+		assertOutput(t, a.exp, act)
+	}
+}
+
+func TestLogicBinExpr(t *testing.T) {
+
+	var assertions = []struct {
+		in  tree.BinaryExpr
+		exp value.Value
+	}{
+		{ // 0
+			in:  binExpr(boolLit(true), token.AND, boolLit(true)),
+			exp: value.Bool(true),
+		}, { // 1
+			in:  binExpr(boolLit(true), token.AND, boolLit(false)),
+			exp: value.Bool(false),
+		}, { // 2
+			in:  binExpr(boolLit(false), token.AND, boolLit(false)),
+			exp: value.Bool(false),
+		}, { // 3
+			in:  binExpr(boolLit(true), token.OR, boolLit(true)),
+			exp: value.Bool(true),
+		}, { // 4
+			in:  binExpr(boolLit(true), token.OR, boolLit(false)),
+			exp: value.Bool(true),
+		}, { // 5
+			in:  binExpr(boolLit(false), token.OR, boolLit(false)),
+			exp: value.Bool(false),
 		},
 	}
 
-	expIds := map[value.Ident]value.Value{
-		value.Ident("y"): numValue("1"),
-		value.Ident("x"): numValue("1"),
+	for i, a := range assertions {
+		t.Logf("Assertion %d", i)
+		env := newTestEnv()
+		act := Expression(env, a.in)
+		assertOutput(t, a.exp, act)
 	}
-
-	expStk := value.Stack{}
-
-	p := New(env, env)
-	p.Run()
-
-	require.Nil(t, env.err, "ERROR: %+v", env.err)
-	require.True(t, env.exitFlag)
-	require.Equal(t, 0, env.exitCode)
-	require.False(t, p.Halted)
-	require.Equal(t, expIds, env.ids)
-	require.Equal(t, expStk, env.Stack)
 }
 
-func TestProcess_MultiAssign(t *testing.T) {
+func TestCompBinExpr(t *testing.T) {
 
-	// x, y, z := true, 1, text
-	env := &runtimeEnv{
-		ins: []inst.Inst{
-			inst.Inst{Code: inst.STACK_PUSH, Data: value.Bool(true)},
-			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("x")},
-			inst.Inst{Code: inst.STACK_PUSH, Data: numValue("1")},
-			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("y")},
-			inst.Inst{Code: inst.STACK_PUSH, Data: value.Str("text")},
-			inst.Inst{Code: inst.SCOPE_BIND, Data: value.Ident("z")},
+	var assertions = []struct {
+		in  tree.BinaryExpr
+		exp value.Value
+	}{
+		{ // 0
+			in:  binExpr(numLit("1"), token.LESS, numLit("2")),
+			exp: value.Bool(true),
+		}, { // 1
+			in:  binExpr(numLit("2"), token.LESS, numLit("2")),
+			exp: value.Bool(false),
+		}, { // 2
+			in:  binExpr(numLit("3"), token.LESS, numLit("2")),
+			exp: value.Bool(false),
+		}, { // 3
+			in:  binExpr(numLit("1"), token.MORE, numLit("2")),
+			exp: value.Bool(false),
+		}, { // 4
+			in:  binExpr(numLit("2"), token.MORE, numLit("2")),
+			exp: value.Bool(false),
+		}, { // 5
+			in:  binExpr(numLit("3"), token.MORE, numLit("2")),
+			exp: value.Bool(true),
+		}, { // 6
+			in:  binExpr(numLit("1"), token.LESS_EQUAL, numLit("2")),
+			exp: value.Bool(true),
+		}, { // 7
+			in:  binExpr(numLit("2"), token.LESS_EQUAL, numLit("2")),
+			exp: value.Bool(true),
+		}, { // 8
+			in:  binExpr(numLit("3"), token.LESS_EQUAL, numLit("2")),
+			exp: value.Bool(false),
+		}, { // 9
+			in:  binExpr(numLit("1"), token.MORE_EQUAL, numLit("2")),
+			exp: value.Bool(false),
+		}, { // 10
+			in:  binExpr(numLit("2"), token.MORE_EQUAL, numLit("2")),
+			exp: value.Bool(true),
+		}, { // 11
+			in:  binExpr(numLit("3"), token.MORE_EQUAL, numLit("2")),
+			exp: value.Bool(true),
 		},
-		ids: map[value.Ident]value.Value{},
 	}
 
-	expIds := map[value.Ident]value.Value{
-		value.Ident("x"): value.Bool(true),
-		value.Ident("y"): numValue("1"),
-		value.Ident("z"): value.Str("text"),
+	for i, a := range assertions {
+		t.Logf("Assertion %d", i)
+		env := newTestEnv()
+		act := Expression(env, a.in)
+		assertOutput(t, a.exp, act)
 	}
-
-	expStk := value.Stack{}
-
-	p := New(env, env)
-	p.Run()
-
-	require.Nil(t, env.err, "ERROR: %+v", env.err)
-	require.True(t, env.exitFlag)
-	require.Equal(t, 0, env.exitCode)
-	require.False(t, p.Halted)
-	require.Equal(t, expIds, env.ids)
-	require.Equal(t, expStk, env.Stack)
 }
 
-func processBinOpTest(t *testing.T,
-	exp, left, right value.Value,
-	opCode inst.Code) {
+func TestEqualBinExpr(t *testing.T) {
 
-	env := &runtimeEnv{
-		ins: []inst.Inst{
-			inst.Inst{Code: inst.STACK_PUSH, Data: left},
-			inst.Inst{Code: inst.STACK_PUSH, Data: right},
-			inst.Inst{Code: opCode},
+	var assertions = []struct {
+		in  tree.BinaryExpr
+		exp value.Value
+	}{
+		{ // 0
+			in:  binExpr(numLit("1"), token.EQUAL, numLit("1")),
+			exp: value.Bool(true),
+		}, { // 1
+			in:  binExpr(numLit("1"), token.EQUAL, numLit("2")),
+			exp: value.Bool(false),
+		}, { // 2
+			in:  binExpr(numLit("1"), token.EQUAL, strLit("abc")),
+			exp: value.Bool(false),
+		}, { // 3
+			in:  binExpr(numLit("1"), token.NOT_EQUAL, numLit("1")),
+			exp: value.Bool(false),
+		}, { // 4
+			in:  binExpr(numLit("1"), token.NOT_EQUAL, numLit("2")),
+			exp: value.Bool(true),
+		}, { // 5
+			in:  binExpr(numLit("1"), token.NOT_EQUAL, strLit("abc")),
+			exp: value.Bool(true),
 		},
-		ids: map[value.Ident]value.Value{},
 	}
 
-	expIds := map[value.Ident]value.Value{}
-
-	expStk := value.Stack{}
-	expStk.Push(exp)
-
-	p := New(env, env)
-	p.Run()
-
-	require.Nil(t, env.err, "ERROR: %+v", env.err)
-	require.True(t, env.exitFlag)
-	require.Equal(t, 0, env.exitCode)
-	require.False(t, p.Halted)
-	require.Equal(t, expIds, env.ids)
-
-	// Implementations of number.Number may not return the correct results when
-	// using == or != so number.Equal should be used to check equality.
-	require.Equal(t, expStk.Size(), env.Stack.Size())
-	want := expStk.Top()
-	have := env.Stack.Top()
-	if !have.Equal(want) {
-		require.Equal(t, want, have)
+	for i, a := range assertions {
+		t.Logf("Assertion %d", i)
+		env := newTestEnv()
+		act := Expression(env, a.in)
+		assertOutput(t, a.exp, act)
 	}
 }
 
-func TestProcess_Add(t *testing.T) {
-	// 1 + 2
-	processBinOpTest(t,
-		numValue("3"),
-		numValue("1"),
-		numValue("2"),
-		inst.BIN_OP_ADD,
-	)
-}
+func TestExprs(t *testing.T) {
 
-func TestProcess_Sub(t *testing.T) {
-	// 1 - 2
-	processBinOpTest(t,
-		numValue("-1"),
-		numValue("1"),
-		numValue("2"),
-		inst.BIN_OP_SUB,
-	)
-}
-
-func TestProcess_Mul(t *testing.T) {
-	// 2 * 4
-	processBinOpTest(t,
-		numValue("8"),
-		numValue("2"),
-		numValue("4"),
-		inst.BIN_OP_MUL,
-	)
-}
-
-func TestProcess_Div(t *testing.T) {
-	// 12 / 3
-	processBinOpTest(t,
-		numValue("4"),
-		numValue("12"),
-		numValue("3"),
-		inst.BIN_OP_DIV,
-	)
-}
-
-func TestProcess_Rem(t *testing.T) {
-	// 5 % 3
-	processBinOpTest(t,
-		numValue("2"),
-		numValue("5"),
-		numValue("3"),
-		inst.BIN_OP_REM,
-	)
-}
-
-func TestProcess_And(t *testing.T) {
-	// false && false
-	processBinOpTest(t,
-		value.Bool(false),
-		value.Bool(false),
-		value.Bool(false),
-		inst.BIN_OP_AND,
-	)
-	// true && false
-	processBinOpTest(t,
-		value.Bool(false),
-		value.Bool(true),
-		value.Bool(false),
-		inst.BIN_OP_AND,
-	)
-	// true && true
-	processBinOpTest(t,
-		value.Bool(true),
-		value.Bool(true),
-		value.Bool(true),
-		inst.BIN_OP_AND,
-	)
-}
-
-func TestProcess_Or(t *testing.T) {
-	// false || false
-	processBinOpTest(t,
-		value.Bool(false),
-		value.Bool(false),
-		value.Bool(false),
-		inst.BIN_OP_OR,
-	)
-	// true || false
-	processBinOpTest(t,
-		value.Bool(true),
-		value.Bool(true),
-		value.Bool(false),
-		inst.BIN_OP_OR,
-	)
-	// true || true
-	processBinOpTest(t,
-		value.Bool(true),
-		value.Bool(true),
-		value.Bool(true),
-		inst.BIN_OP_OR,
-	)
-}
-
-func TestProcess_Less(t *testing.T) {
-	// 1 < 2
-	processBinOpTest(t,
-		value.Bool(true),
-		numValue("1"),
-		numValue("2"),
-		inst.BIN_OP_LESS,
-	)
-	// 2 < 2
-	processBinOpTest(t,
-		value.Bool(false),
-		numValue("2"),
-		numValue("2"),
-		inst.BIN_OP_LESS,
-	)
-	// 3 < 2
-	processBinOpTest(t,
-		value.Bool(false),
-		numValue("3"),
-		numValue("2"),
-		inst.BIN_OP_LESS,
-	)
-}
-
-func TestProcess_More(t *testing.T) {
-	// 1 > 2
-	processBinOpTest(t,
-		value.Bool(false),
-		numValue("1"),
-		numValue("2"),
-		inst.BIN_OP_MORE,
-	)
-	// 2 > 2
-	processBinOpTest(t,
-		value.Bool(false),
-		numValue("2"),
-		numValue("2"),
-		inst.BIN_OP_MORE,
-	)
-	// 3 > 2
-	processBinOpTest(t,
-		value.Bool(true),
-		numValue("3"),
-		numValue("2"),
-		inst.BIN_OP_MORE,
-	)
-}
-
-func TestProcess_LessOrEqual(t *testing.T) {
-	// 1 <= 2
-	processBinOpTest(t,
-		value.Bool(true),
-		numValue("1"),
-		numValue("2"),
-		inst.BIN_OP_LEQU,
-	)
-	// 2 <= 2
-	processBinOpTest(t,
-		value.Bool(true),
-		numValue("2"),
-		numValue("2"),
-		inst.BIN_OP_LEQU,
-	)
-	// 3 <= 2
-	processBinOpTest(t,
-		value.Bool(false),
-		numValue("3"),
-		numValue("2"),
-		inst.BIN_OP_LEQU,
-	)
-}
-
-func TestProcess_MoreOrEqual(t *testing.T) {
-	// 1 >= 2
-	processBinOpTest(t,
-		value.Bool(false),
-		numValue("1"),
-		numValue("2"),
-		inst.BIN_OP_MEQU,
-	)
-	// 2 >= 2
-	processBinOpTest(t,
-		value.Bool(true),
-		numValue("2"),
-		numValue("2"),
-		inst.BIN_OP_MEQU,
-	)
-	// 3 >= 2
-	processBinOpTest(t,
-		value.Bool(true),
-		numValue("3"),
-		numValue("2"),
-		inst.BIN_OP_MEQU,
-	)
-}
-
-func TestProcess_Equal(t *testing.T) {
-	// 1 == 2
-	processBinOpTest(t,
-		value.Bool(false),
-		numValue("1"),
-		numValue("2"),
-		inst.BIN_OP_EQU,
-	)
-	// 2 == 2
-	processBinOpTest(t,
-		value.Bool(true),
-		numValue("2"),
-		numValue("2"),
-		inst.BIN_OP_EQU,
-	)
-	// 2 == "apple"
-	processBinOpTest(t,
-		value.Bool(false),
-		numValue("2"),
-		value.Str("apple"),
-		inst.BIN_OP_EQU,
-	)
-}
-
-func TestProcess_NotEqual(t *testing.T) {
-	// 1 != 2
-	processBinOpTest(t,
-		value.Bool(true),
-		numValue("1"),
-		numValue("2"),
-		inst.BIN_OP_NEQU,
-	)
-	// 2 != 2
-	processBinOpTest(t,
-		value.Bool(false),
-		numValue("2"),
-		numValue("2"),
-		inst.BIN_OP_NEQU,
-	)
-	// 2 != "apple"
-	processBinOpTest(t,
-		value.Bool(true),
-		numValue("2"),
-		value.Str("apple"),
-		inst.BIN_OP_NEQU,
-	)
-}
-
-func TestProcess_SpellCall_1(t *testing.T) {
-
-	testSpell := func(env spell.Runtime, in []value.Value, out *spell.Output) {
-		require.Equal(t, 1, len(in))
-		require.Equal(t, value.Str("abc"), in[0])
-		require.Equal(t, 0, len(out.Slice()))
-	}
-
-	// x := y
-	env := &runtimeEnv{
-		ins: []inst.Inst{
-			inst.Inst{Code: inst.STACK_PUSH},
-			inst.Inst{Code: inst.STACK_PUSH, Data: value.Str("abc")},
-			inst.Inst{Code: inst.SPELL_CALL, Data: value.Ident("Print")},
-		},
-		ids: map[value.Ident]value.Value{},
-		book: spell.Book{
-			"print": spell.Inscription{
-				Spell:   testSpell,
-				Name:    "Print",
-				Outputs: 0,
+	var assertions = []struct {
+		in  []tree.Expr
+		exp []value.Value
+	}{
+		{ // 0
+			in: []tree.Expr{
+				numLit("1"),
+				binExpr(numLit("1"), token.ADD, numLit("2")),
+				binExpr(numLit("1"), token.EQUAL, strLit("abc")),
+			},
+			exp: []value.Value{
+				numValue("1"),
+				numValue("3"),
+				value.Bool(false),
 			},
 		},
 	}
 
-	expIds := map[value.Ident]value.Value{}
+	for i, a := range assertions {
+		t.Logf("Assertion %d", i)
+		env := newTestEnv()
+		act := Expressions(env, a.in)
+		require.Equal(t, len(a.exp), len(act))
+		for i := 0; i < len(a.exp); i++ {
+			assertOutput(t, a.exp[i], act[i])
+		}
+	}
+}
 
-	expStk := value.Stack{}
+func TestSingleAssign(t *testing.T) {
 
-	p := New(env, env)
-	p.Run()
+	in := tree.SingleAssign{
+		Left:  ident("x"),
+		Right: numLit("1"),
+	}
 
-	require.Nil(t, env.err, "ERROR: %+v", env.err)
-	require.True(t, env.exitFlag)
-	require.Equal(t, 0, env.exitCode)
-	require.False(t, p.Halted)
-	require.Equal(t, expIds, env.ids)
-	require.Equal(t, expStk, env.Stack)
+	exp := newTestEnv()
+	exp.scope[value.Ident("x")] = numValue("1")
+
+	act := newTestEnv()
+	Statement(act, in)
+	require.Equal(t, exp, act)
+}
+
+func TestMultiAssign(t *testing.T) {
+
+	in := tree.MultiAssign{
+		Left:  []tree.Assignee{ident("x"), ident("y"), ident("z")},
+		Right: []tree.Expr{boolLit(true), numLit("1"), strLit(`"abc"`)},
+	}
+
+	exp := newTestEnv()
+	exp.scope[value.Ident("x")] = value.Bool(true)
+	exp.scope[value.Ident("y")] = numValue("1")
+	exp.scope[value.Ident("z")] = value.Str("abc")
+
+	act := newTestEnv()
+	Statement(act, in)
+	require.Equal(t, exp, act)
+}
+
+func TestAsymAssign(t *testing.T) {
+
+	in := tree.AsymAssign{
+		Left: []tree.Assignee{ident("x"), ident("y"), ident("z")},
+		Right: tree.SpellCall{
+			Name: "reverse",
+			Args: []tree.Expr{
+				boolLit(true),
+				numLit("123"),
+				strLit(`"abc"`),
+			},
+		},
+	}
+
+	book := spell.Book{
+		"reverse": spell.Inscription{
+			Name:    "Reverse",
+			Outputs: 3,
+			Spell: func(env spell.Runtime, in []value.Value, out *spell.Output) {
+				out.Set(0, value.Str("abc"))
+				out.Set(1, numValue("1"))
+				out.Set(2, value.Bool(true))
+			},
+		},
+	}
+
+	exp := newTestEnv()
+	exp.book = book
+	exp.scope[value.Ident("x")] = value.Str("abc")
+	exp.scope[value.Ident("y")] = numValue("1")
+	exp.scope[value.Ident("z")] = value.Bool(true)
+
+	act := newTestEnv()
+	act.book = book
+
+	Statement(act, in)
+	require.Equal(t, exp, act)
+}
+
+func TestSpellCall(t *testing.T) {
+
+	in := tree.SpellCall{
+		Name: "Concat",
+		Args: []tree.Expr{
+			strLit(`"abc"`),
+			strLit(`"123"`),
+		},
+	}
+
+	expOut := []value.Value{value.Str("abc123")}
+
+	book := spell.Book{
+		"concat": spell.Inscription{
+			Name:    "Concat",
+			Outputs: 1,
+			Spell: func(env spell.Runtime, in []value.Value, out *spell.Output) {
+				require.Equal(t, 2, len(in))
+				require.Equal(t, value.Str("abc"), in[0])
+				require.Equal(t, value.Str("123"), in[1])
+				require.Equal(t, 1, len(out.Slice()))
+				out.Set(0, value.Str("abc123"))
+			},
+		},
+	}
+
+	exp := newTestEnv()
+	exp.book = book
+
+	act := newTestEnv()
+	act.book = book
+
+	out := SpellCall(act, in)
+	require.Equal(t, exp, act)
+	require.Equal(t, expOut, out)
 }
