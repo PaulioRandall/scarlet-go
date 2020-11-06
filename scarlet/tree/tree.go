@@ -56,8 +56,9 @@ type (
 		Val string // Identifier name as defined in source
 	}
 
-	// VoidLit Node is an Expr representing a void.
-	VoidLit struct {
+	// AnonIdent Node is an Expr representing an anonymous identifier such as
+	// will be used for ignoring a function or spell result.
+	AnonIdent struct {
 		token.Snippet
 	}
 
@@ -122,7 +123,7 @@ type (
 )
 
 func (n Ident) Pos() token.Snippet        { return n.Snippet }
-func (n VoidLit) Pos() token.Snippet      { return n.Snippet }
+func (n AnonIdent) Pos() token.Snippet    { return n.Snippet }
 func (n BoolLit) Pos() token.Snippet      { return n.Snippet }
 func (n NumLit) Pos() token.Snippet       { return n.Snippet }
 func (n StrLit) Pos() token.Snippet       { return n.Snippet }
@@ -133,7 +134,7 @@ func (n BinaryExpr) Pos() token.Snippet   { return n.Snippet }
 func (n SpellCall) Pos() token.Snippet    { return n.Snippet }
 
 func (n Ident) node()        {}
-func (n VoidLit) node()      {}
+func (n AnonIdent) node()    {}
 func (n BoolLit) node()      {}
 func (n NumLit) node()       {}
 func (n StrLit) node()       {}
@@ -143,10 +144,11 @@ func (n MultiAssign) node()  {}
 func (n BinaryExpr) node()   {}
 func (n SpellCall) node()    {}
 
-func (n Ident) assignee() {}
+func (n Ident) assignee()     {}
+func (n AnonIdent) assignee() {}
 
 func (n Ident) expr()      {}
-func (n VoidLit) expr()    {}
+func (n AnonIdent) expr()  {}
 func (n BoolLit) expr()    {}
 func (n NumLit) expr()     {}
 func (n StrLit) expr()     {}

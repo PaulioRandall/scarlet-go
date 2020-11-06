@@ -80,6 +80,29 @@ func TestParse_SingleAssign_2(t *testing.T) {
 	requireNodes(t, exp, act)
 }
 
+func TestParse_SingleAssign_3(t *testing.T) {
+
+	// _ := 1
+	in := positionLexemes(
+		token.MakeTok("_", token.VOID),
+		token.MakeTok(":=", token.ASSIGN),
+		token.MakeTok("1", token.NUMBER),
+	)
+
+	exp := []tree.Node{
+		tree.SingleAssign{
+			Snippet: superSnip(in[0], in[2]),
+			Left:    tree.AnonIdent{Snippet: in[0].Snippet},
+			Infix:   in[1].Snippet,
+			Right:   tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+		},
+	}
+
+	act, e := ParseAll(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
 func TestParse_MultiAssign_1(t *testing.T) {
 
 	// x, y, z := true, 1, "abc"
@@ -119,6 +142,45 @@ func TestParse_MultiAssign_1(t *testing.T) {
 	requireNodes(t, exp, act)
 }
 
+func TestParse_MultiAssign_2(t *testing.T) {
+
+	// _, y, _ := true, 1, "abc"
+	in := positionLexemes(
+		token.MakeTok("_", token.VOID), // 0
+		token.MakeTok(",", token.DELIM),
+		token.MakeTok("y", token.IDENT), // 2
+		token.MakeTok(",", token.DELIM),
+		token.MakeTok("_", token.VOID), // 4
+		token.MakeTok(":=", token.ASSIGN),
+		token.MakeTok("true", token.TRUE), // 6
+		token.MakeTok(",", token.DELIM),
+		token.MakeTok("1", token.NUMBER), // 8
+		token.MakeTok(",", token.DELIM),
+		token.MakeTok(`"text"`, token.STRING), // 10
+	)
+
+	exp := []tree.Node{
+		tree.MultiAssign{
+			Snippet: superSnip(in[0], in[10]),
+			Left: []tree.Assignee{
+				tree.AnonIdent{Snippet: in[0].Snippet},
+				tree.Ident{Snippet: in[2].Snippet, Val: "y"},
+				tree.AnonIdent{Snippet: in[4].Snippet},
+			},
+			Infix: in[5].Snippet,
+			Right: []tree.Expr{
+				tree.BoolLit{Snippet: in[6].Snippet, Val: true},
+				tree.NumLit{Snippet: in[8].Snippet, Val: number.New("1")},
+				tree.StrLit{Snippet: in[10].Snippet, Val: `"text"`},
+			},
+		},
+	}
+
+	act, e := ParseAll(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
 func TestParse_AsymAssign_1(t *testing.T) {
 
 	// x, y := @Print()
@@ -138,6 +200,40 @@ func TestParse_AsymAssign_1(t *testing.T) {
 			Left: []tree.Assignee{
 				tree.Ident{Snippet: in[0].Snippet, Val: "x"},
 				tree.Ident{Snippet: in[2].Snippet, Val: "y"},
+			},
+			Infix: in[3].Snippet,
+			Right: tree.SpellCall{
+				Snippet: superSnip(in[4], in[6]),
+				Name:    "Print",
+				Args:    []tree.Expr{},
+			},
+		},
+	}
+
+	act, e := ParseAll(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
+func TestParse_AsymAssign_2(t *testing.T) {
+
+	// _, _ := @Print()
+	in := positionLexemes(
+		token.MakeTok("_", token.VOID), // 0
+		token.MakeTok(",", token.DELIM),
+		token.MakeTok("_", token.VOID), // 2
+		token.MakeTok(":=", token.ASSIGN),
+		token.MakeTok("@Print", token.SPELL), // 4
+		token.MakeTok("(", token.L_PAREN),
+		token.MakeTok(")", token.R_PAREN), // 6
+	)
+
+	exp := []tree.Node{
+		tree.AsymAssign{
+			Snippet: superSnip(in[0], in[6]),
+			Left: []tree.Assignee{
+				tree.AnonIdent{Snippet: in[0].Snippet},
+				tree.AnonIdent{Snippet: in[2].Snippet},
 			},
 			Infix: in[3].Snippet,
 			Right: tree.SpellCall{

@@ -25,8 +25,6 @@ type (
 		String() string
 	}
 
-	// Ident represents an identifier. They are not available to language users
-	// but are accessible within spells.
 	Ident string
 	Str   string
 	Bool  bool

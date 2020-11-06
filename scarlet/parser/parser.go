@@ -40,8 +40,8 @@ func statements(ctx *context) ([]tree.Node, error) {
 // Parses: <assign> | <expr>
 func statement(ctx *context) (n tree.Node, e error) {
 	switch l := ctx.Peek(); {
-	case l.Token == token.IDENT:
-		n, e = identLeads(ctx)
+	case l.Token == token.IDENT, l.Token == token.VOID:
+		n, e = assigneeLeads(ctx)
 
 	case l.IsLiteral(), l.Token == token.L_PAREN:
 		n, e = expectExpr(ctx)
@@ -57,8 +57,8 @@ func statement(ctx *context) (n tree.Node, e error) {
 	return
 }
 
-// Assumes: IDENT ...
-func identLeads(ctx *context) (tree.Node, error) {
+// Assumes: <assignee> ...
+func assigneeLeads(ctx *context) (tree.Node, error) {
 	switch ctx.Next(); ctx.Peek().Token {
 	case token.ASSIGN:
 		return singleAssign(ctx)
@@ -79,7 +79,7 @@ func singleAssign(ctx *context) (tree.Node, error) {
 	var e error
 	var s tree.SingleAssign
 
-	s.Left, e = expectIdent(ctx.Get())
+	s.Left, e = expectAssignee(ctx.Get())
 	if e != nil {
 		return s, e
 	}
@@ -165,26 +165,26 @@ func multiAssignLeft(ctx *context) ([]tree.Assignee, token.Snippet, error) {
 		snip  token.Snippet
 		l     token.Lexeme
 		nodes []tree.Assignee
-		id    tree.Ident
+		a     tree.Assignee
 		e     error
 	)
 
 	l = ctx.Get()
 	snip = l.Snippet
 
-	if id, e = expectIdent(l); e != nil {
+	if a, e = expectAssignee(l); e != nil {
 		return nil, zero, e
 	}
-	nodes = append(nodes, id)
+	nodes = append(nodes, a)
 
 	for ctx.Peek().Token == token.DELIM {
 		ctx.Next()
 		l = ctx.Next()
 
-		if id, e = expectIdent(l); e != nil {
+		if a, e = expectAssignee(l); e != nil {
 			return nil, zero, e
 		}
-		nodes = append(nodes, id)
+		nodes = append(nodes, a)
 	}
 
 	snip = token.SuperSnippet(snip, l.Snippet)

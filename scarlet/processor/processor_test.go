@@ -14,6 +14,7 @@ import (
 
 func numValue(n string) value.Num { return value.Num{Number: number.New(n)} }
 func ident(id string) tree.Ident  { return tree.Ident{Val: id} }
+func anon() tree.AnonIdent        { return tree.AnonIdent{} }
 func numLit(n string) tree.NumLit { return tree.NumLit{Val: number.New(n)} }
 func boolLit(b bool) tree.BoolLit { return tree.BoolLit{Val: b} }
 func strLit(s string) tree.StrLit { return tree.StrLit{Val: s} }
@@ -265,8 +266,9 @@ func TestExprs(t *testing.T) {
 	}
 }
 
-func TestSingleAssign(t *testing.T) {
+func TestSingleAssign_1(t *testing.T) {
 
+	// x := 1
 	in := tree.SingleAssign{
 		Left:  ident("x"),
 		Right: numLit("1"),
@@ -280,13 +282,30 @@ func TestSingleAssign(t *testing.T) {
 	require.Equal(t, exp, act)
 }
 
-func TestMultiAssign(t *testing.T) {
+func TestSingleAssign_2(t *testing.T) {
 
+	// _ := 1
+	in := tree.SingleAssign{
+		Left:  anon(),
+		Right: numLit("1"),
+	}
+
+	exp := newTestEnv()
+
+	act := newTestEnv()
+	Statement(act, in)
+	require.Equal(t, exp, act)
+}
+
+func TestMultiAssign_1(t *testing.T) {
+
+	// x, y, z := true, 1, "abc"
 	in := tree.MultiAssign{
 		Left:  []tree.Assignee{ident("x"), ident("y"), ident("z")},
 		Right: []tree.Expr{boolLit(true), numLit("1"), strLit(`"abc"`)},
 	}
 
+	// x: true, y: 1, z: "abc"
 	exp := newTestEnv()
 	exp.scope[value.Ident("x")] = value.Bool(true)
 	exp.scope[value.Ident("y")] = numValue("1")
@@ -297,8 +316,26 @@ func TestMultiAssign(t *testing.T) {
 	require.Equal(t, exp, act)
 }
 
-func TestAsymAssign(t *testing.T) {
+func TestMultiAssign_2(t *testing.T) {
 
+	// _, y, _ := true, 1, "abc"
+	in := tree.MultiAssign{
+		Left:  []tree.Assignee{anon(), ident("y"), anon()},
+		Right: []tree.Expr{boolLit(true), numLit("1"), strLit(`"abc"`)},
+	}
+
+	// y: 1
+	exp := newTestEnv()
+	exp.scope[value.Ident("y")] = numValue("1")
+
+	act := newTestEnv()
+	Statement(act, in)
+	require.Equal(t, exp, act)
+}
+
+func TestAsymAssign_1(t *testing.T) {
+
+	// x, y, z := @Reverse(true, 123, "abc")
 	in := tree.AsymAssign{
 		Left: []tree.Assignee{ident("x"), ident("y"), ident("z")},
 		Right: tree.SpellCall{
@@ -323,6 +360,7 @@ func TestAsymAssign(t *testing.T) {
 		},
 	}
 
+	// x: "abc", y: 1, z: true
 	exp := newTestEnv()
 	exp.book = book
 	exp.scope[value.Ident("x")] = value.Str("abc")
@@ -336,7 +374,46 @@ func TestAsymAssign(t *testing.T) {
 	require.Equal(t, exp, act)
 }
 
-func TestSpellCall(t *testing.T) {
+func TestAsymAssign_2(t *testing.T) {
+
+	// _, y, _ := @Reverse(true, 123, "abc")
+	in := tree.AsymAssign{
+		Left: []tree.Assignee{anon(), ident("y"), anon()},
+		Right: tree.SpellCall{
+			Name: "reverse",
+			Args: []tree.Expr{
+				boolLit(true),
+				numLit("123"),
+				strLit(`"abc"`),
+			},
+		},
+	}
+
+	book := spell.Book{
+		"reverse": spell.Inscription{
+			Name:    "Reverse",
+			Outputs: 3,
+			Spell: func(env spell.Runtime, in []value.Value, out *spell.Output) {
+				out.Set(0, value.Str("abc"))
+				out.Set(1, numValue("1"))
+				out.Set(2, value.Bool(true))
+			},
+		},
+	}
+
+	// y: 1
+	exp := newTestEnv()
+	exp.book = book
+	exp.scope[value.Ident("y")] = numValue("1")
+
+	act := newTestEnv()
+	act.book = book
+
+	Statement(act, in)
+	require.Equal(t, exp, act)
+}
+
+func TestSpellCall_1(t *testing.T) {
 
 	in := tree.SpellCall{
 		Name: "Concat",

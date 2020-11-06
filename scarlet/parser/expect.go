@@ -30,6 +30,19 @@ func strLit(l token.Lexeme) tree.StrLit {
 	}
 }
 
+// Pattern: IDENT || VOID
+func expectAssignee(l token.Lexeme) (a tree.Assignee, e error) {
+	switch l.Token {
+	case token.IDENT:
+		a = tree.Ident{Snippet: l.Snippet, Val: l.Val}
+	case token.VOID:
+		a = tree.AnonIdent{Snippet: l.Snippet}
+	default:
+		e = errSnip(l.Snippet, "Expected identifier")
+	}
+	return
+}
+
 // Pattern: IDENT
 func expectIdent(l token.Lexeme) (id tree.Ident, e error) {
 

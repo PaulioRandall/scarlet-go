@@ -62,38 +62,31 @@ func Statement(env Runtime, s tree.Stat) {
 }
 
 func SingleAssign(env Runtime, n tree.SingleAssign) {
-	l := Assignee(env, n.Left)
-	r := Expression(env, n.Right)
-	if r == nil {
-		env.Unbind(l)
-	} else {
-		env.Bind(l, r)
-	}
+	assign(env, n.Left, Expression(env, n.Right))
 }
 
 func MultiAssign(env Runtime, n tree.MultiAssign) {
 	vals := Expressions(env, n.Right)
-	for i, v := range n.Left {
-		l := Assignee(env, v)
-		r := vals[i]
-		if r == nil {
-			env.Unbind(l)
-		} else {
-			env.Bind(l, r)
-		}
+	for i, a := range n.Left {
+		assign(env, a, vals[i])
 	}
 }
 
 func AsymAssign(env Runtime, n tree.AsymAssign) {
 	vals := MultiReturn(env, n.Right)
-	for i, v := range n.Left {
-		l := Assignee(env, v)
-		r := vals[i]
-		if r == nil {
-			env.Unbind(l)
-		} else {
-			env.Bind(l, r)
-		}
+	for i, a := range n.Left {
+		assign(env, a, vals[i])
+	}
+}
+
+func assign(env Runtime, a tree.Assignee, v value.Value) {
+	switch id, ok := Assignee(env, a); {
+	case !ok:
+		return
+	case v == nil:
+		env.Unbind(id)
+	default:
+		env.Bind(id, v)
 	}
 }
 
@@ -110,10 +103,12 @@ func SpellCall(env Runtime, n tree.SpellCall) []value.Value {
 	return out.Slice()
 }
 
-func Assignee(env Runtime, n tree.Assignee) value.Ident {
+func Assignee(env Runtime, n tree.Assignee) (value.Ident, bool) {
 	switch v := n.(type) {
 	case tree.Ident:
-		return value.Ident(v.Val)
+		return value.Ident(v.Val), true
+	case tree.AnonIdent:
+		return value.Ident(""), false
 	default:
 		panic("SANITY CHECK! Unknown tree.Assignee type")
 	}
@@ -239,7 +234,10 @@ func SpellCallExpr(env Runtime, n tree.SpellCall) value.Value {
 
 	s, ok := env.Spellbook().Lookup(n.Name)
 	if !ok {
-		panic("SANITY CHECK! Unknown spell '" + n.Name + "'")
+		panic("SANITY CHECK! Unknown spell '@" + n.Name + "'")
+	}
+	if s.Outputs != 1 {
+		panic("SANITY CHECK! '@" + n.Name + "' is not a single result expression")
 	}
 
 	in := Expressions(env, n.Args)

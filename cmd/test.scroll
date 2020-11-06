@@ -8,4 +8,4 @@ answer := x * y
 n := "123.456"
 @Println("The length of `", n, "` is ", @Len(n))
 
-n, e := @ParseNum("123")
+_, e := @ParseNum("twelve")
