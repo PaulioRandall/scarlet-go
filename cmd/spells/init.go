@@ -14,6 +14,7 @@ func NewBook() spell.Book {
 	b.Inscribe("Print", 0, Print)
 	b.Inscribe("Println", 0, Println)
 	b.Inscribe("ParseNum", 2, ParseNum)
+	b.Inscribe("PrintScope", 0, PrintScope)
 
 	return b
 }

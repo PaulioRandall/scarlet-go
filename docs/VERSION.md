@@ -1,5 +1,27 @@
 # Versions
 
+## v0.3.0
+
+```
+_ := 1 + 2
+e := "error"
+@Print(@Len(e))
+n, e := @ParseNum("123") # 'e' unbound
+@Println(n)
+@PrintScope()
+@Exit(0)
+```
+
+- Ignore expression result
+- Variable unbinding
+- Spells
+  - `@Exit(code)` Stops execution of the scroll with the specified exit code
+  - `@Print(value...)` Prints the values to terminal in the order provided
+  - `@Println(value...)` Same as '@Print' but appends a linefeed
+  - `x := @Len(value)` Finds the length of any value whose type has a length
+  - `x, e := @ParseNum(number)` Parses a string as a number returning an error message if failed
+  - `@PrintScope()` Prints all variables available within the current scope
+
 ## v0.2.0
 
 ```

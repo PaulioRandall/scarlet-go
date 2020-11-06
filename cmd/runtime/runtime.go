@@ -9,13 +9,10 @@ import (
 	"github.com/PaulioRandall/scarlet-go/cmd/spells"
 )
 
-// IdMap represents a mapping of declared identifiers with their current values.
-type IdMap map[value.Ident]value.Value
-
 // RuntimeEnv represents a Runtime and an Environment for a specific program.
 type RuntimeEnv struct {
 	// processor.Runtime
-	Scope     IdMap
+	scope     spell.Scope
 	spellbook spell.Book
 	exitFlag  bool
 	exitCode  int
@@ -25,7 +22,7 @@ type RuntimeEnv struct {
 // New creates and returns a new RuntimeEnv for a specific program.
 func New() *RuntimeEnv {
 	return &RuntimeEnv{
-		Scope:     IdMap{},
+		scope:     spell.Scope{},
 		spellbook: spells.NewBook(),
 	}
 }
@@ -35,19 +32,24 @@ func (env *RuntimeEnv) Spellbook() spell.Book {
 	return env.spellbook
 }
 
+// Scope implements processor.Runtime.Scope.
+func (env *RuntimeEnv) Scope() spell.Scope {
+	return env.scope
+}
+
 // Bind implements processor.Runtime.Bind.
 func (env *RuntimeEnv) Bind(id value.Ident, v value.Value) {
-	env.Scope[id] = v
+	env.scope[id] = v
 }
 
 // Unbind implements processor.Runtime.Unbind.
 func (env *RuntimeEnv) Unbind(id value.Ident) {
-	delete(env.Scope, id)
+	delete(env.scope, id)
 }
 
 // Fetch implements processor.Runtime.Fetch.
 func (env *RuntimeEnv) Fetch(id value.Ident) value.Value {
-	if v, ok := env.Scope[id]; ok {
+	if v, ok := env.scope[id]; ok {
 		return v
 	}
 	env.Fail(1, errors.New("Identifier "+string(id)+" not found in scope"))

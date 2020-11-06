@@ -65,14 +65,16 @@ func Println(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 func ParseNum(env spell.Runtime, in []value.Value, out *spell.Output) {
 
+	const name = "@ParseNum"
+
 	if len(in) != 1 {
-		setError(env, "@ParseNum requires one argument")
+		setError(env, name+" requires one argument")
 		return
 	}
 
 	v, ok := in[0].(value.Str)
 	if !ok {
-		setError(env, "@ParseNum argument must be a string")
+		setError(env, name+" argument must be a string")
 	}
 
 	n, e := strconv.ParseFloat(string(v), 64)
@@ -82,4 +84,10 @@ func ParseNum(env spell.Runtime, in []value.Value, out *spell.Output) {
 	}
 
 	out.Set(0, value.NewFloat(n))
+}
+
+func PrintScope(env spell.Runtime, _ []value.Value, _ *spell.Output) {
+	for id, v := range env.Scope() {
+		fmt.Println(id.String() + ": " + v.String())
+	}
 }

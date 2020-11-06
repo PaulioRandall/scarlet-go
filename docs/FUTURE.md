@@ -1,9 +1,5 @@
 # Scribbles
 
-## [v0.3.0]
-
-- Spells
-
 ## [v0.4.0+] Potential Features
 
 - Manual/documentation
@@ -14,9 +10,6 @@ x := @Args()
 
 # Does a variable exist
 x := @Exists("variable_name")
-
-# Find the length of any value whose type has a length
-x := @Len(value)
 
 # Stringify a value of any type
 x := @Str(value)
@@ -41,9 +34,6 @@ x := @str.IndexOf(haystack, needle)
 
 # Join two strings together
 x := @str.Join("abc", "xyz")
-
-# Parse a string as a number
-x, e := @str.ParseNum(number)
 
 # Parse a string as a bool
 x, e := @str.ParseBool(bool)

@@ -1,8 +1,6 @@
 package program
 
 import (
-	"fmt"
-
 	"github.com/PaulioRandall/scarlet-go/cmd/runtime"
 	"github.com/PaulioRandall/scarlet-go/scarlet/processor"
 )
@@ -51,15 +49,5 @@ func Run(c RunCmd) (ExeResult, error) {
 		}
 	}
 
-	printEnv(env) // Temp
-
 	return exeResult{err: env.GetErr(), exitCode: env.GetExitCode()}, nil
-}
-
-// Temp
-func printEnv(env *runtime.RuntimeEnv) {
-	fmt.Println("\nVariables created:")
-	for id, v := range env.Scope {
-		fmt.Println("\t" + id.String() + " " + v.String())
-	}
 }

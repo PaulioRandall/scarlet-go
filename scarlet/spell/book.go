@@ -28,6 +28,10 @@ type (
 		Outputs int
 	}
 
+	// Scope represents a mapping of declared identifiers, with their current
+	// values, available within the current scope.
+	Scope map[value.Ident]value.Value
+
 	// Runtime is a handler for performing memory related and context dependent
 	// instructions such as access to scope variables and storing exit and error
 	// information for the processor. It's a subset of the Runtime used by the
@@ -36,6 +40,8 @@ type (
 
 		// Spellbook returns the book containing all spells available.
 		Spellbook() Book
+
+		Scope() Scope
 
 		// Bind sets the value of a variable overwriting any existing value.
 		Bind(value.Ident, value.Value)

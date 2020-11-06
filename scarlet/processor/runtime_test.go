@@ -7,10 +7,8 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
-type testScope map[value.Ident]value.Value
-
 type testRuntime struct {
-	scope    testScope
+	scope    spell.Scope
 	book     spell.Book
 	exitFlag bool
 	exitCode int
@@ -19,13 +17,17 @@ type testRuntime struct {
 
 func newTestEnv() *testRuntime {
 	return &testRuntime{
-		scope: testScope{},
+		scope: spell.Scope{},
 		book:  spell.Book{},
 	}
 }
 
 func (env *testRuntime) Spellbook() spell.Book {
 	return env.book
+}
+
+func (env *testRuntime) Scope() spell.Scope {
+	return env.scope
 }
 
 func (env *testRuntime) Bind(id value.Ident, v value.Value) {

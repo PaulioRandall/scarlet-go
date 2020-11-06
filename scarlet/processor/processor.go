@@ -10,36 +10,7 @@ import (
 // Runtime is a handler for performing memory related and context dependent
 // instructions such as access to the value stack and acces to scope variables.
 type Runtime interface {
-
-	// Spellbook returns the book containing the spells available during runtime.
-	Spellbook() spell.Book
-
-	// Bind sets the value of a variable overwriting any existing value.
-	Bind(value.Ident, value.Value)
-
-	// Unbind removes a variable from the scope.
-	Unbind(value.Ident)
-
-	// Fetch returns the value associated with the specified identifier.
-	Fetch(value.Ident) value.Value
-
-	// Fail sets the error and exit status a non-recoverable error occurs
-	// during execution.
-	Fail(int, error)
-
-	// Exit causes the program to exit with the specified exit code.
-	Exit(int)
-
-	// GetErr returns the error if set else returns nil.
-	GetErr() error
-
-	// GetExitCode returns the currently set exit code. Only meaningful if the
-	// exit flag has been set.
-	GetExitCode() int
-
-	// GetExitFlag returns true if the program should stop execution after
-	// finishing any instruction currently being executed.
-	GetExitFlag() bool
+	spell.Runtime
 }
 
 const (

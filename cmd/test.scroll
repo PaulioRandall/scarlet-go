@@ -9,3 +9,8 @@ n := "123.456"
 @Println("The length of `", n, "` is ", @Len(n))
 
 _, e := @ParseNum("twelve")
+
+@Println()
+@PrintScope()
+
+@Exit(0)
