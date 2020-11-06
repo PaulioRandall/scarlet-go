@@ -297,26 +297,44 @@ func TestMultiAssign(t *testing.T) {
 	require.Equal(t, exp, act)
 }
 
-/*
 func TestAsymAssign(t *testing.T) {
 
 	in := tree.AsymAssign{
-		Left:  []tree.Assignee{ident("x"), ident("y"), ident("z")},
-		Right: tree.Expr{
-			// TODO: Spell call here!!
+		Left: []tree.Assignee{ident("x"), ident("y"), ident("z")},
+		Right: tree.SpellCall{
+			Name: "reverse",
+			Args: []tree.Expr{
+				boolLit(true),
+				numLit("123"),
+				strLit(`"abc"`),
+			},
+		},
+	}
+
+	book := spell.Book{
+		"reverse": spell.Inscription{
+			Name:    "Reverse",
+			Outputs: 3,
+			Spell: func(env spell.Runtime, in []value.Value, out *spell.Output) {
+				out.Set(0, value.Str("abc"))
+				out.Set(1, numValue("1"))
+				out.Set(2, value.Bool(true))
+			},
 		},
 	}
 
 	exp := newTestEnv()
-	exp.scope[value.Ident("x")] = value.Bool(true)
+	exp.book = book
+	exp.scope[value.Ident("x")] = value.Str("abc")
 	exp.scope[value.Ident("y")] = numValue("1")
-	exp.scope[value.Ident("z")] = value.Str("abc")
+	exp.scope[value.Ident("z")] = value.Bool(true)
 
 	act := newTestEnv()
+	act.book = book
+
 	Statement(act, in)
 	require.Equal(t, exp, act)
 }
-*/
 
 func TestSpellCall(t *testing.T) {
 
