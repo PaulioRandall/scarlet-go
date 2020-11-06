@@ -6,7 +6,7 @@ import (
 )
 
 type (
-	// Node represents a node in a syntax graph or tree.
+	// Node represents a node in a syntax tree.
 	Node interface {
 		Pos() token.Snippet
 		node()

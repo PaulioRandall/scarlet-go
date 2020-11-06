@@ -138,7 +138,7 @@ func Expressions(env Runtime, n []tree.Expr) []value.Value {
 func Expression(env Runtime, n tree.Expr) value.Value {
 	switch v := n.(type) {
 	case tree.Ident:
-		panic("Not implemented yet!")
+		return Ident(env, v)
 	case tree.Literal:
 		return Literal(env, v)
 	case tree.BinaryExpr:
@@ -148,6 +148,10 @@ func Expression(env Runtime, n tree.Expr) value.Value {
 	default:
 		panic("SANITY CHECK! Unknown tree.Expr type")
 	}
+}
+
+func Ident(env Runtime, n tree.Ident) value.Value {
+	return env.Fetch(value.Ident(n.Val))
 }
 
 func Literal(env Runtime, n tree.Literal) value.Value {
