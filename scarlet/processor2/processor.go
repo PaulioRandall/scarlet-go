@@ -143,7 +143,7 @@ func Expression(env Runtime, n tree.Expr) value.Value {
 		return Literal(env, v)
 	case tree.BinaryExpr:
 		return BinaryExpr(env, v)
-	case tree.SpellCallExpr:
+	case tree.SpellCall:
 		return SpellCallExpr(env, v)
 	default:
 		panic("SANITY CHECK! Unknown tree.Expr type")
@@ -231,7 +231,7 @@ func BinaryExpr(env Runtime, n tree.BinaryExpr) value.Value {
 	}
 }
 
-func SpellCallExpr(env Runtime, n tree.SpellCallExpr) value.Value {
+func SpellCallExpr(env Runtime, n tree.SpellCall) value.Value {
 
 	s, ok := env.Spellbook().Lookup(n.Name)
 	if !ok {
