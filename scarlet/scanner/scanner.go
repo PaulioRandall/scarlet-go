@@ -155,23 +155,23 @@ func identifyLexeme(r *reader, l *lex) error {
 	case r.starts(OR):
 		l.size, l.tk = 2, token.OR
 
-	case r.starts(LESS_EQUAL):
-		l.size, l.tk = 2, token.LESS_EQUAL
+	case r.starts(LTE):
+		l.size, l.tk = 2, token.LTE
 
-	case r.starts(LESS):
-		l.size, l.tk = 1, token.LESS
+	case r.starts(LT):
+		l.size, l.tk = 1, token.LT
 
-	case r.starts(MORE_EQUAL):
-		l.size, l.tk = 2, token.MORE_EQUAL
+	case r.starts(MTE):
+		l.size, l.tk = 2, token.MTE
 
-	case r.starts(MORE):
-		l.size, l.tk = 1, token.MORE
+	case r.starts(MT):
+		l.size, l.tk = 1, token.MT
 
-	case r.starts(EQUAL):
-		l.size, l.tk = 2, token.EQUAL
+	case r.starts(EQU):
+		l.size, l.tk = 2, token.EQU
 
-	case r.starts(NOT_EQUAL):
-		l.size, l.tk = 2, token.NOT_EQUAL
+	case r.starts(NEQ):
+		l.size, l.tk = 2, token.NEQ
 
 	case r.starts(SPELL_PREFIX):
 		if e := spell(r, l); e != nil {

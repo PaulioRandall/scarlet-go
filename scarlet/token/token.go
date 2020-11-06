@@ -46,12 +46,12 @@ const (
 	REM              = `REM`        // %
 	AND              = `AND`        // &&
 	OR               = `OR`         // ||
-	LESS             = `LESS`       // <
-	MORE             = `MORE`       // >
-	LESS_EQUAL       = `LESS_EQUAL` // <=
-	MORE_EQUAL       = `MORE_EQUAL` // >=
-	EQUAL            = `EQUAL`      // ==
-	NOT_EQUAL        = `NOT_EQUAL`  // !=
+	LT               = `LT`         // <
+	MT               = `MT`         // >
+	LTE              = `LTE`        // <=
+	MTE              = `MTE`        // >=
+	EQU              = `EQU`        // ==
+	NEQ              = `NEQ`        // !=
 )
 
 // IdentifyWord returns the Token represented by the 's'. If 's' does not match
@@ -80,9 +80,9 @@ func (tk Token) Precedence() int {
 		return 6
 	case ADD, SUB:
 		return 5
-	case LESS, MORE, LESS_EQUAL, MORE_EQUAL:
+	case LT, MT, LTE, MTE:
 		return 4
-	case EQUAL, NOT_EQUAL:
+	case EQU, NEQ:
 		return 3
 	case AND:
 		return 2
@@ -158,12 +158,12 @@ func (tk Token) IsBinaryOperator() bool {
 		tk == REM ||
 		tk == ADD ||
 		tk == SUB ||
-		tk == LESS ||
-		tk == MORE ||
-		tk == LESS_EQUAL ||
-		tk == MORE_EQUAL ||
-		tk == EQUAL ||
-		tk == NOT_EQUAL ||
+		tk == LT ||
+		tk == MT ||
+		tk == LTE ||
+		tk == MTE ||
+		tk == EQU ||
+		tk == NEQ ||
 		tk == AND ||
 		tk == OR
 }

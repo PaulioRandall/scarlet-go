@@ -153,40 +153,40 @@ func TestCompBinExpr(t *testing.T) {
 		exp value.Value
 	}{
 		{ // 0
-			in:  binExpr(numLit("1"), token.LESS, numLit("2")),
+			in:  binExpr(numLit("1"), token.LT, numLit("2")),
 			exp: value.Bool(true),
 		}, { // 1
-			in:  binExpr(numLit("2"), token.LESS, numLit("2")),
+			in:  binExpr(numLit("2"), token.LT, numLit("2")),
 			exp: value.Bool(false),
 		}, { // 2
-			in:  binExpr(numLit("3"), token.LESS, numLit("2")),
+			in:  binExpr(numLit("3"), token.LT, numLit("2")),
 			exp: value.Bool(false),
 		}, { // 3
-			in:  binExpr(numLit("1"), token.MORE, numLit("2")),
+			in:  binExpr(numLit("1"), token.MT, numLit("2")),
 			exp: value.Bool(false),
 		}, { // 4
-			in:  binExpr(numLit("2"), token.MORE, numLit("2")),
+			in:  binExpr(numLit("2"), token.MT, numLit("2")),
 			exp: value.Bool(false),
 		}, { // 5
-			in:  binExpr(numLit("3"), token.MORE, numLit("2")),
+			in:  binExpr(numLit("3"), token.MT, numLit("2")),
 			exp: value.Bool(true),
 		}, { // 6
-			in:  binExpr(numLit("1"), token.LESS_EQUAL, numLit("2")),
+			in:  binExpr(numLit("1"), token.LTE, numLit("2")),
 			exp: value.Bool(true),
 		}, { // 7
-			in:  binExpr(numLit("2"), token.LESS_EQUAL, numLit("2")),
+			in:  binExpr(numLit("2"), token.LTE, numLit("2")),
 			exp: value.Bool(true),
 		}, { // 8
-			in:  binExpr(numLit("3"), token.LESS_EQUAL, numLit("2")),
+			in:  binExpr(numLit("3"), token.LTE, numLit("2")),
 			exp: value.Bool(false),
 		}, { // 9
-			in:  binExpr(numLit("1"), token.MORE_EQUAL, numLit("2")),
+			in:  binExpr(numLit("1"), token.MTE, numLit("2")),
 			exp: value.Bool(false),
 		}, { // 10
-			in:  binExpr(numLit("2"), token.MORE_EQUAL, numLit("2")),
+			in:  binExpr(numLit("2"), token.MTE, numLit("2")),
 			exp: value.Bool(true),
 		}, { // 11
-			in:  binExpr(numLit("3"), token.MORE_EQUAL, numLit("2")),
+			in:  binExpr(numLit("3"), token.MTE, numLit("2")),
 			exp: value.Bool(true),
 		},
 	}
@@ -206,22 +206,22 @@ func TestEqualBinExpr(t *testing.T) {
 		exp value.Value
 	}{
 		{ // 0
-			in:  binExpr(numLit("1"), token.EQUAL, numLit("1")),
+			in:  binExpr(numLit("1"), token.EQU, numLit("1")),
 			exp: value.Bool(true),
 		}, { // 1
-			in:  binExpr(numLit("1"), token.EQUAL, numLit("2")),
+			in:  binExpr(numLit("1"), token.EQU, numLit("2")),
 			exp: value.Bool(false),
 		}, { // 2
-			in:  binExpr(numLit("1"), token.EQUAL, strLit("abc")),
+			in:  binExpr(numLit("1"), token.EQU, strLit("abc")),
 			exp: value.Bool(false),
 		}, { // 3
-			in:  binExpr(numLit("1"), token.NOT_EQUAL, numLit("1")),
+			in:  binExpr(numLit("1"), token.NEQ, numLit("1")),
 			exp: value.Bool(false),
 		}, { // 4
-			in:  binExpr(numLit("1"), token.NOT_EQUAL, numLit("2")),
+			in:  binExpr(numLit("1"), token.NEQ, numLit("2")),
 			exp: value.Bool(true),
 		}, { // 5
-			in:  binExpr(numLit("1"), token.NOT_EQUAL, strLit("abc")),
+			in:  binExpr(numLit("1"), token.NEQ, strLit("abc")),
 			exp: value.Bool(true),
 		},
 	}
@@ -244,7 +244,7 @@ func TestExprs(t *testing.T) {
 			in: []tree.Expr{
 				numLit("1"),
 				binExpr(numLit("1"), token.ADD, numLit("2")),
-				binExpr(numLit("1"), token.EQUAL, strLit("abc")),
+				binExpr(numLit("1"), token.EQU, strLit("abc")),
 			},
 			exp: []value.Value{
 				numValue("1"),

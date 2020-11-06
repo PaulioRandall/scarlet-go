@@ -191,37 +191,37 @@ func TestOr_1(t *testing.T) {
 
 func TestLessEqual_1(t *testing.T) {
 	doTest(t, "<=", []token.Lexeme{
-		token.MakeTok("<=", token.LESS_EQUAL),
+		token.MakeTok("<=", token.LTE),
 	})
 }
 
 func TestLess_1(t *testing.T) {
 	doTest(t, "<", []token.Lexeme{
-		token.MakeTok("<", token.LESS),
+		token.MakeTok("<", token.LT),
 	})
 }
 
 func TestMoreEqual_1(t *testing.T) {
 	doTest(t, ">=", []token.Lexeme{
-		token.MakeTok(">=", token.MORE_EQUAL),
+		token.MakeTok(">=", token.MTE),
 	})
 }
 
 func TestMore_1(t *testing.T) {
 	doTest(t, ">", []token.Lexeme{
-		token.MakeTok(">", token.MORE),
+		token.MakeTok(">", token.MT),
 	})
 }
 
 func TestEqual_1(t *testing.T) {
 	doTest(t, "==", []token.Lexeme{
-		token.MakeTok("==", token.EQUAL),
+		token.MakeTok("==", token.EQU),
 	})
 }
 
 func TestNotEqual_1(t *testing.T) {
 	doTest(t, "!=", []token.Lexeme{
-		token.MakeTok("!=", token.NOT_EQUAL),
+		token.MakeTok("!=", token.NEQ),
 	})
 }
 

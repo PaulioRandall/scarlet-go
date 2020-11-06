@@ -208,26 +208,26 @@ func BinaryExpr(env Runtime, n tree.BinaryExpr) value.Value {
 	case token.OR:
 		return l.(value.Bool) || r.(value.Bool)
 
-	case token.LESS:
+	case token.LT:
 		lNum, rNum := l.(value.Num), r.(value.Num)
 		return value.Bool(lNum.Number.Less(rNum.Number))
 
-	case token.MORE:
+	case token.MT:
 		lNum, rNum := l.(value.Num), r.(value.Num)
 		return value.Bool(lNum.Number.More(rNum.Number))
 
-	case token.LESS_EQUAL:
+	case token.LTE:
 		lNum, rNum := l.(value.Num), r.(value.Num)
 		return value.Bool(lNum.Number.LessOrEqual(rNum.Number))
 
-	case token.MORE_EQUAL:
+	case token.MTE:
 		lNum, rNum := l.(value.Num), r.(value.Num)
 		return value.Bool(lNum.Number.MoreOrEqual(rNum.Number))
 
-	case token.EQUAL:
+	case token.EQU:
 		return value.Bool(l.Equal(r))
 
-	case token.NOT_EQUAL:
+	case token.NEQ:
 		return value.Bool(!l.Equal(r))
 
 	default:
