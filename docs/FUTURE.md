@@ -1,6 +1,10 @@
 # Scribbles
 
-## [v0.4.0+] Potential Features
+## [v0.4.0]
+
+- All numbers are now float64, arbitrary precision removed 
+
+## [v0.5.0+] Potential Features
 
 - Manual/documentation
 
