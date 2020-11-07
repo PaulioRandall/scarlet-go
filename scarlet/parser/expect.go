@@ -1,9 +1,10 @@
 package parser
 
 import (
+	"strconv"
+
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
-	"github.com/PaulioRandall/scarlet-go/scarlet/value/number"
 )
 
 // Pattern: BOOL
@@ -16,9 +17,13 @@ func boolLit(l token.Lexeme) tree.BoolLit {
 
 // Pattern: NUMBER
 func numLit(l token.Lexeme) tree.NumLit {
+	v, e := strconv.ParseFloat(l.Val, 64)
+	if e != nil {
+		panic("SANITY CHECK! Invalid number, should have been detected prior")
+	}
 	return tree.NumLit{
 		Snippet: l.Snippet,
-		Val:     number.New(l.Val),
+		Val:     v,
 	}
 }
 

@@ -7,17 +7,15 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
-	"github.com/PaulioRandall/scarlet-go/scarlet/value/number"
 
 	"github.com/stretchr/testify/require"
 )
 
-func numValue(n string) value.Num { return value.Num{Number: number.New(n)} }
-func ident(id string) tree.Ident  { return tree.Ident{Val: id} }
-func anon() tree.AnonIdent        { return tree.AnonIdent{} }
-func numLit(n string) tree.NumLit { return tree.NumLit{Val: number.New(n)} }
-func boolLit(b bool) tree.BoolLit { return tree.BoolLit{Val: b} }
-func strLit(s string) tree.StrLit { return tree.StrLit{Val: s} }
+func ident(id string) tree.Ident   { return tree.Ident{Val: id} }
+func anon() tree.AnonIdent         { return tree.AnonIdent{} }
+func numLit(f float64) tree.NumLit { return tree.NumLit{Val: f} }
+func boolLit(b bool) tree.BoolLit  { return tree.BoolLit{Val: b} }
+func strLit(s string) tree.StrLit  { return tree.StrLit{Val: s} }
 func binExpr(l tree.Expr, op token.Token, r tree.Expr) tree.BinaryExpr {
 	return tree.BinaryExpr{Left: l, Op: op, Right: r}
 }
@@ -64,8 +62,8 @@ func TestLiteral(t *testing.T) {
 			in:  boolLit(false),
 			exp: value.Bool(false),
 		}, { // 2
-			in:  numLit("1"),
-			exp: numValue("1"),
+			in:  numLit(1),
+			exp: value.Num(1),
 		}, { // 3
 			in:  strLit(`"abc"`),
 			exp: value.Str(`abc`),
@@ -87,20 +85,20 @@ func TestArithBinExpr(t *testing.T) {
 		exp value.Value
 	}{
 		{ // 0
-			in:  binExpr(numLit("1"), token.ADD, numLit("2")),
-			exp: numValue("3"),
+			in:  binExpr(numLit(1), token.ADD, numLit(2)),
+			exp: value.Num(3),
 		}, { // 1
-			in:  binExpr(numLit("4"), token.SUB, numLit("1")),
-			exp: numValue("3"),
+			in:  binExpr(numLit(4), token.SUB, numLit(1)),
+			exp: value.Num(3),
 		}, { // 2
-			in:  binExpr(numLit("3"), token.MUL, numLit("4")),
-			exp: numValue("12"),
+			in:  binExpr(numLit(3), token.MUL, numLit(4)),
+			exp: value.Num(12),
 		}, { // 3
-			in:  binExpr(numLit("12"), token.DIV, numLit("4")),
-			exp: numValue("3"),
+			in:  binExpr(numLit(12), token.DIV, numLit(4)),
+			exp: value.Num(3),
 		}, { // 4
-			in:  binExpr(numLit("5"), token.REM, numLit("3")),
-			exp: numValue("2"),
+			in:  binExpr(numLit(5), token.REM, numLit(3)),
+			exp: value.Num(2),
 		},
 	}
 
@@ -154,40 +152,40 @@ func TestCompBinExpr(t *testing.T) {
 		exp value.Value
 	}{
 		{ // 0
-			in:  binExpr(numLit("1"), token.LT, numLit("2")),
+			in:  binExpr(numLit(1), token.LT, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 1
-			in:  binExpr(numLit("2"), token.LT, numLit("2")),
+			in:  binExpr(numLit(2), token.LT, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 2
-			in:  binExpr(numLit("3"), token.LT, numLit("2")),
+			in:  binExpr(numLit(3), token.LT, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 3
-			in:  binExpr(numLit("1"), token.MT, numLit("2")),
+			in:  binExpr(numLit(1), token.MT, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 4
-			in:  binExpr(numLit("2"), token.MT, numLit("2")),
+			in:  binExpr(numLit(2), token.MT, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 5
-			in:  binExpr(numLit("3"), token.MT, numLit("2")),
+			in:  binExpr(numLit(3), token.MT, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 6
-			in:  binExpr(numLit("1"), token.LTE, numLit("2")),
+			in:  binExpr(numLit(1), token.LTE, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 7
-			in:  binExpr(numLit("2"), token.LTE, numLit("2")),
+			in:  binExpr(numLit(2), token.LTE, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 8
-			in:  binExpr(numLit("3"), token.LTE, numLit("2")),
+			in:  binExpr(numLit(3), token.LTE, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 9
-			in:  binExpr(numLit("1"), token.MTE, numLit("2")),
+			in:  binExpr(numLit(1), token.MTE, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 10
-			in:  binExpr(numLit("2"), token.MTE, numLit("2")),
+			in:  binExpr(numLit(2), token.MTE, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 11
-			in:  binExpr(numLit("3"), token.MTE, numLit("2")),
+			in:  binExpr(numLit(3), token.MTE, numLit(2)),
 			exp: value.Bool(true),
 		},
 	}
@@ -207,22 +205,22 @@ func TestEqualBinExpr(t *testing.T) {
 		exp value.Value
 	}{
 		{ // 0
-			in:  binExpr(numLit("1"), token.EQU, numLit("1")),
+			in:  binExpr(numLit(1), token.EQU, numLit(1)),
 			exp: value.Bool(true),
 		}, { // 1
-			in:  binExpr(numLit("1"), token.EQU, numLit("2")),
+			in:  binExpr(numLit(1), token.EQU, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 2
-			in:  binExpr(numLit("1"), token.EQU, strLit("abc")),
+			in:  binExpr(numLit(1), token.EQU, strLit("abc")),
 			exp: value.Bool(false),
 		}, { // 3
-			in:  binExpr(numLit("1"), token.NEQ, numLit("1")),
+			in:  binExpr(numLit(1), token.NEQ, numLit(1)),
 			exp: value.Bool(false),
 		}, { // 4
-			in:  binExpr(numLit("1"), token.NEQ, numLit("2")),
+			in:  binExpr(numLit(1), token.NEQ, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 5
-			in:  binExpr(numLit("1"), token.NEQ, strLit("abc")),
+			in:  binExpr(numLit(1), token.NEQ, strLit("abc")),
 			exp: value.Bool(true),
 		},
 	}
@@ -243,13 +241,13 @@ func TestExprs(t *testing.T) {
 	}{
 		{ // 0
 			in: []tree.Expr{
-				numLit("1"),
-				binExpr(numLit("1"), token.ADD, numLit("2")),
-				binExpr(numLit("1"), token.EQU, strLit("abc")),
+				numLit(1),
+				binExpr(numLit(1), token.ADD, numLit(2)),
+				binExpr(numLit(1), token.EQU, strLit("abc")),
 			},
 			exp: []value.Value{
-				numValue("1"),
-				numValue("3"),
+				value.Num(1),
+				value.Num(3),
 				value.Bool(false),
 			},
 		},
@@ -271,11 +269,11 @@ func TestSingleAssign_1(t *testing.T) {
 	// x := 1
 	in := tree.SingleAssign{
 		Left:  ident("x"),
-		Right: numLit("1"),
+		Right: numLit(1),
 	}
 
 	exp := newTestEnv()
-	exp.scope[value.Ident("x")] = numValue("1")
+	exp.scope[value.Ident("x")] = value.Num(1)
 
 	act := newTestEnv()
 	Statement(act, in)
@@ -287,7 +285,7 @@ func TestSingleAssign_2(t *testing.T) {
 	// _ := 1
 	in := tree.SingleAssign{
 		Left:  anon(),
-		Right: numLit("1"),
+		Right: numLit(1),
 	}
 
 	exp := newTestEnv()
@@ -302,13 +300,13 @@ func TestMultiAssign_1(t *testing.T) {
 	// x, y, z := true, 1, "abc"
 	in := tree.MultiAssign{
 		Left:  []tree.Assignee{ident("x"), ident("y"), ident("z")},
-		Right: []tree.Expr{boolLit(true), numLit("1"), strLit(`"abc"`)},
+		Right: []tree.Expr{boolLit(true), numLit(1), strLit(`"abc"`)},
 	}
 
 	// x: true, y: 1, z: "abc"
 	exp := newTestEnv()
 	exp.scope[value.Ident("x")] = value.Bool(true)
-	exp.scope[value.Ident("y")] = numValue("1")
+	exp.scope[value.Ident("y")] = value.Num(1)
 	exp.scope[value.Ident("z")] = value.Str("abc")
 
 	act := newTestEnv()
@@ -321,12 +319,12 @@ func TestMultiAssign_2(t *testing.T) {
 	// _, y, _ := true, 1, "abc"
 	in := tree.MultiAssign{
 		Left:  []tree.Assignee{anon(), ident("y"), anon()},
-		Right: []tree.Expr{boolLit(true), numLit("1"), strLit(`"abc"`)},
+		Right: []tree.Expr{boolLit(true), numLit(1), strLit(`"abc"`)},
 	}
 
 	// y: 1
 	exp := newTestEnv()
-	exp.scope[value.Ident("y")] = numValue("1")
+	exp.scope[value.Ident("y")] = value.Num(1)
 
 	act := newTestEnv()
 	Statement(act, in)
@@ -342,7 +340,7 @@ func TestAsymAssign_1(t *testing.T) {
 			Name: "reverse",
 			Args: []tree.Expr{
 				boolLit(true),
-				numLit("123"),
+				numLit(123),
 				strLit(`"abc"`),
 			},
 		},
@@ -354,7 +352,7 @@ func TestAsymAssign_1(t *testing.T) {
 			Outputs: 3,
 			Spell: func(env spell.Runtime, in []value.Value, out *spell.Output) {
 				out.Set(0, value.Str("abc"))
-				out.Set(1, numValue("1"))
+				out.Set(1, value.Num(1))
 				out.Set(2, value.Bool(true))
 			},
 		},
@@ -364,7 +362,7 @@ func TestAsymAssign_1(t *testing.T) {
 	exp := newTestEnv()
 	exp.book = book
 	exp.scope[value.Ident("x")] = value.Str("abc")
-	exp.scope[value.Ident("y")] = numValue("1")
+	exp.scope[value.Ident("y")] = value.Num(1)
 	exp.scope[value.Ident("z")] = value.Bool(true)
 
 	act := newTestEnv()
@@ -383,7 +381,7 @@ func TestAsymAssign_2(t *testing.T) {
 			Name: "reverse",
 			Args: []tree.Expr{
 				boolLit(true),
-				numLit("123"),
+				numLit(123),
 				strLit(`"abc"`),
 			},
 		},
@@ -395,7 +393,7 @@ func TestAsymAssign_2(t *testing.T) {
 			Outputs: 3,
 			Spell: func(env spell.Runtime, in []value.Value, out *spell.Output) {
 				out.Set(0, value.Str("abc"))
-				out.Set(1, numValue("1"))
+				out.Set(1, value.Num(1))
 				out.Set(2, value.Bool(true))
 			},
 		},
@@ -404,7 +402,7 @@ func TestAsymAssign_2(t *testing.T) {
 	// y: 1
 	exp := newTestEnv()
 	exp.book = book
-	exp.scope[value.Ident("y")] = numValue("1")
+	exp.scope[value.Ident("y")] = value.Num(1)
 
 	act := newTestEnv()
 	act.book = book

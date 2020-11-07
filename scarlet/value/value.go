@@ -2,9 +2,8 @@ package value
 
 import (
 	"fmt"
+	"strconv"
 	"unicode"
-
-	"github.com/PaulioRandall/scarlet-go/scarlet/value/number"
 )
 
 type (
@@ -28,7 +27,7 @@ type (
 	Ident string
 	Str   string
 	Bool  bool
-	Num   struct{ number.Number }
+	Num   float64
 )
 
 func (Ident) Name() string { return "ident" }
@@ -51,13 +50,15 @@ func (a Bool) Equal(b Value) bool {
 	return a.Comparable(b) && a == b.(Bool)
 }
 func (a Num) Equal(b Value) bool {
-	return a.Comparable(b) && a.Number.Equal(b.(Num).Number)
+	return a.Comparable(b) && a == b.(Num)
 }
 
 func (a Ident) String() string { return string(a) }
 func (a Str) String() string   { return string(a) }
 func (a Bool) String() string  { return fmt.Sprintf("%v", bool(a)) }
-func (a Num) String() string   { return a.Number.String() }
+func (a Num) String() string {
+	return strconv.FormatFloat(float64(a), 'f', -1, 64)
+}
 
 func (id Ident) Valid() Bool {
 	for i, ru := range string(id) {
@@ -77,10 +78,4 @@ func (a Str) Len() int { return len(string(a)) }
 func (a Bool) And(b Bool) Bool { return Bool(bool(a) && bool(b)) }
 func (a Bool) Or(b Bool) Bool  { return Bool(bool(a) || bool(b)) }
 
-func NewInt(i int) Num {
-	return Num{Number: number.NewFromInt(int64(i))}
-}
-
-func NewFloat(f float64) Num {
-	return Num{Number: number.NewFromFloat(f)}
-}
+func (a Num) Int() int64 { return int64(a) }

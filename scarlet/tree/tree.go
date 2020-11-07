@@ -2,7 +2,6 @@ package tree
 
 import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
-	"github.com/PaulioRandall/scarlet-go/scarlet/value/number"
 )
 
 type (
@@ -71,7 +70,7 @@ type (
 	// NumLit Node is an Expr representing a literal number.
 	NumLit struct {
 		token.Snippet
-		Val number.Number
+		Val float64
 	}
 
 	// StrLit Node is an Expr representing a literal string.

@@ -33,7 +33,7 @@ func Len(env spell.Runtime, in []value.Value, out *spell.Output) {
 		return
 	}
 
-	out.Set(0, value.NewInt(v.Len()))
+	out.Set(0, value.Num(v.Len()))
 }
 
 func Exit(env spell.Runtime, in []value.Value, _ *spell.Output) {
@@ -49,7 +49,7 @@ func Exit(env spell.Runtime, in []value.Value, _ *spell.Output) {
 		return
 	}
 
-	env.Exit(int(c.Integer()))
+	env.Exit(int(c.Int()))
 }
 
 func Print(env spell.Runtime, in []value.Value, _ *spell.Output) {
@@ -83,7 +83,7 @@ func ParseNum(env spell.Runtime, in []value.Value, out *spell.Output) {
 		return
 	}
 
-	out.Set(0, value.NewFloat(n))
+	out.Set(0, value.Num(n))
 }
 
 func PrintScope(env spell.Runtime, _ []value.Value, _ *spell.Output) {

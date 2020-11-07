@@ -125,7 +125,7 @@ func Literal(env Runtime, n tree.Literal) value.Value {
 	case tree.BoolLit:
 		return value.Bool(v.Val)
 	case tree.NumLit:
-		return value.Num{Number: v.Val}
+		return value.Num(v.Val)
 	case tree.StrLit:
 		return value.Str(v.Val[1 : len(v.Val)-1])
 	default:
@@ -139,34 +139,23 @@ func BinaryExpr(env Runtime, n tree.BinaryExpr) value.Value {
 
 	switch n.Op {
 	case token.ADD:
-		lNum, rNum := l.(value.Num), r.(value.Num)
-		lNum.Number = lNum.Number.Copy()
-		lNum.Number.Add(rNum.Number)
-		return lNum
+		return l.(value.Num) + r.(value.Num)
 
 	case token.SUB:
-		lNum, rNum := l.(value.Num), r.(value.Num)
-		lNum.Number = lNum.Number.Copy()
-		lNum.Number.Sub(rNum.Number)
-		return lNum
+		return l.(value.Num) - r.(value.Num)
 
 	case token.MUL:
-		lNum, rNum := l.(value.Num), r.(value.Num)
-		lNum.Number = lNum.Number.Copy()
-		lNum.Number.Mul(rNum.Number)
-		return lNum
+		return l.(value.Num) * r.(value.Num)
 
 	case token.DIV:
-		lNum, rNum := l.(value.Num), r.(value.Num)
-		lNum.Number = lNum.Number.Copy()
-		lNum.Number.Div(rNum.Number)
-		return lNum
+		return l.(value.Num) / r.(value.Num)
 
 	case token.REM:
-		lNum, rNum := l.(value.Num), r.(value.Num)
-		lNum.Number = lNum.Number.Copy()
-		lNum.Number.Mod(rNum.Number)
-		return lNum
+		x, y := l.(value.Num), r.(value.Num)
+		for x >= y {
+			x -= y
+		}
+		return x
 
 	case token.AND:
 		return l.(value.Bool) && r.(value.Bool)
@@ -176,19 +165,19 @@ func BinaryExpr(env Runtime, n tree.BinaryExpr) value.Value {
 
 	case token.LT:
 		lNum, rNum := l.(value.Num), r.(value.Num)
-		return value.Bool(lNum.Number.Less(rNum.Number))
+		return value.Bool(lNum < rNum)
 
 	case token.MT:
 		lNum, rNum := l.(value.Num), r.(value.Num)
-		return value.Bool(lNum.Number.More(rNum.Number))
+		return value.Bool(lNum > rNum)
 
 	case token.LTE:
 		lNum, rNum := l.(value.Num), r.(value.Num)
-		return value.Bool(lNum.Number.LessOrEqual(rNum.Number))
+		return value.Bool(lNum <= rNum)
 
 	case token.MTE:
 		lNum, rNum := l.(value.Num), r.(value.Num)
-		return value.Bool(lNum.Number.MoreOrEqual(rNum.Number))
+		return value.Bool(lNum >= rNum)
 
 	case token.EQU:
 		return value.Bool(l.Equal(r))

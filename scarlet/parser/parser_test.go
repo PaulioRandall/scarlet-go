@@ -5,7 +5,6 @@ import (
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
-	"github.com/PaulioRandall/scarlet-go/scarlet/value/number"
 
 	"github.com/stretchr/testify/require"
 )
@@ -48,7 +47,7 @@ func TestParse_SingleAssign_1(t *testing.T) {
 			Snippet: superSnip(in[0], in[2]),
 			Left:    tree.Ident{Snippet: in[0].Snippet, Val: "x"},
 			Infix:   in[1].Snippet,
-			Right:   tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+			Right:   tree.NumLit{Snippet: in[2].Snippet, Val: float64(1)},
 		},
 	}
 
@@ -94,7 +93,7 @@ func TestParse_SingleAssign_3(t *testing.T) {
 			Snippet: superSnip(in[0], in[2]),
 			Left:    tree.AnonIdent{Snippet: in[0].Snippet},
 			Infix:   in[1].Snippet,
-			Right:   tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+			Right:   tree.NumLit{Snippet: in[2].Snippet, Val: float64(1)},
 		},
 	}
 
@@ -131,7 +130,7 @@ func TestParse_MultiAssign_1(t *testing.T) {
 			Infix: in[5].Snippet,
 			Right: []tree.Expr{
 				tree.BoolLit{Snippet: in[6].Snippet, Val: true},
-				tree.NumLit{Snippet: in[8].Snippet, Val: number.New("1")},
+				tree.NumLit{Snippet: in[8].Snippet, Val: float64(1)},
 				tree.StrLit{Snippet: in[10].Snippet, Val: `"text"`},
 			},
 		},
@@ -170,7 +169,7 @@ func TestParse_MultiAssign_2(t *testing.T) {
 			Infix: in[5].Snippet,
 			Right: []tree.Expr{
 				tree.BoolLit{Snippet: in[6].Snippet, Val: true},
-				tree.NumLit{Snippet: in[8].Snippet, Val: number.New("1")},
+				tree.NumLit{Snippet: in[8].Snippet, Val: float64(1)},
 				tree.StrLit{Snippet: in[10].Snippet, Val: `"text"`},
 			},
 		},
@@ -277,10 +276,10 @@ func TestParse_BinaryExpr_1(t *testing.T) {
 	exp := []tree.Node{
 		tree.BinaryExpr{
 			Snippet: superSnip(in[0], in[2]),
-			Left:    tree.NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+			Left:    tree.NumLit{Snippet: in[0].Snippet, Val: float64(1)},
 			Op:      in[1].Token,
 			OpPos:   in[1].Snippet,
-			Right:   tree.NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+			Right:   tree.NumLit{Snippet: in[2].Snippet, Val: float64(2)},
 		},
 	}
 
@@ -326,10 +325,10 @@ func TestParse_BinaryExpr_3(t *testing.T) {
 
 	add := tree.BinaryExpr{
 		Snippet: superSnip(in[0], in[2]),
-		Left:    tree.NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+		Left:    tree.NumLit{Snippet: in[0].Snippet, Val: float64(1)},
 		Op:      in[1].Token,
 		OpPos:   in[1].Snippet,
-		Right:   tree.NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+		Right:   tree.NumLit{Snippet: in[2].Snippet, Val: float64(2)},
 	}
 
 	exp := []tree.Node{
@@ -338,7 +337,7 @@ func TestParse_BinaryExpr_3(t *testing.T) {
 			Left:    add,
 			Op:      in[3].Token,
 			OpPos:   in[3].Snippet,
-			Right:   tree.NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
+			Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(3)},
 		},
 	}
 
@@ -360,16 +359,16 @@ func TestParse_BinaryExpr_4(t *testing.T) {
 
 	mul := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[4]),
-		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(2)},
 		Op:      in[3].Token,
 		OpPos:   in[3].Snippet,
-		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
+		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(3)},
 	}
 
 	exp := []tree.Node{
 		tree.BinaryExpr{
 			Snippet: superSnip(in[0], in[4]),
-			Left:    tree.NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+			Left:    tree.NumLit{Snippet: in[0].Snippet, Val: float64(1)},
 			Op:      in[1].Token,
 			OpPos:   in[1].Snippet,
 			Right:   mul,
@@ -402,16 +401,16 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 	// 2 * 3
 	mul := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[4]),
-		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: number.New("2")},
+		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(2)},
 		Op:      in[3].Token,
 		OpPos:   in[3].Snippet,
-		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: number.New("3")},
+		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(3)},
 	}
 
 	// 1 + (2 * 3)
 	add := tree.BinaryExpr{
 		Snippet: superSnip(in[0], in[4]),
-		Left:    tree.NumLit{Snippet: in[0].Snippet, Val: number.New("1")},
+		Left:    tree.NumLit{Snippet: in[0].Snippet, Val: float64(1)},
 		Op:      in[1].Token,
 		OpPos:   in[1].Snippet,
 		Right:   mul,
@@ -420,10 +419,10 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 	// 4 / 5
 	div := tree.BinaryExpr{
 		Snippet: superSnip(in[6], in[8]),
-		Left:    tree.NumLit{Snippet: in[6].Snippet, Val: number.New("4")},
+		Left:    tree.NumLit{Snippet: in[6].Snippet, Val: float64(4)},
 		Op:      in[7].Token,
 		OpPos:   in[7].Snippet,
-		Right:   tree.NumLit{Snippet: in[8].Snippet, Val: number.New("5")},
+		Right:   tree.NumLit{Snippet: in[8].Snippet, Val: float64(5)},
 	}
 
 	// (4 / 5) % 6
@@ -432,7 +431,7 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 		Left:    div,
 		Op:      in[9].Token,
 		OpPos:   in[9].Snippet,
-		Right:   tree.NumLit{Snippet: in[10].Snippet, Val: number.New("6")},
+		Right:   tree.NumLit{Snippet: in[10].Snippet, Val: float64(6)},
 	}
 
 	exp := []tree.Node{
@@ -464,10 +463,10 @@ func TestParse_Assign_BinaryExpr_1(t *testing.T) {
 
 	right := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[4]),
-		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(1)},
 		Op:      in[3].Token,
 		OpPos:   in[3].Snippet,
-		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
+		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(2)},
 	}
 
 	exp := []tree.Node{
@@ -494,7 +493,7 @@ func TestParse_ParenExpr_1(t *testing.T) {
 	)
 
 	exp := []tree.Node{
-		tree.NumLit{Snippet: in[1].Snippet, Val: number.New("1")},
+		tree.NumLit{Snippet: in[1].Snippet, Val: float64(1)},
 	}
 
 	act, e := ParseAll(in)
@@ -516,10 +515,10 @@ func TestParse_ParenExpr_2(t *testing.T) {
 	exp := []tree.Node{
 		tree.BinaryExpr{
 			Snippet: superSnip(in[1], in[3]),
-			Left:    tree.NumLit{Snippet: in[1].Snippet, Val: number.New("1")},
+			Left:    tree.NumLit{Snippet: in[1].Snippet, Val: float64(1)},
 			Op:      in[2].Token,
 			OpPos:   in[2].Snippet,
-			Right:   tree.NumLit{Snippet: in[3].Snippet, Val: number.New("2")},
+			Right:   tree.NumLit{Snippet: in[3].Snippet, Val: float64(2)},
 		},
 	}
 
@@ -544,10 +543,10 @@ func TestParse_ParenExpr_3(t *testing.T) {
 	exp := []tree.Node{
 		tree.BinaryExpr{
 			Snippet: superSnip(in[2], in[4]),
-			Left:    tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+			Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(1)},
 			Op:      in[3].Token,
 			OpPos:   in[3].Snippet,
-			Right:   tree.NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
+			Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(2)},
 		},
 	}
 
@@ -576,10 +575,10 @@ func TestParse_ParenExpr_4(t *testing.T) {
 	// (1 + 2)
 	add := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[4]),
-		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(1)},
 		Op:      in[3].Token,
 		OpPos:   in[3].Snippet,
-		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
+		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(2)},
 	}
 
 	// ((1 + 2) * x)
@@ -644,10 +643,10 @@ func TestParse_SpellCall_2(t *testing.T) {
 	// (1 + 2)
 	add := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[4]),
-		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: number.New("1")},
+		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(1)},
 		Op:      in[3].Token,
 		OpPos:   in[3].Snippet,
-		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: number.New("2")},
+		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(2)},
 	}
 
 	exp := []tree.Node{
@@ -683,7 +682,7 @@ func TestParse_SpellCall_3(t *testing.T) {
 			Name:    "Print",
 			Args: []tree.Expr{
 				tree.BoolLit{Snippet: in[2].Snippet, Val: true},
-				tree.NumLit{Snippet: in[4].Snippet, Val: number.New("1")},
+				tree.NumLit{Snippet: in[4].Snippet, Val: float64(1)},
 				tree.StrLit{Snippet: in[6].Snippet, Val: `"abc"`},
 			},
 		},
