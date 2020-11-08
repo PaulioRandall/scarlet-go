@@ -70,7 +70,11 @@ func SpellCall(env Runtime, n tree.SpellCall) []value.Value {
 
 	in := Expressions(env, n.Args)
 	out := spell.NewOutput(s.Outputs)
-	s.Spell(env, in, out)
+
+	if !env.GetExitFlag() {
+		s.Spell(env, in, out)
+	}
+
 	return out.Slice()
 }
 

@@ -164,11 +164,34 @@ func List_Pop(env spell.Runtime, in []value.Value, out *spell.Output) {
 	}
 
 	if len(list) == 0 {
-		setError(env, "Can't pop '"+id.String()+", it's empty")
+		setError(env, "Can't pop from '"+id.String()+", it's empty")
 		return
 	}
 
 	out.Set(0, list[0])
 	list = list[1:]
+	env.Bind(id, list)
+}
+
+func List_Take(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) != 1 {
+		setError(env, "Two arguments required")
+		return
+	}
+
+	list, id := getList_Id(env, in[0])
+	if list == nil {
+		return
+	}
+
+	if len(list) == 0 {
+		setError(env, "Can't take from '"+id.String()+", it's empty")
+		return
+	}
+
+	last := len(list) - 1
+	out.Set(0, list[last])
+	list = list[:last]
 	env.Bind(id, list)
 }

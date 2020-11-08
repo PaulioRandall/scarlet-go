@@ -23,6 +23,7 @@ func NewBook() spell.Book {
 	b.Inscribe("list.Append", 0, List_Append)
 	b.Inscribe("list.Push", 0, List_Prepend)
 	b.Inscribe("list.Pop", 1, List_Pop)
+	b.Inscribe("list.Take", 1, List_Take)
 
 	return b
 }
