@@ -1,18 +1,10 @@
 
 @Println()
 
-list: @List.New(
-	1,
+list : @List.New(
 	2,
-	@List.New("a", "b", "c"),
 )
 
+@list.Prepend("list", 1)
+@list.Append("list", 3)
 @Println(list)
-@list.Set("list", 2, "xyz")
-@Println(list)
-
-item: @list.Get("list", 2)
-@Println("list[2] is ", item)
-
-len: @Len(list)
-@Println("list length is ", len)

@@ -19,6 +19,8 @@ func NewBook() spell.Book {
 	b.Inscribe("List.New", 1, List_New)
 	b.Inscribe("List.Set", 0, List_Set)
 	b.Inscribe("List.Get", 1, List_Get)
+	b.Inscribe("List.Prepend", 0, List_Prepend)
+	b.Inscribe("List.Append", 0, List_Append)
 
 	return b
 }

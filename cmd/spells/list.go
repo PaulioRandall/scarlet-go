@@ -60,7 +60,7 @@ func List_New(env spell.Runtime, in []value.Value, out *spell.Output) {
 	out.Set(0, value.List(list))
 }
 
-func List_Set(env spell.Runtime, in []value.Value, out *spell.Output) {
+func List_Set(env spell.Runtime, in []value.Value, _ *spell.Output) {
 
 	if len(in) != 3 {
 		setError(env, "@list.Set requires three arguments")
@@ -68,6 +68,9 @@ func List_Set(env spell.Runtime, in []value.Value, out *spell.Output) {
 	}
 
 	listId, idx := getListId_Idx(env, in, "@list.Set")
+	if listId == noId {
+		return
+	}
 
 	list := getList(env, listId, "@list.Set")
 	if list == nil {
@@ -90,6 +93,9 @@ func List_Get(env spell.Runtime, in []value.Value, out *spell.Output) {
 	}
 
 	listId, idx := getListId_Idx(env, in, "@list.Get")
+	if listId == noId {
+		return
+	}
 
 	list := getList(env, listId, "@list.Get")
 	if list == nil {
@@ -101,4 +107,50 @@ func List_Get(env spell.Runtime, in []value.Value, out *spell.Output) {
 	}
 
 	out.Set(0, list[idx.Int()])
+}
+
+func List_Prepend(env spell.Runtime, in []value.Value, _ *spell.Output) {
+
+	if len(in) != 2 {
+		setError(env, "@list.Prepend: requires two arguments")
+		return
+	}
+
+	listId, ok := in[0].(value.Str)
+	if !ok {
+		setError(env, "@list.Prepend requires its first argument be an identifier")
+		return
+	}
+
+	id := listId.ToIdent()
+	list := getList(env, id, "@list.Prepend")
+	if list == nil {
+		return
+	}
+
+	list = append(in[1:], list...)
+	env.Bind(id, list)
+}
+
+func List_Append(env spell.Runtime, in []value.Value, _ *spell.Output) {
+
+	if len(in) != 2 {
+		setError(env, "@list.Append: requires two arguments")
+		return
+	}
+
+	listId, ok := in[0].(value.Str)
+	if !ok {
+		setError(env, "@list.Append requires its first argument be an identifier")
+		return
+	}
+
+	id := listId.ToIdent()
+	list := getList(env, id, "@list.Append")
+	if list == nil {
+		return
+	}
+
+	list = append(list, in[1:]...)
+	env.Bind(id, list)
 }

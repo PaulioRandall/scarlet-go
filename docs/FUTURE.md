@@ -7,13 +7,22 @@
   - `list := @list.New(value...)` Creates a new ordered list
   - `@list.Set(list, index, value)` Set the value of a list slot
   - `v := @list.Get(list, index)` Get the list value at the specified index
+  - `@list.Prepend(list, value...)` Pushes values onto the front of a list
+  - `@list.Append(list, value...)` Pushes values onto the end of a list
 
 
 ## [v0.5.0+] Potential Features
 
 - Manual/documentation
+- Native lists and maps
 
 ```
+# Write to standard output, a space is placed between each printed item 
+<< "abc", "efg"
+
+# Write to standard output, a newline is placed after each printed item 
+<<< "abc", "efg"
+
 # Get the program arguments
 x := @Args()
 
@@ -46,12 +55,6 @@ x := @str.Join("abc", "xyz")
 
 # Parse a string as a bool
 x, e := @str.ParseBool(bool)
-
-# Set the value of a list item
-@list.Set(list, idx, newValue)
-
-# Get the value of an item in the list
-x := @list.Get(list, idx)
 
 # Add an item to the front of a list
 @list.Push(list, val)
