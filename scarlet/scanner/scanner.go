@@ -108,8 +108,8 @@ func identifyLexeme(r *reader, l *lex) error {
 	case r.at(0) == ';':
 		l.size, l.tk = 1, token.TERMINATOR
 
-	case r.at(0) == ':':
-		l.size, l.tk = 1, token.ASSIGN
+	case r.starts("<-"):
+		l.size, l.tk = 2, token.ASSIGN
 
 	case r.at(0) == ',':
 		l.size, l.tk = 1, token.DELIM

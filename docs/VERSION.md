@@ -2,6 +2,19 @@
 
 ## [v0.4.0]
 
+```
+list : @NewList(1, 2,	true,	"abc")
+list : @Slice(list, 1, 3)   # Returns [2, true, "abc"]
+str : @At(list, 2)
+ok : @InRange(list, 9)      # Returns false
+list : @Push(list, 123.456) # Returns [123.456, 2, true, "abc"]
+list : @Add(list, "happy")  # Returns [123.456, 2, true, "abc", "happy"]
+list : @Set(list, 2, false) # Returns [123.456, 2, false, "abc", "happy"]
+list, v : @Del(list, 3)     # Returns [123.456, 2, false, "happy"], "abc"
+list, v : @Pop(list)        # Returns [2, false, "happy"], 123.456
+list, v : @Take(list)       # Returns [123.456, 2, false], "happy"
+```
+
 - All numbers are now float64, arbitrary precision removed
 - New list type
   - `list : @NewList(value...)` Creates a new ordered list

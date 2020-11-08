@@ -94,8 +94,8 @@ func TestTerminator_1(t *testing.T) {
 }
 
 func TestAssign_1(t *testing.T) {
-	doTest(t, ":", []token.Lexeme{
-		token.MakeTok(":", token.ASSIGN),
+	doTest(t, "<-", []token.Lexeme{
+		token.MakeTok("<-", token.ASSIGN),
 	})
 }
 
@@ -301,7 +301,7 @@ func TestNumber_4(t *testing.T) {
 
 func TestComprehensive_1(t *testing.T) {
 
-	in := `x: 1 + 2
+	in := `x <- 1 + 2
 @Println("x = ", x)`
 
 	tm := &token.TextMarker{}
@@ -313,7 +313,8 @@ func TestComprehensive_1(t *testing.T) {
 
 	exp := []token.Lexeme{
 		genLex("x", token.IDENT),
-		genLex(":", token.ASSIGN),
+		genLex(" ", token.SPACE),
+		genLex("<-", token.ASSIGN),
 		genLex(" ", token.SPACE),
 		genLex("1", token.NUMBER),
 		genLex(" ", token.SPACE),

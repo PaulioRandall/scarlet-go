@@ -1,19 +1,17 @@
 
 @Println()
 
-# Try <- as assignment
-
-list : @NewList(
+list <- @NewList(
 	1,
 	2,
 	"abc",
 )
 
-list, v : @Pop(list)
+list, v <- @Pop(list)
 @Println(v)
 
-list, v : @Take(list)
+list, v <- @Take(list)
 @Println(v)
 
-list : @Add(list, v)
+list <- @Add(list, v)
 @Println(list)

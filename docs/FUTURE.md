@@ -1,19 +1,27 @@
 # Scribbles
 
-## [v0.5.0+] Potential Features
+## [v0.5.0]
+
+```
+s <- "Happy"
+i <- @IndexOf(s, "app")
+s <- @Join(s, " days!")
+ten <- @Str(10)
+@Panic(1, "Meh")
+```
+
+- Assignment symbol changed to `<-`
+- `i <- @IndexOf(con, s)` Returns the index of an item within a container or -1 if the item doesn't exists
+- `con <- @Join(con, con)` Joins two containers 
+- `s <- @Str(value)` Stringify a value
+- `@Panic(exitCode, message)` Exit the scroll after printing an error message
+
+## [v0.6.0+] Potential Features
 
 - Manual/documentation
 - Native lists & maps
 
 ```
-# Get the index of a specific UTF-8 char within the string
-x := @str.IndexOf(haystack, needle)
-
-# Join two strings together
-x := @str.Join("abc", "xyz")
-
-
-
 # Write to standard output, a space is placed between each printed item 
 << "abc", "efg"
 
@@ -25,21 +33,6 @@ x := @Args()
 
 # Does a variable exist
 x := @Exists("variable_name")
-
-# Stringify a value of any type
-x := @Str(value)
-
-# Exit the script with an error message
-@Panic(exitCode, message)
-
-# Test if a string has a prefix
-x := @str.StartsWith(s, prefix)
-
-# Test if a string has a suffix
-x := @str.EndsWith(s, suffix)
-
-# Parse a string as a bool
-x, e := @str.ParseBool(bool)
 
 # Iterate a list
 x := @list.Foreach(list, F(i, value, more) {
