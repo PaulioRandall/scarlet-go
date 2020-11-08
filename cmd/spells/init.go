@@ -16,5 +16,7 @@ func NewBook() spell.Book {
 	b.Inscribe("ParseNum", 2, ParseNum)
 	b.Inscribe("PrintScope", 0, PrintScope)
 
+	b.Inscribe("List.New", 1, List_New)
+
 	return b
 }
