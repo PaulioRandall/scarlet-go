@@ -1,5 +1,21 @@
 # Versions
 
+## [v0.4.0]
+
+- All numbers are now float64, arbitrary precision removed
+- New list type
+  - `list : @NewList(value...)` Creates a new ordered list
+- Spells
+  - `con : @Slice(con, start, end)` Take a slice of a container
+  - `v : @At(con, index)` Gets the value at the specified index
+  - `ok : @InRange(con, idx)` Returns true if the index is valid within a container
+  - `con : @Push(con, value...)` Pushes values onto the front of a container
+  - `con : @Add(con, value...)` Pushes values onto the end of a container
+  - `con : @Set(con, index, value)` Sets the value of an item within a container, not usable with strings
+  - `con, v : @Del(con, index)` Removes an item from a container
+  - `con, v : @Pop(con)` Removes the item at the front of a container
+  - `con, v : @Take(con)` Removes the item at the back of a container
+
 ## v0.3.0
 
 ```

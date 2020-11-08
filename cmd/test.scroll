@@ -1,10 +1,12 @@
 
 @Println()
 
+# Try <- as assignment
+
 list : @NewList(
 	1,
 	2,
-	3,
+	"abc",
 )
 
 list, v : @Pop(list)

@@ -75,6 +75,7 @@ func scan(r *reader) ParseToken {
 		if r.more() {
 			return tk, scan(r), nil
 		}
+
 		return tk, nil, nil
 	}
 }
@@ -97,7 +98,7 @@ func identifyLexeme(r *reader, l *lex) error {
 
 	case r.at(0) == '#':
 		l.size, l.tk = 1, token.COMMENT
-		for r.inRange(l.size) && r.at(0) != '\n' && !r.starts("\r\n") {
+		for r.inRange(l.size) && r.at(l.size) != '\n' && !r.starts("\r\n") {
 			l.size++
 		}
 
