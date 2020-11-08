@@ -104,21 +104,6 @@ func List_Set(env spell.Runtime, in []value.Value, _ *spell.Output) {
 	env.Bind(id, list)
 }
 
-func List_Get(env spell.Runtime, in []value.Value, out *spell.Output) {
-
-	if len(in) != 2 {
-		setError(env, "Two arguments required")
-		return
-	}
-
-	list, _, idx := getList_Id_Idx(env, in)
-	if list == nil {
-		return
-	}
-
-	out.Set(0, list[idx.Int()])
-}
-
 func List_Prepend(env spell.Runtime, in []value.Value, _ *spell.Output) {
 
 	if len(in) != 2 {
@@ -219,36 +204,4 @@ func List_InRange(env spell.Runtime, in []value.Value, out *spell.Output) {
 	} else {
 		out.Set(0, value.Bool(true))
 	}
-}
-
-func List_Slice(env spell.Runtime, in []value.Value, out *spell.Output) {
-
-	if len(in) != 3 {
-		setError(env, "Three arguments required")
-		return
-	}
-
-	list, _, start := getList_Id_Idx(env, in)
-	if list == nil {
-		return
-	}
-
-	end, ok := in[2].(value.Num)
-	if !ok {
-		setError(env, "Requires its third argument be an index")
-		return
-	}
-
-	if end.Int() > int64(len(list)) {
-		max := strconv.Itoa(len(list))
-		setError(env, "Out of range, list["+max+"], given "+end.String())
-		return
-	}
-
-	if end.Int() < start.Int() {
-		setError(env, "Invalid range, list["+start.String()+":"+end.String()+"]")
-		return
-	}
-
-	out.Set(0, list[start.Int():end.Int()])
 }

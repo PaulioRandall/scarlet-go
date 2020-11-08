@@ -11,6 +11,9 @@ func (a List) Comparable(b Value) bool { _, ok := b.(List); return ok }
 
 func (a List) Len() int64                   { return int64(len(a)) }
 func (a List) Slice(start, end int64) Value { return a[start:end] }
+func (a List) CanHold(v Value) bool         { return true }
+func (a List) InRange(idx int64) bool       { return idx >= 0 && idx < int64(len(a)) }
+func (a List) At(idx int64) Value           { return a[idx] }
 
 func (a List) Equal(b Value) bool {
 	if !a.Comparable(b) {

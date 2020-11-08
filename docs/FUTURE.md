@@ -6,7 +6,6 @@
 - Lists value type
   - `list : @list.New(value...)` Creates a new ordered list
   - `@list.Set(list, index, value)` Set the value of a list slot
-  - `v : @list.Get(list, index)` Get the list value at the specified index
   - `@list.Prepend(list, value...)` Pushes values onto the front of a list
   - `@list.Append(list, value...)` Pushes values onto the end of a list
   - `@list.Push(list, value...)` Synonym for @list.Prepend
@@ -15,6 +14,7 @@
   - `ok : @list.InRange(list, idx)` Returns true if the index is within range
 - Spells
   - `v : @Slice(value, start, end)` Take a slice of a list or str
+  - `v : @At(index)` Gets the value at the specified index
 
 ## [v0.5.0+] Potential Features
 

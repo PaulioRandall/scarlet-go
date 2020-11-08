@@ -5,11 +5,12 @@ list : @List.New(
 	1,
 	2,
 	3,
-	4,
+	"a",
 	5,
 )
 
-list_two : @Slice(list, 1, 4)
+v : @At(list, 3)
+@Println(v)
 
-@Println(list)
-@Println(list_two)
+
+#@Println(list)

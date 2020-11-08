@@ -143,3 +143,38 @@ func Slice(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	out.Set(0, v.Slice(start.Int(), end.Int()))
 }
+
+func At(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	type indexed interface {
+		InRange(int64) bool
+		At(int64) value.Value
+		Len() int64
+	}
+
+	if len(in) != 2 {
+		setError(env, "@At requires two arguments")
+		return
+	}
+
+	v, ok := in[0].(indexed)
+	if !ok {
+		setError(env, "@At argument is not indexed")
+		return
+	}
+
+	idx, ok := in[1].(value.Num)
+	if !ok {
+		setError(env, "@At requires its second argument be an index")
+		return
+	}
+
+	if !v.InRange(idx.Int()) {
+		size := v.Len()
+		max := strconv.FormatInt(size, 10)
+		setError(env, "Out of range, indexed["+max+"], given "+idx.String())
+		return
+	}
+
+	out.Set(0, v.At(idx.Int()))
+}
