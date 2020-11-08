@@ -79,3 +79,6 @@ func (a Bool) And(b Bool) Bool { return Bool(bool(a) && bool(b)) }
 func (a Bool) Or(b Bool) Bool  { return Bool(bool(a) || bool(b)) }
 
 func (a Num) Int() int64 { return int64(a) }
+
+func (a Str) ToIdent() Ident { return Ident(string(a)) }
+func (a Ident) ToStr() Str   { return Str(string(a)) }

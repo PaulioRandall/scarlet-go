@@ -2,7 +2,12 @@
 
 ## [v0.4.0]
 
-- All numbers are now float64, arbitrary precision removed 
+- All numbers are now float64, arbitrary precision removed
+- Lists value type
+  - `list := @list.New(value...)` Creates a new ordered list
+  - `@list.Set(list, index, value)` Set the value of a list slot
+  - `v := @list.Get(list, index)` Get the list value at the specified index
+
 
 ## [v0.5.0+] Potential Features
 
@@ -41,13 +46,6 @@ x := @str.Join("abc", "xyz")
 
 # Parse a string as a bool
 x, e := @str.ParseBool(bool)
-
-# create a new list
-list := @list.New(
-  1,
-  2,
-  3,
-)
 
 # Set the value of a list item
 @list.Set(list, idx, newValue)

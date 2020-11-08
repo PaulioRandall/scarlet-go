@@ -1,17 +1,13 @@
 
-x, y := 6, 7
-answer := x * y
-
 @Println()
-@Println("6 * 7 = ", answer)
-
-n := "123.456"
-@Println("The length of `", n, "` is ", @Len(n))
-
-_, e := @ParseNum("twelve")
 
 list := @List.New(1, 2, @List.New("a", "b", "c"))
 @Println(list)
+
+@list.Set("list", 2, "xyz")
+@Println(list)
+
+@Println("list[2] is ", @list.Get("list", 2))
 
 @Println()
 @PrintScope()
