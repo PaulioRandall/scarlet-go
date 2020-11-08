@@ -9,6 +9,9 @@ type List []Value
 func (List) Name() string              { return "list" }
 func (a List) Comparable(b Value) bool { _, ok := b.(List); return ok }
 
+func (a List) Len() int64                   { return int64(len(a)) }
+func (a List) Slice(start, end int64) Value { return a[start:end] }
+
 func (a List) Equal(b Value) bool {
 	if !a.Comparable(b) {
 		return false
@@ -43,8 +46,4 @@ func (a List) String() string {
 	}
 	sb.WriteRune(']')
 	return sb.String()
-}
-
-func (a List) Len() int {
-	return len(a)
 }

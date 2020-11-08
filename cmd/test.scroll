@@ -9,7 +9,7 @@ list : @List.New(
 	5,
 )
 
-list_two : @list.Slice("list", 1, 4)
+list_two : @Slice(list, 1, 4)
 
 @Println(list)
 @Println(list_two)

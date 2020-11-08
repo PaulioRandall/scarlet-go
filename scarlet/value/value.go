@@ -73,7 +73,8 @@ func (id Ident) Valid() Bool {
 	return true
 }
 
-func (a Str) Len() int { return len(string(a)) }
+func (a Str) Len() int64                   { return int64(len(string(a))) }
+func (a Str) Slice(start, end int64) Value { return a[start:end] }
 
 func (a Bool) And(b Bool) Bool { return Bool(bool(a) && bool(b)) }
 func (a Bool) Or(b Bool) Bool  { return Bool(bool(a) || bool(b)) }

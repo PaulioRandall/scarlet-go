@@ -13,7 +13,8 @@
   - `v : @list.Pop(list)` Removes and returns an item from the front of a list
   - `v : @list.Take(list)` Removes and returns an item from the end of a list
   - `ok : @list.InRange(list, idx)` Returns true if the index is within range
-  - `sub : @list.Slice(list, startIdx, endIdx)` Take a slice of a list
+- Spells
+  - `v : @Slice(value, start, end)` Take a slice of a list or str
 
 ## [v0.5.0+] Potential Features
 

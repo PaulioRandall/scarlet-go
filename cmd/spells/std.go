@@ -16,26 +16,6 @@ func setError(env spell.Runtime, m string, args ...interface{}) {
 	env.Fail(err_code, errors.New(s))
 }
 
-func Len(env spell.Runtime, in []value.Value, out *spell.Output) {
-
-	type lengthy interface {
-		Len() int
-	}
-
-	if len(in) != 1 {
-		setError(env, "@Len requires one argument")
-		return
-	}
-
-	v, ok := in[0].(lengthy)
-	if !ok {
-		setError(env, "@Len argument has no length")
-		return
-	}
-
-	out.Set(0, value.Num(v.Len()))
-}
-
 func Exit(env spell.Runtime, in []value.Value, _ *spell.Output) {
 
 	if len(in) != 1 {
@@ -90,4 +70,76 @@ func PrintScope(env spell.Runtime, _ []value.Value, _ *spell.Output) {
 	for id, v := range env.Scope() {
 		fmt.Println(id.String() + ": " + v.String())
 	}
+}
+
+func Len(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	type lengthy interface {
+		Len() int64
+	}
+
+	if len(in) != 1 {
+		setError(env, "@Len requires one argument")
+		return
+	}
+
+	v, ok := in[0].(lengthy)
+	if !ok {
+		setError(env, "@Len argument has no length property")
+		return
+	}
+
+	out.Set(0, value.Num(v.Len()))
+}
+
+func Slice(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	type sliceable interface {
+		Slice(int64, int64) value.Value
+		Len() int64
+	}
+
+	if len(in) != 3 {
+		setError(env, "@Slice requires three arguments")
+		return
+	}
+
+	v, ok := in[0].(sliceable)
+	if !ok {
+		setError(env, "@Slice argument is not sliceable")
+		return
+	}
+
+	size := v.Len()
+
+	start, ok := in[1].(value.Num)
+	if !ok {
+		setError(env, "@Slice requires its second argument be an index")
+		return
+	}
+
+	if start.Int() < 0 || start.Int() >= int64(size) {
+		max := strconv.FormatInt(size, 10)
+		setError(env, "Out of range, list["+max+"], given "+start.String())
+		return
+	}
+
+	end, ok := in[2].(value.Num)
+	if !ok {
+		setError(env, "@Slice requires its third argument be an index")
+		return
+	}
+
+	if end.Int() > int64(size) {
+		max := strconv.FormatInt(size, 10)
+		setError(env, "Out of range, sliceable["+max+"], given "+end.String())
+		return
+	}
+
+	if end.Int() < start.Int() {
+		setError(env, "Invalid range, sliceable["+start.String()+":"+end.String()+"]")
+		return
+	}
+
+	out.Set(0, v.Slice(start.Int(), end.Int()))
 }
