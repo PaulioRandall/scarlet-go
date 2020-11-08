@@ -2,14 +2,15 @@
 @Println()
 
 list : @List.New(
+	1,
 	2,
+	3,
 )
 
-@list.Prepend("list", 1)
-@list.Append("list", 3)
-p : @list.Pop("list")
-t : @list.Take("list")
+@Println(@list.InRange("list", 0-1))
+@Println(@list.InRange("list", 0))
+@Println(@list.InRange("list", 1))
+@Println(@list.InRange("list", 2))
+@Println(@list.InRange("list", 3))
 
-@Println(p)
-@Println(t)
 @Println(list)

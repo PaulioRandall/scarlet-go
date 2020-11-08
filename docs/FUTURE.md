@@ -12,6 +12,8 @@
   - `@list.Push(list, value...)` Synonym for @list.Prepend
   - `v : @list.Pop(list)` Removes and returns an item from the front of a list
   - `v : @list.Take(list)` Removes and returns an item from the end of a list
+  - `ok := @list.InRange(list, idx)` Returns true if the index is within range
+
 
 ## [v0.5.0+] Potential Features
 
@@ -61,8 +63,6 @@ x, e := @str.ParseBool(bool)
 # Take a slice of a list
 x := @list.Slice(list, startIdx, endIdx)
 
-# Determine if an index is within a lists range
-x := @list.InRange(list, idx)
 
 # Iterate a list
 x := @list.Foreach(list, F(i, value, more) {
