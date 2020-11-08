@@ -1,16 +1,12 @@
 
 @Println()
 
-list : @List.New(
+list : @NewList(
 	1,
 	2,
 	3,
-	"a",
-	5,
 )
 
-v : @InRange(list, 3)
+v : @Set(list, 1, "b")
 @Println(v)
 
-
-#@Println(list)

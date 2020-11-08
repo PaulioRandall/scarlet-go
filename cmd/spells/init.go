@@ -18,14 +18,14 @@ func NewBook() spell.Book {
 	b.Inscribe("Slice", 1, Slice)
 	b.Inscribe("At", 1, At)
 	b.Inscribe("InRange", 1, InRange)
+	b.Inscribe("Prepend", 1, Prepend)
+	b.Inscribe("Append", 1, Append)
 
-	b.Inscribe("list.New", 1, List_New)
-	b.Inscribe("list.Set", 0, List_Set)
-	b.Inscribe("list.Prepend", 0, List_Prepend) // @Replace
-	b.Inscribe("list.Append", 0, List_Append)   // @Replace
-	b.Inscribe("list.Push", 0, List_Prepend)
-	b.Inscribe("list.Pop", 1, List_Pop)
-	b.Inscribe("list.Take", 1, List_Take)
+	b.Inscribe("NewList", 1, NewList)
+	b.Inscribe("Set", 1, Set)
+	b.Inscribe("Push", 1, Prepend)
+	b.Inscribe("Pop", 1, Pop)
+	b.Inscribe("Take", 1, Take)
 
 	return b
 }

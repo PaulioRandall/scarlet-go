@@ -94,19 +94,14 @@ func Len(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 func Slice(env spell.Runtime, in []value.Value, out *spell.Output) {
 
-	type sliceable interface {
-		Slice(int64, int64) value.Value
-		Len() int64
-	}
-
 	if len(in) != 3 {
 		setError(env, "@Slice requires three arguments")
 		return
 	}
 
-	v, ok := in[0].(sliceable)
+	v, ok := in[0].(value.Container)
 	if !ok {
-		setError(env, "@Slice argument is not sliceable")
+		setError(env, "@Slice argument is not a container")
 		return
 	}
 
@@ -146,20 +141,14 @@ func Slice(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 func At(env spell.Runtime, in []value.Value, out *spell.Output) {
 
-	type indexed interface {
-		InRange(int64) bool
-		At(int64) value.Value
-		Len() int64
-	}
-
 	if len(in) != 2 {
 		setError(env, "@At requires two arguments")
 		return
 	}
 
-	v, ok := in[0].(indexed)
+	v, ok := in[0].(value.Container)
 	if !ok {
-		setError(env, "@At argument is not indexed")
+		setError(env, "@At argument is not a container")
 		return
 	}
 
@@ -181,18 +170,14 @@ func At(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 func InRange(env spell.Runtime, in []value.Value, out *spell.Output) {
 
-	type lengthy interface {
-		InRange(int64) bool
-	}
-
 	if len(in) != 2 {
 		setError(env, "@InRange requires two arguments")
 		return
 	}
 
-	v, ok := in[0].(lengthy)
+	v, ok := in[0].(value.Container)
 	if !ok {
-		setError(env, "@InRange first argument does not have a length")
+		setError(env, "@InRange first argument is not a container")
 		return
 	}
 
@@ -204,4 +189,78 @@ func InRange(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	inRange := v.InRange(idx.Int())
 	out.Set(0, value.Bool(inRange))
+}
+
+func Prepend(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) < 1 {
+		setError(env, "@Prepend requires at least one argument")
+		return
+	}
+
+	c, ok := in[0].(value.Container)
+	if !ok {
+		setError(env, "@Prepend first argument is not a contianer")
+		return
+	}
+
+	for _, v := range in[1:] {
+		if !c.CanHold(v) {
+			setError(env, "@Prepend: that container can't hold a '"+v.Name()+"'")
+			return
+		}
+	}
+
+	out.Set(0, c.Prepend(in[1:]...))
+}
+
+func Append(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) < 1 {
+		setError(env, "@Append requires at least one argument")
+		return
+	}
+
+	c, ok := in[0].(value.Container)
+	if !ok {
+		setError(env, "@Append first argument is not a contianer")
+		return
+	}
+
+	for _, v := range in[1:] {
+		if !c.CanHold(v) {
+			setError(env, "@Append: that container can't hold a '"+v.Name()+"'")
+			return
+		}
+	}
+
+	out.Set(0, c.Append(in[1:]...))
+}
+
+func Set(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) != 3 {
+		setError(env, "@Set: Three arguments required")
+		return
+	}
+
+	c, ok := in[0].(value.MutContainer)
+	if !ok {
+		setError(env, "@Set: first argument is not a mutable contianer")
+		return
+	}
+
+	k := in[1]
+	if !c.CanBeKey(k) {
+		setError(env, "@Set: invalid container key '"+k.String()+"'")
+		return
+	}
+
+	v := in[2]
+	if !c.CanHold(v) {
+		setError(env, "@Set: that container can't hold a '"+v.Name()+"'")
+		return
+	}
+
+	out.Set(0, c.Set(k, v))
 }

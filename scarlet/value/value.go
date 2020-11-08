@@ -24,6 +24,23 @@ type (
 		String() string
 	}
 
+	Container interface {
+		Value
+		Len() int64
+		InRange(int64) bool
+		At(int64) Value
+		Slice(int64, int64) Container
+		CanHold(Value) bool
+		Prepend(...Value) Container
+		Append(...Value) Container
+	}
+
+	MutContainer interface {
+		Container
+		CanBeKey(Value) bool
+		Set(Value, Value) MutContainer
+	}
+
 	Ident string
 	Bool  bool
 	Num   float64

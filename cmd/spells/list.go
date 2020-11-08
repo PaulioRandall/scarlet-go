@@ -80,7 +80,7 @@ func getList_Id_Idx(
 	return list, id.ToIdent(), idx
 }
 
-func List_New(env spell.Runtime, in []value.Value, out *spell.Output) {
+func NewList(env spell.Runtime, in []value.Value, out *spell.Output) {
 	list := make([]value.Value, len(in))
 	for i, v := range in {
 		list[i] = v
@@ -88,55 +88,7 @@ func List_New(env spell.Runtime, in []value.Value, out *spell.Output) {
 	out.Set(0, value.List(list))
 }
 
-func List_Set(env spell.Runtime, in []value.Value, _ *spell.Output) {
-
-	if len(in) != 3 {
-		setError(env, "Three arguments required")
-		return
-	}
-
-	list, id, idx := getList_Id_Idx(env, in)
-	if list == nil {
-		return
-	}
-
-	list[idx.Int()] = in[2]
-	env.Bind(id, list)
-}
-
-func List_Prepend(env spell.Runtime, in []value.Value, _ *spell.Output) {
-
-	if len(in) != 2 {
-		setError(env, "Two arguments required")
-		return
-	}
-
-	list, id := getList_Id(env, in[0])
-	if list == nil {
-		return
-	}
-
-	list = append(in[1:], list...)
-	env.Bind(id, list)
-}
-
-func List_Append(env spell.Runtime, in []value.Value, _ *spell.Output) {
-
-	if len(in) != 2 {
-		setError(env, "Two arguments required")
-		return
-	}
-
-	list, id := getList_Id(env, in[0])
-	if list == nil {
-		return
-	}
-
-	list = append(list, in[1:]...)
-	env.Bind(id, list)
-}
-
-func List_Pop(env spell.Runtime, in []value.Value, out *spell.Output) {
+func Pop(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	if len(in) != 1 {
 		setError(env, "Two arguments required")
@@ -158,7 +110,7 @@ func List_Pop(env spell.Runtime, in []value.Value, out *spell.Output) {
 	env.Bind(id, list)
 }
 
-func List_Take(env spell.Runtime, in []value.Value, out *spell.Output) {
+func Take(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	if len(in) != 1 {
 		setError(env, "One argument required")
