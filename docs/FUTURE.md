@@ -4,14 +4,14 @@
 
 ```
 s <- "Happy"
-i <- @IndexOf(s, "app")
+i <- @Index(s, "app")
 s <- @Join(s, " days!")
 ten <- @Str(10)
 @Panic(1, "Meh")
 ```
 
 - Assignment symbol changed to `<-`
-- `i <- @IndexOf(con, s)` Returns the index of an item within a container or -1 if the item doesn't exists
+- `i <- @Index(con, s)` Returns the index of an item within a container or -1 if the item doesn't exists
 - `con <- @Join(con, con)` Joins two containers 
 - `s <- @Str(value)` Stringify a value
 - `@Panic(exitCode, message)` Exit the scroll after printing an error message

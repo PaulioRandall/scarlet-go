@@ -36,6 +36,7 @@ type (
 		Con
 		InRange(int64) bool
 		At(int64) Value
+		Index(Value) int64
 		Slice(int64, int64) OrdCon
 		PushFront(...Value) OrdCon
 		PushBack(...Value) OrdCon

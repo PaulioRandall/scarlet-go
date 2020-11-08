@@ -176,6 +176,29 @@ func At(env spell.Runtime, in []value.Value, out *spell.Output) {
 	out.Set(0, v.At(idx.Int()))
 }
 
+func Index(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) != 2 {
+		setError(env, "@Index requires two arguments")
+		return
+	}
+
+	haystack, ok := in[0].(value.OrdCon)
+	if !ok {
+		setError(env, "@Index argument is not an ordered container")
+		return
+	}
+
+	needle := in[1]
+	if !haystack.CanHold(needle) {
+		setError(env, "@Index: that container can't hold a '"+needle.Name()+"'")
+		return
+	}
+
+	i := haystack.Index(needle)
+	out.Set(0, value.Num(i))
+}
+
 func InRange(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	if len(in) != 2 {

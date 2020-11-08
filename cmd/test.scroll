@@ -7,11 +7,9 @@ list <- @NewList(
 	"abc",
 )
 
-list, v <- @Pop(list)
-@Println(v)
+i <- @Index(list, "abc")
+@Println(i)
 
-list, v <- @Take(list)
-@Println(v)
+i <- @Index(list, 99)
+@Println(i)
 
-list <- @Add(list, v)
-@Println(list)

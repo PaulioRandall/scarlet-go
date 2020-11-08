@@ -18,6 +18,7 @@ func NewBook() spell.Book {
 	b.Inscribe("Len", 1, Len)
 	b.Inscribe("Slice", 1, Slice)
 	b.Inscribe("At", 1, At)
+	b.Inscribe("Index", 1, Index)
 	b.Inscribe("InRange", 1, InRange)
 	b.Inscribe("Push", 1, Push)
 	b.Inscribe("Add", 1, Add)

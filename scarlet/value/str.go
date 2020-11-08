@@ -26,7 +26,12 @@ func (a Str) CanBeKey(v Value) bool {
 }
 func (a Str) CanHold(v Value) bool   { _, ok := v.(Str); return ok }
 func (a Str) InRange(idx int64) bool { return idx >= 0 && idx < a.Len() }
-func (a Str) At(idx int64) Value     { return Str(string([]rune(string(a))[idx])) }
+func (a Str) At(idx int64) Value {
+	return Str(string([]rune(string(a))[idx]))
+}
+func (a Str) Index(v Value) int64 {
+	return int64(strings.Index(string(a), string(v.(Str))))
+}
 
 func (a Str) PushFront(v ...Value) OrdCon {
 	sb := strings.Builder{}

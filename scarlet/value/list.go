@@ -16,11 +16,21 @@ func (a List) CanBeKey(v Value) bool {
 	i, ok := v.(Num)
 	return ok && a.InRange(i.Int())
 }
+
 func (a List) CanHold(v Value) bool { return true }
 func (a List) InRange(idx int64) bool {
 	return idx >= 0 && idx < int64(len(a))
 }
+
 func (a List) At(idx int64) Value { return a[idx] }
+func (a List) Index(v Value) int64 {
+	for i, item := range a {
+		if item.Equal(v) {
+			return int64(i)
+		}
+	}
+	return -1
+}
 
 func (a List) PushFront(v ...Value) OrdCon { return append(List(v), a...) }
 func (a List) PushBack(v ...Value) OrdCon  { return append(a, List(v)...) }
