@@ -7,6 +7,11 @@ list : @NewList(
 	3,
 )
 
-v : @Set(list, 1, "b")
+list, v : @Pop(list)
 @Println(v)
 
+list, v : @Take(list)
+@Println(v)
+
+list : @Add(list, v)
+@Println(list)

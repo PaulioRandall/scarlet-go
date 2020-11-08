@@ -72,6 +72,14 @@ func PrintScope(env spell.Runtime, _ []value.Value, _ *spell.Output) {
 	}
 }
 
+func NewList(env spell.Runtime, in []value.Value, out *spell.Output) {
+	list := make([]value.Value, len(in))
+	for i, v := range in {
+		list[i] = v
+	}
+	out.Set(0, value.List(list))
+}
+
 func Len(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	type lengthy interface {
@@ -99,9 +107,9 @@ func Slice(env spell.Runtime, in []value.Value, out *spell.Output) {
 		return
 	}
 
-	v, ok := in[0].(value.Container)
+	v, ok := in[0].(value.OrdCon)
 	if !ok {
-		setError(env, "@Slice argument is not a container")
+		setError(env, "@Slice argument is not an ordered container")
 		return
 	}
 
@@ -146,9 +154,9 @@ func At(env spell.Runtime, in []value.Value, out *spell.Output) {
 		return
 	}
 
-	v, ok := in[0].(value.Container)
+	v, ok := in[0].(value.OrdCon)
 	if !ok {
-		setError(env, "@At argument is not a container")
+		setError(env, "@At argument is not an ordered container")
 		return
 	}
 
@@ -175,9 +183,9 @@ func InRange(env spell.Runtime, in []value.Value, out *spell.Output) {
 		return
 	}
 
-	v, ok := in[0].(value.Container)
+	v, ok := in[0].(value.OrdCon)
 	if !ok {
-		setError(env, "@InRange first argument is not a container")
+		setError(env, "@InRange first argument is not an ordered container")
 		return
 	}
 
@@ -191,50 +199,50 @@ func InRange(env spell.Runtime, in []value.Value, out *spell.Output) {
 	out.Set(0, value.Bool(inRange))
 }
 
-func Prepend(env spell.Runtime, in []value.Value, out *spell.Output) {
+func Push(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	if len(in) < 1 {
-		setError(env, "@Prepend requires at least one argument")
+		setError(env, "@Push requires at least one argument")
 		return
 	}
 
-	c, ok := in[0].(value.Container)
+	c, ok := in[0].(value.OrdCon)
 	if !ok {
-		setError(env, "@Prepend first argument is not a contianer")
+		setError(env, "@Push first argument is not an ordered contianer")
 		return
 	}
 
 	for _, v := range in[1:] {
 		if !c.CanHold(v) {
-			setError(env, "@Prepend: that container can't hold a '"+v.Name()+"'")
+			setError(env, "@Push: that container can't hold a '"+v.Name()+"'")
 			return
 		}
 	}
 
-	out.Set(0, c.Prepend(in[1:]...))
+	out.Set(0, c.PushFront(in[1:]...))
 }
 
-func Append(env spell.Runtime, in []value.Value, out *spell.Output) {
+func Add(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	if len(in) < 1 {
-		setError(env, "@Append requires at least one argument")
+		setError(env, "@Add requires at least one argument")
 		return
 	}
 
-	c, ok := in[0].(value.Container)
+	c, ok := in[0].(value.OrdCon)
 	if !ok {
-		setError(env, "@Append first argument is not a contianer")
+		setError(env, "@Add first argument is not aan ordered contianer")
 		return
 	}
 
 	for _, v := range in[1:] {
 		if !c.CanHold(v) {
-			setError(env, "@Append: that container can't hold a '"+v.Name()+"'")
+			setError(env, "@Add: that container can't hold a '"+v.Name()+"'")
 			return
 		}
 	}
 
-	out.Set(0, c.Append(in[1:]...))
+	out.Set(0, c.PushBack(in[1:]...))
 }
 
 func Set(env spell.Runtime, in []value.Value, out *spell.Output) {
@@ -244,9 +252,9 @@ func Set(env spell.Runtime, in []value.Value, out *spell.Output) {
 		return
 	}
 
-	c, ok := in[0].(value.MutContainer)
+	c, ok := in[0].(value.MutOrdCon)
 	if !ok {
-		setError(env, "@Set: first argument is not a mutable contianer")
+		setError(env, "@Set: first argument is not a mutable ordered contianer")
 		return
 	}
 
@@ -263,4 +271,74 @@ func Set(env spell.Runtime, in []value.Value, out *spell.Output) {
 	}
 
 	out.Set(0, c.Set(k, v))
+}
+
+func Del(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) != 2 {
+		setError(env, "@Del: Two arguments required")
+		return
+	}
+
+	c, ok := in[0].(value.Con)
+	if !ok {
+		setError(env, "@Del: first argument is not a contianer")
+		return
+	}
+
+	k := in[1]
+	if !c.CanBeKey(k) {
+		setError(env, "@Del: invalid container key '"+k.String()+"'")
+		return
+	}
+
+	c, v := c.Delete(k)
+	out.Set(0, c)
+	out.Set(0, v)
+}
+
+func Pop(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) != 1 {
+		setError(env, "@Pop: one argument required")
+		return
+	}
+
+	c, ok := in[0].(value.OrdCon)
+	if !ok {
+		setError(env, "@Pop: first argument is not an ordered contianer")
+		return
+	}
+
+	if c.Len() == 0 {
+		setError(env, "@Pop: can't pop from an empty container")
+		return
+	}
+
+	c, v := c.PopFront()
+	out.Set(0, c)
+	out.Set(1, v)
+}
+
+func Take(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) != 1 {
+		setError(env, "@Take: one argument required")
+		return
+	}
+
+	c, ok := in[0].(value.OrdCon)
+	if !ok {
+		setError(env, "@Take: first argument is not an ordered contianer")
+		return
+	}
+
+	if c.Len() == 0 {
+		setError(env, "@Take: can't take from an empty container")
+		return
+	}
+
+	c, v := c.PopBack()
+	out.Set(0, c)
+	out.Set(1, v)
 }

@@ -4,17 +4,18 @@
 
 - All numbers are now float64, arbitrary precision removed
 - Lists value type
-  - `list : @list.New(value...)` Creates a new ordered list
-  - `@list.Set(list, index, value)` Set the value of a list slot
-  - `@list.Prepend(list, value...)` Pushes values onto the front of a list
-  - `@list.Append(list, value...)` Pushes values onto the end of a list
-  - `@list.Push(list, value...)` Synonym for @list.Prepend
-  - `v : @list.Pop(list)` Removes and returns an item from the front of a list
-  - `v : @list.Take(list)` Removes and returns an item from the end of a list
-  - `ok : @list.InRange(list, idx)` Returns true if the index is within range
+  - `list : @NewList(value...)` Creates a new ordered list
+
 - Spells
-  - `v : @Slice(value, start, end)` Take a slice of a list or str
-  - `v : @At(index)` Gets the value at the specified index
+  - `con : @Slice(con, start, end)` Take a slice of a list or str
+  - `v : @At(con, index)` Gets the value at the specified index
+  - `ok : @InRange(con, idx)` Returns true if the index is valid within a container
+  - `con : @Push(con, value...)` Pushes values onto the front of a container
+  - `con : @Add(con, value...)` Pushes values onto the end of a container
+  - `con : @Set(con, index, value)` Sets the value of an item within a container, not usable with strings
+  - `con, v : @Del(con, index)` Removes an item from a container
+  - `con, v : @Pop(con)` Removes the item at the front of a container
+  - `con, v : @Take(con)` Removes the item at the back of a container
 
 ## [v0.5.0+] Potential Features
 

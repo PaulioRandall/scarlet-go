@@ -14,18 +14,19 @@ func NewBook() spell.Book {
 	b.Inscribe("Println", 0, Println)
 	b.Inscribe("ParseNum", 2, ParseNum)
 	b.Inscribe("PrintScope", 0, PrintScope)
+
 	b.Inscribe("Len", 1, Len)
 	b.Inscribe("Slice", 1, Slice)
 	b.Inscribe("At", 1, At)
 	b.Inscribe("InRange", 1, InRange)
-	b.Inscribe("Prepend", 1, Prepend)
-	b.Inscribe("Append", 1, Append)
+	b.Inscribe("Push", 1, Push)
+	b.Inscribe("Add", 1, Add)
+	b.Inscribe("Set", 1, Set)
+	b.Inscribe("Del", 2, Del)
+	b.Inscribe("Pop", 2, Pop)
+	b.Inscribe("Take", 2, Take)
 
 	b.Inscribe("NewList", 1, NewList)
-	b.Inscribe("Set", 1, Set)
-	b.Inscribe("Push", 1, Prepend)
-	b.Inscribe("Pop", 1, Pop)
-	b.Inscribe("Take", 1, Take)
 
 	return b
 }

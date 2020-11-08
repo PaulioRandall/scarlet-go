@@ -24,21 +24,28 @@ type (
 		String() string
 	}
 
-	Container interface {
+	Con interface {
 		Value
 		Len() int64
-		InRange(int64) bool
-		At(int64) Value
-		Slice(int64, int64) Container
+		CanBeKey(Value) bool
 		CanHold(Value) bool
-		Prepend(...Value) Container
-		Append(...Value) Container
+		Delete(Value) (Con, Value)
 	}
 
-	MutContainer interface {
-		Container
-		CanBeKey(Value) bool
-		Set(Value, Value) MutContainer
+	OrdCon interface {
+		Con
+		InRange(int64) bool
+		At(int64) Value
+		Slice(int64, int64) OrdCon
+		PushFront(...Value) OrdCon
+		PushBack(...Value) OrdCon
+		PopFront() (OrdCon, Value)
+		PopBack() (OrdCon, Value)
+	}
+
+	MutOrdCon interface {
+		OrdCon
+		Set(Value, Value) MutOrdCon
 	}
 
 	Ident string
