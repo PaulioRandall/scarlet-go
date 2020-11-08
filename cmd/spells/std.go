@@ -32,6 +32,29 @@ func Exit(env spell.Runtime, in []value.Value, _ *spell.Output) {
 	env.Exit(int(c.Int()))
 }
 
+func Panic(env spell.Runtime, in []value.Value, _ *spell.Output) {
+
+	if len(in) != 2 {
+		setError(env, "@Panic requires two arguments")
+		return
+	}
+
+	c, ok := in[0].(value.Num)
+	if !ok {
+		setError(env, "@Panic requires its first argument be a number")
+		return
+	}
+
+	m, ok := in[1].(value.Str)
+	if !ok {
+		setError(env, "@Panic requires its second argument be a string")
+		return
+	}
+
+	fmt.Println(m)
+	env.Exit(int(c.Int()))
+}
+
 func Str(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	if len(in) != 1 {
