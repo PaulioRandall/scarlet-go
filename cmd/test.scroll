@@ -7,4 +7,7 @@ list : @List.New(
 
 @list.Prepend("list", 1)
 @list.Append("list", 3)
+v : @list.Pop("list")
+
+@Println(v)
 @Println(list)

@@ -9,7 +9,8 @@
   - `v := @list.Get(list, index)` Get the list value at the specified index
   - `@list.Prepend(list, value...)` Pushes values onto the front of a list
   - `@list.Append(list, value...)` Pushes values onto the end of a list
-
+  - `@list.Push(list, value...)` Synonym for @list.Prepend
+  - `v := @list.Pop(list)` Removes and returns an item from the front of a list
 
 ## [v0.5.0+] Potential Features
 
@@ -55,15 +56,6 @@ x := @str.Join("abc", "xyz")
 
 # Parse a string as a bool
 x, e := @str.ParseBool(bool)
-
-# Add an item to the front of a list
-@list.Push(list, val)
-
-# Add an item (or another list) to the end of a list
-@list.Append(list, item)
-
-# Remove an item from the front of a list
-x := @list.Pop(list)
 
 # Remove an item from the end of a list
 x := @list.Take(list)

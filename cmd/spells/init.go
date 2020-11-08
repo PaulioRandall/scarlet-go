@@ -16,11 +16,13 @@ func NewBook() spell.Book {
 	b.Inscribe("ParseNum", 2, ParseNum)
 	b.Inscribe("PrintScope", 0, PrintScope)
 
-	b.Inscribe("List.New", 1, List_New)
-	b.Inscribe("List.Set", 0, List_Set)
-	b.Inscribe("List.Get", 1, List_Get)
-	b.Inscribe("List.Prepend", 0, List_Prepend)
-	b.Inscribe("List.Append", 0, List_Append)
+	b.Inscribe("list.New", 1, List_New)
+	b.Inscribe("list.Set", 0, List_Set)
+	b.Inscribe("list.Get", 1, List_Get)
+	b.Inscribe("list.Prepend", 0, List_Prepend)
+	b.Inscribe("list.Append", 0, List_Append)
+	b.Inscribe("list.Push", 0, List_Prepend)
+	b.Inscribe("list.Pop", 1, List_Pop)
 
 	return b
 }

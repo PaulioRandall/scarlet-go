@@ -7,49 +7,77 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
 
-var zero = value.Num(0)
 var noId = value.Ident("")
 
-func getListId_Idx(env spell.Runtime, in []value.Value, errPre string) (value.Ident, value.Num) {
-	id, ok := in[0].(value.Str)
-	if !ok {
-		setError(env, errPre+": requires its first argument be an identifier")
-		return noId, zero
-	}
-
-	idx, ok := in[1].(value.Num)
-	if !ok {
-		setError(env, errPre+": requires its second argument be an index")
-		return noId, zero
-	}
-
-	return id.ToIdent(), idx
-}
-
-func getList(env spell.Runtime, id value.Ident, errPre string) value.List {
+func getList(env spell.Runtime, id value.Ident) value.List {
 
 	listVal := env.Fetch(id)
 	if listVal == nil {
-		setError(env, errPre+": Could not find the list '"+id.String()+"'")
+		setError(env, "Could not find the list '"+id.String()+"'")
 		return nil
 	}
 
 	list, ok := listVal.(value.List)
 	if !ok {
-		setError(env, errPre+": '"+id.String()+"' is not a list")
+		setError(env, "'"+id.String()+"' is not a list")
 		return nil
 	}
 
 	return list
 }
 
-func validIndex(env spell.Runtime, list value.List, idx value.Num, errPre string) bool {
+func getList_Id(env spell.Runtime, idVal value.Value) (value.List, value.Ident) {
+
+	id, ok := idVal.(value.Str)
+	if !ok {
+		setError(env, "Requires its first argument be an identifier")
+		return nil, noId
+	}
+
+	list := getList(env, id.ToIdent())
+	if list == nil {
+		return nil, noId
+	}
+
+	return list, id.ToIdent()
+}
+
+func validIndex(env spell.Runtime, list value.List, idx value.Num) bool {
 	if idx.Int() < 0 || idx.Int() >= int64(len(list)) {
-		setError(env, errPre+": Out of range, list["+
-			strconv.Itoa(len(list))+"], given "+idx.String())
+		setError(env, "Out of range, list["+strconv.Itoa(len(list))+"],"+
+			" given "+idx.String())
 		return false
 	}
 	return true
+}
+
+func getList_Id_Idx(
+	env spell.Runtime,
+	in []value.Value,
+) (_ value.List, _ value.Ident, _ value.Num) {
+
+	id, ok := in[0].(value.Str)
+	if !ok {
+		setError(env, "Requires its first argument be an identifier")
+		return
+	}
+
+	idx, ok := in[1].(value.Num)
+	if !ok {
+		setError(env, "Requires its second argument be an index")
+		return
+	}
+
+	list := getList(env, id.ToIdent())
+	if list == nil {
+		return
+	}
+
+	if !validIndex(env, list, idx) {
+		return
+	}
+
+	return list, id.ToIdent(), idx
 }
 
 func List_New(env spell.Runtime, in []value.Value, out *spell.Output) {
@@ -63,46 +91,28 @@ func List_New(env spell.Runtime, in []value.Value, out *spell.Output) {
 func List_Set(env spell.Runtime, in []value.Value, _ *spell.Output) {
 
 	if len(in) != 3 {
-		setError(env, "@list.Set requires three arguments")
+		setError(env, "Three arguments required")
 		return
 	}
 
-	listId, idx := getListId_Idx(env, in, "@list.Set")
-	if listId == noId {
-		return
-	}
-
-	list := getList(env, listId, "@list.Set")
+	list, id, idx := getList_Id_Idx(env, in)
 	if list == nil {
 		return
 	}
 
-	if !validIndex(env, list, idx, "@list.Set") {
-		return
-	}
-
 	list[idx.Int()] = in[2]
-	env.Bind(listId, list)
+	env.Bind(id, list)
 }
 
 func List_Get(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	if len(in) != 2 {
-		setError(env, "@list.Get requires two arguments")
+		setError(env, "Two arguments required")
 		return
 	}
 
-	listId, idx := getListId_Idx(env, in, "@list.Get")
-	if listId == noId {
-		return
-	}
-
-	list := getList(env, listId, "@list.Get")
+	list, _, idx := getList_Id_Idx(env, in)
 	if list == nil {
-		return
-	}
-
-	if !validIndex(env, list, idx, "@list.Get") {
 		return
 	}
 
@@ -112,18 +122,11 @@ func List_Get(env spell.Runtime, in []value.Value, out *spell.Output) {
 func List_Prepend(env spell.Runtime, in []value.Value, _ *spell.Output) {
 
 	if len(in) != 2 {
-		setError(env, "@list.Prepend: requires two arguments")
+		setError(env, "Two arguments required")
 		return
 	}
 
-	listId, ok := in[0].(value.Str)
-	if !ok {
-		setError(env, "@list.Prepend requires its first argument be an identifier")
-		return
-	}
-
-	id := listId.ToIdent()
-	list := getList(env, id, "@list.Prepend")
+	list, id := getList_Id(env, in[0])
 	if list == nil {
 		return
 	}
@@ -135,22 +138,37 @@ func List_Prepend(env spell.Runtime, in []value.Value, _ *spell.Output) {
 func List_Append(env spell.Runtime, in []value.Value, _ *spell.Output) {
 
 	if len(in) != 2 {
-		setError(env, "@list.Append: requires two arguments")
+		setError(env, "Two arguments required")
 		return
 	}
 
-	listId, ok := in[0].(value.Str)
-	if !ok {
-		setError(env, "@list.Append requires its first argument be an identifier")
-		return
-	}
-
-	id := listId.ToIdent()
-	list := getList(env, id, "@list.Append")
+	list, id := getList_Id(env, in[0])
 	if list == nil {
 		return
 	}
 
 	list = append(list, in[1:]...)
+	env.Bind(id, list)
+}
+
+func List_Pop(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) != 1 {
+		setError(env, "Two arguments required")
+		return
+	}
+
+	list, id := getList_Id(env, in[0])
+	if list == nil {
+		return
+	}
+
+	if len(list) == 0 {
+		setError(env, "Can't pop '"+id.String()+", it's empty")
+		return
+	}
+
+	out.Set(0, list[0])
+	list = list[1:]
 	env.Bind(id, list)
 }
