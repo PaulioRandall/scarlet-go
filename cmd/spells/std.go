@@ -365,3 +365,25 @@ func Take(env spell.Runtime, in []value.Value, out *spell.Output) {
 	out.Set(0, c)
 	out.Set(1, v)
 }
+
+func Join(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) != 2 {
+		setError(env, "@Join: two arguments required")
+		return
+	}
+
+	a, ok := in[0].(value.Joinable)
+	if !ok {
+		setError(env, "@Join: first argument is not a joinable value")
+		return
+	}
+
+	b := in[1]
+	if !a.CanJoin(b) {
+		setError(env, "@Join: '"+in[0].Name()+"' can't join with a '"+b.Name()+"'")
+		return
+	}
+
+	out.Set(0, a.Join(b))
+}

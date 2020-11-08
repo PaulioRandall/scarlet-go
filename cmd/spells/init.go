@@ -29,5 +29,7 @@ func NewBook() spell.Book {
 
 	b.Inscribe("NewList", 1, NewList)
 
+	b.Inscribe("Join", 1, Join)
+
 	return b
 }

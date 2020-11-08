@@ -1,15 +1,18 @@
 
 @Println()
 
-list <- @NewList(
+a <- @NewList(
 	1,
 	2,
-	"abc",
 )
 
-i <- @Index(list, "abc")
-@Println(i)
+b <- @NewList(
+	3,
+	4,
+)
 
-i <- @Index(list, 99)
-@Println(i)
+c <- @Join(a, b)
+@Println(a)
+@Println(b)
+@Println(c)
 

@@ -49,6 +49,11 @@ type (
 		Set(Value, Value) MutOrdCon
 	}
 
+	Joinable interface {
+		CanJoin(Value) bool
+		Join(Value) Value
+	}
+
 	Ident string
 	Bool  bool
 	Num   float64

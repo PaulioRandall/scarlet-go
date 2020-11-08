@@ -69,3 +69,13 @@ func (a Str) PopBack() (OrdCon, Value) {
 	v := []rune(string(a))
 	return Str(string(v[:last])), Str(string(v[last]))
 }
+
+func (a Str) CanJoin(v Value) bool {
+	_, ok := v.(Str)
+	return ok
+}
+
+func (a Str) Join(v Value) Value {
+	o, _ := v.(Str)
+	return a + o
+}
