@@ -32,6 +32,16 @@ func Exit(env spell.Runtime, in []value.Value, _ *spell.Output) {
 	env.Exit(int(c.Int()))
 }
 
+func Str(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	if len(in) != 1 {
+		setError(env, "@Str requires one argument")
+		return
+	}
+
+	out.Set(0, value.Str(in[0].String()))
+}
+
 func Print(env spell.Runtime, in []value.Value, _ *spell.Output) {
 	for _, v := range in {
 		fmt.Print(v.String())

@@ -14,5 +14,7 @@ b <- @NewList(
 c <- @Join(a, b)
 @Println(a)
 @Println(b)
-@Println(c)
+
+s <- @Join(@Str(a), @Str(b))
+@Println(s)
 

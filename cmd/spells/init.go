@@ -10,6 +10,7 @@ func NewBook() spell.Book {
 	b := spell.Book{}
 
 	b.Inscribe("Exit", 0, Exit)
+	b.Inscribe("Str", 1, Str)
 	b.Inscribe("Print", 0, Print)
 	b.Inscribe("Println", 0, Println)
 	b.Inscribe("ParseNum", 2, ParseNum)
