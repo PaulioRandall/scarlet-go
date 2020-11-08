@@ -25,6 +25,7 @@ func NewBook() spell.Book {
 	b.Inscribe("list.Pop", 1, List_Pop)
 	b.Inscribe("list.Take", 1, List_Take)
 	b.Inscribe("list.InRange", 1, List_InRange)
+	b.Inscribe("list.Slice", 1, List_Slice)
 
 	return b
 }
