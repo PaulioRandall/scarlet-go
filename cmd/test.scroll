@@ -9,7 +9,7 @@ list : @List.New(
 	5,
 )
 
-v : @At(list, 3)
+v : @InRange(list, 3)
 @Println(v)
 
 

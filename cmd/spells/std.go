@@ -178,3 +178,30 @@ func At(env spell.Runtime, in []value.Value, out *spell.Output) {
 
 	out.Set(0, v.At(idx.Int()))
 }
+
+func InRange(env spell.Runtime, in []value.Value, out *spell.Output) {
+
+	type lengthy interface {
+		InRange(int64) bool
+	}
+
+	if len(in) != 2 {
+		setError(env, "@InRange requires two arguments")
+		return
+	}
+
+	v, ok := in[0].(lengthy)
+	if !ok {
+		setError(env, "@InRange first argument does not have a length")
+		return
+	}
+
+	idx, ok := in[1].(value.Num)
+	if !ok {
+		setError(env, "@InRange second argument must be an index")
+		return
+	}
+
+	inRange := v.InRange(idx.Int())
+	out.Set(0, value.Bool(inRange))
+}
