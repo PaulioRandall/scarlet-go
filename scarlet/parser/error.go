@@ -8,34 +8,26 @@ import (
 
 type (
 	scanPosErr struct {
+		error
 		token.UTF8Pos
-		msg string
 	}
 
 	scanSnipErr struct {
+		error
 		token.Snippet
-		msg string
 	}
 )
 
-func (e scanPosErr) Error() string {
-	return e.msg
-}
-
-func (e scanSnipErr) Error() string {
-	return e.msg
-}
-
 func errPos(pos token.UTF8Pos, msg string, args ...interface{}) error {
 	return scanPosErr{
+		error:   fmt.Errorf(msg, args...),
 		UTF8Pos: pos,
-		msg:     "Parser: " + fmt.Sprintf(msg, args...),
 	}
 }
 
 func errSnip(snip token.Snippet, msg string, args ...interface{}) error {
 	return scanSnipErr{
+		error:   fmt.Errorf(msg, args...),
 		Snippet: snip,
-		msg:     "Parser: " + fmt.Sprintf(msg, args...),
 	}
 }

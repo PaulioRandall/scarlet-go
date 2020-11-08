@@ -1,15 +1,18 @@
 
 @Println()
 
-list := @List.New(1, 2, @List.New("a", "b", "c"))
-@Println(list)
+list: @List.New(
+	1,
+	2,
+	@List.New("a", "b", "c"),
+)
 
+@Println(list)
 @list.Set("list", 2, "xyz")
 @Println(list)
 
-@Println("list[2] is ", @list.Get("list", 2))
+item: @list.Get("list", 2)
+@Println("list[2] is ", item)
 
-@Println()
-@PrintScope()
-
-@Exit(0)
+len: @Len(list)
+@Println("list length is ", len)

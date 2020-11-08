@@ -7,17 +7,14 @@ import (
 )
 
 type scanSnipErr struct {
+	error
 	token.Snippet
 	msg string
 }
 
-func (e scanSnipErr) Error() string {
-	return e.msg
-}
-
 func errSnip(snip token.Snippet, msg string, args ...interface{}) error {
 	return scanSnipErr{
+		error:   fmt.Errorf(msg, args...),
 		Snippet: snip,
-		msg:     fmt.Sprintf(msg, args...),
 	}
 }
