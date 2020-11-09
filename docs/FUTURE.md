@@ -4,12 +4,50 @@
 
 - Manual/documentation
 - Native lists & maps
+- Useful error messages
 
 ```
 # Guarded statements
 [x < y] {
   ...
 }
+
+# When Block: A form of match block or switch
+when {
+  [x < 0] { // Guard case
+    ... 
+  }
+  [true] { // Default case
+    ... 
+  }
+}
+
+# Create a new map from a list where keys are indexes
+map <- @NewMap(list)
+
+# Create a new initialised map 
+map <- @NewMap(
+  "one", 1,
+  "two", 2,
+  "three", 3,
+)
+
+# Map a value to a key
+@Set(map, key, value)
+
+# Get the value of map entry using its key
+v <- @Get(map, key)
+
+# Remove a map entry
+v <- @Del(map, key)
+
+# Get a list of all keys in a map
+list <- @Keys(map)
+
+# Get a list of all values in a map
+list <- @Values(map)
+```
+```
 
 # Write to standard output, a space is placed between each printed item 
 << "abc", "efg"
@@ -25,31 +63,6 @@ x := @list.Foreach(list, F(i, value, more) {
   ...
 })
 
-# Create a new map
-map := @map.New(
-  1, "one",
-  2, "two",
-  3, "three",
-)
-
-# Map a value to a key
-@map.Set(map, key, value)
-
-# Get the value of map entry using its key
-x := @map.Get(map, key)
-
-# Remove a map entry
-x := @map.Del(key)
-
-# Get a list of all keys in a map
-x := @map.Keys(map)
-
-# Get a list of all values in a map
-x := @map.Values(map)
-
-# Test if a key exists within a map
-x := @map.Exists(key)
-
 # Iterate a map
 x := @map.Foreach(map, F(key, value) {
   ...
@@ -64,16 +77,6 @@ f := F(a, b -> x, y) {
   ...
 }
 x, y := f(1, 2)
-
-# When Block: A form of match block or switch
-when {
-  [x < 0] { // Guard case
-    ... 
-  }
-  [true] { // Default case
-    ... 
-  }
-}
 
 # Exit the current function
 exit F

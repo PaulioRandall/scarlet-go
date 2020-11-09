@@ -1,6 +1,8 @@
 package processor
 
 import (
+	"strconv"
+
 	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
@@ -69,6 +71,13 @@ func SpellCall(env Runtime, n tree.SpellCall) []value.Value {
 	}
 
 	in := Expressions(env, n.Args)
+	for i, v := range in {
+		if v == nil {
+			idx := strconv.Itoa(i + 1)
+			panic("SANITY CHECK! Invalid nil argument " + idx + " for '@" + n.Name + "'")
+		}
+	}
+
 	out := spell.NewOutput(s.Outputs)
 
 	if !env.GetExitFlag() {
@@ -220,6 +229,13 @@ func SpellCallExpr(env Runtime, n tree.SpellCall) value.Value {
 	}
 
 	in := Expressions(env, n.Args)
+	for i, v := range in {
+		if v == nil {
+			idx := strconv.Itoa(i + 1)
+			panic("SANITY CHECK! Invalid nil argument " + idx + " for '@" + n.Name + "'")
+		}
+	}
+
 	out := spell.NewOutput(1)
 	s.Spell(env, in, out)
 	return out.Get(0)
