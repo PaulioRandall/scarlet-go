@@ -1,13 +1,21 @@
 package tree
 
-import (
-	"github.com/PaulioRandall/scarlet-go/scarlet/token"
-)
-
 type (
+	Position interface {
+		Offset() int
+		Line() int
+		ColByte() int
+		ColRune() int
+	}
+
+	Range interface {
+		Begin() Position
+		End() Position
+	}
+
 	// Node represents a node in a syntax tree.
 	Node interface {
-		Pos() token.Snippet
+		Pos() Range
 		node()
 	}
 
@@ -51,69 +59,69 @@ type (
 type (
 	// Ident Node is an Expr representing an identifier.
 	Ident struct {
-		token.Snippet
-		Val string // Identifier name as defined in source
+		Range Range
+		Val   string // Identifier name as defined in source
 	}
 
 	// AnonIdent Node is an Expr representing an anonymous identifier such as
 	// will be used for ignoring a function or spell result.
 	AnonIdent struct {
-		token.Snippet
+		Range Range
 	}
 
 	// BoolLit Node is an Expr representing a literal boolean.
 	BoolLit struct {
-		token.Snippet
-		Val bool
+		Range Range
+		Val   bool
 	}
 
 	// NumLit Node is an Expr representing a literal number.
 	NumLit struct {
-		token.Snippet
-		Val float64
+		Range Range
+		Val   float64
 	}
 
 	// StrLit Node is an Expr representing a literal string.
 	StrLit struct {
-		token.Snippet
-		Val string
+		Range Range
+		Val   string
 	}
 
 	// SingleAssign Node is a Stat representing a single assignment.
 	SingleAssign struct {
-		token.Snippet
+		Range Range
 		Left  Assignee
-		Infix token.Snippet
+		Infix Range
 		Right Expr
 	}
 
 	// AsymAssign Node is a Stat representing an assignment with multiple
 	// target identifiers but only one expression, a function or spell call.
 	AsymAssign struct {
-		token.Snippet
+		Range Range
 		Left  []Assignee // Ordered left to right
-		Infix token.Snippet
+		Infix Range
 		Right Expr
 	}
 
 	// MultiAssign Node is a Stat representing a multiple assignment.
 	MultiAssign struct {
-		token.Snippet
+		Range Range
 		Left  []Assignee // Ordered left to right
-		Infix token.Snippet
+		Infix Range
 		Right []Expr // Ordered left to right
 	}
 
 	// UnaryExpr Node is an Expr representing a unary operation.
 	UnaryExpr struct {
-		token.Snippet
-		Term Expr
-		Op   Operator
+		Range Range
+		Term  Expr
+		Op    Operator
 	}
 
 	// BinaryExpr Node is an Expr representing an operation with two operands.
 	BinaryExpr struct {
-		token.Snippet
+		Range Range
 		Left  Expr
 		Op    Operator
 		Right Expr
@@ -121,23 +129,23 @@ type (
 
 	// SpellCall Node is a MultiExpr representing a spell invocation.
 	SpellCall struct {
-		token.Snippet
-		Name string
-		Args []Expr
+		Range Range
+		Name  string
+		Args  []Expr
 	}
 )
 
-func (n Ident) Pos() token.Snippet        { return n.Snippet }
-func (n AnonIdent) Pos() token.Snippet    { return n.Snippet }
-func (n BoolLit) Pos() token.Snippet      { return n.Snippet }
-func (n NumLit) Pos() token.Snippet       { return n.Snippet }
-func (n StrLit) Pos() token.Snippet       { return n.Snippet }
-func (n SingleAssign) Pos() token.Snippet { return n.Snippet }
-func (n AsymAssign) Pos() token.Snippet   { return n.Snippet }
-func (n MultiAssign) Pos() token.Snippet  { return n.Snippet }
-func (n UnaryExpr) Pos() token.Snippet    { return n.Snippet }
-func (n BinaryExpr) Pos() token.Snippet   { return n.Snippet }
-func (n SpellCall) Pos() token.Snippet    { return n.Snippet }
+func (n Ident) Pos() Range        { return n.Range }
+func (n AnonIdent) Pos() Range    { return n.Range }
+func (n BoolLit) Pos() Range      { return n.Range }
+func (n NumLit) Pos() Range       { return n.Range }
+func (n StrLit) Pos() Range       { return n.Range }
+func (n SingleAssign) Pos() Range { return n.Range }
+func (n AsymAssign) Pos() Range   { return n.Range }
+func (n MultiAssign) Pos() Range  { return n.Range }
+func (n UnaryExpr) Pos() Range    { return n.Range }
+func (n BinaryExpr) Pos() Range   { return n.Range }
+func (n SpellCall) Pos() Range    { return n.Range }
 
 func (n Ident) node()        {}
 func (n AnonIdent) node()    {}

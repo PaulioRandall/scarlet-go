@@ -10,8 +10,7 @@ import (
 // Pattern: BOOL
 func boolLit(l token.Lexeme) tree.BoolLit {
 	return tree.BoolLit{
-		Snippet: l.Snippet,
-		Val:     l.Token == token.TRUE,
+		Val: l.Token == token.TRUE,
 	}
 }
 
@@ -21,27 +20,21 @@ func numLit(l token.Lexeme) tree.NumLit {
 	if e != nil {
 		panic("SANITY CHECK! Invalid number, should have been detected prior")
 	}
-	return tree.NumLit{
-		Snippet: l.Snippet,
-		Val:     v,
-	}
+	return tree.NumLit{Val: v}
 }
 
 // Pattern: STRING
 func strLit(l token.Lexeme) tree.StrLit {
-	return tree.StrLit{
-		Snippet: l.Snippet,
-		Val:     l.Val,
-	}
+	return tree.StrLit{Val: l.Val}
 }
 
 // Pattern: IDENT || VOID
 func expectAssignee(l token.Lexeme) (a tree.Assignee, e error) {
 	switch l.Token {
 	case token.IDENT:
-		a = tree.Ident{Snippet: l.Snippet, Val: l.Val}
+		a = tree.Ident{Val: l.Val}
 	case token.VOID:
-		a = tree.AnonIdent{Snippet: l.Snippet}
+		a = tree.AnonIdent{}
 	default:
 		e = errSnip(l.Snippet, "Expected identifier")
 	}
@@ -56,10 +49,7 @@ func expectIdent(l token.Lexeme) (id tree.Ident, e error) {
 		return
 	}
 
-	id = tree.Ident{
-		Snippet: l.Snippet,
-		Val:     l.Val,
-	}
+	id = tree.Ident{Val: l.Val}
 	return
 }
 
@@ -135,9 +125,8 @@ func maybePostUnaryOp(ctx *context, left tree.Expr) tree.Expr {
 	switch l := ctx.Next(); l.Token {
 	case token.EXIST:
 		return tree.UnaryExpr{
-			Term:    left,
-			Op:      tree.OP_EXIST,
-			Snippet: token.SuperSnippet(left.Pos(), l.Snippet),
+			Term: left,
+			Op:   tree.OP_EXIST,
 		}
 
 	default:
@@ -212,32 +201,30 @@ func maybeBinaryExpr(ctx *context, left tree.Expr, leftOpPrec int) (tree.Expr, e
 	}
 
 	binExpr := tree.BinaryExpr{
-		Left:    left,
-		Op:      tokenToOperator(op.Token),
-		Right:   right,
-		Snippet: token.SuperSnippet(left.Pos(), right.Pos()),
+		Left:  left,
+		Op:    tokenToOperator(op.Token),
+		Right: right,
 	}
 
 	return maybeBinaryExpr(ctx, binExpr, leftOpPrec)
 }
 
 // Parses: L_PAREN [<expr> {DELIM <expr>}] R_PAREN
-func expectParams(ctx *context) ([]tree.Expr, token.Snippet, error) {
+func expectParams(ctx *context) ([]tree.Expr, error) {
 
 	var (
 		l     token.Lexeme
-		zero  token.Snippet
 		snip  token.Snippet
 		nodes []tree.Expr
 		e     error
 	)
 
 	if !ctx.More() {
-		return nil, zero, errPos(ctx.End(), "Missing parameters")
+		return nil, errPos(ctx.End(), "Missing parameters")
 	}
 
 	if l = ctx.Next(); l.Token != token.L_PAREN {
-		return nil, zero, errSnip(l.Snippet,
+		return nil, errSnip(l.Snippet,
 			"Expected left parenthesis but got %s", l.Token.String())
 	}
 	snip = l.Snippet
@@ -246,21 +233,21 @@ func expectParams(ctx *context) ([]tree.Expr, token.Snippet, error) {
 		nodes = []tree.Expr{}
 	} else {
 		if nodes, e = expectParamsSet(ctx); e != nil {
-			return nil, zero, e
+			return nil, e
 		}
 	}
 
 	if !ctx.More() {
-		return nil, zero, errPos(ctx.End(), "Missing right parenthesis")
+		return nil, errPos(ctx.End(), "Missing right parenthesis")
 	}
 
 	if l = ctx.Next(); l.Token != token.R_PAREN {
-		return nil, zero, errSnip(l.Snippet,
+		return nil, errSnip(l.Snippet,
 			"Expected right parenthesis but got %s", l.Token.String())
 	}
 	snip = token.SuperSnippet(snip, l.Snippet)
 
-	return nodes, snip, nil
+	return nodes, nil
 }
 
 // Parses:  <expr> {DELIM <expr>}

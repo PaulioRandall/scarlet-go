@@ -38,7 +38,7 @@ func validate(nodes []tree.Node) []tree.Stat {
 	for i, n := range nodes {
 		s, ok := n.(tree.Stat)
 		if !ok {
-			panic("Result of expression ignored: " + n.Pos().String())
+			panic("Result of expression ignored")
 		}
 		stmts[i] = s
 	}

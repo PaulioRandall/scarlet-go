@@ -84,13 +84,12 @@ func singleAssign(ctx *context) (tree.Node, error) {
 		return s, e
 	}
 
-	s.Infix = ctx.Next().Snippet
+	ctx.Next()
 	s.Right, e = expectExpr(ctx)
 	if e != nil {
 		return s, e
 	}
 
-	s.Snippet = token.SuperSnippet(s.Left.Pos(), s.Right.Pos())
 	return s, nil
 }
 
@@ -134,10 +133,8 @@ func multiOrAsymAssign(ctx *context) (tree.Node, error) {
 				"Too many expressions on left or not enough on right of assignment")
 		}
 		m = tree.AsymAssign{
-			Left:    left,
-			Infix:   op.Snippet,
-			Right:   right[0],
-			Snippet: snip,
+			Left:  left,
+			Right: right[0],
 		}
 
 	case lSize > rSize:
@@ -146,10 +143,8 @@ func multiOrAsymAssign(ctx *context) (tree.Node, error) {
 
 	default:
 		m = tree.MultiAssign{
-			Left:    left,
-			Infix:   op.Snippet,
-			Right:   right,
-			Snippet: snip,
+			Left:  left,
+			Right: right,
 		}
 	}
 
@@ -206,7 +201,6 @@ func multiAssignRight(ctx *context) ([]tree.Expr, token.Snippet, error) {
 		return nil, zero, e
 	}
 	nodes = append(nodes, ex)
-	snip = ex.Pos()
 
 	for ctx.Peek().Token == token.DELIM {
 		ctx.Next()
@@ -217,7 +211,6 @@ func multiAssignRight(ctx *context) ([]tree.Expr, token.Snippet, error) {
 		nodes = append(nodes, ex)
 	}
 
-	snip = token.SuperSnippet(snip, ex.Pos())
 	return nodes, snip, nil
 }
 
@@ -231,11 +224,10 @@ func spellCall(ctx *context) (tree.Node, error) {
 		Name: sp.Val[1:],
 	}
 
-	if n.Args, n.Snippet, e = expectParams(ctx); e != nil {
+	if n.Args, e = expectParams(ctx); e != nil {
 		return nil, e
 	}
 
-	n.Snippet = token.SuperSnippet(sp.Snippet, n.Snippet)
 	return n, nil
 }
 
