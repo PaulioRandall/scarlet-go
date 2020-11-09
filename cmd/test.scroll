@@ -1,18 +1,7 @@
 
 @Println()
 
-a <- @NewList(1, 2)
-b <- @NewList(3, 4)
+list <- @NewList("a", "b", "c")
 
-c <- @Join(a, b)
-@Println(a)
-
-z <- @NewList(
-	a?,
-	b?,
-	c?,
-	d?,
-	e?,
-)
-
-@Println(z)
+i <- @Index(list, "z")
+@Println(i?)

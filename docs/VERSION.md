@@ -1,5 +1,23 @@
 # Versions
 
+## [v0.5.0]
+
+```
+s <- "Happy"
+i <- @Index(s, "app")
+s <- @Join(s, " days!")
+ten <- @Str(10)
+@Panic(1, "Meh")
+exists <- err?
+```
+
+- Assignment symbol changed to `<-`
+- `i <- @Index(con, s)` Returns the index of an item within a container or unbinds the target identifier if not found
+- `con <- @Join(con, con)` Joins two containers 
+- `s <- @Str(value)` Stringify a value
+- `@Panic(exitCode, message)` Exit the scroll after printing an error message
+- `ok <- value?` Results in true if a value exists, can be used on identifiers
+
 ## [v0.4.0]
 
 ```

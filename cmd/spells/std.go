@@ -229,6 +229,10 @@ func Index(env spell.Runtime, in []value.Value, out *spell.Output) {
 	}
 
 	i := haystack.Index(needle)
+	if i == -1 {
+		return
+	}
+
 	out.Set(0, value.Num(i))
 }
 

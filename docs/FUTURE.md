@@ -1,29 +1,16 @@
 # Scribbles
 
-## [v0.5.0]
-
-```
-s <- "Happy"
-i <- @Index(s, "app")
-s <- @Join(s, " days!")
-ten <- @Str(10)
-@Panic(1, "Meh")
-exists <- err?
-```
-
-- Assignment symbol changed to `<-`
-- `i <- @Index(con, s)` Returns the index of an item within a container or -1 if the item doesn't exists
-- `con <- @Join(con, con)` Joins two containers 
-- `s <- @Str(value)` Stringify a value
-- `@Panic(exitCode, message)` Exit the scroll after printing an error message
-- `ok <- value?` Results in true if a value exists, can be used on identifiers
-
 ## [v0.6.0+] Potential Features
 
 - Manual/documentation
 - Native lists & maps
 
 ```
+# Guarded statements
+[x < y] {
+  ...
+}
+
 # Write to standard output, a space is placed between each printed item 
 << "abc", "efg"
 
@@ -32,9 +19,6 @@ exists <- err?
 
 # Get the program arguments
 x := @Args()
-
-# Does a variable exist
-x := @Exists("variable_name")
 
 # Iterate a list
 x := @list.Foreach(list, F(i, value, more) {
@@ -80,9 +64,6 @@ f := F(a, b -> x, y) {
   ...
 }
 x, y := f(1, 2)
-
-# Test if a variable exists
-x := y?
 
 # When Block: A form of match block or switch
 when {
@@ -140,7 +121,6 @@ watch e {
 # Template Strings & Spells
 a, op, b, eql, c := 1, "+", 2, "=", 3
 x := @Fmt("{a} {op} {b} {eql} {c}")     # "1 + 2 = 3"
-x := @fmt.Fmt("{a} {op} {b} {eql} {c}") # "1 + 2 = 3"
 
 a, b, c := 1.1, 2.22, 3.333
 x := @Fmt("{a, .2} + {b, .2} = {c, .2}") # "1.10 + 2.22 + 3.33"
