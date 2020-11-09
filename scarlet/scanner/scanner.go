@@ -114,6 +114,9 @@ func identifyLexeme(r *reader, l *lex) error {
 	case r.at(0) == ',':
 		l.size, l.tk = 1, token.DELIM
 
+	case r.at(0) == '?':
+		l.size, l.tk = 1, token.EXIST
+
 	case r.at(0) == '(':
 		l.size, l.tk = 1, token.L_PAREN
 

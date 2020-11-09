@@ -16,6 +16,9 @@ func anon() tree.AnonIdent         { return tree.AnonIdent{} }
 func numLit(f float64) tree.NumLit { return tree.NumLit{Val: f} }
 func boolLit(b bool) tree.BoolLit  { return tree.BoolLit{Val: b} }
 func strLit(s string) tree.StrLit  { return tree.StrLit{Val: s} }
+func unaryExpr(term tree.Expr, op token.Token) tree.UnaryExpr {
+	return tree.UnaryExpr{Term: term, Op: op}
+}
 func binExpr(l tree.Expr, op token.Token, r tree.Expr) tree.BinaryExpr {
 	return tree.BinaryExpr{Left: l, Op: op, Right: r}
 }
@@ -73,6 +76,36 @@ func TestLiteral(t *testing.T) {
 	for i, a := range assertions {
 		t.Logf("Assertion %d", i)
 		env := newTestEnv()
+		act := Expression(env, a.in)
+		assertOutput(t, a.exp, act)
+	}
+}
+
+func TestExistExpr(t *testing.T) {
+
+	var assertions = []struct {
+		in  tree.UnaryExpr
+		exp value.Value
+	}{
+		{ // 0
+			in:  unaryExpr(numLit(1), token.EXIST),
+			exp: value.Bool(true),
+		}, { // 1
+			in:  unaryExpr(strLit("abc"), token.EXIST),
+			exp: value.Bool(true),
+		}, { // 2
+			in:  unaryExpr(ident("x"), token.EXIST),
+			exp: value.Bool(true),
+		}, { // 3
+			in:  unaryExpr(ident("y"), token.EXIST),
+			exp: value.Bool(false),
+		},
+	}
+
+	for i, a := range assertions {
+		t.Logf("Assertion %d", i)
+		env := newTestEnv()
+		env.scope[value.Ident("x")] = value.Num(1)
 		act := Expression(env, a.in)
 		assertOutput(t, a.exp, act)
 	}

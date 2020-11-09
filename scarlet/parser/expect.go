@@ -102,22 +102,47 @@ func expectExpr(ctx *context) (tree.Expr, error) {
 }
 
 // Parses: <term>
-func expectTerm(ctx *context) (tree.Expr, error) {
+func expectTerm(ctx *context) (ex tree.Expr, e error) {
 	switch {
 	case !ctx.More():
-		return nil, errPos(ctx.End(), "Expected term")
+		e = errPos(ctx.End(), "Expected term")
 
 	case ctx.LexItr.Peek().IsLiteral():
-		return expectLiteral(ctx)
+		ex, e = expectLiteral(ctx)
 
 	case ctx.LexItr.Peek().Token == token.IDENT:
-		return expectIdent(ctx.Next())
+		ex, e = expectIdent(ctx.Next())
 
 	case ctx.LexItr.Peek().Token == token.SPELL:
-		return spellCallExpr(ctx)
+		ex, e = spellCallExpr(ctx)
 
 	default:
-		return nil, errSnip(ctx.LexItr.Peek().Snippet, "Expected term")
+		e = errSnip(ctx.LexItr.Peek().Snippet, "Expected term")
+	}
+
+	if e != nil {
+		return nil, e
+	}
+
+	return maybePostUnaryOp(ctx, ex), e
+}
+
+func maybePostUnaryOp(ctx *context, left tree.Expr) tree.Expr {
+	if !ctx.More() || !ctx.Peek().IsPostUnaryOperator() {
+		return left
+	}
+
+	switch l := ctx.Next(); l.Token {
+	case token.EXIST:
+		return tree.UnaryExpr{
+			Term:    left,
+			Op:      l.Token,
+			OpPos:   l.Snippet,
+			Snippet: token.SuperSnippet(left.Pos(), l.Snippet),
+		}
+
+	default:
+		panic("SANITY CHECK! Unknown post unary operator")
 	}
 }
 

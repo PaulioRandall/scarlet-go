@@ -48,6 +48,12 @@ func (env *RuntimeEnv) Unbind(id value.Ident) {
 }
 
 // Fetch implements processor.Runtime.Fetch.
+func (env *RuntimeEnv) Exists(id value.Ident) value.Bool {
+	_, ok := env.scope[id]
+	return value.Bool(ok)
+}
+
+// Fetch implements processor.Runtime.Fetch.
 func (env *RuntimeEnv) Fetch(id value.Ident) value.Value {
 	if v, ok := env.scope[id]; ok {
 		return v

@@ -49,6 +49,10 @@ type (
 		// Unbind removes a variable from the scope.
 		Unbind(value.Ident)
 
+		// Exists returns true if the specified identifier exists within the current
+		//scope.
+		Exists(value.Ident) value.Bool
+
 		// Fetch returns the value associated with the specified identifier.
 		Fetch(value.Ident) value.Value
 

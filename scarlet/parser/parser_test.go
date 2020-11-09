@@ -719,3 +719,25 @@ func TestParse_SpellCall_4(t *testing.T) {
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
+
+func TestParse_Exist_1(t *testing.T) {
+
+	// x?
+	in := positionLexemes(
+		token.MakeTok("x", token.IDENT),
+		token.MakeTok("?", token.EXIST),
+	)
+
+	exp := []tree.Node{
+		tree.UnaryExpr{
+			Snippet: superSnip(in[0], in[1]),
+			Term:    tree.Ident{Snippet: in[0].Snippet, Val: "x"},
+			Op:      token.EXIST,
+			OpPos:   in[1].Snippet,
+		},
+	}
+
+	act, e := ParseAll(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}

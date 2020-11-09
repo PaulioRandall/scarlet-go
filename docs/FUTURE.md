@@ -8,6 +8,7 @@ i <- @Index(s, "app")
 s <- @Join(s, " days!")
 ten <- @Str(10)
 @Panic(1, "Meh")
+exists <- err?
 ```
 
 - Assignment symbol changed to `<-`
@@ -15,6 +16,7 @@ ten <- @Str(10)
 - `con <- @Join(con, con)` Joins two containers 
 - `s <- @Str(value)` Stringify a value
 - `@Panic(exitCode, message)` Exit the scroll after printing an error message
+- `ok <- value?` Results in true if a value exists, can be used on identifiers
 
 ## [v0.6.0+] Potential Features
 

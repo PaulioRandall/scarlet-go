@@ -104,6 +104,14 @@ type (
 		Right []Expr // Ordered left to right
 	}
 
+	// UnaryExpr Node is an Expr representing a unary operation.
+	UnaryExpr struct {
+		token.Snippet
+		Term  Expr
+		Op    token.Token
+		OpPos token.Snippet
+	}
+
 	// BinaryExpr Node is an Expr representing an operation with two operands.
 	BinaryExpr struct {
 		token.Snippet
@@ -129,6 +137,7 @@ func (n StrLit) Pos() token.Snippet       { return n.Snippet }
 func (n SingleAssign) Pos() token.Snippet { return n.Snippet }
 func (n AsymAssign) Pos() token.Snippet   { return n.Snippet }
 func (n MultiAssign) Pos() token.Snippet  { return n.Snippet }
+func (n UnaryExpr) Pos() token.Snippet    { return n.Snippet }
 func (n BinaryExpr) Pos() token.Snippet   { return n.Snippet }
 func (n SpellCall) Pos() token.Snippet    { return n.Snippet }
 
@@ -140,6 +149,7 @@ func (n StrLit) node()       {}
 func (n SingleAssign) node() {}
 func (n AsymAssign) node()   {}
 func (n MultiAssign) node()  {}
+func (n UnaryExpr) node()    {}
 func (n BinaryExpr) node()   {}
 func (n SpellCall) node()    {}
 
@@ -151,6 +161,7 @@ func (n AnonIdent) expr()  {}
 func (n BoolLit) expr()    {}
 func (n NumLit) expr()     {}
 func (n StrLit) expr()     {}
+func (n UnaryExpr) expr()  {}
 func (n BinaryExpr) expr() {}
 func (n SpellCall) expr()  {}
 

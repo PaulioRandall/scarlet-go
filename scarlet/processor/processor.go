@@ -111,6 +111,8 @@ func Expression(env Runtime, n tree.Expr) value.Value {
 		return Ident(env, v)
 	case tree.Literal:
 		return Literal(env, v)
+	case tree.UnaryExpr:
+		return UnaryExpr(env, v)
 	case tree.BinaryExpr:
 		return BinaryExpr(env, v)
 	case tree.SpellCall:
@@ -134,6 +136,19 @@ func Literal(env Runtime, n tree.Literal) value.Value {
 		return value.Str(v.Val[1 : len(v.Val)-1])
 	default:
 		panic("SANITY CHECK! Unknown tree.Literal type")
+	}
+}
+
+func UnaryExpr(env Runtime, n tree.UnaryExpr) value.Value {
+	switch n.Op {
+	case token.EXIST:
+		if id, ok := n.Term.(tree.Ident); ok {
+			return env.Exists(value.Ident(id.Val))
+		}
+		return value.Bool(Expression(env, n.Term) != nil)
+
+	default:
+		panic("SANITY CHECK! Unknown tree.binaryExpr type")
 	}
 }
 

@@ -299,6 +299,12 @@ func TestNumber_4(t *testing.T) {
 	doErrTest(t, "123.abc")
 }
 
+func TestExist_1(t *testing.T) {
+	doTest(t, "?", []token.Lexeme{
+		token.MakeTok("?", token.EXIST),
+	})
+}
+
 func TestComprehensive_1(t *testing.T) {
 
 	in := `x <- 1 + 2

@@ -52,6 +52,7 @@ const (
 	MTE              = `MTE`        // >=
 	EQU              = `EQU`        // ==
 	NEQ              = `NEQ`        // !=
+	EXIST            = `EXIST`      // ?
 )
 
 // IdentifyWord returns the Token represented by the 's'. If 's' does not match
@@ -143,12 +144,13 @@ func (tk Token) IsAssignee() bool {
 // compilers might. This is just the way the compiler is built and may be
 // subject to change later.
 func (tk Token) IsOperator() bool {
-	return tk.IsUnaryOperator() || tk.IsBinaryOperator()
+	return tk.IsPostUnaryOperator() || tk.IsBinaryOperator()
 }
 
-// IsUnaryOperator returns true if the Token represents a unary operator.
-func (tk Token) IsUnaryOperator() bool {
-	return false
+// IsPostUnaryOperator returns true if the Token represents a postfixed unary
+// operator.
+func (tk Token) IsPostUnaryOperator() bool {
+	return tk == EXIST
 }
 
 // IsBinaryOperator returns true if the Token represents a binary operator.

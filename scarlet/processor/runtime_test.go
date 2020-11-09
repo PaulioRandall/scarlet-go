@@ -38,6 +38,11 @@ func (env *testRuntime) Unbind(id value.Ident) {
 	delete(env.scope, id)
 }
 
+func (env *testRuntime) Exists(id value.Ident) value.Bool {
+	_, ok := env.scope[id]
+	return value.Bool(ok)
+}
+
 func (env *testRuntime) Fetch(id value.Ident) value.Value {
 	if v, ok := env.scope[id]; ok {
 		return v

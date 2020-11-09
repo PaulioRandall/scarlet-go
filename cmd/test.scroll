@@ -1,21 +1,18 @@
 
 @Println()
 
-a <- @NewList(
-	1,
-	2,
-)
-
-b <- @NewList(
-	3,
-	4,
-)
+a <- @NewList(1, 2)
+b <- @NewList(3, 4)
 
 c <- @Join(a, b)
 @Println(a)
-@Println(b)
 
-s <- @Join(@Str(a), @Str(b))
-@Println(s)
+z <- @NewList(
+	a?,
+	b?,
+	c?,
+	d?,
+	e?,
+)
 
-
+@Println(z)
