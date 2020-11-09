@@ -107,17 +107,15 @@ type (
 	// UnaryExpr Node is an Expr representing a unary operation.
 	UnaryExpr struct {
 		token.Snippet
-		Term  Expr
-		Op    token.Token
-		OpPos token.Snippet
+		Term Expr
+		Op   Operator
 	}
 
 	// BinaryExpr Node is an Expr representing an operation with two operands.
 	BinaryExpr struct {
 		token.Snippet
 		Left  Expr
-		Op    token.Token
-		OpPos token.Snippet
+		Op    Operator
 		Right Expr
 	}
 

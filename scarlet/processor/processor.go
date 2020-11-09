@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
-	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 )
@@ -150,7 +149,7 @@ func Literal(env Runtime, n tree.Literal) value.Value {
 
 func UnaryExpr(env Runtime, n tree.UnaryExpr) value.Value {
 	switch n.Op {
-	case token.EXIST:
+	case tree.OP_EXIST:
 		if id, ok := n.Term.(tree.Ident); ok {
 			return env.Exists(value.Ident(id.Val))
 		}
@@ -166,51 +165,51 @@ func BinaryExpr(env Runtime, n tree.BinaryExpr) value.Value {
 	l, r := Expression(env, n.Left), Expression(env, n.Right)
 
 	switch n.Op {
-	case token.ADD:
+	case tree.OP_ADD:
 		return l.(value.Num) + r.(value.Num)
 
-	case token.SUB:
+	case tree.OP_SUB:
 		return l.(value.Num) - r.(value.Num)
 
-	case token.MUL:
+	case tree.OP_MUL:
 		return l.(value.Num) * r.(value.Num)
 
-	case token.DIV:
+	case tree.OP_DIV:
 		return l.(value.Num) / r.(value.Num)
 
-	case token.REM:
+	case tree.OP_REM:
 		x, y := l.(value.Num), r.(value.Num)
 		for x >= y {
 			x -= y
 		}
 		return x
 
-	case token.AND:
+	case tree.OP_AND:
 		return l.(value.Bool) && r.(value.Bool)
 
-	case token.OR:
+	case tree.OP_OR:
 		return l.(value.Bool) || r.(value.Bool)
 
-	case token.LT:
+	case tree.OP_LT:
 		lNum, rNum := l.(value.Num), r.(value.Num)
 		return value.Bool(lNum < rNum)
 
-	case token.MT:
+	case tree.OP_MT:
 		lNum, rNum := l.(value.Num), r.(value.Num)
 		return value.Bool(lNum > rNum)
 
-	case token.LTE:
+	case tree.OP_LTE:
 		lNum, rNum := l.(value.Num), r.(value.Num)
 		return value.Bool(lNum <= rNum)
 
-	case token.MTE:
+	case tree.OP_MTE:
 		lNum, rNum := l.(value.Num), r.(value.Num)
 		return value.Bool(lNum >= rNum)
 
-	case token.EQU:
+	case tree.OP_EQU:
 		return value.Bool(l.Equal(r))
 
-	case token.NEQ:
+	case tree.OP_NEQ:
 		return value.Bool(!l.Equal(r))
 
 	default:

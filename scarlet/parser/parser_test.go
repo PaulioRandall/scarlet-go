@@ -277,8 +277,7 @@ func TestParse_BinaryExpr_1(t *testing.T) {
 		tree.BinaryExpr{
 			Snippet: superSnip(in[0], in[2]),
 			Left:    tree.NumLit{Snippet: in[0].Snippet, Val: float64(1)},
-			Op:      in[1].Token,
-			OpPos:   in[1].Snippet,
+			Op:      tokenToOperator(in[1].Token),
 			Right:   tree.NumLit{Snippet: in[2].Snippet, Val: float64(2)},
 		},
 	}
@@ -301,8 +300,7 @@ func TestParse_BinaryExpr_2(t *testing.T) {
 		tree.BinaryExpr{
 			Snippet: superSnip(in[0], in[2]),
 			Left:    tree.BoolLit{Snippet: in[0].Snippet, Val: true},
-			Op:      in[1].Token,
-			OpPos:   in[1].Snippet,
+			Op:      tokenToOperator(in[1].Token),
 			Right:   tree.BoolLit{Snippet: in[2].Snippet, Val: false},
 		},
 	}
@@ -326,8 +324,7 @@ func TestParse_BinaryExpr_3(t *testing.T) {
 	add := tree.BinaryExpr{
 		Snippet: superSnip(in[0], in[2]),
 		Left:    tree.NumLit{Snippet: in[0].Snippet, Val: float64(1)},
-		Op:      in[1].Token,
-		OpPos:   in[1].Snippet,
+		Op:      tokenToOperator(in[1].Token),
 		Right:   tree.NumLit{Snippet: in[2].Snippet, Val: float64(2)},
 	}
 
@@ -335,8 +332,7 @@ func TestParse_BinaryExpr_3(t *testing.T) {
 		tree.BinaryExpr{
 			Snippet: superSnip(in[0], in[4]),
 			Left:    add,
-			Op:      in[3].Token,
-			OpPos:   in[3].Snippet,
+			Op:      tokenToOperator(in[3].Token),
 			Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(3)},
 		},
 	}
@@ -360,8 +356,7 @@ func TestParse_BinaryExpr_4(t *testing.T) {
 	mul := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[4]),
 		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(2)},
-		Op:      in[3].Token,
-		OpPos:   in[3].Snippet,
+		Op:      tokenToOperator(in[3].Token),
 		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(3)},
 	}
 
@@ -369,8 +364,7 @@ func TestParse_BinaryExpr_4(t *testing.T) {
 		tree.BinaryExpr{
 			Snippet: superSnip(in[0], in[4]),
 			Left:    tree.NumLit{Snippet: in[0].Snippet, Val: float64(1)},
-			Op:      in[1].Token,
-			OpPos:   in[1].Snippet,
+			Op:      tokenToOperator(in[1].Token),
 			Right:   mul,
 		},
 	}
@@ -402,8 +396,7 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 	mul := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[4]),
 		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(2)},
-		Op:      in[3].Token,
-		OpPos:   in[3].Snippet,
+		Op:      tokenToOperator(in[3].Token),
 		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(3)},
 	}
 
@@ -411,8 +404,7 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 	add := tree.BinaryExpr{
 		Snippet: superSnip(in[0], in[4]),
 		Left:    tree.NumLit{Snippet: in[0].Snippet, Val: float64(1)},
-		Op:      in[1].Token,
-		OpPos:   in[1].Snippet,
+		Op:      tokenToOperator(in[1].Token),
 		Right:   mul,
 	}
 
@@ -420,8 +412,7 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 	div := tree.BinaryExpr{
 		Snippet: superSnip(in[6], in[8]),
 		Left:    tree.NumLit{Snippet: in[6].Snippet, Val: float64(4)},
-		Op:      in[7].Token,
-		OpPos:   in[7].Snippet,
+		Op:      tokenToOperator(in[7].Token),
 		Right:   tree.NumLit{Snippet: in[8].Snippet, Val: float64(5)},
 	}
 
@@ -429,8 +420,7 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 	rem := tree.BinaryExpr{
 		Snippet: superSnip(in[6], in[10]),
 		Left:    div,
-		Op:      in[9].Token,
-		OpPos:   in[9].Snippet,
+		Op:      tokenToOperator(in[9].Token),
 		Right:   tree.NumLit{Snippet: in[10].Snippet, Val: float64(6)},
 	}
 
@@ -439,8 +429,7 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 		tree.BinaryExpr{
 			Snippet: superSnip(in[0], in[10]),
 			Left:    add,
-			Op:      in[5].Token,
-			OpPos:   in[5].Snippet,
+			Op:      tokenToOperator(in[5].Token),
 			Right:   rem,
 		},
 	}
@@ -464,8 +453,7 @@ func TestParse_Assign_BinaryExpr_1(t *testing.T) {
 	right := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[4]),
 		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(1)},
-		Op:      in[3].Token,
-		OpPos:   in[3].Snippet,
+		Op:      tokenToOperator(in[3].Token),
 		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(2)},
 	}
 
@@ -516,8 +504,7 @@ func TestParse_ParenExpr_2(t *testing.T) {
 		tree.BinaryExpr{
 			Snippet: superSnip(in[1], in[3]),
 			Left:    tree.NumLit{Snippet: in[1].Snippet, Val: float64(1)},
-			Op:      in[2].Token,
-			OpPos:   in[2].Snippet,
+			Op:      tokenToOperator(in[2].Token),
 			Right:   tree.NumLit{Snippet: in[3].Snippet, Val: float64(2)},
 		},
 	}
@@ -544,8 +531,7 @@ func TestParse_ParenExpr_3(t *testing.T) {
 		tree.BinaryExpr{
 			Snippet: superSnip(in[2], in[4]),
 			Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(1)},
-			Op:      in[3].Token,
-			OpPos:   in[3].Snippet,
+			Op:      tokenToOperator(in[3].Token),
 			Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(2)},
 		},
 	}
@@ -576,8 +562,7 @@ func TestParse_ParenExpr_4(t *testing.T) {
 	add := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[4]),
 		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(1)},
-		Op:      in[3].Token,
-		OpPos:   in[3].Snippet,
+		Op:      tokenToOperator(in[3].Token),
 		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(2)},
 	}
 
@@ -585,8 +570,7 @@ func TestParse_ParenExpr_4(t *testing.T) {
 	mul := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[7]),
 		Left:    add,
-		Op:      in[6].Token,
-		OpPos:   in[6].Snippet,
+		Op:      tokenToOperator(in[6].Token),
 		Right:   tree.Ident{Snippet: in[7].Snippet, Val: "x"},
 	}
 
@@ -595,8 +579,7 @@ func TestParse_ParenExpr_4(t *testing.T) {
 		tree.BinaryExpr{
 			Snippet: superSnip(in[2], in[10]),
 			Left:    mul,
-			Op:      in[9].Token,
-			OpPos:   in[9].Snippet,
+			Op:      tokenToOperator(in[9].Token),
 			Right:   tree.Ident{Snippet: in[10].Snippet, Val: "y"},
 		},
 	}
@@ -644,8 +627,7 @@ func TestParse_SpellCall_2(t *testing.T) {
 	add := tree.BinaryExpr{
 		Snippet: superSnip(in[2], in[4]),
 		Left:    tree.NumLit{Snippet: in[2].Snippet, Val: float64(1)},
-		Op:      in[3].Token,
-		OpPos:   in[3].Snippet,
+		Op:      tokenToOperator(in[3].Token),
 		Right:   tree.NumLit{Snippet: in[4].Snippet, Val: float64(2)},
 	}
 
@@ -732,8 +714,7 @@ func TestParse_Exist_1(t *testing.T) {
 		tree.UnaryExpr{
 			Snippet: superSnip(in[0], in[1]),
 			Term:    tree.Ident{Snippet: in[0].Snippet, Val: "x"},
-			Op:      token.EXIST,
-			OpPos:   in[1].Snippet,
+			Op:      tree.OP_EXIST,
 		},
 	}
 

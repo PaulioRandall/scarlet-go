@@ -136,8 +136,7 @@ func maybePostUnaryOp(ctx *context, left tree.Expr) tree.Expr {
 	case token.EXIST:
 		return tree.UnaryExpr{
 			Term:    left,
-			Op:      l.Token,
-			OpPos:   l.Snippet,
+			Op:      tree.OP_EXIST,
 			Snippet: token.SuperSnippet(left.Pos(), l.Snippet),
 		}
 
@@ -214,8 +213,7 @@ func maybeBinaryExpr(ctx *context, left tree.Expr, leftOpPrec int) (tree.Expr, e
 
 	binExpr := tree.BinaryExpr{
 		Left:    left,
-		Op:      op.Token,
-		OpPos:   op.Snippet,
+		Op:      tokenToOperator(op.Token),
 		Right:   right,
 		Snippet: token.SuperSnippet(left.Pos(), right.Pos()),
 	}
@@ -287,4 +285,44 @@ func expectParamsSet(ctx *context) ([]tree.Expr, error) {
 	}
 
 	return nodes, nil
+}
+
+func tokenToOperator(tk token.Token) tree.Operator {
+	switch tk {
+	case token.ADD:
+		return tree.OP_ADD
+	case token.SUB:
+		return tree.OP_SUB
+	case token.MUL:
+		return tree.OP_MUL
+	case token.DIV:
+		return tree.OP_DIV
+	case token.REM:
+		return tree.OP_REM
+
+	case token.AND:
+		return tree.OP_AND
+	case token.OR:
+		return tree.OP_OR
+
+	case token.LT:
+		return tree.OP_LT
+	case token.MT:
+		return tree.OP_MT
+	case token.LTE:
+		return tree.OP_LTE
+	case token.MTE:
+		return tree.OP_MTE
+
+	case token.EQU:
+		return tree.OP_EQU
+	case token.NEQ:
+		return tree.OP_NEQ
+
+	case token.EXIST:
+		return tree.OP_EXIST
+
+	default:
+		panic("SANITY CHECK! Unknown operator")
+	}
 }

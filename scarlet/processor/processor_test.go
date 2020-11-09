@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/spell"
-	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
 	"github.com/PaulioRandall/scarlet-go/scarlet/value"
 
@@ -16,10 +15,10 @@ func anon() tree.AnonIdent         { return tree.AnonIdent{} }
 func numLit(f float64) tree.NumLit { return tree.NumLit{Val: f} }
 func boolLit(b bool) tree.BoolLit  { return tree.BoolLit{Val: b} }
 func strLit(s string) tree.StrLit  { return tree.StrLit{Val: s} }
-func unaryExpr(term tree.Expr, op token.Token) tree.UnaryExpr {
+func unaryExpr(term tree.Expr, op tree.Operator) tree.UnaryExpr {
 	return tree.UnaryExpr{Term: term, Op: op}
 }
-func binExpr(l tree.Expr, op token.Token, r tree.Expr) tree.BinaryExpr {
+func binExpr(l tree.Expr, op tree.Operator, r tree.Expr) tree.BinaryExpr {
 	return tree.BinaryExpr{Left: l, Op: op, Right: r}
 }
 
@@ -88,16 +87,16 @@ func TestExistExpr(t *testing.T) {
 		exp value.Value
 	}{
 		{ // 0
-			in:  unaryExpr(numLit(1), token.EXIST),
+			in:  unaryExpr(numLit(1), tree.OP_EXIST),
 			exp: value.Bool(true),
 		}, { // 1
-			in:  unaryExpr(strLit("abc"), token.EXIST),
+			in:  unaryExpr(strLit("abc"), tree.OP_EXIST),
 			exp: value.Bool(true),
 		}, { // 2
-			in:  unaryExpr(ident("x"), token.EXIST),
+			in:  unaryExpr(ident("x"), tree.OP_EXIST),
 			exp: value.Bool(true),
 		}, { // 3
-			in:  unaryExpr(ident("y"), token.EXIST),
+			in:  unaryExpr(ident("y"), tree.OP_EXIST),
 			exp: value.Bool(false),
 		},
 	}
@@ -118,19 +117,19 @@ func TestArithBinExpr(t *testing.T) {
 		exp value.Value
 	}{
 		{ // 0
-			in:  binExpr(numLit(1), token.ADD, numLit(2)),
+			in:  binExpr(numLit(1), tree.OP_ADD, numLit(2)),
 			exp: value.Num(3),
 		}, { // 1
-			in:  binExpr(numLit(4), token.SUB, numLit(1)),
+			in:  binExpr(numLit(4), tree.OP_SUB, numLit(1)),
 			exp: value.Num(3),
 		}, { // 2
-			in:  binExpr(numLit(3), token.MUL, numLit(4)),
+			in:  binExpr(numLit(3), tree.OP_MUL, numLit(4)),
 			exp: value.Num(12),
 		}, { // 3
-			in:  binExpr(numLit(12), token.DIV, numLit(4)),
+			in:  binExpr(numLit(12), tree.OP_DIV, numLit(4)),
 			exp: value.Num(3),
 		}, { // 4
-			in:  binExpr(numLit(5), token.REM, numLit(3)),
+			in:  binExpr(numLit(5), tree.OP_REM, numLit(3)),
 			exp: value.Num(2),
 		},
 	}
@@ -150,22 +149,22 @@ func TestLogicBinExpr(t *testing.T) {
 		exp value.Value
 	}{
 		{ // 0
-			in:  binExpr(boolLit(true), token.AND, boolLit(true)),
+			in:  binExpr(boolLit(true), tree.OP_AND, boolLit(true)),
 			exp: value.Bool(true),
 		}, { // 1
-			in:  binExpr(boolLit(true), token.AND, boolLit(false)),
+			in:  binExpr(boolLit(true), tree.OP_AND, boolLit(false)),
 			exp: value.Bool(false),
 		}, { // 2
-			in:  binExpr(boolLit(false), token.AND, boolLit(false)),
+			in:  binExpr(boolLit(false), tree.OP_AND, boolLit(false)),
 			exp: value.Bool(false),
 		}, { // 3
-			in:  binExpr(boolLit(true), token.OR, boolLit(true)),
+			in:  binExpr(boolLit(true), tree.OP_OR, boolLit(true)),
 			exp: value.Bool(true),
 		}, { // 4
-			in:  binExpr(boolLit(true), token.OR, boolLit(false)),
+			in:  binExpr(boolLit(true), tree.OP_OR, boolLit(false)),
 			exp: value.Bool(true),
 		}, { // 5
-			in:  binExpr(boolLit(false), token.OR, boolLit(false)),
+			in:  binExpr(boolLit(false), tree.OP_OR, boolLit(false)),
 			exp: value.Bool(false),
 		},
 	}
@@ -185,40 +184,40 @@ func TestCompBinExpr(t *testing.T) {
 		exp value.Value
 	}{
 		{ // 0
-			in:  binExpr(numLit(1), token.LT, numLit(2)),
+			in:  binExpr(numLit(1), tree.OP_LT, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 1
-			in:  binExpr(numLit(2), token.LT, numLit(2)),
+			in:  binExpr(numLit(2), tree.OP_LT, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 2
-			in:  binExpr(numLit(3), token.LT, numLit(2)),
+			in:  binExpr(numLit(3), tree.OP_LT, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 3
-			in:  binExpr(numLit(1), token.MT, numLit(2)),
+			in:  binExpr(numLit(1), tree.OP_MT, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 4
-			in:  binExpr(numLit(2), token.MT, numLit(2)),
+			in:  binExpr(numLit(2), tree.OP_MT, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 5
-			in:  binExpr(numLit(3), token.MT, numLit(2)),
+			in:  binExpr(numLit(3), tree.OP_MT, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 6
-			in:  binExpr(numLit(1), token.LTE, numLit(2)),
+			in:  binExpr(numLit(1), tree.OP_LTE, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 7
-			in:  binExpr(numLit(2), token.LTE, numLit(2)),
+			in:  binExpr(numLit(2), tree.OP_LTE, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 8
-			in:  binExpr(numLit(3), token.LTE, numLit(2)),
+			in:  binExpr(numLit(3), tree.OP_LTE, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 9
-			in:  binExpr(numLit(1), token.MTE, numLit(2)),
+			in:  binExpr(numLit(1), tree.OP_MTE, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 10
-			in:  binExpr(numLit(2), token.MTE, numLit(2)),
+			in:  binExpr(numLit(2), tree.OP_MTE, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 11
-			in:  binExpr(numLit(3), token.MTE, numLit(2)),
+			in:  binExpr(numLit(3), tree.OP_MTE, numLit(2)),
 			exp: value.Bool(true),
 		},
 	}
@@ -238,22 +237,22 @@ func TestEqualBinExpr(t *testing.T) {
 		exp value.Value
 	}{
 		{ // 0
-			in:  binExpr(numLit(1), token.EQU, numLit(1)),
+			in:  binExpr(numLit(1), tree.OP_EQU, numLit(1)),
 			exp: value.Bool(true),
 		}, { // 1
-			in:  binExpr(numLit(1), token.EQU, numLit(2)),
+			in:  binExpr(numLit(1), tree.OP_EQU, numLit(2)),
 			exp: value.Bool(false),
 		}, { // 2
-			in:  binExpr(numLit(1), token.EQU, strLit("abc")),
+			in:  binExpr(numLit(1), tree.OP_EQU, strLit("abc")),
 			exp: value.Bool(false),
 		}, { // 3
-			in:  binExpr(numLit(1), token.NEQ, numLit(1)),
+			in:  binExpr(numLit(1), tree.OP_NEQ, numLit(1)),
 			exp: value.Bool(false),
 		}, { // 4
-			in:  binExpr(numLit(1), token.NEQ, numLit(2)),
+			in:  binExpr(numLit(1), tree.OP_NEQ, numLit(2)),
 			exp: value.Bool(true),
 		}, { // 5
-			in:  binExpr(numLit(1), token.NEQ, strLit("abc")),
+			in:  binExpr(numLit(1), tree.OP_NEQ, strLit("abc")),
 			exp: value.Bool(true),
 		},
 	}
@@ -275,8 +274,8 @@ func TestExprs(t *testing.T) {
 		{ // 0
 			in: []tree.Expr{
 				numLit(1),
-				binExpr(numLit(1), token.ADD, numLit(2)),
-				binExpr(numLit(1), token.EQU, strLit("abc")),
+				binExpr(numLit(1), tree.OP_ADD, numLit(2)),
+				binExpr(numLit(1), tree.OP_EQU, strLit("abc")),
 			},
 			exp: []value.Value{
 				value.Num(1),
