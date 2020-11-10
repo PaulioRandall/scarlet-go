@@ -26,6 +26,7 @@ const (
 	TRUE             = `TRUE`       // true
 	FALSE            = `FALSE`      // false
 	LOOP             = `LOOP`       // loop
+	WHEN             = `WHEN`       // when
 	NUMBER           = `NUMBER`     // 1
 	STRING           = `STRING`     // "string"
 	IDENT            = `IDENT`      // identifier
@@ -65,6 +66,8 @@ func IdentifyWord(s string) Token {
 		return FALSE
 	case "loop":
 		return LOOP
+	case "when":
+		return WHEN
 	}
 
 	return IDENT

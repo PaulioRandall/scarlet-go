@@ -75,6 +75,12 @@ func TestLoop_1(t *testing.T) {
 	})
 }
 
+func TestWhen_1(t *testing.T) {
+	doTest(t, "when", []token.Lexeme{
+		token.MakeTok("when", token.WHEN),
+	})
+}
+
 func TestIdent_1(t *testing.T) {
 	doTest(t, "abc", []token.Lexeme{
 		token.MakeTok("abc", token.IDENT),

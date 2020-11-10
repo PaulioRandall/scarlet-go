@@ -7,10 +7,18 @@
 [1 < 2] {
   @Println("Scarlet!")
 }
+when {
+  [x < 0] @Println("x is negative")
+  [x > 0] @Println("x is positive")
+  [true] {
+    @Println("x is zero")
+  }
+}
 ```
 
 - `[cond] stmt` Guarded or conditional statement
 - `[cond] { stmts }` Guarded or conditional block
+- `when { [cond] stmt;... }` Match block where only the body of the first true guard is executed
 
 ## [v0.7.0+] Potential Features
 
@@ -19,16 +27,6 @@
 - Useful error messages
 
 ```
-# When Block: A form of match block or switch
-when {
-  [x < 0] { // Guard case
-    ... 
-  }
-  [true] { // Default case
-    ... 
-  }
-}
-
 # Create a new map from a list where keys are indexes
 map <- @NewMap(list)
 
