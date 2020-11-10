@@ -244,7 +244,7 @@ func SpellCallExpr(env Runtime, n tree.SpellCall) value.Value {
 
 func Guard(env Runtime, g tree.Guard) {
 
-	cond, ok := Expression(env, g.Cond).(value.Bool)
+	cond, ok := Expression(env, g.Condition()).(value.Bool)
 	if !ok {
 		panic("SANITY CHECK! Expected boolean result")
 	}
@@ -253,11 +253,20 @@ func Guard(env Runtime, g tree.Guard) {
 		return
 	}
 
-	for _, v := range g.Body.Stmts {
-		s, ok := v.(tree.Stat)
-		if !ok {
-			panic("SANITY CHECK! Result of expression ignored")
+	switch t := g.(type) {
+	case tree.GuardedStmt:
+		Statement(env, t.Stmt)
+
+	case tree.GuardedBlock:
+		for _, v := range t.Body.Stmts {
+			s, ok := v.(tree.Stat)
+			if !ok {
+				panic("SANITY CHECK! Result of expression ignored")
+			}
+			Statement(env, s)
 		}
-		Statement(env, s)
+
+	default:
+		panic("SANITY CHECK! Unknown guard type")
 	}
 }

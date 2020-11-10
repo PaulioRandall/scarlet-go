@@ -88,8 +88,8 @@ func expectTerminator(ctx *context) error {
 	return nil
 }
 
-// Parses:  <expr> {<operator> <expr>}
-// Parses:  L_PAREN <expr> {<operator> <expr>} R_PAREN
+// Parses: <expr> {<operator> <expr>}
+// Parses: L_PAREN <expr> {<operator> <expr>} R_PAREN
 func expectExpr(ctx *context) (tree.Expr, error) {
 	return expectExprRight(ctx, 0)
 }
@@ -120,6 +120,7 @@ func expectTerm(ctx *context) (ex tree.Expr, e error) {
 	return maybePostUnaryOp(ctx, ex), e
 }
 
+// Parses: [EXISTS]
 func maybePostUnaryOp(ctx *context, left tree.Expr) tree.Expr {
 	if !ctx.More() || !ctx.Peek().IsPostUnaryOperator() {
 		return left

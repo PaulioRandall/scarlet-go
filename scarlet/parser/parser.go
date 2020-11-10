@@ -267,28 +267,37 @@ func blockStatements(ctx *context) ([]tree.Node, error) {
 func guard(ctx *context) (tree.Guard, error) {
 
 	var e error
-	var zero, g tree.Guard
+	var cond tree.Expr
 
 	if !ctx.More() {
-		return zero, errPos(ctx.End(), "Missing left square brace")
+		return nil, errPos(ctx.End(), "Missing left square brace")
 	}
 
 	if l := ctx.Next(); l.Token != token.L_SQUARE {
-		return zero, errSnip(l.Snippet,
+		return nil, errSnip(l.Snippet,
 			"Expected left square brace but got %s", l.Token.String())
 	}
 
-	if g.Cond, e = expectExpr(ctx); e != nil {
-		return zero, e
+	if cond, e = expectExpr(ctx); e != nil {
+		return nil, e
 	}
 
 	if l := ctx.Next(); l.Token != token.R_SQUARE {
-		return zero, errSnip(l.Snippet,
+		return nil, errSnip(l.Snippet,
 			"Expected right square brace but got %s", l.Token.String())
 	}
 
+	if ctx.More() && ctx.Peek().Token != token.L_CURLY {
+		n, e := statement(ctx)
+		if e != nil {
+			return nil, e
+		}
+		return tree.GuardedStmt{Cond: cond, Stmt: n.(tree.Stat)}, nil
+	}
+
+	g := tree.GuardedBlock{Cond: cond}
 	if g.Body, e = expectBlock(ctx); e != nil {
-		return zero, e
+		return nil, e
 	}
 
 	return g, nil

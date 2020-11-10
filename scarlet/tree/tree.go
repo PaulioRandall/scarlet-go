@@ -56,6 +56,13 @@ type (
 		Node
 		stat()
 	}
+
+	// Guard is a Node representing a guarded statement or block.
+	Guard interface {
+		Node
+		Condition() Expr
+		guard()
+	}
 )
 
 type (
@@ -142,8 +149,15 @@ type (
 		Stmts []Node
 	}
 
-	// Guard Node is a Stat representing a conditional statement or block.
-	Guard struct {
+	// GuardedStmt Node is a Stat representing a conditional statement.
+	GuardedStmt struct {
+		Range Range
+		Cond  Expr
+		Stmt  Stat
+	}
+
+	// GuardedBlock Node is a Stat representing a conditional block.
+	GuardedBlock struct {
 		Range Range
 		Cond  Expr
 		Body  Block
@@ -162,7 +176,11 @@ func (n UnaryExpr) Pos() Range    { return n.Range }
 func (n BinaryExpr) Pos() Range   { return n.Range }
 func (n SpellCall) Pos() Range    { return n.Range }
 func (n Block) Pos() Range        { return n.Range }
-func (n Guard) Pos() Range        { return n.Range }
+func (n GuardedStmt) Pos() Range  { return n.Range }
+func (n GuardedBlock) Pos() Range { return n.Range }
+
+func (n GuardedStmt) Condition() Expr  { return n.Cond }
+func (n GuardedBlock) Condition() Expr { return n.Cond }
 
 func (n Ident) node()        {}
 func (n AnonIdent) node()    {}
@@ -176,7 +194,8 @@ func (n UnaryExpr) node()    {}
 func (n BinaryExpr) node()   {}
 func (n SpellCall) node()    {}
 func (n Block) node()        {}
-func (n Guard) node()        {}
+func (n GuardedStmt) node()  {}
+func (n GuardedBlock) node() {}
 
 func (n Ident) assignee()     {}
 func (n AnonIdent) assignee() {}
@@ -201,4 +220,8 @@ func (n AsymAssign) stat()   {}
 func (n MultiAssign) stat()  {}
 func (n SpellCall) stat()    {}
 func (n Block) stat()        {}
-func (n Guard) stat()        {}
+func (n GuardedStmt) stat()  {}
+func (n GuardedBlock) stat() {}
+
+func (n GuardedStmt) guard()  {}
+func (n GuardedBlock) guard() {}

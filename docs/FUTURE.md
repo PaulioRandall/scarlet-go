@@ -3,12 +3,14 @@
 ## [v0.6.0]
 
 ```
+[2 > 1] @Println("Scarlet!)
 [1 < 2] {
   @Println("Scarlet!")
 }
 ```
 
-- `[cond] { stmts }` Guard or conditional block
+- `[cond] stmt` Guarded or conditional statement
+- `[cond] { stmts }` Guarded or conditional block
 
 ## [v0.7.0+] Potential Features
 
@@ -17,9 +19,6 @@
 - Useful error messages
 
 ```
-# Conditional statement
-[cond] stmt
-
 # When Block: A form of match block or switch
 when {
   [x < 0] { // Guard case

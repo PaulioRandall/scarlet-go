@@ -762,7 +762,7 @@ func TestParse_Block_2(t *testing.T) {
 	requireNodes(t, exp, act)
 }
 
-func TestParse_Guard_1(t *testing.T) {
+func TestParse_GuardedBlock_1(t *testing.T) {
 
 	// [true] {}
 	in := positionLexemes(
@@ -775,10 +775,74 @@ func TestParse_Guard_1(t *testing.T) {
 	)
 
 	exp := []tree.Node{
-		tree.Guard{
+		tree.GuardedBlock{
 			Cond: tree.BoolLit{Val: true},
 			Body: tree.Block{
 				Stmts: []tree.Node{},
+			},
+		},
+	}
+
+	act, e := ParseAll(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
+func TestParse_GuardedBlock_2(t *testing.T) {
+
+	// [true] { x <- 1
+	// }
+	in := positionLexemes(
+		token.MakeTok("[", token.L_SQUARE),
+		token.MakeTok("true", token.TRUE),
+		token.MakeTok("]", token.R_SQUARE),
+		token.MakeTok("{", token.L_CURLY),
+		token.MakeTok("x", token.IDENT),
+		token.MakeTok("<-", token.ASSIGN),
+		token.MakeTok("1", token.NUMBER),
+		token.MakeTok("\n", token.NEWLINE),
+		token.MakeTok("}", token.R_CURLY),
+		token.MakeTok("\n", token.NEWLINE),
+	)
+
+	exp := []tree.Node{
+		tree.GuardedBlock{
+			Cond: tree.BoolLit{Val: true},
+			Body: tree.Block{
+				Stmts: []tree.Node{
+					tree.SingleAssign{
+						Left:  tree.Ident{Val: "x"},
+						Right: tree.NumLit{Val: float64(1)},
+					},
+				},
+			},
+		},
+	}
+
+	act, e := ParseAll(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}
+
+func TestParse_GuardedStmt_1(t *testing.T) {
+
+	// [true] x <- 1
+	in := positionLexemes(
+		token.MakeTok("[", token.L_SQUARE),
+		token.MakeTok("true", token.TRUE),
+		token.MakeTok("]", token.R_SQUARE),
+		token.MakeTok("x", token.IDENT),
+		token.MakeTok("<-", token.ASSIGN),
+		token.MakeTok("1", token.NUMBER),
+		token.MakeTok("\n", token.NEWLINE),
+	)
+
+	exp := []tree.Node{
+		tree.GuardedStmt{
+			Cond: tree.BoolLit{Val: true},
+			Stmt: tree.SingleAssign{
+				Left:  tree.Ident{Val: "x"},
+				Right: tree.NumLit{Val: float64(1)},
 			},
 		},
 	}

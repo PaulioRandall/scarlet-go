@@ -480,9 +480,9 @@ func TestSpellCall_1(t *testing.T) {
 	require.Equal(t, expOut, out)
 }
 
-func TestGuard_1(t *testing.T) {
+func TestGuardedBlock_1(t *testing.T) {
 
-	in := tree.Guard{
+	in := tree.GuardedBlock{
 		Cond: boolLit(false),
 		Body: tree.Block{
 			Stmts: []tree.Node{
@@ -501,9 +501,9 @@ func TestGuard_1(t *testing.T) {
 	require.Equal(t, exp, act)
 }
 
-func TestGuard_2(t *testing.T) {
+func TestGuardedBlock_2(t *testing.T) {
 
-	in := tree.Guard{
+	in := tree.GuardedBlock{
 		Cond: boolLit(true),
 		Body: tree.Block{
 			Stmts: []tree.Node{
@@ -516,6 +516,35 @@ func TestGuard_2(t *testing.T) {
 	exp := newTestEnv()
 	exp.scope[value.Ident("x")] = value.Num(1)
 	exp.scope[value.Ident("y")] = value.Num(2)
+
+	act := newTestEnv()
+	Guard(act, in)
+	require.Equal(t, exp, act)
+}
+
+func TestGuardedStmt_1(t *testing.T) {
+
+	in := tree.GuardedStmt{
+		Cond: boolLit(false),
+		Stmt: tree.SingleAssign{Left: ident("x"), Right: numLit(1)},
+	}
+
+	exp := newTestEnv()
+
+	act := newTestEnv()
+	Guard(act, in)
+	require.Equal(t, exp, act)
+}
+
+func TestGuardedStmt_2(t *testing.T) {
+
+	in := tree.GuardedStmt{
+		Cond: boolLit(true),
+		Stmt: tree.SingleAssign{Left: ident("x"), Right: numLit(1)},
+	}
+
+	exp := newTestEnv()
+	exp.scope[value.Ident("x")] = value.Num(1)
 
 	act := newTestEnv()
 	Guard(act, in)
