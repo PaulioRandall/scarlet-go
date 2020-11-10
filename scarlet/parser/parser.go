@@ -49,6 +49,12 @@ func statement(ctx *context) (n tree.Node, e error) {
 	case l.Token == token.SPELL:
 		n, e = spellCall(ctx)
 
+	case l.Token == token.L_SQUARE:
+		n, e = guard(ctx)
+
+	case l.Token == token.L_CURLY:
+		n, e = expectBlock(ctx)
+
 	default:
 		e = errSnip(l.Snippet,
 			"%s does not lead any known statement", l.Token.String())
@@ -234,4 +240,52 @@ func spellCall(ctx *context) (tree.Node, error) {
 func spellCallExpr(ctx *context) (tree.Expr, error) {
 	n, e := spellCall(ctx)
 	return n.(tree.Expr), e
+}
+
+// Parses: {<assign> | <expr>}
+func blockStatements(ctx *context) ([]tree.Node, error) {
+
+	nodes := []tree.Node{}
+
+	for ctx.More() && ctx.Peek().Token != token.R_CURLY {
+		n, e := statement(ctx)
+		if e != nil {
+			return nil, e
+		}
+		nodes = append(nodes, n)
+		expectTerminator(ctx)
+	}
+
+	return nodes, nil
+}
+
+// guard: [<expr>] L_CURLY {<assign> | <expr>} R_CURLY
+func guard(ctx *context) (tree.Guard, error) {
+
+	var e error
+	var zero, g tree.Guard
+
+	if !ctx.More() {
+		return zero, errPos(ctx.End(), "Missing left square brace")
+	}
+
+	if l := ctx.Next(); l.Token != token.L_SQUARE {
+		return zero, errSnip(l.Snippet,
+			"Expected left square brace but got %s", l.Token.String())
+	}
+
+	if g.Cond, e = expectExpr(ctx); e != nil {
+		return zero, e
+	}
+
+	if l := ctx.Next(); l.Token != token.R_SQUARE {
+		return zero, errSnip(l.Snippet,
+			"Expected right square brace but got %s", l.Token.String())
+	}
+
+	if g.Body, e = expectBlock(ctx); e != nil {
+		return zero, e
+	}
+
+	return g, nil
 }

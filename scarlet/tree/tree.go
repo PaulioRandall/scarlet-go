@@ -1,13 +1,15 @@
 package tree
 
 type (
+	// Position represents a point within a text source.
 	Position interface {
-		Offset() int
-		Line() int
+		Offset() int // bytes
+		Line() int   // index
 		ColByte() int
 		ColRune() int
 	}
 
+	// Range represents a snippet between two points within a text source.
 	Range interface {
 		Begin() Position
 		End() Position
@@ -133,6 +135,19 @@ type (
 		Name  string
 		Args  []Expr
 	}
+
+	// Block Node is a Stat representing a block of statements.
+	Block struct {
+		Range Range
+		Stmts []Node
+	}
+
+	// Guard Node is a Stat representing a conditional statement or block.
+	Guard struct {
+		Range Range
+		Cond  Expr
+		Body  Block
+	}
 )
 
 func (n Ident) Pos() Range        { return n.Range }
@@ -146,6 +161,8 @@ func (n MultiAssign) Pos() Range  { return n.Range }
 func (n UnaryExpr) Pos() Range    { return n.Range }
 func (n BinaryExpr) Pos() Range   { return n.Range }
 func (n SpellCall) Pos() Range    { return n.Range }
+func (n Block) Pos() Range        { return n.Range }
+func (n Guard) Pos() Range        { return n.Range }
 
 func (n Ident) node()        {}
 func (n AnonIdent) node()    {}
@@ -158,6 +175,8 @@ func (n MultiAssign) node()  {}
 func (n UnaryExpr) node()    {}
 func (n BinaryExpr) node()   {}
 func (n SpellCall) node()    {}
+func (n Block) node()        {}
+func (n Guard) node()        {}
 
 func (n Ident) assignee()     {}
 func (n AnonIdent) assignee() {}
@@ -181,3 +200,5 @@ func (n SingleAssign) stat() {}
 func (n AsymAssign) stat()   {}
 func (n MultiAssign) stat()  {}
 func (n SpellCall) stat()    {}
+func (n Block) stat()        {}
+func (n Guard) stat()        {}

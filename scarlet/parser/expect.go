@@ -274,6 +274,33 @@ func expectParamsSet(ctx *context) ([]tree.Expr, error) {
 	return nodes, nil
 }
 
+// Parsers: L_SQUARE <stmt> R_SQUARE
+func expectBlock(ctx *context) (tree.Block, error) {
+
+	var e error
+	var zero, b tree.Block
+
+	if !ctx.More() {
+		return zero, errPos(ctx.End(), "Missing left curly brace")
+	}
+
+	if l := ctx.Next(); l.Token != token.L_CURLY {
+		return zero, errSnip(l.Snippet,
+			"Expected left curly brace but got %s", l.Token.String())
+	}
+
+	if b.Stmts, e = blockStatements(ctx); e != nil {
+		return zero, e
+	}
+
+	if l := ctx.Next(); l.Token != token.R_CURLY {
+		return zero, errSnip(l.Snippet,
+			"Expected right curly brace but got %s", l.Token.String())
+	}
+
+	return b, nil
+}
+
 func tokenToOperator(tk token.Token) tree.Operator {
 	switch tk {
 	case token.ADD:
