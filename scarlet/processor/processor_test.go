@@ -577,3 +577,29 @@ func TestWhen_1(t *testing.T) {
 	When(act, in)
 	require.Equal(t, exp, act)
 }
+
+func TestWhen_2(t *testing.T) {
+
+	// when {
+	//   [false] x <- 1
+	//   [false] x <- 2
+	// }
+	in := tree.When{
+		Cases: []tree.Guard{
+			tree.GuardedStmt{
+				Cond: boolLit(false),
+				Stmt: tree.SingleAssign{Left: ident("x"), Right: numLit(1)},
+			},
+			tree.GuardedStmt{
+				Cond: boolLit(false),
+				Stmt: tree.SingleAssign{Left: ident("x"), Right: numLit(2)},
+			},
+		},
+	}
+
+	exp := newTestEnv()
+
+	act := newTestEnv()
+	When(act, in)
+	require.Equal(t, exp, act)
+}

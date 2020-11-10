@@ -1,35 +1,8 @@
 # Scribbles
 
-## [v0.6.0]
+## [v0.7.0]
 
 ```
-[2 > 1] @Println("Scarlet!)
-[1 < 2] {
-  @Println("Scarlet!")
-}
-when {
-  [x < 0] @Println("x is negative")
-  [x > 0] @Println("x is positive")
-  [true] {
-    @Println("x is zero")
-  }
-}
-```
-
-- `[cond] stmt` Guarded or conditional statement
-- `[cond] { stmts }` Guarded or conditional block
-- `when { [cond] stmt;... }` Match block where only the body of the first true guard is executed
-
-## [v0.7.0+] Potential Features
-
-- Manual/documentation
-- Native lists & maps
-- Useful error messages
-
-```
-# Create a new map from a list where keys are indexes
-map <- @NewMap(list)
-
 # Create a new initialised map 
 map <- @NewMap(
   "one", 1,
@@ -52,6 +25,13 @@ list <- @Keys(map)
 # Get a list of all values in a map
 list <- @Values(map)
 ```
+
+## [v0.8.0+] Potential Features
+
+- Manual/documentation
+- Native lists & maps
+- Useful error messages
+
 ```
 
 # Write to standard output, a space is placed between each printed item 

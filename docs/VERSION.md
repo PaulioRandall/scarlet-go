@@ -1,5 +1,25 @@
 # Versions
 
+## [v0.6.0]
+
+```
+[2 > 1] @Println("Scarlet!)
+[1 < 2] {
+  @Println("Scarlet!")
+}
+when {
+  [x < 0] @Println("x is negative")
+  [x > 0] @Println("x is positive")
+  [true] {
+    @Println("x is zero")
+  }
+}
+```
+
+- `[cond] stmt` Guarded or conditional statement
+- `[cond] { stmts }` Guarded or conditional block
+- `when { [cond] stmt;... }` Match block where only the body of the first true guard is executed
+
 ## [v0.5.0]
 
 ```
