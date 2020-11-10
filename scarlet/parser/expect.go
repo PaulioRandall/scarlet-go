@@ -278,7 +278,7 @@ func expectParamsSet(ctx *context) ([]tree.Expr, error) {
 	return nodes, nil
 }
 
-// Parsers: L_SQUARE <stmt> R_SQUARE
+// Parsers: L_CURLY <stmt> R_CURLY
 func expectBlock(ctx *context) (tree.Block, error) {
 
 	var e error
@@ -303,6 +303,43 @@ func expectBlock(ctx *context) (tree.Block, error) {
 	}
 
 	return b, nil
+}
+
+// Parsers: L_CURLY <guard> R_CURLY
+func expectWhenBlock(ctx *context) ([]tree.Guard, error) {
+
+	var gs []tree.Guard
+
+	if !ctx.More() {
+		return nil, errPos(ctx.End(), "Missing left curly brace")
+	}
+
+	if l := ctx.Next(); l.Token != token.L_CURLY {
+		return nil, errSnip(l.Snippet,
+			"Expected left curly brace but got %s", l.Token.String())
+	}
+
+	for ctx.More() && ctx.Peek().Token != token.R_CURLY {
+		g, e := guard(ctx)
+		if e != nil {
+			return nil, e
+		}
+		gs = append(gs, g)
+		if e := expectTerminator(ctx); e != nil {
+			return nil, e
+		}
+	}
+
+	if !ctx.More() {
+		return nil, errPos(ctx.End(), "Missing right curly brace")
+	}
+
+	if l := ctx.Next(); l.Token != token.R_CURLY {
+		return nil, errSnip(l.Snippet,
+			"Expected right curly brace but got %s", l.Token.String())
+	}
+
+	return gs, nil
 }
 
 func tokenToOperator(tk token.Token) tree.Operator {

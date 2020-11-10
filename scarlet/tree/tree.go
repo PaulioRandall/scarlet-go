@@ -162,6 +162,13 @@ type (
 		Cond  Expr
 		Body  Block
 	}
+
+	// When is a Node representing a guarded block of guards where only the
+	// statement of the first  matching case is executed.
+	When struct {
+		Range Range
+		Cases []Guard
+	}
 )
 
 func (n Ident) Pos() Range        { return n.Range }
@@ -178,6 +185,7 @@ func (n SpellCall) Pos() Range    { return n.Range }
 func (n Block) Pos() Range        { return n.Range }
 func (n GuardedStmt) Pos() Range  { return n.Range }
 func (n GuardedBlock) Pos() Range { return n.Range }
+func (n When) Pos() Range         { return n.Range }
 
 func (n GuardedStmt) Condition() Expr  { return n.Cond }
 func (n GuardedBlock) Condition() Expr { return n.Cond }
@@ -196,6 +204,7 @@ func (n SpellCall) node()    {}
 func (n Block) node()        {}
 func (n GuardedStmt) node()  {}
 func (n GuardedBlock) node() {}
+func (n When) node()         {}
 
 func (n Ident) assignee()     {}
 func (n AnonIdent) assignee() {}
@@ -222,6 +231,7 @@ func (n SpellCall) stat()    {}
 func (n Block) stat()        {}
 func (n GuardedStmt) stat()  {}
 func (n GuardedBlock) stat() {}
+func (n When) stat()         {}
 
 func (n GuardedStmt) guard()  {}
 func (n GuardedBlock) guard() {}

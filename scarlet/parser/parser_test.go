@@ -851,3 +851,56 @@ func TestParse_GuardedStmt_1(t *testing.T) {
 	require.Nil(t, e, "ERROR: %+v", e)
 	requireNodes(t, exp, act)
 }
+
+func TestParse_When_1(t *testing.T) {
+
+	// when {
+	// [false] x <- 1
+	// [true] x <- 2
+	// }
+	in := positionLexemes(
+		token.MakeTok("when", token.WHEN),
+		token.MakeTok("{", token.L_CURLY),
+		token.MakeTok("[", token.L_SQUARE),
+		token.MakeTok("false", token.FALSE),
+		token.MakeTok("]", token.R_SQUARE),
+		token.MakeTok("x", token.IDENT),
+		token.MakeTok("<-", token.ASSIGN),
+		token.MakeTok("1", token.NUMBER),
+		token.MakeTok("\n", token.NEWLINE),
+		token.MakeTok("[", token.L_SQUARE),
+		token.MakeTok("true", token.TRUE),
+		token.MakeTok("]", token.R_SQUARE),
+		token.MakeTok("x", token.IDENT),
+		token.MakeTok("<-", token.ASSIGN),
+		token.MakeTok("2", token.NUMBER),
+		token.MakeTok("\n", token.NEWLINE),
+		token.MakeTok("}", token.R_CURLY),
+		token.MakeTok("\n", token.NEWLINE),
+	)
+
+	exp := []tree.Node{
+		tree.When{
+			Cases: []tree.Guard{
+				tree.GuardedStmt{
+					Cond: tree.BoolLit{Val: false},
+					Stmt: tree.SingleAssign{
+						Left:  tree.Ident{Val: "x"},
+						Right: tree.NumLit{Val: float64(1)},
+					},
+				},
+				tree.GuardedStmt{
+					Cond: tree.BoolLit{Val: true},
+					Stmt: tree.SingleAssign{
+						Left:  tree.Ident{Val: "x"},
+						Right: tree.NumLit{Val: float64(2)},
+					},
+				},
+			},
+		},
+	}
+
+	act, e := ParseAll(in)
+	require.Nil(t, e, "ERROR: %+v", e)
+	requireNodes(t, exp, act)
+}

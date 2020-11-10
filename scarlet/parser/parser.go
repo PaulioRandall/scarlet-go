@@ -57,6 +57,9 @@ func statement(ctx *context) (n tree.Node, e error) {
 	case l.Token == token.L_CURLY:
 		n, e = expectBlock(ctx)
 
+	case l.Token == token.WHEN:
+		n, e = when(ctx)
+
 	default:
 		e = errSnip(l.Snippet,
 			"%s does not lead any known statement", l.Token.String())
@@ -263,7 +266,7 @@ func blockStatements(ctx *context) ([]tree.Node, error) {
 	return nodes, nil
 }
 
-// guard: L_SQUARE <expr> R_SQUARE L_CURLY {<assign> | <expr>} R_CURLY
+// Parses: L_SQUARE <expr> R_SQUARE L_CURLY {<assign> | <expr>} R_CURLY
 func guard(ctx *context) (tree.Guard, error) {
 
 	var e error
@@ -301,4 +304,20 @@ func guard(ctx *context) (tree.Guard, error) {
 	}
 
 	return g, nil
+}
+
+// Assumes: WHEN ...
+// Parses: WHEN L_CURLY <guard> TERMINATOR {<guard> TERMINATOR} R_CURLY
+func when(ctx *context) (tree.When, error) {
+
+	var e error
+	var zero, w tree.When
+
+	ctx.Next()
+
+	if w.Cases, e = expectWhenBlock(ctx); e != nil {
+		return zero, e
+	}
+
+	return w, nil
 }
