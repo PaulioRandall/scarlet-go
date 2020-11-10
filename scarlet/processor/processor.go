@@ -30,6 +30,8 @@ func Statement(env Runtime, s tree.Stat) {
 		SpellCall(env, v)
 	case tree.Guard:
 		Guard(env, v)
+	case tree.When:
+		When(env, v)
 	default:
 		panic("SANITY CHECK! Unknown tree.Stat type")
 	}
@@ -242,7 +244,7 @@ func SpellCallExpr(env Runtime, n tree.SpellCall) value.Value {
 	return out.Get(0)
 }
 
-func Guard(env Runtime, g tree.Guard) {
+func Guard(env Runtime, g tree.Guard) bool {
 
 	cond, ok := Expression(env, g.Condition()).(value.Bool)
 	if !ok {
@@ -250,9 +252,14 @@ func Guard(env Runtime, g tree.Guard) {
 	}
 
 	if !cond {
-		return
+		return false
 	}
 
+	GuardBody(env, g)
+	return true
+}
+
+func GuardBody(env Runtime, g tree.Guard) {
 	switch t := g.(type) {
 	case tree.GuardedStmt:
 		Statement(env, t.Stmt)
@@ -268,5 +275,13 @@ func Guard(env Runtime, g tree.Guard) {
 
 	default:
 		panic("SANITY CHECK! Unknown guard type")
+	}
+}
+
+func When(env Runtime, w tree.When) {
+	for _, g := range w.Cases {
+		if Guard(env, g) {
+			return
+		}
 	}
 }

@@ -1,4 +1,14 @@
 
 @Println()
 
-[1 < 2] @Println("Piper at the Gates of Dawn")
+x <- 99
+
+when {
+	[x < 0] @Println("x is negative")
+	[x > 0] @Println("x is positive")
+	[true] {
+		@Print("x")
+		@Print(" ", "is")
+		@Println(" ", "zero")
+	}
+}

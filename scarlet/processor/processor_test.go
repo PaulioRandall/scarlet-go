@@ -550,3 +550,30 @@ func TestGuardedStmt_2(t *testing.T) {
 	Guard(act, in)
 	require.Equal(t, exp, act)
 }
+
+func TestWhen_1(t *testing.T) {
+
+	// when {
+	//   [false] x <- 1
+	//   [true] x <- 2
+	// }
+	in := tree.When{
+		Cases: []tree.Guard{
+			tree.GuardedStmt{
+				Cond: boolLit(false),
+				Stmt: tree.SingleAssign{Left: ident("x"), Right: numLit(1)},
+			},
+			tree.GuardedStmt{
+				Cond: boolLit(true),
+				Stmt: tree.SingleAssign{Left: ident("x"), Right: numLit(2)},
+			},
+		},
+	}
+
+	exp := newTestEnv()
+	exp.scope[value.Ident("x")] = value.Num(2)
+
+	act := newTestEnv()
+	When(act, in)
+	require.Equal(t, exp, act)
+}
