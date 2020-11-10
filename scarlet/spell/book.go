@@ -38,16 +38,13 @@ type (
 	// Processor that only exposes appropriate functionality for spells.
 	Runtime interface {
 
-		// Spellbook returns the book containing all spells available.
+		// Spellbook returns the book containing all spells available. Changes made
+		// will not be reflected within the current environment.
 		Spellbook() Book
 
+		// Scope returns a copy of the current scope. Changes made will not be
+		// reflected within the current environment.
 		Scope() Scope
-
-		// Bind sets the value of a variable overwriting any existing value.
-		Bind(value.Ident, value.Value)
-
-		// Unbind removes a variable from the scope.
-		Unbind(value.Ident)
 
 		// Exists returns true if the specified identifier exists within the current
 		//scope.

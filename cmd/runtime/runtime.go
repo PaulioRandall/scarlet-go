@@ -29,12 +29,20 @@ func New() *RuntimeEnv {
 
 // Spellbook implements processor.Runtime.Spellbook.
 func (env *RuntimeEnv) Spellbook() spell.Book {
-	return env.spellbook
+	r := make(spell.Book, len(env.spellbook))
+	for k, v := range env.spellbook {
+		r[k] = v
+	}
+	return r
 }
 
 // Scope implements processor.Runtime.Scope.
 func (env *RuntimeEnv) Scope() spell.Scope {
-	return env.scope
+	r := make(spell.Scope, len(env.scope))
+	for k, v := range env.scope {
+		r[k] = v
+	}
+	return r
 }
 
 // Bind implements processor.Runtime.Bind.

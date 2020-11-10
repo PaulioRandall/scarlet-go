@@ -12,6 +12,12 @@ import (
 // instructions such as access to the value stack and acces to scope variables.
 type Runtime interface {
 	spell.Runtime
+
+	// Bind sets the value of a variable overwriting any existing value.
+	Bind(value.Ident, value.Value)
+
+	// Unbind removes a variable from the scope.
+	Unbind(value.Ident)
 }
 
 const (

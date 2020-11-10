@@ -23,11 +23,19 @@ func newTestEnv() *testRuntime {
 }
 
 func (env *testRuntime) Spellbook() spell.Book {
-	return env.book
+	r := make(spell.Book, len(env.book))
+	for k, v := range env.book {
+		r[k] = v
+	}
+	return r
 }
 
 func (env *testRuntime) Scope() spell.Scope {
-	return env.scope
+	r := make(spell.Scope, len(env.scope))
+	for k, v := range env.scope {
+		r[k] = v
+	}
+	return r
 }
 
 func (env *testRuntime) Bind(id value.Ident, v value.Value) {
