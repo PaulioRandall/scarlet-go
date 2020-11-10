@@ -1,7 +1,6 @@
 
 @Println()
 
-list <- @NewList("a", "b", "c")
-
-i <- @Index(list, "z")
-@Println(i?)
+[1 < 2] {
+	@Println("Piper at the Gates of Dawn")
+}

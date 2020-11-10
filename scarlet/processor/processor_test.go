@@ -479,3 +479,45 @@ func TestSpellCall_1(t *testing.T) {
 	require.Equal(t, exp, act)
 	require.Equal(t, expOut, out)
 }
+
+func TestGuard_1(t *testing.T) {
+
+	in := tree.Guard{
+		Cond: boolLit(false),
+		Body: tree.Block{
+			Stmts: []tree.Node{
+				tree.SingleAssign{
+					Left:  ident("x"),
+					Right: numLit(1),
+				},
+			},
+		},
+	}
+
+	exp := newTestEnv()
+
+	act := newTestEnv()
+	Guard(act, in)
+	require.Equal(t, exp, act)
+}
+
+func TestGuard_2(t *testing.T) {
+
+	in := tree.Guard{
+		Cond: boolLit(true),
+		Body: tree.Block{
+			Stmts: []tree.Node{
+				tree.SingleAssign{Left: ident("x"), Right: numLit(1)},
+				tree.SingleAssign{Left: ident("y"), Right: numLit(2)},
+			},
+		},
+	}
+
+	exp := newTestEnv()
+	exp.scope[value.Ident("x")] = value.Num(1)
+	exp.scope[value.Ident("y")] = value.Num(2)
+
+	act := newTestEnv()
+	Guard(act, in)
+	require.Equal(t, exp, act)
+}

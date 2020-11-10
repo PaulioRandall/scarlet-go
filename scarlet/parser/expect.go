@@ -79,8 +79,11 @@ func expectTerminator(ctx *context) error {
 	if !ctx.More() {
 		return errPos(ctx.End(), "Expected terminator but reached EOF")
 	}
+	if ctx.Peek().Token == token.R_CURLY {
+		return nil
+	}
 	if tk := ctx.Next(); !tk.IsTerminator() {
-		return errSnip(tk.Snippet, "Expected expression but reached EOF")
+		return errSnip(tk.Snippet, "Expected terminator but got %v", tk.Token)
 	}
 	return nil
 }

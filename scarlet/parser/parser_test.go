@@ -40,6 +40,7 @@ func TestParse_SingleAssign_1(t *testing.T) {
 		token.MakeTok("x", token.IDENT),
 		token.MakeTok(":=", token.ASSIGN),
 		token.MakeTok("1", token.NUMBER),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -61,6 +62,7 @@ func TestParse_SingleAssign_2(t *testing.T) {
 		token.MakeTok("x", token.IDENT),
 		token.MakeTok(":=", token.ASSIGN),
 		token.MakeTok("y", token.IDENT),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -82,6 +84,7 @@ func TestParse_SingleAssign_3(t *testing.T) {
 		token.MakeTok("_", token.VOID),
 		token.MakeTok(":=", token.ASSIGN),
 		token.MakeTok("1", token.NUMBER),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -111,6 +114,7 @@ func TestParse_MultiAssign_1(t *testing.T) {
 		token.MakeTok("1", token.NUMBER), // 8
 		token.MakeTok(",", token.DELIM),
 		token.MakeTok(`"text"`, token.STRING), // 10
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -148,6 +152,7 @@ func TestParse_MultiAssign_2(t *testing.T) {
 		token.MakeTok("1", token.NUMBER), // 8
 		token.MakeTok(",", token.DELIM),
 		token.MakeTok(`"text"`, token.STRING), // 10
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -181,6 +186,7 @@ func TestParse_AsymAssign_1(t *testing.T) {
 		token.MakeTok("@Print", token.SPELL), // 4
 		token.MakeTok("(", token.L_PAREN),
 		token.MakeTok(")", token.R_PAREN), // 6
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -212,6 +218,7 @@ func TestParse_AsymAssign_2(t *testing.T) {
 		token.MakeTok("@Print", token.SPELL), // 4
 		token.MakeTok("(", token.L_PAREN),
 		token.MakeTok(")", token.R_PAREN), // 6
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -237,6 +244,7 @@ func TestParse_IdentExpr_1(t *testing.T) {
 	// x
 	in := positionLexemes(
 		token.MakeTok("x", token.IDENT),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -255,6 +263,7 @@ func TestParse_BinaryExpr_1(t *testing.T) {
 		token.MakeTok("1", token.NUMBER),
 		token.MakeTok("+", token.ADD),
 		token.MakeTok("2", token.NUMBER),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -277,6 +286,7 @@ func TestParse_BinaryExpr_2(t *testing.T) {
 		token.MakeTok("true", token.TRUE),
 		token.MakeTok("&&", token.AND),
 		token.MakeTok("false", token.FALSE),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -301,6 +311,7 @@ func TestParse_BinaryExpr_3(t *testing.T) {
 		token.MakeTok("2", token.NUMBER),
 		token.MakeTok("-", token.SUB),
 		token.MakeTok("3", token.NUMBER),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	add := tree.BinaryExpr{
@@ -331,6 +342,7 @@ func TestParse_BinaryExpr_4(t *testing.T) {
 		token.MakeTok("2", token.NUMBER),
 		token.MakeTok("*", token.MUL),
 		token.MakeTok("3", token.NUMBER),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	mul := tree.BinaryExpr{
@@ -368,6 +380,7 @@ func TestParse_BinaryExpr_5(t *testing.T) {
 		token.MakeTok("5", token.NUMBER), // 8
 		token.MakeTok("%", token.REM),
 		token.MakeTok("6", token.NUMBER), // 10
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	// 2 * 3
@@ -421,6 +434,7 @@ func TestParse_Assign_BinaryExpr_1(t *testing.T) {
 		token.MakeTok("1", token.NUMBER),
 		token.MakeTok("+", token.ADD),
 		token.MakeTok("2", token.NUMBER),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	right := tree.BinaryExpr{
@@ -448,6 +462,7 @@ func TestParse_ParenExpr_1(t *testing.T) {
 		token.MakeTok("(", token.L_PAREN),
 		token.MakeTok("1", token.NUMBER),
 		token.MakeTok(")", token.R_PAREN),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -468,6 +483,7 @@ func TestParse_ParenExpr_2(t *testing.T) {
 		token.MakeTok("+", token.ADD),
 		token.MakeTok("2", token.NUMBER),
 		token.MakeTok(")", token.R_PAREN),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -494,6 +510,7 @@ func TestParse_ParenExpr_3(t *testing.T) {
 		token.MakeTok("2", token.NUMBER),
 		token.MakeTok(")", token.R_PAREN),
 		token.MakeTok(")", token.R_PAREN),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -524,6 +541,7 @@ func TestParse_ParenExpr_4(t *testing.T) {
 		token.MakeTok(")", token.R_PAREN),
 		token.MakeTok("-", token.SUB),
 		token.MakeTok("y", token.IDENT),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	// (1 + 2)
@@ -561,6 +579,7 @@ func TestParse_SpellCall_1(t *testing.T) {
 		token.MakeTok("@Print", token.SPELL),
 		token.MakeTok("(", token.L_PAREN),
 		token.MakeTok(")", token.R_PAREN),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -585,6 +604,7 @@ func TestParse_SpellCall_2(t *testing.T) {
 		token.MakeTok("+", token.ADD),
 		token.MakeTok("2", token.NUMBER),
 		token.MakeTok(")", token.R_PAREN),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	// (1 + 2)
@@ -618,6 +638,7 @@ func TestParse_SpellCall_3(t *testing.T) {
 		token.MakeTok(",", token.DELIM),
 		token.MakeTok(`"abc"`, token.STRING),
 		token.MakeTok(")", token.R_PAREN),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -646,6 +667,7 @@ func TestParse_SpellCall_4(t *testing.T) {
 		token.MakeTok("x", token.IDENT),
 		token.MakeTok(")", token.R_PAREN),
 		token.MakeTok(")", token.R_PAREN),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -668,6 +690,7 @@ func TestParse_Exist_1(t *testing.T) {
 	in := positionLexemes(
 		token.MakeTok("x", token.IDENT),
 		token.MakeTok("?", token.EXIST),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -688,6 +711,7 @@ func TestParse_Block_1(t *testing.T) {
 	in := positionLexemes(
 		token.MakeTok("{", token.L_CURLY),
 		token.MakeTok("}", token.R_CURLY),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -715,6 +739,7 @@ func TestParse_Block_2(t *testing.T) {
 		token.MakeTok("2", token.NUMBER),
 		token.MakeTok("\n", token.NEWLINE),
 		token.MakeTok("}", token.R_CURLY),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{
@@ -746,6 +771,7 @@ func TestParse_Guard_1(t *testing.T) {
 		token.MakeTok("]", token.R_SQUARE),
 		token.MakeTok("{", token.L_CURLY),
 		token.MakeTok("}", token.R_CURLY),
+		token.MakeTok("\n", token.NEWLINE),
 	)
 
 	exp := []tree.Node{

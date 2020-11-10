@@ -28,6 +28,8 @@ func Statement(env Runtime, s tree.Stat) {
 		AsymAssign(env, v)
 	case tree.SpellCall:
 		SpellCall(env, v)
+	case tree.Guard:
+		Guard(env, v)
 	default:
 		panic("SANITY CHECK! Unknown tree.Stat type")
 	}
@@ -238,4 +240,24 @@ func SpellCallExpr(env Runtime, n tree.SpellCall) value.Value {
 	out := spell.NewOutput(1)
 	s.Spell(env, in, out)
 	return out.Get(0)
+}
+
+func Guard(env Runtime, g tree.Guard) {
+
+	cond, ok := Expression(env, g.Cond).(value.Bool)
+	if !ok {
+		panic("SANITY CHECK! Expected boolean result")
+	}
+
+	if !cond {
+		return
+	}
+
+	for _, v := range g.Body.Stmts {
+		s, ok := v.(tree.Stat)
+		if !ok {
+			panic("SANITY CHECK! Result of expression ignored")
+		}
+		Statement(env, s)
+	}
 }

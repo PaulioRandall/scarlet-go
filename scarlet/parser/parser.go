@@ -31,7 +31,9 @@ func statements(ctx *context) ([]tree.Node, error) {
 			return nil, e
 		}
 		nodes = append(nodes, n)
-		expectTerminator(ctx)
+		if e := expectTerminator(ctx); e != nil {
+			return nil, e
+		}
 	}
 
 	return nodes, nil
@@ -253,13 +255,15 @@ func blockStatements(ctx *context) ([]tree.Node, error) {
 			return nil, e
 		}
 		nodes = append(nodes, n)
-		expectTerminator(ctx)
+		if e := expectTerminator(ctx); e != nil {
+			return nil, e
+		}
 	}
 
 	return nodes, nil
 }
 
-// guard: [<expr>] L_CURLY {<assign> | <expr>} R_CURLY
+// guard: L_SQUARE <expr> R_SQUARE L_CURLY {<assign> | <expr>} R_CURLY
 func guard(ctx *context) (tree.Guard, error) {
 
 	var e error

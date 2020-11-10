@@ -1,16 +1,24 @@
 # Scribbles
 
-## [v0.6.0+] Potential Features
+## [v0.6.0]
+
+```
+[1 < 2] {
+  @Println("Scarlet!")
+}
+```
+
+- `[cond] { stmts }` Guard or conditional block
+
+## [v0.7.0+] Potential Features
 
 - Manual/documentation
 - Native lists & maps
 - Useful error messages
 
 ```
-# Guarded statements
-[x < y] {
-  ...
-}
+# Conditional statement
+[cond] stmt
 
 # When Block: A form of match block or switch
 when {
