@@ -19,9 +19,6 @@ func Sanitise(tks []token.Lexeme) []token.Lexeme {
 		curr := itr.Next()
 
 		switch first := prevIdx < 0; {
-		case curr.IsRedundant():
-			continue // Always remove tokens redundant to the parsing process.
-
 		case first && curr.IsTerminator():
 			continue // Remove leading terminators
 

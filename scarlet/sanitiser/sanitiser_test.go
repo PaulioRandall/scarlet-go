@@ -8,22 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRedundant_1(t *testing.T) {
-	in := []token.Lexeme{
-		token.MakeTok(" ", token.SPACE),
-	}
-	exp := []token.Lexeme{}
-	require.Equal(t, exp, Sanitise(in))
-}
-
-func TestRedundant_2(t *testing.T) {
-	in := []token.Lexeme{
-		token.MakeTok("# Scarlet", token.COMMENT),
-	}
-	exp := []token.Lexeme{}
-	require.Equal(t, exp, Sanitise(in))
-}
-
 func TestLeadingTerminators_1(t *testing.T) {
 	in := []token.Lexeme{
 		token.MakeTok("\n", token.TERMINATOR),
@@ -93,33 +77,21 @@ func TestTerminatorBeforeRCurly_1(t *testing.T) {
 func TestFull_1(t *testing.T) {
 
 	in := []token.Lexeme{
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("\n", token.NEWLINE),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("\n", token.NEWLINE),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("@Println", token.SPELL),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("(", token.L_PAREN),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("\n", token.NEWLINE),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("1", token.NUMBER),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok(",", token.DELIM),
 		token.MakeTok("\n", token.NEWLINE),
 		token.MakeTok("\n", token.NEWLINE),
 		token.MakeTok("\n", token.NEWLINE),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("1", token.NUMBER),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok(",", token.DELIM),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("\n", token.NEWLINE),
 		token.MakeTok("\n", token.NEWLINE),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok(")", token.R_PAREN),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("\n", token.NEWLINE),
 	}
 
@@ -147,13 +119,10 @@ func TestFull_2(t *testing.T) {
 		token.MakeTok("[", token.L_SQUARE),
 		token.MakeTok("true", token.TRUE),
 		token.MakeTok("]", token.R_SQUARE),
-		token.MakeTok(" ", token.SPACE),
 		token.MakeTok("{", token.L_CURLY),
 		token.MakeTok("\n", token.NEWLINE),
-		token.MakeTok("\t", token.SPACE),
 		token.MakeTok(`"abc"`, token.STRING),
 		token.MakeTok("\n", token.NEWLINE),
-		token.MakeTok("\t", token.SPACE),
 		token.MakeTok(`"xyz"`, token.STRING),
 		token.MakeTok("\n", token.NEWLINE),
 		token.MakeTok("}", token.R_CURLY),

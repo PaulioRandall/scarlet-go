@@ -6,6 +6,7 @@ import (
 	"github.com/PaulioRandall/scarlet-go/scarlet/parser"
 	"github.com/PaulioRandall/scarlet-go/scarlet/sanitiser"
 	"github.com/PaulioRandall/scarlet-go/scarlet/scanner"
+	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
 )
 
@@ -19,7 +20,7 @@ func Build(c BuildCmd) ([]tree.Stat, error) {
 	}
 
 	src := []rune(string(b))
-	tks, e := scanner.ScanAll(src)
+	tks, e := scan(src)
 	if e != nil {
 		return nil, e
 	}
@@ -30,6 +31,27 @@ func Build(c BuildCmd) ([]tree.Stat, error) {
 		return nil, e
 	}
 	return validate(nodes), nil
+}
+
+func scan(src []rune) ([]token.Lexeme, error) {
+
+	var (
+		r  []token.Lexeme
+		l  token.Lexeme
+		pt = scanner.New(src)
+		e  error
+	)
+
+	for pt != nil {
+		if l, pt, e = pt(); e != nil {
+			return nil, e
+		}
+		if !l.IsRedundant() {
+			r = append(r, l)
+		}
+	}
+
+	return r, nil
 }
 
 // Temp until a validator pkg is created
