@@ -30,7 +30,9 @@ func statements(ctx *context) ([]tree.Node, error) {
 		if e != nil {
 			return nil, e
 		}
-		nodes = append(nodes, n)
+		if n != nil { // non-empty statement
+			nodes = append(nodes, n)
+		}
 		if e := expectTerminator(ctx); e != nil {
 			return nil, e
 		}
@@ -42,6 +44,9 @@ func statements(ctx *context) ([]tree.Node, error) {
 // Parses: <assign> | <expr>
 func statement(ctx *context) (n tree.Node, e error) {
 	switch l := ctx.Peek(); {
+	case l.IsTerminator():
+		return
+
 	case l.Token == token.IDENT, l.Token == token.VOID:
 		n, e = assigneeLeads(ctx)
 
@@ -257,7 +262,9 @@ func blockStatements(ctx *context) ([]tree.Node, error) {
 		if e != nil {
 			return nil, e
 		}
-		nodes = append(nodes, n)
+		if n != nil { // Non-empty statement
+			nodes = append(nodes, n)
+		}
 		if e := expectTerminator(ctx); e != nil {
 			return nil, e
 		}
@@ -294,6 +301,9 @@ func guard(ctx *context) (tree.Guard, error) {
 		n, e := statement(ctx)
 		if e != nil {
 			return nil, e
+		}
+		if n == nil {
+			return nil, errSnip(ctx.Peek().Snippet, "Empty statement not allowed")
 		}
 		return tree.GuardedStmt{Cond: cond, Stmt: n.(tree.Stat)}, nil
 	}

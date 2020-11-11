@@ -8,28 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestLeadingTerminators_1(t *testing.T) {
-	in := []token.Lexeme{
-		token.MakeTok("\n", token.TERMINATOR),
-		token.MakeTok(";", token.TERMINATOR),
-	}
-	exp := []token.Lexeme{}
-	require.Equal(t, exp, Sanitise(in))
-}
-
-func TestSuccessiveTerminators_1(t *testing.T) {
-	in := []token.Lexeme{
-		token.MakeTok("x", token.IDENT),
-		token.MakeTok("\n", token.TERMINATOR),
-		token.MakeTok(";", token.TERMINATOR),
-	}
-	exp := []token.Lexeme{
-		token.MakeTok("x", token.IDENT),
-		token.MakeTok("\n", token.TERMINATOR),
-	}
-	require.Equal(t, exp, Sanitise(in))
-}
-
 func TestNewlineAfterOpener_1(t *testing.T) {
 	in := []token.Lexeme{
 		token.MakeTok("(", token.L_PAREN),
@@ -97,6 +75,8 @@ func TestFull_1(t *testing.T) {
 
 	// @Println(1,1)
 	exp := []token.Lexeme{
+		token.MakeTok("\n", token.NEWLINE),
+		token.MakeTok("\n", token.NEWLINE),
 		token.MakeTok("@Println", token.SPELL),
 		token.MakeTok("(", token.L_PAREN),
 		token.MakeTok("1", token.NUMBER),

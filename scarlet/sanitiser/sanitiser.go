@@ -18,11 +18,7 @@ func Sanitise(tks []token.Lexeme) []token.Lexeme {
 	for prevIdx := -1; itr.More(); prevIdx = len(r) - 1 {
 		curr := itr.Next()
 
-		switch first := prevIdx < 0; {
-		case first && curr.IsTerminator():
-			continue // Remove leading terminators
-
-		case first:
+		if prevIdx < 0 {
 			r = append(r, curr)
 			continue
 		}
@@ -33,9 +29,6 @@ func Sanitise(tks []token.Lexeme) []token.Lexeme {
 
 		case prev.IsTerminator() && curr.Token == token.R_CURLY:
 			r[prevIdx] = curr // Remove terminators ',' before closing curly brace '}'
-
-		case prev.IsTerminator() && curr.IsTerminator():
-			// Remove successive terminators
 
 		case prev.IsOpener() && curr.Token == token.NEWLINE:
 			// Remove newlines after openers '(,[,{'

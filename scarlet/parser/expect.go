@@ -320,6 +320,10 @@ func expectWhenBlock(ctx *context) ([]tree.Guard, error) {
 	}
 
 	for ctx.More() && ctx.Peek().Token != token.R_CURLY {
+		if ctx.Peek().IsTerminator() {
+			ctx.Next()
+			continue // Ignore empty statements
+		}
 		g, e := guard(ctx)
 		if e != nil {
 			return nil, e
