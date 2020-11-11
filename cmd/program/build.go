@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/parser"
-	"github.com/PaulioRandall/scarlet-go/scarlet/sanitiser"
 	"github.com/PaulioRandall/scarlet-go/scarlet/scanner"
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 	"github.com/PaulioRandall/scarlet-go/scarlet/tree"
@@ -25,7 +24,6 @@ func Build(c BuildCmd) ([]tree.Stat, error) {
 		return nil, e
 	}
 
-	tks = sanitiser.Sanitise(tks)
 	nodes, e := parser.ParseAll(tks)
 	if e != nil {
 		return nil, e

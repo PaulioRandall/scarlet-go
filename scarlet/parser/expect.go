@@ -233,12 +233,8 @@ func expectParams(ctx *context) ([]tree.Expr, error) {
 	}
 	snip = l.Snippet
 
-	if ctx.Peek().Token == token.R_PAREN {
-		nodes = []tree.Expr{}
-	} else {
-		if nodes, e = expectParamsSet(ctx); e != nil {
-			return nil, e
-		}
+	if nodes, e = expectParamsSet(ctx); e != nil {
+		return nil, e
 	}
 
 	if !ctx.More() {
@@ -263,14 +259,20 @@ func expectParamsSet(ctx *context) ([]tree.Expr, error) {
 		e     error
 	)
 
-	for {
+	for ctx.More() && ctx.Peek().Token != token.R_PAREN {
+		if ctx.Peek().IsTerminator() {
+			ctx.Next()
+			continue
+		}
 		if ex, e = expectExpr(ctx); e != nil {
 			return nil, e
 		}
 		nodes = append(nodes, ex)
-
+		if !ctx.More() {
+			return nil, errPos(ctx.End(), "Missing delimiter or right parenthesis")
+		}
 		if ctx.Peek().Token != token.DELIM {
-			break
+			return nodes, nil
 		}
 		ctx.Next()
 	}

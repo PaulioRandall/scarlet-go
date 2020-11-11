@@ -1,13 +1,17 @@
 
 @Println()
 
+list <- @NewList(
+	1,
+	2,
+	3,
+)
+
 x <- 99
 
 when {
 	[x < 0] @Println("x is negative")
 	[x > 0] @Println("x is positive")
-
-	
 	[true] {
 		@Print("x")
 		@Print(" ", "is")
