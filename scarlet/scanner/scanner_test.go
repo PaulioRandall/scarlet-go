@@ -46,8 +46,8 @@ func TestSpace_1(t *testing.T) {
 }
 
 func TestSpace_2(t *testing.T) {
-	doTest(t, "\t\r\v\f ", []token.Lexeme{
-		token.MakeTok("\t\r\v\f ", token.SPACE),
+	doTest(t, "\t\v\f ", []token.Lexeme{
+		token.MakeTok("\t\v\f ", token.SPACE),
 	})
 }
 

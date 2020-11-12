@@ -91,7 +91,8 @@ func identifyLexeme(r *reader, l *lex) error {
 
 	case unicode.IsSpace(r.at(0)):
 		l.size, l.tk = 1, token.SPACE
-		for r.inRange(l.size) && unicode.IsSpace(r.at(l.size)) {
+		for r.inRange(l.size) && unicode.IsSpace(r.at(l.size)) &&
+			r.at(l.size) != '\r' && r.at(l.size) != '\n' {
 			l.size++
 		}
 
