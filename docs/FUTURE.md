@@ -2,6 +2,8 @@
 
 ## [v0.7.0]
 
+- `@[namespace.]name()` Spells may now only have a single optional namespace
+
 ```
 # Create a new initialised map 
 map <- @NewMap(

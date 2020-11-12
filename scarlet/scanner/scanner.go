@@ -1,8 +1,7 @@
 // Scanner package scans Lexemes (Tokens) from a text source. The scanner will
 // not sanitise any text in the process so the resultant lexemes will be an
 // exact representation of the input including whitespace and other redundant
-// Tokens. Pre-parsing should be performed via the sanitiser package if the
-// Tokens are heading for compilation.
+// Tokens.
 package scanner
 
 import (
@@ -216,11 +215,13 @@ func identifyWord(r *reader, l *lex) {
 func spell(r *reader, l *lex) error {
 
 	// Valid:   @abc
-	// Valid:   @abc.efg.xyz
+	// Valid:   @abc.xyz
 	// Invalid: @
 	// Invalid: @abc.
+	// Invalid: @abc..xyz
+	// Invalid: @abc.efg.hij
 
-	part := func() error {
+	parsePart := func() error {
 		if !r.inRange(l.size) {
 			// TODO: Snippet here, `colRune + l.size`
 			return errPos(r.Snapshot(), "Bad spell name, have EOF, want letter")
@@ -240,15 +241,18 @@ func spell(r *reader, l *lex) error {
 	}
 
 	l.size, l.tk = 1, token.SPELL
-	for {
-		if e := part(); e != nil {
-			return e
-		}
 
-		if !r.inRange(l.size) || r.at(l.size) != '.' {
-			break
-		}
-		l.size++
+	if e := parsePart(); e != nil {
+		return e
+	}
+
+	if !r.inRange(l.size) || r.at(l.size) != '.' {
+		return nil
+	}
+	l.size++
+
+	if e := parsePart(); e != nil {
+		return e
 	}
 
 	return nil

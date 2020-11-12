@@ -125,28 +125,31 @@ func (b Book) Lookup(name string) (Inscription, bool) {
 
 func isSpellIdent(id string) bool {
 
-	// E.g.
-	// abc
-	// abc.xyz
-	// a.b.c.d
+	// E.g. "abc" or "abc.xyz"
 
-	newPart := true
+	r := []rune(id)
+	size := len(r)
+	i := 0
 
-	for _, ru := range id {
-
-		switch {
-		case newPart && unicode.IsLetter(ru):
-			newPart = false
-
-		case newPart:
-			return false
-
-		case ru == '.':
-			newPart = true
+	parsePart := func() bool {
+		for ; i < size; i++ {
+			if !unicode.IsLetter(r[i]) {
+				return false
+			}
 		}
+		return true
 	}
 
-	return !newPart
+	if parsePart() {
+		return true
+	}
+
+	if r[i] != '.' {
+		return false
+	}
+	i++
+
+	return parsePart()
 }
 
 // NewOutput returns a new initialised output.

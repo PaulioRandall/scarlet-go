@@ -238,8 +238,8 @@ func TestSpell_1(t *testing.T) {
 }
 
 func TestSpell_2(t *testing.T) {
-	doTest(t, "@a.b.c", []token.Lexeme{
-		token.MakeTok("@a.b.c", token.SPELL),
+	doTest(t, "@abc.efg", []token.Lexeme{
+		token.MakeTok("@abc.efg", token.SPELL),
 	})
 }
 
@@ -249,6 +249,10 @@ func TestSpell_3(t *testing.T) {
 
 func TestSpell_4(t *testing.T) {
 	doErrTest(t, "@abc.")
+}
+
+func TestSpell_5(t *testing.T) {
+	doErrTest(t, "@abc.efg.hij")
 }
 
 func TestString_1(t *testing.T) {
