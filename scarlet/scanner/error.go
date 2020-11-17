@@ -31,7 +31,8 @@ func (e scanErr) Error() string {
 
 func err(p token.UTF8Pos, msg string, args ...interface{}) scanErr {
 	return scanErr{
-		Position: position.Make(p.Offset, p.Line, p.ColByte, p.ColRune),
+		// TODO: Filename
+		Position: position.Pos("", p.Offset, p.Line, p.ColByte, p.ColRune),
 		msg:      fmt.Sprintf(msg, args...),
 	}
 }

@@ -9,7 +9,7 @@ import (
 type serror interface {
 	error
 	When() string
-	From() position.Pos
-	To() position.Pos
+	From() position.Position
+	To() position.Position
 	Trace() string
 }
