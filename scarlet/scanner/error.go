@@ -3,31 +3,35 @@ package scanner
 import (
 	"fmt"
 
+	"github.com/PaulioRandall/scarlet-go/scarlet/position"
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 )
 
 type (
-	scanPosErr struct {
-		error
-		token.UTF8Pos
+
+	// Position represents a point within a text source.
+	Position interface {
+		Offset() int  // Byte offset from start of text
+		Line() int    // Current line index
+		Col() int     // Byte offset from start of the line
+		ColRune() int // Rune offset from start of the line
 	}
 
-	scanSnipErr struct {
-		error
-		token.Snippet
+	scanErr struct {
+		msg string
+		Position
 	}
 )
 
-func errPos(pos token.UTF8Pos, msg string, args ...interface{}) error {
-	return scanPosErr{
-		error:   fmt.Errorf(msg, args...),
-		UTF8Pos: pos,
-	}
+// scanErr implements the error interface.
+
+func (e scanErr) Error() string {
+	return e.msg
 }
 
-func errSnip(snip token.Snippet, msg string, args ...interface{}) error {
-	return scanSnipErr{
-		error:   fmt.Errorf(msg, args...),
-		Snippet: snip,
+func err(p token.UTF8Pos, msg string, args ...interface{}) scanErr {
+	return scanErr{
+		Position: position.Make(p.Offset, p.Line, p.ColByte, p.ColRune),
+		msg:      fmt.Sprintf(msg, args...),
 	}
 }

@@ -1,5 +1,25 @@
 package tree
 
+type Operator int
+
+const (
+	OP_UNDEFINED Operator = iota
+	OP_ADD                // +
+	OP_SUB                // -
+	OP_MUL                // *
+	OP_DIV                // /
+	OP_REM                // %
+	OP_AND                // &&
+	OP_OR                 // ||
+	OP_LT                 // <
+	OP_MT                 // >
+	OP_LTE                // <=
+	OP_MTE                // >=
+	OP_EQU                // ==
+	OP_NEQ                // !=
+	OP_EXIST              // ?
+)
+
 type (
 	// Position represents a point within a text source.
 	Position interface {
@@ -218,7 +238,7 @@ func (n UnaryExpr) expr()  {}
 func (n BinaryExpr) expr() {}
 func (n SpellCall) expr()  {}
 
-func (n SpellCall) multiExpr() {}
+func (n SpellCall) wideExpr() {}
 
 func (n BoolLit) literal() {}
 func (n NumLit) literal()  {}
