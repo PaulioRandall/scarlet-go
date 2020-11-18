@@ -4,25 +4,30 @@ type (
 
 	// Position represents a point within a file.
 	Position struct {
-		filepath string
-		offset   int // Byte offset from start of text
-		line     int // Current line index
-		col      int // Byte offset from start of the line
-		colRune  int // Rune offset from start of the line
+		path    string // Filepath to the source text file
+		offset  int    // Byte offset from start of text
+		line    int    // Current line index
+		byteCol int    // Byte offset from start of the line
+		runeCol int    // Rune offset from start of the line
 	}
 
 	// Range represents a snippet between two points within a text source.
 	Range struct {
 		Position
 		lineCount int // Line count
-		len       int // Byte length from column start
-		lenRune   int // Rune length from column start
+		byteLen   int // Byte length from column start
+		runeLen   int // Rune length from column start
 	}
 
-	// TextMarker represents a mutable Position within file text with
+	// TextMarker represents a mutable Position within a text file with
 	// functionality for advancing through it.
 	TextMarker Position
 )
+
+// Path returns the filepath to the file.
+func (p Position) Path() string {
+	return p.path
+}
 
 // Offset returns the byte offset within the file.
 func (p Position) Offset() int {
@@ -34,14 +39,14 @@ func (p Position) Line() int {
 	return p.line
 }
 
-// Col returns byte column index of the positions line within the file.
-func (p Position) Col() int {
-	return p.col
+// ByteCol returns byte column index of the positions line within the file.
+func (p Position) ByteCol() int {
+	return p.byteCol
 }
 
-// ColRune returns the rune column index of the positions line within the file.
-func (p Position) ColRune() int {
-	return p.colRune
+// RuneCol returns the rune column index of the positions line within the file.
+func (p Position) RuneCol() int {
+	return p.runeCol
 }
 
 // LineCount returns the number of lines the range spans.
@@ -49,14 +54,14 @@ func (r Range) LineCount() int {
 	return r.lineCount
 }
 
-// Len returns the byte length of the range.
-func (r Range) Len() int {
-	return r.len
+// ByteLen returns the byte length of the range.
+func (r Range) ByteLen() int {
+	return r.byteLen
 }
 
-// LenRune returns the rune length of the range.
-func (r Range) LenRune() int {
-	return r.lenRune
+// RuneLen returns the rune length of the range.
+func (r Range) RuneLen() int {
+	return r.runeLen
 }
 
 // Adv moves forward the number of bytes in 's'. For each linefeed '\n' in
@@ -66,11 +71,11 @@ func (tm *TextMarker) Adv(s string) {
 	for _, ru := range s {
 		if ru == '\n' {
 			tm.line++
-			tm.col = 0
-			tm.colRune = 0
+			tm.byteCol = 0
+			tm.runeCol = 0
 		} else {
-			tm.col += len(string(ru))
-			tm.colRune++
+			tm.byteCol += len(string(ru))
+			tm.runeCol++
 		}
 	}
 }
@@ -81,22 +86,22 @@ func (tm *TextMarker) Pos() Position {
 }
 
 // Pos returns a new initialised Position.
-func Pos(filepath string, offset, line, col, colRune int) Position {
+func Pos(path string, offset, line, byteCol, runeCol int) Position {
 	return Position{
-		filepath: filepath,
-		offset:   offset,
-		line:     line,
-		col:      col,
-		colRune:  colRune,
+		path:    path,
+		offset:  offset,
+		line:    line,
+		byteCol: byteCol,
+		runeCol: runeCol,
 	}
 }
 
 // Rng returns a new initialised Range.
-func Rng(start Position, lineCount, len, lenRune int) Range {
+func Rng(start Position, lineCount, byteLen, runeLen int) Range {
 	return Range{
 		Position:  start,
 		lineCount: lineCount,
-		len:       len,
-		lenRune:   lenRune,
+		byteLen:   byteLen,
+		runeLen:   runeLen,
 	}
 }

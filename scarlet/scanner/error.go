@@ -13,8 +13,8 @@ type (
 	Position interface {
 		Offset() int  // Byte offset from start of text
 		Line() int    // Current line index
-		Col() int     // Byte offset from start of the line
-		ColRune() int // Rune offset from start of the line
+		ByteCol() int // Byte offset from start of the line
+		RuneCol() int // Rune offset from start of the line
 	}
 
 	scanErr struct {
