@@ -3,6 +3,7 @@ package scanner
 import (
 	"fmt"
 
+	//"github.com/PaulioRandall/scarlet-go/scarlet/position"
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 )
 

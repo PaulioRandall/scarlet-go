@@ -15,8 +15,7 @@ type (
 	Range struct {
 		Position
 		lineCount int // Line count
-		byteLen   int // Byte length from column start
-		runeLen   int // Rune length from column start
+		byteLen   int // Byte length
 	}
 
 	// TextMarker represents a mutable Position within a text file with
@@ -59,11 +58,6 @@ func (r Range) ByteLen() int {
 	return r.byteLen
 }
 
-// RuneLen returns the rune length of the range.
-func (r Range) RuneLen() int {
-	return r.runeLen
-}
-
 // Adv moves forward the number of bytes in 's'. For each linefeed '\n' in
 // the string the line field is incremented and column values zeroed.
 func (tm *TextMarker) Adv(s string) {
@@ -77,6 +71,17 @@ func (tm *TextMarker) Adv(s string) {
 			tm.byteCol += len(string(ru))
 			tm.runeCol++
 		}
+	}
+}
+
+// Range returns a Range between the current position and the end of 's'.
+func (tm *TextMarker) Range(s string) Range {
+	start, end := *tm, *tm
+	end.Adv(s)
+	return Range{
+		Position:  Position(start),
+		lineCount: end.line - start.line + 1,
+		byteLen:   end.offset - start.offset,
 	}
 }
 
@@ -97,11 +102,10 @@ func Pos(path string, offset, line, byteCol, runeCol int) Position {
 }
 
 // Rng returns a new initialised Range.
-func Rng(start Position, lineCount, byteLen, runeLen int) Range {
+func Rng(start Position, lineCount, byteLen int) Range {
 	return Range{
 		Position:  start,
 		lineCount: lineCount,
 		byteLen:   byteLen,
-		runeLen:   runeLen,
 	}
 }
