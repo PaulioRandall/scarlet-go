@@ -26,13 +26,7 @@ func TestBadToken(t *testing.T) {
 
 func tok(s string, tk token.Token) token.Lexeme {
 	l := token.Make(s, tk, token.Snippet{})
-	lineCount := 1
-	if s == "\n" || s == "\r\n" {
-		lineCount++
-	}
-	l.Range = position.Rng(
-		position.Pos("", 0, 0, 0, 0), lineCount, len(s),
-	)
+	l.Range = position.Range{Rlen: len(s)}
 	return l
 }
 

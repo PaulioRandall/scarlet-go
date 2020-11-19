@@ -8,7 +8,7 @@ import (
 
 type scanErr struct {
 	msg string
-	position.Position
+	position.Range
 }
 
 // scanErr implements the error interface.
@@ -17,10 +17,9 @@ func (e scanErr) Error() string {
 	return e.msg
 }
 
-func err(p position.Position, msg string, args ...interface{}) scanErr {
+func err(rng position.Range, msg string, args ...interface{}) scanErr {
 	return scanErr{
-		// TODO: Filename
-		Position: p,
-		msg:      fmt.Sprintf(msg, args...),
+		Range: rng,
+		msg:   fmt.Sprintf(msg, args...),
 	}
 }
