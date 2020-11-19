@@ -31,8 +31,8 @@ func (r Range) Line() int {
 	return r.Rline
 }
 
-// ByteCol returns byte column index of the positions line within the file.
-func (r Range) ByteCol() int {
+// Col returns column index of the positions line within the file.
+func (r Range) Col() int {
 	return r.Rcol
 }
 
@@ -55,8 +55,8 @@ func (tm *TextMarker) Adv(s string) {
 	}
 }
 
-// Pos returns the current position of the TextMarker.
-func (tm *TextMarker) Pos() Range {
+// Range returns the current position of the TextMarker.
+func (tm *TextMarker) Range() Range {
 	return Range(*tm)
 }
 

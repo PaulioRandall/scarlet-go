@@ -15,7 +15,7 @@ import (
 // value.
 type Lexeme struct {
 	Token
-	Snippet
+	Snippet // @Retire
 	position.Range
 	Val string
 }

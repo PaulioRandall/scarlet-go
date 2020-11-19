@@ -4,8 +4,20 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/position"
-	//"github.com/PaulioRandall/scarlet-go/scarlet/token"
 )
+
+type scanErr struct {
+	msg string
+	rng position.Range
+}
+
+func (e scanErr) Error() string {
+	return e.msg
+}
+
+func (e scanErr) Range() position.Range {
+	return e.rng
+}
 
 type reader struct {
 	tm     position.TextMarker
@@ -74,4 +86,11 @@ func (r *reader) read(runeCount int) (position.Range, string) {
 	r.tm.Adv(v)
 
 	return rng, v
+}
+
+func (r *reader) err(runeLen int, msg string, args ...interface{}) error {
+	return scanErr{
+		msg: fmt.Sprintf(msg, args...),
+		rng: r.tm.RangeOf(r.slice(runeLen)),
+	}
 }

@@ -88,7 +88,7 @@ func identifyLexeme(r *reader, l *lex) error {
 	case r.starts("\r\n"):
 		l.size, l.tk = 2, token.NEWLINE
 	case r.at(0) == '\r':
-		return err(r.tm.RangeOf("\r"), "Missing LF after CR")
+		return r.err(1, "Missing LF after CR")
 
 	case unicode.IsSpace(r.at(0)):
 		l.size, l.tk = 1, token.SPACE
@@ -194,7 +194,7 @@ func identifyLexeme(r *reader, l *lex) error {
 		}
 
 	default:
-		return err(r.tm.RangeOf(""), "Unexpected symbol %q", r.at(0))
+		return r.err(1, "Unexpected symbol %q", r.at(0))
 	}
 
 	return nil
@@ -225,13 +225,11 @@ func spell(r *reader, l *lex) error {
 
 	parsePart := func() error {
 		if !r.inRange(l.size) {
-			// TODO: Snippet here, `colRune + l.size`
-			return err(r.tm.RangeOf(""), "Bad spell name, have EOF, want letter")
+			return r.err(l.size, "Bad spell name, have EOF, want letter")
 		}
 
 		if ru := r.at(l.size); !unicode.IsLetter(ru) {
-			// TODO: Snippet here, `colRune + l.size`
-			return err(r.tm.RangeOf(""), "Bad spell name, have %q, want letter", ru)
+			return r.err(l.size, "Bad spell name, have %q, want letter", ru)
 		}
 
 		l.size++
@@ -281,15 +279,13 @@ func stringLiteral(r *reader, l *lex) error {
 		}
 
 		if ru := r.at(l.size); ru == '\r' || ru == '\n' {
-			// TODO: Snippet here, `colRune + l.size`
-			return err(r.tm.RangeOf(""), "Unterminated string")
+			return r.err(l.size, "Unterminated string")
 		}
 		l.size++
 	}
 
 ERROR:
-	// TODO: Snippet here, `colRune + l.size`
-	return err(r.tm.RangeOf(""), "Unterminated string")
+	return r.err(l.size, "Unterminated string")
 }
 
 func numberLiteral(r *reader, l *lex) error {
@@ -305,13 +301,11 @@ func numberLiteral(r *reader, l *lex) error {
 	l.size++
 
 	if !r.inRange(l.size) {
-		// TODO: Snippet here, `colRune + l.size`
-		return err(r.tm.RangeOf(""), "Unexpected symbol, have EOF, want [0-9]")
+		return r.err(l.size, "Unexpected symbol, have EOF, want [0-9]")
 	}
 
 	if ru := r.at(l.size); !unicode.IsDigit(ru) {
-		// TODO: Snippet here, `colRune + l.size`
-		return err(r.tm.RangeOf(""), "Unexpected symbol, have %q want [0-9]", ru)
+		return r.err(l.size, "Unexpected symbol, have %q want [0-9]", ru)
 	}
 
 	for r.inRange(l.size) && unicode.IsDigit(r.at(l.size)) {
