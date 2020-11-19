@@ -3,12 +3,12 @@ package scanner
 import (
 	"fmt"
 
-	//"github.com/PaulioRandall/scarlet-go/scarlet/position"
-	"github.com/PaulioRandall/scarlet-go/scarlet/token"
+	"github.com/PaulioRandall/scarlet-go/scarlet/position"
+	//"github.com/PaulioRandall/scarlet-go/scarlet/token"
 )
 
 type reader struct {
-	token.TextMarker
+	tm     position.TextMarker
 	data   []rune
 	remain int // Runes remaining
 }
@@ -64,14 +64,14 @@ func (r *reader) slice(runeCount int) string {
 	return string(r.data[:runeCount])
 }
 
-func (r *reader) read(runeCount int) (token.Snippet, string) {
+func (r *reader) read(runeCount int) (position.Range, string) {
 
-	val := r.slice(runeCount)
-	snip := r.Snippet(val)
+	v := r.slice(runeCount)
+	rng := r.tm.RangeOf(v)
 
 	r.data = r.data[runeCount:]
 	r.remain = len(r.data)
-	r.Advance(val)
+	r.tm.Adv(v)
 
-	return snip, val
+	return rng, v
 }

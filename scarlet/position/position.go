@@ -74,8 +74,8 @@ func (tm *TextMarker) Adv(s string) {
 	}
 }
 
-// Range returns a Range between the current position and the end of 's'.
-func (tm *TextMarker) Range(s string) Range {
+// RangeOf returns a Range between the current position and the end of 's'.
+func (tm *TextMarker) RangeOf(s string) Range {
 	start, end := *tm, *tm
 	end.Adv(s)
 	return Range{
@@ -83,6 +83,13 @@ func (tm *TextMarker) Range(s string) Range {
 		lineCount: end.line - start.line + 1,
 		byteLen:   end.offset - start.offset,
 	}
+}
+
+// PosAfter returns the position after advancing 's'.
+func (tm *TextMarker) PosAfter(s string) Position {
+	p := *tm
+	p.Adv(s)
+	return Position(p)
 }
 
 // Pos returns the current Pos of the TextMarker.

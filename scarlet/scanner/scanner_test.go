@@ -3,6 +3,7 @@ package scanner
 import (
 	"testing"
 
+	"github.com/PaulioRandall/scarlet-go/scarlet/position"
 	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 
 	"github.com/stretchr/testify/require"
@@ -23,223 +24,231 @@ func TestBadToken(t *testing.T) {
 	doErrTest(t, "¬")
 }
 
+func tok(s string, tk token.Token) token.Lexeme {
+	l := token.Make(s, tk, token.Snippet{})
+	lineCount := 1
+	if s == "\n" || s == "\r\n" {
+		lineCount++
+	}
+	l.Range = position.Rng(
+		position.Pos("", 0, 0, 0, 0), lineCount, len(s),
+	)
+	return l
+}
+
 func TestNewline_1(t *testing.T) {
 	doTest(t, "\n", []token.Lexeme{
-		token.Make("\n", token.NEWLINE, token.Snippet{
-			End: token.UTF8Pos{Offset: 1, Line: 1},
-		}),
+		tok("\n", token.NEWLINE),
 	})
 }
 
 func TestNewline_2(t *testing.T) {
 	doTest(t, "\r\n", []token.Lexeme{
-		token.Make("\r\n", token.NEWLINE, token.Snippet{
-			End: token.UTF8Pos{Offset: 2, Line: 1},
-		}),
+		tok("\r\n", token.NEWLINE),
 	})
 }
 
 func TestSpace_1(t *testing.T) {
 	doTest(t, " ", []token.Lexeme{
-		token.MakeTok(" ", token.SPACE),
+		tok(" ", token.SPACE),
 	})
 }
 
 func TestSpace_2(t *testing.T) {
 	doTest(t, "\t\v\f ", []token.Lexeme{
-		token.MakeTok("\t\v\f ", token.SPACE),
+		tok("\t\v\f ", token.SPACE),
 	})
 }
 
 func TestComment_1(t *testing.T) {
 	doTest(t, "# :)", []token.Lexeme{
-		token.MakeTok("# :)", token.COMMENT),
+		tok("# :)", token.COMMENT),
 	})
 }
 
 func TestBool_1(t *testing.T) {
 	doTest(t, "true", []token.Lexeme{
-		token.MakeTok("true", token.TRUE),
+		tok("true", token.TRUE),
 	})
 }
 
 func TestBool_2(t *testing.T) {
 	doTest(t, "false", []token.Lexeme{
-		token.MakeTok("false", token.FALSE),
+		tok("false", token.FALSE),
 	})
 }
 
 func TestLoop_1(t *testing.T) {
 	doTest(t, "loop", []token.Lexeme{
-		token.MakeTok("loop", token.LOOP),
+		tok("loop", token.LOOP),
 	})
 }
 
 func TestWhen_1(t *testing.T) {
 	doTest(t, "when", []token.Lexeme{
-		token.MakeTok("when", token.WHEN),
+		tok("when", token.WHEN),
 	})
 }
 
 func TestIdent_1(t *testing.T) {
 	doTest(t, "abc", []token.Lexeme{
-		token.MakeTok("abc", token.IDENT),
+		tok("abc", token.IDENT),
 	})
 }
 
 func TestIdent_2(t *testing.T) {
 	doTest(t, "abc_xyz", []token.Lexeme{
-		token.MakeTok("abc_xyz", token.IDENT),
+		tok("abc_xyz", token.IDENT),
 	})
 }
 
 func TestTerminator_1(t *testing.T) {
 	doTest(t, ";", []token.Lexeme{
-		token.MakeTok(";", token.TERMINATOR),
+		tok(";", token.TERMINATOR),
 	})
 }
 
 func TestAssign_1(t *testing.T) {
 	doTest(t, "<-", []token.Lexeme{
-		token.MakeTok("<-", token.ASSIGN),
+		tok("<-", token.ASSIGN),
 	})
 }
 
 func TestDelim_1(t *testing.T) {
 	doTest(t, ",", []token.Lexeme{
-		token.MakeTok(",", token.DELIM),
+		tok(",", token.DELIM),
 	})
 }
 
 func TestLeftParen_1(t *testing.T) {
 	doTest(t, "(", []token.Lexeme{
-		token.MakeTok("(", token.L_PAREN),
+		tok("(", token.L_PAREN),
 	})
 }
 
 func TestRightParen_1(t *testing.T) {
 	doTest(t, ")", []token.Lexeme{
-		token.MakeTok(")", token.R_PAREN),
+		tok(")", token.R_PAREN),
 	})
 }
 
 func TestLeftSquare_1(t *testing.T) {
 	doTest(t, "[", []token.Lexeme{
-		token.MakeTok("[", token.L_SQUARE),
+		tok("[", token.L_SQUARE),
 	})
 }
 
 func TestRightSquare_1(t *testing.T) {
 	doTest(t, "]", []token.Lexeme{
-		token.MakeTok("]", token.R_SQUARE),
+		tok("]", token.R_SQUARE),
 	})
 }
 
 func TestLeftCurly_1(t *testing.T) {
 	doTest(t, "{", []token.Lexeme{
-		token.MakeTok("{", token.L_CURLY),
+		tok("{", token.L_CURLY),
 	})
 }
 
 func TestRightCurly_1(t *testing.T) {
 	doTest(t, "}", []token.Lexeme{
-		token.MakeTok("}", token.R_CURLY),
+		tok("}", token.R_CURLY),
 	})
 }
 
 func TestVoid_1(t *testing.T) {
 	doTest(t, "_", []token.Lexeme{
-		token.MakeTok("_", token.VOID),
+		tok("_", token.VOID),
 	})
 }
 
 func TestAdd_1(t *testing.T) {
 	doTest(t, "+", []token.Lexeme{
-		token.MakeTok("+", token.ADD),
+		tok("+", token.ADD),
 	})
 }
 
 func TestSub_1(t *testing.T) {
 	doTest(t, "-", []token.Lexeme{
-		token.MakeTok("-", token.SUB),
+		tok("-", token.SUB),
 	})
 }
 
 func TestMul_1(t *testing.T) {
 	doTest(t, "*", []token.Lexeme{
-		token.MakeTok("*", token.MUL),
+		tok("*", token.MUL),
 	})
 }
 
 func TestDiv_1(t *testing.T) {
 	doTest(t, "/", []token.Lexeme{
-		token.MakeTok("/", token.DIV),
+		tok("/", token.DIV),
 	})
 }
 
 func TestRem_1(t *testing.T) {
 	doTest(t, "%", []token.Lexeme{
-		token.MakeTok("%", token.REM),
+		tok("%", token.REM),
 	})
 }
 
 func TestAnd_1(t *testing.T) {
 	doTest(t, "&&", []token.Lexeme{
-		token.MakeTok("&&", token.AND),
+		tok("&&", token.AND),
 	})
 }
 
 func TestOr_1(t *testing.T) {
 	doTest(t, "||", []token.Lexeme{
-		token.MakeTok("||", token.OR),
+		tok("||", token.OR),
 	})
 }
 
 func TestLessEqual_1(t *testing.T) {
 	doTest(t, "<=", []token.Lexeme{
-		token.MakeTok("<=", token.LTE),
+		tok("<=", token.LTE),
 	})
 }
 
 func TestLess_1(t *testing.T) {
 	doTest(t, "<", []token.Lexeme{
-		token.MakeTok("<", token.LT),
+		tok("<", token.LT),
 	})
 }
 
 func TestMoreEqual_1(t *testing.T) {
 	doTest(t, ">=", []token.Lexeme{
-		token.MakeTok(">=", token.MTE),
+		tok(">=", token.MTE),
 	})
 }
 
 func TestMore_1(t *testing.T) {
 	doTest(t, ">", []token.Lexeme{
-		token.MakeTok(">", token.MT),
+		tok(">", token.MT),
 	})
 }
 
 func TestEqual_1(t *testing.T) {
 	doTest(t, "==", []token.Lexeme{
-		token.MakeTok("==", token.EQU),
+		tok("==", token.EQU),
 	})
 }
 
 func TestNotEqual_1(t *testing.T) {
 	doTest(t, "!=", []token.Lexeme{
-		token.MakeTok("!=", token.NEQ),
+		tok("!=", token.NEQ),
 	})
 }
 
 func TestSpell_1(t *testing.T) {
 	doTest(t, "@abc", []token.Lexeme{
-		token.MakeTok("@abc", token.SPELL),
+		tok("@abc", token.SPELL),
 	})
 }
 
 func TestSpell_2(t *testing.T) {
 	doTest(t, "@abc.efg", []token.Lexeme{
-		token.MakeTok("@abc.efg", token.SPELL),
+		tok("@abc.efg", token.SPELL),
 	})
 }
 
@@ -257,19 +266,19 @@ func TestSpell_5(t *testing.T) {
 
 func TestString_1(t *testing.T) {
 	doTest(t, `""`, []token.Lexeme{
-		token.MakeTok(`""`, token.STRING),
+		tok(`""`, token.STRING),
 	})
 }
 
 func TestString_2(t *testing.T) {
 	doTest(t, `"abc"`, []token.Lexeme{
-		token.MakeTok(`"abc"`, token.STRING),
+		tok(`"abc"`, token.STRING),
 	})
 }
 
 func TestString_3(t *testing.T) {
 	doTest(t, `"\""`, []token.Lexeme{
-		token.MakeTok(`"\""`, token.STRING),
+		tok(`"\""`, token.STRING),
 	})
 }
 
@@ -291,13 +300,13 @@ func TestString_7(t *testing.T) {
 
 func TestNumber_1(t *testing.T) {
 	doTest(t, "123", []token.Lexeme{
-		token.MakeTok("123", token.NUMBER),
+		tok("123", token.NUMBER),
 	})
 }
 
 func TestNumber_2(t *testing.T) {
 	doTest(t, "123.456", []token.Lexeme{
-		token.MakeTok("123.456", token.NUMBER),
+		tok("123.456", token.NUMBER),
 	})
 }
 
@@ -311,7 +320,7 @@ func TestNumber_4(t *testing.T) {
 
 func TestExist_1(t *testing.T) {
 	doTest(t, "?", []token.Lexeme{
-		token.MakeTok("?", token.EXIST),
+		tok("?", token.EXIST),
 	})
 }
 
@@ -320,11 +329,13 @@ func TestComprehensive_1(t *testing.T) {
 	in := `x <- 1 + 2
 @Println("x = ", x)`
 
-	tm := &token.TextMarker{}
+	tm := &position.TextMarker{}
 	genLex := func(v string, tk token.Token) token.Lexeme {
-		snip := tm.Snippet(v)
-		tm.Advance(v)
-		return token.Make(v, tk, snip)
+		rng := tm.RangeOf(v)
+		tm.Adv(v)
+		l := tok(v, tk)
+		l.Range = rng
+		return l
 	}
 
 	exp := []token.Lexeme{

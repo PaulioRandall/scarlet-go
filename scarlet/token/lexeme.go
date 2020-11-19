@@ -7,6 +7,8 @@ package token
 
 import (
 	"fmt"
+
+	"github.com/PaulioRandall/scarlet-go/scarlet/position"
 )
 
 // Lexeme represents a token from source code including its position and raw
@@ -14,6 +16,7 @@ import (
 type Lexeme struct {
 	Token
 	Snippet
+	position.Range
 	Val string
 }
 

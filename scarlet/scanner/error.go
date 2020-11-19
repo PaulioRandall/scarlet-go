@@ -4,24 +4,12 @@ import (
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/scarlet/position"
-	"github.com/PaulioRandall/scarlet-go/scarlet/token"
 )
 
-type (
-
-	// Position represents a point within a text source.
-	Position interface {
-		Offset() int  // Byte offset from start of text
-		Line() int    // Current line index
-		ByteCol() int // Byte offset from start of the line
-		RuneCol() int // Rune offset from start of the line
-	}
-
-	scanErr struct {
-		msg string
-		Position
-	}
-)
+type scanErr struct {
+	msg string
+	position.Position
+}
 
 // scanErr implements the error interface.
 
@@ -29,10 +17,10 @@ func (e scanErr) Error() string {
 	return e.msg
 }
 
-func err(p token.UTF8Pos, msg string, args ...interface{}) scanErr {
+func err(p position.Position, msg string, args ...interface{}) scanErr {
 	return scanErr{
 		// TODO: Filename
-		Position: position.Pos("", p.Offset, p.Line, p.ColByte, p.ColRune),
+		Position: p,
 		msg:      fmt.Sprintf(msg, args...),
 	}
 }
