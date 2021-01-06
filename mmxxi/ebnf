@@ -1,0 +1,53 @@
+
+PROGRAM = {STMT}
+
+BODY = "{" {STMT} "}" STMT_DELIM
+STMT = (ASSIGN | DEF | CALL | GUARD | MATCH) STMT_DELIM
+STMT_DELIM = ";"
+
+LOOP = "loop" (IDENT | CALL | LIST | MAP) "->" IDENT IDENT IDENT BODY
+LOOP = "loop" [ASSIGN] GUARD_COND BODY
+
+MATCH = "match" EXPR "{" STMT_DELIM {CASE} "}"
+CASE = (EXPR | GUARD_COND) ":" (STMT | BODY)
+
+GUARD = GUARD_COND (STMT | BODY)
+GUARD_COND = "[" EXPR "]"
+
+DEF = IDENT ":=" FUNC | EXPR_FUNC
+DEF = IDENT {"," IDENT} ":=" EXPR {"," EXPR}
+DEF = "type" IDENT ":=" TYPE_DEF
+TYPE_DEF = TYPE | FUNC_SIG | EXPR_FUNC_SIG
+
+ASSIGN = IDENT "<-" EXPR_FUNC
+ASSIGN = IDENT {"," IDENT} "<-" EXPR {"," EXPR}
+
+EXPR_FUNC = "E" "(" IDENT_PARAMS "->" TYPE ")" EXPR
+FUNC = "F" "(" IDENT_PARAMS ["->" IDENT_PARAMS] ")" BODY
+IDENT_PARAMS = [IDENT_PARAM {"," IDENT_PARAM}]
+IDENT_PARAM = IDENT TYPE
+
+EXPR_FUNC_SIG = "E" "(" SIG_PARAMS "->" TYPE ")"
+FUNC_SIG = "F" "(" SIG_PARAMS ["->" SIG_PARAMS] ")"
+SIG_PARAMS = [SIG_PARAM {"," SIG_PARAM}]
+SIG_PARAM = [IDENT] TYPE
+
+EXPR = EXPR INFIX_OPERATOR EXPR
+EXPR = EXPR "?"
+EXPR = ("!" | "-" | "¬") EXPR
+EXPR = "(" EXPR ")"
+EXPR = BOOL | NUMBER | STRING | IDENT | CALL | LIST | MAP
+
+MAP = "{" [EXPR ":" EXPR {"," EXPR ":" EXPR}] "}"
+LIST = "[" [EXPR {"," EXPR}] "]"
+CALL = ["@"] IDENT "(" {EXPR} ")"
+IDENT = "_" | (LETTER {LETTER | DIGIT | "_"})
+
+STRING = '"' *Any unicode char (needs refining)* '"'
+NUMBER = DIGIT {DIGIT} ["." DIGIT {DIGIT}]
+BOOL = "true" | "false"
+
+TYPE = "B" | "N" | "S" | IDENT
+INFIX_OPERATOR = "==" | "!=" | "<" | ">" | "<=" | ">=" | "+" | "-" | "*" | "/" | "%" | "||" | "&&"
+LETTER = *Any unicode char from categories 'Lu' or 'Ll' (needs expanding)*
+DIGIT = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"

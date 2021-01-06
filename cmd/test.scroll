@@ -7,6 +7,6 @@ list <- @NewList(
 	3,
 )
 
-[true] list <- @Add(list, 4) 
+[true] list <- @Add(list, 4)
 
 @Println(list)
