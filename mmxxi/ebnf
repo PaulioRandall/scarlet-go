@@ -16,8 +16,7 @@ GUARD_COND = "[" EXPR "]"
 
 DEF = IDENT ":=" FUNC | EXPR_FUNC
 DEF = IDENT {"," IDENT} ":=" EXPR {"," EXPR}
-DEF = "type" IDENT ":=" TYPE_DEF
-TYPE_DEF = TYPE | FUNC_SIG | EXPR_FUNC_SIG
+DEF = "type" IDENT ":=" TYPE
 
 ASSIGN = IDENT "<-" EXPR_FUNC
 ASSIGN = IDENT {"," IDENT} "<-" EXPR {"," EXPR}
@@ -47,7 +46,7 @@ STRING = '"' *Any unicode char (needs refining)* '"'
 NUMBER = DIGIT {DIGIT} ["." DIGIT {DIGIT}]
 BOOL = "true" | "false"
 
-TYPE = "B" | "N" | "S" | IDENT
+TYPE = "B" | "N" | "S" | IDENT | FUNC_SIG | EXPR_FUNC_SIG
 INFIX_OPERATOR = "==" | "!=" | "<" | ">" | "<=" | ">=" | "+" | "-" | "*" | "/" | "%" | "||" | "&&"
 LETTER = *Any unicode char from categories 'Lu' or 'Ll' (needs expanding)*
 DIGIT = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
