@@ -1,4 +1,4 @@
-package token
+package scroll
 
 import (
 	"fmt"
@@ -21,6 +21,7 @@ type (
 	Snippet struct {
 		Start Position
 		End   Position
+		Text  string
 	}
 
 	// TextMarker provides functionality for moving progressing through some text.
@@ -50,12 +51,32 @@ func (s Snippet) To() Position {
 
 // String returns a human readable string representation of the Snippet.
 func (s Snippet) String() string {
-	return fmt.Sprintf("%s -> %s", s.Start.String(), s.End.String())
+	return fmt.Sprintf("%s -> %s %q",
+		s.Text,
+		s.Start.String(),
+		s.End.String(),
+	)
 }
 
-// Advance moves forward the number of bytes in 's'. For each linefeed '\n' in
-// the string the line field is incremented and column values zeroed.
-func (tm *TextMarker) Advance(s string) {
+// Pos returns the current Position of the TextMarker.
+func (tm TextMarker) Pos() Position {
+	return Position(tm)
+}
+
+// EndOf returns a Position representing the end of 's' assuming 's' starts at
+// the TextMarker's current position. No advancing takes place.
+func (tm TextMarker) EndOf(s string) Position {
+	end := TextMarker(tm.Pos())
+	end.Advance(s)
+	return Position(end)
+}
+
+// Advance increments the number of bytes in 's'. For each linefeed '\n'
+// the line field is incremented and column values zeroed. A snippet
+// representing 's' is returned.
+func (tm *TextMarker) Advance(s string) Snippet {
+	start := tm.Pos()
+
 	tm.Offset += len(s)
 	for _, ru := range s {
 		if ru == '\n' {
@@ -67,29 +88,16 @@ func (tm *TextMarker) Advance(s string) {
 			tm.ColRune++
 		}
 	}
-}
 
-// Position returns a position representing the end of 's' in source code
-// assuming 's' starts at the TextMarker's current position.
-func (tm *TextMarker) Position(s string) Position {
-	p := TextMarker(tm.Snapshot())
-	p.Advance(s)
-	return Position(p)
-}
-
-// Snippet returns a Snippet representing 's' in source code assuming 's'
-// starts at the TextMarker's current position.
-func (tm *TextMarker) Snippet(s string) Snippet {
-	start := tm.Snapshot()
-	end := TextMarker(tm.Snapshot())
-	end.Advance(s)
 	return Snippet{
 		Start: start,
-		End:   Position(end),
+		End:   tm.Pos(),
+		Text:  s,
 	}
 }
 
-// Snapshot returns the current Position of the TextMarker.
-func (tm *TextMarker) Snapshot() Position {
-	return Position(*tm)
+// SliceSnippet returns the snippet of 's'.
+func (tm *TextMarker) SliceSnippet(s string) Snippet {
+	cp := TextMarker(tm.Pos())
+	return cp.Advance(s)
 }

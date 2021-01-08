@@ -1,4 +1,4 @@
-package token
+package scroll
 
 import (
 	"testing"
