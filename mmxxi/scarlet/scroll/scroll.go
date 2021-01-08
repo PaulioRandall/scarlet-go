@@ -7,12 +7,20 @@ import (
 	"strings"
 )
 
-// Scroll represents a Scarlet scroll or source file.
-type Scroll struct {
-	Name string // Name of the file without extension
-	Dir  string // Directory containing the file
-	Path string // Path to the file including name and extension
-}
+type (
+	// Scroll represents a Scarlet scroll or source file.
+	Scroll struct {
+		Name string // Name of the file without extension
+		Dir  string // Directory containing the file
+		Path string // Path to the file including name and extension
+	}
+
+	// ScrollReader represents a reader of Scarlet source.
+	ScrollReader struct {
+		data []rune
+		tm   *TextMarker
+	}
+)
 
 // Make returns a new scroll from a file path.
 func Make(path string) (s Scroll, e error) {
@@ -29,23 +37,17 @@ func Make(path string) (s Scroll, e error) {
 	return s, nil
 }
 
-// Reader returns a new scroll reader.
-func (s Scroll) Reader() ScrollReader {
-	return MakeReader(s.Path)
-}
-
-// ScrollReader represents a reader of Scarlet source.
-type ScrollReader struct {
-	data []rune
-	tm   *TextMarker
-}
-
 // Make returns an initialised scroll.
 func MakeReader(s string) ScrollReader {
 	return ScrollReader{
 		data: []rune(s),
 		tm:   &TextMarker{},
 	}
+}
+
+// Reader returns a new scroll reader.
+func (s Scroll) Reader() ScrollReader {
+	return MakeReader(s.Path)
 }
 
 // Loads a scroll from a file.
