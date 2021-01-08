@@ -22,13 +22,13 @@ const (
 	VOID  // _
 
 	// Literals
-	BOOL // true or false
+	BOOL // 'true' or 'false'
 	NUM  // 1
 	STR  // "string"
 
 	// Keywords
-	E_FUNC // expression function
-	FUNC   // function
+	E_FUNC // E
+	FUNC   // F
 	LOOP   // loop
 	MATCH  // match
 	TYPE   // type
@@ -51,14 +51,14 @@ const (
 	NEQ // !=
 	LT  // <
 	MT  // >
-	LEQ // <=
-	MEQ // >=
+	LTE // <=
+	MTE // >=
 
 	NOT // !
 	QUE // ?
 
 	// Delimiters
-	TERMINATOR // ;, '\n'
+	TERMINATOR // ';' or '\n'
 	SPELL      // @
 	DELIM      // ,
 	REF        // :
@@ -101,16 +101,16 @@ func IdentifyWord(s string) Token {
 
 // Precedence returns a number representing the priority of the Token in
 // comparison to other Tokens whereby a higher number signifies a greater
-// precedence.
+// precedence. Upon equal precedence, left always has priority.
 func (tk Token) Precedence() int {
 	switch tk {
-	case L_PAREN, R_PAREN:
+	case L_PAREN, R_PAREN, L_BRACK, R_BRACK, L_BRACE, R_BRACE:
 		return 7
 	case MUL, DIV, REM:
 		return 6
 	case ADD, SUB:
 		return 5
-	case LT, MT, LEQ, MEQ:
+	case LT, MT, LTE, MTE:
 		return 4
 	case EQU, NEQ:
 		return 3
@@ -145,18 +145,34 @@ func (tk Token) IsAssignee() bool {
 	return tk == IDENT || tk == VOID
 }
 
-// IsOperator returns true if the Token represents a arithmetic, logical, or
-// boolean operator. All operators have a precedence of 1 or greater.
-//
-// Note that parenthesis are not currently defined as operators unlike other
-// compilers might. This is just the way the compiler is built and may be
-// subject to change later.
-func (tk Token) IsOperator() bool {
-	return tk.IsInfixOperator() || tk == NOT || tk == QUE
+// IsOpener returns true if the Token represents an opening bracket of any sort.
+func (tk Token) IsOpener() bool {
+	return tk == L_PAREN || tk == L_BRACK || tk == L_BRACE
 }
 
-// IsInfixOperator returns true if the Token represents an infix operator.
-func (tk Token) IsInfixOperator() bool {
+// IsCloser returns true if the Token represents an closing bracket of any sort.
+func (tk Token) IsCloser() bool {
+	return tk == R_PAREN || tk == R_BRACK || tk == R_BRACE
+}
+
+// IsOperator returns true if the Token represents a arithmetic, logical, or
+// boolean operator. All operators have a precedence of 1 or greater.
+func (tk Token) IsOperator() bool {
+	return tk.IsInfix() || tk.IsPrefix() || tk.IsPostfix()
+}
+
+// IsPrefix returns true if the Token represents a prefix operator.
+func (tk Token) IsPrefix() bool {
+	return tk.IsOpener() || tk == NOT
+}
+
+// IsPostfix returns true if the Token represents a postfix operator.
+func (tk Token) IsPostfix() bool {
+	return tk.IsCloser() || tk == QUE
+}
+
+// IsInfix returns true if the Token represents an infix operator.
+func (tk Token) IsInfix() bool {
 	return tk == ADD ||
 		tk == SUB ||
 		tk == MUL ||
@@ -166,20 +182,10 @@ func (tk Token) IsInfixOperator() bool {
 		tk == NEQ ||
 		tk == LT ||
 		tk == MT ||
-		tk == LEQ ||
-		tk == MEQ ||
+		tk == LTE ||
+		tk == MTE ||
 		tk == AND ||
 		tk == OR
-}
-
-// IsOpener returns true if the Token represents an opening bracket of any sort.
-func (tk Token) IsOpener() bool {
-	return tk == L_PAREN || tk == L_BRACK || tk == L_BRACE
-}
-
-// IsCloser returns true if the Token represents an closing bracket of any sort.
-func (tk Token) IsCloser() bool {
-	return tk == R_PAREN || tk == R_BRACK || tk == R_BRACE
 }
 
 // String returns the human readable string representation of the Token.
@@ -256,10 +262,10 @@ func (tk Token) String() string {
 		return "LT"
 	case MT:
 		return "MT"
-	case LEQ:
-		return "LEQ"
-	case MEQ:
-		return "MEQ"
+	case LTE:
+		return "LTE"
+	case MTE:
+		return "MTE"
 
 	case NOT:
 		return "NOT"
