@@ -88,9 +88,11 @@ func identifyLexeme(sr *scroll.ScrollReader, l *lex) error {
 			l.size++
 		}
 
-	case sr.At(0) == '#':
+	case sr.Starts("#"):
 		l.size, l.tk = 1, token.COMMENT
-		for sr.InRange(l.size) && sr.At(l.size) != '\n' && !sr.Starts("\r\n") {
+		for sr.InRange(l.size) &&
+			!sr.Contains(l.size, "\n") &&
+			!sr.Contains(l.size, "\r\n") {
 			l.size++
 		}
 
@@ -106,7 +108,7 @@ func identifyLexeme(sr *scroll.ScrollReader, l *lex) error {
 		l.size, l.tk = 2, token.ASSIGN
 
 	case sr.Starts("->"):
-		l.size, l.tk = 2, token.INTO
+		l.size, l.tk = 2, token.OUTPUT
 
 	case sr.Starts("+"):
 		l.size, l.tk = 1, token.ADD

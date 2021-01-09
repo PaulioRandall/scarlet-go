@@ -9,10 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TODO: Test scanning multiple tokens in one string
-
-func TestSolo(t *testing.T) {
-	soloTests := map[string]token.Lexeme{
+func TestSoloTokens(t *testing.T) {
+	tests := map[string]token.Lexeme{
 		// Redundant
 		" ":         token.MakeLex2(token.SPACE, " "),
 		"   ":       token.MakeLex2(token.SPACE, "   "),
@@ -46,7 +44,7 @@ func TestSolo(t *testing.T) {
 		// Operators
 		":=": token.MakeLex2(token.DEFINE, ":="),
 		"<-": token.MakeLex2(token.ASSIGN, "<-"),
-		"->": token.MakeLex2(token.INTO, "->"),
+		"->": token.MakeLex2(token.OUTPUT, "->"),
 
 		"+": token.MakeLex2(token.ADD, "+"),
 		"-": token.MakeLex2(token.SUB, "-"),
@@ -81,7 +79,7 @@ func TestSolo(t *testing.T) {
 		"}": token.MakeLex2(token.R_BRACE, "}"),
 	}
 
-	for in, exp := range soloTests {
+	for in, exp := range tests {
 		sr := scroll.NewReader(in)
 		tks, e := ScanAll(sr)
 		require.Nil(t, e, "%q: Unexpected error: %+v", in, e)
@@ -90,8 +88,11 @@ func TestSolo(t *testing.T) {
 	}
 }
 
-func TestSoloNewlines(t *testing.T) {
-	for _, in := range []string{"\n", "\r\n"} {
+func TestSoloNewlinesTokens(t *testing.T) {
+
+	tests := []string{"\n", "\r\n"}
+
+	for _, in := range tests {
 		sr := scroll.NewReader(in)
 		tks, e := ScanAll(sr)
 
@@ -106,8 +107,8 @@ func TestSoloNewlines(t *testing.T) {
 	}
 }
 
-func TestBadSolo(t *testing.T) {
-	soloBadTests := []string{
+func TestBadSoloTokens(t *testing.T) {
+	tests := []string{
 		"\r",
 		".",
 		".123",
@@ -116,11 +117,72 @@ func TestBadSolo(t *testing.T) {
 		`"\"`,
 	}
 
-	for _, in := range soloBadTests {
+	for _, in := range tests {
 		sr := scroll.NewReader(in)
 		_, e := ScanAll(sr)
 		require.NotNil(t, e, "%q: Expected error", in)
 	}
 }
 
-// TODO: Test scanning multiple tokens in one string
+func TestMultipleTokens(t *testing.T) {
+
+	tm := &scroll.TextMarker{}
+	genExp := func(tk token.Token, v string) token.Lexeme {
+		return token.MakeLex(tk, tm.Advance(v))
+	}
+
+	in := "f := F(a N, b N -> c N) {\n" +
+		"\tc <- a + b # Comment\r\n" +
+		"}\n"
+
+	exps := []token.Lexeme{
+		genExp(token.IDENT, "f"),
+		genExp(token.SPACE, " "),
+		genExp(token.DEFINE, ":="),
+		genExp(token.SPACE, " "),
+		genExp(token.FUNC, "F"),
+		genExp(token.L_PAREN, "("),
+		genExp(token.IDENT, "a"),
+		genExp(token.SPACE, " "),
+		genExp(token.T_NUM, "N"),
+		genExp(token.DELIM, ","),
+		genExp(token.SPACE, " "),
+		genExp(token.IDENT, "b"),
+		genExp(token.SPACE, " "),
+		genExp(token.T_NUM, "N"),
+		genExp(token.SPACE, " "),
+		genExp(token.OUTPUT, "->"),
+		genExp(token.SPACE, " "),
+		genExp(token.IDENT, "c"),
+		genExp(token.SPACE, " "),
+		genExp(token.T_NUM, "N"),
+		genExp(token.R_PAREN, ")"),
+		genExp(token.SPACE, " "),
+		genExp(token.L_BRACE, "{"),
+		genExp(token.TERMINATOR, "\n"),
+		genExp(token.SPACE, "\t"),
+		genExp(token.IDENT, "c"),
+		genExp(token.SPACE, " "),
+		genExp(token.ASSIGN, "<-"),
+		genExp(token.SPACE, " "),
+		genExp(token.IDENT, "a"),
+		genExp(token.SPACE, " "),
+		genExp(token.ADD, "+"),
+		genExp(token.SPACE, " "),
+		genExp(token.IDENT, "b"),
+		genExp(token.SPACE, " "),
+		genExp(token.COMMENT, "# Comment"),
+		genExp(token.TERMINATOR, "\r\n"),
+		genExp(token.R_BRACE, "}"),
+		genExp(token.TERMINATOR, "\n"),
+	}
+
+	sr := scroll.NewReader(in)
+	tks, e := ScanAll(sr)
+
+	for i := range exps {
+		require.Nil(t, e, "Unexpected errors: %+v", e)
+		require.Equal(t, exps[i], tks[i])
+	}
+	require.Equal(t, len(exps), len(tks))
+}

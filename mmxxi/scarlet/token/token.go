@@ -34,7 +34,7 @@ const (
 	// Operators
 	DEFINE // :=
 	ASSIGN // <-
-	INTO   // ->
+	OUTPUT // ->
 
 	ADD // +
 	SUB // -, ¬
@@ -229,8 +229,8 @@ func (tk Token) String() string {
 		return "DEFINE"
 	case ASSIGN:
 		return "ASSIGN"
-	case INTO:
-		return "INTO"
+	case OUTPUT:
+		return "OUTPUT"
 
 	case ADD:
 		return "ADD"
