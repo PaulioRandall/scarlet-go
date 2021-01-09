@@ -37,6 +37,7 @@ func MakeLex2(tk Token, v string) Lexeme {
 			ColByte: sizeBytes,
 			ColRune: sizeRunes,
 		},
+		Text: v,
 	}
 
 	return MakeLex(tk, sn)

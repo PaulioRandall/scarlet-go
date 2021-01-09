@@ -22,7 +22,7 @@ type (
 )
 
 // New returns a ParseToken function.
-func New(sr scroll.ScrollReader) ParseToken {
+func New(sr *scroll.ScrollReader) ParseToken {
 	if sr.More() {
 		return scan(sr)
 	}
@@ -30,7 +30,7 @@ func New(sr scroll.ScrollReader) ParseToken {
 }
 
 // ScanAll scans all remaining lexemes as an ordered slice.
-func ScanAll(sr scroll.ScrollReader) ([]token.Lexeme, error) {
+func ScanAll(sr *scroll.ScrollReader) ([]token.Lexeme, error) {
 
 	var (
 		r  []token.Lexeme
@@ -49,7 +49,7 @@ func ScanAll(sr scroll.ScrollReader) ([]token.Lexeme, error) {
 	return r, nil
 }
 
-func scan(sr scroll.ScrollReader) ParseToken {
+func scan(sr *scroll.ScrollReader) ParseToken {
 	return func() (token.Lexeme, ParseToken, error) {
 
 		l := &lex{}
@@ -68,7 +68,7 @@ func scan(sr scroll.ScrollReader) ParseToken {
 	}
 }
 
-func identifyLexeme(sr scroll.ScrollReader, l *lex) error {
+func identifyLexeme(sr *scroll.ScrollReader, l *lex) error {
 
 	switch {
 	case sr.Starts(";") || sr.Starts("\n"):
@@ -95,11 +95,8 @@ func identifyLexeme(sr scroll.ScrollReader, l *lex) error {
 		}
 
 		// Keywords, identifiers, & bool literals
-	case unicode.IsLetter(sr.At(0)):
+	case unicode.IsLetter(sr.At(0)) || sr.At(0) == '_':
 		identifyWord(sr, l)
-
-	case sr.Starts("_"):
-		l.size, l.tk = 1, token.VOID
 
 		// Operators
 	case sr.Starts(":="):
@@ -163,8 +160,8 @@ func identifyLexeme(sr scroll.ScrollReader, l *lex) error {
 	case sr.Starts(","):
 		l.size, l.tk = 1, token.DELIM
 
-	case sr.Starts("?"):
-		l.size, l.tk = 1, token.QUE
+	case sr.Starts(":"):
+		l.size, l.tk = 1, token.REF
 
 	case sr.Starts("("):
 		l.size, l.tk = 1, token.L_PAREN
@@ -202,11 +199,15 @@ func identifyLexeme(sr scroll.ScrollReader, l *lex) error {
 	return nil
 }
 
-func identifyWord(sr scroll.ScrollReader, l *lex) {
+func identifyWord(sr *scroll.ScrollReader, l *lex) {
 
 	l.size = 1
 	for sr.InRange(l.size) {
-		if ru := sr.At(l.size); !unicode.IsLetter(ru) && ru != '_' {
+		ru := sr.At(l.size)
+
+		if !unicode.IsLetter(ru) &&
+			!unicode.IsDigit(ru) &&
+			ru != '_' {
 			break
 		}
 
@@ -216,7 +217,7 @@ func identifyWord(sr scroll.ScrollReader, l *lex) {
 	l.tk = token.IdentifyWord(sr.Slice(l.size))
 }
 
-func stringLiteral(sr scroll.ScrollReader, l *lex) error {
+func stringLiteral(sr *scroll.ScrollReader, l *lex) error {
 
 	l.size, l.tk = 1, token.STR
 	for {
@@ -246,7 +247,7 @@ ERROR:
 	return err(sr, "Unterminated string")
 }
 
-func numberLiteral(sr scroll.ScrollReader, l *lex) error {
+func numberLiteral(sr *scroll.ScrollReader, l *lex) error {
 
 	l.size, l.tk = 1, token.NUM
 	for sr.InRange(l.size) && unicode.IsDigit(sr.At(l.size)) {
@@ -273,7 +274,7 @@ func numberLiteral(sr scroll.ScrollReader, l *lex) error {
 	return nil
 }
 
-func err(sr scroll.ScrollReader, m string, args ...interface{}) error {
+func err(sr *scroll.ScrollReader, m string, args ...interface{}) error {
 	m = fmt.Sprintf(m, args...)
 	m = fmt.Sprintf("Line %d: %s", sr.Line(), m)
 	return errors.New(m)

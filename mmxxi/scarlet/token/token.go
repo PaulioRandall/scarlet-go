@@ -9,16 +9,12 @@ type Token int
 const (
 	UNDEFINED Token = iota
 
-	// Reference
-	EOF
-
 	// Redundant
 	SPACE   // whitespace
 	COMMENT // # comment
 
 	// Identifiers
 	IDENT // identifier
-	VOID  // _
 
 	// Literals
 	BOOL // 'true' or 'false'
@@ -26,6 +22,9 @@ const (
 	STR  // "string"
 
 	// Keywords
+	T_BOOL // B
+	T_NUM  // N
+	T_STR  // S
 	E_FUNC // E
 	FUNC   // F
 	LOOP   // loop
@@ -76,6 +75,12 @@ func IdentifyWord(s string) Token {
 	switch s {
 	case "true", "false":
 		return BOOL
+	case "B":
+		return T_BOOL
+	case "N":
+		return T_NUM
+	case "S":
+		return T_STR
 	case "E":
 		return E_FUNC
 	case "F":
@@ -84,12 +89,6 @@ func IdentifyWord(s string) Token {
 		return LOOP
 	case "match":
 		return MATCH
-	case "B":
-		return BOOL
-	case "N":
-		return NUM
-	case "S":
-		return STR
 	case "type":
 		return TYPE
 	}
@@ -137,12 +136,6 @@ func (tk Token) IsTerm() bool {
 	return tk == IDENT || tk.IsLiteral()
 }
 
-// IsAssignee returns true of the Token can be used as the target of an
-// assignment.
-func (tk Token) IsAssignee() bool {
-	return tk == IDENT || tk == VOID
-}
-
 // IsOpener returns true if the Token represents an opening bracket of any sort.
 func (tk Token) IsOpener() bool {
 	return tk == L_PAREN || tk == L_BRACK || tk == L_BRACE
@@ -186,15 +179,16 @@ func (tk Token) IsInfix() bool {
 		tk == OR
 }
 
+// IsType returns true if the Token represents a type.
+func (tk Token) IsType() bool {
+	return tk == T_BOOL || tk == T_NUM || tk == T_STR
+}
+
 // String returns the human readable string representation of the Token.
 func (tk Token) String() string {
 	switch tk {
 
-	// Reference
-	case EOF:
-		return "EOF"
-
-		// Redundant
+	// Redundant
 	case SPACE:
 		return "SPACE"
 	case COMMENT:
@@ -203,8 +197,6 @@ func (tk Token) String() string {
 		// Identifiers
 	case IDENT:
 		return "IDENT"
-	case VOID:
-		return "VOID"
 
 		// Literals
 	case BOOL:
@@ -215,6 +207,12 @@ func (tk Token) String() string {
 		return "STR"
 
 		// Keywords
+	case T_BOOL:
+		return "T_BOOL"
+	case T_NUM:
+		return "T_NUM"
+	case T_STR:
+		return "T_STR"
 	case E_FUNC:
 		return "E_FUNC"
 	case FUNC:

@@ -51,7 +51,7 @@ func (s Snippet) To() Position {
 
 // String returns a human readable string representation of the Snippet.
 func (s Snippet) String() string {
-	return fmt.Sprintf("%s -> %s %q",
+	return fmt.Sprintf("%q %s -> %s",
 		s.Text,
 		s.Start.String(),
 		s.End.String(),
