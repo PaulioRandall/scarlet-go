@@ -62,6 +62,17 @@ func Load(filename string) (ScrollReader, error) {
 	return MakeReader(s), nil
 }
 
+// Line returns the current line number.
+func (sr ScrollReader) Line() int {
+	return sr.tm.Line + 1
+}
+
+// Slice returns 'n' runes from the scroll as a string without advancing the
+// text marker.
+func (sr ScrollReader) Slice(n int) string {
+	return string(sr.data[:n])
+}
+
 // Read reads 'n' runes from the scroll as a snippet.
 func (sr ScrollReader) Read(n int) Snippet {
 	text := string(sr.data[:n])

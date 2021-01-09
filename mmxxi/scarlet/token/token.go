@@ -10,7 +10,6 @@ const (
 	UNDEFINED Token = iota
 
 	// Reference
-	SOF
 	EOF
 
 	// Redundant
@@ -34,8 +33,8 @@ const (
 	TYPE   // type
 
 	// Operators
-	ASSIGN // <-
 	DEFINE // :=
+	ASSIGN // <-
 	INTO   // ->
 
 	ADD // +
@@ -62,7 +61,6 @@ const (
 	SPELL      // @
 	DELIM      // ,
 	REF        // :
-	DOT        // .
 
 	L_PAREN // (
 	R_PAREN // )
@@ -193,8 +191,6 @@ func (tk Token) String() string {
 	switch tk {
 
 	// Reference
-	case SOF:
-		return "SOF"
 	case EOF:
 		return "EOF"
 
@@ -231,10 +227,10 @@ func (tk Token) String() string {
 		return "TYPE"
 
 		// Operators
-	case ASSIGN:
-		return "ASSIGN"
 	case DEFINE:
 		return "DEFINE"
+	case ASSIGN:
+		return "ASSIGN"
 	case INTO:
 		return "INTO"
 
@@ -281,8 +277,6 @@ func (tk Token) String() string {
 		return "DELIM"
 	case REF:
 		return "REF"
-	case DOT:
-		return "DOT"
 
 	case L_PAREN:
 		return "L_BRACE"

@@ -17,16 +17,16 @@ func (l Lexeme) Value() string {
 	return l.Snippet.Text
 }
 
-// Make returns a new Lexeme.
-func Make(tk Token, sn scroll.Snippet) Lexeme {
+// MakeLex returns a new Lexeme.
+func MakeLex(tk Token, sn scroll.Snippet) Lexeme {
 	return Lexeme{
 		Token:   tk,
 		Snippet: sn,
 	}
 }
 
-// Make2 returns a new Lexeme with a zero start position.
-func Make2(tk Token, v string) Lexeme {
+// MakeLex2 returns a new Lexeme with a zero start position.
+func MakeLex2(tk Token, v string) Lexeme {
 
 	sizeBytes := len(v)
 	sizeRunes := len([]rune(v))
@@ -39,7 +39,7 @@ func Make2(tk Token, v string) Lexeme {
 		},
 	}
 
-	return Make(tk, sn)
+	return MakeLex(tk, sn)
 }
 
 func (l Lexeme) String() string {
