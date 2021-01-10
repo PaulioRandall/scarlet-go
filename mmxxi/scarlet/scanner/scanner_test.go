@@ -109,6 +109,7 @@ func TestSoloNewlinesTokens(t *testing.T) {
 
 func TestBadSoloTokens(t *testing.T) {
 	tests := []string{
+		"£",
 		"\r",
 		".",
 		".123",

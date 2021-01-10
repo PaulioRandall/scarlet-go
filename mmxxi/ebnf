@@ -33,7 +33,7 @@ SIG_PARAM = [IDENT] TYPE
 
 EXPR = EXPR INFIX_OPERATOR EXPR
 EXPR = EXPR "?"
-EXPR = ("!" | "-" | "¬") EXPR
+EXPR = ("!" | "-") EXPR
 EXPR = "(" EXPR ")"
 EXPR = BOOL | NUMBER | STRING | IDENT | CALL | LIST | MAP
 
