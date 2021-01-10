@@ -26,8 +26,3 @@ func Make(path string) (s Scroll, e error) {
 
 	return s, nil
 }
-
-// Reader returns a new scroll reader.
-func (s Scroll) Reader() *ScrollReader {
-	return NewReader(s.Path)
-}

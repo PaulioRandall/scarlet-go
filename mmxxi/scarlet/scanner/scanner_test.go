@@ -80,7 +80,7 @@ func TestSoloTokens(t *testing.T) {
 	}
 
 	for in, exp := range tests {
-		sr := scroll.NewReader(in)
+		sr := NewScrollReader(in)
 		tks, e := ScanAll(sr)
 		require.Nil(t, e, "%q: Unexpected error: %+v", in, e)
 		require.Equal(t, 1, len(tks), "%q", in)
@@ -93,7 +93,7 @@ func TestSoloNewlinesTokens(t *testing.T) {
 	tests := []string{"\n", "\r\n"}
 
 	for _, in := range tests {
-		sr := scroll.NewReader(in)
+		sr := NewScrollReader(in)
 		tks, e := ScanAll(sr)
 
 		exp := token.MakeLex2(token.TERMINATOR, in)
@@ -119,7 +119,7 @@ func TestBadSoloTokens(t *testing.T) {
 	}
 
 	for _, in := range tests {
-		sr := scroll.NewReader(in)
+		sr := NewScrollReader(in)
 		_, e := ScanAll(sr)
 		require.NotNil(t, e, "%q: Expected error", in)
 	}
@@ -178,7 +178,7 @@ func TestMultipleTokens(t *testing.T) {
 		genExp(token.TERMINATOR, "\n"),
 	}
 
-	sr := scroll.NewReader(in)
+	sr := NewScrollReader(in)
 	tks, e := ScanAll(sr)
 
 	for i := range exps {
