@@ -25,50 +25,44 @@ type (
 
 // Concrete node types
 type (
-	node struct {
-		nt NodeType
-		sn scroll.Snippet
-	}
-
 	Ident struct {
-		node
-		lx token.Lexeme
+		Snip scroll.Snippet
+		Lex  token.Lexeme
 	}
 
 	Lit struct {
-		node
-		lx token.Lexeme
+		Snip scroll.Snippet
+		Lex  token.Lexeme
 	}
 
 	Define struct {
-		node
-		id Ident
-		ex Expr
+		Snip  scroll.Snippet
+		Ident Ident
+		Expr  Expr
 	}
 
 	Assign struct {
-		node
-		id Ident
-		ex Expr
+		Snip   scroll.Snippet
+		Idents []Ident
+		Exprs  []Expr
 	}
 )
 
-func (n node) NodeType() NodeType      { return n.nt }
-func (n node) Snippet() scroll.Snippet { return n.sn }
+func (n Ident) NodeType() NodeType  { return IDENT }
+func (n Lit) NodeType() NodeType    { return LITERAL }
+func (n Define) NodeType() NodeType { return DEFINE }
+func (n Assign) NodeType() NodeType { return ASSIGN }
+
+func (n Ident) Snippet() scroll.Snippet  { return n.Snip }
+func (n Lit) Snippet() scroll.Snippet    { return n.Snip }
+func (n Define) Snippet() scroll.Snippet { return n.Snip }
+func (n Assign) Snippet() scroll.Snippet { return n.Snip }
 
 func (n Ident) expr() {}
 func (n Lit) expr()   {}
 
 func (n Assign) stmt() {}
 func (n Define) stmt() {}
-
-func (n Ident) Lexeme() token.Lexeme { return n.lx }
-func (n Lit) Lexeme() token.Lexeme   { return n.lx }
-
-func (n Assign) Ident() Ident { return n.id }
-func (n Assign) Expr() Expr   { return n.ex }
-func (n Define) Ident() Ident { return n.id }
-func (n Define) Expr() Expr   { return n.ex }
 
 func _enforceTypes() {
 	var _ Expr = Ident{}

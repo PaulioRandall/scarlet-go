@@ -6,6 +6,7 @@ import (
 
 // LexIterator allows iteration over a lexeme slice.
 type LexIterator interface {
+	Line() int
 	Accept(tk token.Token) bool
 	Read() token.Lexeme
 	Peek() token.Lexeme
@@ -13,7 +14,7 @@ type LexIterator interface {
 	Index() int
 	At(i int) token.Lexeme
 	InRange(i int) bool
-	Match(tk token.Token)
+	Match(tk token.Token) bool
 	MatchPat(tks ...token.Token) bool
 	MatchAny(tks ...token.Token) bool
 }
@@ -30,6 +31,11 @@ func NewIterator(tks []token.Lexeme) *lxIterator {
 		tks:  tks,
 		size: len(tks),
 	}
+}
+
+// Line returns the current line number.
+func (itr *lxIterator) Line() int {
+	return itr.tks[itr.idx].Snippet.Start.Line + 1
 }
 
 // Accept returns the next lexeme before incrementing.
