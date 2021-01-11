@@ -95,6 +95,31 @@ func literal(itr LexIterator) (ast.Node, error) {
 	return nil, nil
 }
 
+// IDENT {"," IDENT}
+func identList(itr LexIterator) ([]ast.Ident, error) {
+
+	var ids []ast.Ident
+	readIdent := func() error {
+		if !itr.More() || !itr.Match(token.IDENT) {
+			return err(itr, "Expected IDENT")
+		}
+		id := ident(itr.Read())
+		ids = append(ids, id)
+		return nil
+	}
+
+	if e := readIdent(); e != nil {
+		return nil, e
+	}
+	for itr.Match(token.DELIM) {
+		if e := readIdent(); e != nil {
+			return nil, e
+		}
+	}
+
+	return ids, nil
+}
+
 // IDENT
 func ident(id token.Lexeme) ast.Ident {
 	return ast.Ident{
