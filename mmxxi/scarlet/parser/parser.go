@@ -1,16 +1,17 @@
 package parser
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/ast"
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/token"
 )
 
-type (
-	// ParseTree is a recursion based tokeniser. It returns an AST and another
-	// ParseTree function to obtain the following AST. On error or while
-	// obtaining the last AST, ParseTree will be nil.
-	ParseTree func() (ast.Tree, ParseTree, error)
-)
+// ParseTree is a recursion based tokeniser. It returns an AST and another
+// ParseTree function to obtain the following AST. On error or while
+// obtaining the last AST, ParseTree will be nil.
+type ParseTree func() (ast.Tree, ParseTree, error)
 
 // New returns a new ParseTree function.
 func New(itr LexIterator) ParseTree {
@@ -42,7 +43,7 @@ func ParseAll(itr LexIterator) ([]ast.Tree, error) {
 
 func nextFunc(itr LexIterator) ParseTree {
 	return func() (ast.Tree, ParseTree, error) {
-		t, e := parse(itr)
+		t, e := parseNext(itr)
 		if e != nil {
 			return ast.Tree{}, nil, e
 		}
@@ -50,27 +51,35 @@ func nextFunc(itr LexIterator) ParseTree {
 	}
 }
 
-func parse(itr LexIterator) (ast.Tree, error) {
-	var t ast.Tree
-
-	n, e := statement(itr)
+func parseNext(itr LexIterator) (ast.Tree, error) {
+	n, e := terminatedStatement(itr)
 	if e != nil {
-		return t, e
+		return ast.Tree{}, e
 	}
-
-	t = ast.Tree{Root: n}
-	return t, nil
+	return ast.Tree{Root: n}, nil
 }
 
-// STMT
-func statement(itr LexIterator) (n ast.Node, e error) {
+// TERMIN_STMT = STMT TERMINATOR
+func terminatedStatement(itr LexIterator) (n ast.Stmt, e error) {
+	s, e := statement(itr)
+	if e != nil {
+		return nil, e
+	}
+	if !itr.Accept(token.TERMINATOR) {
+		return nil, err(itr, "Expected TERMINATOR")
+	}
+	return s, nil
+}
+
+// STMT = DEFINE | ASSIGN
+func statement(itr LexIterator) (n ast.Stmt, e error) {
 	switch {
 	case itr.MatchPat(token.IDENT, token.DEFINE),
 		itr.MatchPat(token.IDENT, token.ASSIGN),
 		itr.MatchPat(token.IDENT, token.DELIM):
-		return defineOrAssign(itr)
+		return binder(itr)
 	default:
-		return nil, err(itr, "Unknown statement")
+		return nil, err(itr, "Unknown statement type")
 	}
 }
 
@@ -82,7 +91,7 @@ func identList(itr LexIterator) ([]ast.Ident, error) {
 		if !itr.More() || !itr.Match(token.IDENT) {
 			return err(itr, "Expected IDENT")
 		}
-		id := makeIdent(itr.Read())
+		id := ast.MakeIdent(itr.Read())
 		ids = append(ids, id)
 		return nil
 	}
@@ -99,11 +108,11 @@ func identList(itr LexIterator) ([]ast.Ident, error) {
 	return ids, nil
 }
 
-// DEFINE = IDENT_LIST ":=" EXPR {"," EXPR}
-// ASSIGN = IDENT_LIST "<-" EXPR {"," EXPR}
-func defineOrAssign(itr LexIterator) (ast.Assign, error) {
+// DEFINE = IDENT_LIST ":=" EXPR_LIST
+// ASSIGN = IDENT_LIST "<-" EXPR_LIST
+func binder(itr LexIterator) (ast.Binder, error) {
 
-	var zero ast.Assign
+	var zero ast.Binder
 
 	ids, e := identList(itr)
 	if e != nil {
@@ -120,18 +129,12 @@ func defineOrAssign(itr LexIterator) (ast.Assign, error) {
 		return zero, e
 	}
 
-	return makeAssign(ids, op, exprs), nil
+	// TODO: Validate the binder, i.e left and right must have the same len
+
+	return ast.MakeBinder(ids, op, exprs), nil
 }
 
-// ASSIGN = IDENT_LIST "<-" EXPR {"," EXPR}
-func assign(itr LexIterator, ids []ast.Ident) (ast.Assign, error) {
-	if !itr.Accept(token.ASSIGN) {
-		return ast.Assign{}, err(itr, "Expected ASSIGN")
-	}
-	return ast.Assign{}, nil
-}
-
-// EXPRS {"," EXPRS}
+// EXPR_LIST = EXPR {"," EXPR}
 func expressions(itr LexIterator) ([]ast.Expr, error) {
 
 	var (
@@ -155,15 +158,15 @@ func expressions(itr LexIterator) ([]ast.Expr, error) {
 	return r, nil
 }
 
-// EXPR = LITERAL | IDENT
+// EXPR = IDENT | LITERAL
 func expression(itr LexIterator) (ast.Expr, error) {
 	switch {
 	case !itr.More():
 		return nil, err(itr, "Expected EXPR")
-	case itr.MatchAny(token.BOOL, token.NUM, token.STR):
-		return makeLit(itr.Read()), nil
 	case itr.Match(token.IDENT):
-		return makeIdent(itr.Read()), nil
+		return ast.MakeIdent(itr.Read()), nil
+	case itr.MatchAny(token.BOOL, token.NUM, token.STR):
+		return ast.MakeLiteral(itr.Read()), nil
 	default:
 		return nil, err(itr, "Expected EXPR")
 	}
@@ -172,7 +175,19 @@ func expression(itr LexIterator) (ast.Expr, error) {
 // LITERAL = BOOL | NUMBER | STRING
 func literal(itr LexIterator) (ast.Node, error) {
 	if itr.MatchAny(token.BOOL, token.NUM, token.STR) {
-		return makeLit(itr.Read()), nil
+		return ast.MakeLiteral(itr.Read()), nil
 	}
 	return nil, err(itr, "Expected LITERAL")
+}
+
+func err(itr LexIterator, m string, args ...interface{}) error {
+	m = fmt.Sprintf(m, args...)
+	m = fmt.Sprintf("Line %d: %s", itr.Line(), m)
+	return errors.New(m)
+}
+
+func errNode(n ast.Node, m string, args ...interface{}) error {
+	m = fmt.Sprintf(m, args...)
+	m = fmt.Sprintf("Line %d: %s", n.Snippet().Start.Line, m)
+	return errors.New(m)
 }

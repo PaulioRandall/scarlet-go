@@ -8,8 +8,8 @@ import (
 // Abstract node types
 type (
 	Node interface {
-		NodeType() NodeType
 		Snippet() scroll.Snippet
+		node()
 	}
 
 	Expr interface {
@@ -21,44 +21,86 @@ type (
 		Node
 		stmt()
 	}
+
+	Literal interface {
+		Expr
+		literal()
+	}
+
+	Binder interface {
+		Stmt
+		binder()
+	}
 )
 
 // Concrete node types
 type (
-	Ident struct {
+	Base struct {
 		Snip scroll.Snippet
-		Lex  token.Lexeme
 	}
 
-	Lit struct {
-		Snip scroll.Snippet
-		Lex  token.Lexeme
+	Ident struct {
+		Base
+		Lex token.Lexeme
+	}
+
+	BoolLit struct {
+		Base
+		Val bool
+	}
+
+	NumLit struct {
+		Base
+		Val float64
+	}
+
+	StrLit struct {
+		Base
+		Val string
+	}
+
+	BinderBase struct {
+		Base
+		Op    token.Lexeme
+		Left  []Ident
+		Right []Expr
+	}
+
+	Define struct {
+		BinderBase
 	}
 
 	Assign struct {
-		Snip   scroll.Snippet
-		Op     token.Lexeme
-		Idents []Ident
-		Exprs  []Expr
+		BinderBase
 	}
 )
 
-func (n Ident) NodeType() NodeType  { return IDENT }
-func (n Lit) NodeType() NodeType    { return LITERAL }
-func (n Assign) NodeType() NodeType { return ASSIGN }
+func (n Base) Snippet() scroll.Snippet { return n.Snip }
+func (n Base) node()                   {}
 
-func (n Ident) Snippet() scroll.Snippet  { return n.Snip }
-func (n Lit) Snippet() scroll.Snippet    { return n.Snip }
-func (n Assign) Snippet() scroll.Snippet { return n.Snip }
+func (n Ident) expr()   {}
+func (n BoolLit) expr() {}
+func (n NumLit) expr()  {}
+func (n StrLit) expr()  {}
 
-func (n Ident) expr() {}
-func (n Lit) expr()   {}
-
+func (n Define) stmt() {}
 func (n Assign) stmt() {}
 
-func _enforceTypes() {
-	var _ Expr = Ident{}
-	var _ Expr = Lit{}
+func (n BoolLit) literal() {}
+func (n NumLit) literal()  {}
+func (n StrLit) literal()  {}
 
-	var _ Stmt = Assign{}
+func (n Define) binder() {}
+func (n Assign) binder() {}
+
+func _enforceTypes() {
+
+	var _ Expr = Ident{}
+
+	var _ Literal = BoolLit{}
+	var _ Literal = NumLit{}
+	var _ Literal = StrLit{}
+
+	var _ Binder = Define{}
+	var _ Binder = Assign{}
 }

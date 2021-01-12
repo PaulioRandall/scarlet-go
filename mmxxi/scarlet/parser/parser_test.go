@@ -15,10 +15,7 @@ func TestIdentList_1(t *testing.T) {
 		token.MakeLex2(token.IDENT, "a"),
 	}
 
-	exp := []ast.Ident{
-
-		ast.Ident{Snip: in[0].Snippet, Lex: in[0]},
-	}
+	exp := []ast.Ident{ast.MakeIdent(in[0])}
 
 	itr := NewIterator(in)
 	act, e := identList(itr)
@@ -29,6 +26,7 @@ func TestIdentList_1(t *testing.T) {
 
 func TestIdentList_2(t *testing.T) {
 
+	// a, b, c
 	in := []token.Lexeme{
 		token.MakeLex2(token.IDENT, "a"),
 		token.MakeLex2(token.DELIM, ","),
@@ -38,9 +36,9 @@ func TestIdentList_2(t *testing.T) {
 	}
 
 	exp := []ast.Ident{
-		ast.Ident{Snip: in[0].Snippet, Lex: in[0]},
-		ast.Ident{Snip: in[2].Snippet, Lex: in[2]},
-		ast.Ident{Snip: in[4].Snippet, Lex: in[4]},
+		ast.MakeIdent(in[0]),
+		ast.MakeIdent(in[2]),
+		ast.MakeIdent(in[4]),
 	}
 
 	itr := NewIterator(in)
@@ -73,4 +71,63 @@ func TestIdentList_4(t *testing.T) {
 	require.NotNil(t, e, "Expected error")
 }
 
-// TODO: Test define or assign
+func TestBinder_1(t *testing.T) {
+
+	// x <- 1
+	in := []token.Lexeme{
+		token.MakeLex2(token.IDENT, "x"),
+		token.MakeLex2(token.DEFINE, "<-"),
+		token.MakeLex2(token.NUM, "1"),
+	}
+
+	exp := ast.MakeBinder(
+		[]ast.Ident{ast.MakeIdent(in[0])},
+		in[1],
+		[]ast.Expr{ast.MakeLiteral(in[2])},
+	)
+
+	itr := NewIterator(in)
+	act, e := binder(itr)
+
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	require.Equal(t, exp, act)
+}
+
+func TestExpression_1(t *testing.T) {
+
+	in := []token.Lexeme{
+		token.MakeLex2(token.BOOL, "true"),
+	}
+
+	exp := ast.MakeLiteral(in[0])
+
+	itr := NewIterator(in)
+	act, e := expression(itr)
+
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	require.Equal(t, exp, act)
+}
+
+func TestParseNext_1(t *testing.T) {
+
+	// x <- 1
+	in := []token.Lexeme{
+		token.MakeLex2(token.IDENT, "x"),
+		token.MakeLex2(token.DEFINE, "<-"),
+		token.MakeLex2(token.NUM, "1"),
+		token.MakeLex2(token.TERMINATOR, "\n"),
+	}
+
+	var stmt ast.Stmt = ast.MakeBinder(
+		[]ast.Ident{ast.MakeIdent(in[0])},
+		in[1],
+		[]ast.Expr{ast.MakeLiteral(in[2])},
+	)
+	exp := ast.Tree{Root: stmt}
+
+	itr := NewIterator(in)
+	act, e := parseNext(itr)
+
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	require.Equal(t, exp, act)
+}
