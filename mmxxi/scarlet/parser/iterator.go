@@ -15,8 +15,8 @@ type LexIterator interface {
 	At(i int) token.Lexeme
 	InRange(i int) bool
 	Match(tk token.Token) bool
-	MatchPat(tks ...token.Token) bool
 	MatchAny(tks ...token.Token) bool
+	MatchPat(tks ...token.Token) bool
 }
 
 type lxIterator struct {
@@ -35,12 +35,19 @@ func NewIterator(tks []token.Lexeme) *lxIterator {
 
 // Line returns the current line number.
 func (itr *lxIterator) Line() int {
-	return itr.tks[itr.idx].Snippet.Start.Line + 1
+	switch {
+	case itr.More():
+		return itr.tks[itr.idx].Snippet.Start.Line + 1
+	case itr.idx != 0:
+		return itr.tks[itr.idx-1].Snippet.Start.Line + 1
+	default:
+		return 0
+	}
 }
 
 // Accept returns the next lexeme before incrementing.
 func (itr *lxIterator) Accept(tk token.Token) bool {
-	if itr.tks[itr.idx].Token == tk {
+	if itr.Match(tk) {
 		itr.idx++
 		return true
 	}
@@ -81,7 +88,20 @@ func (itr *lxIterator) InRange(i int) bool {
 
 // Match returns true if the next token starts with 'tk'.
 func (itr *lxIterator) Match(tk token.Token) bool {
-	return itr.tks[itr.idx].Token == tk
+	return itr.More() && itr.tks[itr.idx].Token == tk
+}
+
+// MatchAny returns true if the next token matches any in 'tks'.
+func (itr *lxIterator) MatchAny(tks ...token.Token) bool {
+
+	subject := itr.tks[itr.idx].Token
+	for _, tk := range tks {
+		if subject == tk {
+			return true
+		}
+	}
+
+	return false
 }
 
 // MatchPat returns true if the upcoming tokens starts with 'tks'.
@@ -100,17 +120,4 @@ func (itr *lxIterator) MatchPat(tks ...token.Token) bool {
 	}
 
 	return true
-}
-
-// MatchAny returns true if the next token matches any in 'tks'.
-func (itr *lxIterator) MatchAny(tks ...token.Token) bool {
-
-	subject := itr.tks[itr.idx].Token
-	for _, tk := range tks {
-		if subject == tk {
-			return true
-		}
-	}
-
-	return false
 }

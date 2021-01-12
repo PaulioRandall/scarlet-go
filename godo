@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Usage:
-#   ./godo help
-#   ./godo clean
-#   ./godo build
-#   ./godo test
-#   ./godo run
+# 	help       Show usage
+# 	clean      Remove build files
+# 	build      Build -> format -> vet
+# 	test       Build -> format -> test -> vet
+# 	run        Build -> format -> test -> vet -> run
 
 tabs -2
 clear

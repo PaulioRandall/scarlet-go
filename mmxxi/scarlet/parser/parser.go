@@ -1,9 +1,6 @@
 package parser
 
 import (
-	"errors"
-	"fmt"
-
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/ast"
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/token"
 )
@@ -103,7 +100,7 @@ func identList(itr LexIterator) ([]ast.Ident, error) {
 		if !itr.More() || !itr.Match(token.IDENT) {
 			return err(itr, "Expected IDENT")
 		}
-		id := ident(itr.Read())
+		id := makeIdent(itr.Read())
 		ids = append(ids, id)
 		return nil
 	}
@@ -111,25 +108,12 @@ func identList(itr LexIterator) ([]ast.Ident, error) {
 	if e := readIdent(); e != nil {
 		return nil, e
 	}
-	for itr.Match(token.DELIM) {
+
+	for itr.Accept(token.DELIM) {
 		if e := readIdent(); e != nil {
 			return nil, e
 		}
 	}
 
 	return ids, nil
-}
-
-// IDENT
-func ident(id token.Lexeme) ast.Ident {
-	return ast.Ident{
-		Snip: id.Snippet,
-		Lex:  id,
-	}
-}
-
-func err(itr LexIterator, m string, args ...interface{}) error {
-	m = fmt.Sprintf(m, args...)
-	m = fmt.Sprintf("Line %d: %s", itr.Line(), m)
-	return errors.New(m)
 }
