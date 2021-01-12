@@ -63,44 +63,18 @@ func parse(itr LexIterator) (ast.Tree, error) {
 }
 
 // STMT
-func statement(itr LexIterator) (ast.Node, error) {
+func statement(itr LexIterator) (n ast.Node, e error) {
 	switch {
-	case itr.Match(token.IDENT):
-		return stmtExpr(itr)
+	case itr.MatchPat(token.IDENT, token.DEFINE),
+		itr.MatchPat(token.IDENT, token.ASSIGN),
+		itr.MatchPat(token.IDENT, token.DELIM):
+		return defineOrAssign(itr)
 	default:
 		return nil, err(itr, "Unknown statement")
 	}
 }
 
-// DEFINE = IDENT {"," IDENT} ":=" EXPR {"," EXPR}
-// ASSIGN = IDENT {"," IDENT} "<-" EXPR {"," EXPR}
-// EXPR
-func stmtExpr(itr LexIterator) (ast.Node, error) {
-	// TODO
-	return nil, nil
-}
-
-// EXPR = LITERAL | IDENT
-func expr(itr LexIterator) (ast.Expr, error) {
-	switch {
-	case itr.MatchAny(token.BOOL, token.NUM, token.STR):
-		return makeLit(itr.Read()), nil
-	case itr.Match(token.IDENT):
-		return makeIdent(itr.Read()), nil
-	default:
-		return nil, err(itr, "Expected EXPR")
-	}
-}
-
-// LITERAL = BOOL | NUMBER | STRING
-func literal(itr LexIterator) (ast.Node, error) {
-	if itr.MatchAny(token.BOOL, token.NUM, token.STR) {
-		return makeLit(itr.Read()), nil
-	}
-	return nil, err(itr, "Expected LITERAL")
-}
-
-// IDENT {"," IDENT}
+// IDENT_LIST = IDENT {"," IDENT}
 func identList(itr LexIterator) ([]ast.Ident, error) {
 
 	var ids []ast.Ident
@@ -116,7 +90,6 @@ func identList(itr LexIterator) ([]ast.Ident, error) {
 	if e := readIdent(); e != nil {
 		return nil, e
 	}
-
 	for itr.Accept(token.DELIM) {
 		if e := readIdent(); e != nil {
 			return nil, e
@@ -124,4 +97,82 @@ func identList(itr LexIterator) ([]ast.Ident, error) {
 	}
 
 	return ids, nil
+}
+
+// DEFINE = IDENT_LIST ":=" EXPR {"," EXPR}
+// ASSIGN = IDENT_LIST "<-" EXPR {"," EXPR}
+func defineOrAssign(itr LexIterator) (ast.Assign, error) {
+
+	var zero ast.Assign
+
+	ids, e := identList(itr)
+	if e != nil {
+		return zero, e
+	}
+
+	if !itr.MatchAny(token.DEFINE, token.ASSIGN) {
+		return zero, err(itr, "Expected DEFINE or ASSIGN")
+	}
+
+	op := itr.Read()
+	exprs, e := expressions(itr)
+	if e != nil {
+		return zero, e
+	}
+
+	return makeAssign(ids, op, exprs), nil
+}
+
+// ASSIGN = IDENT_LIST "<-" EXPR {"," EXPR}
+func assign(itr LexIterator, ids []ast.Ident) (ast.Assign, error) {
+	if !itr.Accept(token.ASSIGN) {
+		return ast.Assign{}, err(itr, "Expected ASSIGN")
+	}
+	return ast.Assign{}, nil
+}
+
+// EXPRS {"," EXPRS}
+func expressions(itr LexIterator) ([]ast.Expr, error) {
+
+	var (
+		r  []ast.Expr
+		ex ast.Expr
+		e  error
+	)
+
+	if ex, e = expression(itr); e != nil {
+		return nil, e
+	}
+	r = append(r, ex)
+
+	for itr.Accept(token.DELIM) {
+		if ex, e = expression(itr); e != nil {
+			return nil, e
+		}
+		r = append(r, ex)
+	}
+
+	return r, nil
+}
+
+// EXPR = LITERAL | IDENT
+func expression(itr LexIterator) (ast.Expr, error) {
+	switch {
+	case !itr.More():
+		return nil, err(itr, "Expected EXPR")
+	case itr.MatchAny(token.BOOL, token.NUM, token.STR):
+		return makeLit(itr.Read()), nil
+	case itr.Match(token.IDENT):
+		return makeIdent(itr.Read()), nil
+	default:
+		return nil, err(itr, "Expected EXPR")
+	}
+}
+
+// LITERAL = BOOL | NUMBER | STRING
+func literal(itr LexIterator) (ast.Node, error) {
+	if itr.MatchAny(token.BOOL, token.NUM, token.STR) {
+		return makeLit(itr.Read()), nil
+	}
+	return nil, err(itr, "Expected LITERAL")
 }

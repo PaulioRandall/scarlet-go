@@ -72,3 +72,5 @@ func TestIdentList_4(t *testing.T) {
 
 	require.NotNil(t, e, "Expected error")
 }
+
+// TODO: Test define or assign
