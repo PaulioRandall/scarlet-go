@@ -20,3 +20,10 @@ func makeIdent(id token.Lexeme) ast.Ident {
 		Lex:  id,
 	}
 }
+
+func makeLit(lit token.Lexeme) ast.Lit {
+	return ast.Lit{
+		Snip: lit.Snippet,
+		Lex:  lit,
+	}
+}

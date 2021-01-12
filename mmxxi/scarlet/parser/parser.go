@@ -81,15 +81,23 @@ func stmtExpr(itr LexIterator) (ast.Node, error) {
 }
 
 // EXPR = LITERAL | IDENT
-func expr(itr LexIterator) (ast.Node, error) {
-	// TODO
-	return nil, nil
+func expr(itr LexIterator) (ast.Expr, error) {
+	switch {
+	case itr.MatchAny(token.BOOL, token.NUM, token.STR):
+		return makeLit(itr.Read()), nil
+	case itr.Match(token.IDENT):
+		return makeIdent(itr.Read()), nil
+	default:
+		return nil, err(itr, "Expected EXPR")
+	}
 }
 
 // LITERAL = BOOL | NUMBER | STRING
 func literal(itr LexIterator) (ast.Node, error) {
-	// TODO
-	return nil, nil
+	if itr.MatchAny(token.BOOL, token.NUM, token.STR) {
+		return makeLit(itr.Read()), nil
+	}
+	return nil, err(itr, "Expected LITERAL")
 }
 
 // IDENT {"," IDENT}
