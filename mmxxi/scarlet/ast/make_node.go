@@ -43,7 +43,7 @@ func MakeLiteral(lit token.Lexeme) Expr {
 	}
 }
 
-func MakeBinder(ids []Ident, op token.Lexeme, exprs []Expr) Binder {
+func MakeBinding(ids []Ident, op token.Lexeme, exprs []Expr) Binding {
 	base := Base{
 		Snip: scroll.Snippet{
 			Start: ids[0].Snippet().Start,
@@ -54,7 +54,7 @@ func MakeBinder(ids []Ident, op token.Lexeme, exprs []Expr) Binder {
 	switch op.Token {
 	case token.DEFINE:
 		return Define{
-			BinderBase: BinderBase{
+			BaseBinding: BaseBinding{
 				Base:  base,
 				Op:    op,
 				Left:  ids,
@@ -64,7 +64,7 @@ func MakeBinder(ids []Ident, op token.Lexeme, exprs []Expr) Binder {
 
 	case token.ASSIGN:
 		return Assign{
-			BinderBase: BinderBase{
+			BaseBinding: BaseBinding{
 				Base:  base,
 				Op:    op,
 				Left:  ids,

@@ -1,9 +1,6 @@
 package parser
 
 import (
-	"errors"
-	"fmt"
-
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/ast"
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/token"
 )
@@ -56,11 +53,16 @@ func nextFunc(itr LexIterator) ParseTree {
 }
 
 func parseNext(itr LexIterator) (ast.Tree, error) {
-	n, e := terminatedStatement(itr)
+	var zero ast.Tree
+
+	stmt, e := terminatedStatement(itr)
 	if e != nil {
-		return ast.Tree{}, e
+		return zero, e
 	}
-	return ast.Tree{Root: n}, nil
+	if e = validateStmt(stmt); e != nil {
+		return zero, e
+	}
+	return ast.Tree{Root: stmt}, nil
 }
 
 // TERMIN_STMT = STMT TERMINATOR
@@ -81,7 +83,7 @@ func statement(itr LexIterator) (n ast.Stmt, e error) {
 	case itr.MatchPat(token.IDENT, token.DEFINE),
 		itr.MatchPat(token.IDENT, token.ASSIGN),
 		itr.MatchPat(token.IDENT, token.DELIM):
-		return binder(itr)
+		return binding(itr)
 	default:
 		return nil, err(itr, "Unknown statement type")
 	}
@@ -114,9 +116,9 @@ func identList(itr LexIterator) ([]ast.Ident, error) {
 
 // DEFINE = IDENT_LIST ":=" EXPR_LIST
 // ASSIGN = IDENT_LIST "<-" EXPR_LIST
-func binder(itr LexIterator) (ast.Binder, error) {
+func binding(itr LexIterator) (ast.Binding, error) {
 
-	var zero ast.Binder
+	var zero ast.Binding
 
 	ids, e := identList(itr)
 	if e != nil {
@@ -133,9 +135,7 @@ func binder(itr LexIterator) (ast.Binder, error) {
 		return zero, e
 	}
 
-	// TODO: Validate the binder, i.e left and right must have the same len
-
-	return ast.MakeBinder(ids, op, exprs), nil
+	return ast.MakeBinding(ids, op, exprs), nil
 }
 
 // EXPR_LIST = EXPR {"," EXPR}
@@ -182,16 +182,4 @@ func literal(itr LexIterator) (ast.Node, error) {
 		return ast.MakeLiteral(itr.Read()), nil
 	}
 	return nil, err(itr, "Expected LITERAL")
-}
-
-func err(itr LexIterator, m string, args ...interface{}) error {
-	m = fmt.Sprintf(m, args...)
-	m = fmt.Sprintf("Line %d: %s", itr.Line(), m)
-	return errors.New(m)
-}
-
-func errNode(n ast.Node, m string, args ...interface{}) error {
-	m = fmt.Sprintf(m, args...)
-	m = fmt.Sprintf("Line %d: %s", n.Snippet().Start.Line, m)
-	return errors.New(m)
 }

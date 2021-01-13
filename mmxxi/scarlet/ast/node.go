@@ -27,9 +27,9 @@ type (
 		literal()
 	}
 
-	Binder interface {
+	Binding interface {
 		Stmt
-		binder()
+		Base() BaseBinding
 	}
 )
 
@@ -59,7 +59,7 @@ type (
 		Val string
 	}
 
-	BinderBase struct {
+	BaseBinding struct {
 		Base
 		Op    token.Lexeme
 		Left  []Ident
@@ -67,11 +67,11 @@ type (
 	}
 
 	Define struct {
-		BinderBase
+		BaseBinding
 	}
 
 	Assign struct {
-		BinderBase
+		BaseBinding
 	}
 )
 
@@ -90,8 +90,8 @@ func (n BoolLit) literal() {}
 func (n NumLit) literal()  {}
 func (n StrLit) literal()  {}
 
-func (n Define) binder() {}
-func (n Assign) binder() {}
+func (n Define) Base() BaseBinding { return n.BaseBinding }
+func (n Assign) Base() BaseBinding { return n.BaseBinding }
 
 func _enforceTypes() {
 
@@ -101,6 +101,6 @@ func _enforceTypes() {
 	var _ Literal = NumLit{}
 	var _ Literal = StrLit{}
 
-	var _ Binder = Define{}
-	var _ Binder = Assign{}
+	var _ Binding = Define{}
+	var _ Binding = Assign{}
 }

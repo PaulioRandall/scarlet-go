@@ -71,23 +71,61 @@ func TestIdentList_4(t *testing.T) {
 	require.NotNil(t, e, "Expected error")
 }
 
-func TestBinder_1(t *testing.T) {
+func TestBinding_1(t *testing.T) {
 
-	// x <- 1
+	// x := 1
 	in := []token.Lexeme{
 		token.MakeLex2(token.IDENT, "x"),
-		token.MakeLex2(token.DEFINE, "<-"),
+		token.MakeLex2(token.DEFINE, ":="),
 		token.MakeLex2(token.NUM, "1"),
 	}
 
-	exp := ast.MakeBinder(
+	exp := ast.MakeBinding(
 		[]ast.Ident{ast.MakeIdent(in[0])},
 		in[1],
 		[]ast.Expr{ast.MakeLiteral(in[2])},
 	)
 
 	itr := NewIterator(in)
-	act, e := binder(itr)
+	act, e := binding(itr)
+
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	require.Equal(t, exp, act)
+}
+
+func TestBinding_2(t *testing.T) {
+
+	// a, b, c <- 1, 2, 3
+	in := []token.Lexeme{
+		token.MakeLex2(token.IDENT, "a"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.IDENT, "b"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.IDENT, "c"),
+		token.MakeLex2(token.ASSIGN, "<-"),
+		token.MakeLex2(token.NUM, "1"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.NUM, "2"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.NUM, "3"),
+	}
+
+	exp := ast.MakeBinding(
+		[]ast.Ident{
+			ast.MakeIdent(in[0]),
+			ast.MakeIdent(in[2]),
+			ast.MakeIdent(in[4]),
+		},
+		in[5],
+		[]ast.Expr{
+			ast.MakeLiteral(in[6]),
+			ast.MakeLiteral(in[8]),
+			ast.MakeLiteral(in[10]),
+		},
+	)
+
+	itr := NewIterator(in)
+	act, e := binding(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
@@ -119,7 +157,7 @@ func TestParseNext_1(t *testing.T) {
 	}
 
 	exp := ast.Tree{
-		Root: ast.MakeBinder(
+		Root: ast.MakeBinding(
 			[]ast.Ident{ast.MakeIdent(in[0])},
 			in[1],
 			[]ast.Expr{ast.MakeLiteral(in[2])},
@@ -131,6 +169,24 @@ func TestParseNext_1(t *testing.T) {
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
+}
+
+func TestParseNext_Fail_1(t *testing.T) {
+
+	// x, y <- 1
+	in := []token.Lexeme{
+		token.MakeLex2(token.IDENT, "x"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.IDENT, "y"),
+		token.MakeLex2(token.ASSIGN, "<-"),
+		token.MakeLex2(token.NUM, "1"),
+		token.MakeLex2(token.TERMINATOR, "\n"),
+	}
+
+	itr := NewIterator(in)
+	_, e := parseNext(itr)
+
+	require.NotNil(t, e, "Expected error")
 }
 
 func TestParseAll_1(t *testing.T) {
@@ -158,14 +214,14 @@ func TestParseAll_1(t *testing.T) {
 
 	exp := []ast.Tree{
 		ast.Tree{
-			Root: ast.MakeBinder(
+			Root: ast.MakeBinding(
 				[]ast.Ident{ast.MakeIdent(in[0])},
 				in[1],
 				[]ast.Expr{ast.MakeLiteral(in[2])},
 			),
 		},
 		ast.Tree{
-			Root: ast.MakeBinder(
+			Root: ast.MakeBinding(
 				[]ast.Ident{
 					ast.MakeIdent(in[4]),
 					ast.MakeIdent(in[6]),
