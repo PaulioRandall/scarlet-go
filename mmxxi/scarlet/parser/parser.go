@@ -1,6 +1,9 @@
 package parser
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/ast"
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/token"
 )
@@ -53,27 +56,25 @@ func nextFunc(itr LexIterator) ParseTree {
 }
 
 func parseNext(itr LexIterator) (ast.Tree, error) {
-	var zero ast.Tree
-
 	stmt, e := terminatedStatement(itr)
 	if e != nil {
-		return zero, e
-	}
-	if e = validateStmt(stmt); e != nil {
-		return zero, e
+		return ast.Tree{}, e
 	}
 	return ast.Tree{Root: stmt}, nil
 }
 
 // TERMIN_STMT = STMT TERMINATOR
 func terminatedStatement(itr LexIterator) (n ast.Stmt, e error) {
+
 	s, e := statement(itr)
 	if e != nil {
 		return nil, e
 	}
+
 	if !itr.Accept(token.TERMINATOR) {
 		return nil, err(itr, "Expected TERMINATOR")
 	}
+
 	return s, nil
 }
 
@@ -84,6 +85,7 @@ func statement(itr LexIterator) (n ast.Stmt, e error) {
 		itr.MatchPat(token.IDENT, token.ASSIGN),
 		itr.MatchPat(token.IDENT, token.DELIM):
 		return binding(itr)
+
 	default:
 		return nil, err(itr, "Unknown statement type")
 	}
@@ -167,10 +169,13 @@ func expression(itr LexIterator) (ast.Expr, error) {
 	switch {
 	case !itr.More():
 		return nil, err(itr, "Expected EXPR")
+
 	case itr.Match(token.IDENT):
 		return ast.MakeIdent(itr.Read()), nil
+
 	case itr.MatchAny(token.BOOL, token.NUM, token.STR):
 		return ast.MakeLiteral(itr.Read()), nil
+
 	default:
 		return nil, err(itr, "Expected EXPR")
 	}
@@ -182,4 +187,16 @@ func literal(itr LexIterator) (ast.Node, error) {
 		return ast.MakeLiteral(itr.Read()), nil
 	}
 	return nil, err(itr, "Expected LITERAL")
+}
+
+func err(itr LexIterator, m string, args ...interface{}) error {
+	m = fmt.Sprintf(m, args...)
+	m = fmt.Sprintf("Line %d: %s", itr.Line(), m)
+	return errors.New(m)
+}
+
+func errNode(n ast.Node, m string, args ...interface{}) error {
+	m = fmt.Sprintf(m, args...)
+	m = fmt.Sprintf("Line %d: %s", n.Snippet().Start.Line, m)
+	return errors.New(m)
 }

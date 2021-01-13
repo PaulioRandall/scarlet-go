@@ -171,24 +171,6 @@ func TestParseNext_1(t *testing.T) {
 	require.Equal(t, exp, act)
 }
 
-func TestParseNext_Fail_1(t *testing.T) {
-
-	// x, y <- 1
-	in := []token.Lexeme{
-		token.MakeLex2(token.IDENT, "x"),
-		token.MakeLex2(token.DELIM, ","),
-		token.MakeLex2(token.IDENT, "y"),
-		token.MakeLex2(token.ASSIGN, "<-"),
-		token.MakeLex2(token.NUM, "1"),
-		token.MakeLex2(token.TERMINATOR, "\n"),
-	}
-
-	itr := NewIterator(in)
-	_, e := parseNext(itr)
-
-	require.NotNil(t, e, "Expected error")
-}
-
 func TestParseAll_1(t *testing.T) {
 
 	// pi := 3.14

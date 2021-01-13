@@ -1,18 +1,11 @@
-package parser
+package validator
 
 import (
 	"errors"
 	"fmt"
 
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/ast"
-	//"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/token"
 )
-
-func err(itr LexIterator, m string, args ...interface{}) error {
-	m = fmt.Sprintf(m, args...)
-	m = fmt.Sprintf("Line %d: %s", itr.Line(), m)
-	return errors.New(m)
-}
 
 func errNode(n ast.Node, m string, args ...interface{}) error {
 	m = fmt.Sprintf(m, args...)
@@ -23,11 +16,13 @@ func errNode(n ast.Node, m string, args ...interface{}) error {
 func validateStmt(stmt ast.Stmt) error {
 	switch v := stmt.(type) {
 	case nil:
-		panic("Nil statement no allowed")
+		panic("Nil statement not allowed")
+
 	case ast.Binding:
 		return validateBinding(v)
+
 	default:
-		return errNode(stmt, "Unknown statement type")
+		return errNode(v, "Unknown statement type")
 	}
 }
 
@@ -50,13 +45,27 @@ func validateBinding(b ast.Binding) error {
 	}
 
 	if leftLen > rightLen {
-		return errNode(b, "Invalid binding: too many items on left or too few on right")
+		return errNode(b,
+			"Invalid binding: too many items on left or too few on right")
 	}
 
 	if leftLen < rightLen {
 		return errNode(b,
-			"Invalid binding: too many items on right or too few on left")
+			"Invalid binding: too few items on left or too many on right")
 	}
 
 	return nil
+}
+
+func validateExpr(expr ast.Expr) error {
+	switch v := expr.(type) {
+	case nil:
+		panic("Nil expression not allowed")
+
+	case ast.Ident, ast.Literal:
+		return nil
+
+	default:
+		return errNode(v, "Unknown expression type")
+	}
 }

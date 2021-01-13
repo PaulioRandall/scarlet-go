@@ -15,17 +15,17 @@ func MakeIdent(id token.Lexeme) Ident {
 }
 
 func MakeLiteral(lit token.Lexeme) Expr {
-	switch lit.Token {
+	switch val := lit.Snippet.Text; lit.Token {
 	case token.BOOL:
 		return BoolLit{
 			Base: Base{Snip: lit.Snippet},
-			Val:  lit.Snippet.Text == "true",
+			Val:  val == "true",
 		}
 
 	case token.NUM:
-		n, e := strconv.ParseFloat(lit.Snippet.Text, 64)
+		n, e := strconv.ParseFloat(val, 64)
 		if e != nil {
-			panic("Illegal float format: '" + lit.Snippet.Text + "'")
+			panic("Illegal float format: '" + val + "'")
 		}
 		return NumLit{
 			Base: Base{Snip: lit.Snippet},
@@ -35,7 +35,7 @@ func MakeLiteral(lit token.Lexeme) Expr {
 	case token.STR:
 		return StrLit{
 			Base: Base{Snip: lit.Snippet},
-			Val:  lit.Snippet.Text,
+			Val:  val[1 : len(val)-1], // Remove double quotes
 		}
 
 	default:
