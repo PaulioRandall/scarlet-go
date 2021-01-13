@@ -42,6 +42,10 @@ func ParseAll(itr LexIterator) ([]ast.Tree, error) {
 }
 
 func nextFunc(itr LexIterator) ParseTree {
+	if !itr.More() {
+		return nil
+	}
+
 	return func() (ast.Tree, ParseTree, error) {
 		t, e := parseNext(itr)
 		if e != nil {

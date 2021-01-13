@@ -118,15 +118,71 @@ func TestParseNext_1(t *testing.T) {
 		token.MakeLex2(token.TERMINATOR, "\n"),
 	}
 
-	var stmt ast.Stmt = ast.MakeBinder(
-		[]ast.Ident{ast.MakeIdent(in[0])},
-		in[1],
-		[]ast.Expr{ast.MakeLiteral(in[2])},
-	)
-	exp := ast.Tree{Root: stmt}
+	exp := ast.Tree{
+		Root: ast.MakeBinder(
+			[]ast.Ident{ast.MakeIdent(in[0])},
+			in[1],
+			[]ast.Expr{ast.MakeLiteral(in[2])},
+		),
+	}
 
 	itr := NewIterator(in)
 	act, e := parseNext(itr)
+
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	require.Equal(t, exp, act)
+}
+
+func TestParseAll_1(t *testing.T) {
+
+	// pi := 3.14
+	// x, y, z <- true, 1, "Scarlet"
+	in := []token.Lexeme{
+		token.MakeLex2(token.IDENT, "pi"),
+		token.MakeLex2(token.DEFINE, ":="),
+		token.MakeLex2(token.NUM, "3.14"),
+		token.MakeLex2(token.TERMINATOR, "\n"), // 3
+		token.MakeLex2(token.IDENT, "x"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.IDENT, "y"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.IDENT, "z"),
+		token.MakeLex2(token.ASSIGN, "<-"), // 9
+		token.MakeLex2(token.BOOL, "true"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.NUM, "1"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.STR, `"Scarlet"`),
+		token.MakeLex2(token.TERMINATOR, "\n"), // 15
+	}
+
+	exp := []ast.Tree{
+		ast.Tree{
+			Root: ast.MakeBinder(
+				[]ast.Ident{ast.MakeIdent(in[0])},
+				in[1],
+				[]ast.Expr{ast.MakeLiteral(in[2])},
+			),
+		},
+		ast.Tree{
+			Root: ast.MakeBinder(
+				[]ast.Ident{
+					ast.MakeIdent(in[4]),
+					ast.MakeIdent(in[6]),
+					ast.MakeIdent(in[8]),
+				},
+				in[9],
+				[]ast.Expr{
+					ast.MakeLiteral(in[10]),
+					ast.MakeLiteral(in[12]),
+					ast.MakeLiteral(in[14]),
+				},
+			),
+		},
+	}
+
+	itr := NewIterator(in)
+	act, e := ParseAll(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
