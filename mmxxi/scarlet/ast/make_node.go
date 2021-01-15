@@ -9,8 +9,11 @@ import (
 
 func MakeIdent(id token.Lexeme) Ident {
 	return Ident{
-		Base: Base{Snip: id.Snippet},
-		Lex:  id,
+		BaseExpr: BaseExpr{
+			ValType: T_INFER,
+			Base:    Base{Snip: id.Snippet},
+		},
+		Lex: id,
 	}
 }
 
@@ -18,8 +21,11 @@ func MakeLiteral(lit token.Lexeme) Expr {
 	switch val := lit.Snippet.Text; lit.Token {
 	case token.BOOL:
 		return BoolLit{
-			Base: Base{Snip: lit.Snippet},
-			Val:  val == "true",
+			BaseExpr: BaseExpr{
+				ValType: T_BOOL,
+				Base:    Base{Snip: lit.Snippet},
+			},
+			Val: val == "true",
 		}
 
 	case token.NUM:
@@ -28,14 +34,20 @@ func MakeLiteral(lit token.Lexeme) Expr {
 			panic("Illegal float format: '" + val + "'")
 		}
 		return NumLit{
-			Base: Base{Snip: lit.Snippet},
-			Val:  n,
+			BaseExpr: BaseExpr{
+				ValType: T_NUM,
+				Base:    Base{Snip: lit.Snippet},
+			},
+			Val: n,
 		}
 
 	case token.STR:
 		return StrLit{
-			Base: Base{Snip: lit.Snippet},
-			Val:  val[1 : len(val)-1], // Remove double quotes
+			BaseExpr: BaseExpr{
+				ValType: T_STR,
+				Base:    Base{Snip: lit.Snippet},
+			},
+			Val: val[1 : len(val)-1], // Remove double quotes
 		}
 
 	default:

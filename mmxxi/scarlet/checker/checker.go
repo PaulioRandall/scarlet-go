@@ -1,4 +1,4 @@
-package validator
+package checker
 
 import (
 	"errors"
@@ -7,10 +7,15 @@ import (
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/ast"
 )
 
-func errNode(n ast.Node, m string, args ...interface{}) error {
-	m = fmt.Sprintf(m, args...)
-	m = fmt.Sprintf("Line %d: %s", n.Snippet().Start.Line, m)
-	return errors.New(m)
+// func validateRoutine(ctx Context, trees []ast.Tree) error
+
+func validateNode(n ast.Node) error {
+	switch v := n.(type) {
+	case ast.Stmt:
+		return validateStmt(v)
+	default:
+		return nil
+	}
 }
 
 func validateStmt(stmt ast.Stmt) error {
@@ -68,4 +73,10 @@ func validateExpr(expr ast.Expr) error {
 	default:
 		return errNode(v, "Unknown expression type")
 	}
+}
+
+func errNode(n ast.Node, m string, args ...interface{}) error {
+	m = fmt.Sprintf(m, args...)
+	m = fmt.Sprintf("Line %d: %s", n.Snippet().Start.Line, m)
+	return errors.New(m)
 }

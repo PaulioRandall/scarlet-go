@@ -5,6 +5,21 @@ import (
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/token"
 )
 
+type ValType int
+
+const (
+	T_UNDEFINED ValType = iota
+	T_INFER             // Inferred
+	//T_USER // User defined
+	T_BOOL
+	T_NUM
+	T_STR
+	//T_LIST
+	//T_MAP
+	//T_EFUNC
+	//T_FUNC
+)
+
 // Abstract node types
 type (
 	Node interface {
@@ -14,6 +29,7 @@ type (
 
 	Expr interface {
 		Node
+		ValueType() ValType
 		expr()
 	}
 
@@ -39,23 +55,28 @@ type (
 		Snip scroll.Snippet
 	}
 
-	Ident struct {
+	BaseExpr struct {
 		Base
+		ValType ValType
+	}
+
+	Ident struct {
+		BaseExpr
 		Lex token.Lexeme
 	}
 
 	BoolLit struct {
-		Base
+		BaseExpr
 		Val bool
 	}
 
 	NumLit struct {
-		Base
+		BaseExpr
 		Val float64
 	}
 
 	StrLit struct {
-		Base
+		BaseExpr
 		Val string
 	}
 
@@ -78,10 +99,8 @@ type (
 func (n Base) Snippet() scroll.Snippet { return n.Snip }
 func (n Base) node()                   {}
 
-func (n Ident) expr()   {}
-func (n BoolLit) expr() {}
-func (n NumLit) expr()  {}
-func (n StrLit) expr()  {}
+func (n BaseExpr) ValueType() ValType { return n.ValType }
+func (n BaseExpr) expr()              {}
 
 func (n Define) stmt() {}
 func (n Assign) stmt() {}
