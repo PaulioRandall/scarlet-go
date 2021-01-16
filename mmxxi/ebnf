@@ -52,3 +52,26 @@ TYPE = "B" | "N" | "S" | IDENT | ROUTINE_SIG | FUNC_SIG
 INFIX_OPERATOR = "==" | "!=" | "<" | ">" | "<=" | ">=" | "+" | "-" | "*" | "/" | "%" | "||" | "&&"
 LETTER = *Any unicode char from categories 'Lu' or 'Ll' (needs expanding)*
 DIGIT = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+
+
+*** Considering ***
+
+// Overloaded func & e-func definitions (but not assignments) 
+check := E(n N -> B) n > 0
+check := E(b B -> B) b
+check := E(s S -> B) @Len(s) <= 8
+
+// Return statement using `<~` as the return symbol
+fac := E(n N -> r N) {
+	match n {
+		0: <~ 0
+		1: <~ 1
+		[true]: <~ n + fac(n-1)
+	}
+}
+
+div := F(a, b N -> N, S) {
+	[b == 0] <~ _, "Can't divide by zero"
+	<~ a/b, _
+}

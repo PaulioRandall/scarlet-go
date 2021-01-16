@@ -42,13 +42,13 @@ type (
 		node()
 	}
 
-	Typed interface {
+	TypedNode interface {
 		Node
 		ValueType() ValType
 	}
 
 	Expr interface {
-		Typed
+		TypedNode
 		expr()
 	}
 
