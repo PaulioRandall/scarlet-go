@@ -56,15 +56,15 @@ func nextFunc(itr LexIterator) ParseTree {
 }
 
 func parseNext(itr LexIterator) (ast.Tree, error) {
-	stmt, e := terminatedStatement(itr)
+	stmt, e := cappedStatement(itr)
 	if e != nil {
 		return ast.Tree{}, e
 	}
 	return ast.Tree{Root: stmt}, nil
 }
 
-// TERMIN_STMT = STMT TERMINATOR
-func terminatedStatement(itr LexIterator) (n ast.Stmt, e error) {
+// cappedStatement = statement TERMINATOR
+func cappedStatement(itr LexIterator) (ast.Stmt, error) {
 
 	s, e := statement(itr)
 	if e != nil {
@@ -78,8 +78,8 @@ func terminatedStatement(itr LexIterator) (n ast.Stmt, e error) {
 	return s, nil
 }
 
-// STMT = DEFINE | ASSIGN
-func statement(itr LexIterator) (n ast.Stmt, e error) {
+// statement = binding
+func statement(itr LexIterator) (ast.Stmt, error) {
 	switch {
 	case !itr.More():
 		return nil, err(itr, "Expected statement")
@@ -96,65 +96,12 @@ func statement(itr LexIterator) (n ast.Stmt, e error) {
 	}
 }
 
-// DEC_IDENT = IDENT [TYPE]
-func decIdent(itr LexIterator) (ast.Ident, error) {
-
-	zero := ast.Ident{}
-
-	if !itr.More() || !itr.Match(token.IDENT) {
-		return zero, err(itr, "Expected IDENT")
-	}
-	v := itr.Read()
-
-	t := ast.T_INFER
-	if itr.More() && itr.Peek().IsType() {
-		switch lx := itr.Read(); lx.Token {
-		case token.T_BOOL:
-			t = ast.T_BOOL
-		case token.T_NUM:
-			t = ast.T_NUM
-		case token.T_STR:
-			t = ast.T_STR
-		default:
-			return zero, errLex(lx, "Unknown type")
-		}
-	}
-
-	return ast.MakeIdent(v, t), nil
-}
-
-// IDENT_LIST = DEC_IDENT {"," DEC_IDENT}
-func identList(itr LexIterator) ([]ast.Ident, error) {
-
-	var ids []ast.Ident
-	readIdent := func() error {
-		id, e := decIdent(itr)
-		if e != nil {
-			return e
-		}
-		ids = append(ids, id)
-		return nil
-	}
-
-	if e := readIdent(); e != nil {
-		return nil, e
-	}
-	for itr.Accept(token.DELIM) {
-		if e := readIdent(); e != nil {
-			return nil, e
-		}
-	}
-
-	return ids, nil
-}
-
-// DEFINE = IDENT_LIST ":=" EXPR_LIST
-// ASSIGN = IDENT_LIST "<-" EXPR_LIST
+// binding = decIdentList (":=" | "<-") expressions
 func binding(itr LexIterator) (ast.Binding, error) {
 
 	var zero ast.Binding
 
-	ids, e := identList(itr)
+	ids, e := decIdentList(itr)
 	if e != nil {
 		return zero, e
 	}
@@ -172,7 +119,78 @@ func binding(itr LexIterator) (ast.Binding, error) {
 	return ast.MakeBinding(ids, op, exprs), nil
 }
 
-// EXPR_LIST = EXPR {"," EXPR}
+// decIdentList = typedIdentList {"," typedIdentList}
+func decIdentList(itr LexIterator) ([]ast.Ident, error) {
+
+	var ids []ast.Ident
+
+	for {
+		typIds, e := typedIdentList(itr)
+		if e != nil {
+			return nil, e
+		}
+
+		ids = append(ids, typIds...)
+
+		if !itr.Accept(token.DELIM) {
+			break
+		}
+	}
+
+	return ids, nil
+}
+
+// typedIdentList = IDENT {DELIM IDENT} [valType]
+func typedIdentList(itr LexIterator) ([]ast.Ident, error) {
+
+	var ids []ast.Ident
+
+	for {
+		if !itr.Match(token.IDENT) {
+			return nil, err(itr, "Expected IDENT")
+		}
+
+		lx := itr.Read()
+		id := ast.MakeIdent(lx, ast.T_UNDEFINED)
+		ids = append(ids, id)
+
+		if !itr.Accept(token.DELIM) {
+			break
+		}
+	}
+
+	t, e := valType(itr)
+	if e != nil {
+		return nil, e
+	}
+
+	for i, _ := range ids {
+		ids[i].ValType = t
+	}
+
+	return ids, nil
+}
+
+// valType = T_BOOL | T_NUM | T_STR
+func valType(itr LexIterator) (ast.ValType, error) {
+
+	if !itr.More() || !itr.Peek().IsType() {
+		return ast.T_INFER, nil
+	}
+
+	switch lx := itr.Read(); lx.Token {
+	case token.T_BOOL:
+		return ast.T_BOOL, nil
+	case token.T_NUM:
+		return ast.T_NUM, nil
+	case token.T_STR:
+		return ast.T_STR, nil
+	default:
+		return ast.T_UNDEFINED, errLex(lx, "Unknown type")
+	}
+}
+
+// expressions = expression {"," expression}
 func expressions(itr LexIterator) ([]ast.Expr, error) {
 
 	var (
@@ -196,7 +214,7 @@ func expressions(itr LexIterator) ([]ast.Expr, error) {
 	return r, nil
 }
 
-// EXPR = IDENT | LITERAL
+// expression = IDENT | literal
 func expression(itr LexIterator) (ast.Expr, error) {
 	switch {
 	case !itr.More():
@@ -213,7 +231,7 @@ func expression(itr LexIterator) (ast.Expr, error) {
 	}
 }
 
-// LITERAL = BOOL | NUMBER | STRING
+// literal = BOOL | NUMBER | STRING
 func literal(itr LexIterator) (ast.Node, error) {
 	if itr.MatchAny(token.BOOL, token.NUM, token.STR) {
 		return ast.MakeLiteral(itr.Read()), nil

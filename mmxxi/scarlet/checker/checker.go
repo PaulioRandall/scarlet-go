@@ -15,6 +15,8 @@ import (
 
 func validateNode(n ast.Node) error {
 	switch v := n.(type) {
+	case ast.Ident:
+		return validateIdent(v)
 	case ast.Stmt:
 		return validateStmt(v)
 	default:
@@ -22,8 +24,15 @@ func validateNode(n ast.Node) error {
 	}
 }
 
-func validateStmt(stmt ast.Stmt) error {
-	switch v := stmt.(type) {
+func validateIdent(n ast.Ident) error {
+	if n.ValType == ast.T_UNDEFINED {
+		return errNode(n, "Undefined variable type")
+	}
+	return nil
+}
+
+func validateStmt(n ast.Stmt) error {
+	switch v := n.(type) {
 	case nil:
 		panic("Nil statement not allowed")
 
@@ -35,43 +44,46 @@ func validateStmt(stmt ast.Stmt) error {
 	}
 }
 
-func validateBinding(b ast.Binding) error {
+func validateBinding(n ast.Binding) error {
 
-	left, right := b.Base().Left, b.Base().Right
+	left, right := n.Base().Left, n.Base().Right
 
 	if left == nil {
-		return errNode(b, "Invalid binding: left side is nil")
+		return errNode(n, "Invalid binding: left side is nil")
 	}
 
 	if right == nil {
-		return errNode(b, "Invalid binding: right side is nil")
+		return errNode(n, "Invalid binding: right side is nil")
 	}
 
 	leftLen, rightLen := len(left), len(right)
 
 	if leftLen == 0 {
-		return errNode(b, "Invalid binding: left side is empty")
+		return errNode(n, "Invalid binding: left side is empty")
 	}
 
 	if leftLen > rightLen {
-		return errNode(b,
+		return errNode(n,
 			"Invalid binding: too many items on left or too few on right")
 	}
 
 	if leftLen < rightLen {
-		return errNode(b,
+		return errNode(n,
 			"Invalid binding: too few items on left or too many on right")
 	}
 
 	return nil
 }
 
-func validateExpr(expr ast.Expr) error {
-	switch v := expr.(type) {
+func validateExpr(n ast.Expr) error {
+	switch v := n.(type) {
 	case nil:
 		panic("Nil expression not allowed")
 
-	case ast.Ident, ast.Literal:
+	case ast.Ident:
+		return validateIdent(v)
+
+	case ast.Literal:
 		return nil
 
 	default:

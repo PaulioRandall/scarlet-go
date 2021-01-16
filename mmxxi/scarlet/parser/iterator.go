@@ -15,6 +15,7 @@ type LexIterator interface {
 	At(i int) token.Lexeme
 	InRange(i int) bool
 	Match(tk token.Token) bool
+	MatchAt(i int, tk token.Token) bool
 	MatchAny(tks ...token.Token) bool
 	MatchPat(tks ...token.Token) bool
 }
@@ -88,7 +89,12 @@ func (itr *lxIterator) InRange(i int) bool {
 
 // Match returns true if the next token starts with 'tk'.
 func (itr *lxIterator) Match(tk token.Token) bool {
-	return itr.More() && itr.tks[itr.idx].Token == tk
+	return itr.MatchAt(itr.idx, tk)
+}
+
+// MatchAt returns true if the token at index 'i' starts with 'tk'.
+func (itr *lxIterator) MatchAt(i int, tk token.Token) bool {
+	return itr.InRange(i) && itr.tks[i].Token == tk
 }
 
 // MatchAny returns true if the next token matches any in 'tks'.

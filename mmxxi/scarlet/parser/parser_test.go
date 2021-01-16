@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestIdentList_1(t *testing.T) {
+func TestDecIdentList_1(t *testing.T) {
 
 	// a
 	in := []token.Lexeme{
@@ -19,13 +19,13 @@ func TestIdentList_1(t *testing.T) {
 	exp := []ast.Ident{ast.MakeIdent(in[0], ast.T_INFER)}
 
 	itr := NewIterator(in)
-	act, e := identList(itr)
+	act, e := decIdentList(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
 }
 
-func TestIdentList_2(t *testing.T) {
+func TestDecIdentList_2(t *testing.T) {
 
 	// a N
 	in := []token.Lexeme{
@@ -36,13 +36,13 @@ func TestIdentList_2(t *testing.T) {
 	exp := []ast.Ident{ast.MakeIdent(in[0], ast.T_NUM)}
 
 	itr := NewIterator(in)
-	act, e := identList(itr)
+	act, e := decIdentList(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
 }
 
-func TestIdentList_3(t *testing.T) {
+func TestDecIdentList_3(t *testing.T) {
 
 	// a, b, c
 	in := []token.Lexeme{
@@ -60,13 +60,13 @@ func TestIdentList_3(t *testing.T) {
 	}
 
 	itr := NewIterator(in)
-	act, e := identList(itr)
+	act, e := decIdentList(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
 }
 
-func TestIdentList_4(t *testing.T) {
+func TestDecIdentList_4(t *testing.T) {
 
 	// a B, b N, c S
 	in := []token.Lexeme{
@@ -87,15 +87,15 @@ func TestIdentList_4(t *testing.T) {
 	}
 
 	itr := NewIterator(in)
-	act, e := identList(itr)
+	act, e := decIdentList(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
 }
 
-func TestIdentList_5(t *testing.T) {
+func TestDecIdentList_5(t *testing.T) {
 
-	// a, b N, c
+	// a, b N, c S
 	in := []token.Lexeme{
 		token.MakeLex2(token.IDENT, "a"), // 0
 		token.MakeLex2(token.DELIM, ","),
@@ -103,32 +103,33 @@ func TestIdentList_5(t *testing.T) {
 		token.MakeLex2(token.T_NUM, "N"),
 		token.MakeLex2(token.DELIM, ","),
 		token.MakeLex2(token.IDENT, "c"), // 5
+		token.MakeLex2(token.T_STR, "S"),
 	}
 
 	exp := []ast.Ident{
-		ast.MakeIdent(in[0], ast.T_INFER),
+		ast.MakeIdent(in[0], ast.T_NUM),
 		ast.MakeIdent(in[2], ast.T_NUM),
-		ast.MakeIdent(in[5], ast.T_INFER),
+		ast.MakeIdent(in[5], ast.T_STR),
 	}
 
 	itr := NewIterator(in)
-	act, e := identList(itr)
+	act, e := decIdentList(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
 }
 
-func TestIdentList_6(t *testing.T) {
+func TestDecIdentList_6(t *testing.T) {
 
 	in := []token.Lexeme{}
 
 	itr := NewIterator(in)
-	_, e := identList(itr)
+	_, e := decIdentList(itr)
 
 	require.NotNil(t, e, "Expected error")
 }
 
-func TestIdentList_7(t *testing.T) {
+func TestDecIdentList_7(t *testing.T) {
 
 	in := []token.Lexeme{
 		token.MakeLex2(token.IDENT, "a"),
@@ -136,7 +137,7 @@ func TestIdentList_7(t *testing.T) {
 	}
 
 	itr := NewIterator(in)
-	_, e := identList(itr)
+	_, e := decIdentList(itr)
 
 	require.NotNil(t, e, "Expected error")
 }
@@ -261,7 +262,7 @@ func TestParseNext_1(t *testing.T) {
 func TestParseAll_1(t *testing.T) {
 
 	// pi N := 3.14
-	// x, y <- true, false
+	// x, y B <- true, false
 	in := []token.Lexeme{
 		token.MakeLex2(token.IDENT, "pi"), // 0
 		token.MakeLex2(token.T_NUM, "N"),
@@ -271,10 +272,11 @@ func TestParseAll_1(t *testing.T) {
 		token.MakeLex2(token.IDENT, "x"), // 5
 		token.MakeLex2(token.DELIM, ","),
 		token.MakeLex2(token.IDENT, "y"), // 7
+		token.MakeLex2(token.T_BOOL, "B"),
 		token.MakeLex2(token.ASSIGN, "<-"),
-		token.MakeLex2(token.BOOL, "true"), // 9
+		token.MakeLex2(token.BOOL, "true"), // 10
 		token.MakeLex2(token.DELIM, ","),
-		token.MakeLex2(token.BOOL, "false"), // 11
+		token.MakeLex2(token.BOOL, "false"), // 12
 		token.MakeLex2(token.TERMINATOR, "\n"),
 	}
 
@@ -289,13 +291,13 @@ func TestParseAll_1(t *testing.T) {
 		ast.Tree{
 			Root: ast.MakeBinding(
 				[]ast.Ident{
-					ast.MakeIdent(in[5], ast.T_INFER),
-					ast.MakeIdent(in[7], ast.T_INFER),
+					ast.MakeIdent(in[5], ast.T_BOOL),
+					ast.MakeIdent(in[7], ast.T_BOOL),
 				},
-				in[8],
+				in[9],
 				[]ast.Expr{
-					ast.MakeLiteral(in[9]),
-					ast.MakeLiteral(in[11]),
+					ast.MakeLiteral(in[10]),
+					ast.MakeLiteral(in[12]),
 				},
 			),
 		},

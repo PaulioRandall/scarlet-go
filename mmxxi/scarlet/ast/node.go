@@ -20,6 +20,21 @@ const (
 	//T_FUNC
 )
 
+func (vt ValType) String() string {
+	switch vt {
+	case T_INFER:
+		return "T_INFER"
+	case T_BOOL:
+		return "T_BOOL"
+	case T_NUM:
+		return "T_NUM"
+	case T_STR:
+		return "T_STR"
+	}
+
+	return "UNDEFINED"
+}
+
 // Abstract node types
 type (
 	Node interface {
