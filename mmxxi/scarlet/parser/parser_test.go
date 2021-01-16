@@ -11,11 +11,12 @@ import (
 
 func TestIdentList_1(t *testing.T) {
 
+	// a
 	in := []token.Lexeme{
 		token.MakeLex2(token.IDENT, "a"),
 	}
 
-	exp := []ast.Ident{ast.MakeIdent(in[0])}
+	exp := []ast.Ident{ast.MakeIdent(in[0], ast.T_INFER)}
 
 	itr := NewIterator(in)
 	act, e := identList(itr)
@@ -25,6 +26,23 @@ func TestIdentList_1(t *testing.T) {
 }
 
 func TestIdentList_2(t *testing.T) {
+
+	// a N
+	in := []token.Lexeme{
+		token.MakeLex2(token.IDENT, "a"),
+		token.MakeLex2(token.T_NUM, "N"),
+	}
+
+	exp := []ast.Ident{ast.MakeIdent(in[0], ast.T_NUM)}
+
+	itr := NewIterator(in)
+	act, e := identList(itr)
+
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	require.Equal(t, exp, act)
+}
+
+func TestIdentList_3(t *testing.T) {
 
 	// a, b, c
 	in := []token.Lexeme{
@@ -36,9 +54,9 @@ func TestIdentList_2(t *testing.T) {
 	}
 
 	exp := []ast.Ident{
-		ast.MakeIdent(in[0]),
-		ast.MakeIdent(in[2]),
-		ast.MakeIdent(in[4]),
+		ast.MakeIdent(in[0], ast.T_INFER),
+		ast.MakeIdent(in[2], ast.T_INFER),
+		ast.MakeIdent(in[4], ast.T_INFER),
 	}
 
 	itr := NewIterator(in)
@@ -48,7 +66,59 @@ func TestIdentList_2(t *testing.T) {
 	require.Equal(t, exp, act)
 }
 
-func TestIdentList_3(t *testing.T) {
+func TestIdentList_4(t *testing.T) {
+
+	// a B, b N, c S
+	in := []token.Lexeme{
+		token.MakeLex2(token.IDENT, "a"), // 0
+		token.MakeLex2(token.T_BOOL, "B"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.IDENT, "b"), // 3
+		token.MakeLex2(token.T_NUM, "N"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.IDENT, "c"), // 6
+		token.MakeLex2(token.T_STR, "S"),
+	}
+
+	exp := []ast.Ident{
+		ast.MakeIdent(in[0], ast.T_BOOL),
+		ast.MakeIdent(in[3], ast.T_NUM),
+		ast.MakeIdent(in[6], ast.T_STR),
+	}
+
+	itr := NewIterator(in)
+	act, e := identList(itr)
+
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	require.Equal(t, exp, act)
+}
+
+func TestIdentList_5(t *testing.T) {
+
+	// a, b N, c
+	in := []token.Lexeme{
+		token.MakeLex2(token.IDENT, "a"), // 0
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.IDENT, "b"), // 2
+		token.MakeLex2(token.T_NUM, "N"),
+		token.MakeLex2(token.DELIM, ","),
+		token.MakeLex2(token.IDENT, "c"), // 5
+	}
+
+	exp := []ast.Ident{
+		ast.MakeIdent(in[0], ast.T_INFER),
+		ast.MakeIdent(in[2], ast.T_NUM),
+		ast.MakeIdent(in[5], ast.T_INFER),
+	}
+
+	itr := NewIterator(in)
+	act, e := identList(itr)
+
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	require.Equal(t, exp, act)
+}
+
+func TestIdentList_6(t *testing.T) {
 
 	in := []token.Lexeme{}
 
@@ -58,7 +128,7 @@ func TestIdentList_3(t *testing.T) {
 	require.NotNil(t, e, "Expected error")
 }
 
-func TestIdentList_4(t *testing.T) {
+func TestIdentList_7(t *testing.T) {
 
 	in := []token.Lexeme{
 		token.MakeLex2(token.IDENT, "a"),
@@ -81,7 +151,7 @@ func TestBinding_1(t *testing.T) {
 	}
 
 	exp := ast.MakeBinding(
-		[]ast.Ident{ast.MakeIdent(in[0])},
+		[]ast.Ident{ast.MakeIdent(in[0], ast.T_INFER)},
 		in[1],
 		[]ast.Expr{ast.MakeLiteral(in[2])},
 	)
@@ -112,9 +182,9 @@ func TestBinding_2(t *testing.T) {
 
 	exp := ast.MakeBinding(
 		[]ast.Ident{
-			ast.MakeIdent(in[0]),
-			ast.MakeIdent(in[2]),
-			ast.MakeIdent(in[4]),
+			ast.MakeIdent(in[0], ast.T_INFER),
+			ast.MakeIdent(in[2], ast.T_INFER),
+			ast.MakeIdent(in[4], ast.T_INFER),
 		},
 		in[5],
 		[]ast.Expr{
@@ -133,11 +203,28 @@ func TestBinding_2(t *testing.T) {
 
 func TestExpression_1(t *testing.T) {
 
+	// true
 	in := []token.Lexeme{
 		token.MakeLex2(token.BOOL, "true"),
 	}
 
 	exp := ast.MakeLiteral(in[0])
+
+	itr := NewIterator(in)
+	act, e := expression(itr)
+
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	require.Equal(t, exp, act)
+}
+
+func TestExpression_2(t *testing.T) {
+
+	// abc
+	in := []token.Lexeme{
+		token.MakeLex2(token.IDENT, "abc"),
+	}
+
+	exp := ast.MakeIdent(in[0], ast.T_INFER)
 
 	itr := NewIterator(in)
 	act, e := expression(itr)
@@ -158,7 +245,7 @@ func TestParseNext_1(t *testing.T) {
 
 	exp := ast.Tree{
 		Root: ast.MakeBinding(
-			[]ast.Ident{ast.MakeIdent(in[0])},
+			[]ast.Ident{ast.MakeIdent(in[0], ast.T_INFER)},
 			in[1],
 			[]ast.Expr{ast.MakeLiteral(in[2])},
 		),
@@ -173,47 +260,42 @@ func TestParseNext_1(t *testing.T) {
 
 func TestParseAll_1(t *testing.T) {
 
-	// pi := 3.14
-	// x, y, z <- true, 1, "Scarlet"
+	// pi N := 3.14
+	// x, y <- true, false
 	in := []token.Lexeme{
-		token.MakeLex2(token.IDENT, "pi"),
+		token.MakeLex2(token.IDENT, "pi"), // 0
+		token.MakeLex2(token.T_NUM, "N"),
 		token.MakeLex2(token.DEFINE, ":="),
-		token.MakeLex2(token.NUM, "3.14"),
-		token.MakeLex2(token.TERMINATOR, "\n"), // 3
-		token.MakeLex2(token.IDENT, "x"),
+		token.MakeLex2(token.NUM, "3.14"), // 3
+		token.MakeLex2(token.TERMINATOR, "\n"),
+		token.MakeLex2(token.IDENT, "x"), // 5
 		token.MakeLex2(token.DELIM, ","),
-		token.MakeLex2(token.IDENT, "y"),
+		token.MakeLex2(token.IDENT, "y"), // 7
+		token.MakeLex2(token.ASSIGN, "<-"),
+		token.MakeLex2(token.BOOL, "true"), // 9
 		token.MakeLex2(token.DELIM, ","),
-		token.MakeLex2(token.IDENT, "z"),
-		token.MakeLex2(token.ASSIGN, "<-"), // 9
-		token.MakeLex2(token.BOOL, "true"),
-		token.MakeLex2(token.DELIM, ","),
-		token.MakeLex2(token.NUM, "1"),
-		token.MakeLex2(token.DELIM, ","),
-		token.MakeLex2(token.STR, `"Scarlet"`),
-		token.MakeLex2(token.TERMINATOR, "\n"), // 15
+		token.MakeLex2(token.BOOL, "false"), // 11
+		token.MakeLex2(token.TERMINATOR, "\n"),
 	}
 
 	exp := []ast.Tree{
 		ast.Tree{
 			Root: ast.MakeBinding(
-				[]ast.Ident{ast.MakeIdent(in[0])},
-				in[1],
-				[]ast.Expr{ast.MakeLiteral(in[2])},
+				[]ast.Ident{ast.MakeIdent(in[0], ast.T_NUM)},
+				in[2],
+				[]ast.Expr{ast.MakeLiteral(in[3])},
 			),
 		},
 		ast.Tree{
 			Root: ast.MakeBinding(
 				[]ast.Ident{
-					ast.MakeIdent(in[4]),
-					ast.MakeIdent(in[6]),
-					ast.MakeIdent(in[8]),
+					ast.MakeIdent(in[5], ast.T_INFER),
+					ast.MakeIdent(in[7], ast.T_INFER),
 				},
-				in[9],
+				in[8],
 				[]ast.Expr{
-					ast.MakeLiteral(in[10]),
-					ast.MakeLiteral(in[12]),
-					ast.MakeLiteral(in[14]),
+					ast.MakeLiteral(in[9]),
+					ast.MakeLiteral(in[11]),
 				},
 			),
 		},

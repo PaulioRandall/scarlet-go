@@ -81,6 +81,11 @@ func terminatedStatement(itr LexIterator) (n ast.Stmt, e error) {
 // STMT = DEFINE | ASSIGN
 func statement(itr LexIterator) (n ast.Stmt, e error) {
 	switch {
+	case !itr.More():
+		return nil, err(itr, "Expected statement")
+
+	case itr.Match(token.IDENT) && itr.InRange(1) && itr.At(1).IsType():
+		fallthrough
 	case itr.MatchPat(token.IDENT, token.DEFINE),
 		itr.MatchPat(token.IDENT, token.ASSIGN),
 		itr.MatchPat(token.IDENT, token.DELIM):
@@ -91,15 +96,42 @@ func statement(itr LexIterator) (n ast.Stmt, e error) {
 	}
 }
 
-// IDENT_LIST = IDENT {"," IDENT}
+// DEC_IDENT = IDENT [TYPE]
+func decIdent(itr LexIterator) (ast.Ident, error) {
+
+	zero := ast.Ident{}
+
+	if !itr.More() || !itr.Match(token.IDENT) {
+		return zero, err(itr, "Expected IDENT")
+	}
+	v := itr.Read()
+
+	t := ast.T_INFER
+	if itr.More() && itr.Peek().IsType() {
+		switch lx := itr.Read(); lx.Token {
+		case token.T_BOOL:
+			t = ast.T_BOOL
+		case token.T_NUM:
+			t = ast.T_NUM
+		case token.T_STR:
+			t = ast.T_STR
+		default:
+			return zero, errLex(lx, "Unknown type")
+		}
+	}
+
+	return ast.MakeIdent(v, t), nil
+}
+
+// IDENT_LIST = DEC_IDENT {"," DEC_IDENT}
 func identList(itr LexIterator) ([]ast.Ident, error) {
 
 	var ids []ast.Ident
 	readIdent := func() error {
-		if !itr.More() || !itr.Match(token.IDENT) {
-			return err(itr, "Expected IDENT")
+		id, e := decIdent(itr)
+		if e != nil {
+			return e
 		}
-		id := ast.MakeIdent(itr.Read())
 		ids = append(ids, id)
 		return nil
 	}
@@ -171,7 +203,7 @@ func expression(itr LexIterator) (ast.Expr, error) {
 		return nil, err(itr, "Expected EXPR")
 
 	case itr.Match(token.IDENT):
-		return ast.MakeIdent(itr.Read()), nil
+		return ast.MakeIdent(itr.Read(), ast.T_INFER), nil
 
 	case itr.MatchAny(token.BOOL, token.NUM, token.STR):
 		return ast.MakeLiteral(itr.Read()), nil
@@ -198,5 +230,11 @@ func err(itr LexIterator, m string, args ...interface{}) error {
 func errNode(n ast.Node, m string, args ...interface{}) error {
 	m = fmt.Sprintf(m, args...)
 	m = fmt.Sprintf("Line %d: %s", n.Snippet().Start.Line, m)
+	return errors.New(m)
+}
+
+func errLex(lx token.Lexeme, m string, args ...interface{}) error {
+	m = fmt.Sprintf(m, args...)
+	m = fmt.Sprintf("Line %d: %s", lx.Snippet.Start.Line, m)
 	return errors.New(m)
 }

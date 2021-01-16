@@ -5,10 +5,21 @@ import (
 )
 
 type context struct {
-	defs []ast.Ident
-	vars []ast.Ident
+	user    map[string]ast.ValType
+	globals map[string]ast.ValType
+	defs    map[string]ast.ValType
+	vars    map[string]ast.ValType
 }
 
-// TODO: For each routine, including main scroll:
-// TODO: first pass identifies all defined identifiers
-// TODO: second pass checks everything
+func (ctx context) get(id string) ast.ValType {
+	if t, ok := ctx.globals[id]; ok {
+		return t
+	}
+	if t, ok := ctx.defs[id]; ok {
+		return t
+	}
+	if t, ok := ctx.vars[id]; ok {
+		return t
+	}
+	return ast.T_UNDEFINED
+}

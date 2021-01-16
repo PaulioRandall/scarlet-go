@@ -11,30 +11,30 @@ import (
 
 var tks = []token.Lexeme{
 	token.MakeLex2(token.IDENT, "x"), // 0
+	token.MakeLex2(token.T_BOOL, "B"),
 	token.MakeLex2(token.DELIM, ","),
-	token.MakeLex2(token.IDENT, "y"), // 2
+	token.MakeLex2(token.IDENT, "y"), // 3
+	token.MakeLex2(token.T_NUM, "N"),
 	token.MakeLex2(token.DELIM, ","),
-	token.MakeLex2(token.IDENT, "z"), // 4
+	token.MakeLex2(token.IDENT, "z"), // 6
 	token.MakeLex2(token.ASSIGN, "<-"),
-	token.MakeLex2(token.BOOL, "true"), // 6
+	token.MakeLex2(token.BOOL, "true"), // 8
 	token.MakeLex2(token.DELIM, ","),
-	token.MakeLex2(token.NUM, "1"), // 8
+	token.MakeLex2(token.NUM, "1"), // 10
 	token.MakeLex2(token.DELIM, ","),
-	token.MakeLex2(token.NUM, `"Scarlet"`), // 10
-	token.MakeLex2(token.TERMINATOR, "\n"), // 11
+	token.MakeLex2(token.NUM, `"Scarlet"`), // 12
+	token.MakeLex2(token.TERMINATOR, "\n"),
 }
 
 func TestBinding_1(t *testing.T) {
 
-	// x, y <- 1, 2
+	// x B <- true
 	in := ast.MakeBinding(
 		[]ast.Ident{
-			ast.MakeIdent(tks[0]),
-			ast.MakeIdent(tks[2]),
+			ast.MakeIdent(tks[0], ast.T_BOOL),
 		},
-		tks[5],
+		tks[7],
 		[]ast.Expr{
-			ast.MakeLiteral(tks[6]),
 			ast.MakeLiteral(tks[8]),
 		},
 	)
@@ -46,15 +46,35 @@ func TestBinding_1(t *testing.T) {
 
 func TestBinding_2(t *testing.T) {
 
-	// x, y <- 1
+	// x B, y N <- true, 1
 	in := ast.MakeBinding(
 		[]ast.Ident{
-			ast.MakeIdent(tks[0]),
-			ast.MakeIdent(tks[2]),
+			ast.MakeIdent(tks[0], ast.T_BOOL),
+			ast.MakeIdent(tks[3], ast.T_NUM),
 		},
-		tks[5],
+		tks[7],
 		[]ast.Expr{
-			ast.MakeLiteral(tks[6]),
+			ast.MakeLiteral(tks[8]),
+			ast.MakeLiteral(tks[10]),
+		},
+	)
+
+	e := validateBinding(in)
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	//require.NotNil(t, e, "Expected error")
+}
+
+func TestBinding_3(t *testing.T) {
+
+	// x B, y N <- true
+	in := ast.MakeBinding(
+		[]ast.Ident{
+			ast.MakeIdent(tks[0], ast.T_BOOL),
+			ast.MakeIdent(tks[3], ast.T_NUM),
+		},
+		tks[7],
+		[]ast.Expr{
+			ast.MakeLiteral(tks[8]),
 		},
 	)
 

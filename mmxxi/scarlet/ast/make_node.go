@@ -7,10 +7,10 @@ import (
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/token"
 )
 
-func MakeIdent(id token.Lexeme) Ident {
+func MakeIdent(id token.Lexeme, t ValType) Ident {
 	return Ident{
 		BaseExpr: BaseExpr{
-			ValType: T_INFER,
+			ValType: t,
 			Base:    Base{Snip: id.Snippet},
 		},
 		Lex: id,

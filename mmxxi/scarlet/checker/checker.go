@@ -7,7 +7,11 @@ import (
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/ast"
 )
 
-// func validateRoutine(ctx Context, trees []ast.Tree) error
+// func validateRoutine(ctx Context, trees []ast.Tree) error {
+// 	TODO: For each routine, including main scroll:
+// 				1. identify all defined identifiers
+// 				2. check everything
+// }
 
 func validateNode(n ast.Node) error {
 	switch v := n.(type) {
