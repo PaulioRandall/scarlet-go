@@ -42,9 +42,13 @@ type (
 		node()
 	}
 
-	Expr interface {
+	Typed interface {
 		Node
 		ValueType() ValType
+	}
+
+	Expr interface {
+		Typed
 		expr()
 	}
 
@@ -120,8 +124,10 @@ type (
 func (n Base) Snippet() scroll.Snippet { return n.Snip }
 func (n Base) node()                   {}
 
+func (n Var) ValueType() ValType      { return n.ValType }
 func (n BaseExpr) ValueType() ValType { return n.ValType }
-func (n BaseExpr) expr()              {}
+
+func (n BaseExpr) expr() {}
 
 func (n Define) stmt() {}
 func (n Assign) stmt() {}

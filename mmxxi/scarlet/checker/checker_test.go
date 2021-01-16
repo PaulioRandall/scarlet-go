@@ -66,11 +66,51 @@ func TestBinding_2(t *testing.T) {
 
 func TestBinding_3(t *testing.T) {
 
+	// x, y <- true, 1
+	in := ast.MakeBinding(
+		[]ast.Var{
+			ast.MakeVar(tks[0], ast.T_NUM),
+			ast.MakeVar(tks[3], ast.T_NUM),
+		},
+		tks[7],
+		[]ast.Expr{
+			ast.MakeLiteral(tks[8]),
+			ast.MakeLiteral(tks[10]),
+		},
+	)
+
+	e := checkBinding(in)
+	//require.Nil(t, e, "Unexpected error: %+v", e)
+	require.NotNil(t, e, "Expected error")
+}
+
+func TestBinding_4(t *testing.T) {
+
+	// Missing expression
 	// x B, y N <- true
 	in := ast.MakeBinding(
 		[]ast.Var{
 			ast.MakeVar(tks[0], ast.T_BOOL),
 			ast.MakeVar(tks[3], ast.T_NUM),
+		},
+		tks[7],
+		[]ast.Expr{
+			ast.MakeLiteral(tks[8]),
+		},
+	)
+
+	e := checkBinding(in)
+	//require.Nil(t, e, "Unexpected error: %+v", e)
+	require.NotNil(t, e, "Expected error")
+}
+
+func TestBinding_5(t *testing.T) {
+
+	// Wrong type being assigned
+	// x B <- 1
+	in := ast.MakeBinding(
+		[]ast.Var{
+			ast.MakeVar(tks[0], ast.T_NUM),
 		},
 		tks[7],
 		[]ast.Expr{
