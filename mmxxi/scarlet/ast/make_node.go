@@ -7,6 +7,14 @@ import (
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/token"
 )
 
+func MakeVar(id token.Lexeme, t ValType) Var {
+	return Var{
+		Base:    Base{Snip: id.Snippet},
+		ValType: t,
+		Lex:     id,
+	}
+}
+
 func MakeIdent(id token.Lexeme, t ValType) Ident {
 	return Ident{
 		BaseExpr: BaseExpr{
@@ -55,34 +63,27 @@ func MakeLiteral(lit token.Lexeme) Expr {
 	}
 }
 
-func MakeBinding(ids []Ident, op token.Lexeme, exprs []Expr) Binding {
+func MakeBinding(vars []Var, op token.Lexeme, exprs []Expr) Binding {
 	base := Base{
 		Snip: scroll.Snippet{
-			Start: ids[0].Snippet().Start,
+			Start: vars[0].Snippet().Start,
 			End:   exprs[0].Snippet().End,
 		},
 	}
 
+	bb := BaseBinding{
+		Base:  base,
+		Op:    op,
+		Left:  vars,
+		Right: exprs,
+	}
+
 	switch op.Token {
 	case token.DEFINE:
-		return Define{
-			BaseBinding: BaseBinding{
-				Base:  base,
-				Op:    op,
-				Left:  ids,
-				Right: exprs,
-			},
-		}
+		return Define{BaseBinding: bb}
 
 	case token.ASSIGN:
-		return Assign{
-			BaseBinding: BaseBinding{
-				Base:  base,
-				Op:    op,
-				Left:  ids,
-				Right: exprs,
-			},
-		}
+		return Assign{BaseBinding: bb}
 
 	default:
 		panic("Non-binder passed to makeBinder")

@@ -9,23 +9,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDecIdentList_1(t *testing.T) {
+func TestVarList_1(t *testing.T) {
 
 	// a
 	in := []token.Lexeme{
 		token.MakeLex2(token.IDENT, "a"),
 	}
 
-	exp := []ast.Ident{ast.MakeIdent(in[0], ast.T_INFER)}
+	exp := []ast.Var{ast.MakeVar(in[0], ast.T_INFER)}
 
 	itr := NewIterator(in)
-	act, e := decIdentList(itr)
+	act, e := varList(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
 }
 
-func TestDecIdentList_2(t *testing.T) {
+func TestVarList_2(t *testing.T) {
 
 	// a N
 	in := []token.Lexeme{
@@ -33,16 +33,16 @@ func TestDecIdentList_2(t *testing.T) {
 		token.MakeLex2(token.T_NUM, "N"),
 	}
 
-	exp := []ast.Ident{ast.MakeIdent(in[0], ast.T_NUM)}
+	exp := []ast.Var{ast.MakeVar(in[0], ast.T_NUM)}
 
 	itr := NewIterator(in)
-	act, e := decIdentList(itr)
+	act, e := varList(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
 }
 
-func TestDecIdentList_3(t *testing.T) {
+func TestVarList_3(t *testing.T) {
 
 	// a, b, c
 	in := []token.Lexeme{
@@ -53,20 +53,20 @@ func TestDecIdentList_3(t *testing.T) {
 		token.MakeLex2(token.IDENT, "c"),
 	}
 
-	exp := []ast.Ident{
-		ast.MakeIdent(in[0], ast.T_INFER),
-		ast.MakeIdent(in[2], ast.T_INFER),
-		ast.MakeIdent(in[4], ast.T_INFER),
+	exp := []ast.Var{
+		ast.MakeVar(in[0], ast.T_INFER),
+		ast.MakeVar(in[2], ast.T_INFER),
+		ast.MakeVar(in[4], ast.T_INFER),
 	}
 
 	itr := NewIterator(in)
-	act, e := decIdentList(itr)
+	act, e := varList(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
 }
 
-func TestDecIdentList_4(t *testing.T) {
+func TestVarList_4(t *testing.T) {
 
 	// a B, b N, c S
 	in := []token.Lexeme{
@@ -80,20 +80,20 @@ func TestDecIdentList_4(t *testing.T) {
 		token.MakeLex2(token.T_STR, "S"),
 	}
 
-	exp := []ast.Ident{
-		ast.MakeIdent(in[0], ast.T_BOOL),
-		ast.MakeIdent(in[3], ast.T_NUM),
-		ast.MakeIdent(in[6], ast.T_STR),
+	exp := []ast.Var{
+		ast.MakeVar(in[0], ast.T_BOOL),
+		ast.MakeVar(in[3], ast.T_NUM),
+		ast.MakeVar(in[6], ast.T_STR),
 	}
 
 	itr := NewIterator(in)
-	act, e := decIdentList(itr)
+	act, e := varList(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
 }
 
-func TestDecIdentList_5(t *testing.T) {
+func TestVarList_5(t *testing.T) {
 
 	// a, b N, c S
 	in := []token.Lexeme{
@@ -106,30 +106,30 @@ func TestDecIdentList_5(t *testing.T) {
 		token.MakeLex2(token.T_STR, "S"),
 	}
 
-	exp := []ast.Ident{
-		ast.MakeIdent(in[0], ast.T_NUM),
-		ast.MakeIdent(in[2], ast.T_NUM),
-		ast.MakeIdent(in[5], ast.T_STR),
+	exp := []ast.Var{
+		ast.MakeVar(in[0], ast.T_NUM),
+		ast.MakeVar(in[2], ast.T_NUM),
+		ast.MakeVar(in[5], ast.T_STR),
 	}
 
 	itr := NewIterator(in)
-	act, e := decIdentList(itr)
+	act, e := varList(itr)
 
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	require.Equal(t, exp, act)
 }
 
-func TestDecIdentList_6(t *testing.T) {
+func TestVarList_6(t *testing.T) {
 
 	in := []token.Lexeme{}
 
 	itr := NewIterator(in)
-	_, e := decIdentList(itr)
+	_, e := varList(itr)
 
 	require.NotNil(t, e, "Expected error")
 }
 
-func TestDecIdentList_7(t *testing.T) {
+func TestVarList_7(t *testing.T) {
 
 	in := []token.Lexeme{
 		token.MakeLex2(token.IDENT, "a"),
@@ -137,7 +137,7 @@ func TestDecIdentList_7(t *testing.T) {
 	}
 
 	itr := NewIterator(in)
-	_, e := decIdentList(itr)
+	_, e := varList(itr)
 
 	require.NotNil(t, e, "Expected error")
 }
@@ -152,7 +152,7 @@ func TestBinding_1(t *testing.T) {
 	}
 
 	exp := ast.MakeBinding(
-		[]ast.Ident{ast.MakeIdent(in[0], ast.T_INFER)},
+		[]ast.Var{ast.MakeVar(in[0], ast.T_INFER)},
 		in[1],
 		[]ast.Expr{ast.MakeLiteral(in[2])},
 	)
@@ -182,10 +182,10 @@ func TestBinding_2(t *testing.T) {
 	}
 
 	exp := ast.MakeBinding(
-		[]ast.Ident{
-			ast.MakeIdent(in[0], ast.T_INFER),
-			ast.MakeIdent(in[2], ast.T_INFER),
-			ast.MakeIdent(in[4], ast.T_INFER),
+		[]ast.Var{
+			ast.MakeVar(in[0], ast.T_INFER),
+			ast.MakeVar(in[2], ast.T_INFER),
+			ast.MakeVar(in[4], ast.T_INFER),
 		},
 		in[5],
 		[]ast.Expr{
@@ -246,7 +246,7 @@ func TestParseNext_1(t *testing.T) {
 
 	exp := ast.Tree{
 		Root: ast.MakeBinding(
-			[]ast.Ident{ast.MakeIdent(in[0], ast.T_INFER)},
+			[]ast.Var{ast.MakeVar(in[0], ast.T_INFER)},
 			in[1],
 			[]ast.Expr{ast.MakeLiteral(in[2])},
 		),
@@ -283,16 +283,16 @@ func TestParseAll_1(t *testing.T) {
 	exp := []ast.Tree{
 		ast.Tree{
 			Root: ast.MakeBinding(
-				[]ast.Ident{ast.MakeIdent(in[0], ast.T_NUM)},
+				[]ast.Var{ast.MakeVar(in[0], ast.T_NUM)},
 				in[2],
 				[]ast.Expr{ast.MakeLiteral(in[3])},
 			),
 		},
 		ast.Tree{
 			Root: ast.MakeBinding(
-				[]ast.Ident{
-					ast.MakeIdent(in[5], ast.T_BOOL),
-					ast.MakeIdent(in[7], ast.T_BOOL),
+				[]ast.Var{
+					ast.MakeVar(in[5], ast.T_BOOL),
+					ast.MakeVar(in[7], ast.T_BOOL),
 				},
 				in[9],
 				[]ast.Expr{

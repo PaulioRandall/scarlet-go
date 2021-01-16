@@ -96,12 +96,12 @@ func statement(itr LexIterator) (ast.Stmt, error) {
 	}
 }
 
-// binding = decIdentList (":=" | "<-") expressions
+// binding = varList (":=" | "<-") expressions
 func binding(itr LexIterator) (ast.Binding, error) {
 
 	var zero ast.Binding
 
-	ids, e := decIdentList(itr)
+	vars, e := varList(itr)
 	if e != nil {
 		return zero, e
 	}
@@ -116,34 +116,34 @@ func binding(itr LexIterator) (ast.Binding, error) {
 		return zero, e
 	}
 
-	return ast.MakeBinding(ids, op, exprs), nil
+	return ast.MakeBinding(vars, op, exprs), nil
 }
 
-// decIdentList = typedIdentList {"," typedIdentList}
-func decIdentList(itr LexIterator) ([]ast.Ident, error) {
+// varList = typedVarList {"," typedVarList}
+func varList(itr LexIterator) ([]ast.Var, error) {
 
-	var ids []ast.Ident
+	var vars []ast.Var
 
 	for {
-		typIds, e := typedIdentList(itr)
+		typVars, e := typedVarList(itr)
 		if e != nil {
 			return nil, e
 		}
 
-		ids = append(ids, typIds...)
+		vars = append(vars, typVars...)
 
 		if !itr.Accept(token.DELIM) {
 			break
 		}
 	}
 
-	return ids, nil
+	return vars, nil
 }
 
-// typedIdentList = IDENT {DELIM IDENT} [valType]
-func typedIdentList(itr LexIterator) ([]ast.Ident, error) {
+// typedVarList = IDENT {DELIM IDENT} [valType]
+func typedVarList(itr LexIterator) ([]ast.Var, error) {
 
-	var ids []ast.Ident
+	var vars []ast.Var
 
 	for {
 		if !itr.Match(token.IDENT) {
@@ -151,8 +151,8 @@ func typedIdentList(itr LexIterator) ([]ast.Ident, error) {
 		}
 
 		lx := itr.Read()
-		id := ast.MakeIdent(lx, ast.T_UNDEFINED)
-		ids = append(ids, id)
+		v := ast.MakeVar(lx, ast.T_UNDEFINED)
+		vars = append(vars, v)
 
 		if !itr.Accept(token.DELIM) {
 			break
@@ -164,11 +164,11 @@ func typedIdentList(itr LexIterator) ([]ast.Ident, error) {
 		return nil, e
 	}
 
-	for i, _ := range ids {
-		ids[i].ValType = t
+	for i, _ := range vars {
+		vars[i].ValType = t
 	}
 
-	return ids, nil
+	return vars, nil
 }
 
 // valType = T_BOOL | T_NUM | T_STR

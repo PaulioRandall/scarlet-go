@@ -70,6 +70,12 @@ type (
 		Snip scroll.Snippet
 	}
 
+	Var struct {
+		Base
+		ValType ValType
+		Lex     token.Lexeme
+	}
+
 	BaseExpr struct {
 		Base
 		ValType ValType
@@ -98,7 +104,7 @@ type (
 	BaseBinding struct {
 		Base
 		Op    token.Lexeme
-		Left  []Ident
+		Left  []Var
 		Right []Expr
 	}
 

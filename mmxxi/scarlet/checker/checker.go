@@ -13,38 +13,54 @@ import (
 // 				2. check everything
 // }
 
-func validateNode(n ast.Node) error {
+func checkNode(n ast.Node) error {
 	switch v := n.(type) {
-	case ast.Ident:
-		return validateIdent(v)
+	case ast.Expr:
+		return checkExpr(v)
 	case ast.Stmt:
-		return validateStmt(v)
+		return checkStmt(v)
 	default:
 		return nil
 	}
 }
 
-func validateIdent(n ast.Ident) error {
+func checkVar(n ast.Var) error {
 	if n.ValType == ast.T_UNDEFINED {
 		return errNode(n, "Undefined variable type")
 	}
 	return nil
 }
 
-func validateStmt(n ast.Stmt) error {
+func checkExpr(n ast.Expr) error {
+	switch v := n.(type) {
+	case nil:
+		panic("Nil expression not allowed")
+
+	case ast.Ident:
+		return checkIdent(v)
+
+	case ast.Literal:
+		return nil
+
+	default:
+		return errNode(v, "Unknown expression type")
+	}
+}
+
+func checkStmt(n ast.Stmt) error {
 	switch v := n.(type) {
 	case nil:
 		panic("Nil statement not allowed")
 
 	case ast.Binding:
-		return validateBinding(v)
+		return checkBinding(v)
 
 	default:
 		return errNode(v, "Unknown statement type")
 	}
 }
 
-func validateBinding(n ast.Binding) error {
+func checkBinding(n ast.Binding) error {
 
 	left, right := n.Base().Left, n.Base().Right
 
@@ -75,20 +91,11 @@ func validateBinding(n ast.Binding) error {
 	return nil
 }
 
-func validateExpr(n ast.Expr) error {
-	switch v := n.(type) {
-	case nil:
-		panic("Nil expression not allowed")
-
-	case ast.Ident:
-		return validateIdent(v)
-
-	case ast.Literal:
-		return nil
-
-	default:
-		return errNode(v, "Unknown expression type")
+func checkIdent(n ast.Ident) error {
+	if n.ValType == ast.T_UNDEFINED {
+		return errNode(n, "Undefined variable type")
 	}
+	return nil
 }
 
 func errNode(n ast.Node, m string, args ...interface{}) error {

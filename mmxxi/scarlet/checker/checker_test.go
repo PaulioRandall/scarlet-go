@@ -30,8 +30,8 @@ func TestBinding_1(t *testing.T) {
 
 	// x B <- true
 	in := ast.MakeBinding(
-		[]ast.Ident{
-			ast.MakeIdent(tks[0], ast.T_BOOL),
+		[]ast.Var{
+			ast.MakeVar(tks[0], ast.T_BOOL),
 		},
 		tks[7],
 		[]ast.Expr{
@@ -39,7 +39,7 @@ func TestBinding_1(t *testing.T) {
 		},
 	)
 
-	e := validateBinding(in)
+	e := checkBinding(in)
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	//require.NotNil(t, e, "Expected error")
 }
@@ -48,9 +48,9 @@ func TestBinding_2(t *testing.T) {
 
 	// x B, y N <- true, 1
 	in := ast.MakeBinding(
-		[]ast.Ident{
-			ast.MakeIdent(tks[0], ast.T_BOOL),
-			ast.MakeIdent(tks[3], ast.T_NUM),
+		[]ast.Var{
+			ast.MakeVar(tks[0], ast.T_BOOL),
+			ast.MakeVar(tks[3], ast.T_NUM),
 		},
 		tks[7],
 		[]ast.Expr{
@@ -59,7 +59,7 @@ func TestBinding_2(t *testing.T) {
 		},
 	)
 
-	e := validateBinding(in)
+	e := checkBinding(in)
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	//require.NotNil(t, e, "Expected error")
 }
@@ -68,9 +68,9 @@ func TestBinding_3(t *testing.T) {
 
 	// x B, y N <- true
 	in := ast.MakeBinding(
-		[]ast.Ident{
-			ast.MakeIdent(tks[0], ast.T_BOOL),
-			ast.MakeIdent(tks[3], ast.T_NUM),
+		[]ast.Var{
+			ast.MakeVar(tks[0], ast.T_BOOL),
+			ast.MakeVar(tks[3], ast.T_NUM),
 		},
 		tks[7],
 		[]ast.Expr{
@@ -78,7 +78,7 @@ func TestBinding_3(t *testing.T) {
 		},
 	)
 
-	e := validateBinding(in)
+	e := checkBinding(in)
 	//require.Nil(t, e, "Unexpected error: %+v", e)
 	require.NotNil(t, e, "Expected error")
 }
