@@ -119,7 +119,7 @@ func TestVarList_5(t *testing.T) {
 	require.Equal(t, exp, act)
 }
 
-func TestVarList_6(t *testing.T) {
+func TestVarList_fail_1(t *testing.T) {
 
 	in := []token.Lexeme{}
 
@@ -129,7 +129,7 @@ func TestVarList_6(t *testing.T) {
 	require.NotNil(t, e, "Expected error")
 }
 
-func TestVarList_7(t *testing.T) {
+func TestVarList_fail_2(t *testing.T) {
 
 	in := []token.Lexeme{
 		token.MakeLex2(token.IDENT, "a"),
@@ -192,6 +192,33 @@ func TestBinding_2(t *testing.T) {
 			ast.MakeLiteral(in[6]),
 			ast.MakeLiteral(in[8]),
 			ast.MakeLiteral(in[10]),
+		},
+	)
+
+	itr := NewIterator(in)
+	act, e := binding(itr)
+
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	require.Equal(t, exp, act)
+}
+
+func TestBinding_3(t *testing.T) {
+
+	// x N <- y
+	in := []token.Lexeme{
+		token.MakeLex2(token.IDENT, "x"),
+		token.MakeLex2(token.T_NUM, "N"),
+		token.MakeLex2(token.ASSIGN, "<-"),
+		token.MakeLex2(token.IDENT, "y"),
+	}
+
+	exp := ast.MakeBinding(
+		[]ast.Var{
+			ast.MakeVar(in[0], ast.T_NUM),
+		},
+		in[2],
+		[]ast.Expr{
+			ast.MakeIdent(in[3], ast.T_INFER),
 		},
 	)
 

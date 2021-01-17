@@ -22,7 +22,7 @@ var tks = []token.Lexeme{
 	token.MakeLex2(token.DELIM, ","),
 	token.MakeLex2(token.NUM, "1"), // 10
 	token.MakeLex2(token.DELIM, ","),
-	token.MakeLex2(token.NUM, `"Scarlet"`), // 12
+	token.MakeLex2(token.IDENT, "abc"), // 12
 	token.MakeLex2(token.TERMINATOR, "\n"),
 }
 
@@ -64,7 +64,26 @@ func TestBinding_2(t *testing.T) {
 	//require.NotNil(t, e, "Expected error")
 }
 
+/*
 func TestBinding_3(t *testing.T) {
+
+	// x B <- y
+	in := ast.MakeBinding(
+		[]ast.Var{
+			ast.MakeVar(tks[0], ast.T_BOOL),
+		},
+		tks[7],
+		[]ast.Expr{
+			ast.MakeIdent(tks[12], ast.T_INFER),
+		},
+	)
+
+	e := checkBinding(in)
+	require.Nil(t, e, "Unexpected error: %+v", e)
+	//require.NotNil(t, e, "Expected error")
+}
+*/
+func TestBinding_fail_1(t *testing.T) {
 
 	// x, y <- true, 1
 	in := ast.MakeBinding(
@@ -84,7 +103,7 @@ func TestBinding_3(t *testing.T) {
 	require.NotNil(t, e, "Expected error")
 }
 
-func TestBinding_4(t *testing.T) {
+func TestBinding_fail_2(t *testing.T) {
 
 	// Missing expression
 	// x B, y N <- true
@@ -104,7 +123,7 @@ func TestBinding_4(t *testing.T) {
 	require.NotNil(t, e, "Expected error")
 }
 
-func TestBinding_5(t *testing.T) {
+func TestBinding_fail_3(t *testing.T) {
 
 	// Wrong type being assigned
 	// x B <- 1
