@@ -2,8 +2,10 @@
 PROGRAM = {STMT}
 
 BODY = "{" {STMT} "}" STMT_DELIM
-STMT = (ASSIGN | DEFINE | CALL | GUARD | MATCH) STMT_DELIM
+STMT = (ASSIGN | DEFINE | CALL | GUARD | MATCH | LOOP | EXIT) STMT_DELIM
 STMT_DELIM = ";"
+
+EXIT = "<~"
 
 LOOP = "loop" IDENT "," IDENT "," IDENT "<-" (IDENT | CALL | LIST | MAP) BODY
 LOOP = "loop" [ASSIGN] GUARD_COND [STMT] BODY
@@ -14,32 +16,30 @@ CASE = (EXPR | GUARD_COND) ":" (STMT | BODY)
 GUARD = GUARD_COND (STMT | BODY)
 GUARD_COND = "[" EXPR "]"
 
-DEFINE = INF_VAR ":=" ROUTINE | FUNC
-DEFINE = INF_VAR {"," INF_VAR} ":=" EXPR {"," EXPR}
-DEFINE = "type" IDENT ":=" TYPE
+DEFINE = INF_VAR ":=" FUNC | E_FUNC
+DEFINE = INF_VARS ":=" EXPR_LIST
 
-ASSIGN = INF_VAR "<-" FUNC
-ASSIGN = INF_VAR {"," INF_VAR} "<-" EXPR {"," EXPR}
+ASSIGN = INF_VAR "<-" FUNC | E_FUNC
+ASSIGN = INF_VARS "<-" EXPR_LIST
 
-FUNC = "E" "(" VAR_LIST "->" TYPE ")" EXPR
-FUNC = "E" "(" VAR_LIST "->" EXP_VAR ")" BODY
-ROUTINE = "F" "(" VAR_LIST ["->" VAR_LIST] ")" BODY
-VAR_LIST = [EXP_VAR {"," EXP_VAR}]
+E_FUNC = "E" "(" VAR_LIST "->" TYPE ")" EXPR
+FUNC = "F" "(" VAR_LIST ["->" VAR_LIST] ")" BODY
+
+EXPR_LIST = EXPR {"," EXPR}
+VAR_LIST = [EXP_VARS {"," EXP_VARS}]
+EXP_VARS = [IDENT {"," IDENT}] TYPE
+EXP_VAR = [IDENT] TYPE
+INF_VARS = IDENT {"," IDENT} [TYPE]
 INF_VAR = IDENT [TYPE]
-EXP_VAR = IDENT TYPE
-
-FUNC_SIG = "E" "(" SIG_PARAMS "->" TYPE ")"
-ROUTINE_SIG = "F" "(" SIG_PARAMS ["->" SIG_PARAMS] ")"
-SIG_PARAMS = [SIG_PARAM {"," SIG_PARAM}]
-SIG_PARAM = [IDENT] TYPE
 
 EXPR = EXPR INFIX_OPERATOR EXPR
 EXPR = EXPR "?"
 EXPR = ("!" | "-") EXPR
 EXPR = "(" EXPR ")"
-EXPR = BOOL | NUMBER | STRING | IDENT | CALL | LIST | MAP
+EXPR = BOOL | NUMBER | STRING | IDENT | CALL | LIST | PAIR | MAP
 
-MAP = "{" [EXPR ":" EXPR {"," EXPR ":" EXPR}] "}"
+MAP = "{" [PAIR {"," PAIR}] "}"
+PAIR = EXPR ":" EXPR
 LIST = "[" [EXPR {"," EXPR}] "]"
 CALL = ["@"] IDENT "(" {EXPR} ")"
 IDENT = "_" | (LETTER {LETTER | DIGIT | "_"})
@@ -48,30 +48,33 @@ STRING = '"' *Any unicode char (needs refining)* '"'
 NUMBER = DIGIT {DIGIT} ["." DIGIT {DIGIT}]
 BOOL = "true" | "false"
 
-TYPE = "B" | "N" | "S" | IDENT | ROUTINE_SIG | FUNC_SIG
-INFIX_OPERATOR = "==" | "!=" | "<" | ">" | "<=" | ">=" | "+" | "-" | "*" | "/" | "%" | "||" | "&&"
+TYPE = "B" | "N" | "S" | "E" | "F"
+INFIX_OPERATOR = "==" | "!=" | "<" | ">" | "<=" | ">=" | "+" | "-" | "*" | "/" | "%" | "|" | "&"
 LETTER = *Any unicode char from categories 'Lu' or 'Ll' (needs expanding)*
 DIGIT = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
 
+# Empty values
 
-*** Considering ***
+B: false
+N: 0
+S: ""
+F: F()
+E: E() Unit
 
-// Overloaded func & e-func definitions (but not assignments) 
-check := E(n N -> B) n > 0
-check := E(b B -> B) b
-check := E(s S -> B) @Len(s) <= 8
+# Considering
 
-// Return statement using `<~` as the return symbol
-fac := E(n N -> r N) {
-	match n {
-		0: <~ 0
-		1: <~ 1
-		[true]: <~ n + fac(n-1)
+// Return statement using `<~` as the early exit symbol
+div := F(a, b N -> c N, e S) {
+	[b == 0] {
+		e = "Can't divide by zero"
+		<~
 	}
+	c <- a/b
 }
 
-div := F(a, b N -> N, S) {
+// Eventually, maybe
+div := F(a, b N -> c N, e S) {
 	[b == 0] <~ _, "Can't divide by zero"
 	<~ a/b, _
 }

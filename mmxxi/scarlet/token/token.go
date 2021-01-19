@@ -29,12 +29,12 @@ const (
 	FUNC   // F
 	LOOP   // loop
 	MATCH  // match
-	TYPE   // type
 
 	// Operators
 	DEFINE // :=
 	ASSIGN // <-
 	OUTPUT // ->
+	EXIT   // <~
 
 	ADD // +
 	SUB // -, ¬
@@ -89,8 +89,6 @@ func IdentifyWord(s string) Token {
 		return LOOP
 	case "match":
 		return MATCH
-	case "type":
-		return TYPE
 	}
 
 	return IDENT
@@ -221,8 +219,6 @@ func (tk Token) String() string {
 		return "LOOP"
 	case MATCH:
 		return "MATCH"
-	case TYPE:
-		return "TYPE"
 
 		// Operators
 	case DEFINE:
@@ -231,6 +227,8 @@ func (tk Token) String() string {
 		return "ASSIGN"
 	case OUTPUT:
 		return "OUTPUT"
+	case EXIT:
+		return "EXIT"
 
 	case ADD:
 		return "ADD"

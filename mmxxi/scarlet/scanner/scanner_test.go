@@ -39,12 +39,12 @@ func TestSoloTokens(t *testing.T) {
 		"F":     token.MakeLex2(token.FUNC, "F"),
 		"loop":  token.MakeLex2(token.LOOP, "loop"),
 		"match": token.MakeLex2(token.MATCH, "match"),
-		"type":  token.MakeLex2(token.TYPE, "type"),
 
 		// Operators
 		":=": token.MakeLex2(token.DEFINE, ":="),
 		"<-": token.MakeLex2(token.ASSIGN, "<-"),
 		"->": token.MakeLex2(token.OUTPUT, "->"),
+		"<~": token.MakeLex2(token.EXIT, "<~"),
 
 		"+": token.MakeLex2(token.ADD, "+"),
 		"-": token.MakeLex2(token.SUB, "-"),

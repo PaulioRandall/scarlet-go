@@ -103,6 +103,9 @@ func identifyLexeme(sr ScrollReader, l *lex) error {
 	case sr.Starts(":="):
 		l.size, l.tk = 2, token.DEFINE
 
+	case sr.Starts("<~"):
+		l.size, l.tk = 2, token.EXIT
+
 	case sr.Starts("<-"):
 		l.size, l.tk = 2, token.ASSIGN
 
@@ -124,10 +127,10 @@ func identifyLexeme(sr ScrollReader, l *lex) error {
 	case sr.Starts("%"):
 		l.size, l.tk = 1, token.REM
 
-	case sr.Starts("&&"):
+	case sr.Starts("&"):
 		l.size, l.tk = 2, token.AND
 
-	case sr.Starts("||"):
+	case sr.Starts("|"):
 		l.size, l.tk = 2, token.OR
 
 	case sr.Starts("=="):
