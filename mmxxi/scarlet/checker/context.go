@@ -7,35 +7,67 @@ import (
 type (
 	bindings map[string]ast.ValType
 
+	// # new rootCtx, pushMajorCtx, pushMinorCtx
+	// x <- 1 + 2
+	//
+	// # pushMajorCtx, pushMinorCtx, add a & b to minorCtx
+	// div, err <- F(a N, b N -> c N, e S) {
+	//    [b == 0] { # pushMinorCtx
+	//      e <- "Can't divide by zero"
+	//      <~
+	//    } # popMinorCtx
+	//    c <- a / b
+	// } # set div=c, err=e, popMajorCtx
+
+	// rootCtx (level 0) encapsulates a whole scroll.
 	rootCtx struct {
-		stack *baseCtx
+		major *majorCtx
 		defs  bindings
-		// usrTypes    bindings
 	}
 
-	baseCtx struct {
-		next  *baseCtx
-		stack *subCtx
+	// majorCtx (level 1) represents constructs with a body of statements but with
+	// isolated variables. No majorCtx can access the variables of another, unless
+	// they are explicitly passed. I.e. the root of each scroll and function
+	// bodies.
+	majorCtx struct {
+		next  *majorCtx
+		minor *minorCtx
 	}
 
-	subCtx struct {
-		next *subCtx
+	// minorCtx (level 2) represents constructs with a body of statements that
+	// have access to all variables in other minorCtxs it is nested within but the
+	// parent doesn't have access to theirs, i.e. conditionals and loops.
+	minorCtx struct {
+		next *minorCtx
 		vars bindings
 	}
 )
 
 const not_found = ast.T_UNDEFINED
 
-func (r rootCtx) newBase() {
-	r.stack = &baseCtx{next: r.stack}
-	r.newSub()
+func makeRootCtx() {
+	c := rootCtx{}
+	c.pushMajorCtx()
 }
 
-func (r rootCtx) newSub() {
-	r.stack.stack = &subCtx{
-		next: r.stack.stack,
+func (r rootCtx) pushMajorCtx() {
+	r.major = &majorCtx{next: r.major}
+	r.pushMinorCtx()
+}
+
+func (r rootCtx) popMajorCtx() {
+	r.major = r.major.next
+}
+
+func (r rootCtx) pushMinorCtx() {
+	r.major.minor = &minorCtx{
+		next: r.major.minor,
 		vars: bindings{},
 	}
+}
+
+func (r rootCtx) popMinorCtx() {
+	r.major.minor = r.major.minor.next
 }
 
 func (r rootCtx) defExists(id string) bool {
@@ -54,7 +86,7 @@ func (r rootCtx) varExists(id string) bool {
 }
 
 func (r rootCtx) getVar(id string) ast.ValType {
-	for s := r.stack.stack; s != nil; s = s.next {
+	for s := r.major.minor; s != nil; s = s.next {
 		if t, ok := s.vars[id]; ok {
 			return t
 		}

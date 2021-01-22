@@ -48,7 +48,7 @@ STRING = '"' *Any unicode char (needs refining)* '"'
 NUMBER = DIGIT {DIGIT} ["." DIGIT {DIGIT}]
 BOOL = "true" | "false"
 
-TYPE = "B" | "N" | "S" | "E" | "F"
+TYPE = "B" | "N" | "S" | "E" | "F" | "unit"
 INFIX_OPERATOR = "==" | "!=" | "<" | ">" | "<=" | ">=" | "+" | "-" | "*" | "/" | "%" | "|" | "&"
 LETTER = *Any unicode char from categories 'Lu' or 'Ll' (needs expanding)*
 DIGIT = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
@@ -60,9 +60,23 @@ B: false
 N: 0
 S: ""
 F: F()
-E: E() Unit
+E: E() unit
 
 # Considering
+
+// Maybe change func body delims, could use "end" keyword
+add := F(a, b N -> c N)
+	c <- a+b
+end
+
+add := F(a, b N -> c N)	c <- a+b end
+
+// Maybe match func
+findOption := M(N -> S)
+	1: <~ "Print options"
+	2: <~ "Exit"
+	[true]: <~ "Unknown option"
+end
 
 // Return statement using `<~` as the early exit symbol
 div := F(a, b N -> c N, e S) {

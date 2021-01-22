@@ -9,10 +9,8 @@ import (
 
 func validateRoutine(ctx rootCtx, trees []ast.Tree) error {
 
-	//	ctx := Context{}
-
 	for _, t := range trees {
-		if e := checkNode(t.Root); e != nil {
+		if e := checkNode(ctx, t.Root); e != nil {
 			return e
 		}
 	}
@@ -23,7 +21,7 @@ func validateRoutine(ctx rootCtx, trees []ast.Tree) error {
 	// 				2. check everything
 }
 
-func checkNode(n ast.Node) error {
+func checkNode(ctx rootCtx, n ast.Node) error {
 	switch v := n.(type) {
 	case ast.Expr:
 		return checkExpr(v)
