@@ -45,28 +45,29 @@ type (
 
 const not_found = ast.T_UNDEFINED
 
-func makeRootCtx() {
+func makeRootCtx() rootCtx {
 	c := rootCtx{}
 	c.pushMajorCtx()
+	return c
 }
 
-func (r rootCtx) pushMajorCtx() {
+func (r *rootCtx) pushMajorCtx() {
 	r.major = &majorCtx{next: r.major}
 	r.pushMinorCtx()
 }
 
-func (r rootCtx) popMajorCtx() {
+func (r *rootCtx) popMajorCtx() {
 	r.major = r.major.next
 }
 
-func (r rootCtx) pushMinorCtx() {
+func (r *rootCtx) pushMinorCtx() {
 	r.major.minor = &minorCtx{
 		next: r.major.minor,
 		vars: bindings{},
 	}
 }
 
-func (r rootCtx) popMinorCtx() {
+func (r *rootCtx) popMinorCtx() {
 	r.major.minor = r.major.minor.next
 }
 
@@ -81,6 +82,13 @@ func (r rootCtx) getDef(id string) ast.ValType {
 	return not_found
 }
 
+func (r *rootCtx) setDef(id string, t ast.ValType) {
+	if _, ok := r.defs[id]; ok {
+		panic("Already defined '" + id + "', should check it exists first")
+	}
+	r.defs[id] = t
+}
+
 func (r rootCtx) varExists(id string) bool {
 	return r.getVar(id) != ast.T_UNDEFINED
 }
@@ -92,6 +100,10 @@ func (r rootCtx) getVar(id string) ast.ValType {
 		}
 	}
 	return not_found
+}
+
+func (r *rootCtx) setVar(id string, t ast.ValType) {
+	r.major.minor.vars[id] = t
 }
 
 func (r rootCtx) exists(id string) bool {

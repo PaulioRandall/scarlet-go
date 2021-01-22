@@ -24,28 +24,28 @@ func validateRoutine(ctx rootCtx, trees []ast.Tree) error {
 func checkNode(ctx rootCtx, n ast.Node) error {
 	switch v := n.(type) {
 	case ast.Expr:
-		return checkExpr(v)
+		return checkExpr(ctx, v)
 	case ast.Stmt:
-		return checkStmt(v)
+		return checkStmt(ctx, v)
 	default:
 		return nil
 	}
 }
 
-func checkVar(n ast.Var) error {
+func checkVar(ctx rootCtx, n ast.Var) error {
 	if n.ValType == ast.T_UNDEFINED {
 		return errNode(n, "Invalid variable: undefined type")
 	}
 	return nil
 }
 
-func checkExpr(n ast.Expr) error {
+func checkExpr(ctx rootCtx, n ast.Expr) error {
 	switch v := n.(type) {
 	case nil:
 		panic("Nil expression not allowed")
 
 	case ast.Ident:
-		return checkIdent(v)
+		return checkIdent(ctx, v)
 
 	case ast.Literal:
 		return nil
@@ -55,20 +55,20 @@ func checkExpr(n ast.Expr) error {
 	}
 }
 
-func checkStmt(n ast.Stmt) error {
+func checkStmt(ctx rootCtx, n ast.Stmt) error {
 	switch v := n.(type) {
 	case nil:
 		panic("Nil statement not allowed")
 
 	case ast.Binding:
-		return checkBinding(v)
+		return checkBinding(ctx, v)
 
 	default:
 		return errNode(v, "Invalid statement: unknown type")
 	}
 }
 
-func checkBinding(n ast.Binding) error {
+func checkBinding(ctx rootCtx, n ast.Binding) error {
 
 	badBind := func(n ast.Node, m string, args ...interface{}) error {
 		return errNode(n, "Invalid binding: "+m, args...)
@@ -100,7 +100,7 @@ func checkBinding(n ast.Binding) error {
 
 	for i, _ := range left {
 		exp := left[i].ValueType()
-		if exp != ast.T_INFER && exp != right[i].ValueType() {
+		if exp != ast.T_INFER && exp != resolveType(ctx, right[i]) {
 			return badBind(right[i], "expression has wrong type, expected %s", exp)
 		}
 	}
@@ -108,11 +108,25 @@ func checkBinding(n ast.Binding) error {
 	return nil
 }
 
-func checkIdent(n ast.Ident) error {
+func checkIdent(ctx rootCtx, n ast.Ident) error {
 	if n.ValType == ast.T_UNDEFINED {
 		return errNode(n, "Invalid ident: Undefined variable type")
 	}
+	if !ctx.exists(n.Val) {
+		return errNode(n, "Missing value: Undefined variable")
+	}
 	return nil
+}
+
+func resolveType(ctx rootCtx, n ast.TypedNode) ast.ValType {
+	switch v := n.(type) {
+	case ast.Ident:
+		if n.ValueType() == ast.T_INFER {
+			return ctx.get(v.Val)
+		}
+	}
+
+	return n.ValueType()
 }
 
 func errNode(n ast.Node, m string, args ...interface{}) error {

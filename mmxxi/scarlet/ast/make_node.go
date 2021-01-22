@@ -21,7 +21,7 @@ func MakeIdent(id token.Lexeme, t ValType) Ident {
 			ValType: t,
 			Base:    Base{Snip: id.Snippet},
 		},
-		Lex: id,
+		Val: id.Snippet.Text,
 	}
 }
 

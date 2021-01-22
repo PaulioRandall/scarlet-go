@@ -39,7 +39,8 @@ func TestBinding_1(t *testing.T) {
 		},
 	)
 
-	e := checkBinding(in)
+	ctx := makeRootCtx()
+	e := checkBinding(ctx, in)
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	//require.NotNil(t, e, "Expected error")
 }
@@ -59,12 +60,12 @@ func TestBinding_2(t *testing.T) {
 		},
 	)
 
-	e := checkBinding(in)
+	ctx := makeRootCtx()
+	e := checkBinding(ctx, in)
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	//require.NotNil(t, e, "Expected error")
 }
 
-/*
 func TestBinding_3(t *testing.T) {
 
 	// x B <- y
@@ -78,11 +79,14 @@ func TestBinding_3(t *testing.T) {
 		},
 	)
 
-	e := checkBinding(in)
+	ctx := makeRootCtx()
+	ctx.setVar(tks[12].Text, ast.T_BOOL)
+
+	e := checkBinding(ctx, in)
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	//require.NotNil(t, e, "Expected error")
 }
-*/
+
 func TestBinding_fail_1(t *testing.T) {
 
 	// x, y <- true, 1
@@ -98,7 +102,8 @@ func TestBinding_fail_1(t *testing.T) {
 		},
 	)
 
-	e := checkBinding(in)
+	ctx := makeRootCtx()
+	e := checkBinding(ctx, in)
 	//require.Nil(t, e, "Unexpected error: %+v", e)
 	require.NotNil(t, e, "Expected error")
 }
@@ -118,7 +123,8 @@ func TestBinding_fail_2(t *testing.T) {
 		},
 	)
 
-	e := checkBinding(in)
+	ctx := makeRootCtx()
+	e := checkBinding(ctx, in)
 	//require.Nil(t, e, "Unexpected error: %+v", e)
 	require.NotNil(t, e, "Expected error")
 }
@@ -137,7 +143,8 @@ func TestBinding_fail_3(t *testing.T) {
 		},
 	)
 
-	e := checkBinding(in)
+	ctx := makeRootCtx()
+	e := checkBinding(ctx, in)
 	//require.Nil(t, e, "Unexpected error: %+v", e)
 	require.NotNil(t, e, "Expected error")
 }

@@ -87,7 +87,7 @@ type (
 
 	Ident struct {
 		BaseExpr
-		Lex token.Lexeme
+		Val string
 	}
 
 	BoolLit struct {
