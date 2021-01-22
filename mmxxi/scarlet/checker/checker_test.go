@@ -26,7 +26,9 @@ var tks = []token.Lexeme{
 	token.MakeLex2(token.TERMINATOR, "\n"),
 }
 
-func TestBinding_1(t *testing.T) {
+// TODO: Test CheckDefine
+
+func TestCheckAssign_1(t *testing.T) {
 
 	// x B <- true
 	in := ast.MakeBinding(
@@ -37,15 +39,15 @@ func TestBinding_1(t *testing.T) {
 		[]ast.Expr{
 			ast.MakeLiteral(tks[8]),
 		},
-	)
+	).(ast.Assign)
 
 	ctx := makeRootCtx()
-	e := checkBinding(ctx, in)
+	e := checkAssign(ctx, in)
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	//require.NotNil(t, e, "Expected error")
 }
 
-func TestBinding_2(t *testing.T) {
+func TestCheckAssign_2(t *testing.T) {
 
 	// x B, y N <- true, 1
 	in := ast.MakeBinding(
@@ -58,15 +60,15 @@ func TestBinding_2(t *testing.T) {
 			ast.MakeLiteral(tks[8]),
 			ast.MakeLiteral(tks[10]),
 		},
-	)
+	).(ast.Assign)
 
 	ctx := makeRootCtx()
-	e := checkBinding(ctx, in)
+	e := checkAssign(ctx, in)
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	//require.NotNil(t, e, "Expected error")
 }
 
-func TestBinding_3(t *testing.T) {
+func TestCheckAssign_3(t *testing.T) {
 
 	// x B <- y
 	in := ast.MakeBinding(
@@ -75,21 +77,21 @@ func TestBinding_3(t *testing.T) {
 		},
 		tks[7],
 		[]ast.Expr{
-			ast.MakeIdent(tks[12], ast.T_INFER),
+			ast.MakeIdent(tks[12], ast.T_RESOLVE),
 		},
-	)
+	).(ast.Assign)
 
 	ctx := makeRootCtx()
 	ctx.setVar(tks[12].Text, ast.T_BOOL)
 
-	e := checkBinding(ctx, in)
+	e := checkAssign(ctx, in)
 	require.Nil(t, e, "Unexpected error: %+v", e)
 	//require.NotNil(t, e, "Expected error")
 }
 
-func TestBinding_fail_1(t *testing.T) {
+func TestCheckAssign_fail_1(t *testing.T) {
 
-	// x, y <- true, 1
+	// x, y N <- true, 1
 	in := ast.MakeBinding(
 		[]ast.Var{
 			ast.MakeVar(tks[0], ast.T_NUM),
@@ -97,18 +99,18 @@ func TestBinding_fail_1(t *testing.T) {
 		},
 		tks[7],
 		[]ast.Expr{
-			ast.MakeLiteral(tks[8]),
+			ast.MakeLiteral(tks[8]), // Bool!
 			ast.MakeLiteral(tks[10]),
 		},
-	)
+	).(ast.Assign)
 
 	ctx := makeRootCtx()
-	e := checkBinding(ctx, in)
+	e := checkAssign(ctx, in)
 	//require.Nil(t, e, "Unexpected error: %+v", e)
 	require.NotNil(t, e, "Expected error")
 }
 
-func TestBinding_fail_2(t *testing.T) {
+func TestCheckAssign_fail_2(t *testing.T) {
 
 	// Missing expression
 	// x B, y N <- true
@@ -121,15 +123,15 @@ func TestBinding_fail_2(t *testing.T) {
 		[]ast.Expr{
 			ast.MakeLiteral(tks[8]),
 		},
-	)
+	).(ast.Assign)
 
 	ctx := makeRootCtx()
-	e := checkBinding(ctx, in)
+	e := checkAssign(ctx, in)
 	//require.Nil(t, e, "Unexpected error: %+v", e)
 	require.NotNil(t, e, "Expected error")
 }
 
-func TestBinding_fail_3(t *testing.T) {
+func TestCheckAssign_fail_3(t *testing.T) {
 
 	// Wrong type being assigned
 	// x B <- 1
@@ -141,10 +143,10 @@ func TestBinding_fail_3(t *testing.T) {
 		[]ast.Expr{
 			ast.MakeLiteral(tks[8]),
 		},
-	)
+	).(ast.Assign)
 
 	ctx := makeRootCtx()
-	e := checkBinding(ctx, in)
+	e := checkAssign(ctx, in)
 	//require.Nil(t, e, "Unexpected error: %+v", e)
 	require.NotNil(t, e, "Expected error")
 }

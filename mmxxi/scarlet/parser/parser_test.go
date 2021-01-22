@@ -218,7 +218,7 @@ func TestBinding_3(t *testing.T) {
 		},
 		in[2],
 		[]ast.Expr{
-			ast.MakeIdent(in[3], ast.T_INFER),
+			ast.MakeIdent(in[3], ast.T_RESOLVE),
 		},
 	)
 
@@ -252,7 +252,7 @@ func TestExpression_2(t *testing.T) {
 		token.MakeLex2(token.IDENT, "abc"),
 	}
 
-	exp := ast.MakeIdent(in[0], ast.T_INFER)
+	exp := ast.MakeIdent(in[0], ast.T_RESOLVE)
 
 	itr := NewIterator(in)
 	act, e := expression(itr)

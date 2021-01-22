@@ -221,7 +221,7 @@ func expression(itr LexIterator) (ast.Expr, error) {
 		return nil, err(itr, "Expected EXPR")
 
 	case itr.Match(token.IDENT):
-		return ast.MakeIdent(itr.Read(), ast.T_INFER), nil
+		return ast.MakeIdent(itr.Read(), ast.T_RESOLVE), nil
 
 	case itr.MatchAny(token.BOOL, token.NUM, token.STR):
 		return ast.MakeLiteral(itr.Read()), nil

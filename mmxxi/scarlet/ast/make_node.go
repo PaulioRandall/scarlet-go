@@ -11,7 +11,7 @@ func MakeVar(id token.Lexeme, t ValType) Var {
 	return Var{
 		Base:    Base{Snip: id.Snippet},
 		ValType: t,
-		Lex:     id,
+		Val:     id.Snippet.Text,
 	}
 }
 

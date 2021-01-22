@@ -7,18 +7,29 @@ import (
 	"github.com/PaulioRandall/scarlet-go/mmxxi/scarlet/ast"
 )
 
-func validateRoutine(ctx rootCtx, trees []ast.Tree) error {
+func validateScroll(trees []ast.Tree) error {
 
+	ctx := makeRootCtx()
+
+	// Process definitions first
 	for _, t := range trees {
-		if e := checkNode(ctx, t.Root); e != nil {
-			return e
+		if def, ok := t.Root.(ast.Define); ok {
+			if e := checkDefine(ctx, def); e != nil {
+				return e
+			}
+		}
+	}
+
+	// Check everything
+	for _, t := range trees {
+		if _, ok := t.Root.(ast.Define); !ok {
+			if e := checkNode(ctx, t.Root); e != nil {
+				return e
+			}
 		}
 	}
 
 	return nil
-	// 	TODO: For each routine, including main scroll:
-	// 				1. identify all defined identifiers
-	// 				2. check everything
 }
 
 func checkNode(ctx rootCtx, n ast.Node) error {
@@ -28,7 +39,7 @@ func checkNode(ctx rootCtx, n ast.Node) error {
 	case ast.Stmt:
 		return checkStmt(ctx, v)
 	default:
-		return nil
+		return errNode(v, "Invalid node: this shouldn't be here")
 	}
 }
 
@@ -60,8 +71,8 @@ func checkStmt(ctx rootCtx, n ast.Stmt) error {
 	case nil:
 		panic("Nil statement not allowed")
 
-	case ast.Binding:
-		return checkBinding(ctx, v)
+	case ast.Assign:
+		return checkAssign(ctx, v)
 
 	default:
 		return errNode(v, "Invalid statement: unknown type")
@@ -98,11 +109,59 @@ func checkBinding(ctx rootCtx, n ast.Binding) error {
 		return badBind(n, "too few items on left or too many on right")
 	}
 
-	for i, _ := range left {
-		exp := left[i].ValueType()
-		if exp != ast.T_INFER && exp != resolveType(ctx, right[i]) {
-			return badBind(right[i], "expression has wrong type, expected %s", exp)
+	return nil
+}
+
+func checkDefine(ctx rootCtx, n ast.Define) error {
+	if e := checkBinding(ctx, n); e != nil {
+		return e
+	}
+
+	for i, v := range n.Base().Left {
+
+		right := n.Base().Right[i]
+		t := resolveType(ctx, right)
+
+		if ctx.defExists(v.Val) {
+			return errNode(v, "Invalid definition: already defined '"+v.Val+"'")
 		}
+
+		expT := v.ValueType()
+		if expT != ast.T_INFER && expT != t {
+			return errNode(right,
+				"Invalid definition: expression has wrong type, expected %s", expT)
+		}
+
+		ctx.setDef(v.Val, t)
+	}
+
+	return nil
+}
+
+func checkAssign(ctx rootCtx, n ast.Assign) error {
+	if e := checkBinding(ctx, n); e != nil {
+		return e
+	}
+
+	vars := bindings{}
+	for i, v := range n.Base().Left {
+
+		if _, ok := vars[v.Val]; ok { // e.g. x, x <- 1, 2
+			return errNode(v,
+				"Invalid assignment: can't multi-assign to the same variable")
+		}
+
+		right := n.Base().Right[i]
+		t := resolveType(ctx, right)
+		expT := v.ValueType()
+
+		if expT != ast.T_INFER && expT != t { // e.g. x B <- 1
+			return errNode(right,
+				"Invalid assignment: expression has wrong type, expected %s", expT)
+		}
+
+		vars[v.Val] = t
+		ctx.setVar(v.Val, t)
 	}
 
 	return nil
@@ -110,22 +169,18 @@ func checkBinding(ctx rootCtx, n ast.Binding) error {
 
 func checkIdent(ctx rootCtx, n ast.Ident) error {
 	if n.ValType == ast.T_UNDEFINED {
-		return errNode(n, "Invalid ident: Undefined variable type")
+		return errNode(n, "Invalid ident: undefined variable type")
 	}
 	if !ctx.exists(n.Val) {
-		return errNode(n, "Missing value: Undefined variable")
+		return errNode(n, "Missing value: undefined variable")
 	}
 	return nil
 }
 
 func resolveType(ctx rootCtx, n ast.TypedNode) ast.ValType {
-	switch v := n.(type) {
-	case ast.Ident:
-		if n.ValueType() == ast.T_INFER {
-			return ctx.get(v.Val)
-		}
+	if v, ok := n.(ast.Ident); ok && v.ValueType() == ast.T_RESOLVE {
+		return ctx.get(v.Val)
 	}
-
 	return n.ValueType()
 }
 

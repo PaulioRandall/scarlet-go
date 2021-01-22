@@ -9,7 +9,8 @@ type ValType int
 
 const (
 	T_UNDEFINED ValType = iota
-	T_INFER             // Inferred
+	T_RESOLVE           // Expr identifiers will need resolving
+	T_INFER             // Variable identifiers are sometimes inferred
 	//T_USER // User defined
 	T_BOOL
 	T_NUM
@@ -22,6 +23,8 @@ const (
 
 func (vt ValType) String() string {
 	switch vt {
+	case T_RESOLVE:
+		return "T_RESOLVE"
 	case T_INFER:
 		return "T_INFER"
 	case T_BOOL:
@@ -77,7 +80,7 @@ type (
 	Var struct {
 		Base
 		ValType ValType
-		Lex     token.Lexeme
+		Val     string
 	}
 
 	BaseExpr struct {

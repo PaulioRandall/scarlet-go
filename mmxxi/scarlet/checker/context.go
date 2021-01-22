@@ -103,6 +103,12 @@ func (r rootCtx) getVar(id string) ast.ValType {
 }
 
 func (r *rootCtx) setVar(id string, t ast.ValType) {
+	for s := r.major.minor; s != nil; s = s.next {
+		if t, ok := s.vars[id]; ok {
+			s.vars[id] = t
+			return
+		}
+	}
 	r.major.minor.vars[id] = t
 }
 
