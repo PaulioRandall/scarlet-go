@@ -26,7 +26,7 @@ var tks = []token.Lexeme{
 	token.MakeLex2(token.TERMINATOR, "\n"),
 }
 
-// TODO: Test CheckDefine
+// TODO: Test CheckDefine, same as assign
 
 func TestCheckAssign_1(t *testing.T) {
 

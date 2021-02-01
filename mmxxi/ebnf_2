@@ -1,0 +1,210 @@
+
+# This language:
+# - is compiled but for writing scripts
+# - values conciseness & type correctness
+# - is a standalone executable
+# - is strongly & staticly typed
+# - has type inference
+# - every value is a pair
+# -- left side is dominant, i.e. used as the value by default
+# -- right side is 'unit' if it's not explicitly defined
+# -- The left hand side is always of type 'T:unit'
+# - allows teams to create spells (inbuilt funcs) for common functionality
+# - has pure functions, unless they call a spell
+# - allows definitions (const) but only in root of script
+# - is for writing scripts:
+# -- build scripts
+# -- pipeline scripts
+# -- file manipulation scripts
+# -- etc
+# - is not for:
+# -- backend web development
+# -- systems programming
+# -- application programming
+# -- math based scripting
+
+# Types:
+#   U | U:U     = unit
+#   B | B:U     = bool
+#   I | I:U     = 64 bit int 
+#   N | N:U     = 64 bit float ('N' = number) 
+#   S | S:U     = string
+#   E | E:U     = error (string)
+#   T1:T2       = explicit right side of pair
+#   []T | []T:U = ordered list of Ts
+
+# Other keywords:
+#   F
+#   MATCH
+#   END
+#   unit
+#   true
+#   false
+
+# Operators
+# Precedence   Symbol   association   result
+# 12  ()   left
+# 11  ?    left
+# 10  !    right
+# 9   *    left    N:I    - overflow/underflow count
+# 9   /    left    N:I:B  - overflow/underflow count, B = -1 if divisor was 0
+# 9   %    left    N:I:B  - overflow/underflow count, B = -1 if divisor was 0
+# 8   +    left    N:I    - overflow/underflow count
+# 8   -    left    N:I    - overflow/underflow count
+# 7   <    left    B:unit
+# 7   >    left    B:unit
+# 7   <=   left    B:unit
+# 7   >=   left    B:unit
+# 6   ==   left    B:B    - true if types are the same
+# 6   !=   left    B:B    - true if types are the same
+# 5   ||   left    B:unit
+# 4   &&   left    B:unit
+# 3   :    right   T:T
+# 2   :=   right
+# 2   <-   right
+# 1   ,    left
+
+# Create & init variables 
+x, y, z <- 0, 1, 2
+r <- x + y + z
+
+# The left hand side is always of type 'T:unit'
+u <- unit      # = unit:unit
+p0 <- 0:"zero"
+p1 <- 1:"one"
+p2 <- 2:"two"
+
+# Any operation performed on a value uses the left hand side and discards the
+# the right, except '?' which returns the right hand side
+p3 <- p1       # (1:"one")     straight copy
+p4 <- p1:unit  # (1:unit)      replace right side with 'unit'
+p5 <- p1?      # ("one":unit)  get the right side
+p6 <- p1 + p2  # (3:unit)      add left sides, use 'unit' as the right
+p7 <- !p1      # (-1:unit)     negate left side, use 'unit' as the right
+p8 <- p1:p2    # (1:2:"two")   stack operation, pushes on '1'
+p9 <- p0:p1:p2 # (0:1:2:"two") stack operation, pushes on '1' then '0'
+p10 <- p9?     # (1:2:"two")   stack operation, pops off '0'
+
+# Define constant
+pi := 3.14
+
+# Create & init list
+list <- {}
+list <- {
+	"a"
+	"b"
+	"c"
+}
+
+# Spell call
+@Println("abc")
+num <- @ParseNum("123.456")
+
+# Get right side of pair
+e <- num?
+
+# Guarded statements
+[e != ""] @Panic(e)
+[num > 0]
+	@Println("num is more than 0")
+END
+
+# Guarded loop 
+{z > 0} z <- z-1
+{z > 0}
+	z <- z-1
+END
+
+# Match case, i,e, if-else
+MATCH e != ""
+	true:  @Panic(e)
+	false: @Println("num is", num)
+END
+MATCH unit
+	[e != ""]: @Panic(e)
+	[false]:   @Println("num is", num)
+END
+
+# Match subject or case
+MATCH num
+	[num < 0]: @Println("num is less than 0")
+	0:         @Println("num is 0")
+	1:         @Println("num is 1")
+	true:      @Println("num is more than 1")
+END
+
+# Define function
+unsafeDiv := F(a, b I -> N) a/b
+div := F(a, b I -> N:E)
+	[b == 0] <~ 0:"Can't divide by zero"
+	<~ a/b:""
+END
+
+# Maybe?
+# Watch block
+r, e <- 0, ""
+WATCH e
+	r <- div(1, 2)
+	e = r?
+	r = @Sqrt(r)
+END
+[e != ""] @Panic(e)
+
+# Match func
+select := M(n I -> S) n
+	0:      "zero"
+	1:      "one"
+	2:      "two"
+	[true]: "many"
+END
+
+
+
+PROGRAM = {STMT}
+
+BODY = NEWLINE {STMT} "END" NEWLINE
+STMT = (NEWLINE | ASSIGN | DEFINE | CALL | GUARD | LOOP | MATCH | RETURN) NEWLINE
+
+RETURN = "<~" EXPR
+
+MATCH = "MATCH" EXPR NEWLINE {CASE} "END" NEWLINE
+CASE  = (EXPR | "[" EXPR "]") ":" (STMT | BODY)
+
+LOOP  = "{" EXPR "}" (STMT | BODY)
+GUARD = "[" EXPR "]" (STMT | BODY)
+
+ASSIGN = IDENTS "<-" EXPRS
+DEFINE = IDENTS ":=" EXPRS
+DEFINE = IDENT ":=" FUNC
+
+EXPRS  = EXPR {"," EXPR}
+IDENTS = IDENT {"," IDENT}
+
+FUNC        = "F" "(" FUNC_INPUTS "->" TYPE ")" FUNC_BODY
+FUNC_BODY   = EXPR | BODY
+FUNC_INPUTS = {IDENT {"," IDENT} TYPE}
+
+EXPR = EXPR INFIX_OPERATOR EXPR
+EXPR = EXPR "?"
+EXPR = "!" EXPR
+EXPR = "(" EXPR ")"
+EXPR = UNIT | BOOL | NUMBER | STRING | IDENT | CALL | PAIR | LIST 
+
+CALL  = ["@"] IDENT "(" {EXPR} ")"
+IDENT = LETTER {LETTER | DIGIT | "_"}
+
+LIST   = "{" {NEWLINE EXPR} [NEWLINE EXPR NEWLINE] "}"
+PAIR   = EXPR ":" EXPR
+STRING = '"' *Any unicode char (needs refining)* '"'
+NUMBER = INT "." INT
+INT    = DIGIT {DIGIT}
+BOOL   = "true" | "false"
+UNIT   = "unit"
+
+TYPE           = BASE_TYPE [":" BASE_TYPE]
+BASE_TYPE      = "U" | "B" | "I" | "N" | "S" | "E" | "[]" BASE_TYPE
+INFIX_OPERATOR = CMP_OPERATOR | "+" | "-" | "*" | "/" | "%" | "||" | "&&"
+CMP_OPERATOR   = "==" | "!=" | "<" | ">" | "<=" | ">="
+LETTER         = *Any unicode char from categories 'Lu' or 'Ll' (needs expanding)*
+DIGIT          = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+NEWLINE        = *LF or CRLF*
