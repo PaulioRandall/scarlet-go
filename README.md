@@ -1,5 +1,7 @@
 # scarlet-go
 
+**Archiving as I have too many projects, Scarlet was not in the top 20%.**
+
   "Sometimes it's better to light a flamethrower than curse the darkness."
     - 'Men at Arms' by Terry Pratchett
 
